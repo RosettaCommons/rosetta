@@ -425,7 +425,7 @@ public:
 			TR << "Rebuilding Icoord from xyz " << filename << std::endl;
 			core::chemical::ResidueTypeOP restype = read_topology_file("core/chemical/"+filename,
 					atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
-			core::chemical::ResidueTypeCOP restype_ref( new core::chemical::ResidueType(*restype) );
+			core::chemical::ResidueTypeCOP restype_ref( core::chemical::ResidueTypeOP( new core::chemical::ResidueType(*restype) ) );
 			restype->name( restype_ref->name() + "_IcoorRedo"); // For debugging purposes.
 
 			restype->assign_internal_coordinates();
@@ -474,7 +474,7 @@ public:
 			}
 			if( mistake ) {
 				core::chemical::sdf::MolWriter writer;
-				writer.output_residue("core/chemical/"+ filename + "_orig.mol", core::conformation::ResidueCOP( new core::conformation::Residue( *restype_ref, true) ) );
+				writer.output_residue("core/chemical/"+ filename + "_orig.mol", core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( *restype_ref, true) ) ) );
 				writer.output_residue("core/chemical/"+ filename + "_after.mol", restype );
 
 				TR << "### For Restype Before " << std::endl;

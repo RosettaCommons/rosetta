@@ -183,7 +183,7 @@ public:
 		hbonds::HBondSet hb_set;
 		pose.update_residue_neighbors();
 		hbonds::fill_hbond_set( pose, false, hb_set, false );
-		hb_set.show(pose, std::cout);
+		hb_set.show(pose, true, std::cout);
 	}
 
 	void

@@ -43,11 +43,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>
 
-
-#ifndef _WIN32
-#include "pthread.h"
-#endif
-
 namespace protocols {
 namespace boinc {
 namespace watchdog {

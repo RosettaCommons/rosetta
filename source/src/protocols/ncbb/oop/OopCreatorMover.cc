@@ -462,7 +462,7 @@ OopCreatorMover::apply(
 			pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
 			Real torsion_value( pose.torsion( torsion_id ) );
 			CircularHarmonicFuncOP circularharm_func( new CircularHarmonicFunc( radians( torsion_value ), radians( 10.0 ) ) );
-			ConstraintCOP dihedral1( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) );
+			ConstraintCOP dihedral1( ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) ) );
 			pose.add_constraint( dihedral1 );
 		}
 		//kdrew: if constraint weight is not set on commandline or elsewhere, set to 1.0

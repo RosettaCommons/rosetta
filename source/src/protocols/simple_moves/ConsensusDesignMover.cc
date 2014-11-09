@@ -162,7 +162,7 @@ ConsensusDesignMover::create_consensus_design_task(
 	if( !ptask_ ){
 		if( task_factory_ ) ptask_ = task_factory_->create_task_and_apply_taskoperations( pose );
 		else{
-			ptask_ = core::pack::task::PackerTaskCOP( new core::pack::task::PackerTask_( pose ) );
+			ptask_ = core::pack::task::PackerTaskCOP( core::pack::task::PackerTaskOP( new core::pack::task::PackerTask_( pose ) ) );
 			if( invert_task_) utility_exit_with_message("invert_task_ set to true even though no task or task_factory was passed in. something probably unclean somewhere.");
 		}
 	}

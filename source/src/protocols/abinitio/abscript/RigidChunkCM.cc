@@ -89,7 +89,7 @@ RigidChunkCM::RigidChunkCM( std::string const& label,
   Parent(),
   label_( label ),
   rigid_core_( rigid_core ),
-  template_( core::pose::PoseCOP( new core::pose::Pose(template_pose) ) ) {}
+  template_( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(template_pose) ) ) ) {}
 
 
 loops::Loops read_rigid_core( std::string const& file){
@@ -159,7 +159,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 
   if( !template_ ){
     tr.Debug << "Building template from broker-time pose." << std::endl;
-    template_ = core::pose::PoseCOP( new core::pose::Pose( in_p ) );
+    template_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( in_p ) ) );
   }
 
   if( in_p.is_fullatom() && !template_->is_fullatom() ){

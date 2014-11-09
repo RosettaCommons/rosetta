@@ -228,7 +228,7 @@ set_pep_cst(
 	pep_cst_vector.x( pep_cst.x );
 	pep_cst_vector.y( pep_cst.y );
 	pep_cst_vector.z( pep_cst.z );
-	ConstraintCOP this_cst( new CoordinateConstraint( id::AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), id::AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) ) );
+	ConstraintCOP this_cst( ConstraintOP( new CoordinateConstraint( id::AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), id::AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) ) ) );
 	pose.add_constraint( this_cst );
 }
 

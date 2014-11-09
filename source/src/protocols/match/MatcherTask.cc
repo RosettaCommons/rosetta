@@ -180,7 +180,7 @@ MatcherTask::set_upstream_pose(
 	core::pose::Pose const & input_pose
 )
 {
-	upstream_pose_ = core::pose::PoseCOP( new core::pose::Pose( input_pose ) );
+	upstream_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( input_pose ) ) );
 	utility::vector1< std::string > path = utility::string_split( input_pose.pdb_info()->name(), '/' );
 	upstream_pose_name_ = utility::string_split( path[ path.size() ], '.' )[1];
 }
@@ -190,7 +190,7 @@ MatcherTask::set_downstream_pose(
 	core::pose::Pose const & input_pose
 )
 {
-	downstream_pose_ = core::pose::PoseCOP( new core::pose::Pose( input_pose ) );
+	downstream_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( input_pose ) ) );
 
 	if ( downstream_orientation_atoms_.size() != 0 ) {
 		validate_downstream_orientation_atoms();
@@ -203,7 +203,7 @@ MatcherTask::set_downstream_pose(
 	utility::vector1< core::id::AtomID > const & orientation_atoms
 )
 {
-	downstream_pose_ = core::pose::PoseCOP( new core::pose::Pose( input_pose ) );
+	downstream_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( input_pose ) ) );
 	downstream_orientation_atoms_ = orientation_atoms;
 
 	validate_downstream_orientation_atoms();

@@ -317,22 +317,22 @@ add_motif_bb_constraints(
 	using namespace core::scoring::func;
 
 	FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CA" ), this_pos ),
+	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CA" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "CA" ),
-																											fx1 ) ) );
+																											fx1 ) ) ) );
 
 	FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "C" ), this_pos ),
+	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "C" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "C" ),
-																											fx2 ) ) );
+																											fx2 ) ) ) );
 
 	FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "N" ), this_pos ),
+	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "N" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "N" ),
-																											fx3 ) ) );
+																											fx3 ) ) ) );
 
 	// For the fourth atom, if either residue is glycine, you need to use HA, else use CB
 	if( pose.residue( this_pos ).type().aa() == core::chemical::aa_gly || inv_rotamer.type().aa() == core::chemical::aa_gly ) {
@@ -342,16 +342,16 @@ add_motif_bb_constraints(
 					inv_rotamer.atom_index( "1HA" ) : inv_rotamer.atom_index( "HA" ) );
 
 		FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-		cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
+		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index2 ),
-																											fx ) ) );
+																											fx ) ) ) );
 	} else {
 		FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-		cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CB" ), this_pos ),
+		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CB" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "CB" ),
-																											fx ) ) );
+																											fx ) ) ) );
 	}
 
 	return;
@@ -393,22 +393,22 @@ add_motif_sc_constraints(
 	}
 
 	FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
+	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index1 ),
-																											fx1 ) ) );
+																											fx1 ) ) ) );
 
 	FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( index2, this_pos ),
+	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index2, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index2 ),
-																											fx2 ) ) );
+																											fx2 ) ) ) );
 
 	FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( index3, this_pos ),
+	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index3, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index3 ),
-																											fx3 ) ) );
+																											fx3 ) ) ) );
 
 	return;
 }

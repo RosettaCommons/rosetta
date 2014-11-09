@@ -184,9 +184,9 @@ void DensityMorphingMover::apply(core::pose::Pose & pose) {
 			using namespace ObjexxFCL::format;
 
 			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_dev_factor_*reso) );
-			pose.add_constraint( core::scoring::constraints::ConstraintCOP( new CoordinateConstraint(
+			pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new CoordinateConstraint(
 														  AtomID(iatom,ires), best_anchor, pose.residue(ires).xyz(iatom),
-														  fx ) ) );
+														  fx ) ) ) );
 
 			TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << F(8,3,best_pos[0]) << F(8,3,best_pos[1]) << F(8,3,best_pos[2]) << F(8,3,cst_pos[0]) << F(8,3,cst_pos[1]) << F(8,3,cst_pos[2]) << std::endl;
 

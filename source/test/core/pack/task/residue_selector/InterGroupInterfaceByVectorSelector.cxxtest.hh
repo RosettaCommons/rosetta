@@ -102,7 +102,7 @@ public:
 		TS_ASSERT_EQUALS( subset.size(), ground_truth.size() );
 		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			//std::cout << ii << " subset[" << ii << "] = " << subset[ ii ] << " ground_truth[ " << ii << " ] = " << ground_truth[ ii ] << std::endl;
-			TS_ASSERT_EQUALS( subset[ ii ], ground_truth[ ii ] );
+			TS_ASSERT( subset[ ii ] == ground_truth[ ii ] );
 		}
 	}
 
@@ -120,7 +120,7 @@ public:
 		ResidueSubset ground_truth = gold_result( pose );
 
 		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], ground_truth[ ii ] );
+			TS_ASSERT( subset[ ii ] == ground_truth[ ii ] );
 		}
 	}
 
@@ -152,7 +152,7 @@ public:
 		ResidueSubset ground_truth = gold_result( pose );
 
 		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], ground_truth[ ii ] );
+			TS_ASSERT( subset[ ii ] == ground_truth[ ii ] );
 		}
 	}
 

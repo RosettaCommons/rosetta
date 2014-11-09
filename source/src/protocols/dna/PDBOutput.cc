@@ -155,7 +155,7 @@ void PDBOutput::starting_pose( Pose const & pose ) { reference_pose( pose ); }
 void PDBOutput::reference_pose( Pose const & pose )
 {
 	// make hard copy to guarantee that the reference pose remains unchanged
-	reference_pose_ = PoseCOP( new Pose( pose ) );
+	reference_pose_ = PoseCOP( PoseOP( new Pose( pose ) ) );
 	designed_residues_.assign( reference_pose_->total_residue(), false );
 }
 pose::PoseCOP PDBOutput::reference_pose() const { return reference_pose_; }

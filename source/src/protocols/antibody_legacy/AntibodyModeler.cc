@@ -281,7 +281,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	graft_move->enable_graft_h3( graft_h3_ );
 	graft_move->enable_benchmark_mode( benchmark_ );
 	graft_move->set_camelid( camelid_ );
-	graft_move->set_native_pose( PoseCOP( new pose::Pose ( native_pose_ ) ) );
+	graft_move->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose ( native_pose_ ) ) ) );
 	model_antibody->add_mover( graft_move );
 
 	if ( model_h3_ ) {
@@ -290,7 +290,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 		model_cdrh3->set_camelid( camelid_ );
 		model_cdrh3->model_h3( model_h3_ );
 		model_cdrh3->store_H3_cter_fragment( H3_base_library_ );
-		model_cdrh3->set_native_pose( PoseCOP( new pose::Pose ( native_pose_ ) ) );
+		model_cdrh3->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose ( native_pose_ ) ) ) );
 		model_cdrh3->set_centroid_loop_building( true );
 		model_cdrh3->set_fullatom_loop_building( true );
 		model_antibody->add_mover( model_cdrh3 );

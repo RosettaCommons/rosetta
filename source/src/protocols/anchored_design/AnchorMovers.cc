@@ -265,7 +265,7 @@ void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 	if(RMSD_only_this_ != EMPTY_STRING) {
 		core::pose::Pose dummy;
 		core::import_pose::pose_from_pdb(dummy, RMSD_only_this_);
-		RMSD_only_this_pose_ = core::pose::PoseCOP( new core::pose::Pose(dummy) );
+		RMSD_only_this_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(dummy) ) );
 	}
 
 	return;
@@ -282,7 +282,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 
 	//pre-pre-processing
 	if( rmsd_ ){
-		start_pose = core::pose::PoseCOP( new core::pose::Pose(pose) );
+		start_pose = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) );
 	}
 
 	if( RMSD_only_this_ != EMPTY_STRING ){

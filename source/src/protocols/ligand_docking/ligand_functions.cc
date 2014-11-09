@@ -64,13 +64,13 @@ torsion_constraints_from_mean_sd(
 		Real const stddev_radians = numeric::conversions::radians( mean_sd_degrees[j].second );
 		core::scoring::func::FuncOP restr_func( new core::scoring::func::CircularHarmonicFunc( chi_radians, stddev_radians ) );
 		AtomIndices chi_idx = rsd_type.chi_atoms(chino);
-		ConstraintCOP constraint( new DihedralConstraint(
+		ConstraintCOP constraint( ConstraintOP( new DihedralConstraint(
 			AtomID(chi_idx[1], rsd_no),
 			AtomID(chi_idx[2], rsd_no),
 			AtomID(chi_idx[3], rsd_no),
 			AtomID(chi_idx[4], rsd_no),
 			restr_func
-		) );
+		) ) );
 		csts.push_back( constraint );
 	}
 	TR << std::endl;

@@ -64,13 +64,15 @@ public: // Types
 	// STL/boost style
 	typedef  T  value_type;
 	typedef  typename AtomMap::reference  reference;
-	typedef  typename AtomMap::const_reference  const_reference;
+	typedef  typename AtomMap::const_reference  const_reference; // in c++11 this is an allocator!
+	// typedef const typename AtomMap::value_type & const_reference; // c++11?
 	typedef  typename AtomMap::size_type  size_type;
 
 	// Project style
 	typedef  T  Value;
 	typedef  typename AtomMap::Reference  Reference;
-	typedef  typename AtomMap::ConstReference  ConstReference;
+	typedef  typename AtomMap::ConstReference  ConstReference; // in c++11 this is an allocator!
+	// typedef const typename AtomMap::value_type & ConstReference; // c++11?
 	typedef platform::Size Size;
 
 
@@ -193,7 +195,7 @@ public: // Methods
 	/// @brief Get the value for an AtomID: Extend the map if necessary, filling with the default value
 	/// Phil changing this to be a non-resizing function
 	inline
-	ConstReference
+	value_type
 	get( AtomID const & id ) const
 	{
 		if ( Size( id.rsd() ) > res_map_.size() ) return default_value_;

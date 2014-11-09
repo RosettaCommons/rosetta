@@ -38,9 +38,9 @@ using std::endl;
 typedef numeric::xyzVector<platform::Real> Vec;
 typedef numeric::xyzMatrix<platform::Real> Mat;
 
-Rose::Rose(PoseCOP pin                                                   ) : p(pin),h(HashCOP( new Hash(*p,         BB ,4.0) )) {}
-Rose::Rose(PoseCOP pin, sic_dock::PoseCoordPickMode const & coord_picker ) : p(pin),h(HashCOP( new Hash(*p,coord_picker,4.0) )) {}
-Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms  ) : p(pin),h(HashCOP( new Hash(*p,clash_atoms ,4.0) )) {}
+Rose::Rose(PoseCOP pin                                                   ) : p(pin),h(HashCOP( HashOP( new Hash(*p,         BB ,4.0) ) )) {}
+Rose::Rose(PoseCOP pin, sic_dock::PoseCoordPickMode const & coord_picker ) : p(pin),h(HashCOP( HashOP( new Hash(*p,coord_picker,4.0) ) )) {}
+Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms  ) : p(pin),h(HashCOP( HashOP( new Hash(*p,clash_atoms ,4.0) ) )) {}
 
 
 

@@ -158,7 +158,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 
 	for( core::Size seqpos( start_seq ), end( stop_seq ); seqpos <= end; ++seqpos ) {
 		if (use_all_residues[seqpos])
-				pose.add_constraint( scoring::constraints::ConstraintCOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile, smap ) ) );
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile, smap ) ) ) );
 	}
 }
 

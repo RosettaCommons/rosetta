@@ -127,7 +127,7 @@ public:
 		scminmap.setup( collection );
 
 		utility::vector1< ResidueCOP > bgres( 20 );
-		for ( Size ii = 1; ii <= 20; ++ii ) bgres[ ii ] = core::conformation::ResidueCOP( new Residue( pose.residue( ii ) ) );
+		for ( Size ii = 1; ii <= 20; ++ii ) bgres[ ii ] = core::conformation::ResidueCOP( core::conformation::ResidueOP( new Residue( pose.residue( ii ) ) ) );
 
 		MinimizationGraph g( 20 );
 		g.copy_connectivity( * packer_neighbor_graph );

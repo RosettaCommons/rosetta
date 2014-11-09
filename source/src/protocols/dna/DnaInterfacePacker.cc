@@ -1247,7 +1247,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@brief makes hard copy to guarantee that the reference pose isn't changed from elsewhere
-void DnaInterfacePacker::reference_pose( Pose const & pose ) { reference_pose_ = PoseCOP( new Pose( pose ) ); }
+void DnaInterfacePacker::reference_pose( Pose const & pose ) { reference_pose_ = PoseCOP( PoseOP( new Pose( pose ) ) ); }
 PoseCOP DnaInterfacePacker::reference_pose() const { return reference_pose_; }
 
 void DnaInterfacePacker::targeted_dna( DnaDesignDefOPs const & defs ) { targeted_dna_ = defs; }

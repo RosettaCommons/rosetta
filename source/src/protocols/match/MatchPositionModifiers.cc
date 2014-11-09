@@ -63,12 +63,12 @@ create_match_position_modifier(
 	core::Size geom_cst,
 	utility::vector1< std::string > const & input_tokens )
 {
-	if( mpm_name == "ss" ) return MatchPositionModifierCOP( new SecondaryStructureMPM( input_tokens ) );
-	else if( mpm_name == "num_neighbors" ) return MatchPositionModifierCOP( new NumNeighborsMPM( input_tokens ) );
-	else if( mpm_name == "bfactor" ) return MatchPositionModifierCOP( new BfactorMPM( input_tokens ) );
-	else if( mpm_name == "all" ) return MatchPositionModifierCOP( new AddAllPositionsMPM() );
-	else if( mpm_name == "no_c_n_term" ) return MatchPositionModifierCOP( new RemoveNorCTermMPM( input_tokens ) );
-	else if( mpm_name == "task_operation" ) return MatchPositionModifierCOP( new TaskOperationMPM( geom_cst, input_tokens ) );
+	if( mpm_name == "ss" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new SecondaryStructureMPM( input_tokens ) ) );
+	else if( mpm_name == "num_neighbors" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new NumNeighborsMPM( input_tokens ) ) );
+	else if( mpm_name == "bfactor" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new BfactorMPM( input_tokens ) ) );
+	else if( mpm_name == "all" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new AddAllPositionsMPM() ) );
+	else if( mpm_name == "no_c_n_term" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new RemoveNorCTermMPM( input_tokens ) ) );
+	else if( mpm_name == "task_operation" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new TaskOperationMPM( geom_cst, input_tokens ) ) );
 	return NULL;
 }
 

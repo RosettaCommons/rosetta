@@ -121,10 +121,10 @@ generate_bb_coordinate_constraints(
 				for ( Size ii = 1; ii <= rsd.last_backbone_atom(); ++ii ) {
 					core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(0.0,coord_sdev) );
 					cst_set->add_constraint(
-						ConstraintCOP( new CoordinateConstraint(
+						ConstraintCOP( ConstraintOP( new CoordinateConstraint(
 							AtomID(ii,idx), AtomID(1,pose.total_residue()), rsd.xyz(ii),
 							fx
-						) )
+						) ) )
 					);
 				}
 			} // coord_sdev > 0
@@ -204,10 +204,10 @@ void derive_sc_sc_restraints(
 					if ( distance <= upper_dist_cutoff ) {
 						core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( distance, cst_sdev ) );
 						pose.add_constraint(
-							core::scoring::constraints::ConstraintCOP( new AtomPairConstraint(
+							core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new AtomPairConstraint(
 								AtomID(atm_ii,ii), AtomID(atm_jj,jj),
 								fx
-							) ) );
+							) ) ) );
 						tr << "adding restraint from "
 							<< "AtomID(" << atm_ii << "," << ii
 							<< "AtomID(" << atm_jj << "," << jj

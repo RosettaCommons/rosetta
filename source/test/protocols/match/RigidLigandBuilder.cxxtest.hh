@@ -246,7 +246,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		ResidueTypeSet & restype_set(
 			ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ));
 
-		ResidueTypeCOP cys_restype( & restype_set.name_map( "CYS" ));
+		ResidueTypeCOP cys_restype( ResidueTypeOP( new ResidueType( restype_set.name_map( "CYS" ))));
 
 		Pose trpcage = create_trpcage_ideal_pose();
 		Pose carbaryl_pose;
@@ -353,7 +353,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		ResidueTypeSet & restype_set(
 			ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ));
 
-		ResidueTypeCOP cys_restype( & restype_set.name_map( "CYS" ));
+		ResidueTypeCOP cys_restype( ResidueTypeOP( new ResidueType( restype_set.name_map( "CYS" ))));
 
 		Pose trpcage = create_trpcage_ideal_pose();
 		Pose mbh_pose;

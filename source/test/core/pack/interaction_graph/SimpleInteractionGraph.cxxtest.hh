@@ -280,7 +280,7 @@ public:
 		simple_ig->initialize( oneten );
 
 		for (core::Size ii(1); ii <= oneten.n_residue(); ++ii) {
-			ResidueCOP res( new Residue(oneten.residue(ii)) );
+			ResidueCOP res( ResidueOP( new Residue(oneten.residue(ii)) ) );
 			TS_ASSERT_DELTA( simple_ig->consider_substitution(ii, res), 0, 0.0001);
 			simple_ig->reject_change( ii );
 		}

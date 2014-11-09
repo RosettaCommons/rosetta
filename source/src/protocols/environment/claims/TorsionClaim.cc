@@ -85,7 +85,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             LocalPosition const & local_pos):
   EnvClaim( owner ),
-  selector_( ResidueSelectorCOP( new EnvLabelSelector( local_pos ) ) ),
+  selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
   c_str_( MUST_CONTROL ),
   i_str_( DOES_NOT_CONTROL ),
   claim_sidechain_( false ),
@@ -107,13 +107,13 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
     local_positions.push_back( core::environment::LocalPositionOP( new LocalPosition( label, i ) ) );
   }
 
-  selector_ = ResidueSelectorCOP( new EnvLabelSelector( local_positions ) );
+  selector_ = core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_positions ) ) );
 }
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             LocalPositions const & positions ):
   EnvClaim( owner ),
-  selector_( ResidueSelectorCOP( new EnvLabelSelector( positions ) ) ),
+  selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( positions ) ) ) ),
   c_str_( MUST_CONTROL ),
   i_str_( DOES_NOT_CONTROL ),
   claim_sidechain_( false ),

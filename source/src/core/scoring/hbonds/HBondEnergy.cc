@@ -232,14 +232,14 @@ HBondEnergyCreator::score_types_for_method() const {
 /// ctor
 HBondEnergy::HBondEnergy( HBondOptions const & opts ):
 	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new HBondEnergyCreator ) ) ),
-	options_( HBondOptionsCOP( new HBondOptions( opts ) )),
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( opts ) ) )),
 	database_( HBondDatabase::get_database(opts.params_database_tag()) )
 {}
 
 /// copy ctor
 HBondEnergy::HBondEnergy( HBondEnergy const & src ):
 	parent( src ),
-	options_( HBondOptionsCOP( new HBondOptions( *src.options_) )) ,
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_) ) )) ,
 	database_( src.database_)
 {}
 

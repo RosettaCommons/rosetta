@@ -191,7 +191,7 @@ void Job::call_output_observers( core::pose::Pose const & pose )
 }
 
 
-JobCOP const JD2_BOGUS_JOB( new Job( InnerJobOP( new InnerJob("EMPTY_JOB_use_jd2", 0)), 0 ) );
+JobCOP const JD2_BOGUS_JOB(  JobOP( new Job( InnerJobOP( new InnerJob("EMPTY_JOB_use_jd2", 0)), 0 ) ) );
 
 bool
 operator==(

@@ -146,7 +146,7 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
 
           Real distance = p.distance(q);
           if (distance <= option[OptionKeys::abinitio::star::initial_dist_cutoff]()) {
-            pose->add_constraint(core::scoring::constraints::ConstraintCOP( new AtomPairConstraint(ai, aj, core::scoring::func::FuncOP(new HarmonicFunc(distance, 2))) ));
+            pose->add_constraint(core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new AtomPairConstraint(ai, aj, core::scoring::func::FuncOP(new HarmonicFunc(distance, 2))) ) ));
             TR << "AtomPair CA " << k << " CA " << l << " HARMONIC " << distance << " 2" << std::endl;
             ++n_csts;
           }

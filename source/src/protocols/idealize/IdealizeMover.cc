@@ -155,7 +155,7 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 								 ( jt.is_polar_hydrogen() && it.is_acceptor()  && dis2 <    polarH_dis2_threshold ) ||
 								 ( it.is_heavyatom()      && jt.is_heavyatom() && dis2 < heavyatom_dis2_threshold ) ) {
 
-							pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( AtomID(ii,i), AtomID(jj,j), core::scoring::func::FuncOP( new HarmonicFunc( std::sqrt( dis2 ), atom_pair_sdev ) ) ) ) );
+							pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( AtomID(ii,i), AtomID(jj,j), core::scoring::func::FuncOP( new HarmonicFunc( std::sqrt( dis2 ), atom_pair_sdev ) ) ) ) ) );
 							++total_atompairs;
 						}
 					} // jj
@@ -176,7 +176,7 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 				continue;
 			Residue const & i_rsd( pose.residue(i) );
 			for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
-				pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,nres), i_rsd.xyz( ii ), core::scoring::func::FuncOP( new HarmonicFunc( 0.0, coord_sdev ) ) ) ) );
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,nres), i_rsd.xyz( ii ), core::scoring::func::FuncOP( new HarmonicFunc( 0.0, coord_sdev ) ) ) ) ) );
 			}
 		}
 	} // coordinate_constraint_weight_ != 0

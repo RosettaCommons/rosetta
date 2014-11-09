@@ -169,7 +169,7 @@ PlaceOnLoop::add_bb_csts_to_loop( core::pose::Pose & pose ) const
 		if( (pose.residue( i ).aa() == aa_gly || pose.residue( i ).aa() == aa_pro ) )
 			ptask->nonconst_residue_task( i ).prevent_repacking();
 	}
-	stub_set_->pair_with_scaffold( pose, host_chain_, protocols::filters::FilterCOP( new protocols::filters::TrueFilter ) );
+	stub_set_->pair_with_scaffold( pose, host_chain_, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
   core::Size fixed_res(1);
   if( host_chain_ == 1 ) fixed_res = pose.total_residue();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );

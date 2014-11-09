@@ -866,7 +866,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 				pack::pack_rotamers( *ala_pose, *scorefxn, task);
 				(*scorefxn)( *ala_pose );
-				stubset->pair_with_scaffold( *ala_pose, host_chain_, protocols::filters::FilterCOP( new protocols::filters::TrueFilter ) );
+				stubset->pair_with_scaffold( *ala_pose, host_chain_, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
 				std::string const stub_set_filter_name( stubset_tag->getOption< std::string >( "filter_name", "true_filter" ) );
 				Filters_map::const_iterator stub_set_filter( filters.find( stub_set_filter_name ) );
 				runtime_assert( stub_set_filter != filters.end() );

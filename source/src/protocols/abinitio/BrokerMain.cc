@@ -195,6 +195,7 @@ void common_setup() {
 	using core::scoring::constraints::BoundFunc;
 	using core::scoring::constraints::ConstraintFactory;
 	using core::scoring::constraints::ConstraintIO;
+	using core::scoring::constraints::ConstraintCreatorOP;
 	using core::scoring::constraints::ConstraintCreatorCOP;
 	using core::scoring::func::FuncOP;
 	using protocols::constraints_additional::NamedAtomPairConstraintCreator;
@@ -208,7 +209,7 @@ void common_setup() {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
 		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
 		ConstraintFactory::get_instance()->replace_creator(
-			ConstraintCreatorCOP( new NamedAtomPairConstraintCreator() ));
+			ConstraintCreatorCOP( ConstraintCreatorOP( new NamedAtomPairConstraintCreator() ) ));
 	}
 }
 

@@ -582,7 +582,7 @@ DaemonSet::add_pack_daemon(
 
 	/// Read the correspondence file
 	EntityCorrespondenceOP ec( new EntityCorrespondence );
-	ec->set_pose( core::pose::PoseCOP( new core::pose::Pose( pose ) ));
+	ec->set_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ));
 	ec->set_num_entities( num_entities_ );
 	ec->initialize_from_correspondence_file( correspondence_file );
 

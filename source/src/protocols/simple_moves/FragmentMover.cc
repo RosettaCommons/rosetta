@@ -181,7 +181,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::ConstantLengthFragSet const & fragset,
 	core::kinematics::MoveMap const & movemap
-)	: FragmentMover(fragset.clone(), core::kinematics::MoveMapCOP( new core::kinematics::MoveMap(movemap) ), "ClassicFragmentMover" )
+)	: FragmentMover(fragset.clone(), core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new core::kinematics::MoveMap(movemap) ) ), "ClassicFragmentMover" )
 {
 	set_defaults();
 }

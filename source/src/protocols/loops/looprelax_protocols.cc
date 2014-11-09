@@ -731,7 +731,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 					if( ! option[OptionKeys::loops::skip_ccd_moves ]() ){
 						loop_closure::ccd::CCDLoopClosureMover ccd_mover(
 								Loop( loop_begin, loop_end, cutpoint ),
-								MoveMapCOP( new MoveMap( mm_one_loop ) ) );
+								MoveMapCOP( MoveMapOP( new MoveMap( mm_one_loop ) ) ) );
 						ccd_mover.max_cycles( 25 );  // Used to be 5 moves, which would result in 25 "tries" in the old code. ~Labonte
 						ccd_mover.apply( pose );
 					}
@@ -783,7 +783,7 @@ void LoopRebuild::fast_ccd_close_loops(
 		kinematics::MoveMap & mm )
 {
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
-			Loop( loop_begin, loop_end, cutpoint ), kinematics::MoveMapCOP( new kinematics::MoveMap( mm ) ) );
+			Loop( loop_begin, loop_end, cutpoint ), kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 	ccd_loop_closure_mover.check_rama_scores( false );
 	ccd_loop_closure_mover.apply( pose );
 
@@ -1323,7 +1323,7 @@ void LoopRefine::apply(
 
 	//protocols::loops::refine_loops_with_ccd( pose, pose, LoopsToRefine );
 	loop_mover::refine::LoopMover_Refine_CCD refine_ccd( LoopsToRefine );
-	refine_ccd.set_native_pose( PoseCOP( new pose::Pose ( pose ) ) );
+	refine_ccd.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose ( pose ) ) ) );
 	refine_ccd.apply( pose );
 
 }

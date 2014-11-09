@@ -229,11 +229,11 @@ dock(
 	protocols::sic_dock::scores::MotifHashRigidScoreOP mhscore_(NULL);
 	protocols::sic_dock::scores::TrisBpyScoreCOP bpy3_sc_(NULL);
 	protocols::sic_dock::JointScoreOP rigidsfxn( new protocols::sic_dock::JointScore );
-	protocols::sic_dock::RigidScoreCOP cbscore_( new protocols::sic_dock::CBScore(init_pose,init_pose,option[sicdock::clash_dis](),option[sicdock::contact_dis]()) );
+	protocols::sic_dock::RigidScoreCOP cbscore_( protocols::sic_dock::RigidScoreOP( new protocols::sic_dock::CBScore(init_pose,init_pose,option[sicdock::clash_dis](),option[sicdock::contact_dis]()) ) );
 	// rigidsfxn->add_score(cbscore_,1.0);
 
 	if(option[basic::options::OptionKeys::sicdock::trisbpy].user()){
-		bpy3_sc_ = protocols::sic_dock::scores::TrisBpyScoreCOP( new protocols::sic_dock::scores::TrisBpyScore(init_pose,option[sicdock::trisbpy](),option[sicdock::trisbpy_min_contacts]()) );
+		bpy3_sc_ = protocols::sic_dock::scores::TrisBpyScoreCOP( protocols::sic_dock::scores::TrisBpyScoreOP( new protocols::sic_dock::scores::TrisBpyScore(init_pose,option[sicdock::trisbpy](),option[sicdock::trisbpy_min_contacts]()) ) );
 		rigidsfxn->add_score(bpy3_sc_,1.0);
 	}
 
@@ -466,7 +466,7 @@ dock(
 				if(nout < nstruct){
 					if(mhscore_){
 						utility::io::ozstream out(outdir+tag+"_motifs.pdb");
-						clash_checker = xyzStripeHashPoseCOP( new xyzStripeHashPose(olig,NCO,2.5) );
+						clash_checker = xyzStripeHashPoseCOP( xyzStripeHashPoseOP( new xyzStripeHashPose(olig,NCO,2.5) ) );
 						mhscore_->dump_matching_motifs(x1s,x2s,out,clash_checker);
 						out.close();
 						// protocols::motif_hash::MotifRotamerSetOperationCOP rso = mhscore_->motif_hash()->get_matching_motifs_rotsetop(olig,NULL,0.6,NULL);

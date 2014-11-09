@@ -151,7 +151,7 @@ SecondaryMatchProtocol::do_matching(
 	//this might be a little iffy, come back to this if it causes problems
 	poses_to_process.push_back( start_pose.get_self_ptr() );
 
-	core::pose::PoseCOP ref_pose( new core::pose::Pose( start_pose ) );
+	core::pose::PoseCOP ref_pose( core::pose::PoseOP( new core::pose::Pose( start_pose ) ) );
 	//core::pose::Pose ref_pose = start_pose;
 
 	//clear_catalytic_res(); //make sure this gets done first thing

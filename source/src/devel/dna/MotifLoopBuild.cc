@@ -126,7 +126,7 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
     std::string secstruct;
     core::Size num_attemps(0);
     bool pass(false);
-    this->set_native_pose( PoseCOP( new core::pose::Pose( pose ) ) );
+    this->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
     this->set_last_move_status( protocols::moves::FAIL_RETRY );
 
     devel::enzdes::EnzdesRemodelMover::initialize(pose);

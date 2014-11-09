@@ -212,7 +212,7 @@ BackrubDDMover::apply( Pose & pose )
 	// read known and unknown optimization parameters from the database
 	backrub_mover.branchopt().read_database();
 
-	core::pose::PoseCOP pose_copy( new core::pose::Pose( pose ) );
+	core::pose::PoseCOP pose_copy( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
 	backrub_mover.set_input_pose( pose_copy );
 	backrub_mover.set_native_pose( pose_copy );
 	sidechain_mover.set_input_pose( pose_copy );

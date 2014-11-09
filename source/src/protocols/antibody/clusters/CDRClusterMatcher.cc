@@ -58,7 +58,7 @@ CDRClusterMatcher::load_center_data(){
 	
 	//I need to turn this text file into a database soon.
 	CDRClusterEnumManagerOP cluster_man( new CDRClusterEnumManager() );
-	AntibodyEnumManagerCOP ab_man( new AntibodyEnumManager() );
+	AntibodyEnumManagerCOP ab_man( AntibodyEnumManagerOP( new AntibodyEnumManager() ) );
 
 	
 	

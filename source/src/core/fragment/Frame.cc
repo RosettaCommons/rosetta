@@ -123,7 +123,7 @@ Frame::Frame( core::Size start, core::Size length, SingleResidueFragDataOP srfd 
 		end_( start + length - 1),
 		nr_res_( length )
 {
-	add_fragment( FragDataCOP( new FragData( srfd, length ) ) );
+	add_fragment( FragDataCOP( FragDataOP( new FragData( srfd, length ) ) ) );
 }
 
 /// @brief clone method, new frame with same alignment position, fragments are not copied!

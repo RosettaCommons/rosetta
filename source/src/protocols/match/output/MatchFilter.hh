@@ -26,7 +26,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <iterator>
-
+#include <string>
 
 namespace protocols {
 namespace match {

@@ -406,16 +406,16 @@ ArithmeticScanner::scan( std::string const & input_string )
 			scanning_literal = false;
 
 			if ( input_string[ pos_curr ] == '(' ) {
-			   tokens->append( TokenCOP( new SimpleToken( LEFT_PAREN ) ) );
+			   tokens->append( TokenCOP( TokenOP( new SimpleToken( LEFT_PAREN ) ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == ')' ) {
-			   tokens->append( TokenCOP( new SimpleToken( RIGHT_PAREN ) ) );
+			   tokens->append( TokenCOP( TokenOP( new SimpleToken( RIGHT_PAREN ) ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == ',' ) {
-			   tokens->append( TokenCOP( new SimpleToken( COMMA ) ) );
+			   tokens->append( TokenCOP( TokenOP( new SimpleToken( COMMA ) ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == '+' ) {
-			   tokens->append( TokenCOP( new SimpleToken( PLUS_SYMBOL ) ) );
+			   tokens->append( TokenCOP( TokenOP( new SimpleToken( PLUS_SYMBOL ) ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == '-' ) {
 				if ( pos_curr + 1 < input_string.size() &&
@@ -423,14 +423,14 @@ ArithmeticScanner::scan( std::string const & input_string )
 					scanning_literal = true;
 					pos_token_begin = pos_curr;
 				} else {
-					tokens->append( TokenCOP( new SimpleToken( SUBTRACT_SYMBOL ) ));
+					tokens->append( TokenCOP( TokenOP( new SimpleToken( SUBTRACT_SYMBOL ) ) ));
 					++pos_token_begin;
 				}
 			} else if (input_string[ pos_curr ] == '*' ) {
-			   tokens->append( TokenCOP( new SimpleToken( MULTIPLY_SYMBOL ) ) );
+			   tokens->append( TokenCOP( TokenOP( new SimpleToken( MULTIPLY_SYMBOL ) ) ) );
 				++pos_token_begin;
 			} else if (input_string[ pos_curr ] == '/' ) {
-			   tokens->append( TokenCOP( new SimpleToken( DIVIDE_SYMBOL ) ) );
+			   tokens->append( TokenCOP( TokenOP( new SimpleToken( DIVIDE_SYMBOL ) ) ) );
 				++pos_token_begin;
 			} else if ( is_numeral( input_string[ pos_curr ] )) {
 				scanning_literal = true;
@@ -1234,7 +1234,7 @@ void
 ExpressionCreator::visit( ArithmeticASTValue const & node )
 {
 	if ( node.is_literal() ) {
-		last_constructed_expression_ = ExpressionCOP( new LiteralExpression( node.literal_value() ) );
+		last_constructed_expression_ = ExpressionCOP( ExpressionOP( new LiteralExpression( node.literal_value() ) ) );
 	} else {
 		last_constructed_expression_ = handle_variable_expression( node );
 	}
@@ -1263,9 +1263,9 @@ ExpressionCreator::visit( ArithmeticASTRestTerm const & node )
 				if ( iter == node.children_begin()) {
 
 					if ( node.rest_term_token() == MULTIPLY_SYMBOL ) {
-						semi_constructed_expression_ = ExpressionCOP( new MultiplyExpression( parents_semi_constructed_expression, last_constructed_expression_ ) );
+						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new MultiplyExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
 					} else if ( node.rest_term_token() == DIVIDE_SYMBOL ) {
-						semi_constructed_expression_ = ExpressionCOP( new DivideExpression( parents_semi_constructed_expression, last_constructed_expression_ ) );
+						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new DivideExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
 					} else {
 						utility_exit_with_message( "Error visiting ArithmeticASTRestExpression: expected MULTIPLY_SYMBOL or DIVIDE_SYMBOL; got " + token_type_name( node.rest_term_token() ) );
 					}
@@ -1309,9 +1309,9 @@ ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
 				expressions.push_back( last_constructed_expression_ );
 				if ( iter == node.children_begin()) {
 					if ( node.rest_expression_token() == PLUS_SYMBOL ) {
-						semi_constructed_expression_ = ExpressionCOP( new AddExpression( parents_semi_constructed_expression, last_constructed_expression_ ) );
+						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new AddExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
 					} else if ( node.rest_expression_token() == SUBTRACT_SYMBOL ) {
-						semi_constructed_expression_ = ExpressionCOP( new SubtractExpression( parents_semi_constructed_expression, last_constructed_expression_ ) );
+						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new SubtractExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
 					} else {
 						utility_exit_with_message( "Error visiting ArithmeticASTRestTerm: expected PLUS_SYMBOL or SUBTRACT_SYMBOL; got " + token_type_name( node.rest_expression_token() ) );
 					}
@@ -1370,19 +1370,19 @@ ExpressionCreator::handle_function_expression(
 			utility_exit_with_message( "Error constructing MaxExpression; Did not create 2 arguments, created "
 				+ utility::to_string( count_args ) + " argument" + (count_args == 1 ? "." : "s.") );
 		}
-		return ExpressionCOP( new MaxExpression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new MaxExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "min" ) {
 		if ( count_args != 2 ) {
 			utility_exit_with_message( "Error constructing MinExpression; Did not create 2 arguments, created "
 				+ utility::to_string( count_args ) +" argument"+ (count_args == 1 ? "." : "s.") );
 		}
-		return ExpressionCOP( new MinExpression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new MinExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "sqrt" ) {
 		if ( count_args != 1 ) {
 			utility_exit_with_message( "Error constructing SquarerootExpression; Did not create 1 arguments, created "
 				+ utility::to_string( count_args ) +" arguments." );
 		}
-		return ExpressionCOP( new SquarerootExpression( args[ 1 ] ) );
+		return ExpressionCOP( ExpressionOP( new SquarerootExpression( args[ 1 ] ) ) );
 	}
 
 	return 0;
@@ -1462,28 +1462,28 @@ BooleanExpressionCreator::handle_function_expression(
 	std::string const fname = function->name();
 	if ( fname == "EQUALS" ) {
 		assert( args.size() == 2 );
-		return ExpressionCOP( new EqualsExpression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new EqualsExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "GT" ) {
 		assert( args.size() == 2 );
-		return ExpressionCOP( new GT_Expression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new GT_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "GTE" ) {
 		assert( args.size() == 2 );
-		return ExpressionCOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "LT" ) {
 		assert( args.size() == 2 );
-		return ExpressionCOP( new LT_Expression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new LT_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "LTE" ) {
 		assert( args.size() == 2 );
-		return ExpressionCOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname ==  "AND" ) {
 		assert( args.size() == 2 );
-		return ExpressionCOP( new AndExpression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new AndExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "OR" ) {
 		assert( args.size() == 2 );
-		return ExpressionCOP( new OrExpression( args[ 1 ], args[ 2 ] ) );
+		return ExpressionCOP( ExpressionOP( new OrExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "NOT" ) {
 		assert( args.size() == 1 );
-		return ExpressionCOP( new NotExpression( args[ 1 ] ) );
+		return ExpressionCOP( ExpressionOP( new NotExpression( args[ 1 ] ) ) );
 	} else {
 		utility_exit_with_message( "Unrecognized function name in BooleanExpressionCreator: '" + fname + "'" );
 		return 0;
@@ -1558,7 +1558,7 @@ ExpressionCOP
 VariableExpression::differentiate( std::string const & varname ) const
 {
 	if ( name_ == varname ) {
-		return ExpressionCOP( new LiteralExpression( 1.0 ) );
+		return ExpressionCOP( ExpressionOP( new LiteralExpression( 1.0 ) ) );
 	}
 	return 0;
 }
@@ -1677,7 +1677,7 @@ AbsoluteValueExpression::differentiate( std::string const & varname ) const
 		return dex_dvar;
 	} else {
 		LiteralExpressionOP negone( new LiteralExpression( -1 ) );
-		return ExpressionCOP( new MultiplyExpression( negone, dex_dvar ) );
+		return ExpressionCOP( ExpressionOP( new MultiplyExpression( negone, dex_dvar ) ) );
 	}
 }
 
@@ -1700,7 +1700,7 @@ AddExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		return ExpressionCOP( new AddExpression( de1, de2 ) );
+		return ExpressionCOP( ExpressionOP( new AddExpression( de1, de2 ) ) );
 	} else if ( de1 ) {
 		return de1;
 	} else {
@@ -1728,12 +1728,12 @@ SubtractExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		return ExpressionCOP( new SubtractExpression( de1, de2 ) );
+		return ExpressionCOP( ExpressionOP( new SubtractExpression( de1, de2 ) ) );
 	} else if ( de1 ) {
 		return de1;
 	} else {
-		LiteralExpressionCOP negone( new LiteralExpression( -1 ) );
-		return ExpressionCOP( new MultiplyExpression( negone, de2 ) );
+		LiteralExpressionCOP negone( LiteralExpressionOP( new LiteralExpression( -1 ) ) );
+		return ExpressionCOP( ExpressionOP( new MultiplyExpression( negone, de2 ) ) );
 	}
 
 }
@@ -1757,13 +1757,13 @@ MultiplyExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		ExpressionCOP a( new MultiplyExpression( de1, e2() ) );
-		ExpressionCOP b( new MultiplyExpression( e1(), de2 ) );
-		return ExpressionCOP( new AddExpression( a, b ) );
+		ExpressionCOP a( ExpressionOP( new MultiplyExpression( de1, e2() ) ) );
+		ExpressionCOP b( ExpressionOP( new MultiplyExpression( e1(), de2 ) ) );
+		return ExpressionCOP( ExpressionOP( new AddExpression( a, b ) ) );
 	} else if ( de1 ) {
-		return ExpressionCOP( new MultiplyExpression( de1, e2() ) );
+		return ExpressionCOP( ExpressionOP( new MultiplyExpression( de1, e2() ) ) );
 	} else {
-		return ExpressionCOP( new MultiplyExpression( de2, e1() ) );
+		return ExpressionCOP( ExpressionOP( new MultiplyExpression( de2, e1() ) ) );
 	}
 
 }
@@ -1791,15 +1791,15 @@ DivideExpression::differentiate( std::string const & varname ) const
 		MultiplyExpressionOP num2( new MultiplyExpression( de2, e1() ) );
 		SubtractExpressionOP diff( new SubtractExpression( num1, num2 ) );
 		MultiplyExpressionOP sqr( new MultiplyExpression( e2(), e2() ) );
-		return ExpressionCOP( new DivideExpression( diff, sqr ) );
+		return ExpressionCOP( ExpressionOP( new DivideExpression( diff, sqr ) ) );
 	} else if ( de1 ) {
-		return ExpressionCOP( new DivideExpression( de1, e2() ) );
+		return ExpressionCOP( ExpressionOP( new DivideExpression( de1, e2() ) ) );
 	} else {
 		LiteralExpressionOP negone( new LiteralExpression( -1.0 ) );
 		MultiplyExpressionOP de2_e1( new MultiplyExpression( de2, e1() ) );
 		MultiplyExpressionOP num( new MultiplyExpression( negone, de2_e1 ) );
 		MultiplyExpressionOP sqr( new MultiplyExpression( e2(), e2() ) );
-		return ExpressionCOP( new DivideExpression( num, sqr ) );
+		return ExpressionCOP( ExpressionOP( new DivideExpression( num, sqr ) ) );
 	}
 
 }
@@ -1824,10 +1824,10 @@ MaxExpression::differentiate( std::string const & varname ) const
 		return 0;
 	}
 
-	if ( de1 == 0 ) de1 = ExpressionCOP( new LiteralExpression( 0.0 ) );
-	if ( de2 == 0 ) de2 = ExpressionCOP( new LiteralExpression( 0.0 ) );
+	if ( de1 == 0 ) de1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	if ( de2 == 0 ) de2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
 
-	return ExpressionCOP( new MetaMaxExpression( e1(), e2(), de1, de2 ) );
+	return ExpressionCOP( ExpressionOP( new MetaMaxExpression( e1(), e2(), de1, de2 ) ) );
 
 }
 
@@ -1858,10 +1858,10 @@ MinExpression::differentiate( std::string const & varname ) const
 		return 0;
 	}
 
-	if ( de1 == 0 ) de1 = ExpressionCOP( new LiteralExpression( 0.0 ) );
-	if ( de2 == 0 ) de2 = ExpressionCOP( new LiteralExpression( 0.0 ) );
+	if ( de1 == 0 ) de1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	if ( de2 == 0 ) de2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
 
-	return ExpressionCOP( new MetaMinExpression( e1(), e2(), de1, de2 ) );
+	return ExpressionCOP( ExpressionOP( new MetaMinExpression( e1(), e2(), de1, de2 ) ) );
 
 }
 
@@ -1899,9 +1899,9 @@ MetaMaxExpression::differentiate( std::string const & varname ) const
 
 	if ( ! dee1 && ! dee2 ) return 0;
 
-	if ( ! dee1 ) dee1 = ExpressionCOP( new LiteralExpression( 0.0 ) );
-	if ( ! dee2 ) dee2 = ExpressionCOP( new LiteralExpression( 0.0 ) );
-	return ExpressionCOP( new MetaMaxExpression( e1_, e2_, dee1, dee2 ) );
+	if ( ! dee1 ) dee1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	if ( ! dee2 ) dee2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	return ExpressionCOP( ExpressionOP( new MetaMaxExpression( e1_, e2_, dee1, dee2 ) ) );
 
 }
 
@@ -1938,9 +1938,9 @@ MetaMinExpression::differentiate( std::string const & varname ) const
 
 	if ( ! dee1 && ! dee2 ) return 0;
 
-	if ( ! dee1 ) dee1 = ExpressionCOP( new LiteralExpression( 0.0 ) );
-	if ( ! dee2 ) dee2 = ExpressionCOP( new LiteralExpression( 0.0 ) );
-	return ExpressionCOP( new MetaMinExpression( e1_, e2_, dee1, dee2 ) );
+	if ( ! dee1 ) dee1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	if ( ! dee2 ) dee2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	return ExpressionCOP( ExpressionOP( new MetaMinExpression( e1_, e2_, dee1, dee2 ) ) );
 
 }
 

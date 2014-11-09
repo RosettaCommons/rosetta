@@ -79,6 +79,7 @@ void set_rb_constraints(
 	core::Size cst_seqwidth
                    ) {
 					   
+	using core::scoring::constraints::ConstraintOP;
 	using core::scoring::constraints::ConstraintCOP;
 	
 	core::scoring::constraints::ConstraintSetOP new_csts( new core::scoring::constraints::ConstraintSet );
@@ -116,7 +117,7 @@ void set_rb_constraints(
 				if ( CSTs_i.size() > 0 ) {
 					TR << "Adding " << CSTs_i.size() << " ambiguous constraints for res " << resmap[cst_i]
 					   << " (= input " << cst_i << ")" << std::endl;
-					new_csts->add_constraint( ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) );
+					new_csts->add_constraint( ConstraintCOP( ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) ) );
 				}
 
 			}
@@ -136,6 +137,7 @@ void set_constraints(
 	core::Size cst_seqwidth
                    ) {
 
+	using core::scoring::constraints::ConstraintOP;
 	using core::scoring::constraints::ConstraintCOP;
 
 	if (pose.total_residue() != cst_pose.total_residue()) {
@@ -171,7 +173,7 @@ void set_constraints(
 		//
 		if ( CSTs_i.size() > 0 ) {
 			TR << "Adding " << CSTs_i.size() << " ambiguous constraints for res " << cst_i << std::endl;
-			new_csts->add_constraint( ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) );
+			new_csts->add_constraint( ConstraintCOP( ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) ) );
 		}
 	}
 	pose.constraint_set( new_csts );

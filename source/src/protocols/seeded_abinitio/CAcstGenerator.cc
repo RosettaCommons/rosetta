@@ -203,7 +203,7 @@ void add_dist_constraints(
 									core::conformation::Residue res_in_pose = pose.residue( pos + start_relevant_chain - 1 );
 									core::conformation::Residue res_in_pose2= pose.residue( pos_2 + start_relevant_chain - 1);
 
-									cst->add_constraint( ConstraintCOP( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( distance_ca, stddev ) ) ) ) );
+									cst->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( distance_ca, stddev ) ) ) ) ) );
 								}
 								}
 						}

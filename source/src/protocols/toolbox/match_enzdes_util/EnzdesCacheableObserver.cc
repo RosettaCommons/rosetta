@@ -314,7 +314,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
       	// add individual profile constraint for each residue position
       	// because of the underlying constraint implementation, this enures that the constraint is
 				// a context-independent 1-body energy, or (intra)residue constraint
-      	pose.add_constraint( scoring::constraints::ConstraintCOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) );
+      	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) ) );
 			}
   	}// else if ( option[ OptionKeys::constraints::in::file::pssm ].user() ){
  //}

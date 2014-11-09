@@ -159,8 +159,8 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 
 			if( residue_to_constrain(ires) ) {
 			 for (Size iatom = iatom_start; iatom <= iatom_stop; ++iatom) {
-				pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint(
-			               AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom), cc_func_ ) ) );
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
+			               AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom), cc_func_ ) ) ) );
 				TR.Debug << "coordinate constraint added to residue " << ires << ", atom " << iatom << std::endl;
 			 }
 			}
@@ -204,7 +204,7 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 					if ( dist > max_distance_ ) continue;
 
 					pose.add_constraint(
-					    scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( cst_weight_, core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, coord_dev_ ) ) ) ) ) ) );
+					    scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( cst_weight_, core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, coord_dev_ ) ) ) ) ) ) ) );
 					TR.Debug << "atom_pair_constraint added to residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
 				}}
 			}

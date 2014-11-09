@@ -302,7 +302,7 @@ DesignProteinBackboneAroundDNA::ccd(
 	refine_ccd->repack_period( repack_rate_ );
 	refine_ccd->temp_initial( temp_initial_ );
 	refine_ccd->temp_final( temp_final_ );
-	refine_ccd->set_native_pose( PoseCOP( new Pose( pose ) ) );
+	refine_ccd->set_native_pose( PoseCOP( PoseOP( new Pose( pose ) ) ) );
 	refine_ccd->set_task_factory( task_factory2 );
 	refine_ccd->apply( pose );
 }
@@ -326,7 +326,7 @@ DesignProteinBackboneAroundDNA::backrub(
 	backrubmover.branchopt().read_database();
 
 	// this mover appears to require a separate copy of the input pose
-	PoseCOP input_pose( new Pose( pose ) );
+	PoseCOP input_pose( PoseOP( new Pose( pose ) ) );
 	backrubmover.set_input_pose( input_pose ); // virtual funtion in Mover base class
 
 	// set up backrub segments

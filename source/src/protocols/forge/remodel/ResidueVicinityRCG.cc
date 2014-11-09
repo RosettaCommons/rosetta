@@ -244,13 +244,13 @@ ResidueVicinityRCG::generate_remodel_constraints(
 
 			//and finally add the constraints to the RGC
 		if( (*rv_it)->desired_remodelres_in_vicinity() == 1 ){
-			this->add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( rv_csts ) ) );
+			this->add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( rv_csts ) ) ) );
 			//debug
 			//tr << "creating ambig constraint of size " << rv_csts.size() << std::endl;
 		}
 
 		else{
-			this->add_constraint( core::scoring::constraints::ConstraintCOP( new protocols::constraints_additional::AmbiguousMultiConstraint( (*rv_it)->desired_remodelres_in_vicinity(), rv_csts ) ) );
+			this->add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new protocols::constraints_additional::AmbiguousMultiConstraint( (*rv_it)->desired_remodelres_in_vicinity(), rv_csts ) ) ) );
 
 			//debug
 			//tr << "creating ambig multi constraint of size " << rv_csts.size() << " and n " << (*rv_it)->desired_remodelres_in_vicinity() <<  std::endl;

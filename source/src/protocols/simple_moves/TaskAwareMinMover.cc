@@ -106,7 +106,7 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
   using core::kinematics::MoveMap;
 
 	// non-initialization failsafe
-	if ( ! minmover_->movemap() ) minmover_->movemap( core::kinematics::MoveMapCOP( new MoveMap ) );
+	if ( ! minmover_->movemap() ) minmover_->movemap( core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap ) ) );
 
   //clone the MinMover's MoveMap
   MoveMapOP mm( new MoveMap( *( minmover_->movemap() ) ) );

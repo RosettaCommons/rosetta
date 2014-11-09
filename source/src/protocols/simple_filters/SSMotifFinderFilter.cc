@@ -126,7 +126,7 @@ write_to_file( std::string const filename, core::Size const stem1, core::Size co
 
   std::ofstream stem_file;
 	stem_file.open( filename.c_str(), std::ios::app );
-	runtime_assert( stem_file );
+	runtime_assert( stem_file.good() );
 	stem_file<<pdbname<<' '<<resnum1<<chain1<<' '<<resnum2<<chain2<<' '<<rmsd<<'\n';
 }
 

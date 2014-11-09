@@ -168,7 +168,7 @@ SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
 	// now we check the strand pairing definitions in the BluePrint -- if some of them are impossible, DSSP will never return 'E',
 	// so we will want these residues to be L/E (which is specified as 'h').
 	protocols::fldsgn::topology::SS_Info2_COP ss_info;
- 	ss_info = protocols::fldsgn::topology::SS_Info2_COP( new protocols::fldsgn::topology::SS_Info2( blue.secstruct() ) );
+ 	ss_info = protocols::fldsgn::topology::SS_Info2_COP( protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( blue.secstruct() ) ) );
 	protocols::fldsgn::topology::StrandPairingSet spairs( blue.strand_pairings(), ss_info );
 	protocols::fldsgn::topology::StrandPairings pairs( spairs.strand_pairings() );
 

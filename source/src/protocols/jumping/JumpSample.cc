@@ -540,11 +540,11 @@ JumpSample::add_chainbreaks_as_distance_constraint( pose::Pose &pose ) const {
   for ( Size i = 1; i<= njump_; i++ ) {
 		core::scoring::func::FuncOP f( new ChainbreakDistFunc( 1.7424 ) );
 		pose.add_constraint(
-			scoring::constraints::ConstraintCOP( new AtomPairConstraint(
+			scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 				id::AtomID( pose.residue(cuts_(i)    ).atom_index("C"), cuts_(i)    ),
 				id::AtomID( pose.residue(cuts_(i) + 1).atom_index("N"), cuts_(i) + 1),
   				f
-			) )
+			) ) )
 		);
 	}
 }
@@ -560,11 +560,11 @@ JumpSample::add_chainbreaks_as_distance_constraint(
     if ( sp.dist( cuts_(i), cuts_(i)+1 ) <= max_dist ) {
       tr.Debug << "add chainbreak as distance constraint to residues " << cuts_(i) << " and " << cuts_(i)+1 << std::endl;
 			core::scoring::func::FuncOP f( new ChainbreakDistFunc( 1.7424 ) );
-			pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
+			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 				id::AtomID( pose.residue(cuts_(i)    ).atom_index("C"), cuts_(i)    ),
 				id::AtomID( pose.residue(cuts_(i) + 1).atom_index("N"), cuts_(i) + 1),
 				f
-			) ) );
+			) ) ) );
 		}
   }
 }

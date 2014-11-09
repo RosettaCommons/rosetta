@@ -450,8 +450,8 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 		using namespace fragment;
 		tr.Info << "TemplateJumpSetup will be initialized with secondary structure from homologs " << std::endl;
 		ConstantLengthFragSet fragset;
-		pick_frags( fragset, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new SecstructSRFD ), 1 ) ) ); //for ss-structure 1mers are enough
-		ss_def = core::fragment::SecondaryStructureCOP( new core::fragment::SecondaryStructure( fragset, target_total_residue() ) );
+		pick_frags( fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new SecstructSRFD ), 1 ) ) ) ); //for ss-structure 1mers are enough
+		ss_def = core::fragment::SecondaryStructureCOP( core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( fragset, target_total_residue() ) ) );
 	}
 // 	utility::io::ozstream dump("ss_def_for_jumps");
 // 	for ( Size i = 1; i<=ss_def->total_residue(); i++ ) {

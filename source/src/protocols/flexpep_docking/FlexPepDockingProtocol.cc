@@ -347,8 +347,8 @@ FlexPepDockingProtocol::set_receptor_constraints( core::pose::Pose & pose )
 			//			Residue const  & reside = pose.residue( i );
 			AtomID CAi ( pose.residue(i).atom_index( " CA " ), i );
 			cst_set->add_constraint
-				(  ConstraintCOP( new CoordinateConstraint
-					 ( CAi, CAi, conformation.xyz( CAi ), spring ) )
+				(  ConstraintCOP( ConstraintOP( new CoordinateConstraint
+					 ( CAi, CAi, conformation.xyz( CAi ), spring ) ) )
 					 );
 		}
 	pose.constraint_set( cst_set );
@@ -998,7 +998,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	TR <<"apply" << std::endl;
 	// if no native provided, use pose as pseudo-native reference
 	if( get_native_pose().get() == NULL ){
-		set_native_pose( PoseCOP( new pose::Pose(pose) ) ); // TODO: debug this - will it work for PoseCOP;
+		set_native_pose( PoseCOP( PoseOP( new pose::Pose(pose) ) ) ); // TODO: debug this - will it work for PoseCOP;
 		TR.Warning << "WARNING: No native supplied by used - using starting structure as reference for statistics" << std::endl;
 	}
 

@@ -183,7 +183,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 		if ( tr.Trace.visible() )	fa_pose.dump_pdb("set_fold_tree_fa_pose.pdb");
 
 
-		FrameOP fa_frame_( new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) );
+		FrameOP fa_frame_( new Frame( loop_.start(), FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) ) );
 		fa_frame_->steal( centroid_pose );
 		fa_frame_->apply( 1, fa_pose );
 

@@ -173,7 +173,7 @@ bool read_ignore_comments(std::istream & in, T & s) {
 	while(peek(in)[0] == '#') {
 		in.getline(buf,9999);
 	}
-	return (in >> s);
+	return (in >> s).good();
 }
 string read_ignore_comments(std::istream & in) {
 	char buf[9999];
@@ -418,19 +418,19 @@ struct ConstraintConfig {
 		if(id2.rsd() > nsub*nres) utility_exit_with_message("2nd constraint rsd "+str(id2.rsd())+" outside of nres*nsub");
 		if(id1.rsd() > nres     ) return;//utility_exit_with_message("1st constraint rsd "+str(id1.rsd())+" outside of primary subunit");
 		//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << endl;
-		p.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( id1 , id2 , core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) );
+		p.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( id1 , id2 , core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) ) );
 		int sub2 = (id2.rsd()-1)/nres + 1;
 		if(sub2 > 1 && sub2 <= (int)nhub) {
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1)             );
 			AtomID id2B( id1.atomno(), id1.rsd() - nres * (sub2-1) + nhub*nres );
 			//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
-			p.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) );
+			p.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) ) );
 		}
 		if(sub2 > (int)nhub) { // !!!!!!!!!!!!!! assuming dimer cst on higher sym!
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1) );
 			AtomID id2B( id1.atomno(), id1.rsd() + nres * (sub2-1) );
 			//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
-			p.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) );
+			p.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) ) );
 		}
 	}
 	int hub_seq_sep(int r1, int r2) const {
@@ -794,7 +794,7 @@ struct ConstraintConfig {
 					AtomID id2( p.residue(i->dres2).atom_index(aname2), i->dres2 );
 						//TR << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
 					add_sym_cst( p, id1, id2, d, CSTSDMULT/2.0*sqrt(d) );
-					p.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( id1, id2, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,CSTSDMULT/2.0*sqrt(d)) ) ) ) );
+					p.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( id1, id2, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,CSTSDMULT/2.0*sqrt(d)) ) ) ) ) );
 				}
 			}
 		}

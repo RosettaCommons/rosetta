@@ -91,7 +91,7 @@ FullModelInfo::FullModelInfo(
 		utility::vector1< Size > const & res_numbers_in_pose ):
 	CacheableData(),
 	res_list_( res_numbers_in_pose ),
-	full_model_parameters_( FullModelParametersCOP( new FullModelParameters( full_sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) )  )
+	full_model_parameters_( FullModelParametersCOP( FullModelParametersOP( new FullModelParameters( full_sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) ) )  )
 {
 }
 
@@ -106,7 +106,7 @@ FullModelInfo::FullModelInfo( FullModelParametersCOP full_model_parameters ):
 FullModelInfo::FullModelInfo( pose::Pose & pose ) :
 	CacheableData()
 {
-	full_model_parameters_ = FullModelParametersCOP( new FullModelParameters( pose, res_list_ ) );
+	full_model_parameters_ = FullModelParametersCOP( FullModelParametersOP( new FullModelParameters( pose, res_list_ ) ) );
 }
 
 

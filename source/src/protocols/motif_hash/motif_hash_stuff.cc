@@ -2203,10 +2203,10 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 
 		xyzStripeHashPoseCOP ccheck1bb32,ccheck2bb32,ccheck1nco2,ccheck2nco2;
 		if(clash_check){
-			ccheck1bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose1,BB ,3.2) );
-			ccheck2bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose2,BB ,3.2) );
-			ccheck1nco2 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose1,NCO,2.5) );
-			ccheck2nco2 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose2,NCO,2.5) );
+			ccheck1bb32 = xyzStripeHashPoseCOP( xyzStripeHashPoseOP( new xyzStripeHashPose(pose1,BB ,3.2) ) );
+			ccheck2bb32 = xyzStripeHashPoseCOP( xyzStripeHashPoseOP( new xyzStripeHashPose(pose2,BB ,3.2) ) );
+			ccheck1nco2 = xyzStripeHashPoseCOP( xyzStripeHashPoseOP( new xyzStripeHashPose(pose1,NCO,2.5) ) );
+			ccheck2nco2 = xyzStripeHashPoseCOP( xyzStripeHashPoseOP( new xyzStripeHashPose(pose2,NCO,2.5) ) );
 		}
 
 		vector1<Xform> stubs1,stubs2;
@@ -2393,7 +2393,7 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 	// cout << *ptask << endl;
 	MotifHits hits;
 	get_matching_motifs(pose,ptask,hits,clash_check,radius);
-	return MotifRotamerSetOperationCOP( new MotifRotamerSetOperation(pose,hits) );
+	return MotifRotamerSetOperationCOP( MotifRotamerSetOperationOP( new MotifRotamerSetOperation(pose,hits) ) );
  }
 
  MotifRotamerSetOperation::MotifRotamerSetOperation(

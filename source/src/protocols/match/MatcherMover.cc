@@ -196,7 +196,7 @@ void
 MatcherMover::set_ligres(
 	core::conformation::ResidueCOP ligres )
 {
-	ligres_ = core::conformation::ResidueCOP( new core::conformation::Residue(*ligres) );
+	ligres_ = core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(*ligres) ) );
 }
 
 void

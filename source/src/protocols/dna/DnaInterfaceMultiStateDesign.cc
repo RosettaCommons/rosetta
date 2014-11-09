@@ -229,7 +229,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 	multistate_packer_ = multistate_design::MultiStatePackerOP( new MultiStatePacker( num_packs_ ) );
 
 	multistate_packer_->set_aggregate_function(
-		MultiStateAggregateFunction::COP( new PartitionAggregateFunction( boltz_temp_, anchor_offset_ ) ) );
+		MultiStateAggregateFunction::COP( MultiStateAggregateFunction::OP( new PartitionAggregateFunction( boltz_temp_, anchor_offset_ ) ) ) );
 
 	multistate_packer_->set_scorefxn( score_function() );
 

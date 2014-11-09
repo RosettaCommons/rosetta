@@ -454,7 +454,7 @@ void AbrelaxApplication::setup() {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
 		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
 		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator(
-			ConstraintCreatorCOP( new constraints_additional::NamedAtomPairConstraintCreator ) );
+			ConstraintCreatorCOP( ConstraintCreatorOP( new constraints_additional::NamedAtomPairConstraintCreator ) ) );
 	}
 
 	silent_score_file_ = core::io::silent::SilentFileDataOP( new io::silent::SilentFileData );
@@ -1191,22 +1191,22 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 				Size const nr_large_copies( option[ templates::nr_large_copies ] );
 				fragset_large_ = templates_->pick_frags(
 								fragset_large_,
-								core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ),
+								core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) ),
 								min_nr_frags,
 								nr_large_copies );
 			} else {
-				Size nr = templates_->pick_frags( *fragset_large_, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) );
+				Size nr = templates_->pick_frags( *fragset_large_, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) ) );
 				tr.Info << nr << " " << fragset_large_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 			}
 			if ( option[ templates::pick_multiple_sizes ] ) {
 				Size nr = templates_->pick_frags(
 								*fragset_large_,
-								core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 18 ) )
+								core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 18 ) ) )
 				);
 				tr.Info << nr << " 18mer fragments picked from homolog structures" << std::endl;
 				nr = templates_->pick_frags(
 								*fragset_large_,
-								core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP(  new BBTorsionSRFD ), 24 ) )
+								core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP(  new BBTorsionSRFD ), 24 ) ) )
 				);
 				tr.Info << nr << " 27mer fragments picked from homolog structures" << std::endl;
 			}
@@ -1217,12 +1217,12 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 			Size const nr_small_copies( option[ templates::nr_small_copies ] );
 			fragset_small_ = templates_->pick_frags(
 								fragset_small_,
-								core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ),
+								core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) ),
 									min_nr_frags,
 								nr_small_copies );
 		} else {
 			//pick torsion fragments fragset_small
-			Size nr2 = templates_->pick_frags( *fragset_small_, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) );
+			Size nr2 = templates_->pick_frags( *fragset_small_, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) ) );
 			tr.Info << nr2 << " " << fragset_small_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 		}
 	} // templates && !templates:no_pick_fragments
@@ -1230,9 +1230,9 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 	if ( native_pose_ && ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() )) {
 		tr.Info << " stealing fragments from native pose: ATTENTION: native pose has to be IDEALIZED!!! " << std::endl;
 		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_large_,
-			core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) );
+			core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) ) );
 		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_small_,
-			core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) );
+			core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) ) );
 	} else if ( ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() ) && !native_pose_ && !templates_ ) {
 		tr.Warning << "cannot steal fragments without native pose or homologue structures " << std::endl;
 	}

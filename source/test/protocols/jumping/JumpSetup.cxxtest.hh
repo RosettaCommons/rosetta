@@ -170,7 +170,7 @@ apply_ss_jumps( pose::Pose &pose, JumpSetup jump_def, std::string tag ) {
 	std::ofstream dist_out_file( out_fn.c_str() );
 	std::ifstream dist_in_file( in_fn.c_str() );
 	if ( !dist_in_file.good() ) {
-		tr.Fatal << "can't find file " << dist_in_file << std::endl;
+		tr.Fatal << "can't find file " << in_fn.c_str() << std::endl;
 	}
 	bool success = true;
 	for ( FragID_Iterator it=jump_geometries.begin(), eit=jump_geometries.end();

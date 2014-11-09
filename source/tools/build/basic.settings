@@ -1912,7 +1912,7 @@ settings = {
         "prepends" : {
             # This makes clang use libstdc++ 4.4.0 on CentOS.
             # (requires gcc44-c++ and libstdc++44-devel)
-            "library_path" : [ "/usr/lib/gcc/x86_64-redhat-linux6E/4.4.0" ],
+            #"library_path" : [ "/usr/lib/gcc/x86_64-redhat-linux6E/4.4.0" ],
         },
     },
 

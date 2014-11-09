@@ -86,14 +86,14 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
 	AtomID aidCY1( pose.residue( hbs_pre_position ).atom_index("CY1"), hbs_pre_position );
 
-	ConstraintCOP atompair( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) );
-	ConstraintCOP atompair2( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) );
-	ConstraintCOP atompair3( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) );
+	ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
+	ConstraintCOP atompair2( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
+	ConstraintCOP atompair3( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
 	//ConstraintCOP angle = new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 );
-	ConstraintCOP angle( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func ) );
+	ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func ) ) );
 	//ConstraintCOP angle2 = new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 );
-	ConstraintCOP dihedral( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) );
-	ConstraintCOP dihedral2( new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_2 ) );
+	ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) ) );
+	ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_2 ) ) );
 
 	pose.add_constraint( atompair );
 	pose.add_constraint( atompair2 );

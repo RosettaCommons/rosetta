@@ -150,6 +150,7 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
+	using residue_selector::ResidueSelectorOP;
 	using residue_selector::ResidueSelectorCOP;
 	
 	residue_selector::NotResidueSelectorOP not_rs( new core::pack::task::residue_selector::NotResidueSelector );
@@ -165,7 +166,7 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 		}
 	}
 
-	or_rs->add_residue_selector( ResidueSelectorCOP( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) );
+	or_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
 	not_rs->set_residue_selector( or_rs );
 	operation::OperateOnResidueSubsetOP repack_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_rs ) );
 
@@ -241,6 +242,7 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
+	using residue_selector::ResidueSelectorOP;
 	using residue_selector::ResidueSelectorCOP;
 
 	// recover sidechains if pose has been loaded from centriod PDB...
@@ -267,7 +269,7 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 		}
 	}
 
-	interface_or_linker_rs->add_residue_selector( ResidueSelectorCOP( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) );
+	interface_or_linker_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
 	not_interface_or_linker_rs->set_residue_selector( interface_or_linker_rs );
 	operation::OperateOnResidueSubsetOP block_outside_interface_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_interface_or_linker_rs ) );;
 

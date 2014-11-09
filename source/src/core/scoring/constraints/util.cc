@@ -382,7 +382,7 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 		for ( Size ii = 1; ii <= last_atom; ++ii ) {
 
 			func::FuncOP f( new func::HarmonicFunc( 0.0, coord_sdev ) );
-			cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) );
+			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) ) );
 		}
 	}
 
@@ -411,7 +411,7 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const start_res, core:
 		for ( Size ii = 1; ii<= last_atom; ++ii ) {
 
 			func::FuncOP f( new func::HarmonicFunc( 0.0, coord_sdev ) );
-			cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) );
+			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) ) );
 		}
 	}
 

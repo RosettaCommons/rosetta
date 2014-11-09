@@ -210,7 +210,7 @@ sequence_tolerance_main( void * )
 
 	// set up the FitnessFunction
 	MultiStatePackerOP func( new MultiStatePacker(option[ ms::num_packs ]()) );
-	func->set_aggregate_function(MultiStateAggregateFunction::COP( new MultiStateAggregateFunction() ));
+	func->set_aggregate_function(MultiStateAggregateFunction::COP( MultiStateAggregateFunction::OP( new MultiStateAggregateFunction() ) ));
 	ScoreFunctionOP score_function( core::scoring::get_score_function() );
 	func->set_scorefxn( score_function );
 
@@ -238,7 +238,7 @@ sequence_tolerance_main( void * )
 	// tell the FitnessFunction to add the vector of components without master weighting to MultiStateEntity objects
 	func->add_metric_value_getter(
 		"fitness_comp",
-		MetricValueGetter("fitness", "weighted_total_no_master_vector", basic::MetricValueBaseCOP( new basic::MetricValue<utility::vector1<Real> > ))
+		MetricValueGetter("fitness", "weighted_total_no_master_vector", basic::MetricValueBaseCOP( basic::MetricValueBaseOP( new basic::MetricValue<utility::vector1<Real> > ) ))
 	);
 
 	if ( option[ seq_tol::unsat_polars ] ) {
@@ -248,7 +248,7 @@ sequence_tolerance_main( void * )
 		calculator_factory.register_calculator("unsat_polars", PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ));
 		func->add_metric_value_getter(
 			"unsat_polars",
-			MetricValueGetter("unsat_polars", "all_bur_unsat_polars", basic::MetricValueBaseCOP( new basic::MetricValue<Size> ))
+			MetricValueGetter("unsat_polars", "all_bur_unsat_polars", basic::MetricValueBaseCOP( basic::MetricValueBaseOP( new basic::MetricValue<Size> ) ))
 		);
 	}
 
@@ -257,7 +257,7 @@ sequence_tolerance_main( void * )
 		calculator_factory.register_calculator("surface", PoseMetricCalculatorOP( new SurfaceCalculator() ));
 		func->add_metric_value_getter(
 			"surface",
-			MetricValueGetter("surface", "total_surface", basic::MetricValueBaseCOP( new basic::MetricValue<Real> ))
+			MetricValueGetter("surface", "total_surface", basic::MetricValueBaseCOP( basic::MetricValueBaseOP( new basic::MetricValue<Real> ) ))
 		);
 	}
 

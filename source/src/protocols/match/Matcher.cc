@@ -189,7 +189,7 @@ void Matcher::add_upstream_restype_for_constraint(
 	if ( ! upstream_builders_[ cst_id ] ) {
 		upstream::ProteinUpstreamBuilderOP prot_sc_builder( new upstream::ProteinUpstreamBuilder );
 		/// default to dunbrack sampler
-		prot_sc_builder->set_sampler( upstream::ProteinSCSamplerCOP( new upstream::DunbrackSCSampler ) );
+		prot_sc_builder->set_sampler( upstream::ProteinSCSamplerCOP( upstream::ProteinSCSamplerOP( new upstream::DunbrackSCSampler ) ) );
 		prot_sc_builder->set_use_input_sidechain( use_input_sc_ );
 		upstream_builders_[ cst_id ] = prot_sc_builder;
 	}

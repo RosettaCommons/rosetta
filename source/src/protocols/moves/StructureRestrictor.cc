@@ -64,7 +64,7 @@ StructureRestrictor::StructureRestrictor( StructureRestrictor const & src):
 	//utility::pointer::ReferenceCount(),
 	Mover(src)
 {
-  chain_map  = src.chain_map;
+  chain_map = std::map< std::string const, std::string const >( src.chain_map );
   relevant_chains_fname = src.relevant_chains_fname;
   initialized = src.initialized;
 }

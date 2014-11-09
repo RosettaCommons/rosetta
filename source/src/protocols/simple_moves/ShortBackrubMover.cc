@@ -260,7 +260,7 @@ ShortBackrubMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & pose)
 {
-	backrubmover_->set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
+	backrubmover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
 	backrubmover_->clear_segments();
 	backrubmover_->add_mainchain_segments();
 	backrubmover_->branchopt().read_database();

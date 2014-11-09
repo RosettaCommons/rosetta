@@ -39,7 +39,7 @@ protocols::jd2::JobInputter::~JobInputter(){}
 
 ///@brief this code is here to restrict the use of inner_job_nonconst (this class is a friend class and can do it)
 void JobInputter::load_pose_into_job( core::pose::Pose const & pose, JobOP job ){
-	job->inner_job_nonconst()->set_pose( core::pose::PoseCOP( new core::pose::Pose(pose) ) );
+	job->inner_job_nonconst()->set_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
 }
 
 ///@brief this code is here to restrict the use of inner_job_nonconst (this class is a friend class and can do it)

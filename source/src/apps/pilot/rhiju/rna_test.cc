@@ -604,7 +604,7 @@ add_coordinate_constraints( pose::Pose & pose ) {
 
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 			core::scoring::func::FuncOP fx( new HarmonicFunc( 0.0, coord_sdev ) );
-			cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), fx ) ) );
+			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), fx ) ) ) );
 		}
 	}
 
@@ -668,13 +668,13 @@ setup_rna_chainbreak_constraints(
 			AtomID const O5_id( rsd2.atom_index( "O5'" ), i+1 );
 
 			// distance from O3' to P
-			cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) );
+			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) ) );
 
 			// angle at O3'
-			cst_set->add_constraint( ConstraintCOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) );
+			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) ) );
 
 			// angle at P
-			cst_set->add_constraint( ConstraintCOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) );
+			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
 		}
 	}
 
@@ -788,7 +788,7 @@ setup_rna_base_pair_constraints( pose::Pose & pose ){
 
 		Size const atom1_index = pose.residue(i).atom_index( atom1 );
 		Size const atom2_index = pose.residue(j).atom_index( atom2 );
-		cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( AtomID( atom1_index, i ), AtomID( atom2_index, j), distance_func ) ) );
+		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( AtomID( atom1_index, i ), AtomID( atom2_index, j), distance_func ) ) ) );
 	}
 
 	pose.constraint_set( cst_set );
@@ -4084,10 +4084,10 @@ rotamerize_rna_test()
 			atom_ids1[p] << " <--> " <<
 			atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
 
-		cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint(
+		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(
 																										id::AtomID(atom1,i),
 																										id::AtomID(atom2,j),
-																										distance_func ) ) );
+																										distance_func ) ) ) );
 
 	}
 

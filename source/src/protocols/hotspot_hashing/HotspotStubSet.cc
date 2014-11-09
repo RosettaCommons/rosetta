@@ -131,7 +131,7 @@ HotspotStubSet::HotspotStubSet() :
 	target_resnum_(0),
 	target_distance_(15.0),
 	score_threshold_(-1.0),
-	filter_( protocols::filters::FilterCOP( new protocols::filters::TrueFilter ) ),
+	filter_( protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) ),
 	hotspot_length_( 1 )
 { set_chain_to_design(); }
 
@@ -218,7 +218,7 @@ HotspotStubSetOP HotspotStubSet::colonyE( ) {
 			}
 
 			stubi_E = 0-log( stubi_E );
-			HotspotStubCOP new_stub( new HotspotStub( stubi->residue(), stubi_E, nonconstpose, chain_to_design_, filter_ ) );
+			HotspotStubCOP new_stub( HotspotStubOP( new HotspotStub( stubi->residue(), stubi_E, nonconstpose, chain_to_design_, filter_ ) ) );
 			new_set->add_stub_( new_stub );
 		}
 	}
@@ -605,8 +605,8 @@ void HotspotStubSet::read_data( std::string const filename ) {
 		//{
 			// make a stub from the last residue on the pose (which should only have one residue) and add it to the set
 			//using namespace core::chemical;
-			core::conformation::ResidueCOP residue( new core::conformation::Residue( it->residue( it->total_residue() ) ) );
-			HotspotStubCOP stub( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) );
+			core::conformation::ResidueCOP residue( core::conformation::ResidueOP( new core::conformation::Residue( it->residue( it->total_residue() ) ) ) );
+			HotspotStubCOP stub( HotspotStubOP( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
 			add_stub_( stub );
 		//}
 	}
@@ -833,8 +833,8 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 			TR << "Stub score: " << score;
 			// only keep stub if scores better than/eq a threshold (defaults to -1.0)
 			if ( score <= score_threshold_ ) {
-				core::conformation::ResidueCOP found_residue( new core::conformation::Residue( pose.residue( placed_seqpos ) ) );
-				HotspotStubCOP stub( new HotspotStub( found_residue, score, nonconstpose, chain_to_design_, filter_ ) );
+				core::conformation::ResidueCOP found_residue( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( placed_seqpos ) ) ) );
+				HotspotStubCOP stub( HotspotStubOP( new HotspotStub( found_residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
 				add_stub_( stub );
 				TR << ". Accept." << std::endl;
 				//pose.dump_pdb( "placed_stub.pdb"); // debug pdb output
@@ -876,7 +876,7 @@ HotspotStubSet::rescore( core::pose::Pose const & pose, core::scoring::ScoreFunc
 			}
 			core::Real const score = get_residue_score_( working_pose, scorefxn, placed_seqpos );
 			TR << stub_it->first << " " << score << "\n";
-			HotspotStubCOP stub( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) );
+			HotspotStubCOP stub( HotspotStubOP( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
 			new_set->add_stub_( stub );
 		}
 	}
@@ -919,7 +919,7 @@ void HotspotStubSet::write_stub( utility::io::ozstream & outstream, HotspotStubC
 /// @brief set up scaffold_status_ for each stub included in this set
 void HotspotStubSet::pair_with_scaffold( core::pose::Pose const & pose, core::Size const partner, protocols::filters::FilterCOP filter )
 {
-	pose_ = core::pose::PoseCOP( new core::pose::Pose( pose ) );
+	pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
 	chain_to_design_ = partner;
 	filter_ = filter;
 	core::Size const chain_beg( pose_->conformation().chain_begin( chain_to_design_ ) );
@@ -1315,7 +1315,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 	// *****associate the stub set with the unbound pose
 	// *****hotspot_stub_set->pair_with_scaffold( pose, partner );
 
-	protocols::filters::FilterCOP true_filter( new protocols::filters::TrueFilter );
+	protocols::filters::FilterCOP true_filter( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) );
 	for( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
 		if (packer_task->pack_residue(resnum) )	{
 			hotspot_stub_set->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );
@@ -1488,7 +1488,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	// *****associate the stub set with the unbound pose
 	// *****hotspot_stub_set->pair_with_scaffold( pose, partner );
 
-	protocols::filters::FilterCOP true_filter( new protocols::filters::TrueFilter );
+	protocols::filters::FilterCOP true_filter( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) );
 	for( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
 		if (packer_task->pack_residue(resnum) )	{
 			hotspot_stub_set->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );

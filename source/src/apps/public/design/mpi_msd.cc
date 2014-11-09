@@ -176,7 +176,7 @@ read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 	}
 
 	EntityCorrespondenceOP ec( new EntityCorrespondence );
-	ec->set_pose( core::pose::PoseCOP( new pose::Pose( pose ) ));
+	ec->set_pose( core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose( pose ) ) ));
 	ec->set_num_entities( n_designed_positions );
 	ec->initialize_from_correspondence_file( correspondence_file );
 

@@ -439,7 +439,7 @@ void
 CCDLoopClosureMover::copy_data( CCDLoopClosureMover & to, CCDLoopClosureMover const & from ) const
 {
 	to.loop_ = from.loop_;
-	to.movemap_ = core::kinematics::MoveMapCOP( new kinematics::MoveMap( * from.movemap_ ) );  // deep copy pointer
+	to.movemap_ = core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new kinematics::MoveMap( * from.movemap_ ) ) );  // deep copy pointer
 
 	to.max_per_move_torsion_delta_ = from.max_per_move_torsion_delta_;
 	to.max_total_torsion_delta_ = from.max_total_torsion_delta_;

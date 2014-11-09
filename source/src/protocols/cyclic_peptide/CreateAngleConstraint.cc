@@ -65,9 +65,9 @@ void CreateAngleConstraint::apply( core::pose::Pose & pose )
             Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
             Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
             pose.add_constraint(
-                                core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( core::id::AtomID(atomno1,res1_[i_cst]),
+                                core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( core::id::AtomID(atomno1,res1_[i_cst]),
                                                                                 core::id::AtomID(atomno0,res_center_[i_cst]),
-                                                                                core::id::AtomID(atomno2,res2_[i_cst]), func ) ) );
+                                                                                core::id::AtomID(atomno2,res2_[i_cst]), func ) ) ) );
         }
     }
 }

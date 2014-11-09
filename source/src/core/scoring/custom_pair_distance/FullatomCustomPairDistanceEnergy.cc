@@ -456,7 +456,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 			l >> score_function_name;
 
 			atoms_and_func_struct pair_func;
-			pair_func.func_ = DistanceFuncCOP( new DistanceFunc( score_function_name ) );
+			pair_func.func_ = DistanceFuncCOP( DistanceFuncOP( new DistanceFunc( score_function_name ) ) );
 			if (pair_func.func_->max_dis() > max_dis_)
 				max_dis_ = pair_func.func_->max_dis();
 			tr.Debug << "SCORE_FUNCTION: " << score_function_name << " (min: " <<
@@ -525,7 +525,7 @@ FullatomCustomPairDistanceEnergy::version() const
 DistanceFunc::DistanceFunc( std::string const name ) {
 	utility::io::izstream scores_stream;
 	basic::database::open( scores_stream, "scoring/score_functions/custom_pair_distance/" + name);
-	scores_hist_ = numeric::interpolation::HistogramCOP<Real,Real>::Type( new numeric::interpolation::Histogram<Real,Real>( scores_stream() ) );
+	scores_hist_ = numeric::interpolation::HistogramCOP<Real,Real>::Type( numeric::interpolation::HistogramOP<Real, Real>::Type( new numeric::interpolation::Histogram<Real,Real>( scores_stream() ) ) );
 	scores_stream.close();
 }
 

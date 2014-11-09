@@ -38,6 +38,7 @@
 // C++ headers
 #include <map>
 #include <set>
+#include <string>
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>

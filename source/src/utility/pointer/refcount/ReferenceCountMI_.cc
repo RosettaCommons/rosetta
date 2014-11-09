@@ -11,6 +11,7 @@
 /// @brief  Base class for reference-counted multiple inheritance polymorphic classes
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 
+#ifdef PTR_REFCOUNT
 
 // Unit headers
 #include <utility/pointer/refcount/ReferenceCountMI_.hh>
@@ -26,3 +27,5 @@ ReferenceCountMI_::Size const ReferenceCountMI_::max_count_ = static_cast< Refer
 
 } // namespace pointer
 } // namespace utility
+
+#endif // PTR_REFCOUNT

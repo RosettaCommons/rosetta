@@ -406,7 +406,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 		}
 
 		if( constrain_relax_segments_ ){
-			coord_cst_mover.set_loop_segments( protocols::loops::LoopsCOP( new protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() ) ) );
+			coord_cst_mover.set_loop_segments( protocols::loops::LoopsCOP( protocols::loops::LoopsOP( new protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() ) ) ) );
 		}
 
 		//if -relax::coord_cst_width is given, the code instead uses _bounded_ constraints on

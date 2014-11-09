@@ -368,10 +368,10 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
 
 		TR << "Add constraint to residue " << I(4,gap_start) << " and residue " << I(4,gap_stop) << std::endl;
 		core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc( 0, gap_distance(gap_size), stdev, "gap" ) );
-		pose.add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint(
+		pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint(
 				core::id::AtomID(iatom,gap_start),
 				core::id::AtomID(jatom,gap_stop),
-				fx ) ) );
+				fx ) ) ) );
 
 	}
 }

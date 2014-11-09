@@ -225,8 +225,8 @@ CentroidDisulfidePotential::disulfide_params(
 		conformation::Conformation & conformation = *conformation_op;
 		chemical::ResidueTypeSetCOP restype_set =
 			chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
-		res1_ptr = conformation::ResidueCOP( new conformation::Residue(
-			restype_set->name_map("ALA"), res1, conformation) );
+		res1_ptr = conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue(
+			restype_set->name_map("ALA"), res1, conformation) ) );
 	}
 	if(res2.aa() == chemical::aa_gly) {
 		//dummy conformation; would only be used if bb atoms missing, e.g. Pro
@@ -234,8 +234,8 @@ CentroidDisulfidePotential::disulfide_params(
 		conformation::Conformation & conformation = *conformation_op;
 		chemical::ResidueTypeSetCOP restype_set =
 			chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
-		res2_ptr = conformation::ResidueCOP( new conformation::Residue(
-			restype_set->name_map("ALA"), res2, conformation) );
+		res2_ptr = conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue(
+			restype_set->name_map("ALA"), res2, conformation) ) );
 	}
 	//Make sure they both have CB now
 	assert(res1_ptr->type().has("CB"));
@@ -273,11 +273,11 @@ CentroidDisulfidePotential::disulfide_params(
 	assert(0. <= cacbcb_angle_2); assert( cacbcb_angle_2 <= 180. );
 }
 
-Cb_Distance_FuncCOP CentroidDisulfidePotential::cb_distance_func_( new Cb_Distance_Func() );
-Cen_Distance_FuncCOP CentroidDisulfidePotential::cen_distance_func_( new Cen_Distance_Func() );
-CaCbCb_Angle_FuncCOP CentroidDisulfidePotential::cacbcb_angle_func_( new CaCbCb_Angle_Func() );
-NCaCaC_Dihedral_FuncCOP CentroidDisulfidePotential::ncacac_dihedral_func_( new NCaCaC_Dihedral_Func() );
-CaCbCbCa_Dihedral_FuncCOP CentroidDisulfidePotential::cacbcbca_dihedral_func_( new CaCbCbCa_Dihedral_Func() );
+Cb_Distance_FuncCOP CentroidDisulfidePotential::cb_distance_func_( Cb_Distance_FuncOP( new Cb_Distance_Func() ) );
+Cen_Distance_FuncCOP CentroidDisulfidePotential::cen_distance_func_( Cen_Distance_FuncOP( new Cen_Distance_Func() ) );
+CaCbCb_Angle_FuncCOP CentroidDisulfidePotential::cacbcb_angle_func_( CaCbCb_Angle_FuncOP( new CaCbCb_Angle_Func() ) );
+NCaCaC_Dihedral_FuncCOP CentroidDisulfidePotential::ncacac_dihedral_func_( NCaCaC_Dihedral_FuncOP( new NCaCaC_Dihedral_Func() ) );
+CaCbCbCa_Dihedral_FuncCOP CentroidDisulfidePotential::cacbcbca_dihedral_func_( CaCbCbCa_Dihedral_FuncOP( new CaCbCbCa_Dihedral_Func() ) );
 
 /**
  * @brief Decide whether there is a disulfide bond between two residues.
@@ -343,7 +343,7 @@ static HistogramCOP<Real,Real>::Type
 histogram_from_db(string file) {
 	utility::io::izstream scores_stream;
 	basic::database::open( scores_stream, file);
-	HistogramCOP<Real,Real>::Type scores( new Histogram<Real,Real>( scores_stream() ) );
+	HistogramCOP<Real,Real>::Type scores( HistogramOP<Real, Real>::Type( new Histogram<Real,Real>( scores_stream() ) ) );
 	scores_stream.close();
 	return scores;
 }

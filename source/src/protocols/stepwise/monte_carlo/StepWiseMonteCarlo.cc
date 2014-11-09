@@ -75,7 +75,7 @@ namespace monte_carlo {
 //Constructor
 StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn_input ):
 	scorefxn_input_( scorefxn_input ),
-	options_( options::StepWiseMonteCarloOptionsCOP( new options::StepWiseMonteCarloOptions ) ), // can be replaced later
+	options_( options::StepWiseMonteCarloOptionsCOP( options::StepWiseMonteCarloOptionsOP( new options::StepWiseMonteCarloOptions ) ) ), // can be replaced later
 	minimize_single_res_( false ), // changes during run
 	max_missing_weight_( scorefxn_input->get_weight( scoring::missing_res ) ), // for annealing
 	missing_weight_interval_( 0.0 ), // updated below

@@ -310,6 +310,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using protocols::evaluation::PoseEvaluatorOP;
+	using core::pose::PoseOP;
+
 	// this typedef belongs in its own .fwd.hh file.
 	//typedef utility::pointer::owning_ptr< loops::IndependentLoopMover > loops::IndependentLoopMoverOP;
 
@@ -473,7 +475,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			quick_ccd.get_checkpoints()->set_type("InitialBuild");
 			quick_ccd.set_current_tag( curr_job_tag );
-			quick_ccd.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+			quick_ccd.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 			quick_ccd.set_scorefxn( cen_scorefxn_ );
 			quick_ccd.set_build_attempts_( 1 );
 			quick_ccd.set_grow_attempts_( 0 );
@@ -697,7 +699,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					}
 					remodel_mover->get_checkpoints()->set_type("Remodel");
 					remodel_mover->set_current_tag( curr_job_tag );
-					remodel_mover->set_native_pose( PoseCOP( new Pose( native_pose ) ) );
+					remodel_mover->set_native_pose( PoseCOP( PoseOP( new Pose( native_pose ) ) ) );
 					remodel_mover->apply( pose );
 
 					if ( remodel() == "perturb_kic" ) { //DJM: skip this struct if initial closure fails
@@ -895,7 +897,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<=nat_i_rsd.last_backbone_atom(); ++ii ) {
 							core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
-							pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) ) );
+							pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) ) ) );
 						}
 
 						// now cst symmetry mates
@@ -919,7 +921,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
 							core::scoring::func::FuncOP fx( new BoundFunc( 0, cst_width, coord_sdev, "xyz" ) );
-							pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) ) );
+							pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) ) ) );
 						}
 						// now cst symmetry mates
 						// if (symm_info) {
@@ -1126,13 +1128,13 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			if ( refine() == "refine_ccd" ) {
 				// heap allocation needed for internal shared_from_this call.
 				moves::MoverOP refine_ccd( new loops::loop_mover::refine::LoopMover_Refine_CCD( loops, fa_scorefxn_ ) );
-				refine_ccd->set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+				refine_ccd->set_native_pose( PoseCOP( PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 				refine_ccd->apply( pose );
 			} else
 			if ( refine() == "refine_kic" ) {
 				//loops.remove_terminal_loops( pose );
 				moves::MoverOP refine_kic( new loops::loop_mover::refine::LoopMover_Refine_KIC( loops, fa_scorefxn_ ) );
-				refine_kic->set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+				refine_kic->set_native_pose( PoseCOP( PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 				refine_kic->apply( pose );
 			} else
 			if ( refine() == "refine_kic_refactor" || refine() == "refine_kic_with_fragments") {

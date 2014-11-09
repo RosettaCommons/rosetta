@@ -52,8 +52,8 @@ CDRSetOptionsParser::CDRSetOptionsParser():
 	utility::pointer::ReferenceCount(),
 	default_and_user_(false)
 {
-	ab_manager_ = AntibodyEnumManagerCOP( new AntibodyEnumManager() );
-	cluster_manager_ = clusters::CDRClusterEnumManagerCOP( new CDRClusterEnumManager() );
+	ab_manager_ = AntibodyEnumManagerCOP( AntibodyEnumManagerOP( new AntibodyEnumManager() ) );
+	cluster_manager_ = clusters::CDRClusterEnumManagerCOP( clusters::CDRClusterEnumManagerOP( new CDRClusterEnumManager() ) );
 }
 
 

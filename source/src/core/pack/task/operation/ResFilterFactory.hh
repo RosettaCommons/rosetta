@@ -50,6 +50,7 @@ public:
 	//typedef utility::pointer::ReferenceCount parent;
 	typedef std::map< std::string, ResFilterCreatorOP > ResFilterCreatorMap;
 	typedef utility::tag::Tag Tag;
+	typedef utility::tag::TagOP TagOP;
 	typedef utility::tag::TagCOP TagCOP;
 
 public:
@@ -61,7 +62,7 @@ public:
 	bool has_type( std::string const & ) const;
 
 ///@brief return new ResFilter by key lookup in filter_map_ (new ResFilter parses Tag if provided)
-	ResFilterOP newResFilter( std::string const &, TagCOP = TagCOP( new Tag() ) ) const;
+	ResFilterOP newResFilter( std::string const &, TagCOP = TagCOP( TagOP( new Tag() ) ) ) const;
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

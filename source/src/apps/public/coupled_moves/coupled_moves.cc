@@ -234,7 +234,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	output_tag += option[coupled_moves::output_prefix];
 	
 	// start with a fresh copy of the optimized pose
-	core::pose::PoseOP pose_copy(new core::pose::Pose(pose));
+	core::pose::PoseOP pose_copy( new core::pose::Pose(pose) );
 
 	core::pack::task::PackerTaskOP task( main_task_factory_->create_task_and_apply_taskoperations( *pose_copy ) );
 	
@@ -242,7 +242,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	utility::vector1<core::Size> design_positions;
 	
 	// using ClashBasedRepackShellSelector to define repack shell
-	core::pack::task::residue_selector::ClashBasedRepackShellSelectorOP rs( new core::pack::task::residue_selector::ClashBasedRepackShellSelector(task, score_fxn_));
+	core::pack::task::residue_selector::ClashBasedRepackShellSelectorOP rs( new core::pack::task::residue_selector::ClashBasedRepackShellSelector(task, score_fxn_) );
 	utility::vector1< bool > to_repack = rs->apply( *pose_copy );
 
 	for(core::Size i = 1; i <= to_repack.size(); ++i) {
@@ -283,7 +283,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		core::pack::task::IGEdgeReweighterOP reweight_ligand( new protocols::toolbox::IGLigandDesignEdgeUpweighter( ligand_weight ) );
 		task->set_IGEdgeReweights()->add_reweighter( reweight_ligand );
 	} else {
-		coupled_mover = protocols::simple_moves::CoupledMoverOP(new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task));
+		coupled_mover = protocols::simple_moves::CoupledMoverOP( new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task) );
 	}
 	
 	coupled_mover->set_fix_backbone( option[coupled_moves::fix_backbone] );
@@ -292,7 +292,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	coupled_mover->set_bump_check( option[coupled_moves::bump_check] );
 	coupled_mover->set_uniform_backrub( option[coupled_moves::uniform_backrub] );
 	
-	protocols::simple_moves::PackRotamersMoverOP pack(new protocols::simple_moves::PackRotamersMover( score_fxn_, task, 1 ));		
+	protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( score_fxn_, task, 1 ) );		
 
 	if ( option[coupled_moves::initial_repack] ) {
 		pack->apply(*pose_copy);

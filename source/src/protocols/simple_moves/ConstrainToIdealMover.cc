@@ -228,10 +228,10 @@ ConstrainToIdealMover::add_bond_length_constraint(
 
 		core::scoring::func::FuncOP dist_harm_func_( new core::scoring::func::HarmonicFunc( bond_length, bond_length_sd ) );
 
-		cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( atom_id1,
+		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( atom_id1,
 																																		atom_id2,
 																																		dist_harm_func_,
-																																		score_type_ ) ) );
+																																		score_type_ ) ) ) );
 		if ( verbose_ ) {
 			TR << "PUTTING CONSTRAINT ON DISTANCE: " <<
 				atom_id2.rsd() << " " << atom_name1 << "; "  <<
@@ -295,8 +295,8 @@ ConstrainToIdealMover::add_bond_angle_constraint(
 		}
 
 		core::scoring::func::FuncOP angle_harm_func_( new core::scoring::func::HarmonicFunc( bond_angle, bond_angle_sd ) );
-		cst_set->add_constraint(ConstraintCOP(  new AngleConstraint(
-																																atom_id2, atom_id1, atom_id3, angle_harm_func_,	score_type_ ) ) );
+		cst_set->add_constraint(ConstraintCOP( ConstraintOP( new AngleConstraint(
+																																atom_id2, atom_id1, atom_id3, angle_harm_func_,	score_type_ ) ) ) );
 
 		if ( verbose_ ) {
 			TR << "PUTTING CONSTRAINT ON ANGLE: " <<

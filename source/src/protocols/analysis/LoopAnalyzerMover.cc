@@ -73,7 +73,7 @@ std::ostream & which_ostream( std::ostream & ost, std::ostream & oss, bool const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, bool const tracer ) :
 	Mover(),
-	loops_(protocols::loops::LoopsCOP( new protocols::loops::Loops(loops) )),
+	loops_(protocols::loops::LoopsCOP( protocols::loops::LoopsOP( new protocols::loops::Loops(loops) ) )),
 	tracer_(tracer),
 	sf_(/* NULL */),
 	chbreak_sf_(/* NULL */),
@@ -95,7 +95,7 @@ LoopAnalyzerMover::LoopAnalyzerMover() : tracer_(false) { utility_exit_with_mess
 LoopAnalyzerMover::LoopAnalyzerMover( LoopAnalyzerMover const & rhs ) :
 	//utility::pointer::ReferenceCount(),
 	Mover(),
-	loops_(protocols::loops::LoopsCOP( new protocols::loops::Loops(*(rhs.loops_)) )),
+	loops_(protocols::loops::LoopsCOP( protocols::loops::LoopsOP( new protocols::loops::Loops(*(rhs.loops_)) ) )),
 	tracer_(rhs.tracer_),
 	positions_(rhs.positions_), //this is useless data
 	sf_(rhs.sf_->clone()),

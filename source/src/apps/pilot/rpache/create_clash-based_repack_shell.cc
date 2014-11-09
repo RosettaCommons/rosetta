@@ -68,10 +68,10 @@ main( int argc, char * argv [] )
 	core::pack::task::PackerTaskOP task( main_task_factory->create_task_and_apply_taskoperations( starting_pose ) );
 
 	// make a copy of the original pose
-	core::pose::PoseOP pose_copy(new core::pose::Pose(starting_pose));
+	core::pose::PoseOP pose_copy( new core::pose::Pose(starting_pose) );
 
 	// using ClashBasedRepackShellSelector to define repack shell
-	core::pack::task::residue_selector::ClashBasedRepackShellSelectorOP cbrss( new core::pack::task::residue_selector::ClashBasedRepackShellSelector(task, score_fxn));
+	core::pack::task::residue_selector::ClashBasedRepackShellSelectorOP cbrss( new core::pack::task::residue_selector::ClashBasedRepackShellSelector(task, score_fxn) );
 	utility::vector1< bool > to_repack = cbrss->apply( *pose_copy );
 
 	// print list of positions to repack

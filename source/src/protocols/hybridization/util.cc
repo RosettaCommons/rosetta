@@ -209,7 +209,7 @@ void generate_centroid_constraints(
 					using namespace core::scoring::func;
 					FuncOP fx( new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
 					pose.add_constraint(
-						scoring::constraints::ConstraintCOP( new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx ) )
+						scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx ) ) )
 					);
 				}
 			}
@@ -227,12 +227,12 @@ void setup_user_coordinate_constraints(
 	for (core::Size i=1; i<=reses.size(); ++i) {
 	  core::scoring::func::FuncOP fx( new core::scoring::func::USOGFunc( 0, COORDDEV ) );
 	  pose.add_constraint(
-			scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint(
+			scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
 				core::id::AtomID(2,reses[i]),
 				core::id::AtomID(2,pose.total_residue()),
 				pose.residue(reses[i]).atom(2).xyz(),
 				fx
-			) ) );
+			) ) ) );
 	}
 }
 
@@ -324,10 +324,10 @@ void setup_interface_coordinate_constraints(
 
 			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, COORDDEV*MAXDIST/MINDIST_NONMOVEj) );
             pose.add_constraint(
-                    scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(pose.residue_type(j).atom_index("CA"),j),
+                    scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(pose.residue_type(j).atom_index("CA"),j),
                                                core::id::AtomID(pose.residue_type(best_anchor).atom_index("CA"),best_anchor),
 																							 pose.residue(j).xyz(pose.residue_type(j).atom_index("CA")),
-																							 fx) ));
+																							 fx) ) ));
                                // new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
 
 					}
@@ -403,7 +403,7 @@ void setup_interface_atompair_constraints(
 
                    FuncOP fx( new ScalarWeightedFunc( weighting_factor, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
                    pose.add_constraint(
-                     scoring::constraints::ConstraintCOP( new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx ) )
+                     scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx ) ) )
                    );
              } //add constraints
           } //add contraints with MINSEQSEP MAXDIST
@@ -433,7 +433,7 @@ void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< 
 			using namespace core::scoring::func;
 			FuncOP fx( new ScalarWeightedFunc( 4.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) ); // try to lock it down with a high weight
 			pose.add_constraint(
-				scoring::constraints::ConstraintCOP( new AtomPairConstraint(	core::id::AtomID(2,strand_pair.first), core::id::AtomID(2,strand_pair.second), fx ) )
+				scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(	core::id::AtomID(2,strand_pair.first), core::id::AtomID(2,strand_pair.second), fx ) ) )
 			);
 		}
 	}
@@ -486,7 +486,6 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 								new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires_tgt), core::id::AtomID(jatom,jres_tgt), fx ) )
 						);
 					}
-
 				}
 			}
 		}

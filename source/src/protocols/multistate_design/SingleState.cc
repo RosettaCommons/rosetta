@@ -27,7 +27,7 @@ SingleState::SingleState()
 	: utility::pointer::ReferenceCount(),
 		pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(NULL)
 {
-	fitness_function_ = SingleStateFitnessFunctionCOP( new SingleStateFitnessFunction() );
+	fitness_function_ = SingleStateFitnessFunctionCOP( SingleStateFitnessFunctionOP( new SingleStateFitnessFunction() ) );
 }
 
 SingleState::~SingleState(){}
@@ -38,7 +38,7 @@ SingleState::SingleState( core::pose::Pose const & pose, bool is_positive )
 {
 	pose_p_ = core::pose::PoseOP( new core::pose::Pose );
 	*pose_p_ = pose;
-	fitness_function_ = SingleStateFitnessFunctionCOP( new SingleStateFitnessFunction() );
+	fitness_function_ = SingleStateFitnessFunctionCOP( SingleStateFitnessFunctionOP( new SingleStateFitnessFunction() ) );
 }
 
 SingleState::SingleState( SingleState const & other )

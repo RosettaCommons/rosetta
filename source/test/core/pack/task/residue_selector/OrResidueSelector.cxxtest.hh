@@ -52,7 +52,7 @@ public:
 		ResidueSubset subset = or_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], (ii % 5 == 1 || ii % 2 == 1) );
+			TS_ASSERT( subset[ ii ] == (ii % 5 == 1 || ii % 2 == 1) );
 		}
 	}
 
@@ -80,7 +80,7 @@ public:
 		ResidueSubset subset = or_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], (ii % 5 == 1 || ii % 2 == 1) );
+			TS_ASSERT( subset[ ii ] == (ii % 5 == 1 || ii % 2 == 1) );
 		}
 	}
 
@@ -142,7 +142,7 @@ public:
 		ResidueSubset subset = or_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], (ii >= 2 && ii <= 5) );
+			TS_ASSERT( subset[ ii ] == (ii >= 2 && ii <= 5) );
 		}
 	}
 

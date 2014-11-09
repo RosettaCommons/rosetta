@@ -1043,7 +1043,7 @@ FA_ElecEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 	if ( res1 == res2 ) {
-		return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
+		return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
 	}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
@@ -1060,12 +1060,12 @@ FA_ElecEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 	}
-	return etable::count_pair::CountPairFunctionCOP( new CountPairAll );
+	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairAll ) );
 
 }
 

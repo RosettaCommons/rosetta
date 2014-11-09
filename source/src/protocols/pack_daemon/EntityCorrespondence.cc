@@ -87,9 +87,9 @@ void EntityCorrespondence::set_pose( core::pose::PoseCOP pose )
 	pose_ = pose;
 	if ( ! pose_->pdb_info() ) {
 		PDBInfo info(*pose_);
-		pdb_pose_map_ = core::pose::PDBPoseMapCOP( new PDBPoseMap( info ) ); //use PDBInfo ctor for PDBPoseMap
+		pdb_pose_map_ = core::pose::PDBPoseMapCOP( core::pose::PDBPoseMapOP( new PDBPoseMap( info ) ) ); //use PDBInfo ctor for PDBPoseMap
 	} else {
-		pdb_pose_map_ = core::pose::PDBPoseMapCOP( new PDBPoseMap( pose_->pdb_info()->pdb2pose()) );
+		pdb_pose_map_ = core::pose::PDBPoseMapCOP( core::pose::PDBPoseMapOP( new PDBPoseMap( pose_->pdb_info()->pdb2pose()) ) );
 	}
 }
 

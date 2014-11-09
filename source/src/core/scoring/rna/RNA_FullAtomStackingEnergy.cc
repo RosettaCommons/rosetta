@@ -606,7 +606,7 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 	if ( res1 == res2 ) {
-		return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
+		return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
 	}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
@@ -623,10 +623,10 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( !rsd1.is_RNA() ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
-	if ( !rsd2.is_RNA() ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
-	return etable::count_pair::CountPairFunctionCOP( new CountPairAll );
+	if ( !rsd1.is_RNA() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( !rsd2.is_RNA() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( rsd1.seqpos() == rsd2.seqpos() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairAll ) );
 
 }
 

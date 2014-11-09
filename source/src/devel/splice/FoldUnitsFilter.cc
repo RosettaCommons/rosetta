@@ -109,7 +109,7 @@ void
 FoldUnitsFilter::write_to_file( std::string const pdb, core::Size const from_res, core::Size const to_res, std::string const dssp, std::string const sequence, core::pose::Pose const & pose ) const{
 	std::ofstream data;
 	data.open( filename_.c_str(), std::ios::app );
-	runtime_assert( data );
+	runtime_assert( data.good() );
 	data<<pdb<<' '<<from_res<<' '<<to_res<<' '<<dssp<<' '<<sequence<<' ';
 	for( Size resi = from_res; resi <= to_res; ++resi ){
 		Real const phi = pose.phi( resi );

@@ -550,7 +550,7 @@ SimpleInteractionGraph::initialize( pose::Pose const & pose){
 	for ( Size res_i = 1; res_i <= pose_->total_residue(); res_i++ ) {
 		SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
 		runtime_assert( newnode );
-		newnode->set_current( conformation::ResidueCOP( new conformation::Residue( pose_->residue( res_i )) ) );
+		newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
 	}
 
    //neighbors determined through ScoreFunction::are_they_neighbors function
@@ -579,14 +579,14 @@ SimpleInteractionGraph::initialize( pose::Pose const & pose){
 void
 SimpleInteractionGraph::set_pose_no_initialize( pose::Pose const & pose )
 {
-	pose_ = pose::PoseCOP( new pose::Pose(pose) );
+	pose_ = pose::PoseCOP( pose::PoseOP( new pose::Pose( pose ) ) );
 	if ( num_nodes() != pose.total_residue() ) {
 	  set_num_nodes( pose.total_residue() );
 	}
 	for ( Size res_i = 1; res_i <= pose_->total_residue(); res_i++ ) {
 		SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
 		runtime_assert( newnode );
-		newnode->set_current( conformation::ResidueCOP( new conformation::Residue( pose_->residue( res_i )) ) );
+		newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
 	}
 }
 

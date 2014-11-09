@@ -57,6 +57,7 @@ public:
 	typedef utility::vector1< TaskOperationOP > TaskOperationOPs;
 	typedef std::map< std::string, TaskOperationCreatorOP > TaskOperationCreatorMap;
 	typedef utility::tag::Tag Tag;
+	typedef utility::tag::TagOP TagOP;
 	typedef utility::tag::TagCOP TagCOP;
 
 public:
@@ -73,7 +74,7 @@ public:
 	TaskOperationOP newTaskOperation(
 		std::string const &,
 		basic::datacache::DataMap & datamap,
-		TagCOP = TagCOP( new Tag() )
+		TagCOP = TagCOP( TagOP( new Tag() ) )
 	) const;
 ///@brief fills vector with new TaskOperations from nested "TASKOPERATIONS" TagCOP
 	void newTaskOperations(	TaskOperationOPs &, basic::datacache::DataMap & datamap, TagCOP ) const;

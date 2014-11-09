@@ -172,7 +172,7 @@ core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordC
 		Size residue_id = *caAtomsToConstrain_start;
 		tr.Debug << "constraining " << residue_id << std::endl;
 		Residue const & rsd( pose.residue(residue_id) );
-		cst_set->add_constraint(ConstraintCOP( new CoordinateConstraint(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.total_residue()), rsd.xyz(atom_name),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(0.0,default_coord_sdev))) ));
+		cst_set->add_constraint(ConstraintCOP( ConstraintOP( new CoordinateConstraint(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.total_residue()), rsd.xyz(atom_name),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(0.0,default_coord_sdev))) ) ));
 		caAtomsToConstrain_start++;
 	}
 return(cst_set);

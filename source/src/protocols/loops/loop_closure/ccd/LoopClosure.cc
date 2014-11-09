@@ -131,7 +131,7 @@ void LoopClosure::init() {
   init_mc();
   // put a template frame at top of list -- will always catch the fragments according to closure_frames.front()
   using namespace fragment;
-  closure_frame_ = core::fragment::FrameOP( new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) );
+  closure_frame_ = core::fragment::FrameOP( new Frame( loop_.start(), FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) ) );
 }
 
 LoopClosure::~LoopClosure() {}

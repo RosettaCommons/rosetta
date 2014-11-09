@@ -374,7 +374,7 @@ HbsCreatorMover::apply(
 
 			core::scoring::func::CircularHarmonicFuncOP circularharm_func( new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
 
-			ConstraintCOP dihedral1( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) );
+			ConstraintCOP dihedral1( ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) ) );
 
 			pose.add_constraint( dihedral1 );
 		}

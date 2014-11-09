@@ -222,7 +222,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		if( protocol_ == "kinematic" ) {
 						if( perturb_ ) {
 							protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb(single_loop, lores_score_ );
-							perturb.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+							perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 							perturb.apply( pose );
 						}
 						core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
@@ -230,7 +230,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 						if( refine_ ) {
 							protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( single_loop, hires_score_ );
 							refine.set_redesign_loop(false); // design?
-							refine.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+							refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 							pose.update_residue_neighbors();
 							refine.apply( pose );
 						}
@@ -251,7 +251,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 						perturb.add_fragments( frag_libs[i] );
 					}
 					perturb.set_strict_loops( true );
-					perturb.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					perturb.apply( pose );
 				}
 			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
@@ -263,7 +263,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 				}
 				//core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
 				refine.set_redesign_loop( false );
-				refine.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+				refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 				refine.apply( pose );
 			}//refine
 		}//ccd

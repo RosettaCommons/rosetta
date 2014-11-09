@@ -32,11 +32,11 @@ class Vector1BoolTests : public CxxTest::TestSuite {
 			utility::vector1_bool v( vector_size, false );
 
 			TS_ASSERT_EQUALS(v.size(), vector_size);
-			TS_ASSERT_EQUALS(v[1], false);
-			TS_ASSERT_EQUALS(v[2], false);
-			TS_ASSERT_EQUALS(v[3], false);
-			TS_ASSERT_EQUALS(v[4], false);
-			TS_ASSERT_EQUALS(v[5], false);
+			TS_ASSERT(v[1] == false);
+			TS_ASSERT(v[2] == false);
+			TS_ASSERT(v[3] == false);
+			TS_ASSERT(v[4] == false);
+			TS_ASSERT(v[5] == false);
 		}
 
 
@@ -48,9 +48,9 @@ class Vector1BoolTests : public CxxTest::TestSuite {
 			utility::vector1_bool w( 3, true );
 
 			v = w;
-			TS_ASSERT_EQUALS( v[1], true );
-			TS_ASSERT_EQUALS( v[2], true );
-			TS_ASSERT_EQUALS( v[3], true );
+			TS_ASSERT( v[1] == true );
+			TS_ASSERT( v[2] == true );
+			TS_ASSERT( v[3] == true );
 		}
 
 
@@ -61,9 +61,9 @@ class Vector1BoolTests : public CxxTest::TestSuite {
 			utility::vector1_bool v( 3, false );
 			utility::vector1_bool w( v );
 
-			TS_ASSERT_EQUALS( w[1], false );
-			TS_ASSERT_EQUALS( w[2], false );
-			TS_ASSERT_EQUALS( w[3], false );
+			TS_ASSERT( w[1] == false );
+			TS_ASSERT( w[2] == false );
+			TS_ASSERT( w[3] == false );
 		}
 
 
@@ -73,7 +73,7 @@ class Vector1BoolTests : public CxxTest::TestSuite {
 			utility::vector1_bool v( 3, false );
 			std_vector_bool  w( 3, false );
 
-			TS_ASSERT_EQUALS(v, w);
+			TS_ASSERT(v == w);
 			TS_ASSERT( v == w );
 			TS_ASSERT( !( v != w ) );
 			TS_ASSERT( !( v < w ) );
@@ -94,9 +94,9 @@ class Vector1BoolTests : public CxxTest::TestSuite {
 
 			// set up first vector
 			utility::vector1_bool v( 3 );  v[1] = true; v[2] = false; v[3] = true;
-			TS_ASSERT_EQUALS(v[1], true);
-			TS_ASSERT_EQUALS(v[2], false);
-			TS_ASSERT_EQUALS(v[3], true);
+			TS_ASSERT(v[1] == true);
+			TS_ASSERT(v[2] == false);
+			TS_ASSERT(v[3] == true);
 
 			// set up second vector and verify equal
 			utility::vector1_bool w( v );
@@ -104,9 +104,9 @@ class Vector1BoolTests : public CxxTest::TestSuite {
 
 			// alter second vector and verify not equal
 			w[2] = true;
-			TS_ASSERT_EQUALS(w[1], true);
-			TS_ASSERT_EQUALS(w[2], true);
-			TS_ASSERT_EQUALS(w[3], true);
+			TS_ASSERT(w[1] == true);
+			TS_ASSERT(w[2] == true);
+			TS_ASSERT(w[3] == true);
 			TS_ASSERT( v != w );
 			TS_ASSERT( w != v );
 
@@ -146,27 +146,27 @@ class Vector1BoolTests : public CxxTest::TestSuite {
 			utility::vector1_bool v( 3 );  v[1] = true; v[2] = false; v[3] = true;
 
 			// check starting condition
-			TS_ASSERT_EQUALS(v[1], true);
-			TS_ASSERT_EQUALS(v[2], false);
-			TS_ASSERT_EQUALS(v[3], true);
+			TS_ASSERT(v[1] == true);
+			TS_ASSERT(v[2] == false);
+			TS_ASSERT(v[3] == true);
 
 			// flip the whole vector
 			v.flip();
-			TS_ASSERT_EQUALS(v[1], false);
-			TS_ASSERT_EQUALS(v[2], true);
-			TS_ASSERT_EQUALS(v[3], false);
+			TS_ASSERT(v[1] == false);
+			TS_ASSERT(v[2] == true);
+			TS_ASSERT(v[3] == false);
 
 			// flip a single element
 			v[1].flip();
-			TS_ASSERT_EQUALS(v[1], true);
-			TS_ASSERT_EQUALS(v[2], true);
-			TS_ASSERT_EQUALS(v[3], false);
+			TS_ASSERT(v[1] == true);
+			TS_ASSERT(v[2] == true);
+			TS_ASSERT(v[3] == false);
 
 			// assign from an element
 			v[3] = v[2];
-			TS_ASSERT_EQUALS(v[1], true);
-			TS_ASSERT_EQUALS(v[2], true);
-			TS_ASSERT_EQUALS(v[3], true);
+			TS_ASSERT(v[1] == true);
+			TS_ASSERT(v[2] == true);
+			TS_ASSERT(v[3] == true);
 		}
 
 

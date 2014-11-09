@@ -112,7 +112,7 @@ UpstreamHitCacher::process_hit(
 
 	Size index = queue_head_[ cst_id ];
 
-	upstream_confs_[ cst_id ][ index ] = core::conformation::ResidueCOP( new core::conformation::Residue( upstream_conformation ) );
+	upstream_confs_[ cst_id ][ index ] = core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( upstream_conformation ) ) );
 
 	ScaffoldRotamerPair srp; srp[ 1 ] = hit.scaffold_build_id(); srp[ 2 ] = hit.upstream_conf_id();
 	ScaffoldRotamerTuple srt( srp );

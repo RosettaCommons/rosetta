@@ -396,7 +396,7 @@ void
 MotifDnaPacker::init_standard( Pose & pose )
 {
 	//protocols::motifs::make_dna_mutations( pose );
-	starting_pose_ = core::pose::PoseCOP( new pose::Pose( pose ) );
+	starting_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose( pose ) ) );
 	pdboutput_->reference_pose( *starting_pose_ );
 	if ( option[ OptionKeys::dna::design::dna_defs ].user() ) {
 		load_dna_design_defs_from_options( targeted_dna_ );

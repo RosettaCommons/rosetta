@@ -847,19 +847,19 @@ ScoringManager::etable( methods::EnergyMethodOptions const &options_in ) const
 			// soft rep etable: modified radii and also change to lj_switch_dis2sigma
 			methods::EnergyMethodOptions options_loc( options_in );
 			options_loc.etable_options().lj_switch_dis2sigma = 0.91;
-			etable_ptr = EtableOP( ( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-											options_loc.etable_options(), "SOFT" ) ) );
+			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+											options_loc.etable_options(), "SOFT" ) );
 
 		} else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
 			// original comments: note we check for soft rep 1st since that would match this as well -- confusing??
 			// apply a modification of the radii/wdepths
 			std::string const alternate_parameters( table_id.substr( FA_STANDARD_DEFAULT.size() + 1 ) );
-			etable_ptr = EtableOP( ( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-											options_in.etable_options(), alternate_parameters ) ) );
+			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+											options_in.etable_options(), alternate_parameters ) );
 
 		} else { // General way of adding
-			etable_ptr = EtableOP( ( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-											options_in.etable_options() ) ) );
+			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+											options_in.etable_options() ) );
 
 		}
 

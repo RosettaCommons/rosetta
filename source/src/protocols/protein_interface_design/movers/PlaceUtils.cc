@@ -395,7 +395,7 @@ parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::
 		core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 		pack::pack_rotamers( *ala_pose, *scorefxn, task);
 		(*scorefxn)( *ala_pose );
-		stubset->pair_with_scaffold( *ala_pose, host_chain, protocols::filters::FilterCOP( new protocols::filters::TrueFilter ) );
+		stubset->pair_with_scaffold( *ala_pose, host_chain, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
 	}//foreach stubset_tag
 	return( stub_sets );
 }

@@ -115,7 +115,7 @@ void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose_in, Const
 
 		//steal backbone torsion fragment
 		if ( free_of_cut ) {
-			frame = FrameOP( new Frame( pos, FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), len ) ) ) );
+			frame = FrameOP( new Frame( pos, FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), len ) ) ) ) );
 			frame->steal( pose );
 			fragset.add( frame );
 		}
@@ -451,11 +451,11 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 		//		utility_exit_with_message(" stealing fragments from pose: currently not supported! ask Oliver " );
 		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) {
 			if ( !fragset_large ) fragset_large = FragSetOP( new ConstantLengthFragSet( 9 ) );
-			steal_frag_set_from_pose( *native_pose, *fragset_large,	core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large->max_frag_length() ) ) );
+			steal_frag_set_from_pose( *native_pose, *fragset_large,	core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large->max_frag_length() ) ) ) );
 		}
 		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) {
 			if ( !fragset_small ) fragset_small = FragSetOP( new ConstantLengthFragSet( 3 ) );
-			steal_frag_set_from_pose( *native_pose, *fragset_small,	core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small->max_frag_length() ) ) );
+			steal_frag_set_from_pose( *native_pose, *fragset_small,	core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small->max_frag_length() ) ) ) );
 		}
 	}
 

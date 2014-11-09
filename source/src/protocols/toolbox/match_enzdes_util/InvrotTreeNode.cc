@@ -252,7 +252,7 @@ InvrotTreeNode::generate_constraints(
 
 	if( constraints_this_node.size() == 1 ) return constraints_this_node[1];
 
-	return core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( constraints_this_node ) );
+	return core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( constraints_this_node ) ) );
 }
 
 

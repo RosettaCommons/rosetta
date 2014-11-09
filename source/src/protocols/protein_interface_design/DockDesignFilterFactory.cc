@@ -91,7 +91,7 @@ DockDesignFilterFactory::newFilter(
 	core::Real const confidence( tag->getOption< core::Real >( "confidence", 1.0 ) );
 	if ( confidence < 0.999 ) { // fuzzy logic
 		CompoundFilter::CompoundStatement fuzzy_statement;
-		FilterCOP stochastic_filter( new StochasticFilter( confidence ) );
+		FilterCOP stochastic_filter( FilterOP( new StochasticFilter( confidence ) ) );
 		fuzzy_statement.push_back( std::make_pair( stochastic_filter->clone(), OR ) );
 		fuzzy_statement.push_back( std::make_pair( filter->clone(), OR ) );
 		FilterOP compound_filter( new CompoundFilter( fuzzy_statement ) );

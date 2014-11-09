@@ -260,7 +260,7 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 	// *****associate the stub set with the unbound pose
 	// *****hotspot_stub_set_->pair_with_scaffold( pose, partner );
 
-	protocols::filters::FilterCOP true_filter( new protocols::filters::TrueFilter );
+	protocols::filters::FilterCOP true_filter( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) );
 	for ( core::Size resnum=loop_start_; resnum <= loop_stop_; ++resnum ) {
 		//		if ( task->pack_residue(resnum) )	{
 		hotspot_stub_set_->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );

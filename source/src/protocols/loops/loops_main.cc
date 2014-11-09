@@ -166,7 +166,7 @@ void read_loop_fragments(
 
 				for(int c=0; c< option[  OptionKeys::loops::stealfrags_times ](); c++ ){
 					//steal_constant_length_frag_set_from_pose ( stealpose, **it );
-					steal_frag_set_from_pose( stealpose, **it, core::fragment::FragDataCOP( new FragData( core::fragment::SingleResidueFragDataOP( new BBTorsionSRFD ), (*it)->max_frag_length() ) ) );
+					steal_frag_set_from_pose( stealpose, **it, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( core::fragment::SingleResidueFragDataOP( new BBTorsionSRFD ), (*it)->max_frag_length() ) ) ) );
 				}
 			}
 		} // loop over input files
@@ -731,7 +731,7 @@ ccd_close_loops(
 		kinematics::MoveMap const & mm )
 {
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover;
-	ccd_loop_closure_mover.movemap( kinematics::MoveMapCOP( new kinematics::MoveMap( mm ) ) );
+	ccd_loop_closure_mover.movemap( kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 
 	for ( Loops::const_iterator it = loops.begin(), it_end = loops.end(); it != it_end; ++it ) {
 		ccd_loop_closure_mover.loop( *it );

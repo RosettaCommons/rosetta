@@ -398,7 +398,7 @@ void fast_ccd_close_loops(
 )
 {
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
-			loop, kinematics::MoveMapCOP( new kinematics::MoveMap( mm ) ) );
+			loop, kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 	ccd_loop_closure_mover.check_rama_scores( false );
 	ccd_loop_closure_mover.apply( pose );
 

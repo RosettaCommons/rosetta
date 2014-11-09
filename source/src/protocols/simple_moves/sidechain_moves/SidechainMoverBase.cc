@@ -103,7 +103,7 @@ SidechainMoverBase::SidechainMoverBase(
 	last_nchi_(mover.last_nchi_),
 	last_proposal_density_ratio_(mover.last_proposal_density_ratio_)
 {
-	if (mover.task_factory_) task_factory_ = core::pack::task::TaskFactoryCOP( new pack::task::TaskFactory(*mover.task_factory_) );
+	if (mover.task_factory_) task_factory_ = core::pack::task::TaskFactoryCOP( core::pack::task::TaskFactoryOP( new pack::task::TaskFactory(*mover.task_factory_) ) );
 	if (mover.task_) task_ = mover.task_->clone();
 }
 

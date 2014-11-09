@@ -147,8 +147,8 @@ optimize_suite(
 	ConstraintSetOP cst_set( new ConstraintSet() );
 	core::scoring::func::FuncOP coord_cst_func( new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) );
 	for ( Size i=1; i<= 3; ++i ) {
-		cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( AtomID(i,4), AtomID(1,1), target_stub.build_fake_xyz(i),
-																											 coord_cst_func ) ) );
+		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( AtomID(i,4), AtomID(1,1), target_stub.build_fake_xyz(i),
+																											 coord_cst_func ) ) ) );
 	}
 
 	for ( Size i=1; i<= torsions.size(); ++i ) {

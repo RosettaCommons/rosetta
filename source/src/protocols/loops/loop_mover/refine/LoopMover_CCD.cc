@@ -287,7 +287,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	/// must be called once the Pose has become available.
 	resolve_loop_indices( pose );
 
-	if ( ! get_native_pose() ) set_native_pose( PoseCOP( new core::pose::Pose( pose ) ) );
+	if ( ! get_native_pose() ) set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
 	if( use_loops_from_observer_cache() ) this->set_loops_from_pose_observer_cache( pose );
 
 	setup_foldtree_and_add_cutpoint_variants( pose );

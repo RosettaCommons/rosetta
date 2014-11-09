@@ -146,7 +146,7 @@ TrisBpyScore::TrisBpyScore(
 		if(pose_.secstruct(ir)!='L') cb_.push_back(pose_.residue(ir).nbr_atom_xyz());
 		else                         cb_.push_back(Vec(9e9,9e9,9e9));
 	}
-	cc_ = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose_,BB,3.2) );
+	cc_ = xyzStripeHashPoseCOP( xyzStripeHashPoseOP( new xyzStripeHashPose(pose_,BB,3.2) ) );
 
 }
 

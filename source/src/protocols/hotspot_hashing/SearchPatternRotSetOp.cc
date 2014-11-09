@@ -107,7 +107,7 @@ core::Real SearchPatternRotSetOp::increase_packer_residue_radius(
 )
 {
   // Calculate the centroid frame and centroid location in the centroid frame
-	core::conformation::ResidueCOP source_residue( new core::conformation::Residue(pose.residue(residue_index)) );
+	core::conformation::ResidueCOP source_residue( core::conformation::ResidueOP( new core::conformation::Residue(pose.residue(residue_index)) ) );
 	TR.Debug << "Increasing packer residue radius for residue: " << residue_index << " " << source_residue->name() << std::endl;
 
   core::kinematics::Stub centroid_frame = StubGenerator::residueStubCentroidFrame(source_residue);

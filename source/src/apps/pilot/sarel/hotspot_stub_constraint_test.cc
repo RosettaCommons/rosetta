@@ -70,7 +70,7 @@ void run_test() {
 	// jk Read the stub set here
 	protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
 	hotspot_stub_setOP->read_data( "jacobHGH1.stubs" );
-	protocols::hotspot_hashing::HotspotStubSetCOP saved_hotspot_stub_setCOP( new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_setOP ) );
+	protocols::hotspot_hashing::HotspotStubSetCOP saved_hotspot_stub_setCOP( protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_setOP ) ) );
 
 	// jk Setup the PackerTask which will be used in setting up the constraints.
 	core::Size const chain_to_redesign = 2;

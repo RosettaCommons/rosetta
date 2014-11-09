@@ -54,6 +54,7 @@ class XYZClaim : public EnvClaim {
   typedef EnvClaim Parent;
   typedef core::environment::LocalPosition LocalPosition;
   typedef core::environment::LocalPositions LocalPositions;
+  typedef core::pack::task::residue_selector::ResidueSelectorOP ResidueSelectorOP;
   typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:

@@ -270,9 +270,10 @@ void statistics( std::string filename ) {
 	idNegative = polarChargeSum/polarChargeTotal;
 	idPositive = basicSum/basicTotal;
 
-	std::ofstream staResult(".results.log");
+	std::string results_fname( ".results.log" );
+	std::ofstream staResult( results_fname.c_str() );
 	if (!staResult) {
-		TR.Error << "Can not open file " << staResult;
+		TR.Error << "Can not open file " << results_fname;
 	}
 	else {
 
@@ -290,9 +291,10 @@ void statistics( std::string filename ) {
 			<< "positive charged amino acid(ARG,LYS,HIS): " << idP << " \n";
 	}
 
-	std::ofstream yaml(".results.yaml");
+	std::string yaml_fname( ".results.yaml" );
+	std::ofstream yaml( yaml_fname.c_str() );
 	if (!yaml) {
-		TR.Error << "Can not open file " << yaml;
+		TR.Error << "Can not open file " << yaml_fname;
 	}
 	else {
 		yaml << "{ ";

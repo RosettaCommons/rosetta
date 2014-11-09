@@ -91,7 +91,7 @@ bool WobbleMover::ccd_closure(
 	// There is only one loop.
 	protocols::loops::Loops::const_iterator it = loops.begin();
 	protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
-			*it, kinematics::MoveMapCOP( new kinematics::MoveMap( mm ) ) );
+			*it, kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 	ccd_loop_closure_mover.apply( pose );
 
 	return ( ccd_loop_closure_mover.deviation() < forward_threshold_ );

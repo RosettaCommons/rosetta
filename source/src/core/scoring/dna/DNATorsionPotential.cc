@@ -141,10 +141,10 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 	Size const o3prime_index = rsd.atom_index( "O3'" );
 	Size const c4prime_index = rsd.atom_index( "C4'" );
 
-	constraints::ConstraintCOP pair_constraint( new constraints::AtomPairConstraint( id::AtomID( c2prime_index, i),
+	constraints::ConstraintCOP pair_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( c2prime_index, i),
 																															 id::AtomID( c3prime_index, i),
 																															 c2prime_c3prime_dist_harm_func_,
-																															 dna_sugar_close ) );
+																															 dna_sugar_close ) ) );
 
 	cst_set.add_constraint( pair_constraint );
 	

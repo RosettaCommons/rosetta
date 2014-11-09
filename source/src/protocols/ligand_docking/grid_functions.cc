@@ -213,7 +213,7 @@ void rotamers_for_trials(
 	core::scoring::ScoreFunction dummy_sfxn;
 	PackerTaskOP dummy_task = TaskFactory::create_packer_task(pose); // actually used, in a trivial way
 
-	core::graph::GraphCOP empty_graph( new core::graph::Graph() );
+	core::graph::GraphCOP empty_graph( core::graph::GraphOP( new core::graph::Graph() ) );
 	// Retrieve conformers
 	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib =
 		core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type(rsd_no) );

@@ -15,6 +15,10 @@
 
 #include <string>
 
+#ifndef _WIN32
+#include "pthread.h"
+#endif
+
 namespace protocols {
 namespace boinc {
 namespace watchdog {

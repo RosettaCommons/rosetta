@@ -243,18 +243,18 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 			);
 			Vector xyz( rsd.xyz( cst_atomID.atomno() ) + ai );
 			if ( bLocal_ ) {
-				constraints_->add_constraint( ConstraintCOP( new scoring::constraints::LocalCoordinateConstraint(
+				constraints_->add_constraint( ConstraintCOP( ConstraintOP( new scoring::constraints::LocalCoordinateConstraint(
   													 cst_atomID,
 														 cst_fix_stub_ID,
 														 xyz,
-														 cst_func_) )	);
+														 cst_func_) ) )	);
 
 			} else {
-				constraints_->add_constraint( ConstraintCOP( new scoring::constraints::CoordinateConstraint(
+				constraints_->add_constraint( ConstraintCOP( ConstraintOP( new scoring::constraints::CoordinateConstraint(
   													 cst_atomID,
 	    											 id::AtomID( 1, root_ ) /*this is completely ignored! */,
 														 xyz,
-														 cst_func_) )	);
+														 cst_func_) ) )	);
 			}
 		}
 

@@ -217,7 +217,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose
 	//set up loops and anchor internal data
 
 	// read anchor file - automatically reads anchor file name from options system
-	anchor_ = protocols::anchored_design::AnchorCOP( new protocols::anchored_design::Anchor(pose) );
+	anchor_ = protocols::anchored_design::AnchorCOP( protocols::anchored_design::AnchorOP( new protocols::anchored_design::Anchor(pose) ) );
 
 	// read loops file
 	loops_ = protocols::loops::Loops( loop_file_ );
@@ -931,7 +931,7 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 
 		TR << "anchor_noise_constraints constraint, opp_CA, center, sd: " << opp_CA->second << " " << opp_CA->first << " " << sd << std::endl;
 
-		pose.add_constraint(core::scoring::constraints::ConstraintCOP( new AtomPairConstraint(anchor_ID, opp_CA->second, anchor_func) ));
+		pose.add_constraint(core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new AtomPairConstraint(anchor_ID, opp_CA->second, anchor_func) ) ));
 		//++opp_CA;
 	}
 

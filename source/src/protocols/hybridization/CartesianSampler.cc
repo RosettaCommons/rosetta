@@ -303,12 +303,12 @@ CartesianSampler::apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Po
 			for (core::uint i = 1; i <= 3; ++i) {
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 				working_frag.add_constraint(
-					scoring::constraints::ConstraintCOP( new CoordinateConstraint(
+					scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
 						core::id::AtomID(i,j+1),
 						core::id::AtomID(2,working_frag.total_residue()),
 						pose.residue(startpos+j).atom(i).xyz(),
 						fx
-					) )
+					) ) )
 				);
 			}
 		}
@@ -318,12 +318,12 @@ CartesianSampler::apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Po
 			for (int i=1; i<=3; ++i) {
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 				working_frag.add_constraint(
-					scoring::constraints::ConstraintCOP( new CoordinateConstraint(
+					scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
 						core::id::AtomID(i,j+1),
 						core::id::AtomID(2,working_frag.total_residue()),
 						pose.residue(startpos+j).atom(i).xyz(),
 						fx
-					) )
+					) ) )
 				);
 			}
 		}
@@ -589,7 +589,7 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 
 				FuncOP fx( new ScalarWeightedFunc( ref_cst_weight_, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
 				pose.add_constraint(
-						scoring::constraints::ConstraintCOP( new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k), fx ) )
+						scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k), fx ) ) )
 					);
 			}
 		}

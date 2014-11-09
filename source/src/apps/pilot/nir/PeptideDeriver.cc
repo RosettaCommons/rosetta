@@ -159,8 +159,8 @@ main( int argc, char * argv [] )
 //		Residue const  & reside = orig_pose.residue( i ); // commented out to fix compilation error: unused variable 'reside' [-Werror=unused-variable] - Oriel
 		id::AtomID CAi ( orig_pose.residue(i).atom_index( " CA " ), i );
 		cst_set->add_constraint
-		(  ConstraintCOP( new CoordinateConstraint
-		 ( CAi, CAi, conformation.xyz( CAi ), spring ) )
+		(  ConstraintCOP( ConstraintOP( new CoordinateConstraint
+		 ( CAi, CAi, conformation.xyz( CAi ), spring ) ) )
 		 );
 	}
 	orig_pose.constraint_set( cst_set );

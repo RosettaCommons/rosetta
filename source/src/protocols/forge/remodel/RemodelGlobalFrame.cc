@@ -655,7 +655,7 @@ TR.Debug << "setup RGF cst 4" << std::endl;
 				}
 
 TR.Debug << "setup RGF cst 5" << std::endl;
-			  input_pose_cst_set->add_constraint(ConstraintCOP( new protocols::constraints_additional::BindingSiteConstraint( atms, *double_pose) ));
+			  input_pose_cst_set->add_constraint(ConstraintCOP( ConstraintOP( new protocols::constraints_additional::BindingSiteConstraint( atms, *double_pose) ) ));
 
 TR.Debug << "setup RGF cst 6" << std::endl;
 				pose.constraint_set(input_pose_cst_set);
@@ -770,7 +770,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 					Vector idealCM_1( COM_target(0,i), COM_target(1,i), COM_target(2,i));
 
 					//constraint
-					input_pose_cst_set->add_constraint( ConstraintCOP( new protocols::constraints_additional::COMCoordinateConstraint( ID_1s, idealCM_1, sd, tolerance ) ));
+					input_pose_cst_set->add_constraint( ConstraintCOP( ConstraintOP( new protocols::constraints_additional::COMCoordinateConstraint( ID_1s, idealCM_1, sd, tolerance ) ) ));
 				}
 
 				pose.constraint_set(input_pose_cst_set);

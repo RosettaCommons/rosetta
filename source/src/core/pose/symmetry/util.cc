@@ -322,7 +322,7 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
 
 	pose::PDBInfoCOP pdb_info_src ( pose_in.pdb_info() );
 	if ( !pose_in.pdb_info() )
-		pdb_info_src = pose::PDBInfoCOP( new pose::PDBInfo( pose_in, true ) );
+		pdb_info_src = pose::PDBInfoCOP( pose::PDBInfoOP( new pose::PDBInfo( pose_in, true ) ) );
 
 	core::pose::symmetry::extract_asymmetric_unit_pdb_info( pose_in, pdb_info_src, pdb_info );
 	pose_out.pdb_info( pdb_info );

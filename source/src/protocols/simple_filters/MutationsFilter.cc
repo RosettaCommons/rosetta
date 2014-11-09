@@ -89,7 +89,7 @@ MutationsFilter::reference_pose( core::pose::PoseCOP pose )
 void
 MutationsFilter::reference_pose( core::pose::Pose const & pose )
 {
-	reference_pose_ = core::pose::PoseCOP( new core::pose::Pose( pose ) );
+	reference_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
 }
 
 core::Size

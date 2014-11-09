@@ -69,7 +69,7 @@ namespace mover {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	DeleteMover::DeleteMover( ):
-		options_( options::StepWiseMonteCarloOptionsCOP( new options::StepWiseMonteCarloOptions ) ),
+		options_( options::StepWiseMonteCarloOptionsCOP( options::StepWiseMonteCarloOptionsOP( new options::StepWiseMonteCarloOptions ) ) ),
 		minimize_after_delete_( true )
 	{}
 

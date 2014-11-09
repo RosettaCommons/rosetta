@@ -192,7 +192,7 @@ ProteinRMSDNoSuperpositionFeatures::reference_pose_from_options(core::pose::Pose
 		reference_pose(ref_pose);
 	} else {
 		tr << "Setting '" << type_name() << "' to reference the starting structure." << endl;
-		reference_pose(PoseCOP( new Pose(pose) ));
+		reference_pose(PoseCOP( PoseOP( new Pose(pose) ) ));
 	}
 }
 

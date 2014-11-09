@@ -172,9 +172,9 @@ FragmentReader::set_fragments( Pose const & pose_in, FragSetOP const & fragset )
  	using namespace core::fragment;
 
 	if( begin_ == 0 ){
-		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) );
+		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) ) );
 	}else{
-		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) );
+		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) ) );
 	}
 }
 

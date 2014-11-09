@@ -98,6 +98,7 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
   using core::PointPosition;
   using core::conformation::Residue;
   using core::id::AtomID;
+  using core::scoring::constraints::ConstraintOP;
   using core::scoring::constraints::ConstraintCOP;
   using core::scoring::constraints::CoordinateConstraint;
   using core::scoring::func::FuncOP;
@@ -120,7 +121,7 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
 
       Real distance = ca_coords.distance(fixed_coords);
       FuncOP function( new HarmonicFunc(distance, 5) );
-      ConstraintCOP constraint( new CoordinateConstraint(ca_atom, fixed_atom, fixed_coords, function) );
+      ConstraintCOP constraint( ConstraintOP( new CoordinateConstraint(ca_atom, fixed_atom, fixed_coords, function) ) );
       constraints->add_constraint(constraint);
     }
   }

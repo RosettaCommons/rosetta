@@ -230,7 +230,7 @@ int universal_main(
 	if (option[ in::file::native ].user()) {
 		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
 		// Set the native pose into the mover
-		mover.set_native_pose( PoseCOP( new core::pose::Pose(native_pose) ) );
+		mover.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose(native_pose) ) ) );
 #ifdef BOINC_GRAPHICS
 		// set native for graphics
 		boinc::Boinc::set_graphics_native_pose( native_pose );
@@ -563,7 +563,7 @@ int universal_main(
 					core::import_pose::pose_from_pdb( native_pose, curr_job->native_tag() );
 				}
 				// Set the native pose into the mover
-				mover.set_native_pose( PoseCOP( new core::pose::Pose(native_pose) ) );
+				mover.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose(native_pose) ) ) );
 #ifdef BOINC_GRAPHICS
 				// set native for graphics
 				boinc::Boinc::set_graphics_native_pose( native_pose );

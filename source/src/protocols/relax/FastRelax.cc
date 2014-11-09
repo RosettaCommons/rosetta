@@ -728,7 +728,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 	// Obtain the native pose
-	if( !get_native_pose() ) set_native_pose( PoseCOP( new Pose( start_pose ) ) );
+	if( !get_native_pose() ) set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new Pose( start_pose ) ) ) );
 
 	// Statistic information
 	std::vector< core::Real > best_score_log;

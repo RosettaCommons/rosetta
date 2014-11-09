@@ -243,7 +243,7 @@ void run() {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
 		//ConstraintIO::get_cst_factory().add_type( new scoring::constraints::NamedAtomPairConstraint( id::NamedAtomID(), id::NamedAtomID(), NULL) );
 		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
-		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator( ConstraintCreatorCOP( new constraints_additional::NamedAtomPairConstraintCreator ) );
+		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator( ConstraintCreatorCOP( ConstraintCreatorOP( new constraints_additional::NamedAtomPairConstraintCreator ) ) );
 	}
 
 	ConstraintToolMoverOP cst_tool( new ConstraintToolMover );

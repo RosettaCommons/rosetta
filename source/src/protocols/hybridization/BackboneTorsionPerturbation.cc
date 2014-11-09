@@ -100,7 +100,7 @@ void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
             core::Real dist = pose.residue(ires).xyz(2).distance( pose.residue(jres).xyz(2) );
             FuncOP fx( new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
             pose.add_constraint(
-                scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(2,ires), core::id::AtomID(2,jres), fx ) )
+                scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(2,ires), core::id::AtomID(2,jres), fx ) ) )
 			);
         }
     }

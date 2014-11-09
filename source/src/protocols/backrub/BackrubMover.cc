@@ -185,7 +185,7 @@ protocols::backrub::BackrubMover::parse_my_tag(
 	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", preserve_detailed_balance() ) );
 	set_require_mm_bend( tag->getOption<bool>( "require_mm_bend", require_mm_bend() ) );
 
-	set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
+	set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
 
 	clear_segments();
 	add_mainchain_segments();
@@ -205,7 +205,7 @@ protocols::backrub::BackrubMover::initialize_simulation(
 	if (!(num_segments() && get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree())) {
 
   	if (!(get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree())) {
-			set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
+			set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
 		}
 
 		// this code shouldn't get called when the parser is in use
@@ -244,7 +244,7 @@ protocols::backrub::BackrubMover::apply(
 	if (!(num_segments() && get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree())) {
 
   	if (!(get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree())) {
-			set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
+			set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
 		}
 
 		clear_segments();

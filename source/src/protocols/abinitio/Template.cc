@@ -249,7 +249,7 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 			Size const size( max_size - shrink );
 
 			// a fragment of requested size
-			FragDataCOP frag_type( new AnnotatedFragData( name(), pos, FragData( srfd_type, size )) );
+			FragDataCOP frag_type( FragDataOP( new AnnotatedFragData( name(), pos, FragData( srfd_type, size )) ) );
 
 			// pick this fragment for different frame positions and add to template_frames.
 			for ( Size offset = min_padding; offset <= max_size - size; offset+=pos_step ) {

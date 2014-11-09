@@ -431,7 +431,7 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 
 	// RNA Base Centroid stuff -- could soon generalize to find protein partners too. That would be cool.
 	if ( working_parameters_->working_moving_partition_res().size() > 0 ){
-		base_centroid_checker_ = rna::checker::RNA_BaseCentroidCheckerOP(new RNA_BaseCentroidChecker ( pose, working_parameters_,
+		base_centroid_checker_ = rna::checker::RNA_BaseCentroidCheckerOP( new RNA_BaseCentroidChecker ( pose, working_parameters_,
 																																																	 ( working_parameters_->floating_base() /*rigid body*/ && options_->tether_jump() ) ) );
 		base_centroid_checker_->set_floating_base( working_parameters_->floating_base() &&
 																							 working_parameters_->working_moving_partition_res().size() == 1  );

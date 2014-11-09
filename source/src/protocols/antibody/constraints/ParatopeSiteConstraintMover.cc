@@ -142,7 +142,7 @@ ParatopeSiteConstraintMover::apply(core::pose::Pose& pose){
 	using namespace core::scoring::constraints;
 	
 	if (! ab_info_){
-		ab_info_ = AntibodyInfoCOP( new AntibodyInfo(pose) );
+		ab_info_ = AntibodyInfoCOP( AntibodyInfoOP( new AntibodyInfo(pose) ) );
 	}
 	//Check if antigen is present
 	if (! ab_info_->antigen_present())

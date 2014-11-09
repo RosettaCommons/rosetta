@@ -99,7 +99,7 @@ void RestrictToLoops::init() {
 void RestrictToLoops::copy( RestrictToLoops & lhs, RestrictToLoops const & rhs ) {
 	lhs.design_loops_ = rhs.design_loops_;
 	lhs.restrict_only_design_ = rhs.restrict_only_design_;
-	lhs.loops_ = loops::LoopsCOP( new Loops( *rhs.loops_ ) );
+	lhs.loops_ = loops::LoopsCOP( loops::LoopsOP( new Loops( *rhs.loops_ ) ) );
 }
 
 void RestrictToLoops::apply( Pose const & pose, PackerTask & task ) const {
@@ -182,7 +182,7 @@ void RestrictToLoops::set_loops( LoopsCOP loops ) {
 
 
 void RestrictToLoops::set_loops_from_file( string loops_file ) {
-	loops_ = loops::LoopsCOP( new Loops( loops_file ) );
+	loops_ = loops::LoopsCOP( loops::LoopsOP( new Loops( loops_file ) ) );
 }
 
 

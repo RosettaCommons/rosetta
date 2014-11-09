@@ -189,7 +189,7 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 			AtomID const atom2 ( res.atom_index( "C1'" ), i );
 			AtomID const atom3 ( is_purine( res ) ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );
 			AtomID const atom4 ( is_purine( res ) ? res.atom_index( "C4" ) : res.atom_index( "C2" ), i );
-			cst_set->add_constraint( ConstraintCOP( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) ) );
+			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) ) ) );
 		}
 	}
 	pose.constraint_set ( cst_set );

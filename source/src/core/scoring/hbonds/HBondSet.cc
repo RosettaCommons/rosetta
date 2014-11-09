@@ -407,14 +407,14 @@ operator==(HBond const & a, HBond const & b)
 
 
 HBondSet::HBondSet():
-	options_( HBondOptionsCOP( new HBondOptions() ) ),
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) ) ),
 	atom_map_init_( false )
 {}
 
 HBondSet::~HBondSet() {}
 
 HBondSet::HBondSet( Size const nres ):
-	options_( HBondOptionsCOP( new HBondOptions() ) ),
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) ) ),
 	atom_map_init_( false )
 {
 	resize_bb_donor_acceptor_arrays( nres );
@@ -426,12 +426,12 @@ HBondSet::HBondSet( Size const nres ):
 // above constructor takes a Size, automatic casting would
 // ambiguous.
 HBondSet::HBondSet( HBondOptions const & opts ):
-	options_( HBondOptionsCOP( new HBondOptions( opts ) ) ),
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( opts ) ) ) ),
 	atom_map_init_( false )
 {}
 
 HBondSet::HBondSet( HBondOptions const & opts, Size const nres):
-	options_( HBondOptionsCOP( new HBondOptions( opts ) ) ),
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( opts ) ) ) ),
 	atom_map_init_( false )
 {
 	resize_bb_donor_acceptor_arrays( nres );
@@ -445,7 +445,7 @@ HBondSet::HBondSet( HBondOptions const & opts, Size const nres):
 HBondSet::HBondSet(
 	pose::Pose & pose,
 	bool const bb_only /*true*/) :
-	options_(HBondOptionsCOP( new HBondOptions() )),
+	options_(HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) )),
 	atom_map_init_(false)
 {
 	pose.update_residue_neighbors();
@@ -461,7 +461,7 @@ HBondSet::HBondSet(
 	HBondOptions const & opts,
 	pose::Pose & pose,
 	bool const bb_only /*true*/) :
-	options_( HBondOptionsCOP( new HBondOptions(opts) )),
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions(opts) ) )),
 	atom_map_init_(false)
 {
 	pose.update_residue_neighbors();
@@ -472,7 +472,7 @@ HBondSet::HBondSet(
 /// copy ctor
 HBondSet::HBondSet( HBondSet const & src ):
 	basic::datacache::CacheableData(),
-	options_( HBondOptionsCOP( new HBondOptions( *src.options_ ) ))
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
 {
 	for ( Size i=1; i<= src.hbonds_.size(); ++i ) {
 		hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
@@ -487,7 +487,7 @@ HBondSet::HBondSet( HBondSet const & src ):
 /// copy ctor
 HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude_list ):
 	basic::datacache::CacheableData(),
-	options_( HBondOptionsCOP( new HBondOptions( *src.options_ ) ))
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
 {
 
 	bool exclude=false;
@@ -514,7 +514,7 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude
 /// copy ctor
 HBondSet::HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask ):
 	basic::datacache::CacheableData(),
-	options_( HBondOptionsCOP( new HBondOptions( *src.options_ ) ))
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
 {
 
 	//bool exclude=false;
@@ -539,7 +539,7 @@ HBondSet::HBondSet(
 	Size seqpos
 ):
 	basic::datacache::CacheableData(),
-	options_( HBondOptionsCOP( new HBondOptions( *src.options_ ) ))
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
 {
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
@@ -877,7 +877,7 @@ HBondSet::hbond_options() const {
 void HBondSet::set_hbond_options( HBondOptions const & options )
 {
 	clear();
-	options_ = HBondOptionsCOP( new HBondOptions( options ) ); // make a copy of the input to guarantee its integrity
+	options_ = HBondOptionsCOP( HBondOptionsOP( new HBondOptions( options ) ) ); // make a copy of the input to guarantee its integrity
 }
 
 std::ostream &

@@ -13,12 +13,20 @@
 # Defaults to whatever is "g++" on the system.
 
 import os
-uname = os.uname()
 
-if uname[0] == "Darwin" and uname[2][0:2] == "13" or uname[2][0:2] == "14":
+cxx     = "gcc"
+
+# Extra features
+extras  = "none"
+
+uname = os.uname()
+osx_version = int(uname[2][0:2]) if uname[0] == "Darwin" else 0
+
+# OS X version 13 is 10.9 Mavericks, 14 is 10.10 Yosemite
+if osx_version >= 13:
     cxx = "clang"
-else:
-    cxx     = "gcc"
+    extras = "cxx11"
+
 cxx_ver = "*"
 
 # OS
@@ -34,8 +42,5 @@ mode    = "debug"
 
 # Source, test, or documentation builds.
 cat     = "src,external"
-
-# Extra features
-extras  = "none"
 
 log     = ""

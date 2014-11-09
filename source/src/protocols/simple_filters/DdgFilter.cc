@@ -325,7 +325,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		if( filter_ ) {
 			scoring_filter = filter_;
 		} else {
-			scoring_filter = filters::FilterCOP( new simple_filters::ScoreTypeFilter( scorefxn_, core::scoring::total_score, 10000/*threshold*/ ) );
+			scoring_filter = filters::FilterCOP( filters::FilterOP( new simple_filters::ScoreTypeFilter( scorefxn_, core::scoring::total_score, 10000/*threshold*/ ) ) );
 		}
 		//JBB This is not handling symmetric poses properly. This needs to be fixed.
 		core::pose::Pose split_pose( pose );

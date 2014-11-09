@@ -998,7 +998,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function(
 	using namespace count_pair;
 
 	if ( exclude_DNA_DNA && res1.is_DNA() && res2.is_DNA() ) {
-		return count_pair::CountPairFunctionCOP( new CountPairNone );
+		return count_pair::CountPairFunctionCOP( count_pair::CountPairFunctionOP( new CountPairNone ) );
 	}
 
 	count_pair::CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );

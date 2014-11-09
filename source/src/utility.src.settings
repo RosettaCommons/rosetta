@@ -69,8 +69,17 @@ sources = {
 		"OptionKeys",
 	],
 	"utility/pointer": [
+		# leave this here so Xcode will include the headers in the project!
+	],
+	"utility/pointer/boost": [
+		# leave this here so Xcode will include the headers in the project!
+	],
+	"utility/pointer/refcount": [
 		"ReferenceCount",
 		"ReferenceCountMI_",
+	],
+	"utility/pointer/std": [
+		# leave this here so Xcode will include the headers in the project!
 	],
 	"utility/py": [
 		"PyExitCallback",

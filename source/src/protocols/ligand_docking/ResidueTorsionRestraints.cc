@@ -85,13 +85,13 @@ void ResidueTorsionRestraints::setup_constraints(core::pose::Pose & pose)
 		core::Real const curr_chi_radians = numeric::conversions::radians( curr_chi_degrees );
 		core::scoring::func::FuncOP restr_func( new core::scoring::func::CircularHarmonicFunc( curr_chi_radians, stddev_radians ) );
 		AtomIndices chi_idx = rsd_type.chi_atoms(j); // 1-based
-		DihedralConstraintCOP constraint( new DihedralConstraint(
+		DihedralConstraintCOP constraint( DihedralConstraintOP( new DihedralConstraint(
 			AtomID(chi_idx[1], resid_),
 			AtomID(chi_idx[2], resid_),
 			AtomID(chi_idx[3], resid_),
 			AtomID(chi_idx[4], resid_),
 			restr_func
-		) );
+		) ) );
 		TR << "Constraint: " << curr_chi_degrees << " deg, " << constraint->atom(1) << " "
 			<< constraint->atom(2) << " " << constraint->atom(3) << " " << constraint->atom(4) << std::endl;
 		// Is this still necessary (no) or advisable (maybe)?  Constraint will be removed before packing...

@@ -1459,7 +1459,7 @@ Pose::ConstraintSetCOP
 Pose::constraint_set() const
 {
 	if ( constraint_set_ == 0 ) {
-		return Pose::ConstraintSetCOP( new scoring::constraints::ConstraintSet ); // create an empty constraint set
+		return Pose::ConstraintSetCOP( Pose::ConstraintSetOP( new scoring::constraints::ConstraintSet ) ); // create an empty constraint set
 	}
 	return constraint_set_;
 }

@@ -222,10 +222,10 @@ FabConstraint::setup_csts(
             	id::AtomID atom2(pose.residue_type(j).atom_index("CA"),j);
             	runtime_assert(atom1.valid() && atom2.valid());
             	if (abpenalty[i] == 1.5){
-            		add_individual_constraint( ConstraintCOP( new AtomPairConstraint(atom1,atom2, noncdrpenaltyfunc) ));
+            		add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(atom1,atom2, noncdrpenaltyfunc) ) ));
             	}
             	else if (abpenalty[i] == 0.5){
-            		add_individual_constraint( ConstraintCOP( new AtomPairConstraint(atom1,atom2, flankpenaltyfunc) ));
+            		add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(atom1,atom2, flankpenaltyfunc) ) ));
             	}
             	break;
             }

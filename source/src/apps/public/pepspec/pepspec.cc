@@ -950,7 +950,7 @@ set_pep_csts(
 		pep_cst_vector.x( pep_cst.x );
 		pep_cst_vector.y( pep_cst.y );
 		pep_cst_vector.z( pep_cst.z );
-		ConstraintCOP this_cst( new CoordinateConstraint( AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) ) );
+		ConstraintCOP this_cst( ConstraintOP( new CoordinateConstraint( AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) ) ) );
 //		ConstraintCOP cst( new CoordinateConstraint( AtomID( pose.residue( i ).atom_index( "CA" ), i ), AtomID( pose.residue( pep_anchor ).atom_index( "CA" ), pep_anchor ), pose.residue( i ).xyz( "CA" ), new FlatHarmonicFunc( 0.0, 0.1, 2.0 ) ) );
 		pose.add_constraint( this_cst );
 	}

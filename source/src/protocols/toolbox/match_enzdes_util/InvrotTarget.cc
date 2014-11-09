@@ -75,7 +75,7 @@ InvrotTarget::generate_constraints(
 	}
 	if( node_constraints.size() == 0 ) return NULL;
 
-	return core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::MultiConstraint( node_constraints ) );
+	return core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::MultiConstraint( node_constraints ) ) );
 }
 
 

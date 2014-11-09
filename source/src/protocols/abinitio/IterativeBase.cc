@@ -499,7 +499,7 @@ void IterativeBase::initialize() {
 	///@brief set scorefxn used for evaluation
 		setup_filter_cst( overall_cstfilter_weight() );
 		//		set_weight( "prefa_clean_score3", option[ iterative::centroid_before_quickrelax_weight ]() );
-		add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::RDC_Evaluator("rdc") ), scorefxn->get_weight( scoring::rdc ) );
+		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::RDC_Evaluator("rdc") ) ), scorefxn->get_weight( scoring::rdc ) );
 		scorefxn->set_weight( scoring::rdc, 0 );
 	} else {
 		set_weight( "score", 0.0 ); //don't use score that comes back --- but the score_final thing
@@ -1691,7 +1691,7 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 		cst->set_centroid( false );
 		cst->set_skip_redundant( option[ iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( get_weight( "noesy_autoassign_cst" )/overall_cstfilter_weight_ );
-		add_evaluation( evaluation::PoseEvaluatorCOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ), cst->filter_weight()*overall_cstfilter_weight_ );
+		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ) ), cst->filter_weight()*overall_cstfilter_weight_ );
 		rescore(); //rescore now, since we probably have more time now, when later when the decoys are arriving...
 	}
 	basic::prof_show();
@@ -1771,7 +1771,7 @@ void IterativeBase::replace_noesy_filter_constraints() {
 		cst->set_centroid( false );
 		cst->set_skip_redundant( option[ OptionKeys::iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( weight );
-		add_evaluation( evaluation::PoseEvaluatorCOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ), cst->filter_weight()*overall_cstfilter_weight_ );
+		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ) ), cst->filter_weight()*overall_cstfilter_weight_ );
 	}
 	rescore_nonlocal_archive();
 }
@@ -1839,11 +1839,11 @@ void IterativeBase::rescore_nonlocal_archive() {
 		std::string fa_score = option[ iterative::fa_score ]();
 		core::scoring::ScoreFunctionOP fa_scfxn( NULL );
 		fa_scfxn = core::scoring::ScoreFunctionFactory::create_score_function( fa_score );
-		add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::ScoreEvaluator( "score_fa", fa_scfxn, true /*fullname*/ ) ), option[ iterative::fullatom_after_quickrelax_weight ]() );
+		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::ScoreEvaluator( "score_fa", fa_scfxn, true /*fullname*/ ) ) ), option[ iterative::fullatom_after_quickrelax_weight ]() );
 	}
 
 	set_scorefxn( scfxn );
-	add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::ScoreEvaluator( "_final", scfxn ) ), 1.0 );
+	add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::ScoreEvaluator( "_final", scfxn ) ) ), 1.0 );
 	rescore();
 	save_to_file();
 	set_scorefxn( NULL );
@@ -1980,7 +1980,7 @@ void IterativeBase::compute_cores() {
 void IterativeBase::add_core_evaluator( loops::Loops const& core, std::string const& core_tag ) {
 	utility::vector1< Size> selection;
 	core.get_residues( selection );
-	if ( reference_pose_ ) add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::SelectRmsdEvaluator( reference_pose_, selection, core_tag ) ) );
+	if ( reference_pose_ ) add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( reference_pose_, selection, core_tag ) ) ) );
 	core.write_loops_to_file( name()+"/"+core_tag+".gen.rigid", "RIGID" ); //so we have them for other evaluations
 }
 
@@ -2042,7 +2042,7 @@ void IterativeBase::restore_status( std::istream& is ) {
 		cst->set_centroid( false );
 		cst->set_skip_redundant( option[ iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( get_weight( "noesy_autoassign_cst" )/overall_cstfilter_weight_ );
-		add_evaluation( evaluation::PoseEvaluatorCOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ), cst->filter_weight()*overall_cstfilter_weight_ );
+		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ) ), cst->filter_weight()*overall_cstfilter_weight_ );
 	}
 	bCombineNoesyCst_ = stage() < STAGE2_RESAMPLING; //will be overwritten in next reassign NOESY... take guess until then...
 }
@@ -2066,7 +2066,7 @@ void IterativeBase::save_status( std::ostream& os ) const {
 
 void IterativeBase::setup_default_evaluators() {
 	Parent::setup_default_evaluators();
-	add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::JumpNrEvaluator ) );
+	add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::JumpNrEvaluator ) ) );
 }
 
 
@@ -2172,7 +2172,7 @@ void IterativeBase::init_from_decoy_set( core::io::silent::SilentFileData const&
 	if ( !b_old_eval_state ) {
 		tr.Debug << "switch to local evaluation for reading of initial pool" << std::endl;
 		set_evaluate_local( true );//set this temporarily
-		add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::ScoreEvaluator( "_final", scorefxn_non_const() ) ), 1.0 );
+		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::ScoreEvaluator( "_final", scorefxn_non_const() ) ) ), 1.0 );
 	}
 
 	//read decoys and evaluate
@@ -2210,7 +2210,7 @@ void IterativeBase::setup_filter_cst( core::Real overall_weight ) {
 			} else {
 				name = "filter_cst_"+name+"_"+ObjexxFCL::lead_zero_string_of( ct, 2 );;
 			}
-			add_evaluation( evaluation::PoseEvaluatorCOP( new ConstraintEvaluatorWrapper( name, cst_claimer ) ), weight*overall_weight );
+			add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new ConstraintEvaluatorWrapper( name, cst_claimer ) ) ), weight*overall_weight );
 		}//if cst_claimer
 	} // for claimer
 }
@@ -2240,7 +2240,7 @@ void IterativeBase::setup_autoNOE() {
 		cst->set_fullatom( true );
 		cst->set_centroid( false );
 		cst->set_filter_weight( option[ iterative::cenpool_noesy_cst_weight ]() );
-		add_evaluation( evaluation::PoseEvaluatorCOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ), cst->filter_weight()*overall_cstfilter_weight_ );
+		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ) ), cst->filter_weight()*overall_cstfilter_weight_ );
 	}
 
 	//hash-string of the low30 decoy-tags to quickly determine if a new AutoNOE run should be done.

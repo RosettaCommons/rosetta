@@ -73,7 +73,7 @@ void FavorSymmetricSequence::apply(core::pose::Pose & pose)
 		{
 			if(rsd1_index % (residue_count/symmetric_units_) == rsd2_index % (residue_count/symmetric_units_) && rsd1_index != rsd2_index)
 			{
-				pose.add_constraint(core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::ResidueTypeLinkingConstraint(pose,rsd1_index,rsd2_index,penalty_) ));
+				pose.add_constraint(core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::ResidueTypeLinkingConstraint(pose,rsd1_index,rsd2_index,penalty_) ) ));
 				if(TR.visible(basic::t_debug))
 				{
 					TR.Debug << "Enforcing Sequence Symmetry between residues: " << rsd1_index << " and " << rsd2_index << std::endl;

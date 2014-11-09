@@ -85,7 +85,7 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 		setup_mover->apply( pose );
 	}
 
-	core::pose::PoseCOP saved_pose( new core::pose::Pose( pose ) );
+	core::pose::PoseCOP saved_pose( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
 	core::kinematics::FoldTree saved_ft( pose.fold_tree() );
 
 	if ( symmetry_ ) {

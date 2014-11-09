@@ -185,7 +185,7 @@ ProteinRMSDFeatures::parse_my_tag(
 			reference_pose(ref_pose);
 		} else {
 			tr << "Setting '" << type_name() << "' to reference the starting structure." << endl;
-			reference_pose(PoseCOP( new Pose(pose) ));
+			reference_pose(PoseCOP( PoseOP( new Pose(pose) ) ));
 		}
 	}
 }

@@ -395,7 +395,7 @@ EnzdesRemodelMover::apply(
 
 	this->set_last_move_status( protocols::moves::FAIL_RETRY );
 
-	this->set_native_pose( PoseCOP( new core::pose::Pose( pose ) ) );
+	this->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
 
 	//note: the pose gets reduced to poly-ala at all design positions here
 	examine_initial_conformation( pose );
@@ -1148,7 +1148,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 			}
 		}
 	}
-	if( !ligres || !(ligres->type().is_ligand()) ) ligres = core::conformation::ResidueCOP( new core::conformation::Residue( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true ) );
+	if( !ligres || !(ligres->type().is_ligand()) ) ligres = core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true ) ) );
 
 	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL ); //wipe this out for now, matcher will overwrite
 	protocols::match::MatcherMoverOP matcher_mover( new protocols::match::MatcherMover() );
@@ -1336,7 +1336,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 						if( (corresponding_res_block == 0 ) || ( corresponding_res_block > i ) ){
 							tr << "Catalytic residue for MatchConstraint " << i << " at position " << seqpos << " is in remodeled region, building inverse rotamers... " << std::endl;
 							target_inverse_rotamers_.push_back( std::list<core::conformation::ResidueCOP> () );
-							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( core::conformation::ResidueCOP( new core::conformation::Residue( pose.residue( seqpos ) ) ) );
+							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( seqpos ) ) ) ) );
 							invrots_build = true;
 							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, pose.residue( other_seqpos ).get_self_ptr() ) );
 							if( cur_inv_rots.size() != 0 ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );

@@ -87,8 +87,12 @@ public:
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ - d );
 	}
 
+	friend
 	distance
-	operator - ( fixedsizearray1const_iterator< T, S > const & other ) const;
+	operator - ( fixedsizearray1iterator< T, S > const & a,
+		fixedsizearray1iterator< T, S > const & b ) {
+		return a.position_ - b.position_;
+	}
 
 	/// @brief random access increment
 	fixedsizearray1iterator< T, S > const &
@@ -223,6 +227,12 @@ public:
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ - d );
 	}
 
+	friend
+	distance
+	operator - ( fixedsizearray1const_iterator< T, S > const & a,
+							fixedsizearray1const_iterator< T, S > const & b ) {
+		return a.position_ - b.position_;
+	}
 
 	friend
 	inline
@@ -302,13 +312,13 @@ private:
 	T const * position_;
 };
 
-//template < typename T, platform::Size S >
-//fixedsizearray1iterator< T, S >::distance
-//fixedsizearray1iterator< T, S >::operator - (
-//	fixedsizearray1const_iterator< T, S > const & other
-//) const {
-//	return position_ - other.position_;
-//}
+/*template < typename T, platform::Size S >
+typename fixedsizearray1iterator< T, S >::distance
+fixedsizearray1iterator< T, S >::operator - (
+	fixedsizearray1const_iterator< T, S > const & other
+) const {
+	return position_ - other.position_;
+}*/
 
 
 template < typename T, platform::Size S >

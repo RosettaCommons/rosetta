@@ -142,7 +142,7 @@ LoopFinder::apply( core::pose::Pose & pose )
 
 	if( all_loops->size() > 0 ) {
 		for( Loops::const_iterator it = all_loops->begin(); it != all_loops->end(); ++it ) {
-			LoopCOP loop( new Loop(*it) );
+			LoopCOP loop( LoopOP( new Loop(*it) ) );
 			if( pose.residue( loop->start() ).is_upper_terminus() || pose.residue( loop->stop() ).is_lower_terminus() ) continue; // skip if terminal loop
 			if( loop->size() < min_length_ || loop->size() > max_length_ ) continue; // skip this loop
 

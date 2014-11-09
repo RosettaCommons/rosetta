@@ -716,8 +716,8 @@ my_main( void* )
 				//add constraints on CA
 				Size CA_i = nat_i_rsd.atom_index("CA");
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-				p.add_constraint( scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint(
-					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ), fx ) ) );
+				p.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
+					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ), fx ) ) ) );
 
 		}
 	}

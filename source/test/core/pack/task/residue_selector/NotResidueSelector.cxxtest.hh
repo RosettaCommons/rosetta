@@ -50,7 +50,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = not_rs->apply( trpcage );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], (ii % 2 == 0) );
+			TS_ASSERT( subset[ ii ] == (ii % 2 == 0) );
 		}
 	}
 
@@ -75,7 +75,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = not_rs->apply( trpcage );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], (ii % 2 == 0) );
+			TS_ASSERT( subset[ ii ] == (ii % 2 == 0) );
 		}
 	}
 

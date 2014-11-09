@@ -65,11 +65,11 @@ void CreateTorsionConstraint::apply( core::pose::Pose & pose )
             Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
             Size atomno3 = pose.residue_type(res3_[i_cst]).atom_index(atom3_[i_cst]);
             Size atomno4 = pose.residue_type(res4_[i_cst]).atom_index(atom4_[i_cst]);
-            pose.add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint(core::id::AtomID(atomno1,res1_[i_cst]),
+            pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint(core::id::AtomID(atomno1,res1_[i_cst]),
                                                                                    core::id::AtomID(atomno2,res2_[i_cst]),
                                                                                    core::id::AtomID(atomno3,res3_[i_cst]),
                                                                                    core::id::AtomID(atomno4,res4_[i_cst]),
-                                                                                   func ) )
+                                                                                   func ) ) )
                                 );
         }
     }

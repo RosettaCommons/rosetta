@@ -98,7 +98,7 @@ SelectRDC_Evaluator::SelectRDC_Evaluator( core::pose::Pose const& pose, std::str
 	: evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
 		tag_( tag )
 {
-	evaluation::find_existing_residues( core::pose::PoseCOP( new core::pose::Pose( pose ) ), tag, selection_ );
+	evaluation::find_existing_residues( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ), tag, selection_ );
 	init_rdcs();
 }
 

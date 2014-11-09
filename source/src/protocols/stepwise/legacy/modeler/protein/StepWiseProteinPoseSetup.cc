@@ -1549,7 +1549,7 @@ namespace protein {
 				}
 
 				// distance from O3' to P
-				cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) ) );
+				cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) ) ) );
 
 			}
 		}

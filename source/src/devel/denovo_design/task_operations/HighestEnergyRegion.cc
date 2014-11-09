@@ -214,7 +214,7 @@ HighestEnergyRegionOperation::cache_result( core::pose::Pose const & pose )
 	for ( core::Size i=1; i<=res_list.size(); ++i ) {
 		residues_to_design_.push_back( res_list[i] );
 	}
-	cached_pose_ = core::pose::PoseCOP( new core::pose::Pose( pose ) );
+	cached_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
 	TR << "Cached pose and a list of residues of size: " << residues_to_design_.size() << std::endl;
 }
 

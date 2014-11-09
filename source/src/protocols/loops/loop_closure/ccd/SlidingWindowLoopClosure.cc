@@ -370,7 +370,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 
 	{	//take initial loop-conformation as closing candidate
 		using namespace fragment;
-		FrameOP closure_frame( new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) );
+		FrameOP closure_frame( new Frame( loop_.start(), FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) ) );
 		FrameList closure_frames;
 		closure_frame->steal( more_cut );
 

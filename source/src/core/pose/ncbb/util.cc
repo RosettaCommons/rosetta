@@ -139,12 +139,12 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
   AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
   AtomID aidCY1( pose.residue( hbs_pre_position ).atom_index("CY1"), hbs_pre_position );
 
-  ConstraintCOP atompair( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) );
-  ConstraintCOP atompair2( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) );
-  ConstraintCOP atompair3( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) );
-  ConstraintCOP angle( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 ) );
-  ConstraintCOP angle2( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 ) );
-  ConstraintCOP dihedral( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) );
+  ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
+  ConstraintCOP atompair2( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
+  ConstraintCOP atompair3( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
+  ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 ) ) );
+  ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 ) ) );
+  ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) ) );
 
   pose.add_constraint( atompair );
   pose.add_constraint( atompair2 );
@@ -204,10 +204,10 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 	AtomID aidVYP( pose.residue( oop_seq_position+1 ).atom_index("VYP"), oop_seq_position+1 );
 	AtomID aidVZP( pose.residue( oop_seq_position ).atom_index("VZP"), oop_seq_position );
 
-	AtomPairConstraintCOP CYP_CZP_atompair( new AtomPairConstraint( aidCYP, aidCZP, harm_func ) );
+	AtomPairConstraintCOP CYP_CZP_atompair( AtomPairConstraintOP( new AtomPairConstraint( aidCYP, aidCZP, harm_func ) ) );
 	//kdrew: setup virtual atoms constraints
-	AtomPairConstraintCOP CYP_VYP_atompair( new AtomPairConstraint( aidCYP, aidVYP, virtual_atom_overlap_harm_func ) );
-	AtomPairConstraintCOP CZP_VZP_atompair( new AtomPairConstraint( aidCZP, aidVZP, virtual_atom_overlap_harm_func ) );
+	AtomPairConstraintCOP CYP_VYP_atompair( AtomPairConstraintOP( new AtomPairConstraint( aidCYP, aidVYP, virtual_atom_overlap_harm_func ) ) );
+	AtomPairConstraintCOP CZP_VZP_atompair( AtomPairConstraintOP( new AtomPairConstraint( aidCZP, aidVZP, virtual_atom_overlap_harm_func ) ) );
 
 	//kdrew: remove old constraints that are identical
 	core::scoring::constraints::ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();

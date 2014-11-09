@@ -2647,7 +2647,9 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 						pose.add_constraints(cst);
 					}//for atom_it
 				using namespace std;
-				string String = static_cast<ostringstream*>( &(ostringstream() << i) )->str();
+				ostringstream oss;
+				oss << i;
+				string String = oss.str();
 				if (debug_)
 					pose.dump_pdb(mover_name_+"_after_chi_change"+String+".pdb");
 
@@ -2666,7 +2668,9 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 					}//for chiAtom
 				}//for chi
 				using namespace std;
-				string String = static_cast<ostringstream*>( &(ostringstream() << i) )->str();
+				ostringstream oss;
+				oss << i;
+				string String = oss.str();
 				if (debug_)
 				pose.dump_pdb(mover_name_+"after_chi_change"+String+".pdb");
 			}

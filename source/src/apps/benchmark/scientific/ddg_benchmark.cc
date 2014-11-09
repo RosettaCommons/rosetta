@@ -255,9 +255,10 @@ void correlation(std::string ddg_out){
 	Real correlation_result;
 	correlation_result = correlation_coefficient(ddg_sim, ddg_exp);
 
-	std::ofstream staResult(".results.log");
+	std::string results_fname( ".results.log" );
+	std::ofstream staResult( results_fname.c_str() );
 	if (!staResult) {
-		TR.Error << "Can not open file " << staResult;
+		TR.Error << "Can not open file " << results_fname;
 	}
 	else {
 		char correlation_out[100];
@@ -265,9 +266,10 @@ void correlation(std::string ddg_out){
 		staResult << "The correlation coefficient for monomer ddG protocol on the t4-lysozyme test set: " << correlation_out << std::endl;
 	}
 
-	std::ofstream yaml(".results.yaml");
+	std::string yaml_fname( ".results.yaml" );
+	std::ofstream yaml( yaml_fname.c_str() );
 	if (!yaml) {
-		TR.Error << "Can not open file " << yaml;
+		TR.Error << "Can not open file " << yaml_fname;
 	}
 	else {
 		yaml << "{ ";

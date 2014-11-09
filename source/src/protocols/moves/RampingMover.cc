@@ -197,7 +197,7 @@ RampingMover::RampingMover(
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 		core::scoring::ScoreType iist = (core::scoring::ScoreType) ii;
 		if ( start_weights_[ iist ] != end_weights_[ iist ] ) {
-			ramping_funcs_for_weights_[ iist ] = protocols::moves::RampingFuncCOP( new LinearFunc );
+			ramping_funcs_for_weights_[ iist ] = protocols::moves::RampingFuncCOP( protocols::moves::RampingFuncOP( new LinearFunc ) );
 		}
 	}
 }

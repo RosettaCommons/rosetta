@@ -142,7 +142,7 @@ ConstraintIO::read_cst_atom_pairs(
 			aFunc->show_definition( tr.Debug ); tr.Debug << std::endl;
 		}
 
-		cst_set.add_constraint( ConstraintCOP( new AtomPairConstraint( atom1, atom2, aFunc ) ) );
+		cst_set.add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( atom1, atom2, aFunc ) ) ) );
 	} // while getline
 	tr.Debug << "end of file reached" << std::endl;
 	next_section_name = "";
@@ -248,7 +248,7 @@ ConstraintIO::read_cst_coordinates(
 			//		}
 
 		Vector transform( x, y, z );
-		cst_set.add_constraint( ConstraintCOP( new CoordinateConstraint( atom1, atom2, transform, aFunc ) ) );
+		cst_set.add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( atom1, atom2, transform, aFunc ) ) ) );
 
 	} // while getline
 	tr.Debug << "end of file reached" << std::endl;
@@ -350,7 +350,7 @@ ConstraintIO::read_cst_angles(
 			continue;
 		}
 
-		cst_set.add_constraint( ConstraintCOP( new AngleConstraint( atom1, atom2, atom3, aFunc ) ) );
+		cst_set.add_constraint( ConstraintCOP( ConstraintOP( new AngleConstraint( atom1, atom2, atom3, aFunc ) ) ) );
 	}// while getline
 	tr.Debug << "end of file reached" << std::endl;
 	next_section_name = "";

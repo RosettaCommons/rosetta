@@ -106,7 +106,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 
 	using namespace fragment;
 	ConstantLengthFragSetOP fragset( new ConstantLengthFragSet( 1 ) );
-	steal_frag_set_from_pose( pose, *fragset, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 1 ) ), start_region );
+	steal_frag_set_from_pose( pose, *fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 1 ) ) ), start_region );
 	simple_moves::ClassicFragmentMoverOP mover( new simple_moves::ClassicFragmentMover( fragset ) );
 	mover->set_check_ss( false ); /* not good if we want to initialize from 1mer fragments */
 	set_mover( mover );

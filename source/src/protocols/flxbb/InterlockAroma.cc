@@ -185,7 +185,7 @@ InterlockAroma::apply( Pose & pose )
 		RotamerSetFactory rsf;
 		RotamerSetOP rotset = rsf.create_rotamer_set( polyala_pose.residue( ii ) );
 		rotset->set_resid( ii );
-		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, core::graph::GraphCOP( new core::graph::Graph( polyala_pose.total_residue() ) ), false );
+		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, core::graph::GraphCOP( core::graph::GraphOP( new core::graph::Graph( polyala_pose.total_residue() ) ) ), false );
 
 		Size rotnum( 0 );
 		for( Rotamers::const_iterator rotamer = rotset->begin(); rotamer != rotset->end(); ++rotamer ) {

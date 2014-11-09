@@ -344,8 +344,8 @@ int main( int argc, char * argv [] ){
 					for ( Size ii = 1; ii<= nat_i_rsd.nheavyatoms(); ++ii ) {
 						AtomID CAi ( ii, i );
 						cst_set->add_constraint
-							(  ConstraintCOP( new CoordinateConstraint
-								( CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring ) )
+							(  ConstraintCOP( ConstraintOP( new CoordinateConstraint
+								( CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring ) ) )
 								 );
 					}
 				}

@@ -109,16 +109,18 @@ bool ProfileScore::describe_score(FragmentCandidateOP f,
 	Size firstQ = f->get_first_index_in_query();
 	Size firstV = f->get_first_index_in_vall();
 
+/*
 #ifndef WIN32
 	out << "\nvall: " << f->get_chunk()->get_pdb_id() << " " << I(5,
 			f->get_first_index_in_vall()) << " " << out << "\nquery " << I(5,
 			f->get_first_index_in_query()) << "\n";
-#else
+#else */
 	// In VS2013, can't do: out << out
+	// libc++ with c++11 can't do this either. I have commented the non-working version of this and contacted Dominik about this.
 	out << "\nvall: " << f->get_chunk()->get_pdb_id() << " " << I(5,
 			f->get_first_index_in_vall()) << "\nquery " << I(5,
 			f->get_first_index_in_query()) << "\n";
-#endif
+// #endif
 
 	for (Size i = 1; i <= f->get_length(); ++i) {
 		out << "V row: " << F(5, 3, chunk_profile->prof_row(firstV + i - 1)[1]);

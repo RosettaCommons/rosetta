@@ -246,7 +246,7 @@ void setup_activity_table(
 	cppdb::statement insert_statement(basic::database::safely_prepare_statement(insert_string,db_session));
 
 	utility::io::izstream active_file;
-	active_file.open(active_list_filename,std::_S_in);
+	active_file.open(active_list_filename, std::ios_base::in);
 	while(!active_file.eof())
 	{
 		std::string line;
@@ -261,7 +261,7 @@ void setup_activity_table(
 	active_file.close();
 
 	utility::io::izstream inactive_file;
-	inactive_file.open(inactive_list_filename,std::_S_in);
+	inactive_file.open(inactive_list_filename, std::ios_base::in);
 	while(!inactive_file.eof())
 	{
 		std::string line;

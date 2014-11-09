@@ -144,7 +144,7 @@ constrain_pose_res_to_invrots(
 
 	tr << "Created a total of " << all_res_invrot_csts.size() << " constraints between " << invrots.size() << " inverse rotamers and " << totrescount << " residues." << std::endl;
 
-	return core::scoring::constraints::AmbiguousConstraintCOP( new AmbiguousConstraint( all_res_invrot_csts ) );
+	return core::scoring::constraints::AmbiguousConstraintCOP( core::scoring::constraints::AmbiguousConstraintOP( new AmbiguousConstraint( all_res_invrot_csts ) ) );
 
 } //constrain_pose_res_to_invrots
 
@@ -166,7 +166,7 @@ cst_residue_in_pose(
 
 	runtime_assert( res_cache->seqpos_map_size() == 1 );
 
-	return core::conformation::ResidueCOP( new core::conformation::Residue( pose.residue( res_cache->seqpos_map_begin()->first ) ) );
+	return core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( res_cache->seqpos_map_begin()->first ) ) ) );
 }
 
 

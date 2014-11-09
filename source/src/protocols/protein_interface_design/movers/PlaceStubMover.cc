@@ -680,8 +680,8 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 
 			TR << "Trying host position " << res << std::endl;
 
-			protocols::filters::FilterCOP rep_filter( new simple_filters::EnergyPerResidueFilter(
-				res, soft_rep, core::scoring::fa_rep, 20.0 ) );
+			protocols::filters::FilterCOP rep_filter( protocols::filters::FilterOP( new simple_filters::EnergyPerResidueFilter(
+				res, soft_rep, core::scoring::fa_rep, 20.0 ) ) );
 			stub_set_->filter( rep_filter );
 			stub->set_filter( rep_filter );
 			bool const self_energy_pass( stub->get_scaffold_status( res ) );
@@ -760,7 +760,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 				TR_debug <<"DEBUG: before remove coord constraints we had "<<before_remove<<" constraints. after: "<<after_remove<<std::endl;
 
 				// this is to make sure that nothing awful has happened during stub-based minimization.
-				protocols::filters::FilterCOP total_energy_filter( new simple_filters::EnergyPerResidueFilter( res, scorefxn, core::scoring::total_score, stub_energy_threshold_ ) );
+				protocols::filters::FilterCOP total_energy_filter( protocols::filters::FilterOP( new simple_filters::EnergyPerResidueFilter( res, scorefxn, core::scoring::total_score, stub_energy_threshold_ ) ) );
 				bool const interface_energy_pass( total_energy_filter->apply( pose ) );
 				if( interface_energy_pass ){
 					//If a subsequent placement fails, try placing the stub on another position or
@@ -1185,7 +1185,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 		pack::pack_rotamers( *ala_pose, *scorefxn, task);
 		(*scorefxn)( *ala_pose );
-		stub_set_->pair_with_scaffold( *ala_pose, host_chain_, protocols::filters::FilterCOP( new protocols::filters::TrueFilter ) );
+		stub_set_->pair_with_scaffold( *ala_pose, host_chain_, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
 	}// pair stubset scope
 
 	max_cb_cb_dist_ = tag->getOption< core::Real >( "max_cb_dist", 4.0 );

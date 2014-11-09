@@ -221,7 +221,7 @@ public:
 
 		//SCOREFUNCTION --> Favor native residue
 		for ( Size i=1; i<= pose.total_residue();  ++i ) {
-			pose.add_constraint( scoring::constraints::ConstraintCOP( new ResidueTypeConstraint( pose, i, basic::options::option[fav_nat_bonus].value()) ) );
+			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new ResidueTypeConstraint( pose, i, basic::options::option[fav_nat_bonus].value()) ) ) );
 		}
 		//SCOREFUNCTION --> add constraints
 		fa_metal_scorefxn_ = get_score_function();

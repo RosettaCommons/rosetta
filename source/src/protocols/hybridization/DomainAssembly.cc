@@ -384,11 +384,11 @@ DomainAssembly::run()
 
 						TR.Debug << "Adding constraints to residue " << ires << " and " << jres << std::endl;
 						core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc( 0, gd, 5., "gap" ) );
-						full_length_pose->add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint(
+						full_length_pose->add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint(
 								core::id::AtomID(iatom, ires),
 								core::id::AtomID(jatom, jres),
 								fx
-							) ) );
+							) ) ) );
 					}
 				}
 			}
@@ -597,11 +597,11 @@ void DomainAssembly::apply(
 		Size jatom = pose.residue_type(lower_pose->total_residue()+gap_stop ).atom_index("CA");
 		TR << "Adding constraints to residue " << gap_start << " and " << lower_pose->total_residue()+gap_stop << std::endl;
 		core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc( 0, 24., 5., "gap" ) );
-		pose.add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint(
+		pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint(
 				core::id::AtomID(iatom, gap_start),
 				core::id::AtomID(jatom, lower_pose->total_residue()+gap_stop),
 				fx
-			) ) );
+			) ) ) );
 	//}
 
 	DockingLowResOP docking_mover( new DockingLowRes(scorefxn_, jump_num) );

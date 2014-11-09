@@ -1043,7 +1043,7 @@ EnzdesFlexBBProtocol::generate_backrub_ensemble_for_region(
 {
 	//ObjexxFCL::FArray1D_bool flex_res( pose.total_residue(), false);
 	//for( core::Size i = flex_regions_[region]->start() - 1; i <= flex_regions_[region]->end(); ++i) flex_res(i) = true;
-	brub_mover_->set_native_pose( PoseCOP( new core::pose::Pose( pose ) ) );
+	brub_mover_->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
 	brub_mover_->set_input_pose( brub_mover_->get_native_pose() );
 	brub_mover_->clear_segments();
 	brub_mover_->add_mainchain_segments( flex_regions_[region]->positions(), brub_pivot_atoms_, brub_min_atoms_, brub_max_atoms_ );

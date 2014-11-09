@@ -62,7 +62,7 @@ public:
 				core::conformation::Residue const & jjres = trpcage.residue(jj);
 				if ( iires.xyz( iires.nbr_atom() ).distance_squared( jjres.xyz( jjres.nbr_atom() ) ) <= 100.0 ) ++count_neighbs;
 			}
-			TS_ASSERT_EQUALS( subset[ ii ], count_neighbs >= 12 );
+			TS_ASSERT( subset[ ii ] == ( count_neighbs >= 12 ) );
 		}
 	}
 

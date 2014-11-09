@@ -111,7 +111,7 @@ CDRClusterFeatures::features_reporter_dependencies() const {
 void
 CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &) {
 	cdrs_.clear();
-	AntibodyEnumManagerCOP enum_manager( new AntibodyEnumManager() );
+	AntibodyEnumManagerCOP enum_manager( AntibodyEnumManagerOP( new AntibodyEnumManager() ) );
 	std::string cdrs = tag->getOption< std::string >("cdrs", "L1,L2,L3,H1,H2,H3");
 	std::string scheme = tag->getOption< std::string >("numbering_scheme", "AHO_Scheme");
 	

@@ -190,10 +190,10 @@ protocols::backrub::BackrubSidechainMover::update_segments(
 )
 {
 	if (!(backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree())) {
-		backrub_mover_->set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
+		backrub_mover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
 	}
 
-	backrub_mover_->set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
+	backrub_mover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
 	backrub_mover_->clear_segments();
 	backrub_mover_->add_mainchain_segments();
 

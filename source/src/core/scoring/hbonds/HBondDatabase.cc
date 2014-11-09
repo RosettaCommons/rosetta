@@ -167,7 +167,7 @@ HBondDatabase::get_database(){
 	map< string const, HBondDatabaseCOP >::const_iterator
 		param_db = initialized_databases_.find( hb_options.params_database_tag() );
 	if ( param_db == initialized_databases_.end() ){
-		HBondDatabaseCOP newdb( new HBondDatabase( hb_options.params_database_tag() ) );
+		HBondDatabaseCOP newdb( HBondDatabaseOP( new HBondDatabase( hb_options.params_database_tag() ) ) );
 		initialized_databases_[ hb_options.params_database_tag() ] = newdb;
 		return newdb;
 	}
@@ -180,7 +180,7 @@ HBondDatabase::get_database( string const & tag ){
 	map< string const, HBondDatabaseCOP >::const_iterator
 		param_db = initialized_databases_.find(tag);
 	if ( param_db == initialized_databases_.end() ){
-		HBondDatabaseCOP newdb( new HBondDatabase( tag ) );
+		HBondDatabaseCOP newdb( HBondDatabaseOP( new HBondDatabase( tag ) ) );
 		initialized_databases_[ tag ] = newdb;
 		return newdb;
 	}

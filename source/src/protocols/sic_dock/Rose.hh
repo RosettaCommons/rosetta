@@ -31,6 +31,7 @@ public:
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseCOP PoseCOP;
 	typedef protocols::sic_dock::xyzStripeHashPose Hash;
+	typedef protocols::sic_dock::xyzStripeHashPoseOP HashOP;
 	typedef protocols::sic_dock::xyzStripeHashPoseCOP HashCOP;
 	typedef numeric::xyzTransform<Real>  X;
 	typedef numeric::xyzMatrix<Real>     M;

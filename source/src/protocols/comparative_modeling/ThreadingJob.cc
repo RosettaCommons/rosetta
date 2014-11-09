@@ -76,7 +76,7 @@ ThreadingJob::ThreadingJob(
 	SWAligner sw_align;
 	ScoringSchemeOP ss( new SimpleScoringScheme( 120, 0, -100, 0 ) );
 
-	fasta2template_ = core::sequence::SequenceAlignmentCOP( new core::sequence::SequenceAlignment( sw_align.align( t_align_seq, t_pdb_seq, ss ) ) );
+	fasta2template_ = core::sequence::SequenceAlignmentCOP( core::sequence::SequenceAlignmentOP( new core::sequence::SequenceAlignment( sw_align.align( t_align_seq, t_pdb_seq, ss ) ) ) );
 	nres_template_  = aligned_template->ungapped_length();
 
 	// std::cerr << "OLD" << std::endl;

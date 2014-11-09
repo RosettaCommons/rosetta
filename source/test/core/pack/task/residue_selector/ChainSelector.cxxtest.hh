@@ -56,7 +56,7 @@ public:
 		ResidueSubset subset = chain_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], true );
+			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
 
@@ -74,7 +74,7 @@ public:
 		ResidueSubset subset = chain_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], ii <= 10 );
+			TS_ASSERT( subset[ ii ] == ( ii <= 10 ) );
 		}
 	}
 
@@ -95,7 +95,7 @@ public:
 		ResidueSubset subset = chain_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], true );
+			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
 
@@ -109,7 +109,7 @@ public:
 		ResidueSubset subset = chain_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], true );
+			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
 
@@ -134,7 +134,7 @@ public:
 		}
 		ResidueSubset subset = chain_rs->apply( trpcage2 );
 		for ( core::Size ii = 1; ii <= trpcage2.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], ii <= trpcage.total_residue() );
+			TS_ASSERT( subset[ ii ] == ( ii <= trpcage.total_residue() ) );
 		}
 	}
 
@@ -163,7 +163,7 @@ public:
 
 		ResidueSubset subset = chain_rs->apply( trpcage2 );
 		for ( core::Size ii = 1; ii <= trpcage2.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], true );
+			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
 
@@ -187,7 +187,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = chain_rs->apply( trpcage );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], true );
+			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
 
@@ -223,7 +223,7 @@ public:
 
 		ResidueSubset subset = chain_rs->apply( trpcage2 );
 		for ( core::Size ii = 1; ii <= trpcage2.total_residue(); ++ii ) {
-			TS_ASSERT_EQUALS( subset[ ii ], true );
+			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
 

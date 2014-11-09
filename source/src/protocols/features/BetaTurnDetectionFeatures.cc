@@ -47,10 +47,10 @@ using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
 
-BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() : FeaturesReporter(), btd_( new BetaTurnDetection ) {}
+BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() : FeaturesReporter(), btd_( BetaTurnDetectionCOP( BetaTurnDetectionOP( new BetaTurnDetection ) ) ) {}
 
 BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & from ) :
-	FeaturesReporter(), btd_( new BetaTurnDetection( * from.btd_ ) ) {}
+	FeaturesReporter(), btd_( BetaTurnDetectionCOP( BetaTurnDetectionOP( new BetaTurnDetection( * from.btd_ ) ) ) ) {}
 
 BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() {}
 

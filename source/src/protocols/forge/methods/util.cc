@@ -488,7 +488,7 @@ fill_non_loop_cst_set(
 
 			for (core::Size ii = 1; ii <= i_rsd.nheavyatoms(); ++ii) {
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(0.0, coord_sdev) );
-				cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), fx ) ));
+				cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), fx ) ) ));
 			}
 		}
 	}
@@ -647,11 +647,11 @@ void cyclize_pose(core::pose::Pose & pose) {
   AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
 //  pose.remove_constraints();
   core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-  pose.add_constraint(scoring::constraints::ConstraintCOP( new AtomPairConstraint(a1,a2,fx1) ));
+  pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(a1,a2,fx1) ) ));
   core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-  pose.add_constraint(scoring::constraints::ConstraintCOP( new AtomPairConstraint(b1,b2,fx2) ));
+  pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(b1,b2,fx2) ) ));
   core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-  pose.add_constraint(scoring::constraints::ConstraintCOP( new AtomPairConstraint(c1,c2,fx3) ));
+  pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(c1,c2,fx3) ) ));
 }
 
 

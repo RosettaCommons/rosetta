@@ -200,7 +200,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 			// add CSTS
 			for (Size iatom = 1; iatom <= 4; ++iatom) {
-				ideal_pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint( AtomID(iatom,resid), AtomID(1,vrt_index), x_j, core::scoring::func::FuncOP( new BoundFunc(0.0,cst_width_,1.0,"") ) ) ) );
+				ideal_pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(iatom,resid), AtomID(1,vrt_index), x_j, core::scoring::func::FuncOP( new BoundFunc(0.0,cst_width_,1.0,"") ) ) ) ) );
 			}
 
 			com2 += x_j;

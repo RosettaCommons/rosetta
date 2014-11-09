@@ -328,11 +328,11 @@ void CanonicalSamplingMover::setup_constraints( core::pose::Pose & pose ){
       if( CA_dist < CA_cutoff ){
 		core::scoring::func::FuncOP f( new core::scoring::func::HarmonicFunc( CA_dist, cst_tol ) );
         pose.add_constraint(
-	      scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint(
+	      scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint(
 	        core::id::AtomID(pose.residue(itr_res_i).atom_index(" CA "),itr_res_i),
 	        core::id::AtomID(pose.residue(itr_res_j).atom_index(" CA "),itr_res_j),
 	        f
-	      ) )
+	      ) ) )
         );
       }
     }

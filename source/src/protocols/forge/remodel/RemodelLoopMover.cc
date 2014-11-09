@@ -1769,7 +1769,7 @@ void RemodelLoopMover::loophash_stage(
 							pose.set_omega( ires, omega[i]);
 						}
 
-						CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( new MoveMap( movemap ) ) );
+						CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
 						ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 						if(option[OptionKeys::remodel::repeat_structure].user()){
 							for ( Size i = 0; i < seg_length; i++){
@@ -2347,7 +2347,7 @@ void RemodelLoopMover::simultaneous_stage(
 				random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), numeric::random::rg() );
 				for ( Loops::const_iterator l = loops_to_model->begin(), le = loops_to_model->end(); l != le; ++l ) {
 					if ( !l->is_terminal( pose ) ) {
-						CCDLoopClosureMover ccd_mover( *l, core::kinematics::MoveMapCOP( new MoveMap( movemap ) ) );
+						CCDLoopClosureMover ccd_mover( *l, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
 						ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 						if(option[OptionKeys::remodel::repeat_structure].user()){
 							if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
@@ -2612,7 +2612,7 @@ void RemodelLoopMover::independent_stage(
 						}
 					}
 				} else { // ccd
-					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( new MoveMap( movemap ) ) );
+					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
 					ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 					if( option[ OptionKeys::remodel::repeat_structure ].user() ) {
 						if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
@@ -2870,7 +2870,7 @@ void RemodelLoopMover::boost_closure_stage(
 					}
 
 				} else { // ccd_move
-					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( new MoveMap( movemap ) ) );
+					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
 					ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 					if(option[OptionKeys::remodel::repeat_structure].user()){
 						if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {

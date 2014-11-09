@@ -130,7 +130,7 @@ SSShapeComplementarityFilter::parse_my_tag(
 {
 	std::string const bp_filename( tag->getOption< std::string >( "blueprint", "" ) );
 	if ( bp_filename != "" ) {
-		blueprint_ = protocols::jd2::parser::BluePrintCOP( new protocols::jd2::parser::BluePrint( bp_filename ) );
+		blueprint_ = protocols::jd2::parser::BluePrintCOP( protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( bp_filename ) ) );
 		if ( ! blueprint_ ) {
 			utility_exit_with_message( "Error reading blueprint file." );
 		}

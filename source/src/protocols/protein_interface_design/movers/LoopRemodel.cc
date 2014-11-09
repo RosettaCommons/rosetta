@@ -284,7 +284,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 						it->set_extended( true ); // set all loops to extended (needed for kinematic mover to really perturb)
 					}
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb( loops, lores_score_ );
-					perturb.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					perturb.apply( pose );
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
@@ -293,7 +293,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( loops, hires_score_ );
 					refine.set_redesign_loop( design() ); // design?
 					//if( task_factory() ) refine.set_task_factory( task_factory() ); // if we have a task factory set, then we should pass it to the loop mover
-					refine.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+					refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					pose.update_residue_neighbors();
 					refine.apply( pose );
 				}
@@ -321,7 +321,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					perturb.add_fragments( frag9_ );
 					//perturb.randomize_loop( true );
 					perturb.set_strict_loops( true );
-					perturb.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					perturb.apply( pose );
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
@@ -333,7 +333,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					refine.add_fragments( frag9_ );
 					refine.set_redesign_loop( design() );
 					//if( task_factory() ) refine.set_task_factory( task_factory() ); // if we have a task factory set, then we should pass it to the loop mover
-					refine.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+					refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					refine.apply( pose );
 				}
 			} // protocol == ccd
@@ -356,7 +356,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				remodel.add_fragments( frag1_ );
 				remodel.add_fragments( frag3_ );
 				remodel.add_fragments( frag9_ );
-				remodel.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+				remodel.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 				for( core::Size i = 1; i <= cycles_; ++i ) {
 					remodel.apply( pose );
 					if( (remodel.get_last_move_status() == protocols::moves::MS_SUCCESS) || (remodel.get_last_move_status() == protocols::moves::FAIL_DO_NOT_RETRY) ) break;
@@ -386,7 +386,7 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 	using namespace core::fragment;
 	using namespace protocols::loops;
 
-	LoopsCOP loops( new Loops( *loops_in ) );
+	LoopsCOP loops( LoopsOP( new Loops( *loops_in ) ) );
 	for( core::Size frag_length = 3; frag_length <= 9; frag_length+=6 ) { // frag3 and frag9
 		TR << "Finding " << frag_length <<"mer loop fragments..." << std::endl;
 		if( frag_length == 3 ) frag3_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
@@ -394,7 +394,7 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 
 		for( Loops::const_iterator it = loops->begin(); it != loops->end(); ++it ) {
 			// make a temporary loop/loops set to use in this scope
-			LoopCOP loop( new Loop(*it ) );
+			LoopCOP loop( LoopOP( new Loop(*it ) ) );
 			if( loop->size() < frag_length ) continue; // fragment extends past loop
 
 			for( core::Size i=loop->start(); i <= loop->stop() - frag_length; ++i ) {

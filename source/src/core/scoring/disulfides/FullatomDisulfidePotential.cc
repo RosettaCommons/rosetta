@@ -961,7 +961,7 @@ SG_Dist_Func::fa_ssdist_scores()
 	if(scores == 0) {
 		utility::io::izstream scores_stream;
 		basic::database::open( scores_stream, "scoring/score_functions/disulfides/fa_SS_distance_score");
-		scores = HistogramCOP<Real,Real>::Type( new Histogram<Real,Real>( scores_stream() ) );
+		scores = HistogramCOP<Real,Real>::Type( HistogramOP<Real, Real>::Type( new Histogram<Real,Real>( scores_stream() ) ) );
 		scores_stream.close();
 	}
 	return scores;
