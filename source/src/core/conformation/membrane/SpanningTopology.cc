@@ -103,8 +103,10 @@ SpanningTopology::operator=( SpanningTopology const & src ) {
 		return *this;
 	}
 	
-	// Otherwise, create a new object
-	return *( new SpanningTopology( *this ) );
+	// Deep Copy of the data
+    this->topology_ = src.topology_;
+    
+    return *this;
 	
 }
 

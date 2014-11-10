@@ -57,7 +57,31 @@ Span::Span( Size start, Size end ) :
     start_( start ),
     end_( end )
 {}
+    
+/// @brief Copy Consturctor
+/// @details Make a deep copy of this object
+Span::Span( Span const & src ) :
+    start_( src.start_ ),
+    end_( src.end_ )
+{}
 
+/// @brief Assignment Operator
+/// @details Make a deep copy of this object
+Span &
+Span::operator=( Span const & src ) {
+    
+    // Abort self-assignment.
+    if ( this == &src ) {
+        return *this;
+    }
+    
+    // Make a deep copy of everything
+    this->start_ = src.start_;
+    this->end_ = src.end_;
+    
+    return *this;
+}
+    
 /// @brief	Destructor
 Span::~Span(){}
 

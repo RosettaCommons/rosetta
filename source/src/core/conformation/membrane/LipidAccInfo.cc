@@ -114,7 +114,7 @@ LipidAccInfo::LipidAccInfo( std::string lipsfile ) {
 LipidAccInfo::LipidAccInfo( LipidAccInfo const & src ) :
 	utility::pointer::ReferenceCount()
 {
-	copy_data(src, *this);
+	copy_data(*this, src);
 }
 
 /// @brief Assignment Operator
@@ -127,8 +127,9 @@ LipidAccInfo::operator=( LipidAccInfo const & src ) {
 		return *this;
 	}
 	
-	// Otherwise, create a new object
-	return *( new LipidAccInfo( *this ) );
+    // Make a deep copy of data in this object
+    copy_data(*this, src);
+    return *this;
 	
 }
 

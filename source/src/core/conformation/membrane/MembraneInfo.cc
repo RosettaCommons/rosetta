@@ -147,9 +147,17 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	if ( this == &src ) {
 		return *this;
 	}
-	
-	// Otherwise, create a new object
-	return *( new MembraneInfo( *this ) );
+    
+    // Make a deep copy of everything
+    this->conformation_ = src.conformation_;
+    this->thickness_ = src.thickness_;
+    this->steepness_ = src.steepness_;
+    this->membrane_rsd_num_ = src.membrane_rsd_num_;
+    this->membrane_jump_ = src.membrane_jump_;
+    this->lipid_acc_data_ = src.lipid_acc_data_;
+    this->spanning_topology_ = src.spanning_topology_;
+    
+    return *this;
 }
 
 /// @brief Destructor

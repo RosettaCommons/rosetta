@@ -49,10 +49,12 @@ public: // constructors
 
 	/// @brief Copy Consturctor
 	/// @details Make a deep copy of this object
-	// Undefined, commenting out to fix PyRosetta build  Span( Span const & src );
+    Span( Span const & src );
 
 	/// @brief Assignment Operator
-	/// @details
+	/// @details Make a deep copy of this object
+    Span &
+    operator=( Span const & src );
 
 	/// @brief	Destructor
 	~Span();
