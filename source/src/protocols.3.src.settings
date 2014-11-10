@@ -304,6 +304,7 @@ sources = {
 		"SetMembranePositionMover",
 		"MembranePositionFromTopologyMover",
 		"RandomMembranePositionMover",
+		"metrics",
     ],
     "protocols/membrane/io": [
          "SpanFileOptions",

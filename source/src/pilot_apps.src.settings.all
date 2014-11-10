@@ -565,6 +565,7 @@ sources = {
 #		"membrane_docking",
 		"membrane_symdocking",
 		"view_membrane_protein",
+		#"trial_symdocking",
 	],
 	"pilot/mike" : [
 		"crossaln",
@@ -707,7 +708,6 @@ sources = {
 		"version_mpscorefxn",
 		"mp_rsd_energies",
 	],
-
 	"pilot/rayyrw" : [
 		#"replonly",
 		#"replonly_fa",

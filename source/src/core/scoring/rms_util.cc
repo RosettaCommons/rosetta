@@ -411,7 +411,7 @@ is_protein_backbone(
 		( rsd.has("N") && rsd.atom_index("N") == atomno ) ||
 		( rsd.has("C") && rsd.atom_index("C") == atomno );
 }
-
+    
 bool
 is_protein_backbone_including_O(
 	core::pose::Pose const & pose1,

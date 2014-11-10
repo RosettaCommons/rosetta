@@ -214,6 +214,7 @@ sources = {
 		"AddMembraneMover",
 		"SetMembranePositionMover",
 		"MembranePositionFromTopologyMover",
+                "membrane_metrics",
     ],
     "membrane/io" : [
         #"SpanFileLoader",
@@ -498,6 +499,9 @@ testinputfiles = [
 	"membrane/1C3W_TR_A.pdb",
 	"membrane/1C3W_A.span",
 	"membrane/1C3W_w_mem.span",
+    "membrane/1afo_in.pdb",
+    "membrane/1afo_decoy.pdb",
+    "membrane/1afo_tr.span",
 	"nonlocal/2GB3.pdb",
 	"nonlocal/alignment.filt",
 	"optimize_weights/1UAD.wt_complex.pdb",

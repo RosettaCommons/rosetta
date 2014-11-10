@@ -6,17 +6,23 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file   protocols/symmetric_docking/SymDockProtocol.cc
+/// @file     protocols/symmetric_docking/SymDockProtocol.cc
 ///
-/// @brief
+/// @brief    Symmetric Protein-Protein Docking Protocol
+/// @details  Dock symmetrical assemblies together - works with the symmetry
+///           framework in Rosetta 3. Also includes some options for working with
+///           membranes
+///           Last Modified: 10/25/14
+///
 /// @author Ingemar Andre
+/// @author Rebecca Alford (adding membranes & comments)
 
-
+// Unit Headers
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/symmetric_docking/SymSidechainMinMover.hh>
 #include <protocols/symmetric_docking/SymDockProtocolCreator.hh>
 
-////////////
+
 #include <protocols/jd2/ScoreMap.hh>
 #include <basic/options/option.hh>
 
@@ -24,7 +30,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -85,13 +91,13 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
+
 
 #include <basic/Tracer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <core/scoring/electron_density/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
+
 
 #include <core/import_pose/import_pose.hh>
 #include <protocols/jd2/Job.hh>
@@ -102,7 +108,7 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/prof.hh>
 
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+#include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
