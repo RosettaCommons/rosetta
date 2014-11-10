@@ -902,12 +902,12 @@ def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
     mode = 'pyrosetta_debug' if Options.debug else 'pyrosetta'
 
     if not Options.skip_scons_run:
-        if Platform == "macos" and PlatformBits=='32': execute("Building Rosetta libraries...", "cd %s && ./scons.py mode=%s arch=x86 arch_size=32 -j%s" % (mini_path, mode, Options.jobs) )
+        if Platform == "macos" and PlatformBits=='32': execute("Building Rosetta libraries...", "cd %s && ./scons.py extras= mode=%s arch=x86 arch_size=32 -j%s" % (mini_path, mode, Options.jobs) )
         elif Platform == "macos" and PlatformBits=='64':
             #with file(mini_path+'/tools/build/site.settings', 'w') as f: f.write(_mac_os_site_settings_template_.format( compiler = execute('Getting gcc path...', 'which gcc', return_='tuple')[1].split()[0] ))
-            execute("Building mini libraries...", "cd %s && ./scons.py cxx=gcc mode=%s -j%s" % (mini_path, mode, Options.jobs) )
-        elif Platform == "cygwin": execute("Building mini libraries...", "cd %s && ./scons.py mode=%s bin -j%s" % (mini_path, mode, Options.jobs) )
-        else: execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
+            execute("Building mini libraries...", "cd %s && ./scons.py cxx=gcc extras= mode=%s -j%s" % (mini_path, mode, Options.jobs) )
+        elif Platform == "cygwin": execute("Building mini libraries...", "cd %s && ./scons.py extras= mode=%s bin -j%s" % (mini_path, mode, Options.jobs) )
+        else: execute("Building mini libraries...", "cd %s && ./scons.py extras= mode=%s -j%s" % (mini_path, mode, Options.jobs) )
 
 
     #all_sources += [ mini_path + '/' + lib_path.replace('/src/', '/external/') + x + obj_suffix for x in extra_objs ]
