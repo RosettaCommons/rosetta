@@ -175,6 +175,8 @@ struct EtableParamsOnePair
 		fasol_cubic_poly_close_start(0.0),
 		fasol_cubic_poly_close_end(0.0),
 		fasol_cubic_poly_close_flat(0.0),
+		fasol_cubic_poly1_close_flat(0.0),
+		fasol_cubic_poly2_close_flat(0.0),
 		ljatr_final_weight(1.0),
 		fasol_final_weight(1.0)
 	{}
