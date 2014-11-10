@@ -14,6 +14,7 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_SuitePotential.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
 // Package Headers
 
@@ -72,7 +73,8 @@ namespace rna {
 
 RNA_SuitePotential::~RNA_SuitePotential() {}
 
-RNA_SuitePotential::RNA_SuitePotential( bool const calculate_suiteness_bonus /* = false */ ):
+RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
+																			  bool const calculate_suiteness_bonus /* = false */ ):
 	n_torsions_( 7 ),
 	inv_cov_( n_torsions_, n_torsions_ ),
 	offset_( 0.0 ),
@@ -84,7 +86,7 @@ RNA_SuitePotential::RNA_SuitePotential( bool const calculate_suiteness_bonus /* 
 
 	std::string path;
 	if ( calculate_suiteness_bonus_ ) {
-		path = "scoring/rna/suiteness_bonus/" +	option[ OptionKeys::score::suiteness_bonus ]() /* default is Richardson*/;
+		path = "scoring/rna/suiteness_bonus/" +	options.suiteness_bonus();
 	} else {
 		path = "scoring/rna/suite_potentials/" +	option[ OptionKeys::score::rna_suite_potential ]() /* default is Richardson*/;
 	}
@@ -229,7 +231,7 @@ void RNA_SuitePotential::eval_score(
 void RNA_SuitePotential::eval_suiteness_bonus(
 	utility::vector1<Real> const & torsions
 ) const {
-
+	runtime_assert( rna_suite_name_ != 0 );
 	pose::rna::RNA_SuiteAssignment assignment( rna_suite_name_->assign( torsions, deriv_ ) );
 
 	if ( !tags_.has_value( assignment.name ) ) return; // outlier

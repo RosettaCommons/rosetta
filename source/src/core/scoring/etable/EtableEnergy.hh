@@ -35,6 +35,11 @@ namespace core {
 namespace scoring {
 namespace etable {
 
+////////////////////////////////////////////////////////////////////
+//
+//  EtableEnergy class is actually defined in BaseEtableEnergy.hh!
+//
+////////////////////////////////////////////////////////////////////
 
 //////////////////// Evaluators ///////////////////////////////
 
@@ -91,6 +96,17 @@ public:
 		return hydrogen_interaction_cutoff2_;
 	}
 
+	// redundant with atom_pair_energy below, but I didn't want to screw up
+	// how things are optimized... rhiju, 2014.
+	virtual
+  void
+  pair_energy_H_v(
+    conformation::Atom const & atom1,
+    conformation::Atom const & atom2,
+    Real const weight,
+    EnergyMap & emap
+  ) const = 0;
+
 	virtual
 	void
 	atom_pair_energy_v(
@@ -103,6 +119,23 @@ public:
 		Real & d2
 	) const = 0;
 
+	// redundant with atom_pair_energy below, but I didn't want to screw up
+	// how things are optimized... rhiju, 2014.
+	void
+	atom_pair_energy_v(
+    conformation::Atom const & atom1,
+    conformation::Atom const & atom2,
+    Real const weight,
+		EnergyMap & emap,
+		Real & d2
+ ) const {
+		Real atr(0),rep(0),solv(0);
+		atom_pair_energy_v( atom1, atom2, weight, atr, rep, solv, d2 );
+		emap[st_atr()]+=atr;
+    emap[st_rep()]+=rep;
+    emap[st_sol()]+=solv;
+	}
+
 	virtual
 	void
 	atom_pair_lk_energy_and_deriv_v(
@@ -113,16 +146,28 @@ public:
 		bool const eval_deriv = false
 		) const = 0;
 
-    virtual
-    void
-    atom_pair_lk_energy_and_deriv_v_efficient(
-        conformation::Atom const & atom1,
-        conformation::Atom const & atom2,
-        Real & solE1,
-        Real & solE2,
-        Real & dsolE1,
-        bool const eval_deriv
-    ) const;
+	virtual
+	void
+	atom_pair_lk_energy_and_deriv_v_efficient(
+    conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real & solE1,
+		Real & solE2,
+		Real & dsolE1,
+		bool const eval_deriv
+	) const;
+
+	// redundant with atom_pair_energy below, but I didn't want to screw up
+	// how things are optimized... rhiju, 2014.
+	virtual
+	Real
+	eval_dE_dR_over_r_v(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		EnergyMap const & weights,
+		Vector & f1,
+		Vector & f2
+	) const = 0;
 
 private:
 
@@ -273,6 +318,18 @@ public:
 		Real & d2
 	) const;
 
+	virtual
+	void
+	pair_energy_H_v(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real const weight,
+		EnergyMap & emap
+	) const {
+		pair_energy_H( atom1, atom2, weight, emap );
+	}
+
+  virtual
   inline
   void
   pair_energy_H(
@@ -288,6 +345,18 @@ public:
     emap[ st_rep() ] += rep;
     emap[ st_sol() ] += sol;
   }
+
+	virtual
+	Real
+	eval_dE_dR_over_r_v(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		EnergyMap const & weights,
+		Vector & f1,
+		Vector & f2
+	) const {
+		return eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
+	}
 
 	inline
 	Real
@@ -499,6 +568,19 @@ public:
 		Real & d2
 	) const;
 
+	virtual
+	Real
+	eval_dE_dR_over_r_v(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		EnergyMap const & weights,
+		Vector & f1,
+		Vector & f2
+	) const {
+		return eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
+	}
+
+	virtual
 	inline
 	Real
 	eval_dE_dR_over_r(
@@ -560,6 +642,17 @@ public:
 		return sum_energies( atr, rep, solv );
 	}
 
+	virtual
+	void
+	pair_energy_H_v(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real const weight,
+		EnergyMap & emap
+	) const {
+		pair_energy_H( atom1, atom2, weight, emap );
+	}
+
 	inline
 	void
 	pair_energy_H(
@@ -576,6 +669,7 @@ public:
 		emap[ st_sol() ] += sol;
 	}
 
+	virtual
 	inline
 	void
 	pair_energy_H(
@@ -630,7 +724,8 @@ public:
 	/// @brief construction with an etable
 	TableLookupEtableEnergy(
 		Etable const & etable_in,
-		methods::EnergyMethodOptions const & options
+		methods::EnergyMethodOptions const & options,
+		bool const do_classic_intrares = false
 	);
 
 	/// @brief explicit copy constructor
@@ -706,7 +801,8 @@ public:
 	/// @brief construction with an etable
 	AnalyticEtableEnergy(
 		Etable const & etable_in,
-		methods::EnergyMethodOptions const & options
+		methods::EnergyMethodOptions const & options,
+		bool const do_classic_intrares = false
 	);
 
 	/// @brief explicit copy constructor
@@ -769,90 +865,6 @@ private:
 
 };
 
-
-/*class EtableEnergyEvaluator
-{
-public:
-	// default ctor -- set inter-residue score types
-	EtableEnergyEvaluator( EtableEnergy const & etable_energy ) :
-		etable_energy_( etable_energy ),
-		st_atr_( fa_atr ),
-		st_rep_( fa_rep ),
-		st_sol_( fa_sol )
-	{}
-
-	// switch to intra-res mode
-	void set_intrares() {
-		st_atr_ = fa_intra_atr;
-		st_rep_ = fa_intra_rep;
-		st_sol_ = fa_intra_sol;
-	}
-
-public:
-
-	Real
-	hydrogen_interaction_cutoff2() const {
-		return etable_energy_.hydrogen_interaction_cutoff2();
-	}
-
-	void
-	pair_energy_H(
-		Atom const & at1,
-		Atom const & at2,
-		Real const & cp_weight,
-		EnergyMap & emap
-	) const;
-
-	void
-	atom_pair_energy(
-		Atom const & at1,
-		Atom const & at2,
-		Real const & cp_weight,
-		EnergyMap & emap,
-		Real & dsq
-	) const;
-
-
-private:
-	EtableEnergy const & etable_energy_;
-	ScoreType st_atr_;
-	ScoreType st_rep_;
-	ScoreType st_sol_;
-};*/
-
-///////////////////////////////////////////////////////////////////////////////
-// inline methods
-///////////////////////////////////////////////////////////////////////////////
-
-/// @brief decide between intra and interresidue score terms.  Pseudo polymorphic call
-/// from base class
-//inline
-//void
-//TableLookupEtableEnergy::derived_prepare_for_residue_pair(
-//	Size const res1,
-//	Size const res2,
-//	pose::Pose const &
-//) const {
-//
-//	if ( res1 == res2 ) {
-//		if ( using_interres_scoretypes_ ) {
-//			//std::cout << "setting intaresidue scoretypes for residue " << res1 << std::endl;
-//			//set_scoretypes( fa_intra_atr, fa_intra_rep, fa_intra_sol );
-//			etable_evaluator()->set_scoretypes( fa_intra_atr, fa_intra_rep, fa_intra_sol );
-//			using_interres_scoretypes_ = false;
-//		}
-//		assert( etable_evaluator()->st_rep() == fa_intra_rep );
-//	} else {
-//		if ( ! using_interres_scoretypes_ ) {
-//			//std::cout << "setting interresidue scoretypes for residue pair " << res1 << " & " << res2 << std::endl;
-//			//set_scoretypes( fa_atr, fa_rep, fa_sol );
-//			etable_evaluator()->set_scoretypes( fa_atr, fa_rep, fa_sol );
-//			using_interres_scoretypes_ = true;
-//		}
-//		assert( etable_evaluator()->st_rep() == fa_rep );
-//	}
-//
-//}
 
 // TableLookupEvaluator's inline methods
 inline

@@ -18,6 +18,8 @@
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -50,7 +52,8 @@ RNA_BulgeEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_BulgeEnergy::RNA_BulgeEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RNA_BulgeEnergyCreator ) )
+	parent( methods::EnergyMethodCreatorOP( new RNA_BulgeEnergyCreator ) ),
+	bulge_bonus_( -10.0 ) /*Totally made up for now*/
 {}
 
 RNA_BulgeEnergy::~RNA_BulgeEnergy() {}
@@ -75,20 +78,41 @@ RNA_BulgeEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-	static Real const bulge_bonus = -10.0 /*Totally made up for now*/;
 
 	if ( !rsd.is_RNA() ) return;
 
 	if ( rsd.has_variant_type( chemical::BULGE ) ){
-		emap[ rna_bulge ] += bulge_bonus;
+		emap[ rna_bulge ] += bulge_bonus_;
 	}
 
 	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ){
-		emap[ rna_bulge ] += bulge_bonus;
+		emap[ rna_bulge ] += bulge_bonus_;
 	}
 
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+void
+RNA_BulgeEnergy::finalize_total_energy(
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
+) const {
+
+	using namespace core::pose::full_model_info;
+
+	// This allows new stepwise monte carlo to encapsulate the physics
+	//  modeled in Parin's rna_bulge term. SWM no longer uses VIRTUAL_RNA_RESIDUE or BULGE
+	//  variant types, but does have  a full_model_info object that tracks all residues that
+	//  need to be built ("missing").
+	if ( full_model_info_defined( pose ) ) {
+		Size nmissing = get_number_missing_residues_and_connections( pose );
+		totals[ rna_bulge ] += bulge_bonus_ * nmissing;
+	}
+
+}
 
 /// @brief RNA_BulgeEnergy is context independent; indicates that no context graphs are required
 void
@@ -100,7 +124,7 @@ RNA_BulgeEnergy::indicate_required_context_graphs(
 core::Size
 RNA_BulgeEnergy::version() const
 {
-	return 1; // Initial versioning
+	return 2; // Adding full_model_info.
 }
 
 

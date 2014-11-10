@@ -40,12 +40,18 @@ enum ScoreType {
 	fa_atr = 1, //enumeration starts at 1 for indexing utility::vector1
 	fa_rep,
 	fa_sol,
-	fa_intra_atr,
+	fa_intra_atr, // crossover 3: intra between torsion-connected atoms is computed. 'classic'
 	fa_intra_rep,
 	fa_intra_sol,
-	fa_intra_RNA_base_phos_atr, //RNA specific score term
-	fa_intra_RNA_base_phos_rep, //RNA specific score term
-	fa_intra_RNA_base_phos_sol, //RNA specific score term
+  fa_intra_atr_xover4, // crossover 4: intra between torsion-connected atoms not computed
+  fa_intra_rep_xover4,
+  fa_intra_sol_xover4,
+	fa_intra_RNA_base_phos_atr, //RNA specific score term -- to be deprecated in late 2015
+	fa_intra_RNA_base_phos_rep, //RNA specific score term -- to be deprecated in late 2015
+	fa_intra_RNA_base_phos_sol, //RNA specific score term -- to be deprecated in late 2015
+	fa_atr_dummy, // used in fa_intra 'classic' calculations
+	fa_rep_dummy,
+	fa_sol_dummy,
 	lk_hack,
 	lk_ball,
 	lk_ball_wtd,
@@ -64,8 +70,8 @@ enum ScoreType {
 	lk_costheta,
 	lk_polar,
 	lk_nonpolar,
-	lk_polar_intra_RNA,    //RNA specific score term
-	lk_nonpolar_intra_RNA, //RNA specific score term
+	lk_polar_intra_RNA,    //RNA specific score term -- to be deprecated in late 2015
+	lk_nonpolar_intra_RNA, //RNA specific score term -- to be deprecated in late 2015
 //	csd_torsion, //commenting out until it is implemented
 	fa_elec,
 	fa_elec_bb_bb,
@@ -172,9 +178,13 @@ enum ScoreType {
 	rna_jr_suite,			 // RNA suite torsional potential based on distance to closest suite, hard-coded in RNA_SuiteName
 	suiteness_bonus,	 // Energy bonuses for suites specified in a file; suite centers hard-coded in RNA_SuiteName
 	rna_sugar_close,   // constraints to keep RNA sugar closed, and with reasonably ideal geometry
-	fa_stack,          // stacking interaction modeled as pairwise atom-atom interactions
-	fa_stack_aro,
-	stack_elec,          // distance dependent dielectric between base atoms (attenuated parallel to plane)
+
+	fa_stack,          // extra nucleobase stacking interaction modeled as pairwise orientation-dependent atom-atom interactions
+	fa_stack_lower,    // just lower residue, used by free_base entropy estimator
+	fa_stack_upper,    // just upper residue, used by free_base entropy estimator
+	fa_stack_aro,      // just component where occluding atom is aromatic.
+
+	stack_elec,        // distance dependent dielectric between base atoms (attenuated parallel to plane)
 	stack_elec_base_base,
 	stack_elec_base_bb,
 
@@ -184,7 +194,7 @@ enum ScoreType {
 	dna_base_distance,
 
 	geom_sol_fast,           //Context independent version. Currently tested only for RNA case.
-	geom_sol_fast_intra_RNA, //RNA specific score term
+	geom_sol_fast_intra_RNA, //RNA specific score term -- to be deprecated in late 2015.
 
 
 	fa_cust_pair_dist,  // custom short range 2b
@@ -225,7 +235,8 @@ enum ScoreType {
 	hbond_sr_bb_sc,
 	hbond_lr_bb_sc,
 	hbond_sc,
-	hbond_intra,           //Currently effects only RNA
+	hbond_intra,  //Currently affects only RNA & ligands, but can be turned on for protein, DNA.
+	hbond, // all hbonds summed together with same weight.
 
 	#ifdef PYROSETTA
 		PyRosettaTwoBodyContextDependentEnergy_first,
@@ -237,7 +248,7 @@ enum ScoreType {
 
 	// Geometric solvation
 	geom_sol,
-	geom_sol_intra_RNA,    //RNA specific score term
+	geom_sol_intra_RNA, //RNA specific score term -- to be deprecated soon
 	occ_sol_fitted,
 	occ_sol_fitted_onebody,
 	occ_sol_exact,
@@ -257,13 +268,6 @@ enum ScoreType {
 	//RNA stuff
 	//Low resolution
 	rna_rg,           // Radius of gyration for RNA
-
-	// nucleotide resolution thermodynamics
-	loop_close,  // Loop closure terms -- attempting model full RNA folding free energy
-	missing_res, // Score term penalizing missing residues in loop closure calculations
-	bulge_bonus, // Score term that gives a score bonus to residues with 0 hydrogen bonds to compensate for neglecting their entropy
-	num_hbonds, // Score term that counts the number of residues participating in at least k hydrogen bonds
-	num_stacks, // Score term that counts the number of residues participating in at least k base-base stacking interactions
 
 	//  FACTS solvation model
 	facts_elec,
@@ -340,13 +344,18 @@ enum ScoreType {
 	e_pH,
 	rna_bulge,
   mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
-	free_suite, // bonus for virtualizing RNA suite
-	free_2HOprime, // bonus for virtualizing RNA 2'-OH
-	free_side_chain, // bonus for virtualizing protein side-chain
-	intermol, // cost of instantiating a chain form 1 M std state.
-	special_rot,
 
+	// various entropy terms that look at entire pose (and other poses too )
+	free_suite,      // bonus for virtualizing RNA suite
+	free_2HOprime,   // bonus for virtualizing RNA 2'-OH
+	free_side_chain, // bonus for virtualizing protein side-chain
+  free_base, // bonus for not stacking or h-bonding to nucleobase
+	free_res,  // knowledge-based bonus for noninstantiated residues -- favors, e.g., U bulges.
+	free_dof,  // combines all free_* bonuses into one term.
+	intermol,  // cost of instantiating a chain from 1 M std state.
 	other_pose, // in preparation for multi-pose stuff.
+
+	special_rot,
 
 	// PB potential
 	PB_elec,
@@ -375,6 +384,10 @@ enum ScoreType {
 	sheet,
 	burial, // informatic burial prediction
 	abego,  // informatic torsion-bin prediction
+
+	// nucleotide resolution thermodynamics
+	loop_close,  // Loop closure terms -- attempting model full folding free energy for multiple loop-connected poses
+	missing_res, // penalize missing loops
 
 	/// Membrane Framework Whole Structure Energies
 	/// centroid - added by @ralford 3/30/14

@@ -83,12 +83,12 @@ ContextIndependentGeometricSolEnergyCreator::score_types_for_method() const {
 ///@brief copy c-tor
 ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts) :
 	parent( methods::EnergyMethodCreatorOP( new ContextIndependentGeometricSolEnergyCreator ) ),
-	options_( methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( opts ) ) ),
+	options_( opts ),
 	evaluator_( GeometricSolEnergyEvaluatorOP( new GeometricSolEnergyEvaluator( opts ) ) ),
   precalculated_bb_bb_energy_(0.0f),
 	using_extended_method_(false)
 {
-	if ( options_->hbond_options().use_hb_env_dep() ) {
+	if ( options_.hbond_options().use_hb_env_dep() ) {
 		utility_exit_with_message( "Environment dependent hydrogen bonds are not compatible with geom_sol_fast. You can turn off hydrogen-bond environment dependence (e.g., with NO_HB_ENV_DEP in score file), and protein & RNA structure prediction won't get worse! (Or if you insist on using environment dependence, use geom_sol instead of geom_sol_fast.)" );
 	}
 }
@@ -96,7 +96,7 @@ ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( meth
 /// copy ctor
 ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( ContextIndependentGeometricSolEnergy const & src ):
 	ContextIndependentTwoBodyEnergy( src ),
-	options_( methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( *src.options_ ) ) ),
+	options_( src.options_ ),
 	evaluator_( src.evaluator_ ),
 	precalculated_bb_bb_energy_(src.precalculated_bb_bb_energy_),
 	using_extended_method_(src.using_extended_method_)
@@ -242,7 +242,8 @@ ContextIndependentGeometricSolEnergy::eval_intrares_derivatives(
 ) const
 {
 	if ( !defines_intrares_energy( weights ) ) return;
-	evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol_fast_intra_RNA ], atom_derivs);
+	evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol_fast_intra_RNA ], atom_derivs, true /*just_RNA*/ );
+	if ( options_.put_intra_into_total() ) evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol_fast ], atom_derivs, false /*just_RNA*/ );
 }
 
 ////////////////////////////////////////////////////
@@ -338,10 +339,11 @@ ContextIndependentGeometricSolEnergy::atomic_interaction_cutoff() const
 
 ///////////////////////////////////////////////////////////////////////////////////////
 bool
-ContextIndependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const & weights ) const
+ContextIndependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const &  ) const
 {
 	//Change to this on Feb 06, 2012. Ensure that the function returns false if weights[geom_sol_intra_RNA] == 0.0
-	return ( weights[geom_sol_fast_intra_RNA] > 0.0 );
+	//	return ( weights[geom_sol_fast_intra_RNA] > 0.0 || options_.include_intra() );
+	return true; // always calculate.
 }
 
 
@@ -357,7 +359,7 @@ ContextIndependentGeometricSolEnergy::eval_intrares_energy(
 	EnergyMap emap_local;
 	evaluator_->eval_intrares_energy( rsd, pose, scorefxn, emap_local );
 	emap[ geom_sol_fast_intra_RNA ] += emap_local[ geom_sol_intra_RNA ];
-
+	emap[ geom_sol_fast ]           += emap_local[ geom_sol ];
 }
 
 ///@brief ContextIndependentGeometricSolEnergy is not context sensitive, of course.

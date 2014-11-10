@@ -38,7 +38,6 @@ namespace kinematic_closure {
 namespace radians {
 
 using namespace std;
-using std::abs;
 using numeric::constants::r::pi;
 
 void triangle ( // {{{1

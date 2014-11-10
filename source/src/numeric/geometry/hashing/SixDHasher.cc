@@ -298,7 +298,7 @@ numeric::Size SixDOffsetTree::sum_radius( SBin6D & input, numeric::Size range ){
 		return 1000;
 	}
 	for( Size i = 1; i<= range; i++ ){
-		radius += abs(input[i]);
+		radius += std::abs(input[i]);
 	}
 	return radius;
 }

@@ -7,27 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/rna/data/RNA_ChemicalMappingEnergy.hh
-/// @brief
+/// @file core/scoring/methods/FreeDOF_Options.fwd.hh
+/// @brief 
+/// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
-#ifndef INCLUDED_core_scoring_rna_RNA_ChemicalMappingEnergy_fwd_hh
-#define INCLUDED_core_scoring_rna_RNA_ChemicalMappingEnergy_fwd_hh
+
+#ifndef INCLUDED_core_scoring_methods_FreeDOF_Options_FWD_HH
+#define INCLUDED_core_scoring_methods_FreeDOF_Options_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
-namespace rna {
-namespace data {
+namespace methods {
+	
+	class FreeDOF_Options;
+	typedef utility::pointer::shared_ptr< FreeDOF_Options > FreeDOF_OptionsOP;
+	typedef utility::pointer::shared_ptr< FreeDOF_Options const > FreeDOF_OptionsCOP;
+	
+} //methods 
+} //scoring 
+} //core 
 
-	class RNA_ChemicalMappingEnergy;
-	typedef utility::pointer::shared_ptr< RNA_ChemicalMappingEnergy > RNA_ChemicalMappingEnergyOP;
-	typedef utility::pointer::shared_ptr< RNA_ChemicalMappingEnergy const > RNA_ChemicalMappingEnergyCOP;
-
-} //data
-} //rna
-} //scoring
-} //core
-
-#endif // INCLUDED_core_scoring_ScoreFunction_HH
+#endif

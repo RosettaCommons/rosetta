@@ -16,6 +16,7 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -39,7 +40,9 @@ namespace rna {
 class RNA_SuitePotential : public utility::pointer::ReferenceCount {
 
 public:
-	RNA_SuitePotential( bool const calculate_suiteness_bonus = false );
+
+	RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
+											bool const calculate_suiteness_bonus = false );
 
 	virtual ~RNA_SuitePotential();
 

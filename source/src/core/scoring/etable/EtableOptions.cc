@@ -36,9 +36,10 @@ EtableOptions::EtableOptions() :
 	bins_per_A2( 20 ),
 	Wradius( 1.0 ),
 	lj_switch_dis2sigma( 0.6 ),
-	disable_polar_desolvation( false ),
+	no_lk_polar_desolvation( false ),
 	lj_hbond_OH_donor_dis(3.0),
-	lj_hbond_hdis(1.95)
+	lj_hbond_hdis(1.95),
+	enlarge_h_lj_wdepth(false)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -48,7 +49,7 @@ EtableOptions::EtableOptions() :
 		max_dis = 5.5;
 	}
 	if ( option[ score::no_lk_polar_desolvation ] ) {
-		disable_polar_desolvation = false;
+		no_lk_polar_desolvation = false;
 	}
 
 	lj_hbond_OH_donor_dis = option[ corrections::score::lj_hbond_OH_donor_dis ];
@@ -72,9 +73,10 @@ EtableOptions::operator=( EtableOptions const & src )
 	bins_per_A2 = src.bins_per_A2;
 	Wradius = src.Wradius;
 	lj_switch_dis2sigma = src.lj_switch_dis2sigma;
-	disable_polar_desolvation = src.disable_polar_desolvation;
+	no_lk_polar_desolvation = src.no_lk_polar_desolvation;
 	lj_hbond_OH_donor_dis = src.lj_hbond_OH_donor_dis;
 	lj_hbond_hdis = src.lj_hbond_hdis;
+	enlarge_h_lj_wdepth = src.enlarge_h_lj_wdepth;
 	return *this;
 }
 
@@ -85,9 +87,33 @@ operator==( EtableOptions const & a, EtableOptions const & b )
 					( a.bins_per_A2 == b.bins_per_A2 ) &&
 					( a.Wradius == b.Wradius ) &&
 					( a.lj_switch_dis2sigma == b.lj_switch_dis2sigma ) &&
-					( a.disable_polar_desolvation == b.disable_polar_desolvation ) &&
+					( a.no_lk_polar_desolvation == b.no_lk_polar_desolvation ) &&
 					( a.lj_hbond_OH_donor_dis == b.lj_hbond_OH_donor_dis ) &&
-					( a.lj_hbond_hdis == b.lj_hbond_hdis ) );
+					( a.lj_hbond_hdis == b.lj_hbond_hdis ) &&
+					( a.enlarge_h_lj_wdepth == b.enlarge_h_lj_wdepth ) ) ;
+}
+
+
+////////////////////////////
+std::ostream &
+operator<< ( std::ostream & out, const EtableOptions & options ){
+	options.show( out );
+	return out;
+}
+
+
+///
+void
+EtableOptions::show( std::ostream & out ) const
+{
+	out <<"EtableOptions::max_dis: " << max_dis << std::endl;
+	out <<"EtableOptions::bins_per_A2: " << bins_per_A2 << std::endl;
+	out <<"EtableOptions::Wradius: " << Wradius << std::endl;
+	out <<"EtableOptions::lj_switch_dis2sigma: " << lj_switch_dis2sigma << std::endl;
+	out <<"EtableOptions::no_lk_polar_desolvation: " << no_lk_polar_desolvation << std::endl;
+	out <<"EtableOptions::lj_hbond_OH_donor_dis: " << lj_hbond_OH_donor_dis << std::endl;
+	out <<"EtableOptions::lj_hbond_hdis: " << lj_hbond_hdis << std::endl;
+	out <<"EtableOptions::enlarge_h_lj_wdepth: " << enlarge_h_lj_wdepth << std::endl;
 }
 
 void

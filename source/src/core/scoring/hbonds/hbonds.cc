@@ -83,28 +83,6 @@ static thread_local basic::Tracer tr( "core.scoring.hbonds.hbonds" );
 	WARNING WARNING WARNING
 **/
 
-///////////////////////////////////////////////////
-void
-fill_intra_res_hbond_set(
-	pose::Pose const & pose,
-	bool const calculate_derivative,
-	HBondSet & hbond_set)
-{
-
-	HBondDatabase const & database( * HBondDatabase::get_database(hbond_set.hbond_options().params_database_tag()));
-
-
-	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
-		conformation::Residue const & rsd1( pose.residue( res1 ) );
-
-		if(rsd1.is_RNA()==false) continue;
-
-  		identify_intra_res_hbonds( database, rsd1, calculate_derivative, hbond_set);
-
-	}
-
-}
-///////////////////////////////////////////////////
 
 void
 fill_hbond_set(
@@ -204,13 +182,45 @@ fill_hbond_set(
 		}
 	} // res1
 
+	fill_intra_res_hbond_set( pose, calculate_derivative, hbond_set,
+														exclude_bb, exclude_bsc, exclude_scb, exclude_sc ); // don't worry, will skip proteins.
+}
 
-	if(hbond_set.hbond_options().include_intra_res_RNA()){ //Note that we are neglecting exclude_bsc and exclude_scb options here!
-		fill_intra_res_hbond_set(pose, calculate_derivative, hbond_set);
+///////////////////////////////////////////////////
+bool
+calculate_intra_res_hbonds( conformation::Residue const & rsd,
+														HBondOptions const & options ) {
+	if ( rsd.is_protein() && options.exclude_intra_res_protein() /* default true */ ) return false;
+	if ( rsd.is_DNA() && options.exclude_DNA_DNA() /* default true */ ) return false;
+	if ( rsd.is_RNA() && options.exclude_intra_res_RNA() /* default false */ ) return false;
+	return true;
+}
+
+///////////////////////////////////////////////////
+void
+fill_intra_res_hbond_set(
+	pose::Pose const & pose,
+	bool const calculate_derivative,
+	HBondSet & hbond_set,
+	bool const exclude_bb  /* default false */,
+	bool const exclude_bsc /* default false */,
+	bool const exclude_scb /* default false */,
+	bool const exclude_sc  /* default false */
+)
+{
+
+	HBondDatabase const & database( * HBondDatabase::get_database(hbond_set.hbond_options().params_database_tag()));
+	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
+
+	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+		conformation::Residue const & rsd1( pose.residue( res1 ) );
+		if ( !calculate_intra_res_hbonds( rsd1, hbond_set.hbond_options() ) ) continue;
+		Size const rsd_nb = tenA_neighbor_graph.get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
+		identify_intra_res_hbonds( database, rsd1, rsd_nb, calculate_derivative, hbond_set,
+															 exclude_bb, exclude_bsc, exclude_scb, exclude_sc );
 	}
 
 }
-
 
 
 core::Real
@@ -276,7 +286,7 @@ fill_hbond_set_by_AHdist_threshold(
 	// loop over all nbr-pairs
 	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
 		core::conformation::Residue const & rsd1( pose.residue( res1 ) );
-		int const nb1 = tenA_neighbor_graph.get_node( res1 )->num_neighbors_counting_self_static();
+		int const nb1 = tenA_neighbor_graph.get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
 
 		for ( graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(res1)->const_upper_edge_list_begin(),
@@ -296,37 +306,6 @@ fill_hbond_set_by_AHdist_threshold(
 	}
 
 }
-
-/// @brief  Get the f1 and f2 contributions from all hbonds involving this atom
-/*void
-get_atom_hbond_derivative(
-	id::AtomID const & atom,
-	HBondSet const & hbond_set,
-	EnergyMap const & weights,
-	Vector & f1,
-	Vector & f2
-){
-	f1 = Vector(0.0);
-	f2 = Vector(0.0);
-
-	utility::vector1< HBondCOP > const & hbonds
-		( hbond_set.atom_hbonds( atom ) );
-
-	for ( Size i=1; i<= hbonds.size(); ++i ) {
-		HBond const & hbond( *hbonds[ i ] );
-		Real sign_factor( 0.0 );
-		if ( hbond.atom_is_donorH( atom ) ) sign_factor = 1.0;
-		else {
-			assert( hbond.atom_is_acceptor( atom ) );
-			sign_factor = -1;
-		}
-		// get the appropriate type of hbond weight
-		Real const weight(sign_factor * hbond.weight() * hb_eval_type_weight(hbond.eval_type(), weights));
-		f1 += weight * hbond.deriv().first;
-		f2 += weight * hbond.deriv().second;
-
-	}
-}*/
 
 
 /// @details identify_hbonds_1way is overloaded to either add HBond objects to
@@ -388,7 +367,7 @@ identify_hbonds_1way(
 				}
 			}
 
-			// rough filter for existance of hydrogen bond
+			// rough filter for existence of hydrogen bond
 			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
 			Real unweighted_energy( 0.0 );
@@ -508,6 +487,7 @@ identify_hbonds_1way(
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
+			emap[hbond] += hbE;
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 			case hbw_NONE:
 			case hbw_SR_BB:
@@ -594,7 +574,7 @@ identify_hbonds_1way(
 				}
 			}
 
-			// rough filter for existance of hydrogen bond
+			// rough filter for existence of hydrogen bond
 			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
 			Real unweighted_energy( 0.0 );
@@ -624,6 +604,7 @@ identify_hbonds_1way(
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
+			emap[hbond] += hbE;
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 				case hbw_NONE:
 				case hbw_SR_BB:
@@ -700,44 +681,57 @@ void
 identify_intra_res_hbonds(
 	HBondDatabase const & database,
 	conformation::Residue const & rsd,
+	Size const rsd_nb,
 	bool const evaluate_derivative,
-	HBondSet & hbond_set
+	HBondSet & hbond_set,
+	bool const exclude_bb,  /* exclude if acc=bb and don=bb */
+	bool const exclude_bsc, /* exclude if acc=bb and don=sc */
+	bool const exclude_scb, /* exclude if acc=sc and don=bb */
+	bool const exclude_sc  /* exclude if acc=sc and don=sc */
 )
 {
-
-	if(rsd.is_RNA()==false) return;
-
-	if(hbond_set.hbond_options().include_intra_res_RNA()==false) return;
+	runtime_assert( calculate_intra_res_hbonds( rsd, hbond_set.hbond_options() ) );
 
 	// <f1,f2> -- derivative vectors
-	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
 	HBondDerivs derivs;
 
-	//Assume use_hb_env_dep==False!
-	//Right now RNA specific. Include only hydrogen bonds between the base and the phosphate. June 22, 2011 Parin S.
-	//Since there is no DONOR on the phosphate, this means that datm needs to be on the base and the aatm is on the phosphate
+	for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+		Size const hatm( *hnum );
+		Size const datm(rsd.atom_base(hatm));
+		bool datm_is_bb = rsd.atom_is_backbone(datm);
+		if (datm_is_bb){
+			if (exclude_bb && exclude_scb) continue;
+		} else {
+			if (exclude_sc && exclude_bsc) continue;
+		}
 
-	for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+		for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 
-		Size const aatm( *anum );
-		int const base ( rsd.atom_base( aatm ) ); //"base" does not refer to RNA base here!
-		int const base2( rsd.abase2( aatm ) );
-		assert( base2 > 0 && base != base2 );
+			Size const aatm( *anum );
+			int const base ( rsd.atom_base( aatm ) ); //"base" does not refer to RNA base here!
+			int const base2( rsd.abase2( aatm ) );
+			runtime_assert( base2 > 0 && base != base2 );
 
-		if ( !rsd.RNA_type().atom_is_phosphate( aatm ) ) continue;
+			if (rsd.atom_is_backbone(aatm)){
+				if (datm_is_bb){
+					if (exclude_bb) continue;
+				} else {
+					if (exclude_bsc) continue;
+				}
+			} else {
+				if (datm_is_bb){
+					if (exclude_scb) continue;
+				} else {
+					if (exclude_sc) continue;
+				}
+			}
 
-		for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-			Size const hatm( *hnum );
-			Size const datm(rsd.atom_base(hatm));
-
-			if( !rsd.RNA_type().is_RNA_base_atom( datm ) ) continue;
-
-			if( rsd.path_distance( aatm, datm ) < 4) utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
+			if( rsd.path_distance( aatm, datm ) < 4) continue; //utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
 
 			Vector const & hatm_xyz( rsd.atom(hatm).xyz());
 			Vector const & datm_xyz( rsd.atom(datm).xyz());
 
-			// rough filter for existance of hydrogen bond
+			// rough filter for existence of hydrogen bond
 			if ( hatm_xyz.distance_squared( rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
 			Real unweighted_energy( 0.0 );
@@ -753,9 +747,11 @@ identify_intra_res_hbonds(
 
 			if (unweighted_energy >= MAX_HB_ENERGY) continue;
 
-			Real environmental_weight=1;
+			Real environmental_weight
+				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
+					get_environment_dependent_weight(hbe_type, rsd_nb, rsd_nb, hbond_set.hbond_options()));
 
-			// now we have identified a hbond -> upt it into the hbond_set//////
+			// now we have identified a hbond -> put it into the hbond_set//////
 			hbond_set.append_hbond( hatm, rsd, aatm, rsd, hbe_type, unweighted_energy, environmental_weight, derivs );
 			///
 
@@ -764,70 +760,29 @@ identify_intra_res_hbonds(
 }
 
 
-
+// Note: in other places calculating hbond_1way, code is duplicated for performance reasons.
+//  This loop is not going to be time-critical, so decided to wrap it around the HBondSet setting code,
+//  to avoid copying code yet again. --rhiju
 void
 identify_intra_res_hbonds(
 	HBondDatabase const & database,
 	conformation::Residue const & rsd,
-	bool const evaluate_derivative,
+	Size const rsd_nb,
 	HBondOptions const & options,
 	EnergyMap & emap){
 
-	if(rsd.is_RNA()==false) return;
-
-	if(options.include_intra_res_RNA()==false) return;
-
-  // <f1,f2> -- derivative vectors
-  //std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
-	HBondDerivs derivs;
-
-	//Assume use_hb_env_dep==False!
-	//Right now RNA specific. Include only hydrogen bonds between the base and the phosphate. June 22, 2011 Parin S.
-	//Since there is no DONOR on the phosphate, this means that datm needs to be on the base and the aatm is on the phosphate
-
-	for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
-    Size const aatm( *anum );
-    int const base ( rsd.atom_base( aatm ) ); //"base" does not refer to RNA base here!
-    int const base2( rsd.abase2( aatm ) );
-    assert( base2 > 0 && base != base2 );
-
-		if( rsd.RNA_type().atom_is_phosphate(aatm)==false) continue;
-
-	  for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		  Size const hatm( *hnum );
-		  Size const datm(rsd.atom_base(hatm));
-
-			if( rsd.RNA_type().is_RNA_base_atom( datm )==false ) continue;
-			if( rsd.path_distance( aatm, datm ) < 4) utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
-
-		  Vector const & hatm_xyz( rsd.atom(hatm).xyz());
-		  Vector const & datm_xyz( rsd.atom(datm).xyz());
-
-      // rough filter for existance of hydrogen bond
-      if ( hatm_xyz.distance_squared( rsd.xyz( aatm ) ) > MAX_R2 ) continue;
-
-      Real unweighted_energy( 0.0 );
-
-      HBEvalTuple hbe_type( datm, rsd, aatm, rsd);
-
-			hb_energy_deriv( database, options,
-				hbe_type, datm_xyz, hatm_xyz,
-				rsd.atom(aatm ).xyz(),
-				rsd.atom(base ).xyz(),
-				rsd.atom(base2).xyz(),
-				unweighted_energy, evaluate_derivative, derivs);
-
-      if (unweighted_energy >= MAX_HB_ENERGY) continue;
-
-      Real environmental_weight=1;
-
-			Real hbE = unweighted_energy * environmental_weight;
-
-			emap[hbond_intra] += hbE;
-
-  		} // loop over donors
-  } // loop over acceptors
+	runtime_assert( calculate_intra_res_hbonds( rsd, options ) );
+	HBondSet hbond_set( options );
+	identify_intra_res_hbonds( database, rsd, rsd_nb, false /*evaluate_derivative*/, hbond_set );
+	for ( Size n = 1; n <= hbond_set.nhbonds(); n++ ){
+		HBond const & hbond_ =	hbond_set.hbond( n );
+		Real const weighted_energy = hbond_.energy() * hbond_.weight();
+		if ( options.put_intra_into_total() ) {
+			emap[ hbond ]       += weighted_energy;
+		} else {
+			emap[ hbond_intra ] += weighted_energy;
+		}
+	}
 }
 
 
@@ -889,7 +844,7 @@ identify_hbonds_1way_membrane(
 				}
 			}
 
-			// rough filter for existance of hydrogen bond
+			// rough filter for existence of hydrogen bond
 			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
 			Real unweighted_energy( 0.0 );
@@ -984,7 +939,7 @@ identify_hbonds_1way_membrane(
 				}
 			}
 
-			// rough filter for existance of hydrogen bond
+			// rough filter for existence of hydrogen bond
 			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
 			Real unweighted_energy( 0.0 );
@@ -1014,6 +969,7 @@ identify_hbonds_1way_membrane(
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
+			emap[hbond] += hbE;
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 			case hbw_NONE:
 			case hbw_SR_BB:
@@ -1059,11 +1015,11 @@ get_hbond_energies(
 	for (Size i = 1; i <= hbond_set.nhbonds(); ++i){
 		if (!hbond_set.allow_hbond(i)) continue;
 
-		HBond const & hbond(hbond_set.hbond(i));
-		HBEvalType const hbe_type = hbond.eval_type();
+		HBond const & hbond_(hbond_set.hbond(i));
+		HBEvalType const hbe_type = hbond_.eval_type();
 
-		Real hbE = hbond.energy() /*raw energy*/ * hbond.weight() /*env-dep-wt*/;
-
+		Real hbE = hbond_.energy() /*raw energy*/ * hbond_.weight() /*env-dep-wt*/;
+		emap[hbond] += hbE;
 		switch(get_hbond_weight_type(hbe_type)){
 		case hbw_NONE:
 		case hbw_SR_BB:
@@ -1088,79 +1044,42 @@ get_hbond_energies(
 		}
 	}
 }
-
-// this overloads get_hbond_energies to take an EnergyMap because
-// EnergyMap and EnergyMap cannot be substituted efficiently
-/*
-void
-get_hbond_energies(
-	HBondSet const & hbond_set,
-	EnergyMap & emap)
-{
-	for (Size i = 1; i <= hbond_set.nhbonds(); ++i){
-		if (!hbond_set.allow_hbond(i)) continue;
-
-		HBond const & hbond(hbond_set.hbond(i));
-		HBEvalType const hbe_type = hbond.eval_type();
-		// raw energy * env-dep-wt
-		Real hbE = hbond.energy() * hbond.weight();
-
-		switch(get_hbond_weight_type(hbe_type)){
-		case hbw_NONE:
-		case hbw_SR_BB:
-			emap[hbond_sr_bb] += hbE; break;
-		case hbw_LR_BB:
-			emap[hbond_lr_bb] += hbE; break;
-		case hbw_SR_BB_SC:
-			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-			emap[hbond_bb_sc] += hbE;
-			emap[hbond_sr_bb_sc] += hbE; break;
-		case hbw_LR_BB_SC:
-			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-			emap[hbond_bb_sc] += hbE;
-			emap[hbond_lr_bb_sc] += hbE; break;
-		case hbw_SC:
-			emap[hbond_sc] += hbE; break;
-		default:
-			tr << "Warning: energy from unexpected HB type ignored "
-				<< hbond << std::endl;
-			runtime_assert(false);
-			break;
-		}
-	}
-}
-*/
 
 Real
 hb_eval_type_weight(
 	HBEvalType const & hbe_type,
-	EnergyMap const & emap,
-	bool const intra_res /*false*/)
+	EnergyMap const & weights,
+	bool const intra_res /*false*/,
+	bool const put_intra_into_total /*true*/ )
 {
 	Real weight(0.0);
 
-	if(intra_res){
+	if (intra_res) {
+		if ( put_intra_into_total ){
+			weight += weights[hbond]; // typically zero if other weights are non-zero.
+		} else {
+			weight += weights[hbond_intra];
+		}
+	} else {
 
-		weight= emap[hbond_intra];
-
-	}else{
+		weight += weights[hbond]; // typically zero if other weights are non-zero.
 
 		switch(get_hbond_weight_type(hbe_type)){
 		case hbw_NONE:
 		case hbw_SR_BB:
-			weight += emap[hbond_sr_bb]; break;
+			weight += weights[hbond_sr_bb]; break;
 		case hbw_LR_BB:
-			weight += emap[hbond_lr_bb]; break;
+			weight += weights[hbond_lr_bb]; break;
 		case hbw_SR_BB_SC:
 			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-			weight += emap[hbond_bb_sc];
-			weight += emap[hbond_sr_bb_sc]; break;
+			weight += weights[hbond_bb_sc];
+			weight += weights[hbond_sr_bb_sc]; break;
 		case hbw_LR_BB_SC:
 			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-			weight += emap[hbond_bb_sc];
-			weight += emap[hbond_lr_bb_sc]; break;
+			weight += weights[hbond_bb_sc];
+			weight += weights[hbond_lr_bb_sc]; break;
 		case hbw_SC:
-			weight += emap[hbond_sc]; break;
+			weight += weights[hbond_sc]; break;
 		default:
 			tr << "Warning: Unexpected HBondWeightType " << get_hbond_weight_type(hbe_type) << std::endl;
 			runtime_assert(false);
@@ -1352,11 +1271,13 @@ bool
 nonzero_hbond_weight( ScoreFunction const & scorefxn )
 {
 	return ( scorefxn.has_nonzero_weight( hbond_lr_bb ) ||
-		scorefxn.has_nonzero_weight( hbond_sr_bb ) ||
-		scorefxn.has_nonzero_weight( hbond_bb_sc ) ||
-		scorefxn.has_nonzero_weight( hbond_sr_bb_sc ) ||
-		scorefxn.has_nonzero_weight( hbond_lr_bb_sc ) ||
-		scorefxn.has_nonzero_weight( hbond_sc ) );
+					 scorefxn.has_nonzero_weight( hbond_sr_bb ) ||
+					 scorefxn.has_nonzero_weight( hbond_bb_sc ) ||
+					 scorefxn.has_nonzero_weight( hbond_sr_bb_sc ) ||
+					 scorefxn.has_nonzero_weight( hbond_lr_bb_sc ) ||
+					 scorefxn.has_nonzero_weight( hbond_sc ) ||
+					 scorefxn.has_nonzero_weight( hbond_intra ) ||
+					 scorefxn.has_nonzero_weight( hbond ) );
 }
 
 } // hbonds

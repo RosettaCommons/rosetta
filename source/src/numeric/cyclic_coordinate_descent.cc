@@ -97,14 +97,14 @@ void ccd_angle(
 		cc += 2 * r_length * dot( f_vector, s_hat );
 
 		// some checks on orthonormality
-		assert( abs( dot( theta_hat, r_hat ) ) < 1e-3 );
-		assert( abs( dot( theta_hat, s_hat ) ) < 1e-3 );
-		assert( abs( dot( s_hat, r_hat ) ) < 1e-3 );
+		assert( std::abs( dot( theta_hat, r_hat ) ) < 1e-3 );
+		assert( std::abs( dot( theta_hat, s_hat ) ) < 1e-3 );
+		assert( std::abs( dot( s_hat, r_hat ) ) < 1e-3 );
 		assert( s_hat.is_unit( 1e-3 ) );
 		assert( r_hat.is_unit( 1e-3 ) );
 
-		assert( abs( dot( M[ i ], theta_hat ) - dot( O, theta_hat ) ) < 1e-3 );
-		assert( abs( dot( r_vector, theta_hat ) ) < 1e-3 );
+		assert( std::abs( dot( M[ i ], theta_hat ) - dot( O, theta_hat ) ) < 1e-3 );
+		assert( std::abs( dot( r_vector, theta_hat ) ) < 1e-3 );
 	}
 
 	// Derivation shown above.

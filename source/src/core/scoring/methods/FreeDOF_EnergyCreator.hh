@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/methods/FreeMoietyEnergyCreator.hh
-/// @brief  Declaration for the class that connects FreeMoietyEnergy with the ScoringManager
+/// @file   src/core/scoring/methods/FreeDOF_EnergyCreator.hh
+/// @brief  Declaration for the class that connects FreeDOF_Energy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_scoring_rna_FreeMoietyEnergyCreator_hh
-#define INCLUDED_core_scoring_rna_FreeMoietyEnergyCreator_hh
+#ifndef INCLUDED_core_scoring_rna_FreeDOF_EnergyCreator_hh
+#define INCLUDED_core_scoring_rna_FreeDOF_EnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -26,10 +26,10 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class FreeMoietyEnergyCreator : public core::scoring::methods::EnergyMethodCreator
+class FreeDOF_EnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a new FreeMoietyEnergy
+	/// @brief Instantiate a new FreeDOF_Energy
 	virtual
 	methods::EnergyMethodOP
 		create_energy_method(

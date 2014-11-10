@@ -147,7 +147,7 @@ ScoringManager::ScoringManager() :
 	DNA_base_potential_( /* 0 */ ),
 	carbon_hbond_potential_( /* 0 */ ),
 	rna_low_resolution_potential_( /* 0 */ ),
-	rna_torsion_potential_( /* 0 */ ),
+//	rna_torsion_potential_( /* 0 */ ),
 	rna_chemical_shift_potential_( 0 ),
 	rna_dms_potential_( /* 0 */ ),
 	p_aa_( /* 0 */ ),
@@ -399,34 +399,34 @@ ScoringManager::get_RNA_LowResolutionPotential() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-rna::RNA_TorsionPotential const &
-ScoringManager::get_RNA_TorsionPotential() const
-{
-	if (rna_torsion_potential_ == 0 )
-	{
-		rna_torsion_potential_ = rna::RNA_TorsionPotentialOP( new rna::RNA_TorsionPotential() );
-	}
-	return *rna_torsion_potential_;
-}
+// rna::RNA_TorsionPotential const &
+// ScoringManager::get_RNA_TorsionPotential() const
+// {
+// 	if (rna_torsion_potential_ == 0 )
+// 	{
+// 		rna_torsion_potential_ = rna::RNA_TorsionPotentialOP( new rna::RNA_TorsionPotential() );
+// 	}
+// 	return *rna_torsion_potential_;
+// }
 
 ///////////////////////////////////////////////////////////////////////////////
-rna::RNA_SuitePotential const &
-ScoringManager::get_RNA_SuitePotential( bool const calculate_suiteness_bonus /* = false */ ) const
-{
-	if ( calculate_suiteness_bonus ){
-		if (rna_suite_potential_for_suiteness_bonus_ == 0 )
-			{
-				rna_suite_potential_for_suiteness_bonus_ = rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( true ) );
-			}
-		return *rna_suite_potential_for_suiteness_bonus_;
-	}
+// rna::RNA_SuitePotential const &
+// ScoringManager::get_RNA_SuitePotential( bool const calculate_suiteness_bonus /* = false */ ) const
+// {
+// 	if ( calculate_suiteness_bonus ){
+// 		if (rna_suite_potential_for_suiteness_bonus_ == 0 )
+// 			{
+// 				rna_suite_potential_for_suiteness_bonus_ = rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( true ) );
+// 			}
+// 		return *rna_suite_potential_for_suiteness_bonus_;
+// 	}
 
-	if (rna_suite_potential_ == 0 )
-		{
-			rna_suite_potential_ = rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( false ) );
-		}
-	return *rna_suite_potential_;
-}
+// 	if (rna_suite_potential_ == 0 )
+// 		{
+// 			rna_suite_potential_ = rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( false ) );
+// 		}
+// 	return *rna_suite_potential_;
+// }
 
 ///////////////////////////////////////////////////////////////////////////////
 rna::chemical_shift::RNA_ChemicalShiftPotential const &

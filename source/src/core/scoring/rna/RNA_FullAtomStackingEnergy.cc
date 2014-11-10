@@ -34,6 +34,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
 
@@ -45,16 +48,42 @@
 #include <utility/vector1.hh>
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// This is a simple extension of the van der Waals attraction to give extra attraction between
+//  delocalized electron clouds on aromatic residues.
+//
+// The attraction is full-strength for r < 4.0 Angstroms, and then cutoff smoothly at 6.0 A.
+//  (full strength at neighboring base stacks; but no next-nearest base stacks in nucleic acids).
+//
+// There is also an orientation dependence of cos( kappa )^2, where kappa is the angle of the
+//  the r vector to the base axis. This limits the calculation to atoms that are right 'above'
+//  each other in the stacks.
+//
+// This is basically arbitrary and has not yet been compared to, e.g., quantum computations that
+//  take into account electron correlations.
+//
+// Note that base-base contributions count twice, and by default, only base-base interactions
+//  are currently computed.
+//
+// Some of the code below is currently RNA specific, but could easily be generalized to DNA,
+//  and with a tiny bit of extra effort to general aromatics. This physics may be better
+//  modeled in the orbitals code, however.
+//
+// Currently, intrares not supported.
+// And... probably could accelerate this with the nblist & residue_pair_energy_ext() formalism.
+//   (see, e.g., StackElecEnergy.cc). Seems like someone (arvind?) checked in part of this.
+//
+//    -- rhiju, 2014
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// C++
-
-static thread_local basic::Tracer tr( "core.scoring.rna.RNA_FullAtomStackingEnergy" );
+static thread_local basic::Tracer TR( "core.scoring.rna.RNA_FullAtomStackingEnergy" );
 using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {
 namespace rna {
-
 
 /// @details This must return a fresh instance of the RNA_FullAtomStackingEnergy class,
 /// never an instance already in use
@@ -69,8 +98,9 @@ ScoreTypes
 RNA_FullAtomStackingEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( fa_stack );
-	sts.push_back( fa_stack_aro );
-	sts.push_back( num_stacks );
+	sts.push_back( fa_stack_lower ); // just lower residue, used by free_base entropy estimator
+	sts.push_back( fa_stack_upper ); // just upper residue, used by free_base entropy estimator
+	sts.push_back( fa_stack_aro  );  // just component where occluding atom is aromatic.
 	return sts;
 }
 
@@ -81,9 +111,9 @@ RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy() :
 	//Parameters are totally arbitrary and made up!
 	prefactor_ ( 0.2 ),
 	full_stack_cutoff_ ( 4.0 ), //Encompass next base stack
-	dist_cutoff_ ( 6.0 ), // Do not to next-nearest base stack!
-	dist_cutoff2_ ( dist_cutoff_ * dist_cutoff_ ),
-	base_base_only_( true )
+	dist_cutoff_ ( 6.0 ),       // Do not go to next-nearest base stack!
+	dist_cutoff2_( dist_cutoff_ * dist_cutoff_ ),
+	base_base_only_(	basic::options::option[ basic::options::OptionKeys::score::fa_stack_base_base_only ]() /* true */ )
 {}
 
 //clone
@@ -104,24 +134,20 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
     kinematics::MinimizerMapBase const & min_map
 ) const
 {
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
-
     //set_nres_mono(pose);
 
     if ( pose.energies().use_nblist() ) {
-        // stash our nblist inside the pose's energies object
+			  // stash our nblist inside the pose's energies object
         Energies & energies( pose.energies() );
 
         // setup the atom-atom nblist
         NeighborListOP nblist;
-        Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
+        Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? basic::options::option[ basic::options::OptionKeys::run::nblist_autoupdate_narrow ] : 1.5;
         Real const XX = dist_cutoff_ + 2 * tolerated_motion;
         nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX ) );
         if ( pose.energies().use_nblist_auto_update() ) {
             nblist->set_auto_update( tolerated_motion );
         }
-        // this partially becomes the EtableEnergy classes's responsibility
         nblist->setup( pose, sfxn, *this );
         energies.set_nblist( EnergiesCacheableDataType::FA_STACK_NBLIST, nblist );
     }
@@ -143,7 +169,6 @@ RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction 
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
 
-	pose.clear_stacking_map();
 }
 
 void
@@ -167,54 +192,46 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-  if ( !rsd1.is_RNA() ) return;
-  if ( !rsd2.is_RNA() ) return;
-
 	Real score_aro1( 0.0 ), score_aro2( 0.0 );
+	Real const score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1 );
+	Real const score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2 ) ;
 
-	Real const score = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1 ) +
-		residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2 ) ;
-
-	if ( ( score < 0 ) && !pose.energies().use_nblist() ) {
-		pose.record_stacking_interaction( rsd1.seqpos() );
-		pose.record_stacking_interaction( rsd2.seqpos() );
-	}
-
-  emap[ fa_stack ]       += score;
-
+  emap[ fa_stack ]       += score1 + score2;
   emap[ fa_stack_aro ]   += score_aro1 + score_aro2;
 
-	if ( score <= -0.0001 ) {
-		//		tr.Info << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << score << std::endl;
+	if( rsd1.seqpos() <= rsd2.seqpos() ) {
+		emap[ fa_stack_lower ]  += score1;
+		emap[ fa_stack_upper ]  += score2;
+	} else {
+		emap[ fa_stack_lower ]  += score2;
+		emap[ fa_stack_upper ]  += score1;
 	}
 
-	//tr.Info << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << score << std::endl;
+	//	TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
 Real
 RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
+  conformation::Residue const & rsd1, // residue with nucleobase
+	conformation::Residue const & rsd2, // occluding residue
 	pose::Pose const & pose,
 	Real & score_aro
 ) const
 {
 
 	score_aro = 0.0;
+	Real score( 0.0 );
+	if ( !rsd1.is_RNA() ) return score;
+	if ( base_base_only_ && !rsd2.is_RNA() ) return score;
 
   rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
   rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	//	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
   utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
-  Real score( 0.0 );
-
   Size const i( rsd1.seqpos() );
-	//  Size const j( rsd2.seqpos() );
-
-	//  Vector const & centroid_i( base_centroids[i] );
   kinematics::Stub const & stub_i( base_stubs[i] );
   Matrix const M_i ( stub_i.M );
 
@@ -224,12 +241,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 	//Need to be careful nheavyatoms count includes hydrogen! when the hydrogen is made virtual..
 
 		if ( rsd1.is_virtual( m ) ) continue;
-
-		if ( m == rsd1.first_sidechain_atom() ){
-			//Consistency check
-			if ( rsd1.type().atom_name( m ) != " O2'" ) utility_exit_with_message( "m == rsd1.first_sidechain_atom() but rsd1.type().atom_name( m ) != \" O2'\" " );
-			continue;
-		}
+		if ( m == rsd1.first_sidechain_atom() ) continue; // 2'-OH for RNA
 
     Vector const heavy_atom_i( rsd1.xyz( m ) );
 
@@ -239,12 +251,9 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
     for ( Size n = atom_num_start; n <= rsd2.nheavyatoms(); ++n ) {
 
 			if ( rsd2.is_virtual( n ) ) continue;
+			if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) continue; // 2'-OH for RNA
 
-			if ( n == rsd2.first_sidechain_atom() && base_base_only_ ){
-				//Consistency check
-				if ( rsd2.type().atom_name( n ) != " O2'" ) utility_exit_with_message( "n == rsd2.first_sidechain_atom() but rsd2.type().atom_name( n ) != \" O2'\" " );
-				continue;
-			}
+			runtime_assert( check_base_base_OK( rsd1, rsd2, m, n ) );
 
       Vector const heavy_atom_j( rsd2.xyz( n ) );
       Vector r = heavy_atom_j - heavy_atom_i;
@@ -256,82 +265,40 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 				Real const fa_stack_score = get_fa_stack_score( r, M_i );
 				score += fa_stack_score;
 
-				if ( is_aro( rsd1, m ) && is_aro( rsd2, n ) ) score_aro += fa_stack_score;
-
-				//				Real const cos_kappa_j = dot( r, z_j);
-				//				score += get_score( dist, cos_kappa_j );
-
-				//DEBUG
-//				std::cout << "ONE  " << "res_name= " << rsd1.name() << " res_seqpos= " << rsd1.seqpos();
-//				std::cout << " atom " << m  << " " << 	"name= " << rsd1.type().atom_name(m) << " type= " << rsd1.atom_type(m).name();
-
-//				std::cout << "TWO  " << "res_name= " << rsd2.name() << " res_seqpos= " << rsd2.seqpos();
-//				std::cout << " atom " << n  << " " << 	"name= " << rsd2.type().atom_name(n) << " type= " << rsd2.atom_type(n).name() << std::endl;
+				if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) score_aro += fa_stack_score;
 
       }
     }
   }
 
-
 	return score;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 // Depending on the option "base_base_only_" allow a stacking interaction
-//  between an atom in a nucleobase and othe nucleobase atoms or *any*
+//  between an atom in a nucleobase and the nucleobase atoms or *any*
 //  other atom.
 //
-//if ( !check_base_base_OK( rsd1, rsd2, m, n ) && !check_base_base_OK( rsd2, rsd1, n, m ) ) continue;
-//NEED BOTH TO BE NOT OK TO CONTINUE;
-//rsd1 with m, rsd2 with n
-//m needs to be a side chain atom no matter what
-//IN base_base_only_mode, n needs to be a side chain atom
-
-//So if base_base_only, then only consider interaction between base atoms of each base.
-//if base_base_only==false, then consider interaction bewteen base atom of one base and all other atoms of the other base.
-
 bool
 RNA_FullAtomStackingEnergy::check_base_base_OK(
-	conformation::Residue const & rsd1,
+  conformation::Residue const & rsd1, // harbors nucleobase
 	conformation::Residue const & rsd2,
   Size const & m, Size const & n ) const {
 
+	// must be in RNA base.
 	if ( m < rsd1.first_sidechain_atom()  || m > rsd1.nheavyatoms() ) return false;
-
-	if ( m == rsd1.first_sidechain_atom() ){
-		//Consistency check
-		if ( rsd1.type().atom_name( m ) != " O2'" ) utility_exit_with_message( "m == rsd1.first_sidechain_atom() but rsd1.type().atom_name( m ) != \" O2'\" " );
-		return false;
-	}
+	if ( m == rsd1.first_sidechain_atom() ) return false;
 
 	if ( n > rsd2.nheavyatoms() ) return false;
-
+	if ( base_base_only_ && !rsd2.is_RNA() ) return false;
 	if ( base_base_only_ && n < rsd2.first_sidechain_atom() ) return false;
-
-	if ( n == rsd2.first_sidechain_atom() && base_base_only_ ){
-		//Consistency check
-		if ( rsd2.type().atom_name( n ) != " O2'" ) utility_exit_with_message( "n == rsd2.first_sidechain_atom() but rsd2.type().atom_name( n ) != \" O2'\" " );
-		return false;
-	}
+	if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) return false;
 
 	return true;
 
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
-bool
-RNA_FullAtomStackingEnergy::is_aro(
-	conformation::Residue const & rsd1,
-  Size const & m ) const {
-
-	return ( rsd1.atom_type( m ).is_aromatic() );
-	return true;
-
-}
-
-////////////////////////////////////////////////////////////////////////////// (Need to condition this? Parin Sep 2, 2009)
 void
 RNA_FullAtomStackingEnergy::eval_atom_derivative(
 		id::AtomID const & atom_id,
@@ -348,20 +315,16 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
 
-	if ( rsd1.is_virtual( m ) ) return;
-	if ( !rsd1.is_RNA() ) return;
-
+	if ( base_base_only_ && !rsd1.is_RNA() ) return;
 	if ( m > rsd1.nheavyatoms() ) return;
+	if ( rsd1.is_virtual( m ) ) return;
 
   rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
   rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-	//	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
   utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
-
-	//  Vector const & centroid_i( base_centroids[i] );
   kinematics::Stub const & stub_i( base_stubs[i] );
-  Matrix const M_i ( stub_i.M );
 
+  Matrix const M_i ( stub_i.M );
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 
 	bool const pos1_fixed( domain_map( i ) != 0 );
@@ -382,32 +345,30 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 		if ( pos1_fixed && domain_map( i ) == domain_map( j ) ) continue; //Fixed w.r.t. one another.
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
-
-		if ( !rsd2.is_RNA() ) continue;
-
-		//Look for occlusion by other base atoms? Or all other heavy atoms?
-		//		Size const atom_num_start = base_base_only_ ? rsd2.first_sidechain_atom() : 1 ; //check_base_base_OK take care of this part.
+		if ( base_base_only_ && !rsd2.is_RNA() ) continue;
 
 		kinematics::Stub const & stub_j( base_stubs[j] );
 		Matrix const M_j ( stub_j.M );
 
 		for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 
-
 			if ( rsd2.is_virtual( n ) ) continue;
 
-			if ( !check_base_base_OK( rsd1, rsd2, m, n ) && !check_base_base_OK( rsd2, rsd1, n, m ) ) continue; //This screen for nonbase atoms
+			//			if ( !check_base_base_OK( rsd1, rsd2, m, n ) && !check_base_base_OK( rsd2, rsd1, n, m ) ) continue;
 
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector r = heavy_atom_j - heavy_atom_i;
 			Real const dist2 = r.length_squared();
 
-			if ( dist2 < dist_cutoff2_ ) { //dist_cutoff2=dist_cutoff*dist_cutoff. Energy fade from max to 0 between  full_stack_cutoff_ and dist_cutoff_
+			if ( dist2 < dist_cutoff2_ ) { //dist_cutoff2=dist_cutoff*dist_cutoff. Energy fade from max to 0 between full_stack_cutoff_ and dist_cutoff_
 
 				if ( check_base_base_OK( rsd1, rsd2, m, n ) ) {
-					Vector force_vector_i = weights[ fa_stack ] * get_fa_stack_deriv( r, M_i );
 
-					if ( is_aro( rsd1, m ) && is_aro( rsd2, n ) ) force_vector_i += weights[ fa_stack_aro ] * get_fa_stack_deriv( r, M_i );
+					Vector const deriv = get_fa_stack_deriv( r, M_i );
+
+					Vector force_vector_i = weights[ fa_stack ] * deriv;
+					force_vector_i += weights[ fa_stack_lower ] * deriv;
+					if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) force_vector_i += weights[ fa_stack_aro ] * deriv;
 
 					//Force/torque with which occluding atom j acts on "dipole" i.
 					F1 += -1.0 * cross( force_vector_i, heavy_atom_j );
@@ -416,11 +377,14 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 
 				if ( check_base_base_OK( rsd2, rsd1, n, m ) ) {
 					//Force/torque with which occluding atom i acts on "dipole" j.
-					// Note that this calculation is a repeat of some other call to this function.
-					// Might make more sense to do some (alternative) bookkeeping.
-					Vector force_vector_j = weights[ fa_stack ] * get_fa_stack_deriv( -r, M_j );
+					// Note that this calculation is a repeat of some other calls to this function.
+					// Might make more sense to do some (alternative) bookkeeping, e.g. with _ext interface.
 
-					if ( is_aro( rsd1, m ) && is_aro( rsd2, n ) ) force_vector_j += weights[ fa_stack_aro ] * get_fa_stack_deriv( -r, M_j );
+					Vector const deriv = get_fa_stack_deriv( -r, M_j );
+
+					Vector force_vector_j = weights[ fa_stack ] * deriv;
+					force_vector_j += weights[ fa_stack_upper ] * deriv;
+					if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) force_vector_j += weights[ fa_stack_aro ] * deriv;
 
 					F1 += cross( force_vector_j, heavy_atom_i );
 					F2 += force_vector_j;
@@ -534,8 +498,6 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	Real const dE_dy = ( dE_dr ) * ( y/r ) - ( dE_dcoskappa ) * ( y * z )/ ( r*r*r ) ;
 	Real const dE_dz = ( dE_dr ) * ( z/r ) + ( dE_dcoskappa ) * ( x*x + y*y )/ ( r*r*r );
 
-	//	std::cout << " HELLO " << r << " " << dE_dr << " " << dE_dcoskappa << std::endl;
-
   return ( dE_dx * x_i + dE_dy * y_i + dE_dz * z_i );
 
 }
@@ -546,29 +508,13 @@ void
 RNA_FullAtomStackingEnergy::finalize_total_energy(
 	pose::Pose & pose,
 	ScoreFunction const &,
-	EnergyMap & totals
+	EnergyMap &
 ) const
 {
 
   rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
   rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
   rna_centroid_info.calculated() = false;
-
-	if ( pose.energies().use_nblist() ) return;
-
-	//Energies & energies( pose.energies() );
-
-	//num_stacks_.clear();
-	boost::unordered_map < core::Size, core::Size > const & stacking_map = pose.get_stacking_map();
-
-	for ( boost::unordered_map < core::Size, core::Size > ::const_iterator
-		 it = stacking_map.begin(), it_end = stacking_map.end(); it != it_end; ++it ) {
-		if ( it->second > 1 ) {
-			totals[ num_stacks ]++;
-			//EnergyMap & emap( energies.onebody_energies( it->first ) );
-			//emap[ num_stacks ] = it->second;
-		}
-	}
 
 }
 
@@ -608,7 +554,6 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 	if ( res1 == res2 ) {
 		return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
 	}
-
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
 	conformation::Residue const & rsd2( pose.residue( res2 ) );
 	return get_count_pair_function( rsd1, rsd2 );

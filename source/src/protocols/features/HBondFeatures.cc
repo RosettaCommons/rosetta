@@ -1061,7 +1061,7 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 			ScoringManager::get_instance()->etable(
 				scfxn_->energy_method_options().etable_type() ) );
 		TableLookupEtableEnergy const etable_energy( *etable,
-			scfxn_->energy_method_options() );
+    		scfxn_->energy_method_options(), false /*do_classic_intrares*/ );
 
 		etable_energy.atom_pair_energy(
 			don_res.atom(don_datmNum), acc_res.atom(acc_atmNum),
@@ -1091,7 +1091,7 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 				scfxn_->energy_method_options().etable_type() ) );
 		AnalyticEtableEnergy const etable_energy(
 			*etable,
-			scfxn_->energy_method_options() );
+			scfxn_->energy_method_options(), false /*do_classic_intrares*/ );
 
 		etable_energy.atom_pair_energy(
 			don_res.atom(don_datmNum), acc_res.atom(acc_atmNum),

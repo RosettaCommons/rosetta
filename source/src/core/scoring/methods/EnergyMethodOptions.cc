@@ -18,6 +18,8 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/etable/EtableOptions.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+#include <core/scoring/methods/FreeDOF_Options.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
@@ -58,10 +60,16 @@ EnergyMethodOptions::EnergyMethodOptions():
 	elec_no_dis_dep_die_(false),
 	smooth_fa_elec_( false ),
 	exclude_DNA_DNA_(true), // rosetta++ default
+	exclude_intra_res_protein_(true), // rosetta++ default
+	put_intra_into_total_(false ),
+	geom_sol_interres_path_distance_cutoff_( 0 ), // rosetta++ default -- should be 4.
+	geom_sol_intrares_path_distance_cutoff_( 7 ), // originally implemented for RNA base/phosphate.
 	intrares_elec_correction_scale_( 0.0 ),
 	envsmooth_zero_negatives_( false ),
 	hbond_options_(hbonds::HBondOptionsOP( new hbonds::HBondOptions() )),
 	etable_options_(core::scoring::etable::EtableOptionsOP( new core::scoring::etable::EtableOptions() )),
+	rna_options_( new rna::RNA_EnergyMethodOptions() ),
+	free_dof_options_( new methods::FreeDOF_Options() ),
 	cst_max_seq_sep_( std::numeric_limits<core::Size>::max() ),
 	cartbonded_len_(-1.0),
 	cartbonded_ang_(-1.0),
@@ -74,6 +82,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
 	initialize_from_options();
+	method_weights_[ free_res ] = utility::vector1< Real >();
 }
 
 void EnergyMethodOptions::initialize_from_options() {
@@ -83,7 +92,11 @@ void EnergyMethodOptions::initialize_from_options() {
 	elec_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_die ]();
 	elec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_r_option ]();
 	smooth_fa_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_fa_elec ]();
-	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
+	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
+	exclude_intra_res_protein_ = !basic::options::option[basic::options::OptionKeys::score::include_intra_res_protein]();
+	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
+	geom_sol_interres_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_interres_path_distance_cutoff]();
+	geom_sol_intrares_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
 	intrares_elec_correction_scale_ = basic::options::option[ basic::options::OptionKeys::score::intrares_elec_correction_scale ]();
 	envsmooth_zero_negatives_ = basic::options::option[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
 }
@@ -115,10 +128,16 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		elec_no_dis_dep_die_ = src.elec_no_dis_dep_die_;
 		smooth_fa_elec_ = src.smooth_fa_elec_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
+		exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
+		put_intra_into_total_ = src.put_intra_into_total_;
+		geom_sol_interres_path_distance_cutoff_ = src.geom_sol_interres_path_distance_cutoff_;
+		geom_sol_intrares_path_distance_cutoff_ = src.geom_sol_intrares_path_distance_cutoff_;
 		intrares_elec_correction_scale_ = src.intrares_elec_correction_scale_;
 		envsmooth_zero_negatives_ = src.envsmooth_zero_negatives_;
 		hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( *(src.hbond_options_) ) );
 		etable_options_ = core::scoring::etable::EtableOptionsOP( new etable::EtableOptions( *(src.etable_options_) ) );
+		rna_options_ = rna::RNA_EnergyMethodOptionsOP( new rna::RNA_EnergyMethodOptions( *(src.rna_options_) ) );
+		free_dof_options_ = methods::FreeDOF_OptionsOP( new methods::FreeDOF_Options( *(src.free_dof_options_) ) );
 		cst_max_seq_sep_ = src.cst_max_seq_sep_;
 		bond_angle_central_atoms_to_score_ = src.bond_angle_central_atoms_to_score_;
 		bond_angle_residue_type_param_set_ = src.bond_angle_residue_type_param_set_;
@@ -238,6 +257,50 @@ EnergyMethodOptions::exclude_DNA_DNA( bool const setting ) {
 	hbond_options_->exclude_DNA_DNA( setting );
 }
 
+bool
+EnergyMethodOptions::exclude_intra_res_protein() const {
+	runtime_assert( hbond_options_->exclude_intra_res_protein() == exclude_intra_res_protein_ );
+	return exclude_intra_res_protein_;
+}
+
+void
+EnergyMethodOptions::exclude_intra_res_protein( bool const setting ) {
+	exclude_intra_res_protein_ = setting;
+	hbond_options_->exclude_intra_res_protein( setting );
+}
+
+bool
+EnergyMethodOptions::put_intra_into_total() const {
+	runtime_assert( hbond_options_->put_intra_into_total() == put_intra_into_total_ );
+	return put_intra_into_total_;
+}
+
+void
+EnergyMethodOptions::put_intra_into_total( bool const setting ) {
+	put_intra_into_total_ = setting;
+	hbond_options_->put_intra_into_total( setting );
+}
+
+core::Size
+EnergyMethodOptions::geom_sol_interres_path_distance_cutoff() const {
+	return geom_sol_interres_path_distance_cutoff_;
+}
+
+void
+EnergyMethodOptions::geom_sol_interres_path_distance_cutoff( core::Size const setting ) {
+	geom_sol_interres_path_distance_cutoff_ = setting;
+}
+
+core::Size
+EnergyMethodOptions::geom_sol_intrares_path_distance_cutoff() const {
+	return geom_sol_intrares_path_distance_cutoff_;
+}
+
+void
+EnergyMethodOptions::geom_sol_intrares_path_distance_cutoff( core::Size const setting ) {
+	geom_sol_intrares_path_distance_cutoff_ = setting;
+}
+
 core::Real
 EnergyMethodOptions::intrares_elec_correction_scale() const {
 	return intrares_elec_correction_scale_;
@@ -249,7 +312,7 @@ EnergyMethodOptions::intrares_elec_correction_scale( core::Real const setting ) 
 }
 
 bool
-EnergyMethodOptions::envsmooth_zero_negatives() const 
+EnergyMethodOptions::envsmooth_zero_negatives() const
 {
 	return envsmooth_zero_negatives_;
 }
@@ -288,6 +351,36 @@ EnergyMethodOptions::etable_options() {
 void
 EnergyMethodOptions::etable_options( etable::EtableOptions const & opts ) {
 	etable_options_ = core::scoring::etable::EtableOptionsOP( new etable::EtableOptions( opts ) );
+}
+
+rna::RNA_EnergyMethodOptions const &
+EnergyMethodOptions::rna_options() const {
+	return *rna_options_;
+}
+
+rna::RNA_EnergyMethodOptions &
+EnergyMethodOptions::rna_options() {
+	return *rna_options_;
+}
+
+void
+EnergyMethodOptions::rna_options( rna::RNA_EnergyMethodOptions const & opts ) {
+ 	rna_options_ = rna::RNA_EnergyMethodOptionsOP( new rna::RNA_EnergyMethodOptions( opts ) );
+}
+
+methods::FreeDOF_Options const &
+EnergyMethodOptions::free_dof_options() const {
+	return *free_dof_options_;
+}
+
+methods::FreeDOF_Options &
+EnergyMethodOptions::free_dof_options() {
+	return *free_dof_options_;
+}
+
+void
+EnergyMethodOptions::free_dof_options( methods::FreeDOF_Options const & opts ) {
+ 	free_dof_options_ = methods::FreeDOF_OptionsOP( new methods::FreeDOF_Options( opts ) );
 }
 
 std::string const &
@@ -429,9 +522,15 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.elec_no_dis_dep_die_ == b.elec_no_dis_dep_die_ ) &&
 		( a.smooth_fa_elec_ == b.smooth_fa_elec_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
+		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_ ) &&
+		( a.put_intra_into_total_ == b.put_intra_into_total_ ) &&
+		( a.geom_sol_interres_path_distance_cutoff_ == b.geom_sol_interres_path_distance_cutoff_ ) &&
+		( a.geom_sol_intrares_path_distance_cutoff_ == b.geom_sol_intrares_path_distance_cutoff_ ) &&
 		( a.envsmooth_zero_negatives_ == b.envsmooth_zero_negatives_ ) &&
 		( * (a.hbond_options_) == * (b.hbond_options_) ) &&
 		( * (a.etable_options_) == * (b.etable_options_) ) &&
+		( * (a.rna_options_) == * (b.rna_options_) ) &&
+		( * (a.free_dof_options_) == * (b.free_dof_options_) ) &&
 		( a.intrares_elec_correction_scale_ == b.intrares_elec_correction_scale_ ) &&
 		( a.cst_max_seq_sep_ == b.cst_max_seq_sep_ ) &&
 		( a.cartbonded_len_ == b.cartbonded_len_ ) &&
@@ -478,6 +577,14 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: smooth_fa_elec: " << ( smooth_fa_elec_ ? "true" : "false" ) << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: exclude_intra_res_protein: "
+			<< (exclude_intra_res_protein_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: put_intra_into_total: "
+			<< (put_intra_into_total_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: geom_sol_interres_path_distance_cutoff: "
+			<< (geom_sol_interres_path_distance_cutoff_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: geom_sol_intrares_path_distance_cutoff: "
+			<< (geom_sol_intrares_path_distance_cutoff_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: envsmooth_zero_negatives: "
 			<< (envsmooth_zero_negatives_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
@@ -505,6 +612,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 				<< (bond_angle_residue_type_param_set_->use_residue_type_theta0() ? "true" : "false") << std::endl;
 	}
 	out << *hbond_options_;
+	out << *rna_options_;
+	out << *free_dof_options_;
 }
 
 std::ostream& operator<<(std::ostream & out, EnergyMethodOptions const & options) {
@@ -586,6 +695,18 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("exclude_DNA_DNA");
 	option_values.push_back(exclude_DNA_DNA_ ? "1" : "0");
+
+	option_keys.push_back("exclude_intra_res_protein");
+	option_values.push_back(exclude_intra_res_protein_ ? "1" : "0");
+
+	option_keys.push_back("put_intra_into_total");
+	option_values.push_back(put_intra_into_total_ ? "1" : "0");
+
+	option_keys.push_back("geom_sol_interres_path_distance_cutoff");
+	option_values.push_back(geom_sol_interres_path_distance_cutoff_ ? "1" : "0");
+
+	option_keys.push_back("geom_sol_intrares_path_distance_cutoff");
+	option_values.push_back(geom_sol_intrares_path_distance_cutoff_ ? "1" : "0");
 
 	option_keys.push_back("intrares_elec_correction_scale");
 	option_values.push_back(boost::lexical_cast<std::string>(intrares_elec_correction_scale_));

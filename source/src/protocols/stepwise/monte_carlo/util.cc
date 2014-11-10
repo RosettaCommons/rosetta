@@ -101,7 +101,7 @@ output_to_silent_file( std::string const & out_tag,
 	}
 
 	BinarySilentStruct s( pose, out_tag );
-	s.add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residue_connections( pose ) ) );
+	s.add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residues_and_connections( pose ) ) );
 
 	if ( native_pose != 0 ) {
 		s.add_energy( "rms",      rms );

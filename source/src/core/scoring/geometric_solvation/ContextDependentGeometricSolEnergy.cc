@@ -92,7 +92,7 @@ ContextDependentGeometricSolEnergyCreator::score_types_for_method() const {
 ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts
 ) :
 	parent( methods::EnergyMethodCreatorOP( new ContextDependentGeometricSolEnergyCreator ) ),
-	options_( methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( opts ) ) ),
+	options_( opts ),
 	evaluator_( GeometricSolEnergyEvaluatorOP( new GeometricSolEnergyEvaluator( opts ) ) ),
   precalculated_bb_bb_energy_(0.0f),
 	using_extended_method_( false )
@@ -102,7 +102,7 @@ ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods:
 /// copy ctor
 ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( ContextDependentGeometricSolEnergy const & src ):
 	ContextDependentTwoBodyEnergy( src ),
-	options_( methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( *src.options_ ) ) ),
+	options_( src.options_ ),
 	evaluator_( src.evaluator_ ),
 	precalculated_bb_bb_energy_(src.precalculated_bb_bb_energy_),
 	using_extended_method_( src.using_extended_method_ )
@@ -126,7 +126,7 @@ ContextDependentGeometricSolEnergy::setup_for_packing(
 	// Note: The logic here is kinda hacky.
 	using EnergiesCacheableDataType::HBOND_SET;
 	if( ! pose.energies().data().has( HBOND_SET )	) {
-		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
+		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_.hbond_options() ) );
 		hbond_set->setup_for_residue_pair_energies( pose );
 		pose.energies().data().set( HBOND_SET, hbond_set );
 	}
@@ -155,7 +155,7 @@ ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreF
 	// Note: The logic here is kinda hacky.
 	using EnergiesCacheableDataType::HBOND_SET;
 	if( ! pose.energies().data().has( HBOND_SET )	) {
-		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
+		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_.hbond_options() ) );
 		hbond_set->setup_for_residue_pair_energies( pose );
 		pose.energies().data().set( HBOND_SET, hbond_set );
 	}
@@ -231,7 +231,8 @@ ContextDependentGeometricSolEnergy::eval_intrares_derivatives(
 ) const
 {
 	if ( !defines_intrares_energy( weights ) ) return;
-	evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol_intra_RNA ], atom_derivs);
+	evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol_intra_RNA ], atom_derivs, true /*just_RNA*/);
+	if (options_.put_intra_into_total() ) evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol ], atom_derivs, false /*just_RNA*/ );
 }
 
 ////////////////////////////////////////////////////
@@ -321,7 +322,7 @@ ContextDependentGeometricSolEnergy::minimize_in_whole_structure_context( pose::P
 
 void
 ContextDependentGeometricSolEnergy::finalize_total_energy(
-    pose::Pose & pose,
+    pose::Pose &,
     ScoreFunction const &,
     EnergyMap & totals ) const
 {
@@ -334,7 +335,8 @@ ContextDependentGeometricSolEnergy::finalize_total_energy(
 	return; //early return -- must check in packer????
 
 
-    //if ( !using_extended_method_ ) return;
+	/*---
+   //if ( !using_extended_method_ ) return;
     if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
     NeighborList const & nblist
         ( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
@@ -364,10 +366,10 @@ ContextDependentGeometricSolEnergy::finalize_total_energy(
                 conformation::Residue const & jres( *resvect[j] );
 
                 if ( evaluator_->atom_is_heavy( jres, jj ) ) {
-                    if ( evaluator_->atom_is_donor_h( ires, ii ) ) {
+									  if ( ires.atom_is_polar_hydrogen( ii ) ) {
                         evaluator_->get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy );
                         score += energy;
-                    } else if ( evaluator_->atom_is_acceptor( ires, ii ) ) {
+                    } else if ( ires.heavyatom_is_an_acceptor( ii ) ) {
                         evaluator_->get_atom_atom_geometric_solvation_for_acceptor( ii, ires, jj, jres, pose, energy );
                         score += energy;
                     }
@@ -386,6 +388,8 @@ ContextDependentGeometricSolEnergy::finalize_total_energy(
     }
 
     totals[ geom_sol ] += score;
+
+		--*/
 }
 
 
@@ -397,10 +401,11 @@ ContextDependentGeometricSolEnergy::atomic_interaction_cutoff() const
 
 ///////////////////////////////////////////////////////////////////////////////////////
 bool
-ContextDependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const & weights ) const
+ContextDependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const &  ) const
 {
 	//Change to this on Feb 06, 2012. Ensure that the function returns false if weights[geom_sol_intra_RNA] == 0.0
-	return ( weights[geom_sol_intra_RNA] > 0.0001 );
+	//	return ( weights[geom_sol_intra_RNA] > 0.0001 );
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -411,7 +416,10 @@ ContextDependentGeometricSolEnergy::eval_intrares_energy(
 	ScoreFunction const & scorefxn,
 	EnergyMap & emap ) const
 {
+	EnergyMap emap_local;
 	evaluator_->eval_intrares_energy( rsd, pose, scorefxn, emap );
+	emap[ geom_sol_intra_RNA ] += emap_local[ geom_sol_intra_RNA ];
+	emap[ geom_sol ]           += emap_local[ geom_sol ];
 }
 
 

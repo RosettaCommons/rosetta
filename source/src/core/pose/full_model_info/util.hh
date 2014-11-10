@@ -115,7 +115,10 @@ namespace full_model_info {
 	get_chain_for_resnum( Size const & resnum, pose::Pose const & pose );
 
 	Size
-	get_number_missing_residue_connections( pose::Pose & pose );
+	get_number_missing_residues_and_connections( pose::Pose & pose );
+
+	Size
+	get_number_missing_residues_and_connections( pose::Pose & pose, utility::vector1< char > & missing_residues );
 
 	bool
 	check_all_residues_sampled( pose::Pose const & pose );

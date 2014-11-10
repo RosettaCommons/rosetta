@@ -238,6 +238,7 @@ public:
 	///@brief Return the version of the energy method
 	virtual
 	core::Size version() const = 0;
+
 protected:
 
 	void

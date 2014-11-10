@@ -432,20 +432,23 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Check whether one of the atom beyond to a base and another to a phosphate. Doesn't have to be on the same nucleotide.
 bool
-Is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2 ){
+is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2 ){
 
-	bool Is_base_phosphate_atom_pair = false;
+	if ( !rsd_1.is_RNA() ) return false;
+	if ( !rsd_2.is_RNA() ) return false;
 
-	if ( ( rsd_1.RNA_type().atom_is_phosphate( atomno_1 ) && ( rsd_2.RNA_type().is_RNA_base_atom( atomno_2 ) ) ) ) Is_base_phosphate_atom_pair = true;
-	if ( ( rsd_2.RNA_type().atom_is_phosphate( atomno_2 ) && ( rsd_1.RNA_type().is_RNA_base_atom( atomno_1 ) ) ) ) Is_base_phosphate_atom_pair = true;
+	bool is_base_phosphate_atom_pair = false;
 
-	if ( Is_base_phosphate_atom_pair ){ //This Assume that rsd_1 and rsd_2 are the same!!!
+	if ( ( rsd_1.RNA_type().atom_is_phosphate( atomno_1 ) && ( rsd_2.RNA_type().is_RNA_base_atom( atomno_2 ) ) ) ) is_base_phosphate_atom_pair = true;
+	if ( ( rsd_2.RNA_type().atom_is_phosphate( atomno_2 ) && ( rsd_1.RNA_type().is_RNA_base_atom( atomno_1 ) ) ) ) is_base_phosphate_atom_pair = true;
+
+	if ( is_base_phosphate_atom_pair ){ //This Assume that rsd_1 and rsd_2 are the same!!!
 		if ( rsd_1.seqpos() == rsd_2.seqpos() && ( rsd_1.path_distance( atomno_1, atomno_2 ) < 4 ) ){ //consistency check!
-			utility_exit_with_message( "Is_base_phosphate_atom_pair but rsd.path_distance( " + ObjexxFCL::string_of( atomno_1 ) + ", " + ObjexxFCL::string_of( atomno_2 ) + " ) < 4" );
+			utility_exit_with_message( "is_base_phosphate_atom_pair but rsd.path_distance( " + ObjexxFCL::string_of( atomno_1 ) + ", " + ObjexxFCL::string_of( atomno_2 ) + " ) < 4" );
 		}
 	}
 
-	return Is_base_phosphate_atom_pair;
+	return is_base_phosphate_atom_pair;
 
 }
 

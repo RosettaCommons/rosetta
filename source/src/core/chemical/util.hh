@@ -67,6 +67,12 @@ bool variants_match( ResidueType const & res1, ResidueType const & res2 );
 /// @brief  Similar to variants_match(), but allows different adduct-modified states.
 bool nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 );
 
+// @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
+void enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & atom_type_set );
+
+// @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
+void enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set );
+
 }  // namespace chemical
 }  // namespace core
 

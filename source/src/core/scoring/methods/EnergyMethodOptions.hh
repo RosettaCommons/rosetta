@@ -24,12 +24,10 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/etable/EtableOptions.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.fwd.hh> // FA_STANDARD_DEFAULT
 #include <core/scoring/SecondaryStructureWeights.hh> /// REPLACE THIS WITH .fwd.hh
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
-
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh> // CENTROID
-
+#include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
+#include <core/scoring/methods/FreeDOF_Options.fwd.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 
 /// Utility headers
@@ -73,6 +71,12 @@ public:
 	/// copy operator
 	EnergyMethodOptions const &
 	operator=( EnergyMethodOptions const & src );
+
+	/// clone
+	EnergyMethodOptionsOP
+	clone() const{
+		return EnergyMethodOptionsOP( new EnergyMethodOptions( *this ) );
+	}
 
 	///
 	std::string const &
@@ -151,6 +155,38 @@ public:
 	void
 	exclude_DNA_DNA( bool const setting );
 
+	///
+	bool
+	exclude_intra_res_protein() const;
+
+	///
+	void
+	exclude_intra_res_protein( bool const setting );
+
+	///
+	bool
+	put_intra_into_total() const;
+
+	///
+	void
+	put_intra_into_total( bool const setting );
+
+	///
+	core::Size
+	geom_sol_interres_path_distance_cutoff() const;
+
+	///
+	void
+	geom_sol_interres_path_distance_cutoff( core::Size const setting );
+
+	///
+	core::Size
+	geom_sol_intrares_path_distance_cutoff() const;
+
+	///
+	void
+	geom_sol_intrares_path_distance_cutoff( core::Size const setting );
+
 	core::Real
 	intrares_elec_correction_scale() const;
 
@@ -171,7 +207,7 @@ public:
  	hbonds::HBondOptions &
  	hbond_options();
 
- 	/// @breif Set the hbond options object -- makes a deep copy
+ 	/// @brief Set the hbond options object -- makes a deep copy
  	void
  	hbond_options( hbonds::HBondOptions const & opts );
 
@@ -183,9 +219,33 @@ public:
  	etable::EtableOptions &
  	etable_options();
 
- 	/// @breif Set the etable options object -- makes a deep copy
+ 	/// @brief Set the etable options object -- makes a deep copy
  	void
  	etable_options( etable::EtableOptions const & opts );
+
+ 	/// @brief Read access to the RNA options object
+ 	rna::RNA_EnergyMethodOptions const &
+ 	rna_options() const;
+
+ 	/// @brief non-const access to the RNA options object
+ 	rna::RNA_EnergyMethodOptions &
+ 	rna_options();
+
+ 	/// @brief Set the FreeDOF options object -- makes a deep copy
+ 	void
+ 	rna_options( rna::RNA_EnergyMethodOptions const & opts );
+
+ 	/// @brief Read access to the FreeDOF options object
+ 	methods::FreeDOF_Options const &
+ 	free_dof_options() const;
+
+ 	/// @brief non-const access to the FreeDOF options object
+ 	methods::FreeDOF_Options &
+ 	free_dof_options();
+
+ 	/// @brief Set the FreeDOF options object -- makes a deep copy
+ 	void
+ 	free_dof_options( methods::FreeDOF_Options const & opts );
 
 	std::string const & pb_bound_tag() const;
 	std::string & pb_bound_tag();
@@ -336,10 +396,16 @@ private:
 	bool elec_no_dis_dep_die_;
 	bool smooth_fa_elec_;
 	bool exclude_DNA_DNA_;
+	bool exclude_intra_res_protein_;
+	bool put_intra_into_total_;
+	core::Size geom_sol_interres_path_distance_cutoff_;
+	core::Size geom_sol_intrares_path_distance_cutoff_;
 	core::Real intrares_elec_correction_scale_;
 	bool envsmooth_zero_negatives_;
 	hbonds::HBondOptionsOP hbond_options_;
 	core::scoring::etable::EtableOptionsOP etable_options_;
+	rna::RNA_EnergyMethodOptionsOP rna_options_;
+	methods::FreeDOF_OptionsOP free_dof_options_;
 	core::Size cst_max_seq_sep_;
 	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_, cartbonded_improper_;
 	bool cartbonded_linear_;

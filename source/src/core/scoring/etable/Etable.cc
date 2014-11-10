@@ -35,6 +35,7 @@
 #include <core/scoring/EnergyMap.hh>
 
 // Package headers
+#include <core/chemical/util.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/trie/RotamerTrieBase.hh>
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
@@ -117,7 +118,9 @@ Etable::Etable(
 	lj_use_water_radii        ( true ),
 	lj_water_dis              ( 3.0 ),
 	lj_water_hdis             ( 1.95 ),
+	enlarge_h_lj_wdepth_      ( options.enlarge_h_lj_wdepth ),
 	lk_min_dis2sigma          ( 0.89 ),
+	no_lk_polar_desolvation_  ( options.no_lk_polar_desolvation ),
 	min_dis                   ( 0.01 ),
 	min_dis2                  ( min_dis * min_dis ),
 	add_long_range_damping    ( true ),
@@ -194,8 +197,11 @@ Etable::initialize_from_input_atomset(
 		}
 	}
 
+	// rhiju/fang -- Use larger LJ_WDEPTH for protons to avoid clashes in RNA
+	if ( enlarge_h_lj_wdepth_ )	core::chemical::enlarge_h_lj_wdepth( lj_wdepth_, *atom_set_in );
+
 	// APL -- hydrophobic desolvation only; turn off hydrophilic desolvation penalty
-	if ( option[ score::no_lk_polar_desolvation ] ) {
+	if ( no_lk_polar_desolvation_ ) {
 		chemical::AtomTypeSetCOP atom_set( atom_set_ );
 		for ( int i=1; i<= n_atomtypes_; ++i ) {
 			if ( (*atom_set)[i].is_acceptor() || (*atom_set)[i].is_donor() ) {

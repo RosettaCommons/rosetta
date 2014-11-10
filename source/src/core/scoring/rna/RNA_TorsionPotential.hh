@@ -16,9 +16,10 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Project Headers
+#include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
@@ -45,7 +46,9 @@ class RNA_TorsionPotential : public utility::pointer::ReferenceCount
 {
 
 public:
-	RNA_TorsionPotential();
+
+	RNA_TorsionPotential( RNA_EnergyMethodOptions const & options );
+
 	virtual ~RNA_TorsionPotential() ; // auto-removing definition from header{}
 
 

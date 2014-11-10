@@ -46,9 +46,9 @@ namespace hbonds {
 class HBondOptions : public utility::pointer::ReferenceCount {
 public:
 
-	HBondOptions();
+	HBondOptions( std::string params_db_tag = "" );
 
-	HBondOptions( std::string params_db_tag );
+	//	HBondOptions(); // removed in favor of single constructor to avoid copying code.
 
 	void initialize_from_options();
 
@@ -89,11 +89,27 @@ public:
 
 	///
 	bool
-	include_intra_res_RNA() const;
+	put_intra_into_total() const;
 
 	///
 	void
-	include_intra_res_RNA( bool const setting );
+	put_intra_into_total( bool const setting );
+
+	///
+	bool
+	exclude_intra_res_protein() const;
+
+	///
+	void
+	exclude_intra_res_protein( bool const setting );
+
+	///
+	bool
+	exclude_intra_res_RNA() const;
+
+	///
+	void
+	exclude_intra_res_RNA( bool const setting );
 
 	///
 	bool
@@ -154,7 +170,7 @@ public:
 	///pba
 	void
 	Mbhbond( bool const setting );
-	
+
 	/// Membrane framework hbonding correction
 	bool mphbond() const;
 	void mphbond( bool const setting );
@@ -226,8 +242,10 @@ public:
 private:
 
 	bool exclude_DNA_DNA_;
-	bool include_intra_res_RNA_;
-	bool exclude_self_hbonds_;
+	bool exclude_intra_res_protein_;
+	bool exclude_intra_res_RNA_;
+	bool put_intra_into_total_;
+	bool exclude_self_hbonds_; // is this really used properly anywhere? self hbonds are always excluded. now have hbond_intra term.
 	bool use_hb_env_dep_;
 	bool use_hb_env_dep_DNA_;
 	bool smooth_hb_env_dep_;

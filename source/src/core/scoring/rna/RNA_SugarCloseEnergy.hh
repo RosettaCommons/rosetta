@@ -23,6 +23,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/func/FadeFunc.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -139,6 +140,7 @@ private:
 	Real const angle_sd1_, angle_sd2_;
 	core::scoring::func::FuncOP fade_delta_north_, fade_delta_south_;
 
+	chemical::rna::RNA_FittedTorsionInfoOP rna_fitted_torsion_info_; // currently just used for delta cutoff
 	mutable constraints::ConstraintSetOP rna_sugar_close_constraints_;
 
 	virtual

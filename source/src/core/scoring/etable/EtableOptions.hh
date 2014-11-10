@@ -33,14 +33,21 @@ public:
 
 	EtableOptions( EtableOptions const & src );
 
-	EtableOptions const & 
+	EtableOptions const &
 	operator=( EtableOptions const & src );
 
 	friend
 	bool
 	operator==( EtableOptions const & a, EtableOptions const & b );
 
-	void 
+	friend
+	std::ostream &
+	operator<< ( std::ostream & out, const EtableOptions & options );
+
+	void
+	show( std::ostream & out ) const;
+
+	void
 	parse_my_tag( utility::tag::TagCOP tag );
 
 public:
@@ -49,9 +56,10 @@ public:
 	int  bins_per_A2;
 	Real Wradius;
 	Real lj_switch_dis2sigma;
-	bool disable_polar_desolvation;
+	bool no_lk_polar_desolvation;
 	Real lj_hbond_OH_donor_dis;
-	Real lj_hbond_hdis; 
+	Real lj_hbond_hdis;
+	bool enlarge_h_lj_wdepth;
 
 private:
 

@@ -134,9 +134,6 @@ namespace align {
 		std::map< id::AtomID, id::AtomID >
 		get_root_triad_atom_id_map( pose::Pose const & pose ) const;
 
-		bool
-		residue_is_bulged( pose::Pose const & pose, Size const & resid );
-
 		void
 		output_atom_id_map( std::map< id::AtomID, id::AtomID > const & atom_id_map ) const;
 

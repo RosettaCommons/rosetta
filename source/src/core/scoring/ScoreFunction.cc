@@ -44,8 +44,10 @@
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
+#include <core/scoring/methods/FreeDOF_Options.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
@@ -229,6 +231,12 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 	std::string line,tag,operation;
 	ScoreType score_type;
 	Real wt;
+	Real real_value;
+	Size size_value;
+	std::string string_value;
+	utility::vector1< std::pair< ScoreType, Real > >  score_types_from_file;
+	utility::vector1< std::pair< std::pair< ScoreType, Real >, std::string > > patches_from_file;
+
 	while ( getline( data, line ) ) {
 		std::istringstream l( line );
 		l >> tag;
@@ -285,10 +293,19 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			tr << "ATOM_VDW set to CENTROID_ROT_MIN" << std::endl;
 			energy_method_options_->atom_vdw_atom_type_set_name( "centroid_rot:min" );
 		} else if ( tag == "INCLUDE_INTRA_RES_RNA_HB" ) {
-			tr << "INCLUDE_INTRA_RES_RNA_HB==true" << std::endl;
-			energy_method_options_->hbond_options().include_intra_res_RNA( true );
+			utility_exit_with_message( "INCLUDE_INTRA_RES_RNA_HB no longer an option. Just use hbond_intra or hbond score term..." );
+		} else if ( tag == "EXCLUDE_INTRA_RES_RNA_HB" ){
+			energy_method_options_->hbond_options().exclude_intra_res_RNA( true );
+		} else if ( tag == "INCLUDE_INTRA_RES_PROTEIN" ){
+			energy_method_options_->exclude_intra_res_protein( false );
+		} else if ( tag == "PUT_INTRA_INTO_TOTAL" ) {
+			energy_method_options_->put_intra_into_total( true ); // also updates hbond_options
 		} else if ( tag == "INCLUDE_HB_DNA_DNA" ) {
 			energy_method_options_->hbond_options().exclude_DNA_DNA( false );
+		} else if ( tag == "ENLARGE_H_LJ_WDEPTH" ) {
+			energy_method_options_->etable_options().enlarge_h_lj_wdepth = true;
+			reset_energy_methods(); // ensure that etable is recomputed.
+			score_function_info_current_ = false;
 		} else if ( tag == "BOND_ANGLE_CENTRAL_ATOMS_TO_SCORE" ) {
 			utility::vector1<std::string> central_atoms;
 			std::string central_atom;
@@ -311,15 +328,47 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			l >> type;
 			energy_method_options_->unfolded_energies_type( type );
 		} else if ( tag == "FA_ELEC_MIN_DIS" ) {
-			Real value;
-			l >> value;
-			energy_method_options_->elec_min_dis( value );
+			l >> real_value;
+			energy_method_options_->elec_min_dis( real_value );
 		} else if ( tag == "FA_ELEC_MAX_DIS" ) {
-			Real value;
-			l >> value;
-			energy_method_options_->elec_max_dis( value );
+			l >> real_value;
+			energy_method_options_->elec_max_dis( real_value );
 		} else if ( tag == "FA_ELEC_NO_DIS_DEP_DIE" ) {
 			energy_method_options_->elec_no_dis_dep_die( true );
+		} else if ( tag == "NO_LK_POLAR_DESOLVATION" ) {
+			energy_method_options_->etable_options().no_lk_polar_desolvation = true;
+			reset_energy_methods(); // ensure that etable is recomputed.
+			score_function_info_current_ = false;
+		} else if ( tag == "GEOM_SOL_INTERRES_PATH_DISTANCE_CUTOFF" ) {
+			l >> size_value;
+			energy_method_options_->geom_sol_interres_path_distance_cutoff( size_value );
+		} else if ( tag == "GEOM_SOL_INTRARES_PATH_DISTANCE_CUTOFF" ) {
+			l >> size_value;
+			energy_method_options_->geom_sol_intrares_path_distance_cutoff( size_value );
+		} else if ( tag == "RNA_SYN_G_POTENTIAL_BONUS" ) {
+			l >> real_value;
+			energy_method_options_->rna_options().syn_G_potential_bonus( real_value );
+		} else if ( tag == "RNA_TORSION_POTENTIAL" ) {
+			l >> string_value;
+			energy_method_options_->rna_options().torsion_potential( string_value );
+		} else if ( tag == "RNA_SUITENESS_BONUS" ) {
+			l >> string_value;
+			energy_method_options_->rna_options().suiteness_bonus( string_value );
+		} else if ( tag == "FREE_SUITE_BONUS" ) {
+			l >> real_value;
+			energy_method_options_->free_dof_options().free_suite_bonus( real_value );
+		} else if ( tag == "FREE_SUGAR_BONUS" ) {
+			l >> real_value;
+			energy_method_options_->free_dof_options().free_sugar_bonus( real_value );
+		} else if ( tag == "FREE_2HOPRIME_BONUS" ) {
+			l >> real_value;
+			energy_method_options_->free_dof_options().free_2HOprime_bonus( real_value );
+		} else if ( tag == "PACK_PHOSPHATE_PENALTY" ) {
+			l >> real_value;
+			energy_method_options_->free_dof_options().pack_phosphate_penalty( real_value );
+		} else if ( tag == "FREE_SIDE_CHAIN_BONUS" ) {
+			l >> real_value;
+			energy_method_options_->free_dof_options().free_side_chain_bonus( real_value );
 		} else {
 
 	// //////////// Regular Weights ///////////////////////
@@ -332,7 +381,7 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 				if ( l.fail() ) {
 					utility_exit_with_message( "bad line in file "+filename+":"+line );
 				}
-				set_weight( score_type, wt );
+				score_types_from_file.push_back( std::make_pair(  score_type, wt ) ); // will apply at end.
 
 			} else {
 
@@ -342,19 +391,34 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 					tr.Error << "could not parse line in patch-file: " << line << std::endl;
 					continue;
 			  }
-			  if ( operation == "*=" ) {
-					set_weight( score_type, weights_[ score_type ]*wt );
-			  } else if ( operation == "=" ) {
-					set_weight( score_type, wt );
-			  } else {
-					utility_exit_with_message(
-						"unrecognized scorefunction patch operation "+operation+" in file: "+filename
-						);
-			  }
+				// will apply at end.
+				patches_from_file.push_back( std::make_pair( std::make_pair( score_type, wt ), operation ) );
 
 			} // if ( ! patch )
 		} // if ... else if ... else if ...
 	} // while ( getline( data, line ) )
+
+	for ( Size n = 1; n <= score_types_from_file.size(); n++ ) {
+		ScoreType const & score_type = score_types_from_file[n].first;
+		Real const        & weight     = score_types_from_file[n].second;
+		set_weight( score_type, weight );
+	}
+	for ( Size n = 1; n <= patches_from_file.size(); n++ ) {
+	  ScoreType const & score_type = patches_from_file[n].first.first;
+		Real const & weight     = patches_from_file[n].first.second;
+		std::string const & operation = patches_from_file[n].second;
+		if ( operation == "*=" ) {
+			set_weight( score_type, weights_[ score_type ]*weight );
+		} else if ( operation == "=" ) {
+			set_weight( score_type, weight );
+		} else {
+			utility_exit_with_message(
+																"unrecognized scorefunction patch operation "+operation+" in file: "+filename
+																);
+		}
+	}
+
+
 }
 
 
@@ -983,7 +1047,7 @@ ScoreFunction::get_sub_score(
 		}
 	}
 
-	// add in hbonding
+	// add in backbone-backbone hbonding
 	if ( pose.energies().data().has( EnergiesCacheableDataType::HBOND_SET )) {
 
 		hbonds::HBondSet const & hbond_set
@@ -3006,6 +3070,23 @@ find_weights_file(std::string name, std::string extension/*=".wts"*/) {
 			}
 		}
 	}
+}
+
+/// @brief check order of methods
+bool
+ScoreFunction::check_methods_in_right_order( ScoreType const & score_type_in_first_method,
+																						 ScoreType const & score_type_in_second_method ) const
+{
+	bool first_method_found( false );
+	for ( AllMethods::const_iterator it=all_methods_.begin(),
+					it_end = all_methods_.end(); it != it_end; ++it ) {
+
+		if ( ( (*it)->score_types() ).has_value( score_type_in_first_method ) ) first_method_found = true;
+
+		if ( ( (*it)->score_types() ).has_value( score_type_in_second_method ) &&  !first_method_found ) return false;
+
+	}
+	return true;
 }
 
 bool

@@ -19,6 +19,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/etable/EtableOptions.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
@@ -91,14 +93,29 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 	//	if ( !contains_protein( pose ) ) return initialize_o2prime_pack_scorefxn( sample_scorefxn );
 
 	ScoreFunctionOP pack_scorefxn = sample_scorefxn->clone();
+	methods::EnergyMethodOptions const & energy_method_options = sample_scorefxn->energy_method_options();
 
 	// hack for speed -- geom_sol & lk_nonpolar are too slow right now.
 	// [see also: O2PrimePacker]
 	if ( sample_scorefxn->has_nonzero_weight( geom_sol ) ||
 			 sample_scorefxn->has_nonzero_weight( geom_sol_fast ) ){
 
-		runtime_assert( sample_scorefxn->has_nonzero_weight( lk_nonpolar ) );
-		Real const lk_weight = sample_scorefxn->get_weight( lk_nonpolar );
+		Real lk_weight(  sample_scorefxn->get_weight( lk_nonpolar ) );
+		if ( sample_scorefxn->has_nonzero_weight( lk_nonpolar ) ){
+			runtime_assert( !energy_method_options.etable_options().no_lk_polar_desolvation );
+			runtime_assert( !sample_scorefxn->has_nonzero_weight( fa_sol ) );
+		} else { // new -- not using lk_nonpolar -- instead using fa_sol with no_lk_polar_desolvation flags
+			runtime_assert( energy_method_options.etable_options().no_lk_polar_desolvation );
+			runtime_assert( sample_scorefxn->has_nonzero_weight( fa_sol ) );
+			lk_weight = sample_scorefxn->get_weight( fa_sol );
+
+			// get fa_sol to handle polars again -- for speed.
+			etable::EtableOptionsOP pack_etable_options( new etable::EtableOptions( energy_method_options.etable_options() ) );
+			pack_etable_options->no_lk_polar_desolvation  = true;
+			methods::EnergyMethodOptionsOP pack_energy_method_options = energy_method_options.clone();
+			pack_energy_method_options->etable_options( *pack_etable_options);
+			pack_scorefxn->set_energy_method_options( *pack_energy_method_options );
+		}
 
 		pack_scorefxn->set_weight( geom_sol,      0.0 );
 		pack_scorefxn->set_weight( geom_sol_fast, 0.0 );
@@ -108,6 +125,15 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 	} else {
 		runtime_assert( !pack_scorefxn->has_nonzero_weight( lk_nonpolar ) ); // only allow lk_nonpolar if with geom_sol.
 	}
+
+	if ( pack_scorefxn->has_nonzero_weight( free_dof ) ){
+		Real const free_dof_weight = pack_scorefxn->get_weight( free_dof );
+		pack_scorefxn->set_weight( free_suite, free_dof_weight );
+		pack_scorefxn->set_weight( free_2HOprime, free_dof_weight );
+		pack_scorefxn->set_weight( free_side_chain, free_dof_weight );
+		pack_scorefxn->set_weight( free_dof, 0.0 ); // do not calculate free_base
+	}
+	pack_scorefxn->set_weight( free_base, 0.0 );
 
 	// these also take too long to compute.
 	pack_scorefxn->set_weight( fa_stack, 0.0 );

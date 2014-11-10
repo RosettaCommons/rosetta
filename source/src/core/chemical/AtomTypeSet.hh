@@ -201,10 +201,6 @@ private:
 	/// @brief  Save the directory name for future use, eg to load associated AtomVDW data
 	std::string directory_;
 
-	//Fang-Chieh Chou 8/10/2012
-	//Use larger LJ_WDEPTH for protons to avoid clashes in RNA
-	void enlarge_h_lj_wdepth();
-
 };
 
 } // chemical

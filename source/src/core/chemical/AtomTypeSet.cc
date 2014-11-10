@@ -34,6 +34,7 @@
 #include <iostream>
 
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/util.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <basic/database/open.hh>
@@ -67,7 +68,7 @@ AtomTypeSet::AtomTypeSet( std::string const & directory )
 	data.close();
 
 	if ( basic::options::option[ basic::options::OptionKeys::chemical::enlarge_H_lj ] ) {
-		enlarge_h_lj_wdepth();
+		core::chemical::enlarge_h_lj_wdepth( *this );
 	}
 
 	clone_atom_types_from_commandline();
@@ -525,19 +526,6 @@ AtomTypeSet::read_atom_type_extra_parameters_table(
 	}
 }
 
-//Fang-Chieh Chou 8/10/2012
-//Use larger LJ_WDEPTH for protons to avoid clashes in RNA
-void
-AtomTypeSet::enlarge_h_lj_wdepth()
-{
-	Size const n_H_atom_type = 5;
-	Real const lj_wdepth = 0.15;
-	std::string const H_names [n_H_atom_type] = {"Hpol", "Hapo", "Haro", "HNbb", "HOH"};
-	for (Size i = 0; i != n_H_atom_type; ++i) {
-		Size const index = atom_type_index( H_names[i] );
-		atoms_[index] -> set_parameter( "LJ_WDEPTH", lj_wdepth );
-	}
-}
 
 void
 AtomTypeSet::clone_atom_types_from_commandline()

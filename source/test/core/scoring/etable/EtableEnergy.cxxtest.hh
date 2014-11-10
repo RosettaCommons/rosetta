@@ -176,7 +176,7 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
+		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options, true );
 
 		EnergyMap emap;
 		ScoreFunction sfxn;
@@ -205,7 +205,7 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		AnalyticEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
+		AnalyticEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options, true );
 
 		EnergyMap emap;
 		ScoreFunction sfxn;

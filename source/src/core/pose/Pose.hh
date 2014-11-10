@@ -610,11 +610,11 @@ public:
 	/// example:
 	///			pose.total_atoms()
     Size total_atoms() const;
-  
+
 	/// @brief Returns the total number of atoms in the pose
 	/// up to a particular residue
 	Size total_atoms( Size nres ) const;
-    
+
 	/// @brief Returns true if there are no residues in the conformation
 	///
 	/// example(s):
@@ -693,7 +693,7 @@ public:
 	///     Residue
 	void
 	set_secstruct( Size const seqpos, char const setting );
-	
+
 
 	/// @brief  Returns a string representing the 1-letter-coded sequence of the pose conformation.
 	///
@@ -1387,16 +1387,6 @@ public:
 	/// add some score output
 	void
 	dump_scored_pdb( std::string const & file_name, scoring::ScoreFunction const & scorefxn, std::string const & tag="1" );
-	
-	void
-	clear_stacking_map();
-	
-	void
-	record_stacking_interaction( core::Size const & resid ) const;
-	
-	const boost::unordered_map< core::Size, core::Size >&
-	get_stacking_map() const;
-
 
 public: // observer attach/detach
 
@@ -1726,8 +1716,6 @@ private:
 	/// @brief ConformationEvent observers
 	/// @remarks fires when Conformation experiences a coordinate change (conformation::signals::XYZEvent)
 	mutable utility::signals::BufferedSignalHub< void, ConformationEvent > conformation_obs_hub_;
-	
-	mutable boost::unordered_map< core::Size, core::Size> num_stacks_;
 
 
 }; // class Pose

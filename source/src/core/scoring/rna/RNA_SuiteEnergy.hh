@@ -20,6 +20,7 @@
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/rna/RNA_SuitePotential.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -35,10 +36,10 @@ class RNA_SuiteEnergy : public methods::ContextIndependentLRTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentLRTwoBodyEnergy parent;
 
-	RNA_SuiteEnergy();
+	RNA_SuiteEnergy( RNA_EnergyMethodOptions const & options );
 
 	// clone
-	virtual	methods::EnergyMethodOP	clone() const { return methods::EnergyMethodOP( new RNA_SuiteEnergy ); }
+	virtual	methods::EnergyMethodOP	clone() const { return methods::EnergyMethodOP( new RNA_SuiteEnergy( options_ ) ); }
 
 	virtual	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
@@ -117,12 +118,13 @@ private:
 																Real const & weights,
 																utility::vector1<DerivVectorPair> & r1_atom_derivs,
 																utility::vector1<DerivVectorPair> & r2_atom_derivs,
-																RNA_SuitePotential const & rna_suite_potential ) const;
+																RNA_SuitePotentialCOP rna_suite_potential ) const;
 
 private:
 
-	RNA_SuitePotential const rna_suite_potential_;
-  RNA_SuitePotential const rna_suite_potential_for_suiteness_bonus_;
+	RNA_EnergyMethodOptions const & options_;
+	RNA_SuitePotentialOP rna_suite_potential_;
+  RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
 
 };
 

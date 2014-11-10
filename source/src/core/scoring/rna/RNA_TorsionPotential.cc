@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
 // Package Headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
@@ -115,45 +116,30 @@ namespace rna {
 // @brief Auto-generated virtual destructor
 RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
-	RNA_TorsionPotential::RNA_TorsionPotential():
-		// unused rna_tight_torsions_( true ),
+	RNA_TorsionPotential::RNA_TorsionPotential( RNA_EnergyMethodOptions const & options ):
 		delta_fade_( 10.0 ),
 		alpha_fade_( 10.0 ),
 		skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_skip_chainbreak ]() ),
 		verbose_( false ),
 		use_new_potential_( false ),
 		use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() ),
-		syn_G_potential_bonus_( basic::options::option[ basic::options::OptionKeys::score::syn_G_potential_bonus ]() ),
+		syn_G_potential_bonus_( options.syn_G_potential_bonus() ),
 		rna_fitted_torsion_info_( chemical::rna::RNA_FittedTorsionInfoOP( new chemical::rna::RNA_FittedTorsionInfo ) ),
 	  intrares_side_chain_score_( 0.0 )
 	{
-		if ( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ].user() ){
 
-			path_to_torsion_files_ = "scoring/rna/torsion_potentials/" + basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ]();
+		path_to_torsion_files_ = "scoring/rna/torsion_potentials/" + options.torsion_potential();
 
-			//Turn on the new torsional potential if the folder name ends wirh "new"
-			if ( path_to_torsion_files_ .compare( path_to_torsion_files_.size() - 3, 3, "new" ) == 0 ) {
-				use_new_potential_ = true;
-			}
+		//Turn on the new torsional potential if the folder name ends wirh "new"
+		if ( path_to_torsion_files_ .compare( path_to_torsion_files_.size() - 3, 3, "new" ) == 0 ) {
+			use_new_potential_ = true;
+		}
 
-			if ( verbose_ ) {
-				TR << "-----------------------------------------------------------------------------------" << std::endl;
-				TR << "USER INPUTTED path_to_torsion_files_ = " <<  basic::database::full_name( path_to_torsion_files_ ) << std::endl;
-				if ( use_new_potential_ ) TR << "Path name ends with 'new'... Turn on the new torsional potential" << std::endl;
-				TR << "-----------------------------------------------------------------------------------" << std::endl;
-			}
-		} else{
-			//path_to_torsion_files_( "scoring/rna/torsion_potentials/rd2008/" ),
-			//path_to_torsion_files_( "scoring/rna/torsion_potentials/FINAL_Mar_24_2010_new_delta_zeta_chi/" ),
-			//path_to_torsion_files_( "scoring/rna/torsion_potentials/FINAL_April_28_OLD_syn_chi/" ),
-
-			path_to_torsion_files_ = "scoring/rna/torsion_potentials/ps_04282011/";
-
-			if ( verbose_ ) {
-				TR << "-----------------------------------------------------------------------------------" << std::endl;
-				TR << "DEFAULT path_to_torsion_files_ = " <<  basic::database::full_name( path_to_torsion_files_ ) << std::endl;
-				TR << "-----------------------------------------------------------------------------------" << std::endl;
-			}
+		if ( verbose_ ) {
+			TR << "-----------------------------------------------------------------------------------" << std::endl;
+			TR << "path_to_torsion_files_ = " <<  basic::database::full_name( path_to_torsion_files_ ) << std::endl;
+			if ( use_new_potential_ ) TR << "Path name ends with 'new'... Turn on the new torsional potential" << std::endl;
+			TR << "-----------------------------------------------------------------------------------" << std::endl;
 		}
 
 		//		init_potentials_from_gaussian_parameters();
@@ -262,7 +248,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 		/////////////////////// new 'packable phosphate' variants /////////////////
 		// These were experimental, but are actually not in use -- no longer supported.
-		chemical::rna::RNA_ResidueType rna_type = rsd.type().RNA_type();
+		chemical::rna::RNA_ResidueType const & rna_type = rsd.type().RNA_type();
 		if ( rna_type.chi_number_pseudoalpha() > 0 ){
 			Real const pseudoalpha = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
 			Real const pseudoalpha_score = alpha_potential_->func( pseudoalpha );
@@ -597,7 +583,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 			/////////////////////// new 'packable phosphate' variants /////////////////
 			if ( seqpos != current_seqpos ) continue;
-			chemical::rna::RNA_ResidueType rna_type = pose.residue( current_seqpos ).type().RNA_type();
+			chemical::rna::RNA_ResidueType const & rna_type = pose.residue( current_seqpos ).type().RNA_type();
 			if ( rna_type.chi_number_pseudoalpha() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudoalpha() ),	pose, id, f1, f2 ) ){
 				Real const pseudoalpha = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
 				Real const dE_dtorsion = alpha_potential_->dfunc( pseudoalpha );

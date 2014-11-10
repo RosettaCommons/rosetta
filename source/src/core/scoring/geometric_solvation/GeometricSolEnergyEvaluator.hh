@@ -98,12 +98,6 @@ namespace geometric_solvation {
                                 pose::Pose const & pose ) const;
 
     bool
-    atom_is_donor_h( conformation::Residue const & rsd, Size const atm ) const;
-
-    bool
-    atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const;
-
-    bool
     atom_is_heavy( conformation::Residue const & rsd, Size const atm ) const;
 
 
@@ -138,7 +132,8 @@ namespace geometric_solvation {
 		    conformation::Residue const & rsd,
 				pose::Pose const & pose,
 				Real const & geom_sol_intra_weight,
-				utility::vector1< DerivVectorPair > & atom_derivs
+				utility::vector1< DerivVectorPair > & atom_derivs,
+				bool const just_rna = false /*legacy*/
 		) const;
 
 		void
@@ -198,6 +193,9 @@ namespace geometric_solvation {
 																				 ) const;
 
 private:
+
+		bool
+		check_path_distance( conformation::Residue const & rsd1, conformation::Residue const & rsd2, Size const & atm1, Size const & atm2 ) const;
 
 	inline
 	Real
@@ -279,18 +277,17 @@ private:
 		Vector const & polar_atm_xyz,
 		Vector const & occluding_atm_xyz ) const;
 
-	bool
-	atom_is_donor( conformation::Residue const & rsd, Size const atm ) const;
+	Real
+	donorRes_occludingRes_geometric_sol_intra(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		bool const just_RNA = false /*legacy*/ ) const;
 
 	Real
-	donorRes_occludingRes_geometric_sol_RNA_intra(
+	acceptorRes_occludingRes_geometric_sol_intra(
 		conformation::Residue const & rsd,
-		pose::Pose const & pose ) const;
-
-	Real
-	acceptorRes_occludingRes_geometric_sol_RNA_intra(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose ) const;
+		pose::Pose const & pose,
+		bool const just_RNA = false /*legacy*/ ) const;
 
 	Vector
 	get_acceptor_base_atm_xyz( conformation::Residue const & acc_rsd, Size const & acc_atm,
@@ -301,12 +298,15 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 	/////////////////////////////////////////////////////////////////////////////
-	methods::EnergyMethodOptionsOP options_;
+	methods::EnergyMethodOptions const & options_;
 
 	// no Hbonds longer than sqrt of this (the square)
 	hbonds::HBondDatabaseCOP hb_database_;
 	Real const dist_cut2_;
 	Real const geometric_sol_scale_;
+	int const interres_path_distance_cutoff_;
+	int const intrares_path_distance_cutoff_;
+  mutable int path_distance_;
 	bool const verbose_;
 
 	};

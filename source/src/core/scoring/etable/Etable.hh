@@ -618,7 +618,9 @@ private:
 	bool const lj_use_water_radii;
 	Real const lj_water_dis;
 	Real const lj_water_hdis;
+	bool const enlarge_h_lj_wdepth_;
 	Real const lk_min_dis2sigma;
+	bool const no_lk_polar_desolvation_;
 	Real const min_dis;
 	Real const min_dis2; // was double
 	bool const add_long_range_damping;

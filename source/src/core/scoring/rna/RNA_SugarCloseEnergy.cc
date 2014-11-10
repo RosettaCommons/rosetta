@@ -96,7 +96,8 @@ RNA_SugarCloseEnergy::RNA_SugarCloseEnergy() :
 	c4prime_o4prime_c1prime_angle_north_( numeric::conversions::radians( 109.7 ) ),
 	c4prime_o4prime_c1prime_angle_south_( numeric::conversions::radians( 109.9 ) ),
 	angle_sd1_( numeric::conversions::radians( 1.0 ) ),
-	angle_sd2_( numeric::conversions::radians( 1.5 ) )
+	angle_sd2_( numeric::conversions::radians( 1.5 ) ),
+	rna_fitted_torsion_info_( new chemical::rna::RNA_FittedTorsionInfo ) //currently just used for delta cutoff.
 {}
 
 RNA_SugarCloseEnergy::~RNA_SugarCloseEnergy() {}
@@ -197,9 +198,8 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 
 	constraints::ConstraintOP dist_cst, angle1, angle2, angle3;
 	if ( use_phenix_sugar_close_ ) {
-		Real const delta = rsd.mainchain_torsion( DELTA );
-		RNA_FittedTorsionInfo rna_torsion_fitted_info;
-		Real const delta_cutoff = rna_torsion_fitted_info.delta_cutoff();
+		Real const & delta = rsd.mainchain_torsion( DELTA );
+		Real const & delta_cutoff = rna_fitted_torsion_info_->delta_cutoff();
 		if ( delta < delta_cutoff ) { //NORTH
 			func::FuncOP f_dist_cst( new func::HarmonicFunc( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ) );
 			dist_cst = constraints::ConstraintOP( new AtomPairConstraint( o4prime_id, c1prime_id, f_dist_cst, rna_sugar_close ) );

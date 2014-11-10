@@ -137,71 +137,16 @@ public:
 	void clear_hbonds();
 	void add_hbond( HBond const & );
 
-	/// @brief res should be 1 or 2
-	//utility::vector1< HBond > const &
-	//hbonds_for_atom( Size res, Size atom ) const {
-	//	assert( res == 1 || res == 2 );
-	//	return ( res == 1 ? res1_hbonds_[ atom ] : res2_hbonds_[ atom ] );
-	//}
-private:
-	//void add_hbond_for_resatom( HBond const &, Size rsd, Size atno );
-
 private:
 
 	HBondResidueMinDataCOP res1_dat_;
 	HBondResidueMinDataCOP res2_dat_;
-
-	// The hydrogen bonds that atoms in residue 1 form with atoms in residue 2
-	// These must be updated during the setup_for_derivatives
-	//utility::vector1< utility::vector1< HBond > > res1_hbonds_;
-	//utility::vector1< utility::vector1< HBond > > res2_hbonds_;
 
 };
 
 HBondResPairMinData::HBondResPairMinData() {}
 void HBondResPairMinData::set_res1_data( HBondResidueMinDataCOP dat ) { res1_dat_ = dat; }
 void HBondResPairMinData::set_res2_data( HBondResidueMinDataCOP dat ) { res2_dat_ = dat; }
-
-/// @details Don't resize to a smaller size for hbonds
-//void HBondResPairMinData::update_natoms()
-//{
-//	assert( res1_dat_ && res2_dat_ );
-//	//clear_hbonds();
-//	if ( res1_hbonds_.size() < res1_dat_->natoms() ) res1_hbonds_.resize( res1_dat_->natoms() );
-//	if ( res2_hbonds_.size() < res2_dat_->natoms() ) res2_hbonds_.resize( res2_dat_->natoms() );
-//}
-
-/// @details Don't deallocate the vectors of hbonds; just resize those vectors to 0 length.
-/// This saves new() and delete() expenses for future add_hbond() calls.
-//void HBondResPairMinData::clear_hbonds() {
-//	for ( Size ii = 1, iiend = res1_dat_->natoms(); ii <= iiend; ++ii ) {
-//		res1_hbonds_[ ii ].clear();
-//	}
-//	for ( Size ii = 1, iiend = res2_dat_->natoms(); ii <= iiend; ++ii ) {
-//		res2_hbonds_[ ii ].clear();
-//	}
-//
-//}
-
-//void HBondResPairMinData::add_hbond( HBond const & hb )
-//{
-//	/// find lower res and upper res
-//	Size don_id( hb.don_res() < hb.acc_res() ? 1 : 2 );
-//	add_hbond_for_resatom( hb, don_id, hb.don_hatm() );
-//	Size acc_id( hb.don_res() < hb.acc_res() ? 2 : 1 );
-//	add_hbond_for_resatom( hb, acc_id, hb.acc_atm() );
-//}
-
-//void HBondResPairMinData::add_hbond_for_resatom( HBond const & hb, Size res, Size atno )
-//{
-//	assert( res == 1 || res == 2 );
-//
-//	if ( res == 1 ) {
-//		res1_hbonds_[ atno ].push_back( hb );
-//	} else {
-//		res2_hbonds_[ atno ].push_back( hb );
-//	}
-//}
 
 static thread_local basic::Tracer tr( "core.scoring.hbonds.HbondEnergy" );
 
@@ -224,7 +169,7 @@ HBondEnergyCreator::score_types_for_method() const {
 	sts.push_back( hbond_lr_bb_sc );
 	sts.push_back( hbond_sc );
 	sts.push_back( hbond_intra ); //Currently affects only RNA.
-	sts.push_back( num_hbonds );
+	sts.push_back( hbond );
 	return sts;
 }
 
@@ -275,16 +220,16 @@ HBondEnergy::setup_for_packing(
 		thickness_ = Membrane_FAEmbed_from_pose( pose ).thickness();
 		steepness_ = Membrane_FAEmbed_from_pose( pose ).steepness();
 	}
-	
+
 	// membrane framework object initialization
 	if ( options_->mphbond() ) {
-				
+
 		// Initialize membrane specific parameters
 		normal_ = pose.conformation().membrane_info()->membrane_normal();
 		center_ = pose.conformation().membrane_info()->membrane_center();
 		thickness_ = pose.conformation().membrane_info()->membrane_thickness();
 		steepness_ = pose.conformation().membrane_info()->membrane_steepness();
-		
+
 	}
 
 	hbond_set->setup_for_residue_pair_energies( pose );
@@ -355,10 +300,10 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 		thickness_ = Membrane_FAEmbed_from_pose( pose ).thickness();
 		steepness_ = Membrane_FAEmbed_from_pose( pose ).steepness();
 	}
-	
+
 	// membrane framework supported membrane object initialization
 	if ( options_->mphbond() ) {
-		
+
 		// Initialize membrane parameters
 		normal_ = pose.conformation().membrane_info()->membrane_normal();
 		center_ = pose.conformation().membrane_info()->membrane_center();
@@ -383,26 +328,7 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 	}
 	pose.energies().data().set( HBOND_SET, hbond_set );
 
-	//utility::vector1<core::Size> temp_vec ( pose.total_residue(), 0 );
-	num_hbonds_.clear();
 }
-
-///
-/*void
-HBondEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
-{
-	using EnergiesCacheableDataType::HBOND_SET;
-
-	pose.update_residue_neighbors();
-	HBondSetOP hbond_set( new hbonds::HBondSet( options_, pose.total_residue() ) );
-	hbond_set->setup_for_residue_pair_energies( pose, true, false );
-	if ( pose.energies().use_nblist() && pose.energies().data().has( HBOND_SET ) ) {
-		HBondSet const & existing_set = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
-		hbond_set->copy_bb_donor_acceptor_arrays( existing_set );
-	}
-	pose.energies().data().set( HBOND_SET, hbond_set );
-}*/
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -738,15 +664,8 @@ HBondEnergy::hbond_derivs_1way(
 {
 	EnergyMap emap;
 
-	//assert( don_rsd.seqpos() != acc_rsd.seqpos() ); Commented out by Parin Sripakdeevong (sripakpa@stanford.edu) on 12/26/2011
-
-	bool is_intra_res=(don_rsd.seqpos()==acc_rsd.seqpos());
-
-	if(is_intra_res){
-		if(don_rsd.is_RNA()==false) return;
-		if(don_rsd.is_RNA()!=acc_rsd.is_RNA()) utility_exit_with_message("don_rsd.is_RNA()!=acc_rsd.is_RNA()");
-		if(hbond_set.hbond_options().include_intra_res_RNA()==false) return;
-	}
+	bool is_intra_res = (don_rsd.seqpos() == acc_rsd.seqpos());
+	if ( is_intra_res && !calculate_intra_res_hbonds( don_rsd, hbond_set.hbond_options() ) ) return;
 
 	// <f1,f2> -- derivative vectors
 	HBondDerivs deriv;
@@ -761,23 +680,11 @@ HBondEnergy::hbond_derivs_1way(
 		Vector const & hatm_xyz( don_rsd.atom(hatm).xyz() );
 		Vector const & datm_xyz( don_rsd.atom(datm).xyz() );
 
-		if(is_intra_res){ //Must be RNA (see above early return condition)
-			if( don_rsd.RNA_type().is_RNA_base_atom( datm )==false ) continue;
-	 		if( don_rsd.is_virtual(hatm) ) continue; //Is this necessary?
-	 		if( don_rsd.is_virtual(datm) ) continue; //Is this necessary?
-		}
-
 		for ( chemical::AtomIndices::const_iterator
 				anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
 				anum != anume; ++anum ) {
 
 			Size const aatm( *anum );
-
-			if(is_intra_res){ //Must be RNA (see above early return condition)
-				if( acc_rsd.RNA_type().atom_is_phosphate(aatm)==false) continue;
-				if( acc_rsd.path_distance( aatm, datm ) < 4) utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
-		 		if( acc_rsd.is_virtual(aatm) ) continue; //Is this necessary?
-			}
 
 			if ( acc_rsd.atom_is_backbone(aatm)){
 				if ( ! datm_is_bb && exclude_bsc ) continue; // if the donor is sc, the acceptor bb, and exclude_b(a)sc(d)
@@ -808,14 +715,14 @@ HBondEnergy::hbond_derivs_1way(
 			Real weighted_energy = // evn weight * weight-set[ hbtype ] weight
 				(! hbond_set.hbond_options().use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options() )) *
-				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res);
+				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res, hbond_set.hbond_options().put_intra_into_total() );
 			weighted_energy *= ssdep_weight_factor;
 
 			// membrane specific correction
 			if ( options_->Mbhbond() && options_->mphbond()  ) {
 				weighted_energy = get_membrane_depth_dependent_weight(normal_, center_, thickness_,
 				steepness_, don_nb, acc_nb, hatm_xyz, acc_rsd.atom(aatm ).xyz()) *
-				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res);
+					hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res, hbond_set.hbond_options().put_intra_into_total() );
 			}
 
 			/// Only accumulate h and acc derivs for now; soon, don, h, acc, a-base and abase2 derivs
@@ -833,88 +740,11 @@ HBondEnergy::hbond_derivs_1way(
 			acc_atom_derivs[ base2 ].f1() += weighted_energy * deriv.abase2_deriv.f1();
 			acc_atom_derivs[ base2 ].f2() += weighted_energy * deriv.abase2_deriv.f2();
 
-			/*
-			// now we have identified a hbond -> append it into the hbond_set
-			//hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
-			//	hbe_type, unweighted_energy, environmental_weight, deriv );
-
-			bool const dhatm_is_protein_backbone
-				( don_rsd.is_protein() && don_rsd.atom_is_backbone( hatm ) );
-			bool const  aatm_is_protein_backbone
-				( acc_rsd.is_protein() && acc_rsd.atom_is_backbone( aatm ) );
-
-			bool const dhatm_is_backbone( don_rsd.atom_is_backbone( hatm ) );
-			bool const  aatm_is_backbone( acc_rsd.atom_is_backbone( aatm ) );
-
-			Size const don_pos( don_rsd.seqpos() );
-			Size const acc_pos( acc_rsd.seqpos() );
-
-			HBond hbond( hatm, dhatm_is_protein_backbone, don_rsd.is_protein(), don_rsd.is_DNA(),
-				dhatm_is_backbone, don_pos,
-				aatm,  aatm_is_protein_backbone, acc_rsd.is_protein(), acc_rsd.is_DNA(),
-				aatm_is_backbone, acc_pos,
-				hbe_type, unweighted_energy, environmental_weight, deriv );
-
-			hb_pair_data.add_hbond( hbond );
-			//////
-			*/
-
 		} // loop over acceptors
 	} // loop over donors
 
 }
 
-
-/// @details Store all the hbonds formed between these two residues in the data_cache object
-/// so that they are available for derivative evaluation.
-/*void
-HBondEnergy::setup_for_derivatives_for_residue_pair(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	pose::Pose const & pose,
-	ResPairMinimizationData & data_cache
-) const
-{
-	/// Iterate across all acceptor and donor atom pairs for these two residues, and write down the hydrogen bonds
-	/// that are formed.
-
-	using EnergiesCacheableDataType::HBOND_SET;
-
-	HBondSet const & hbondset = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
-
-	assert( dynamic_cast< HBondResPairMinData * > ( data_cache.get_data( hbond_respair_data )() ));
-	HBondResPairMinData & hb_pair_dat = static_cast< HBondResPairMinData & > ( data_cache.get_data_ref( hbond_respair_data ) );
-	hb_pair_dat.clear_hbonds();
-
-	Size const rsd1nneighbs( hb_pair_dat.res1_data().nneighbors() );
-	Size const rsd2nneighbs( hb_pair_dat.res2_data().nneighbors() );
-
-	{ // scope
-	/// 1st == find hbonds with donor atoms on rsd1
-	/// case A: sc is acceptor, bb is donor && res2 is the acceptor residue -> look at the donor availability of residue 1
-	bool exclude_scb( ! hb_pair_dat.res1_data().bb_don_avail() );
-	/// case B: bb is acceptor, sc is donor && res2 is the acceptor residue -> look at the acceptor availability of residue 2
-	bool exclude_bsc( ! hb_pair_dat.res2_data().bb_acc_avail() );
-
-	identify_hbonds_1way( hbondset, database_, rsd1, rsd2, rsd1nneighbs, rsd2nneighbs, exclude_bsc, exclude_scb, hb_pair_dat );
-	}
-
-	{ // scope
-	/// 2nd == evaluate hbonds with donor atoms on rsd2
-	/// case A: sc is acceptor, bb is donor && res1 is the acceptor residue -> look at the donor availability of residue 2
-	bool exclude_scb( ! hb_pair_dat.res2_data().bb_don_avail() );
-	/// case B: bb is acceptor, sc is donor && res1 is the acceptor residue -> look at the acceptor availability of residue 1
-	bool exclude_bsc( ! hb_pair_dat.res1_data().bb_acc_avail() );
-
-
-	identify_hbonds_1way( hbondset, database_, rsd2, rsd1, rsd2nneighbs, rsd1nneighbs, exclude_bsc, exclude_scb, hb_pair_dat );
-	}
-
-}*/
-
-///WORKING| MODELED AFTER THE VERSION IN OccludedHbondSolEnergy...Need to make sure that this is correct!: Parin Sripakdeevong/////
 void
 HBondEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
@@ -925,20 +755,13 @@ HBondEnergy::eval_intrares_derivatives(
 ) const
 {
 
-	if(options_->include_intra_res_RNA() && rsd.is_RNA()){
-
+	if ( calculate_intra_res_hbonds( rsd, *options_ ) ) {
 		using EnergiesCacheableDataType::HBOND_SET;
-
-		HBondSet const & hbondset = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
-
-		bool exclude_scb=false;
-
-		hbond_derivs_1way( weights, hbondset, database_, rsd, rsd, 1, 1, exclude_scb, exclude_scb, 1, atom_derivs, atom_derivs );
-
+		HBondSet const & hbond_set = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
+		bool const exclude_scb( false );
+		hbond_derivs_1way( weights, hbond_set, database_, rsd, rsd, 1, 1, exclude_scb, exclude_scb, 1, atom_derivs, atom_derivs );
 	}
 }
-///WORKING| MODELED AFTER THE VERSION IN OccludedHbondSolEnergy...Need to make sure that this is correct!: Parin Sripakdeevong/////
-
 
 void
 HBondEnergy::eval_residue_pair_derivatives(
@@ -1000,50 +823,6 @@ HBondEnergy::eval_residue_pair_derivatives(
 	}
 
 }
-
-/// @details The hydrogen bonds must have already been found and added to the minpair_data
-/// container in a call to setup_for_derivatives_for_residue_pair() where the input
-/// residues are guaranteed to not have changed since that call.
-/*void
-HBondEnergy::eval_atom_derivative_for_residue_pair(
-	Size const atom_index,
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const & ,
-	ResSingleMinimizationData const & ,
-	ResPairMinimizationData const & minpair_data,
-	pose::Pose const &, // provides context
-	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
-) const
-{
-
-	assert( dynamic_cast< HBondResPairMinData const * > ( minpair_data.get_data( hbond_respair_data )() ));
-	HBondResPairMinData const & hb_pair_dat = static_cast< HBondResPairMinData const & > ( minpair_data.get_data_ref( hbond_respair_data ) );
-
-	utility::vector1< HBond > const & hbonds( hb_pair_dat.hbonds_for_atom( rsd1.seqpos() < rsd2.seqpos() ? 1 : 2, atom_index ));
-
-	/// This loop extracted from the old hbonds.cc::get_atom_hbond_derivative() method
-	id::AtomID atom( atom_index, rsd1.seqpos() );
-
-	for ( Size ii = 1; ii <= hbonds.size(); ++ii ) {
-		HBond const & hbond( hbonds[ ii ] );
-		Real sign_factor( 0.0 );
-		if ( hbond.atom_is_donorH( atom ) ) sign_factor = 1.0;
-		else {
-			assert( hbond.atom_is_acceptor( atom ) );
-			sign_factor = -1;
-		}
-		// get the appropriate type of hbond weight
- 		Real const weight(sign_factor * hbond.weight() * hb_eval_type_weight(hbond.eval_type(), weights));
- 		F1 += weight * hbond.deriv().first;
- 		F2 += weight * hbond.deriv().second;
-
-	}
-}*/
 
 void
 HBondEnergy::backbone_backbone_energy(
@@ -1418,7 +1197,6 @@ HBondEnergy::finalize_total_energy(
 
 	EnergyMap hbond_emap(totals);
 
-
 	// the current logic is that we fill the hbond set with backbone
 	// hbonds only at the beginning of scoring. this is done to setup
 	// the bb-bb hbond exclusion logic. so the hbondset should only
@@ -1434,11 +1212,11 @@ HBondEnergy::finalize_total_energy(
 
 
 	// this is to replicate buggy behavior regarding protein-backbone -- dna-backbone hbonds
-	Real original_bb_sc = totals[ hbond_bb_sc ];
+	Real original_bb_sc    = totals[ hbond_bb_sc ];
 	Real original_sr_bb_sc = totals[ hbond_sr_bb_sc ];
 	Real original_lr_bb_sc = totals[ hbond_lr_bb_sc ];
-	Real original_sc = totals[ hbond_sc ];
-	Real original_intra = totals[hbond_intra];
+	Real original_sc       = totals[ hbond_sc ];
+	Real original_intra    = totals[ hbond_intra ];
 	// end replicate
 
 	get_hbond_energies( hbond_set, totals );
@@ -1451,37 +1229,7 @@ HBondEnergy::finalize_total_energy(
 	totals[ hbond_intra ]    = original_intra;
 	// end replicate
 
-	// Give back a bonus to "free" residues that are involved in 1 or fewer hbonds
-	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
-		 it=num_hbonds_.begin(), it_end = num_hbonds_.end(); it != it_end; ++it ) {
-		if ( it->second > 1 ) totals[ num_hbonds ]++;
-	}
-
 }
-
-/* DEPRECATED
-/// f1 and f2 are zeroed
-void
-HBondEnergy::eval_atom_derivative(
-	id::AtomID const & atom_id,
-	pose::Pose const & pose,
-	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
-) const
-{
-	using EnergiesCacheableDataType::HBOND_SET;
-
-	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-		( pose.energies().data().get( HBOND_SET ) ) );
-	Vector f1,f2;
-	hbonds::get_atom_hbond_derivative( atom_id, hbond_set, weights, f1, f2 );
-	F1 += f1;
-	F2 += f2;
-}*/
 
 ///@brief HACK!  MAX_R defines the maximum donorH to acceptor distance.
 // The atomic_interaction_cutoff method is meant to return the maximum distance
@@ -1518,29 +1266,23 @@ HBondEnergy::indicate_required_context_graphs(
 bool
 HBondEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 {
-
-	bool condition_1= (weights[hbond_intra]>0.0001) ? true : false;
-
-	bool condition_2= (options_->include_intra_res_RNA()) ? true: false;
-
-	return (condition_1 && condition_2);
-
+	return ( weights[hbond_intra] > 0.0 || weights[hbond] > 0.0 );
 }
 
 
 void
 HBondEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	ScoreFunction const & ,
 	EnergyMap & emap
 ) const
 {
-
-	if(options_->include_intra_res_RNA() && rsd.is_RNA()){
-		identify_intra_res_hbonds( *database_, rsd, false /*calculate_derivative*/, *options_, emap);
+	if ( calculate_intra_res_hbonds( rsd, *options_ ) ){
+		TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
+		Size const rsd_nb = tenA_neighbor_graph.get_node( rsd.seqpos() )->num_neighbors_counting_self_static();
+		identify_intra_res_hbonds( *database_, rsd, rsd_nb, *options_, emap);
 	}
-
 }
 
 void

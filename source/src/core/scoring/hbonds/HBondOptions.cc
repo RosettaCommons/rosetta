@@ -46,10 +46,12 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-HBondOptions::HBondOptions( std::string params_db_tag ):
+HBondOptions::HBondOptions( std::string params_db_tag /* = "sp2_elec_params") */ ):
 	exclude_DNA_DNA_( true ),
-	include_intra_res_RNA_( false ),
-	exclude_self_hbonds_( true ),
+	exclude_intra_res_protein_( true ),
+	exclude_intra_res_RNA_( false ),
+	put_intra_into_total_( false ), // means that intra will go into 'hbond' (all hbond terms)
+	exclude_self_hbonds_( true ), // does not seem to be active --rhiju
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
 	smooth_hb_env_dep_( true ),
@@ -70,39 +72,8 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	ldsrbb_minlength_( 4 ),
 	ldsrbb_maxlength_( 17 )
 {
-
-	initialize_from_options();
-}
-
-
-
-HBondOptions::HBondOptions():
-	exclude_DNA_DNA_( true ),
-	include_intra_res_RNA_( false ),
-	exclude_self_hbonds_( true ),
-	use_hb_env_dep_ ( true ),
-	use_hb_env_dep_DNA_( true ),
-	smooth_hb_env_dep_( true ),
-	bb_donor_acceptor_check_( true ),
-	decompose_bb_hb_into_pair_energies_( false ),
-	params_database_tag_("sp2_elec_params"),
-	use_sp2_chi_penalty_( false ),
-	sp2_BAH180_rise_( 0.75 ),
-	sp2_outer_width_( 0.357 ),
-	measure_sp3acc_BAH_from_hvy_( false ),
-	fade_energy_( false ),
-	Mbhbond_( false ), //pba
-	mphbond_( false ),
-	hbond_energy_shift_( 0.0 ),
-	length_dependent_srbb_( false ),
-	ldsrbb_low_scale_( 0.5 ),
-	ldsrbb_high_scale_( 2.0 ),
-	ldsrbb_minlength_( 4 ),
-	ldsrbb_maxlength_( 17 )
-{
 	using namespace basic::options;
-	if (option.has(OptionKeys::score::hbond_params) &&
-			option[OptionKeys::score::hbond_params]() != params_database_tag_ ){
+	if ( params_database_tag_.size() == 0 ) {
 		params_database_tag_ = option[OptionKeys::score::hbond_params];
 	}
 	initialize_from_options();
@@ -114,16 +85,17 @@ void HBondOptions::initialize_from_options() {
 		option[OptionKeys::membrane::Mhbond_depth].user()){
 		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
 	}
-	
+
 	if ( option.has( OptionKeys::membrane_new::scoring::hbond ) ) {
 		mphbond_ = option[ OptionKeys::membrane_new::scoring::hbond ];
 	}
-	
+
 	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	decompose_bb_hb_into_pair_energies_ = option[ OptionKeys::score::hbond_bb_per_residue_energy ];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
+	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
 
 	if (option[ OptionKeys::score::length_dep_srbb ].user())
 		length_dependent_srbb_ = option[ OptionKeys::score::length_dep_srbb ];
@@ -162,7 +134,9 @@ HBondOptions const &
 HBondOptions::operator=( HBondOptions const & src )
 {
 	exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
-	include_intra_res_RNA_=src.include_intra_res_RNA_;
+	exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
+	exclude_intra_res_RNA_ = src.exclude_intra_res_RNA_;
+	put_intra_into_total_ = src.put_intra_into_total_;
 	exclude_self_hbonds_ = src.exclude_self_hbonds_;
 	use_hb_env_dep_ = src.use_hb_env_dep_;
 	use_hb_env_dep_DNA_ = src.use_hb_env_dep_DNA_;
@@ -216,6 +190,9 @@ HBondOptions::parse_my_tag(
 	if( tag->hasOption( "hbonds:use_hb_env_dep_DNA" )) {
 		use_hb_env_dep_DNA( tag->getOption<bool>( "hbonds:use_hb_env_dep_DNA" ) );
 	}
+	if( tag->hasOption( "hbonds:put_intra_into_total" )) {
+		put_intra_into_total( tag->getOption<bool>( "hbonds:put_intra_into_total" ) );
+	}
 	if( tag->hasOption( "hbonds:exclude_self_hbonds" )) {
 		exclude_self_hbonds( tag->getOption<bool>( "hbonds:exclude_self_hbonds" ) );
 	}
@@ -228,10 +205,14 @@ HBondOptions::parse_my_tag(
 	if( tag->hasOption( "hbonds:decompose_bb_hb_into_pair_energies" )) {
 		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "hbonds:decompose_bb_hb_into_pair_energies" ) );
 	}
-
-
-	if( tag->hasOption( "hbonds:include_intra_res_RNA" )) {
-		include_intra_res_RNA( tag->getOption<bool>( "hbonds:include_intra_res_RNA" ) );
+	if( tag->hasOption( "hbonds:exclude_intra_res_protein" )) {
+		exclude_intra_res_protein( tag->getOption<bool>( "hbonds:exclude_intra_res_protein" ) );
+	}
+	if( tag->hasOption( "hbonds:exclude_intra_res_RNA" )) {
+		exclude_intra_res_RNA( tag->getOption<bool>( "hbonds:exclude_intra_res_RNA" ) );
+	}
+	if( tag->hasOption( "hbonds:put_intra_into_total" )) {
+		put_intra_into_total( tag->getOption<bool>( "hbonds:put_intra_into_total" ) );
 	}
 	if( tag->hasOption( "hbonds:bb_donor_acceptor_check" )) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:bb_donor_acceptor_check" ) );
@@ -280,16 +261,44 @@ HBondOptions::exclude_DNA_DNA( bool const setting )
 
 ///
 bool
-HBondOptions::include_intra_res_RNA() const
+HBondOptions::exclude_intra_res_protein() const
 {
-	return include_intra_res_RNA_;
+	return exclude_intra_res_protein_;
 }
 
 ///
 void
-HBondOptions::include_intra_res_RNA( bool const setting )
+HBondOptions::exclude_intra_res_protein( bool const setting )
 {
-	include_intra_res_RNA_ = setting;
+	exclude_intra_res_protein_ = setting;
+}
+
+///
+bool
+HBondOptions::exclude_intra_res_RNA() const
+{
+	return exclude_intra_res_RNA_;
+}
+
+///
+void
+HBondOptions::exclude_intra_res_RNA( bool const setting )
+{
+	exclude_intra_res_RNA_ = setting;
+}
+
+///
+bool
+HBondOptions::put_intra_into_total() const
+{
+	return put_intra_into_total_;
+}
+
+///
+void
+HBondOptions::put_intra_into_total( bool const setting )
+{
+	put_intra_into_total_ = setting;
 }
 
 ///
@@ -465,7 +474,9 @@ bool
 operator==( HBondOptions const & a, HBondOptions const & b )
 {
 	return ( ( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
-		( a.include_intra_res_RNA_ == b.include_intra_res_RNA_	 ) &&
+		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_	 ) &&
+		( a.exclude_intra_res_RNA_ == b.exclude_intra_res_RNA_	 ) &&
+		( a.put_intra_into_total_ == b.put_intra_into_total_	 ) &&
 		( a.exclude_self_hbonds_ == b.exclude_self_hbonds_ ) &&
 		( a.use_hb_env_dep_ == b.use_hb_env_dep_ ) &&
 		( a.use_hb_env_dep_DNA_ == b.use_hb_env_dep_DNA_ ) &&
@@ -501,8 +512,12 @@ HBondOptions::show( std::ostream & out ) const
 {
 	out <<"HBondOptions::show: exclude_DNA_DNA: "
 		<<( exclude_DNA_DNA_ ? "true" : "false" ) << std::endl;
-   out <<"HBondOptions::show: include_intra_res_RNA_: "
-		<<( include_intra_res_RNA_ ? "true" : "false" ) << std::endl;
+	out <<"HBondOptions::show: exclude_intra_res_protein_: "
+		<<( exclude_intra_res_protein_ ? "true" : "false" ) << std::endl;
+	out <<"HBondOptions::show: exclude_intra_res_RNA_: "
+		<<( exclude_intra_res_RNA_ ? "true" : "false" ) << std::endl;
+	out <<"HBondOptions::show: put_intra_into_total_: "
+		<<( put_intra_into_total_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: exclude_self_hbonds: "
 		<<( exclude_self_hbonds_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: use_hb_env_dep: "

@@ -43,7 +43,8 @@
 
 #include <numeric/xyzVector.hh>
 
-#include <core/scoring/EnergyMap.fwd.hh>
+#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/ScoreType.hh>
 #include <utility/vector1.hh>
 
 
@@ -212,7 +213,6 @@ inline_residue_atom_pair_energy(
 			}
 		}
 	}
-
 }
 
 /// @brief intraresidue atom pair energy evaluations

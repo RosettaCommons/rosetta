@@ -539,23 +539,38 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Size
-	get_number_missing_residue_connections( pose::Pose & pose ) {
+	get_number_missing_residues_and_connections( pose::Pose & pose ) {
+		utility::vector1< char > missing_residues;
+		return get_number_missing_residues_and_connections( pose, missing_residues );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	get_number_missing_residues_and_connections( pose::Pose & pose,
+																							 utility::vector1< char > & missing_residues ) {
 
 		using namespace core::pose::full_model_info;
 		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
 		utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
 		utility::vector1< Size > const & fixed_domain_map = const_full_model_info( pose ).fixed_domain_map();
 		utility::vector1< Size > const & working_res = const_full_model_info( pose ).working_res();
+		std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
+		missing_residues.clear();
 
 		Size nmissing( 0 );
 		Size const nres = pose_domain_map.size();
 		for ( Size n = 1; n <= nres; n++ ){
 			if ( fixed_domain_map[ n ] == 0 ){
-				if ( pose_domain_map[ n ] == 0 && working_res.has_value( n ) ) nmissing++;
+				// missing residues.
+				if ( pose_domain_map[ n ] == 0 && working_res.has_value( n ) ) {
+					nmissing++;
+					missing_residues.push_back( full_sequence[ n - 1 ] );
+				}
 			} else if ( n < nres &&
 									!cutpoint_open.has_value( n ) &&
 									fixed_domain_map[ n+1 ] > 0 &&
 									fixed_domain_map[ n+1 ] != fixed_domain_map[ n ] ) {
+				// missing suites between fixed domains (happens in, e.g., four-way junctions with no internal residues)
 				if ( pose_domain_map[ n ] == 0 ||
 						 pose_domain_map[ n+1 ] == 0 ||
 						 ( pose_domain_map[ n ] != pose_domain_map[ n+1 ] ) ) {

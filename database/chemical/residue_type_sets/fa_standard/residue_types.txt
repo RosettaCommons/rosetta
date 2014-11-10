@@ -110,8 +110,6 @@ residue_types/staple/08B.params
 ## Water Types
 residue_types/water/TP3.params
 residue_types/water/TP5.params
-## HOH is a copy of TP3 (but with residue name HOH), and allows for direct readin of PDBs without cleanup -- perhaps can remove TP3?
-#residue_types/water/HOH.params
 
 ## D-CAA Types
 #residue_types/d-caa/DALA.params

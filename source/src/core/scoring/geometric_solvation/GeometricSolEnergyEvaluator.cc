@@ -24,6 +24,7 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
+#include <core/scoring/etable/count_pair/CountPairGeneric.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -56,8 +57,10 @@
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
-
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 static thread_local basic::Tracer TR( "core.scoring.geometric_solvation.GeometricSolEnergyEvaluator" );
 
@@ -77,6 +80,7 @@ using namespace ObjexxFCL::format;
 // Overhauled by the Das lab in 2013-2014, especially
 // to fix derivatives to match new hbond system.
 //
+//
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
@@ -86,22 +90,26 @@ namespace geometric_solvation {
 
 ///@brief copy c-tor
 GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( methods::EnergyMethodOptions const & opts ) :
-	options_( methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( opts ) ) ),
+	options_( opts ),
 	hb_database_( HBondDatabase::get_database( opts.hbond_options().params_database_tag() )),
 	dist_cut2_( 27.0 ),   // 5.2*5.2
 	geometric_sol_scale_( 0.4 * 1.17 / 0.65 ),
+	interres_path_distance_cutoff_( opts.geom_sol_interres_path_distance_cutoff() ), // 0, currently no cutoff here -- so this is counting way too many pairs, even for bonded atoms!
+	intrares_path_distance_cutoff_( opts.geom_sol_intrares_path_distance_cutoff() ), // 6, note that this counts very few pairs
 	verbose_( false )
 {
-	//runtime_assert( !options_->exclude_DNA_DNA() );	//GEOMETRIC SOLVATION NOT COMPATIBLE WITH EXCLUDE_DNA_DNA FLAG YET
+	//runtime_assert( !options_.exclude_DNA_DNA() );	//GEOMETRIC SOLVATION NOT COMPATIBLE WITH EXCLUDE_DNA_DNA FLAG YET
 }
 
 /// copy ctor
 GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( GeometricSolEnergyEvaluator const & src ) :
 		utility::pointer::ReferenceCount(src),
-		options_( methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( * src.options_ ) )),
+		options_( src.options_ ),
 		hb_database_( src.hb_database_ ),
 		dist_cut2_( src.dist_cut2_ ),   // 5.2*5.2
 		geometric_sol_scale_( src.geometric_sol_scale_ ),
+		interres_path_distance_cutoff_( src.interres_path_distance_cutoff_ ),
+		intrares_path_distance_cutoff_( src.intrares_path_distance_cutoff_ ),
 		verbose_( src.verbose_ )
 {}
 
@@ -498,7 +506,7 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 			Vector occluding_base_atm_xyz( 0.0 );
 			set_water_base_atm( base_atm_xyz, polar_atm_xyz, occluding_atm_xyz, occluding_base_atm_xyz,
 													xH, water_O_H_distance );
-			hb_energy_deriv( *hb_database_, options_->hbond_options(),
+			hb_energy_deriv( *hb_database_, options_.hbond_options(),
 				hbond_eval_type, base_atm_xyz, polar_atm_xyz,
 				occluding_atm_xyz,
 				occluding_base_atm_xyz,
@@ -506,7 +514,7 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 				energy, hbderiv_ABE_GO_GEOMSOL_OCC_DON, deriv);
 		} else {
 			Real chi( 0.0 );
-			hbond_compute_energy( *hb_database_, options_->hbond_options(), hbond_eval_type, AHdis, xD, xH, chi, energy );
+			hbond_compute_energy( *hb_database_, options_.hbond_options(), hbond_eval_type, AHdis, xD, xH, chi, energy );
 		}
 	} else {
 
@@ -526,7 +534,7 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 		// find cosine of the base-acceptor-water_proton angle (xH)
 		// note: this is the same as the base-acceptor-water_oxygen angle
 		Vector pseudo_base_atm_xyz, dummy; // stolen from hbonds_geom.cc
-		make_hbBasetoAcc_unitvector( options_->hbond_options(),
+		make_hbBasetoAcc_unitvector( options_.hbond_options(),
 																 get_hbe_acc_hybrid( hbond_eval_type.eval_type() ),
 																 polar_atm_xyz,
 																 base_atm_xyz,
@@ -542,29 +550,29 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 		set_water_base_atm( pseudo_base_atm_xyz, polar_atm_xyz, occluding_atm_xyz, occluding_mock_hydrogen_atm_xyz,
 												-xD, water_O_H_distance );
 		if ( update_deriv || always_do_full_calculation || true ) {
- 			hb_energy_deriv( *hb_database_, options_->hbond_options(), hbond_eval_type,
+ 			hb_energy_deriv( *hb_database_, options_.hbond_options(), hbond_eval_type,
 											 occluding_atm_xyz, occluding_mock_hydrogen_atm_xyz,
 											 polar_atm_xyz, base_atm_xyz /*pseudo_base determined inside!*/, base2_atm_xyz,
 											 energy, hbderiv_ABE_GO_GEOMSOL_OCC_ACC, deriv);
 		} else {
 			Real chi( 0.0 );
 			// stolen from hbonds_geom.cc -- probably should make a shared function.
-			if ( options_->hbond_options().use_sp2_chi_penalty() &&
+			if ( options_.hbond_options().use_sp2_chi_penalty() &&
 					 get_hbe_acc_hybrid( hbond_eval_type.eval_type() ) == chemical::SP2_HYBRID &&
 					 base2_atm_xyz != Vector(-1.0, -1.0, -1.0) ) {
 				chi = numeric::dihedral_radians( occluding_mock_hydrogen_atm_xyz, polar_atm_xyz, pseudo_base_atm_xyz, base2_atm_xyz );
-			} else if ( options_->hbond_options().measure_sp3acc_BAH_from_hvy() &&
+			} else if ( options_.hbond_options().measure_sp3acc_BAH_from_hvy() &&
 									( hbond_eval_type.acc_type() == hbacc_AHX || hbond_eval_type.acc_type() == hbacc_HXL ) ) {
 				/// Bxyz really is the heavy atom base and B2xyz really is the hydroxyl hydrogen
 				/// this is guaranteed by the hbond_measure_sp3acc_BAH_from_hvy flag.
 				chi = numeric::dihedral_radians( occluding_mock_hydrogen_atm_xyz, polar_atm_xyz, pseudo_base_atm_xyz, base2_atm_xyz );
 			}
-			hbond_compute_energy( *hb_database_, options_->hbond_options(), hbond_eval_type, AHdis, xD, xH, chi, energy );
+			hbond_compute_energy( *hb_database_, options_.hbond_options(), hbond_eval_type, AHdis, xD, xH, chi, energy );
 		}
 	}
 
-	if (options_->hbond_options().use_hb_env_dep() ) {
-		environment_weight = hbonds::get_environment_dependent_weight( hbond_eval_type, polar_nb, occ_nb, options_->hbond_options() );
+	if (options_.hbond_options().use_hb_env_dep() ) {
+		environment_weight = hbonds::get_environment_dependent_weight( hbond_eval_type, polar_nb, occ_nb, options_.hbond_options() );
 	}
 
 	if (verbose_ ) TR << "  jk ENERGY: " << energy << std::endl;
@@ -596,6 +604,28 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+GeometricSolEnergyEvaluator::check_path_distance(
+	 conformation::Residue const & rsd1,
+	 conformation::Residue const & rsd2,
+	 Size const & atm1,
+	 Size const & atm2 ) const {
+
+	path_distance_ = 0;
+
+	if ( rsd1.seqpos() == rsd2.seqpos() ) {
+		return ( rsd1.path_distance( atm1, atm2 ) >= intrares_path_distance_cutoff_ );
+	}
+
+	if ( ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) && ( interres_path_distance_cutoff_ > 0 ) ) {
+		etable::count_pair::CountPairGeneric count_pair( rsd1, rsd2 ); // this is inefficient... happens with each atom pair in rsd1, rsd2.
+		path_distance_ = count_pair.path_distance( atm1, atm2 );
+		return ( path_distance_ >= interres_path_distance_cutoff_ );
+	}
+
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //inline
@@ -633,7 +663,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	TenANeighborGraph const & tenA_neighbor_graph
 		( pose.energies().tenA_neighbor_graph() );
 
-	assert( atom_is_donor_h( don_rsd, don_h_atm ) );
+	assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
 
 	Size const don_base_atm( don_rsd.atom_base( don_h_atm ) );
 
@@ -651,11 +681,14 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	bool const don_h_atm_is_protein_backbone
 		( don_rsd.is_protein() && don_rsd.atom_is_backbone( don_h_atm ) );
 	bool const occ_atm_is_protein_backbone_acceptor
-		( occ_rsd.is_protein() && occ_rsd.atom_is_backbone( occ_atm ) && atom_is_acceptor(occ_rsd, occ_atm ) );
+		( occ_rsd.is_protein() && occ_rsd.atom_is_backbone( occ_atm ) && occ_rsd.heavyatom_is_an_acceptor( occ_atm ) );
 	if ( don_h_atm_is_protein_backbone && hbond_set.don_bbg_in_bb_bb_hbond( don_rsd.seqpos() ) &&
 			 !occ_atm_is_protein_backbone_acceptor ) {
 		return;
 	}
+
+	// an atom directly bound to the donor isn't allowed to occlude solvent
+	if ( !check_path_distance( don_rsd, occ_rsd, don_h_atm, occ_atm ) ) return;
 
 	// if the distance is > 5.2 A, from the base atom, it doesn't occlude solvent
 	Vector const & occ_atm_xyz( occ_rsd.atom( occ_atm ).xyz() );
@@ -674,7 +707,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	hbe = potential_backbone_backbone_hbond ? ( HBEvalTuple( don_base_atm, don_rsd, occ_atm, occ_rsd) ) : HBEvalTuple( hbdon_HXL, hbacc_HXL, seq_sep_other ); // apl note: the false condition maps to hbe_dHXLaHXL
 
 	Size don_nbrs( 0 ), occ_nbrs( 0 );
-	if (options_->hbond_options().use_hb_env_dep() ) {
+	if (options_.hbond_options().use_hb_env_dep() ) {
 		don_nbrs = tenA_neighbor_graph.get_node( don_rsd.seqpos() )->num_neighbors_counting_self();
 		occ_nbrs = tenA_neighbor_graph.get_node( occ_rsd.seqpos() )->num_neighbors_counting_self();
 	}
@@ -696,8 +729,9 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 			" atom "<< don_rsd.atom_name( don_h_atm )<<" is occluded by occ_res " <<
 			occ_rsd.name1()<< I(3, occ_rsd.seqpos()) <<
 			" atom "<< occ_rsd.atom_name( occ_atm ) <<
+			" path-distance " << path_distance_ <<
 			"  (HBEvalType " <<  I(2,hbe.eval_type()) << ") " <<
-			" with energy "<< F(8,3,energy)<< std::endl;
+			" with energy "<< F(8,3,energy) << std::endl;
 	}
 }
 
@@ -715,7 +749,7 @@ GeometricSolEnergyEvaluator::get_acceptor_base_atm_xyz( conformation::Residue co
 
 	Vector base_atm_xyz, dummy;
 	chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) ); //acc_rsd.atom_type( acc_atm ).hybridization());
-	make_hbBasetoAcc_unitvector( options_->hbond_options(),
+	make_hbBasetoAcc_unitvector( options_.hbond_options(),
 															 acc_hybrid,
 															 acc_rsd.atom( acc_atm ).xyz(),
 															 acc_rsd.xyz( acc_rsd.atom_base( acc_atm ) ),
@@ -760,14 +794,15 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	TenANeighborGraph const & tenA_neighbor_graph
 		( pose.energies().tenA_neighbor_graph() );
 
-	assert( atom_is_acceptor( acc_rsd, acc_atm ) );
+	assert(  acc_rsd.heavyatom_is_an_acceptor( acc_atm ) );
 
 	bool const acc_atm_is_protein_backbone
 		( acc_rsd.is_protein() && acc_rsd.atom_is_backbone( acc_atm ) );
 	// if a backbone acceptor participates in a backbone-backbone Hbond,
 	// nothing is allowed to occlude solvent except a backbone donor
 	bool const occ_atm_is_protein_backbone_donor
-		( occ_rsd.is_protein() && occ_rsd.atom_is_backbone( occ_atm ) && atom_is_donor(occ_rsd, occ_atm ) );
+		( occ_rsd.is_protein() && occ_rsd.atom_is_backbone( occ_atm ) &&
+			occ_rsd.heavyatom_has_polar_hydrogens( occ_atm ) );
 	if ( acc_atm_is_protein_backbone && hbond_set.acc_bbg_in_bb_bb_hbond( acc_rsd.seqpos() ) &&
 			 !occ_atm_is_protein_backbone_donor ) return;
 
@@ -797,8 +832,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	if ( ( acc_rsd.seqpos() == occ_rsd.seqpos() ) && ( occ_atm == base_atm ) ) return;
 
 	// an atom directly bound to the acceptor isn't allowed to occlude solvent
-	// Note: In current implementation, intraresidue pairs aren't checked...
-	if ( ( acc_rsd.seqpos() == occ_rsd.seqpos() ) && acc_rsd.path_distance( acc_atm, occ_atm ) < 2 ) return;
+	if ( !check_path_distance( acc_rsd, occ_rsd, acc_atm, occ_atm ) ) return;
 
 	// if the distance is > 5.2 A, from the acceptor, it doesn't occlude solvent
 	Vector const & occ_atm_xyz( occ_rsd.atom( occ_atm ).xyz() );
@@ -810,7 +844,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	if ( acc_dis2 > base_dis2 ) return;
 
 	Size acc_nbrs( 0 ), occ_nbrs( 0 );
-	if (options_->hbond_options().use_hb_env_dep() ) {
+	if (options_.hbond_options().use_hb_env_dep() ) {
 		acc_nbrs = tenA_neighbor_graph.get_node( acc_rsd.seqpos() )->num_neighbors_counting_self();
 		occ_nbrs = tenA_neighbor_graph.get_node( occ_rsd.seqpos() )->num_neighbors_counting_self();
 	}
@@ -829,6 +863,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 			" atom "<< acc_rsd.atom_name( acc_atm )<<" is occluded by occ_res "<<
 			occ_rsd.name1()<< I(3, occ_rsd.seqpos()) <<
 			" atom "<< occ_rsd.atom_name( occ_atm ) <<
+			" path-distance " << path_distance_ <<
 			"  (HBEvalType " <<  I(2,hbe.eval_type()) << ") " <<
 			" with energy "<< F(8,3,energy)<<std::endl;
 
@@ -845,60 +880,6 @@ GeometricSolEnergyEvaluator::get_water_cos( Vector const & base_atm_xyz,
 																	 Vector const & occluding_atm_xyz ) const
 {
 	return dot( (polar_atm_xyz - base_atm_xyz).normalize(),  (occluding_atm_xyz - polar_atm_xyz).normalize() );
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Silly helper function
-// These should probably live inside conformation::Residue.
-//
-bool
-GeometricSolEnergyEvaluator::atom_is_donor( conformation::Residue const & rsd, Size const atm ) const
-{
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = rsd.Hpos_polar().begin(),
-			hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
-		Size const don_base_atm( rsd.atom_base( don_h_atm ) );
-		if ( don_base_atm == atm ) return true;
-	}
-	return false;
-}
-//////////////////////////////////////////////////////////////////////////////////////
-// Silly helper function
-// Consider replacing this with heavyatom_is_an_acceptor after Aug. 2014, if runtime_asserts
-// don't fail all over the place
-bool
-GeometricSolEnergyEvaluator::atom_is_donor_h( conformation::Residue const & rsd, Size const atm ) const
-{
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = rsd.Hpos_polar().begin(),
-			hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
-		if ( don_h_atm == atm ) {
-			runtime_assert( rsd.atom_is_polar_hydrogen( atm ) );
-			return true;
-		}
-	}
-	runtime_assert( !rsd.atom_is_polar_hydrogen( atm ) );
-	return false;
-}
-//////////////////////////////////////////////////////////////////////////////
-// Consider replacing this with heavyatom_is_an_acceptor after Aug. 2014, if runtime_asserts
-// don't fail all over the place
-bool
-GeometricSolEnergyEvaluator::atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const
-{
-	for ( chemical::AtomIndices::const_iterator
-			anum  = rsd.accpt_pos().begin(),
-			anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atm( *anum );
-		if ( acc_atm == atm ) {
-			runtime_assert( rsd.heavyatom_is_an_acceptor( atm ) );
-			return true;
-		}
-	}
-	runtime_assert( !rsd.heavyatom_is_an_acceptor( atm ) );
-	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -938,24 +919,28 @@ GeometricSolEnergyEvaluator::eval_intrares_energy(
 	EnergyMap & emap
 ) const {
 
-	if ( !rsd.is_RNA() ) return;
-
 	Real geo_solE_intra_RNA =
-		   donorRes_occludingRes_geometric_sol_RNA_intra( rsd, pose ) +
-		acceptorRes_occludingRes_geometric_sol_RNA_intra( rsd, pose );
-
-	// store the energies
+		donorRes_occludingRes_geometric_sol_intra( rsd, pose, true /*just_RNA*/ ) +
+		acceptorRes_occludingRes_geometric_sol_intra( rsd, pose, true /*just_RNA*/ );
 	emap[ geom_sol_intra_RNA ] += geo_solE_intra_RNA;
 
+	if ( options_.put_intra_into_total() ){
+		Real geo_solE_intra =
+			donorRes_occludingRes_geometric_sol_intra( rsd, pose, false /*just_RNA*/ ) +
+			acceptorRes_occludingRes_geometric_sol_intra( rsd, pose, false /*just_RNA*/ );
+		emap[ geom_sol ] += geo_solE_intra;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 Real
-GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_RNA_intra(
+GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_intra(
 	conformation::Residue const & rsd,
-	pose::Pose const & pose ) const
+	pose::Pose const & pose,
+	bool const just_RNA /* legacy */ ) const
 {
 	Real res_solE( 0.0 ), energy( 0.0 );
+	if ( !just_RNA && !calculate_intra_res_hbonds( rsd, options_.hbond_options() ) ) return res_solE;
 
 	conformation::Residue const & don_rsd=rsd;
 	conformation::Residue const & occ_rsd=rsd;
@@ -965,10 +950,11 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_RNA_intra(
 		Size const don_h_atm( *hnum );
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
 
-			if (core::chemical::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, don_h_atm)==false) continue;
+			if ( just_RNA && !core::chemical::rna::is_base_phosphate_atom_pair(rsd, rsd, occ_atm, don_h_atm) ) continue;
 
 			get_atom_atom_geometric_solvation_for_donor( don_h_atm, don_rsd, occ_atm, occ_rsd, pose, energy );
 			res_solE += energy;
+
 		}
 	}
 
@@ -977,22 +963,23 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_RNA_intra(
 
 ///////////////////////////////////////////////////////////////////////////////////////
 Real
-GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_RNA_intra(
+GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_intra(
 	conformation::Residue const & rsd,
-	pose::Pose const & pose ) const
+	pose::Pose const & pose,
+	bool const just_RNA /* legacy */ ) const
 {
+
+	Real res_solE( 0.0 ), energy( 0.0 );
+	if ( !just_RNA && !calculate_intra_res_hbonds( rsd, options_.hbond_options() ) ) return res_solE;
 
 	conformation::Residue const & acc_rsd=rsd;
 	conformation::Residue const & occ_rsd=rsd;
-
-
-	Real res_solE( 0.0 ), energy( 0.0 );
 
 	for ( chemical::AtomIndices::const_iterator anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 		Size const acc_atm( *anum );
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
 
-			if (core::chemical::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, acc_atm)==false) continue;
+			if ( just_RNA && !core::chemical::rna::is_base_phosphate_atom_pair(rsd, rsd, occ_atm, acc_atm) ) continue;
 
 			get_atom_atom_geometric_solvation_for_acceptor( acc_atm, acc_rsd, occ_atm, occ_rsd, pose, energy);
 			res_solE += energy;
@@ -1029,14 +1016,12 @@ GeometricSolEnergyEvaluator::eval_atom_energy(
 
 		Size j( (*iter)->get_other_ind( i ) );
 
-		//As above disallow contribution within a residue. Is this OK? Sure there shouldn't be an "intra" term?
-		// anyway list of neighbors does not include i==j.
 		if ( i == j ) continue;
 
 		conformation::Residue const & other_rsd( pose.residue( j ) );
 
  		// If this atom is a donor, go over heavy atoms in other residue.
- 		if ( atom_is_donor_h( current_rsd, current_atm ) ) {
+ 		if ( current_rsd.atom_is_polar_hydrogen( current_atm ) ) {
  			for (Size m = 1; m <= other_rsd.nheavyatoms(); m++ ){
 				Real energy( 0.0 );
 				get_atom_atom_geometric_solvation_for_donor( current_atm, current_rsd,
@@ -1046,7 +1031,7 @@ GeometricSolEnergyEvaluator::eval_atom_energy(
  		}
 
  		// If this atom is an acceptor, go over heavy atoms in other residue.
- 		if ( atom_is_acceptor( current_rsd, atom_id.atomno() ) ) {
+ 		if (  current_rsd.heavyatom_is_an_acceptor( atom_id.atomno() ) ) {
  			for (Size m = 1; m <= other_rsd.nheavyatoms(); m++ ){
 				Real energy( 0.0 );
 				get_atom_atom_geometric_solvation_for_acceptor( current_atm, current_rsd,
@@ -1131,12 +1116,13 @@ GeometricSolEnergyEvaluator::eval_intrares_derivatives(
 		 conformation::Residue const & rsd,
 		 pose::Pose const & pose,
 		 Real const & geom_sol_intra_weight,
-		 utility::vector1< DerivVectorPair > & atom_derivs
+		 utility::vector1< DerivVectorPair > & atom_derivs,
+		 bool const just_RNA
 ) const
 {
 
-	// only for RNA, for now?
-	if ( !rsd.is_RNA() ) return;
+	if ( just_RNA && !rsd.is_RNA() ) return;
+	if ( !just_RNA && !calculate_intra_res_hbonds( rsd, options_.hbond_options() ) ) return;
 
 	Real energy( 0.0 );
 	hbonds::HBondDerivs deriv;
@@ -1147,24 +1133,24 @@ GeometricSolEnergyEvaluator::eval_intrares_derivatives(
 	for ( Size ii = 1; ii <= rsd.natoms(); ii++ ) {
 		for ( Size jj = (ii+1); jj <= rsd.natoms(); jj++ ) {
 
-			if ( !core::chemical::rna::Is_base_phosphate_atom_pair( rsd, rsd, ii, jj) ) continue;
+			if ( just_RNA && !core::chemical::rna::is_base_phosphate_atom_pair( rsd, rsd, ii, jj) ) continue;
 
 			if ( atom_is_heavy( rsd, jj ) ) {
-				if ( atom_is_donor_h( rsd, ii ) ) {
+				if ( rsd.atom_is_polar_hydrogen( ii ) ) {
 					get_atom_atom_geometric_solvation_for_donor( ii, rsd, jj, rsd, pose, energy, update_deriv, deriv, hbe_type );
-					fill_atom_derivs_for_donor( deriv, rsd, ii, jj, atom_derivs, atom_derivs, hbe_type, options_->hbond_options(), weighted_energy );
-				} else if ( atom_is_acceptor( rsd, ii ) ) {
+					fill_atom_derivs_for_donor( deriv, rsd, ii, jj, atom_derivs, atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
+				} else if (  rsd.heavyatom_is_an_acceptor( ii ) ) {
 					get_atom_atom_geometric_solvation_for_acceptor( ii, rsd, jj, rsd, pose, energy, update_deriv, deriv, hbe_type );
-					fill_atom_derivs_for_acceptor( deriv, rsd, ii, jj, atom_derivs, atom_derivs, hbe_type, options_->hbond_options(), weighted_energy );
+					fill_atom_derivs_for_acceptor( deriv, rsd, ii, jj, atom_derivs, atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
 				}
 			}
 			if ( atom_is_heavy ( rsd, ii ) ) {
-				if ( atom_is_donor_h( rsd, jj ) ) {
+				if ( rsd.atom_is_polar_hydrogen( jj ) ) {
 					get_atom_atom_geometric_solvation_for_donor( jj, rsd, ii, rsd, pose, energy, update_deriv, deriv, hbe_type );
-					fill_atom_derivs_for_donor( deriv, rsd, jj, ii, atom_derivs, atom_derivs, hbe_type, options_->hbond_options(), weighted_energy );
-				} else if ( atom_is_acceptor( rsd, jj ) ) {
+					fill_atom_derivs_for_donor( deriv, rsd, jj, ii, atom_derivs, atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
+				} else if (  rsd.heavyatom_is_an_acceptor( jj ) ) {
 					get_atom_atom_geometric_solvation_for_acceptor( jj, rsd, ii, rsd, pose, energy, update_deriv, deriv, hbe_type );
-					fill_atom_derivs_for_acceptor( deriv, rsd, jj, ii, atom_derivs, atom_derivs, hbe_type, options_->hbond_options(), weighted_energy );
+					fill_atom_derivs_for_acceptor( deriv, rsd, jj, ii, atom_derivs, atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
 				}
 			}
 		}
@@ -1200,22 +1186,22 @@ GeometricSolEnergyEvaluator::eval_residue_pair_derivatives(
 		Size const jj = neighbs[ k ].atomno2();
 
 		if ( atom_is_heavy( jres, jj ) ) {
-			if ( atom_is_donor_h( ires, ii ) ) {
+			if ( ires.atom_is_polar_hydrogen( ii ) ) {
 				get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy, update_deriv, deriv, hbe_type );
-				fill_atom_derivs_for_donor( deriv, ires, ii, jj, r1_atom_derivs, r2_atom_derivs, hbe_type, options_->hbond_options(), weighted_energy );
+				fill_atom_derivs_for_donor( deriv, ires, ii, jj, r1_atom_derivs, r2_atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
 
-			} else if ( atom_is_acceptor( ires, ii ) ) {
+			} else if (  ires.heavyatom_is_an_acceptor( ii ) ) {
 				get_atom_atom_geometric_solvation_for_acceptor( ii, ires, jj, jres, pose, energy, update_deriv, deriv, hbe_type );
-				fill_atom_derivs_for_acceptor( deriv, ires, ii, jj, r1_atom_derivs, r2_atom_derivs, hbe_type, options_->hbond_options(), weighted_energy );
+				fill_atom_derivs_for_acceptor( deriv, ires, ii, jj, r1_atom_derivs, r2_atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
 			}
 		}
 		if ( atom_is_heavy ( ires, ii ) ) {
-			if ( atom_is_donor_h( jres, jj ) ) {
+			if ( jres.atom_is_polar_hydrogen( jj ) ) {
 				get_atom_atom_geometric_solvation_for_donor( jj, jres, ii, ires, pose, energy, update_deriv, deriv, hbe_type );
-				fill_atom_derivs_for_donor( deriv, jres, jj, ii, r2_atom_derivs, r1_atom_derivs, hbe_type, options_->hbond_options(), weighted_energy );
-			} else if ( atom_is_acceptor( jres, jj ) ) {
+				fill_atom_derivs_for_donor( deriv, jres, jj, ii, r2_atom_derivs, r1_atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
+			} else if (  jres.heavyatom_is_an_acceptor( jj ) ) {
 				get_atom_atom_geometric_solvation_for_acceptor( jj, jres, ii, ires, pose, energy, update_deriv, deriv, hbe_type );
-				fill_atom_derivs_for_acceptor( deriv, jres, jj, ii, r2_atom_derivs, r1_atom_derivs, hbe_type, options_->hbond_options(), weighted_energy );
+				fill_atom_derivs_for_acceptor( deriv, jres, jj, ii, r2_atom_derivs, r1_atom_derivs, hbe_type, options_.hbond_options(), weighted_energy );
 			}
 		}
 
@@ -1244,19 +1230,19 @@ GeometricSolEnergyEvaluator::residue_pair_energy_ext(
 		n = neighbs[ ii ].atomno2();
 
 		if ( atom_is_heavy( rsd2, n ) ) {
-			if ( atom_is_donor_h( rsd1, m ) ) {
+			if ( rsd1.atom_is_polar_hydrogen( m ) ) {
 				get_atom_atom_geometric_solvation_for_donor( m, rsd1, n, rsd2, pose, energy );
 				score += energy;
-			} else if ( atom_is_acceptor( rsd1, m ) ) {
+			} else if (  rsd1.heavyatom_is_an_acceptor( m ) ) {
 				get_atom_atom_geometric_solvation_for_acceptor( m, rsd1, n, rsd2, pose, energy );
 				score += energy;
 			}
 		}
 		if ( atom_is_heavy ( rsd1, m ) ) {
-			if ( atom_is_donor_h( rsd2, n ) ) {
+			if ( rsd2.atom_is_polar_hydrogen( n ) ) {
 				get_atom_atom_geometric_solvation_for_donor( n, rsd2, m, rsd1, pose, energy );
 				score += energy;
-			} else if ( atom_is_acceptor( rsd2, n ) ) {
+			} else if (  rsd2.heavyatom_is_an_acceptor( n ) ) {
 				get_atom_atom_geometric_solvation_for_acceptor( n, rsd2, m, rsd1, pose, energy );
 				score += energy;
 			}

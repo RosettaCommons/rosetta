@@ -24,6 +24,7 @@
 #include <core/pack/dunbrack/ChiSet.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
 // Project Headers
 #include <core/chemical/AtomType.hh>
@@ -296,7 +297,8 @@ build_proton_chi_rotamers(
 
 					if ( include_virtual_side_chain ) {
 						runtime_assert( !rot->has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
-						static core::scoring::rna::RNA_TorsionPotential rna_torsion_potential; // I think this is OK.
+						static core::scoring::rna::RNA_EnergyMethodOptions const rna_options;
+						static core::scoring::rna::RNA_TorsionPotential rna_torsion_potential( rna_options ); // I think this is OK.
 						Real const rna_torsion = rna_torsion_potential.eval_intrares_energy( *rot, pose );
 						if ( n_min == 0 || rna_torsion < rna_torsion_min ){
 							n_min = new_rotamer_number; rna_torsion_min = rna_torsion;

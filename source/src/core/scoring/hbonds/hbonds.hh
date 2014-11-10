@@ -41,11 +41,19 @@ struct SSWeightParameters {
 	Size len_l_, len_h_;
 };
 
+bool
+calculate_intra_res_hbonds( conformation::Residue const & rsd,
+														HBondOptions const & options );
+
 void
 fill_intra_res_hbond_set(
 	pose::Pose const & pose,
 	bool const calculate_derivative,
-	HBondSet & hbond_set
+	HBondSet & hbond_set,
+	bool const exclude_bb  = false,
+	bool const exclude_bsc = false,
+	bool const exclude_scb = false,
+	bool const exclude_sc  = false
 );
 
 void
@@ -134,7 +142,7 @@ identify_hbonds_1way(
 	EnergyMap & emap,
 	Real ssdep_weight_factor = 1.0
 );
-	
+
 void
 identify_hbonds_1way(
 	 HBondDatabase const & database,
@@ -169,15 +177,21 @@ void
 identify_intra_res_hbonds(
 	HBondDatabase const & database,
   conformation::Residue const & rsd,
+	Size const rsd_nb,
   bool const evaluate_derivative,
-	HBondSet & hbond_set);
+	HBondSet & hbond_set,
+	bool const exclude_bb  = false,
+	bool const exclude_bsc = false,
+	bool const exclude_scb = false,
+	bool const exclude_sc  = false
+);
 
 
 void
 identify_intra_res_hbonds(
 	HBondDatabase const & database,
 	conformation::Residue const & rsd,
-	bool const evaluate_derivative,
+	Size const rsd_nb,
 	HBondOptions const & options,
 	EnergyMap & emap);
 
@@ -266,7 +280,8 @@ Real
 hb_eval_type_weight(
 	HBEvalType const & hbe_type,
 	EnergyMap const & emap,
-	bool const intra_res
+	bool const intra_res = false,
+	bool const put_intra_into_total = true
 );
 
 

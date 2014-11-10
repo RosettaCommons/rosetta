@@ -78,6 +78,7 @@ rna_score_test()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
+	using namespace core::scoring::rna::data;
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
@@ -150,7 +151,7 @@ rna_score_test()
 	// if trying to compute stem RMSD
 	protocols::farna::RNA_StructureParameters parameters;
 	core::io::rna::RNA_DataReader rna_data_reader( option[OptionKeys::rna::data_file ]() );
-	core::scoring::rna::data::RNA_ChemicalMappingEnergy rna_chemical_mapping_energy;
+	RNA_ChemicalMappingEnergyOP rna_chemical_mapping_energy;
 	pose::Pose pose,start_pose;
 
 	Size i( 0 );
@@ -166,7 +167,7 @@ rna_score_test()
 
 		if ( !option[ in::file::silent ].user() ) cleanup( pose );
 
-		if ( !full_model_info_defined( pose ) ){
+		if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ){
 			if ( ! option[ original_input ].user() ) {
 				fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 			} else {
@@ -220,10 +221,11 @@ rna_score_test()
 
 		// for data_file, don't actually re-score, just compute rna_chem_map score for now.
 		if ( rna_data_reader.has_reactivities() ){
+			if ( rna_chemical_mapping_energy == 0 ) rna_chemical_mapping_energy = RNA_ChemicalMappingEnergyOP( new RNA_ChemicalMappingEnergy );
 			rna_data_reader.fill_rna_data_info( pose );
 			pose.update_residue_neighbors();
-			s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy.calculate_energy( pose, false /*use_low_res*/ ) );
-			s.add_energy(  "rna_chem_map_lores", rna_chemical_mapping_energy.calculate_energy( pose , true /*use_low_res*/ ) );
+			s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy->calculate_energy( pose, false /*use_low_res*/ ) );
+			s.add_energy(  "rna_chem_map_lores", rna_chemical_mapping_energy->calculate_energy( pose , true /*use_low_res*/ ) );
 		}
 
 

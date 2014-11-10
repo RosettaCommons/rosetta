@@ -82,7 +82,7 @@ namespace modeler {
 		working_fixed_res_( working_parameters->working_fixed_res() ),
 		working_calc_rms_res_( working_parameters->working_calc_rms_res() ), // only for output -- may deprecate.
 		vary_bond_geometry_( false ), // it remains unclear whether this is really different from cartesian.
-		allow_virtual_o2prime_hydrogens_( options->allow_virtual_side_chains() && !options->o2prime_legacy_mode() ),
+		allow_virtual_o2prime_hydrogens_( options->allow_virtual_o2prime_hydrogens() && !options->o2prime_legacy_mode() ),
 		protein_ccd_closer_( protein::loop_close::StepWiseProteinCCD_CloserOP( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) ) )
 	{
 		set_native_pose( working_parameters->working_native_pose() );

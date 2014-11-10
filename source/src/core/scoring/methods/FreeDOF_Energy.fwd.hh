@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/FreeMoietyEnergy.fwd.hh
+/// @file   core/scoring/methods/FreeDOF_Energy.fwd.hh
 /// @brief  FreeMoiety energy method forward declaration
 /// @author Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_core_scoring_methods_FreeMoietyEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_FreeMoietyEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_methods_FreeDOF_Energy_fwd_hh
+#define INCLUDED_core_scoring_methods_FreeDOF_Energy_fwd_hh
 
 
 namespace core {
 namespace scoring {
 namespace methods {
 
-class FreeMoietyEnergy;
+class FreeDOF_Energy;
 
 } // methods
 } // scoring

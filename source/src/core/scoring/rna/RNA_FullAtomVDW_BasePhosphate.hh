@@ -27,6 +27,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 
+//typedef utility::pointer::shared_ptr< core::scoring::etable::TableLookupEtableEnergy > TableLookupEtableEnergyOP;
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -39,7 +41,7 @@ public:
 public:
 
 	/// @brief ctor
-	RNA_FullAtomVDW_BasePhosphate( etable::TableLookupEtableEnergy const & etable_energy_in, etable::Etable const & etable_in );
+	RNA_FullAtomVDW_BasePhosphate( methods::EnergyMethodOptions const & options );
 
 	/// @brief dtor
 	virtual ~RNA_FullAtomVDW_BasePhosphate();
@@ -96,26 +98,7 @@ public:
 		Vector & F2
 	) const;
 
-	virtual
-	void
-	setup_for_scoring( pose::Pose & pose, scoring::ScoreFunction const &  ) const;
-
-
-	virtual
-	void
-	setup_for_derivatives( pose::Pose & pose, scoring::ScoreFunction const & ) const;
-
-/*
-	virtual
-	void
-	setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & ) const;
-*/
-
-
 private:
-
-	etable::TableLookupEtableEnergy const etable_energy_;
-	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
 
 	/// @brief RNA_FullAtomVDW_BasePhosphate( is context independent; indicates that no context graphs are required
 	virtual
@@ -123,6 +106,11 @@ private:
 
 	virtual
 	core::Size version() const;
+
+private:
+
+	methods::EnergyMethodOptions const & options_;
+	etable::EtableEvaluatorOP etable_evaluator_;
 
 /*
 

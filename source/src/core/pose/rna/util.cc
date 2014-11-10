@@ -31,6 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/chemical/AA.hh>
 
@@ -173,11 +174,13 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 
 	conformation::Residue const & current_rsd( pose.residue( i   ) ) ;
 	conformation::Residue const &    next_rsd( pose.residue( i+1 ) ) ;
+	runtime_assert ( current_rsd.is_RNA() );
+	runtime_assert ( next_rsd.is_RNA() );
 
 	//A little inefficient, since atom indices for these backbone
 	// atoms should be the same for all RNA residue types. I think.
-	Size atom_O3prime = current_rsd.atom_index( " O3'" );
-	Size atom_P      =    next_rsd.atom_index( " P  " );
+	Size atom_O3prime = current_rsd.type().RNA_type().o3prime_atom_index(); //( " O3'" );
+	Size atom_P       =    next_rsd.type().RNA_type().p_atom_index(); //atom_index( " P  " );
 	Real const dist2 =
 		( current_rsd.atom( atom_O3prime ).xyz() - next_rsd.atom( atom_P ).xyz() ).length_squared();
 
@@ -617,6 +620,24 @@ apply_pucker(
 		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
 	}
 
+  ///////
+  bool
+	is_cutpoint_closed_by_atom_name(
+     conformation::Residue const & rsd_1,
+		 conformation::Residue const & rsd_2,
+		 conformation::Residue const & rsd_3,
+		 conformation::Residue const & rsd_4,
+		 id::AtomID const & id1,
+		 id::AtomID const & id2,
+		 id::AtomID const & id3,
+		 id::AtomID const & id4 ){
+		return(
+					 is_cutpoint_closed_atom( rsd_1, id1 ) ||
+					 is_cutpoint_closed_atom( rsd_2, id2 ) ||
+					 is_cutpoint_closed_atom( rsd_3, id3 ) ||
+					 is_cutpoint_closed_atom( rsd_4, id4 ) );
+	}
+
 	// Useful functions to torsional potential
 	bool
 	is_torsion_valid(
@@ -627,10 +648,9 @@ apply_pucker(
 	) {
 
 		id::AtomID id1, id2, id3, id4;
-		pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
 
-		if ( verbose ) TR << "torsion_id: " << torsion_id << std::endl;
 		bool is_fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
+		if ( verbose ) TR << "torsion_id: " << torsion_id << std::endl;
 		if ( is_fail ) {
 			if ( verbose ) TR << "fail to get torsion!, perhap this torsion is located at a chain_break " << std::endl;
 			return false;
@@ -657,19 +677,7 @@ apply_pucker(
 		// (Since these torsions will contain virtual atom(s),
 		// but want to score these torsions
 		bool const is_cutpoint_closed1 = is_cutpoint_closed_torsion( pose, torsion_id );
-		bool const is_cutpoint_closed2 = (
-				is_cutpoint_closed_atom( rsd_1, id1 ) ||
-				is_cutpoint_closed_atom( rsd_2, id2 ) ||
-				is_cutpoint_closed_atom( rsd_3, id3 ) ||
-				is_cutpoint_closed_atom( rsd_4, id4 ) );
-
-		if ( is_cutpoint_closed1 != is_cutpoint_closed2 ){
-			output_boolean( " is_cutpoint_closed1 = ", is_cutpoint_closed1 );
-			output_boolean( " is_cutpoint_closed2 = ", is_cutpoint_closed2 );
-			output_boolean( " is_virtual_torsion = ", is_virtual_torsion ); TR << std::endl;
-			print_torsion_info( pose, torsion_id );
-			utility_exit_with_message( "is_cutpoint_closed1 != is_cutpoint_closed2!!" );
-		}
+		assert( is_cutpoint_closed1 == is_cutpoint_closed_by_atom_name( rsd_1, rsd_2, rsd_3, rsd_4, id1, id2, id3, id4) ); // takes time
 
 		if ( is_cutpoint_closed1 && !is_virtual_torsion ){
 			print_torsion_info( pose, torsion_id );
@@ -681,11 +689,11 @@ apply_pucker(
 		runtime_assert( rsd_2.seqpos() <= rsd_3.seqpos() );
 		runtime_assert( rsd_3.seqpos() <= rsd_4.seqpos() );
 		runtime_assert( ( rsd_1.seqpos() == rsd_4.seqpos() )
-				|| ( rsd_1.seqpos() == ( rsd_4.seqpos() - 1 ) ) );
+										|| ( rsd_1.seqpos() == ( rsd_4.seqpos() - 1 ) ) );
 
 		bool const inter_residue_torsion = ( rsd_1.seqpos() != rsd_4.seqpos() );
 
-		bool is_chain_break_torsion = false;
+		bool is_chain_break_torsion( false );
 
 		if ( inter_residue_torsion ){
 			// Note that chain_break_torsion does not neccessarily have to be located

@@ -48,7 +48,6 @@
 #include <core/scoring/methods/EnvSmoothEnergyCreator.hh>
 #include <core/scoring/methods/IntermolEnergyCreator.hh>
 #include <core/scoring/methods/MissingEnergyCreator.hh>
-#include <core/scoring/methods/FreeResidueBonusEnergyCreator.hh>
 #include <core/scoring/methods/NMerRefEnergyCreator.hh>
 #include <core/scoring/methods/NMerPSSMEnergyCreator.hh>
 #include <core/scoring/methods/NMerSVMEnergyCreator.hh>
@@ -114,7 +113,7 @@
 #include <core/scoring/methods/DistanceChainbreakEnergyCreator.hh>
 #include <core/scoring/methods/Fa_MbenvEnergyCreator.hh>
 #include <core/scoring/methods/Fa_MbsolvEnergyCreator.hh>
-#include <core/scoring/methods/FreeMoietyEnergyCreator.hh>
+#include <core/scoring/methods/FreeDOF_EnergyCreator.hh>
 #include <core/scoring/methods/HybridVDW_EnergyCreator.hh>
 #include <core/scoring/methods/GenBornEnergyCreator.hh>
 #include <core/scoring/facts/FACTSEnergyCreator.hh>
@@ -319,6 +318,7 @@ static EnergyMethodRegistrator< scoring::disulfides::CentroidDisulfideEnergyCrea
 static EnergyMethodRegistrator< scoring::disulfides::DisulfideMatchingEnergyCreator > DisulfideMatchingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::disulfides::FullatomDisulfideEnergyCreator > FullatomDisulfideEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::etable::EtableEnergyCreator > EtableEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::etable::EtableClassicIntraEnergyCreator > EtableClassicIntraEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairEnergyCreator > CenPairEnergyCreator_registrator;
@@ -395,7 +395,7 @@ static EnergyMethodRegistrator< scoring::methods::DirectReadoutEnergyCreator > D
 static EnergyMethodRegistrator< scoring::methods::DistanceChainbreakEnergyCreator > DistanceChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Fa_MbenvEnergyCreator > Fa_MbenvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Fa_MbsolvEnergyCreator > Fa_MbsolvEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::methods::FreeMoietyEnergyCreator > FreeMoietyEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::FreeDOF_EnergyCreator > FreeDOF_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GenBornEnergyCreator > GenBornEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::FACTSEnergyCreator > FACTSEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::HybridVDW_EnergyCreator > HybridVDW_EnergyCreator_registrator;

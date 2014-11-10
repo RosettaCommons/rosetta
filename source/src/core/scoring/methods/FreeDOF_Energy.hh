@@ -7,19 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/FreeMoietyEnergy.hh
+/// @file   core/scoring/methods/FreeDOF_Energy.hh
 /// @brief  Score function class
 /// @author Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_core_scoring_methods_FreeMoietyEnergy_hh
-#define INCLUDED_core_scoring_methods_FreeMoietyEnergy_hh
+#ifndef INCLUDED_core_scoring_methods_FreeDOF_Energy_hh
+#define INCLUDED_core_scoring_methods_FreeDOF_Energy_hh
 
 // Unit headers
-#include <core/scoring/methods/FreeMoietyEnergy.fwd.hh>
+#include <core/scoring/methods/FreeDOF_Energy.fwd.hh>
+#include <core/scoring/methods/FreeDOF_Options.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -34,17 +37,17 @@ namespace scoring {
 namespace methods {
 
 ///
-class FreeMoietyEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
+class FreeDOF_Energy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 
 public:
 
 	/// @brief ctor
-	FreeMoietyEnergy();
+	FreeDOF_Energy( EnergyMethodOptions const & energy_method_options );
 
 	/// @brief dtor
-	virtual ~FreeMoietyEnergy();
+	virtual ~FreeDOF_Energy();
 
 	/// clone
 	virtual
@@ -70,7 +73,7 @@ public:
 	) const;
 
 
-	/// @brief FreeMoietyEnergy is context independent; indicates that no
+	/// @brief FreeDOF_Energy is context independent; indicates that no
 	/// context graphs are required
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
@@ -78,15 +81,37 @@ public:
 	virtual
 	core::Size version() const;
 
+	virtual
+	void
+	finalize_total_energy(
+	  pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & totals	) const;
 
-	// data
 private:
 
-	core::Real const free_suite_bonus_;
-	core::Real const free_2HOprime_bonus_;
-	core::Real const free_sugar_bonus_;
-	core::Real const pack_phosphate_penalty_;
-	core::Real const free_side_chain_bonus_;
+
+void
+accumulate_stack_energy(
+	pose::Pose & pose,
+	ScoreFunction const & scorefxn,
+	utility::vector1< Real > & stack_energy	) const;
+
+void
+do_fa_stack_scorefunction_checks( ScoreFunction const & scorefxn ) const;
+
+void
+get_hbond_energy(
+	pose::Pose & pose,
+	ScoreFunction const & scorefxn,
+	utility::vector1< Real > & base_hbond_energy,
+	utility::vector1< Real > & sugar_hbond_energy ) const;
+
+private:
+
+	EnergyMethodOptions const & energy_method_options_;
+	FreeDOF_Options const & options_;
+	utility::vector1< Real > const & free_res_weights_;
 
 };
 

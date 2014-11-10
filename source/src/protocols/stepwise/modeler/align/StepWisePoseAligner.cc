@@ -545,16 +545,6 @@ namespace align {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	StepWisePoseAligner::residue_is_bulged( pose::Pose const & pose, Size const & resid ) {
-		boost::unordered_map < core::Size , core::Size > num_stacks = pose.get_stacking_map();
-		if ( num_stacks[ resid ] < 2 ) {
-			return true;
-		}
-		return false;
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWisePoseAligner::output_atom_id_map( std::map< id::AtomID, id::AtomID > const & atom_id_map ) const {
 		for ( std::map < id::AtomID, id::AtomID >::const_iterator it = atom_id_map.begin();

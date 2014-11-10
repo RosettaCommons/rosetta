@@ -14,6 +14,7 @@
 // Unit Headers
 #include <core/scoring/rna/RNA_SuiteEnergy.hh>
 #include <core/scoring/rna/RNA_SuiteEnergyCreator.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
 // Package Headers
 #include <core/scoring/ScoringManager.hh>
@@ -22,6 +23,7 @@
 #include <core/scoring/PeptideBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
@@ -66,8 +68,8 @@ namespace rna {
 /// never an instance already in use
 methods::EnergyMethodOP
 RNA_SuiteEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
-) const {	return methods::EnergyMethodOP( new RNA_SuiteEnergy ); }
+	methods::EnergyMethodOptions const & options
+) const {	return methods::EnergyMethodOP( new RNA_SuiteEnergy( options.rna_options() ) ); }
 
 ScoreTypes
 RNA_SuiteEnergyCreator::score_types_for_method() const {
@@ -78,10 +80,11 @@ RNA_SuiteEnergyCreator::score_types_for_method() const {
 }
 
 /// ctor
-RNA_SuiteEnergy::RNA_SuiteEnergy() :
+RNA_SuiteEnergy::RNA_SuiteEnergy( RNA_EnergyMethodOptions const & options ) :
 	parent( methods::EnergyMethodCreatorOP( new RNA_SuiteEnergyCreator ) ),
-	rna_suite_potential_( ScoringManager::get_instance()->get_RNA_SuitePotential( false /*calculate_suiteness_bonus*/ ) ),
-	rna_suite_potential_for_suiteness_bonus_( ScoringManager::get_instance()->get_RNA_SuitePotential( true /*calculate_suiteness_bonus*/) )
+	options_( options ),
+	rna_suite_potential_( RNA_SuitePotentialOP( new RNA_SuitePotential( options, false ) ) ),
+	rna_suite_potential_for_suiteness_bonus_(  RNA_SuitePotentialOP( new RNA_SuitePotential( options, true ) ) )
 {}
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -131,11 +134,11 @@ RNA_SuiteEnergy::residue_pair_energy(
 	ScoreFunction const & scorefxn,
 	EnergyMap & emap
 ) const {
-	if ( scorefxn.has_nonzero_weight( rna_suite ) && rna_suite_potential_.eval_score( rsd1, rsd2, pose ) ) {
-		emap[ rna_suite ]       += rna_suite_potential_.get_score();
+	if ( scorefxn.has_nonzero_weight( rna_suite ) && rna_suite_potential_->eval_score( rsd1, rsd2, pose ) ) {
+		emap[ rna_suite ]       += rna_suite_potential_->get_score();
 	}
-	if ( scorefxn.has_nonzero_weight( suiteness_bonus ) && rna_suite_potential_for_suiteness_bonus_.eval_score( rsd1, rsd2, pose ) ) {
-		emap[ suiteness_bonus ] += rna_suite_potential_for_suiteness_bonus_.get_score();
+	if ( scorefxn.has_nonzero_weight( suiteness_bonus ) && rna_suite_potential_for_suiteness_bonus_->eval_score( rsd1, rsd2, pose ) ) {
+		emap[ suiteness_bonus ] += rna_suite_potential_for_suiteness_bonus_->get_score();
 	}
 }
 
@@ -165,7 +168,7 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	Real const & weight,
 	utility::vector1<DerivVectorPair> & r1_atom_derivs,
 	utility::vector1<DerivVectorPair> & r2_atom_derivs,
-	RNA_SuitePotential const & rna_suite_potential
+	RNA_SuitePotentialCOP rna_suite_potential
 ) const {
 
 	using namespace numeric::conversions;
@@ -174,11 +177,11 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	using namespace core::id;
 
 	if ( weight == 0.0 ) return;
-	if ( !rna_suite_potential.eval_score( rsd1, rsd2, pose ) )	return;
+	if ( !rna_suite_potential->eval_score( rsd1, rsd2, pose ) )	return;
 
-	utility::vector1<Real> const & deriv( rna_suite_potential.get_deriv() );
+	utility::vector1<Real> const & deriv( rna_suite_potential->get_deriv() );
 	utility::vector1<TorsionID> const & torsion_ids(
-			rna_suite_potential.get_torsion_ids() );
+			rna_suite_potential->get_torsion_ids() );
 
 	conformation::Residue const & rsd_lo(
 			( rsd1.seqpos() < rsd2.seqpos() ) ? rsd1 : rsd2 );

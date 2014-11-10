@@ -421,7 +421,7 @@ public:
 	///     score_type_from_name
 	void
 	set_weight_if_zero( ScoreType const & t, Real const & setting);
-	
+
 	/// @brief Returns the weight for ScoreType  <t>
 	///
 	/// examples(s):
@@ -678,6 +678,11 @@ public:
 
 	WS_MethodIterator
 	ws_methods_end() const;
+
+	/// @brief check order of methods
+	bool
+	check_methods_in_right_order( ScoreType const & score_type_in_first_method,
+																ScoreType const & score_type_in_second_method ) const;
 
 	/// @brief
 	virtual

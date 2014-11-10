@@ -445,6 +445,8 @@ RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ) {
 	std::string sequence_helix2( full_sequence_.substr( nres/2, nres ) );
 	remove_first_base_pair( full_sequence_, non_standard_residues_, sequence_helix1, sequence_helix2 );
 	remove_last_base_pair(  full_sequence_, non_standard_residues_, sequence_helix1, sequence_helix2 );
+
+	core::pose::full_model_info::update_full_model_info_from_pose( pose );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

@@ -135,6 +135,7 @@ namespace options {
 		local_redock_only_ = src.local_redock_only_;
 		skip_coord_constraints_ = src.skip_coord_constraints_;
 		filter_native_big_bins_ = src.filter_native_big_bins_;
+		allow_virtual_o2prime_hydrogens_ = src.allow_virtual_o2prime_hydrogens_;
 		allow_virtual_side_chains_ = src.allow_virtual_side_chains_;
 		n_sample_ = src.n_sample_;
 		protein_prepack_ = src.protein_prepack_;
@@ -186,6 +187,7 @@ namespace options {
 		local_redock_only_ = option[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
 		skip_coord_constraints_ = option[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
 		filter_native_big_bins_ = option[ OptionKeys::stepwise::protein::filter_native_big_bins ]();
+		allow_virtual_o2prime_hydrogens_ = option[ OptionKeys::stepwise::rna::allow_virtual_o2prime_hydrogens ]();
 		allow_virtual_side_chains_ = option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]();
 		n_sample_ = option[ OptionKeys::stepwise::protein::n_sample ]();
 		protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();

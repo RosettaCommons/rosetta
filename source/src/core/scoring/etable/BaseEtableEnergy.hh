@@ -42,14 +42,12 @@ CoarseEtable can be shared between threads
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
-
+#include <core/scoring/MinimizationData.hh>
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh>
 
 // Project headers
 #include <core/conformation/Atom.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
@@ -57,10 +55,11 @@ CoarseEtable can be shared between threads
 
 #include <ObjexxFCL/FArray3D.hh>
 
+#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/etrie/EtableAtom.fwd.hh>
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <utility/vector1.hh>
 
 namespace core {
@@ -91,14 +90,13 @@ public:
 	BaseEtableEnergy(
 		methods::EnergyMethodCreatorOP creator,
 		Etable const & etable_in,
-		methods::EnergyMethodOptions const & options
+		methods::EnergyMethodOptions const & options,
+		bool const do_classic_intrares_ = false
 	);
 
 	/// @brief explicit copy constructor, since the BaseEtableEnergy now contains OP data
 	BaseEtableEnergy( BaseEtableEnergy< Derived > const & );
 
-
-	/// NO! friend class core::scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentTwoBodyEnergies
@@ -500,17 +498,6 @@ public:
 	}
 
 	///
-	//inline
-	//void
-	//virtual_atom_pair_energy(EnergyMap & emap) const{
-	//	emap[st_atr_]+=0.0;
-	//	emap[st_rep_]+=0.0;
-	//	emap[st_sol_]+=0.0;
-	//	emap[coarse_beadlj]+=0.0;
-	//}
-
-
-	///
 	inline
 	void
 	atom_pair_energy(
@@ -599,21 +586,6 @@ public:
 		(static_cast< Derived const * > (this))->interres_evaluator().atom_pair_energy( atom1, atom2, weight, emap, d2 );
 	}
 
-
-
-	///
-//	inline
-//	Real
-//	eval_dE_dR_over_r(
-//		conformation::Atom const & atom1,
-//		conformation::Atom const & atom2,
-//		EnergyMap const & weights,
-//		Vector & f1,
-//		Vector & f2
-//	) const  {
-//		return static_cast< Derived const* > (this) -> eval_dE_dR_over_r_(atom1,atom2,weights,f1,f2);
-//	};
-
 	///
 	Real
 	hydrogen_interaction_cutoff2() const
@@ -637,63 +609,43 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
 
-	/// Inline Methods For Trie-vs-Trie Algorithm
-//	inline
-//	Energy sum_energies ( Real atr, Real rep, Real solv, Real bb ) const {
-//		return weights_[ st_atr_ ] * atr
-//			+ weights_[ st_rep_ ] * rep
-//			+ weights_[ st_sol_ ] * solv
-//			+ weights_ [ coarse_beadlj ] * bb;
-//	}
-//
-//	inline
-//	Energy heavyatom_heavyatom_energy(
-//		etrie::EtableAtom const & at1,
-//		etrie::EtableAtom const & at2,
-//		DistanceSquared & d2,
-//		Size & /*path_dist*/
-//	) const
-//	{
-//		Energy atr(0.0), rep(0.0), solv(0.0), bb(0.0);
-//		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, bb, d2 );
-//		return sum_energies( atr, rep, solv, bb );
-//	}
-//
-//	inline
-//	Energy heavyatom_hydrogenatom_energy(
-//		etrie::EtableAtom const & at1,
-//		etrie::EtableAtom const & at2,
-//		Size & /*path_dist*/
-//	) const
-//	{
-//		Energy atr(0.0), rep(0.0), solv(0.0), bb(0.0);
-//		pair_energy_H( at1, at2, 1.0, atr, rep, solv, bb );
-//		return sum_energies( atr, rep, solv, bb );
-//	}
-//
-//	inline
-//	Energy hydrogenatom_heavyatom_energy(
-//		etrie::EtableAtom const & at1,
-//		etrie::EtableAtom const & at2,
-//		Size & /*path_dist*/
-//	) const
-//	{
-//		Energy atr(0.0), rep(0.0), solv(0.0), bb(0.0);
-//		pair_energy_H( at1, at2, 1.0, atr, rep, solv, bb );
-//		return sum_energies( atr, rep, solv, bb );
-//	}
-//
-//	inline
-//	Energy hydrogenatom_hydrogenatom_energy(
-//		etrie::EtableAtom const & at1,
-//		etrie::EtableAtom const & at2,
-//		Size & /*path_dist*/
-//	) const
-//	{
-//		Energy atr(0.0), rep(0.0), solv(0.0), bb(0.0);
-//		pair_energy_H( at1, at2, 1.0, atr, rep, solv, bb );
-//		return sum_energies( atr, rep, solv, bb );
-//	}
+	inline
+	EnergiesCacheableDataType::Enum
+	nblist_type() const {
+		return	( do_classic_intrares_ ?
+							EnergiesCacheableDataType::ETABLE_CLASSIC_INTRARES_NBLIST :
+							EnergiesCacheableDataType::ETABLE_NBLIST );
+	}
+
+	inline
+	min_single_data
+	min_single_data_type() const {
+		return	( do_classic_intrares_ ? etab_classic_intrares_single_nblist : etab_single_nblist );
+	}
+
+	inline
+	min_pair_data
+	min_pair_data_type() const {
+		return	( do_classic_intrares_ ? etab_classic_intrares_pair_nblist : etab_pair_nblist );
+	}
+
+
+	inline
+	bool
+	calculate_interres( core::conformation::Residue const & rsd1,
+											core::conformation::Residue const & rsd2 ) const {
+		if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return false;
+		if ( do_classic_intrares_ ) return false;
+		return true;
+	}
+
+	inline
+	bool
+	calculate_intrares( core::conformation::Residue const & rsd ) const {
+		if ( rsd.is_DNA() && exclude_DNA_DNA_ ) return false;
+		if ( !do_classic_intrares_ && rsd.is_protein() && exclude_intra_res_protein_ /* default true */ ) return false;
+		return true;
+	}
 
 protected: //protected methods that may be used by derived classes
 
@@ -714,13 +666,6 @@ protected: //protected methods that may be used by derived classes
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn
 	) const;
-
-	/*count_pair::CPResidueConnectionType
-	determine_residue_connection(
-		conformation::Residue const & res1,
-		conformation::Residue const & res2,
-		pose::Pose const &
-	) const;*/
 
 	count_pair::CPCrossoverBehavior
 	determine_crossover_behavior(
@@ -755,34 +700,6 @@ protected: //protected methods that may be used by derived classes
 
 protected:
 
-	// implementation for quasi-virtual functions
-	// rename this derived_atom_pair_energy
-	//inline
-	//void
-	//atom_pair_energy_(
-	//	conformation::Atom const & atom1,
-	//	conformation::Atom const & atom2,
-	//	Real const weight,
-	//	Real &atr,
-	//	Real &rep,
-	//	Real &solv,
-	//	Real &bb,
-	//	Real & dsq
-	//) const;
-	//
-	/////
-	//inline
-	//void
-	//pair_energy_H_(
-	//	conformation::Atom const & atom1,
-	//	conformation::Atom const & atom2,
-	//	Real const weight,
-	//	Real &atr,
-	//	Real &rep,
-	//	Real &solv,
-	//	Real &bb
-	//) const;
-
 	///
 	inline
 	Real
@@ -803,6 +720,14 @@ protected:
 	{ //do nothing if the derived class does not override this method
 	}
 
+	// this is the only function that uses Residue -- should this be somewhere else?
+	inline
+	bool
+	calculate_intra_xover4( core::conformation::Residue const & rsd ) const {
+		if ( rsd.is_protein() /*&& options_.exclude_intra_res_protein()*/ ) return false;
+		if ( rsd.is_DNA() && exclude_DNA_DNA_ /* default true */ ) return false;
+		return true;
+	}
 
 	//little helper methods for interpolation:
 	bool interpolate_bins(
@@ -813,13 +738,6 @@ protected:
 		Real &frac
 	) const;
 
-	//void
-	//set_scoretypes(
-	//	ScoreType atr_type,
-	//	ScoreType rep_type,
-	//	ScoreType sol_type
-	//) const;
-
 	ScoreType
 	rep_scoretype() const;
 
@@ -828,17 +746,24 @@ protected:
 	/////////////////////////////////////////////////////////////////////////////
 
 protected:
+
 	Etable const & etable() const { return etable_; }
 
+	inline bool do_classic_intrares() const { return do_classic_intrares_; }
+	inline bool put_intra_into_total() const { return put_intra_into_total_; }
+
 private:
+
 	Etable const & etable_; // held as a const reference instead of as a pointer for fast access.
 
 	Real safe_max_dis2;
 	Real hydrogen_interaction_cutoff2_;
 
 	// temporary hack -- make this configurable/cleaner, Phil
-	bool exclude_DNA_DNA;
-
+	bool exclude_DNA_DNA_;
+	bool do_classic_intrares_;
+	bool put_intra_into_total_;
+	bool exclude_intra_res_protein_;
 };
 
 
@@ -1133,6 +1058,7 @@ private:
 //
 //	}
 //}
+
 
 } // etable
 } // scoring

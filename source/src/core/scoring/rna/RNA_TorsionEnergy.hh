@@ -17,6 +17,7 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_TorsionEnergy.fwd.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Package headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
@@ -40,7 +41,8 @@ public:
 public:
 
 	///
-	RNA_TorsionEnergy();
+	RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
+										 RNA_TorsionPotentialOP rna_torsion_potential = 0 );
 
 	/// clone
 	virtual
@@ -108,7 +110,8 @@ public:
 
 private:
 
-	mutable RNA_TorsionPotential rna_torsion_potential_;
+	RNA_EnergyMethodOptions const & options_;
+	RNA_TorsionPotentialOP rna_torsion_potential_;
 
 	virtual
 	core::Size version() const;

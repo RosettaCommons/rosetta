@@ -47,9 +47,35 @@
 
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
+
+#include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
 using namespace core::chemical::rna;
+
+static thread_local basic::Tracer TR( "core.scoring.methods.LK_PolarNonPolarEnergy", basic::t_info );
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// This is largely deprecated now. The 'lk_costheta' functionality was not found to be any better
+//  than geom_sol for RNA applications, and other solvation options like lk_ball and occ_sol are
+//  more likely to continue development in Rosetta.
+//
+// Was mainly in use for lk_nonpolar, but that is more efficiently computed through normal fa_sol/etable machinery
+//  using the NO_LK_POLAR_DESOLVATION flag. I checked that we get the same energies
+//  when using TableLookupEvaluator etables. The numbers are different by ~0.1% for AnalyticEtableEvaluator
+//  because of the way the spline fits to the separate solvation components (atom1 on atom2; atom2 to atom1) do
+//  not perfectly add up to a spline fit on their sum. The former is the way we calculate below,
+//  and the latter is the way used in the normal fa_sol/etable machinery.
+//
+// Was also in use in parin's SWA runs for lk_nonpolar_intra_RNA, but I am replacing that, again, with standard
+//  fa_sol calculations with PUT_INTRA_INTO_TOTAL score terms.
+//
+// Still, do NOT remove for a while -- lk_nonpolar has been in wide use in RNA code, and this is still
+//  the way to play with rebalancing fa_sol & lk_nonpolar separately. Revisit & consider removal in early 2016.
+//
+//   -- rhiju, 2014
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace core {
 namespace scoring {
@@ -63,13 +89,8 @@ methods::EnergyMethodOP
 LK_PolarNonPolarEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options.etable_type() ) );
-	return methods::EnergyMethodOP( new LK_PolarNonPolarEnergy( *etable, options.analytic_etable_evaluation() ) );
-	// for some reason I don't yet understand, cannot switch to 'modern' version which would prevent
-	// a redundant etable setup. -- rhiju
-	//	return new LK_PolarNonPolarEnergy( *( ScoringManager::get_instance()->etable( options )),
-	//																			 options.analytic_etable_evaluation() );
-
+	return EnergyMethodOP( new LK_PolarNonPolarEnergy( *(ScoringManager::get_instance()->etable( options ).lock()),
+																										 options.analytic_etable_evaluation() ) );
 }
 
 ScoreTypes
@@ -270,7 +291,7 @@ LK_PolarNonPolarEnergy::get_residue_energy_RNA_intra(
 			Size path_dist( 0 );
 			if ( cpfxn->count( i, j, cp_weight, path_dist ) ) {
 
-				if( !Is_base_phosphate_atom_pair(rsd1, rsd2, i, j) ) continue;
+				if( !is_base_phosphate_atom_pair(rsd1, rsd2, i, j) ) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( j ) );
 
@@ -293,12 +314,16 @@ LK_PolarNonPolarEnergy::get_residue_energy_RNA_intra(
 					lk_costheta_intra_RNA_score += temp_score;
 
 					if ( verbose_ && std::abs( temp_score ) > 0.1 ){
-						std::cout << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
-							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,3,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
+						TR << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
 					}
 
 				} else {
 					lk_nonpolar_intra_RNA_score += temp_score;
+					if ( verbose_ && std::abs( temp_score ) > 0.1 ){
+						TR << "Nonpolar occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
+					}
 				}
 
 			} // cp
@@ -371,12 +396,16 @@ LK_PolarNonPolarEnergy::get_residue_pair_energy_one_way(
 					lk_costheta_score += temp_score;
 
 					if ( verbose_ && std::abs( temp_score ) > 0.1 ){
-						std::cout << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
-							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,3,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
+						TR << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,5,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
 					}
 
 				} else {
 					lk_nonpolar_score += temp_score;
+					if ( verbose_ && std::abs( temp_score ) > 0.1 ){
+					 	TR << "Nonpolar occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << temp_score << ' ' << F(8,3,dotprod) << std::endl;
+					}
 				}
 
 
@@ -666,16 +695,16 @@ LK_PolarNonPolarEnergy::eval_lk(
 	conformation::Atom const & atom1,
 	conformation::Atom const & atom2,
 	Real & deriv,
-    bool const & eval_deriv
+	bool const & eval_deriv
 ) const
 {
 
-	Real temp_score( 0.0 );
+	Real temp_score( 0.0 ); //, temp_score2( 0.0 );
 	deriv = 0.0;
 
 	etable_evaluator_->atom_pair_lk_energy_and_deriv_v( atom1, atom2, temp_score, deriv, eval_deriv );
 
-	return temp_score;
+	return temp_score; // original -- works with nonanalytic.
 }
 
 ////////////////////////////////////////////////
@@ -756,7 +785,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 		Size path_dist( 0 );
 		if ( cpfxn->count(m, n, cp_weight, path_dist ) ) {
 
-			if(Is_base_phosphate_atom_pair(rsd1, rsd2, m, n)==false) continue;
+			if(is_base_phosphate_atom_pair(rsd1, rsd2, m, n)==false) continue;
 
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;

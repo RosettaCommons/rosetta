@@ -64,6 +64,15 @@ public:
 		EnergyMap & emap
 	) const;
 
+
+	virtual
+	void
+	finalize_total_energy(
+	   pose::Pose &,
+		 ScoreFunction const &,
+		 EnergyMap & totals
+	) const;
+
 	/// @brief RNA_BulgeEnergy is context independent; indicates that no
 	/// context graphs are required
 	virtual
@@ -75,6 +84,8 @@ public:
 
 	// data
 private:
+
+	Real const bulge_bonus_;
 
 };
 

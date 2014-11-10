@@ -82,7 +82,7 @@ MissingEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const {
 
-	Size const num_missing_residue_connections = pose::full_model_info::get_number_missing_residue_connections( pose );
+	Size const num_missing_residue_connections = pose::full_model_info::get_number_missing_residues_and_connections( pose );
 	totals[ missing_res ] = num_missing_residue_connections;
 
 } // finalize_total_energy

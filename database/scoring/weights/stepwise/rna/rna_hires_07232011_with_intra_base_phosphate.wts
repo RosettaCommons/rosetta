@@ -1,5 +1,5 @@
 NO_HB_ENV_DEP
-INCLUDE_INTRA_RES_RNA_HB
+#INCLUDE_INTRA_RES_RNA_HB
 fa_atr   			       0.23
 fa_rep      			     0.12
 fa_intra_rep 			   0.0029

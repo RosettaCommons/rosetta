@@ -183,8 +183,6 @@ Pose::operator=( Pose const & src )
 		constraint_set_.reset();
 	}
 
-	num_stacks_ = src.num_stacks_;
-
 	// transfer remaining observers that honor the Conformation::TRANSFER
 	// event after everything else is done
 	if ( old_conf ) {
@@ -571,7 +569,7 @@ Pose::n_residue() const
 {
 	return conformation_->size();
 }
-    
+
 /// @brief Returns the total number of atoms in the pose conformation
 /// example:
 ///			pose.total_atoms()
@@ -599,7 +597,7 @@ Pose::total_atoms( Size nres ) const{
 	}
 	return atomno;
 }
-    
+
 bool
 Pose::empty() const
 {
@@ -806,7 +804,7 @@ Pose::psi( Size const seqpos ) const
 
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
-			return residue(seqpos).mainchain_torsion(psi_torsion_beta_aa);	
+			return residue(seqpos).mainchain_torsion(psi_torsion_beta_aa);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(psi_torsion);
 		}
@@ -1546,25 +1544,6 @@ void Pose::transfer_constraint_set( const pose::Pose &pose ){
 	}
 	else constraint_set_ = pose.constraint_set_;
 }
-
-void
-Pose::clear_stacking_map()
-{
-	num_stacks_.clear();
-}
-
-void
-Pose::record_stacking_interaction( core::Size const & resid ) const
-{
-	num_stacks_[ resid ]++;
-}
-
-const boost::unordered_map< core::Size, core::Size >&
-Pose::get_stacking_map() const
-{
-	return num_stacks_;
-}
-
 
 
 //////////////////////////////// PDBInfo methods /////////////////////////////////////

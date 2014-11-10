@@ -34,6 +34,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
 
@@ -328,6 +329,34 @@ nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 )
 {
 	return variants_match_with_exceptions( res1, res2, utility::vector1< VariantType >( 1, ADDUCT_VARIANT ) );
 }
+
+
+//////////////////////////////////////
+// rhiju/fang -- Use larger LJ_WDEPTH for protons to avoid clashes in RNA
+void
+enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & atom_type_set ) {
+	Real const enlarged_lj_wdepth = 0.15;
+	// why not just look at element type? Anyway...
+	utility::vector1< std::string > const H_names = utility::tools::make_vector1( "Hpol", "Hapo", "Haro", "HNbb", "HOH" );
+	runtime_assert( lj_wdepth.size() == atom_type_set.n_atomtypes() );
+	for (Size i = 1; i <= H_names.size(); ++i) {
+		Size const index = atom_type_set.atom_type_index( H_names[i] );
+		lj_wdepth[ index ] = enlarged_lj_wdepth;
+	}
+}
+
+//////////////////////////////////////
+// rhiju/fang -- Use larger LJ_WDEPTH for protons to avoid clashes in RNA
+// this is a wrapper around another function to avoid copying code, including
+// Fang's choice of the enlarged_lj_wdepth parameter.
+void
+enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set ) {
+	utility::vector1< Real > lj_wdepth;
+	for ( Size n = 1; n <= atom_type_set.n_atomtypes(); n++ )	lj_wdepth.push_back( atom_type_set[n].lj_wdepth() );
+	enlarge_h_lj_wdepth( lj_wdepth, atom_type_set );
+	for ( Size n = 1; n <= atom_type_set.n_atomtypes(); n++ )	atom_type_set[n].set_parameter( "LJ_WDEPTH", lj_wdepth[n] );
+}
+
 
 }  // namespace chemical
 }  // namespace core

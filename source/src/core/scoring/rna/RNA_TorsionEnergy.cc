@@ -14,9 +14,11 @@
 // Unit Headers
 #include <core/scoring/rna/RNA_TorsionEnergy.hh>
 #include <core/scoring/rna/RNA_TorsionEnergyCreator.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
+#include <core/scoring/rna/RNA_TorsionPotential.hh>
 
 // Package Headers
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoringManager.hh>
 
 // Project headers
@@ -26,9 +28,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
-
 // C++
-
 
 namespace core {
 namespace scoring {
@@ -39,9 +39,9 @@ namespace rna {
 /// never an instance already in use
 methods::EnergyMethodOP
 RNA_TorsionEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new RNA_TorsionEnergy );
+	return methods::EnergyMethodOP( new RNA_TorsionEnergy( options.rna_options() ) );
 }
 
 ScoreTypes
@@ -54,16 +54,20 @@ RNA_TorsionEnergyCreator::score_types_for_method() const {
 
 
 /// ctor
-RNA_TorsionEnergy::RNA_TorsionEnergy() :
+RNA_TorsionEnergy::RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
+																			RNA_TorsionPotentialOP rna_torsion_potential /* = 0 */ ) :
 	parent( methods::EnergyMethodCreatorOP( new RNA_TorsionEnergyCreator ) ),
-	rna_torsion_potential_( ScoringManager::get_instance()->get_RNA_TorsionPotential() )
-{}
+	options_( options ),
+	rna_torsion_potential_( rna_torsion_potential )
+{
+	if ( rna_torsion_potential_ == 0 ) rna_torsion_potential_ = RNA_TorsionPotentialOP( new RNA_TorsionPotential( options ) );
+}
 
 /// clone
 methods::EnergyMethodOP
 RNA_TorsionEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_TorsionEnergy );
+	return methods::EnergyMethodOP( new RNA_TorsionEnergy( options_, rna_torsion_potential_ ) );
 }
 
 
@@ -76,7 +80,7 @@ RNA_TorsionEnergy::residue_pair_energy(
 		ScoreFunction const &,
 		EnergyMap & emap ) const {
 
-	emap[ rna_torsion ] += rna_torsion_potential_.residue_pair_energy( rsd1, rsd2, pose );
+	emap[ rna_torsion ] += rna_torsion_potential_->residue_pair_energy( rsd1, rsd2, pose );
 
 }
 
@@ -89,8 +93,8 @@ RNA_TorsionEnergy::eval_intrares_energy(
 		ScoreFunction const &,
 		EnergyMap & emap 	) const {
 
-	emap[ rna_torsion ]    += rna_torsion_potential_.eval_intrares_energy( rsd, pose );
-	emap[ rna_torsion_sc ] += rna_torsion_potential_.intrares_side_chain_score(); // evaluated at same time as above.
+	emap[ rna_torsion ]    += rna_torsion_potential_->eval_intrares_energy( rsd, pose );
+	emap[ rna_torsion_sc ] += rna_torsion_potential_->intrares_side_chain_score(); // evaluated at same time as above.
 
 }
 
@@ -109,7 +113,7 @@ RNA_TorsionEnergy::eval_atom_derivative(
 ) const
 {
 
-	rna_torsion_potential_.eval_atom_derivative( id, pose, weights, F1, F2 );
+	rna_torsion_potential_->eval_atom_derivative( id, pose, weights, F1, F2 );
 
 }
 

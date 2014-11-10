@@ -33,6 +33,7 @@ namespace scoring {
 
 enum min_single_data{
 	etab_single_nblist = 1,
+	etab_classic_intrares_single_nblist,
 	cst_res_data,
 	lkb_res_data,
 	hbond_res_data,
@@ -41,6 +42,7 @@ enum min_single_data{
 
 enum min_pair_data {
 	etab_pair_nblist = 1,
+	etab_classic_intrares_pair_nblist,
 	cst_respair_data,
 	elec_pair_nblist,
     geom_solv_pair_nblist,

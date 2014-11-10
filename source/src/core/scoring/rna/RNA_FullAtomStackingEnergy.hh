@@ -176,11 +176,6 @@ private:
 		 conformation::Residue const & rsd2,
 		 Size const & m, Size const & n ) const;
 
-	bool
-	is_aro(
-				 conformation::Residue const & rsd1,
-				 Size const & m ) const;
-
 	virtual
 	core::Size version() const;
 

@@ -71,6 +71,12 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_intra_atr" ] = fa_intra_atr;
 	name2score_type_[ "fa_intra_rep" ] = fa_intra_rep;
 	name2score_type_[ "fa_intra_sol" ] = fa_intra_sol;
+	name2score_type_[ "fa_intra_atr_xover4" ] = fa_intra_atr_xover4;
+	name2score_type_[ "fa_intra_rep_xover4" ] = fa_intra_rep_xover4;
+	name2score_type_[ "fa_intra_sol_xover4" ] = fa_intra_sol_xover4;
+	name2score_type_[ "fa_atr_dummy" ] = fa_atr_dummy;
+	name2score_type_[ "fa_rep_dummy" ] = fa_rep_dummy;
+	name2score_type_[ "fa_sol_dummy" ] = fa_sol_dummy;
 	name2score_type_[ "coarse_fa_atr" ] = coarse_fa_atr;
 	name2score_type_[ "coarse_fa_rep" ] = coarse_fa_rep;
 	name2score_type_[ "coarse_fa_sol" ] = coarse_fa_sol;
@@ -152,6 +158,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hbond_sr_bb_sc" ] = hbond_sr_bb_sc;
 	name2score_type_[ "hbond_lr_bb_sc" ] = hbond_lr_bb_sc;
 	name2score_type_[ "hbond_sc"    ] = hbond_sc;
+	name2score_type_[ "hbond"    ] = hbond;
 	name2score_type_[ "interchain_pair" ] = interchain_pair;
 	name2score_type_[ "interchain_vdw" ] = interchain_vdw;
 	name2score_type_[ "interface_dd_pair" ] = interface_dd_pair;
@@ -234,9 +241,15 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "envsmooth" ] = envsmooth;
 	name2score_type_[ "e_pH" ] = e_pH;
 	name2score_type_[ "rna_bulge"] = rna_bulge;
+
+	name2score_type_[ "loop_close"] = loop_close;
+	name2score_type_[ "missing_res"] = missing_res;
 	name2score_type_[ "free_suite"] = free_suite;
 	name2score_type_[ "free_2HOprime"] = free_2HOprime;
 	name2score_type_[ "free_side_chain"] = free_side_chain;
+	name2score_type_[ "free_base"] = free_base;
+	name2score_type_[ "free_res"] = free_res;
+	name2score_type_[ "free_dof"] = free_dof;
 	name2score_type_[ "intermol"] = intermol;
 	name2score_type_[ "mg_ref"] = mg_ref;
 	// Variant type to flag rotamers for alternative scoring with varying weight
@@ -359,17 +372,14 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_base_stack_pairwise"] = rna_base_stack_pairwise;
 	name2score_type_[ "rna_base_stack_axis_pairwise"] = rna_base_stack_axis_pairwise;
 
-	name2score_type_[ "fa_stack"] = fa_stack;
-	name2score_type_[ "fa_stack_aro"] = fa_stack_aro;
+	name2score_type_[ "fa_stack"]       = fa_stack;
+	name2score_type_[ "fa_stack_lower"] = fa_stack_lower;
+	name2score_type_[ "fa_stack_upper"] = fa_stack_upper;
+	name2score_type_[ "fa_stack_aro"]   = fa_stack_aro;
+
 	name2score_type_[ "stack_elec"] = stack_elec;
 	name2score_type_[ "stack_elec_base_base"] = stack_elec_base_base;
 	name2score_type_[ "stack_elec_base_bb"] = stack_elec_base_bb;
-
-	name2score_type_[ "loop_close"] = loop_close;
-	name2score_type_[ "missing_res"] = missing_res;
-	name2score_type_[ "bulge_bonus"] = bulge_bonus;
-	name2score_type_[ "num_hbonds"] = num_hbonds;
-	name2score_type_[ "num_stacks"] = num_stacks;
 
 	name2score_type_[ "rna_torsion"] = rna_torsion;
 	name2score_type_[ "rna_torsion_sc"] = rna_torsion_sc;
