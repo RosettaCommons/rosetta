@@ -22,10 +22,9 @@ extras  = "none"
 uname = os.uname()
 osx_version = int(uname[2][0:2]) if uname[0] == "Darwin" else 0
 
-# OS X version 13 is 10.9 Mavericks, 14 is 10.10 Yosemite
+# OS X version 13 is 10.9 Mavericks, which doesn't ship with gcc.
 if osx_version >= 13:
     cxx = "clang"
-    extras = "cxx11"
 
 cxx_ver = "*"
 

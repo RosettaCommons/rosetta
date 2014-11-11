@@ -1921,36 +1921,23 @@ settings = {
             "flags" : {
                 # Change 'abspath' to 'file' to use DYLD_LIBRARY_PATH environ-
                 # ment variable.
-                "compile" : [ "march=native" ],
-                "shlink" : [ "install_name ${TARGET.abspath}" ],
+                "compile" : [ "march=native", "stdlib=libc++", ],
+                "shlink" : [ "install_name ${TARGET.abspath}", "stdlib=libc++", ],
+                "link"   : [ "stdlib=libc++"],
+                "cxx" : [ "std=c++11" ],
                 # There is at least one variable only used on non-Macs.
                 "warn" : ["Wno-unused-variable"],
             },
+            "defines" : [ "CXX11", "PTR_STD", ],
         },
         "removes" : {
             "flags" : {
-                "link" : [ "$__RPATH" ],
-                "cxx" : [ "std=c++98" ],
-                "shlink" : [ "$LINKFLAGS" ],
+                "link" : [ "$__RPATH", "stdlib=libstdc++", ],
+                "cxx" : [ "std=c++98", "std=c++0x", ],
+                "shlink" : [ "$LINKFLAGS", "stdlib=libstdc++", ],
+                "link"   : [ "stdlib=libstdc++", ],
             },
-        },
-    },
-
-
-    "clang, macos, cxx11" : {
-        "appends" : {
-            "flags" : {
-                "compile" : [ "stdlib=libc++", ],
-                "shlink" : [ "stdlib=libc++"],
-                "link"   : [ "stdlib=libc++"],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "compile" : [ "stdlib=libstdc++", ],
-                "shlink" : [ "stdlib=libstdc++"],
-                "link"   : [ "stdlib=libstdc++"],
-            },
+            "defines" : [ "PTR_BOOST", ],
         },
     },
 
