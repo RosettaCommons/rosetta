@@ -294,8 +294,8 @@ void MPI_WorkUnitManager::receive_MPI_workunit( core::Size MPI_ONLY(node_rank) )
 
 	TRDEBUG << "  RECEVIED WU: Data: " << std::endl;
 
-	WorkUnitBaseOP wu = new WorkUnitBase;
-  runtime_assert( wu );
+	WorkUnitBaseOP wu( new WorkUnitBase );
+  runtime_assert( wu != 0 );
 	wu->raw_data_load( raw_data_ptr, size_of_raw_data );
 	delete [] raw_data_ptr;
 
@@ -306,7 +306,7 @@ void MPI_WorkUnitManager::receive_MPI_workunit( core::Size MPI_ONLY(node_rank) )
 
 	WorkUnitBaseOP qualified_wu = work_unit_list().get_work_unit( *wu )->clone();
 
-  runtime_assert( qualified_wu );
+  runtime_assert( qualified_wu != 0 );
 	// cope over data (the header and the serial data)
 	(*qualified_wu) = (*wu);
 	(*qualified_wu).last_received_from_ = status.MPI_SOURCE;
@@ -333,10 +333,10 @@ void MPI_WorkUnitManager::send_next_WU_on_request( ){
 	// Find next work unit which does not blacklist the node that's requesting a workunit
 	// (indicated by MPI_SOURCE)
 	WorkUnitQueue::iterator suitable_work_unit = outbound().begin();
-	for( ; suitable_work_unit != outbound().end(); ++suitable_work_unit ) 
+	for( ; suitable_work_unit != outbound().end(); ++suitable_work_unit )
 	{
 			// break out of loop once a WU is found that matches the above criterion
-			if( !( (*suitable_work_unit)->in_blacklist( status.MPI_SOURCE ) ) ) break; 
+			if( !( (*suitable_work_unit)->in_blacklist( status.MPI_SOURCE ) ) ) break;
 			// blurb some debug output if in debug mode
 			TRDEBUG << "WU " << (*suitable_work_unit)->id() << " was not sent to " << status.MPI_SOURCE << " because it was blacklisted." << std::endl;
   }
@@ -346,18 +346,18 @@ void MPI_WorkUnitManager::send_next_WU_on_request( ){
 				TRDEBUG << "No suitable work for node "  << status.MPI_SOURCE << " ( blacklisted=" << outbound().size() << ")" << std::endl;
 
 				// craete a idling command workunit - since we have no work for the slave node that's requesting work
-				WorkUnit_WaitOP wait_wu = new WorkUnit_Wait();
+				WorkUnit_WaitOP wait_wu( new WorkUnit_Wait() );
 				wait_wu->set_wu_type("waitwu");
 				outbound().push_back( wait_wu );
-				
+
 				// set suitable_work_unit to the work unit just inserted
 				suitable_work_unit = outbound().end();
-				// after setting suitable_work_unit to outbound().end() we need to 
+				// after setting suitable_work_unit to outbound().end() we need to
 				// decrement the iterator by one to have it point to the last element
-				--suitable_work_unit;  
+				--suitable_work_unit;
 	}
-	
-	// at this point there *must* be a work unit in the queue. if not we fucked up bad. 
+
+	// at this point there *must* be a work unit in the queue. if not we fucked up bad.
 	runtime_assert( outbound().size() != 0 );
 
 	TRDEBUG << "Sending next WU on request... "<< std::endl;
@@ -365,10 +365,10 @@ void MPI_WorkUnitManager::send_next_WU_on_request( ){
 
 	// if we do, then suitable_work_unit one to the node that requested another job
 	send_MPI_workunit( *suitable_work_unit, status.MPI_SOURCE );
-	
+
 	// remove the workunit that was just sent
 	outbound().erase( suitable_work_unit );
-	
+
 	// if error free (ERROR CHECKING!)
 	TRDEBUG << "END Send-on-request" << std::endl;
 
@@ -469,7 +469,3 @@ void MPI_WorkUnitManager::print_stats( )
 
 } // namespace wum
 } // namespace protocols
-
-
-
-

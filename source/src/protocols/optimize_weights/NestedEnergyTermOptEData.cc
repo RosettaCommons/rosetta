@@ -713,11 +713,11 @@ NestedEnergyTermPNatAAOptEPositionData::receive_from_node( int const source_node
 		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data_vect[ kk ] = fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ];
 		}
-		PNatAAOptERotamerDataOP jj_rotamer_data = new PNatAAOptERotamerData(
+		PNatAAOptERotamerDataOP jj_rotamer_data( new PNatAAOptERotamerData(
 			(chemical::AA ) ii_aa_types[ jj - 1 ],
 			ii_rot_nums[ jj - 1 ],
 			free_data_vect,
-			fixed_data_vect );
+			fixed_data_vect ) );
 		add_rotamer_line_data( jj_rotamer_data );
 
 	}
@@ -1241,7 +1241,7 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		wts_.push_back( new SingleStructureData( free_data_v, fixed_data_v ) );
+		wts_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 	}
 
 
@@ -1265,7 +1265,7 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		muts_.push_back( new SingleStructureData( free_data_v, fixed_data_v ) );
+		muts_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 	}
 
 	delete [] free_data;

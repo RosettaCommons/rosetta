@@ -89,7 +89,7 @@ main( int argc, char * argv [] )
 						MPI_Abort( MPI_COMM_WORLD, 1 );
 				}
 
-        LoopHashLibraryOP loop_hash_library = new LoopHashLibrary( loop_sizes, num_partitions, assigned_num );
+        LoopHashLibraryOP loop_hash_library( new LoopHashLibrary( loop_sizes, num_partitions, assigned_num ) );
 
 
         TR << "Creating partition..." << std::endl;
@@ -106,7 +106,7 @@ main( int argc, char * argv [] )
 				// move the master (mpi_rank = 0) db to a nonpartitioned db name, and perform initial filtering
 				if( mpi_rank_ == 0) {
 					LoopHashLibraryOP old_master = loop_hash_library;
-					loop_hash_library = new LoopHashLibrary( loop_sizes, 1, 0);
+					loop_hash_library = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes, 1, 0) );
 					loop_hash_library->merge( old_master, rms_cutoff );
 					old_master->delete_db();
 				}
@@ -123,7 +123,7 @@ main( int argc, char * argv [] )
 					if ( mpi_rank_ % divisor != 0 || mpi_rank_ + (int) divisor/2 >= (int) num_partitions ) {
 						MPI_Barrier( MPI_COMM_WORLD );
 					} else {
-						LoopHashLibraryOP second_loopdb = new LoopHashLibrary( loop_sizes, num_partitions, mpi_rank_ + divisor/2 );
+						LoopHashLibraryOP second_loopdb( new LoopHashLibrary( loop_sizes, num_partitions, mpi_rank_ + divisor/2 ) );
 						try {
 								second_loopdb->load_db();
 								// Merge while throwing out uniques

@@ -799,11 +799,11 @@ PNatAAOptEPositionData::receive_from_node( int const source_node, int const tag 
 		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data_vect[ kk ] = fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ];
 		}
-		PNatAAOptERotamerDataOP jj_rotamer_data = new PNatAAOptERotamerData(
+		PNatAAOptERotamerDataOP jj_rotamer_data( new PNatAAOptERotamerData(
 			(chemical::AA ) ii_aa_types[ jj - 1 ],
 			ii_rot_nums[ jj - 1 ],
 			free_data_vect,
-			fixed_data_vect );
+			fixed_data_vect ) );
 		add_rotamer_line_data( jj_rotamer_data );
 
 	}
@@ -1891,11 +1891,11 @@ PNatRotOptEPositionData::receive_from_node( int const source_node, int const tag
 		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data_vect[ kk ] = fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ];
 		}
-		PNatRotOptERotamerDataOP jj_rotamer_data = new PNatRotOptERotamerData(
+		PNatRotOptERotamerDataOP jj_rotamer_data( new PNatRotOptERotamerData(
 			rotamer_index_vect,
 			chi_vect,
 			free_data_vect,
-			fixed_data_vect );
+			fixed_data_vect ) );
 		add_rotamer_line_data( jj_rotamer_data );
 
 	}
@@ -2795,7 +2795,7 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		natives_.push_back( new SingleStructureData( free_data_v, fixed_data_v ) );
+		natives_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 		natives_[ ii ]->rms( rms[ ii-1 ] );
 		//std::cout << "recieved native with rms: " << rms[ (ii-1) ] << std::endl;
 	}
@@ -2824,7 +2824,7 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		decoys_.push_back( new SingleStructureData( free_data_v, fixed_data_v ) );
+		decoys_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 		decoys_[ ii ]->rms( rms[ ii - 1 ] );
 		//std::cout << "recieved decoy  with rms: " << rms[ (ii-1) ] << std::endl;
 	}
@@ -3858,7 +3858,7 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		wts_.push_back( new SingleStructureData( free_data_v, fixed_data_v ) );
+		wts_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 	}
 
 
@@ -3882,7 +3882,7 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		muts_.push_back( new SingleStructureData( free_data_v, fixed_data_v ) );
+		muts_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 	}
 
 

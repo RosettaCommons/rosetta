@@ -313,7 +313,7 @@ void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool 
 	if ( iter != open_files_.end() ) {
 		channel = iter->second;
 		SingleFileBufferOP buf = open_buffers_[ channel ];
-		runtime_assert( buf ); //consistent?
+		runtime_assert( buf != 0 ); //consistent?
 		//buf->flush( slave );
 		tr.Debug << "channel exists already: " << channel << std::endl;
 		status = MPI_SUCCESS_APPEND;

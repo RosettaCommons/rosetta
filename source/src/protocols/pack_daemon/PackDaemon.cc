@@ -1063,7 +1063,7 @@ DaemonSet::recieve_entity() const
 {
 #ifdef USEMPI
 	std::string entity_string = utility::receive_string_from_node( 0 );
-	EntityOP ent = new Entity( entity_string );
+	EntityOP ent( new Entity( entity_string ) );
 	return ent;
 #endif
 	return 0;

@@ -198,7 +198,7 @@ namespace mc_convergence_checks{
 	}
 	tr.Debug << "done dumping out information about best-rmsd" << std::endl;
       }
-      
+
       hlevel_.debug_print_size_per_level();
       PROF_START( basic::MPIH_EVAL_COMMUNICATE_NEW );
       //store the highest-resolution rmsd
@@ -471,7 +471,7 @@ namespace mc_convergence_checks{
 	  if( tr.visible() ) tr.Debug << "I am the min ranking proc: " << pool_rank_ << " and i am printing out these rank neighbors: ";
 	  for( core::Size ii = 0; ii < num_nbrs; ii++ ) {
 	    if( have_structure_to_print[ ii ] == 1 ) {
-	      if( tr.visible() ) { 
+	      if( tr.visible() ) {
 		tr.Debug << " nbr rank: " << ii << " ";
 		for( core::Size jj = 0; jj < hlevel_.nlevels(); jj++ ) {
 		  tr.Debug << buf_.neighbor_addresses_[ ( ii * hlevel_.nlevels() ) + jj ] << " ";
@@ -1106,7 +1106,7 @@ namespace mc_convergence_checks{
     } else {
       if( rank_ >= min_client_rank ) {
 	tr.Info << "pool already exists!! loading file as top-level" << std::endl;
-	Pool_RMSD_OP top_level_pool = new Pool_RMSD( hlevel_.lib_full_path( universal_address ) );
+	Pool_RMSD_OP top_level_pool( new Pool_RMSD( hlevel_.lib_full_path( universal_address ) ) );
 	if( tr.visible() ) tr.Debug << "finished reading pool from file: " << hlevel_.lib_full_path( universal_address ) << std::endl;
 	hlevel_.fill_top_level( top_level_pool );
       }

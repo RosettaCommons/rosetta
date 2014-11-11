@@ -215,7 +215,7 @@ DGBindOptEData::receive_from_node( int const source_node, int const tag )
 	for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 		fixed_data_v[ jj ] = fixed_data[ ( jj - 1 ) ];
 	}
-	bound_ = new SingleStructureData( free_data_v, fixed_data_v );
+	bound_ = SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) );
 
 
 	delete [] free_data; free_data = 0;
@@ -237,7 +237,7 @@ DGBindOptEData::receive_from_node( int const source_node, int const tag )
 	for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 		fixed_data_v[ jj ] = fixed_data[ ( jj - 1 ) ];
 	}
-	unbound_ = new SingleStructureData( free_data_v, fixed_data_v );
+	unbound_ = SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) );
 
 
 	delete [] free_data;
