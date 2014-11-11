@@ -977,7 +977,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 		if ( jd2rm->has_resource_configuration( pdb_resource_name ) ) {
 			// TODO: make sure the other resource has the right type
 		} else {
-			tr << "Adding implicit resource '" << pdb_resource_name << "' for job whose startstruct is given as pdb='" << rname << "'.";
+			tr << "Adding implicit resource '" << pdb_resource_name << "' for job whose startstruct is given as pdb='" << rname << "'." << std::endl;
 			basic::resource_manager::ResourceConfiguration rconfig;
 			rconfig.resource_tag         = pdb_resource_name;
 			rconfig.locator_tag          = locator; // <--- default
