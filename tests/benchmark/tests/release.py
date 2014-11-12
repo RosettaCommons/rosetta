@@ -213,7 +213,7 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
             release_name = 'PyRosetta.{kind}.{os}.{branch}:{revision}'.format(kind=kind, os=platform['os'], branch=config['branch'], revision=config['revision'])
             archive = working_dir + '/' + release_name + '.tar.bz2'
 
-            file_list = 'app database demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python rosetta.so'.split()  #  ignore_list: _build_ .test.output
+            file_list = 'app database demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python rosetta.so'.split()  # rosetta dir is spefial, we omit it here  # ignore_list: _build_ .test.output
             # debug: file_list = 'app demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python'.split()  #  ignore_list: _build_ .test.output
 
             # Creating tar.bz2 archive with binaries
@@ -222,6 +222,15 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
                 if tar_info.name == release_name+ '/database': tar_info.type = tarfile.DIRTYPE
                 for e in file_list:
                     if tar_info.name.startswith(release_name+'/'+e): return tar_info
+
+                if tar_info.name.startswith(release_name+'/rosetta'):
+                    if tar_info.name == release_name+'/rosetta/config.json': return tar_info
+                    elif tar_info.type == tarfile.DIRTYPE: return tar_info
+                    elif tar_info.name.startswith(release_name+'/rosetta/'):  # special filtering for namespace rosetta dir
+                        for ending in '.so .py .pyc .pyd .dylib'.split():
+                            if tar_info.name.endswith(ending): return tar_info
+                        else: return None
+
                 return None
             with tarfile.open(archive, "w:bz2") as t: t.add(buildings_path, arcname=release_name, filter=arch_filter)
 

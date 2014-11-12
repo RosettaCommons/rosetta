@@ -400,6 +400,9 @@ def main(args):
         sys.exit(1)
 
 
+    import compileall
+    print_('Compiling py files...', color='blue', bright=False)
+    compileall.compile_dir(bindings_path, quiet=True)  # bindings_path+'/..' <-- we probably need pyc files only for rosetta/ dir
 
 
     #buildModule(, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L)

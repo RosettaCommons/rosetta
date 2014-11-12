@@ -39,15 +39,15 @@ mover_3mer = ClassicFragmentMover(fragset3mer,movemap)
 ccd_closure = CCDLoopClosureMover(my_loop, movemap)
 
 #centroid/fullatom conversion movers
-to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover('centroid')
-to_fullatom = protocols::simple_moves::SwitchResidueTypeSetMover('fa_standard')
-recover_sidechains = protocols::simple_moves::ReturnSidechainMover(starting_p)
+to_centroid = protocols.simple_moves.SwitchResidueTypeSetMover('centroid')
+to_fullatom = protocols.simple_moves.SwitchResidueTypeSetMover('fa_standard')
+recover_sidechains = protocols.simple_moves.ReturnSidechainMover(starting_p)
 
 #set up sidechain packer movers
 task_pack = TaskFactory.create_packer_task(starting_p)
 task_pack.restrict_to_repacking()
 task_pack.or_include_current( True )
-pack = protocols::simple_moves::PackRotamersMover( scorefxn_high, task_pack )
+pack = protocols.simple_moves.PackRotamersMover( scorefxn_high, task_pack )
 
 #convert to centroid mode
 to_centroid.apply(p)
@@ -106,4 +106,3 @@ while (jd.job_complete == False):
   Lrms = loop_rmsd(p, starting_p, my_loops, True)
   jd.additional_decoy_info = " Lrmsd: " + str(Lrms)
   jd.output_decoy(p)
-
