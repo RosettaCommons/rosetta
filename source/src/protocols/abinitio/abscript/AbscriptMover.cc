@@ -253,7 +253,7 @@ void AbscriptMover::apply( core::pose::Pose& pose ){
   using namespace basic::options;
 
   if( ! pose.is_centroid() ){
-    throw utility::excn::EXCN_BadInput( "AbscriptMover recieved a non-centroid pose--only centroid poses are accepted." );
+    throw utility::excn::EXCN_BadInput( "AbscriptMover recieved a non-centroid pose. Only centroid poses are accepted because of the score functions used in this algorithm." );
   }
   StageTracker tracker( mc_ );
 
@@ -459,8 +459,8 @@ AbscriptMover::parse_my_tag(
   }
 
   if( !tag->hasTag( "Fragments" ) && !tag->hasTag( "fragments" ) ){
-    add_frags( tag->getOption<std::string>("small_frags", option[ OptionKeys::in::file::frag3 ] ),
-               tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ] ) );
+    add_frags( tag->getOption<std::string>("small_frags", option[ OptionKeys::in::file::frag3 ]() ),
+               tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ]() ) );
   }
 }
 

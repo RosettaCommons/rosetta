@@ -43,7 +43,7 @@ static thread_local basic::Tracer tr( "protocols.environment.ProtectedConformati
 namespace protocols {
 namespace environment {
 
-using namespace core; 
+using namespace core;
 
 using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
@@ -128,7 +128,7 @@ void ProtectedConformation::set_jump( core::id::AtomID const& id, core::kinemati
   if( verify_jump( id ) ){
     Parent::set_jump( id, new_jump );
   } else {
-    fail_verification( utility::to_string(id) );
+    fail_verification( "jump@"+utility::to_string(id) );
   }
 }
 
@@ -519,7 +519,8 @@ bool ProtectedConformation::verify( core::id::DOF_ID const& id ){
 }
 
 void ProtectedConformation::fail_verification( std::string const& str ){
-  throw EXCN_Env_Security_Exception( str, *this, get_mover_name( unlocks_ ), environment() );
+  std::string const& extra_info = unlocks_.empty() ? "(no unlock was present)" : "(the move was not found in the passport)";
+  throw EXCN_Env_Security_Exception( str + extra_info, *this, get_mover_name( unlocks_ ), environment() );
 }
 
 // ALWAYS-FAILING SECURITY OVERLOADS

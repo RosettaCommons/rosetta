@@ -19,11 +19,13 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/environment/Environment.fwd.hh>
+#include <protocols/environment/ClaimingMover.hh>
 
 // Project headers
 #include <protocols/moves/MoverContainer.hh>
 
 // C++ Headers
+#include <set>
 
 // ObjexxFCL Headers
 
@@ -35,8 +37,6 @@ class EnvMover : public moves::Mover {
 public:
   EnvMover();
 
-  EnvMover( EnvironmentOP env );
-
   virtual void
   parse_my_tag( utility::tag::TagCOP tag,
                basic::datacache::DataMap & data,
@@ -47,6 +47,10 @@ public:
   virtual ~EnvMover();
 
   virtual void apply( Pose& pose );
+
+  void add_apply_mover( protocols::moves::MoverOP );
+
+  void add_registered_mover( protocols::moves::MoverOP );
 
   virtual std::string get_name() const;
 
@@ -60,7 +64,8 @@ private:
                      core::pose::Pose const& pose );
 
   EnvironmentOP env_;
-  moves::SequenceMover movers_;
+  moves::SequenceMoverOP movers_;
+  std::set< moves::MoverOP > reg_only_movers_;
 
 }; // end EnvMover base class
 

@@ -136,7 +136,12 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
 
   initialize( tag->getOption< bool >( "initialize", true ) );
 
-  set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+	if( tag->hasOption( "selector" ) ){
+		set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+	} else {
+		set_selector( NULL );
+	}
+
   set_moverkey( tag->getOption< std::string >( "name" , "" ) );
 
   tr.Debug << "Initialzed " << get_name();
@@ -212,7 +217,7 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
 
   //Now that we've committed to a particular sample, configure fragments in the mover.
   setup_fragments( jump_sample );
-
+  tr.Debug <<"mover.configured" << mover()->get_name() << std::endl;
   int shift = residue_selection.index( true )-1;
   ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() );
 

@@ -18,6 +18,7 @@
 #include <core/environment/DofPassport.hh>
 
 #include <protocols/environment/DofUnlock.hh>
+#include <protocols/environment/EnvExcn.hh>
 #include <protocols/environment/claims/CutBiasClaim.hh>
 #include <protocols/environment/claims/JumpClaim.hh>
 #include <protocols/environment/claims/XYZClaim.hh>
@@ -110,7 +111,7 @@ loops::Loops read_rigid_core( std::string const& file){
 void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
                                  basic::datacache::DataMap&,
                                  protocols::filters::Filters_map const&,
-                                 protocols::moves::Movers_map const&,
+                                 protocols::moves::Movers_map const& movermap,
                                  core::pose::Pose const& ){
 
   using namespace basic::options;
@@ -132,15 +133,35 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
     throw utility::excn::EXCN_BadInput( err );
   }
 
+  std::string const APPLY_TO_TEMPLATE = "apply_to_template";
+
   if( tag->hasOption("template") ){
     std::string file = tag->getOption< std::string >( "template" );
     if( file == "INPUT" ){
+      if( tag->hasOption( APPLY_TO_TEMPLATE ) ){
+        std::ostringstream ss;
+        ss << "In " << this->get_name() << " the option '" << APPLY_TO_TEMPLATE
+        << "' is not combinable with input templates." << std::endl;
+        throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+      }
       template_ = NULL;
     } else {
       core::pose::PoseOP p( new core::pose::Pose() );
       core::import_pose::pose_from_pdb( *p,
                                         *core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
                                         file );
+
+      if( tag->hasOption( APPLY_TO_TEMPLATE ) ){
+        std::string const apply_to_templates = tag->getOption< std::string >( "apply_to_template" );
+
+        utility::vector1< std::string > movernames = utility::string_split( apply_to_templates, ',' );
+        for( utility::vector1< std::string >::const_iterator movername = movernames.begin();
+            movername != movernames.end(); ++movername ){
+          moves::MoverOP mover = movermap.find( *movername )->second;
+          mover->apply( *p );
+        }
+      }
+
       template_ = p;
     }
   } else {
@@ -171,27 +192,25 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 
   for ( loops::Loops::const_iterator loop_it = rigid_core_.begin();
         loop_it != rigid_core_.end(); ++loop_it ) {
-    XYZClaimOP xyz_claim( new XYZClaim( this_ptr,
-                                         label(),
-                                         std::make_pair( loop_it->start(),
-                                                         loop_it->stop() ) ) );
+
+    // Claim the rigid chunks with exclusive control
+    std::pair< core::Size, core::Size > const excl_region = std::make_pair( loop_it->start(), loop_it->stop() );
+    XYZClaimOP xyz_claim( new XYZClaim( this_ptr, label(), excl_region ) );
+
     xyz_claim->strength( EXCLUSIVE, EXCLUSIVE );
+    xyz_claim->set_relative( true ); //we don't care where it's located in space; just that the relative locations are ok.
     claims.push_back( xyz_claim );
+    tr.Debug << this->get_name() << ": built EXCLUSIVE XYZClaim for " << excl_region.first << "-" << excl_region.second
+             << " in " << label() << std::endl;
 
-
-    if( loop_it->start() > 1 ){
-      XYZClaimOP support_claim( new XYZClaim( this_ptr,
-                                               LocalPosition( label(), loop_it->start()-1 ) ) );
-      support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
-      claims.push_back( support_claim );
-    }
-
-    if( loop_it->stop() < template_->total_residue() ){
-      XYZClaimOP support_claim( new XYZClaim( this_ptr,
-                                               LocalPosition( label(), loop_it->stop()+1 ) ) );
-      support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
-      claims.push_back( support_claim );
-    }
+    // For initialization, we need to some of FDP's fixing, which requires some control outside the region
+    std::pair< core::Size, core::Size > const supp_region = std::make_pair( std::max( Size( 1 ), excl_region.first-1 ),
+                                                                            std::min( template_->total_residue(), excl_region.second+1 ) );
+    XYZClaimOP support_claim( new XYZClaim( this_ptr, label(), supp_region ) );
+    support_claim->strength( MUST_CONTROL, MUST_CONTROL );
+    claims.push_back( support_claim );
+    tr.Debug << this->get_name() << ": built support XYZClaim for " << supp_region.first << "-" << supp_region.second
+             << " in " << label() << std::endl;
 
     claims.push_back( protocols::environment::claims::EnvClaimOP( new CutBiasClaim( this_ptr, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) ) );
 
@@ -390,13 +409,16 @@ void copy_internal_coords( core::pose::Pose& pose, core::pose::Pose const& ref_p
 }
 //////////////////////////////// END MAGIC FPD CODE ////////////////////////////////////////////
 
+
 void RigidChunkCM::initialize( Pose& pose ){
+
+//  core::pose::Pose pose( pose_in );
+//  pose.set_new_conformation( new core::conformation::Conformation( pose_in.conformation() ) );
+  DofUnlock activation( pose.conformation(), passport() );
 
   if ( missing_density( pose, rigid_core_ ) ) {
     throw utility::excn::EXCN_BadInput( " missing density in backbone of rigid-chunk. Check your LOOP definitions.");
   }
-
-  DofUnlock activation( pose.conformation(), passport() );
 
   for ( loops::Loops::const_iterator region = rigid_core_.begin();
         region != rigid_core_.end(); ++region ) {
@@ -439,6 +461,9 @@ void RigidChunkCM::initialize( Pose& pose ){
       tr.Trace << "NOT fixing upper connection for " << loop_stop << std::endl;
     }
   }
+
+  // Copy rigid-made DoFs into pose
+//  Parent::sandboxed_copy( pose, pose_in );
 }
 
 
@@ -478,7 +503,15 @@ loops::Loops RigidChunkCM::select_parts( loops::Loops const& rigid_core, core::S
 }
 
 std::string RigidChunkCM::get_name() const {
-  return "RigidChunkCM";
+  std::ostringstream ss;
+  ss << "RigidChunkCM(";
+  for ( loops::Loops::const_iterator region = rigid_core_.begin();
+       region != rigid_core_.end(); ++region ) {
+    ss << region->start() << "-" << region->stop() << ",";
+  }
+  ss << ")";
+
+  return ss.str();
 }
 
 moves::MoverOP RigidChunkCM::clone() const {

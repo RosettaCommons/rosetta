@@ -19,6 +19,7 @@
 
 #include <protocols/environment/DofUnlock.hh>
 #include <protocols/environment/EnvExcn.hh>
+#include <protocols/environment/claims/EnvLabelSelector.hh>
 
 #include <core/environment/DofPassport.hh>
 
@@ -96,7 +97,7 @@ AbscriptLoopCloserCM::AbscriptLoopCloserCM():
   Parent(),
   fragset_(),
   scorefxn_(),
-  label_( "BASE" )
+  selector_( new environment::claims::EnvLabelSelector( (std::string) "BASE" ) )
 {}
 
 AbscriptLoopCloserCM::AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
@@ -104,18 +105,16 @@ AbscriptLoopCloserCM::AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
   Parent(),
   fragset_( fragset ),
   scorefxn_( scorefxn ),
-  label_( "BASE" ),
+  selector_( new environment::claims::EnvLabelSelector( (std::string) "BASE" ) ),
   bUpdateMM_( true )
 {}
 
-claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const& in_pose,
+claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const&,
                                                       basic::datacache::WriteableCacheableMapOP ){
   claims::EnvClaims claims;
 
   // We want to control everything that will be relevant to the output pose (which should be the same as the input.
-  claims::TorsionClaimOP claim( new claims::TorsionClaim(
-	utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
-	label(), std::make_pair( 1, in_pose.total_residue() ) ) );
+  claims::TorsionClaimOP claim( new claims::TorsionClaim( utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ), selector() ) );
   claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
   claims.push_back( claim );
@@ -196,7 +195,7 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
 }
 
 void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
-                                         basic::datacache::DataMap & data,
+                                         basic::datacache::DataMap & datamap,
                                          protocols::filters::Filters_map const&,
                                          protocols::moves::Movers_map const&,
                                          core::pose::Pose const& ) {
@@ -204,9 +203,21 @@ void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
   using namespace basic::options::OptionKeys;
   using namespace basic::options;
 
-  set_label( tag->getOption< std::string >( "label", label() ) );
+	if( tag->hasOption( "selector" ) ) {
+		set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+	} else {
+		set_selector( core::pack::task::residue_selector::ResidueSelectorCOP( new environment::claims::EnvLabelSelector( (std::string) "BASE" ) ) );
+	}
 
-  std::string const& fragfile = tag->getOption< std::string >( "fragments", option[ OptionKeys::in::file::frag3 ] );
+  std::string fragfile;
+  if(tag->hasOption("fragments"))
+    fragfile = tag->getOption<std::string>("fragments");
+  else if(!option[OptionKeys::in::file::frag3].user()){
+    tr.Error <<"enter frags with either fragments= or -in:file:frag3"  << std::endl;
+    throw utility::excn::EXCN_RosettaScriptsOption( "fragment file wrong type" );
+  }
+  else
+    fragfile = option[ OptionKeys::in::file::frag3 ]();
 
   core::fragment::FragmentIO frag_io( option[ OptionKeys::abinitio::number_3mer_frags ](), 1,
                                       option[ OptionKeys::frags::annotate ]() );
@@ -215,15 +226,14 @@ void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
 
   if( tag->hasOption( "scorefxn" ) ){
     try {
-      scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+      scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
     } catch ( ... ) {
       tr.Error << "AbscriptLoopCloserCM failed to find the score function '"
                << tag->getOption< std::string >( "scorefxn" ) << std::endl;
       throw;
     }
   } else {
-    tr.Warning << "Configuring AbscriptLoopCloserCM '" << tag->getName() << "' with default abinitio loop closure score function." << std::endl
-               << "THIS IS BAD UNLESS YOU KNOW WHAT THAT MEANS." << std::endl;
+    tr.Warning << "Configuring AbscriptLoopCloserCM '" << tag->getName() << "' with default abinitio loop closure score function." << std::endl;
 
     option[ OptionKeys::abinitio::stage4_patch ].activate();
 
@@ -267,7 +277,6 @@ void AbscriptLoopCloserCM::passport_updated() {
 void AbscriptLoopCloserCM::broking_finished( EnvClaimBroker::BrokerResult const& broker ) {
   //set the target fold tree for the closer.
   final_ft_ = broker.closer_ft;
-
   assert( final_ft_ );
 }
 

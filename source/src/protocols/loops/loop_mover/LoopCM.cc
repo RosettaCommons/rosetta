@@ -151,35 +151,7 @@ void LoopCM::apply( core::pose::Pose& in_pose ){
   mover_->apply( tmp_pose );
 
   // Copy result into protected conformation in in_pose
-  environment::DofUnlock unlock( in_pose.conformation(), passport() );
-  core::Real const TOLERANCE = 1e-6;
-
-  for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
-    try {
-      if( in_pose.residue( i ).is_protein() ){
-        if( ang_delta( tmp_pose.omega( i ), in_pose.omega( i ) ) ){
-          in_pose.set_omega( i, tmp_pose.omega( i ) );
-        }
-        if( ang_delta( tmp_pose.phi( i ), in_pose.phi( i ) ) ){
-          in_pose.set_phi( i, tmp_pose.phi( i ) );
-        }
-        if( ang_delta( tmp_pose.psi( i ), in_pose.psi( i ) ) ) {
-          in_pose.set_psi( i, tmp_pose.psi( i ) );
-        }
-        for( Size j = 1; j <= in_pose.conformation().residue( i ).nchi(); ++j ){
-          if( ang_delta( in_pose.chi( (int) j, i ), tmp_pose.chi( (int) j, i ) ) > TOLERANCE){
-            //TODO: figure out why this fails, and adjust mover parameters accordingly
-//            in_pose.set_chi( (int) j, i, tmp_pose.chi( (int) j, i ) );
-          }
-        }
-      }
-    } catch ( environment::EXCN_Env_Security_Exception const& e ){
-      tr.Error << "[ERROR] Unauthorized changes occurred during loop closure by mover'" << this->get_name()
-               << "': (attempt to write to resid " << i << ")." << std::endl;
-      throw e;
-    }
-  }
-
+  Parent::sandboxed_copy( tmp_pose, in_pose );
 }
 
 environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pose,

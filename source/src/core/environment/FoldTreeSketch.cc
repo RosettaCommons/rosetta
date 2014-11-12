@@ -283,30 +283,43 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
   return out_vect;
 }
 
-core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > const& bias ){
+core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > bias ){
   if( bias.size() != this->nres() ){
     throw EXCN_FTSketchGraph( "Cut bias array does not match FoldTreeSize." );
   }
 
-  core::Real const sum = std::accumulate( bias.begin(), bias.end(), 0 );
+  Size const ALLOWED_FAILURES = 10;
+  Size failures = 0;
+  while( failures < ALLOWED_FAILURES ){
+    core::Real const sum = std::accumulate( bias.begin(), bias.end(), 0.0 );
 
-  if( sum <= 0.0 ){
-    throw EXCN_FTSketchGraph( "Cut bias array sum <= 0.0" );
-  }
+    if( sum <= 0.0 ){
+      tr.Error << bias << std::endl;
+      throw EXCN_FTSketchGraph( "Cut bias array sum was zero. Check your inputs. It may not be possible to auto-decyclize the FT with these cut bias choices." );
+    }
 
-  core::Real rand = numeric::random::rg().uniform() * sum;
 
-  for( Size seqpos = 1; seqpos <= nres(); ++seqpos ){
-    rand -= bias[seqpos];
-    if( rand <= 0 ){
-      tr.Debug << "FoldTreeSketch inserting random cut at " << seqpos << std::endl;
-      insert_cut( seqpos );
-      return seqpos;
+		core::Real rand = numeric::random::rg().uniform() * sum;
+
+    for( Size seqpos = 1; seqpos <= nres(); ++seqpos ){
+      rand -= bias[seqpos];
+      if( rand <= 0.0 ){
+        if( has_cut( seqpos ) || seqpos >= nres() ){
+          ++failures;
+          bias[ seqpos ] = core::Real( 0.0 );
+          tr.Debug << "  Cut insertion failed at " << seqpos << " ignoring this element next time around." << std::endl;
+          continue;
+        }
+        tr.Debug << "FoldTreeSketch inserting random cut at " << seqpos << std::endl;
+        insert_cut( seqpos );
+        return seqpos;
+      }
     }
   }
 
   std::ostringstream ss;
-  ss << "Random cut insertion failed. Check your bias array for bad values. Cut bias array: " << bias;
+  ss << "Random cut insertion failed for all of " << ALLOWED_FAILURES
+     << " attempts. Check your bias array for bad values. Cut bias array: " << bias;
   throw EXCN_FTSketchGraph( ss.str() );
 }
 

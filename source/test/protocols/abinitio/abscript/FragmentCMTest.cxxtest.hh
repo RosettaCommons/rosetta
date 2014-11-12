@@ -7,6 +7,7 @@
 // Package headers
 
 #include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <core/id/types.hh>
 
@@ -15,6 +16,7 @@
 #include <core/kinematics/Jump.hh>
 
 #include <core/pack/task/residue_selector/ChainSelector.hh>
+#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
 
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragmentIO.hh>
@@ -25,6 +27,8 @@
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/EnvExcn.hh>
 
+#include <protocols/filters/Filter.hh>
+
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <protocols/abinitio/abscript/FragmentCM.hh>
@@ -34,10 +38,15 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
 
+#include <utility/tag/Tag.hh>
+// #include <utility/pointer/ReferenceCount.hh>
+
 //C++ headers
 #include <iostream>
 
-using namespace core; 
+std::string const FRAGFILE_LOCATION = "protocols/abinitio/abscript/one_frag3_per_pos";
+
+using namespace core;
 using namespace protocols::environment;
 
 class FragmentCMTest : public CxxTest::TestSuite {
@@ -69,7 +78,8 @@ public:
 
     core::fragment::FragmentIO frag_io( 1, 1, true );
 
-    protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) ) );
+
+    protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( FRAGFILE_LOCATION ) ) ) ) );
 
     EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
@@ -157,54 +167,94 @@ public:
     }
   }
 
-	void test_fragment_apply( core::pose::Pose const& pose ) {
+  void test_fragment_apply( core::pose::Pose const& pose ) {
 
-		using namespace core::fragment;
+    using namespace core::fragment;
 
-		core::Size const frag_start_residue = 1;
+    core::Size const frag_start_residue = 1;
 
-		FragmentIO frag_io( 1, 1, true );
-		FragSetOP fragset = frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" );
-		FragSetOP onefrag_fragset = fragset->empty_clone();
-		onefrag_fragset->add( *(fragset->begin()) );
-		TS_ASSERT_EQUALS( onefrag_fragset->size(), frag_start_residue );
+    FragmentIO frag_io( 1, 1, true );
+    FragSetOP fragset = frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" );
+    FragSetOP onefrag_fragset = fragset->empty_clone();
+    onefrag_fragset->add( *(fragset->begin()) );
+    TS_ASSERT_EQUALS( onefrag_fragset->size(), frag_start_residue );
 
+    BBTorsionSRFDCOP r1_sfrd = utility::pointer::static_pointer_cast< BBTorsionSRFD const >( onefrag_fragset->begin()->fragment(1).get_residue(1) );
 
-		BBTorsionSRFDCOP r1_sfrd = utility::pointer::static_pointer_cast< core::fragment::BBTorsionSRFD const > ( onefrag_fragset->begin()->fragment(1).get_residue(1) );
+    protocols::abinitio::abscript::FragmentCMOP fragmover(
+      new protocols::abinitio::abscript::FragmentCM(
+        protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( onefrag_fragset ) ) ) );
+    TS_ASSERT_THROWS_NOTHING( fragmover->initialize( false ) );
 
-		protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( onefrag_fragset ) ) ) );
-		TS_ASSERT_THROWS_NOTHING( fragmover->initialize( false ) );
+    protocols::environment::Environment env( "env" );
+    env.register_mover( fragmover );
 
-		EnvironmentOP env_op( new Environment( "env" ) );
-		Environment & env = *env_op;
-		env.register_mover( fragmover );
+    core::pose::Pose ppose;
+    {
+      TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
 
-		core::pose::Pose ppose;
-		{
-			TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
+      // Verify no initialization
+      for( core::Size i = 1; i <= ppose.total_residue(); ++i ){
+        if( i != 1 )
+          TS_ASSERT_DELTA( ppose.phi( i ), pose.phi( i ), 1e-10 );
+        if( i != ppose.total_residue() ){
+          TS_ASSERT_DELTA( ppose.psi( i ), pose.psi( i ), 1e-10 );
+          TS_ASSERT_DELTA( ppose.omega( i ) , pose.omega( i ), 1e-10 );
+        }
+      }
 
-			// Verify no initialization
-			for( core::Size i = 1; i <= ppose.total_residue(); ++i ){
-				if( i != 1 )
-					TS_ASSERT_DELTA( ppose.phi( i ), pose.phi( i ), 1e-10 );
-				if( i != ppose.total_residue() ){
-					TS_ASSERT_DELTA( ppose.psi( i ), pose.psi( i ), 1e-10 );
-					TS_ASSERT_DELTA( ppose.omega( i ) , pose.omega( i ), 1e-10 );
-				}
-			}
+      fragmover->apply( ppose );
 
-			fragmover->apply( ppose );
+      for( core::Size i = onefrag_fragset->min_pos(); i <= onefrag_fragset->max_pos(); ++i ) {
+        BBTorsionSRFDCOP sfrd = utility::pointer::static_pointer_cast< BBTorsionSRFD const >( onefrag_fragset->begin()->fragment(1).get_residue( i ) );
 
-			for( core::Size i = onefrag_fragset->min_pos(); i <= onefrag_fragset->max_pos(); ++i ) {
-				BBTorsionSRFDCOP sfrd = utility::pointer::static_pointer_cast< core::fragment::BBTorsionSRFD const > ( onefrag_fragset->begin()->fragment(1).get_residue( i ) );
+        TS_ASSERT_DELTA( ppose.phi( i ), sfrd->torsion( 1 ), 1e-10 );
+        TS_ASSERT_DELTA( ppose.psi( i ), sfrd->torsion( 2 ), 1e-10 );
+        TS_ASSERT_DELTA( ppose.omega( i ) , sfrd->torsion( 3 ), 1e-10 );
+      }
+    }
 
-				TS_ASSERT_DELTA( ppose.phi( i ), sfrd->torsion( 1 ), 1e-10 );
-				TS_ASSERT_DELTA( ppose.psi( i ), sfrd->torsion( 2 ), 1e-10 );
-				TS_ASSERT_DELTA( ppose.omega( i ) , sfrd->torsion( 3 ), 1e-10 );
-			}
-		}
+    core::pose::Pose end_pose;
+    TS_ASSERT_THROWS_NOTHING( end_pose = env.end( ppose ) );
+  }
 
-		core::pose::Pose end_pose;
-		TS_ASSERT_THROWS_NOTHING( end_pose = env.end( ppose ) );
-	}
+  void test_xml() {
+
+    protocols::filters::Filters_map f;
+    core::pose::Pose tmp;
+    basic::datacache::DataMap datamap;
+
+    std::string const SELECTOR = "sele";
+
+    datamap.add( "ResidueSelector",
+								 SELECTOR,
+								 core::pack::task::residue_selector::ResidueSelectorOP( new core::pack::task::residue_selector::ResidueIndexSelector( "1-10" ) ) );
+
+    std::stringstream ss;
+    ss << "<FragmentCM selector=\"" << SELECTOR << "\" fragments=\""
+       << FRAGFILE_LOCATION << "\"/>";
+    utility::tag::TagPtr tag( new utility::tag::Tag );
+    tag->read( ss );
+
+    protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM() );
+    TS_ASSERT_THROWS_NOTHING( fragmover->parse_my_tag( tag , datamap, f, protocols::moves::Movers_map(), core::pose::Pose() ) );
+    TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
+
+    EnvironmentOP env_op( new Environment( "env" ) );
+    Environment & env = *env_op;
+
+    env.register_mover( fragmover );
+
+    core::pose::Pose ppose;
+    TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
+
+    for( core::Size i = 1; i <= ppose.total_residue(); ++i ){
+      TS_ASSERT_DIFFERS( ppose.phi( i ), pose.phi( i ) );
+      TS_ASSERT_DIFFERS( ppose.psi( i ), pose.psi( i ) );
+      TS_ASSERT_DIFFERS( ppose.omega( i ) , pose.omega( i ) );
+    }
+
+    core::pose::Pose end_pose;
+    TS_ASSERT_THROWS_NOTHING( end_pose = env.end( ppose ) );
+  }
 };

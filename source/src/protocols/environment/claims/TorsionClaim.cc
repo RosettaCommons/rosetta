@@ -172,7 +172,7 @@ void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& e
           insert_dof_element( conf, elements, seqpos, CHI, i );
         }
       }
-    } else if( conf.residue( seqpos ).is_virtual_residue() ) {
+    } else if( conf.residue( seqpos ).is_virtual_residue() || conf.residue( seqpos ).name3() == "XXX" ) {
       tr.Debug << *this << " ignoring seqpos " << seqpos << ", because it's a virtual residue." << std::endl;
     } else if( conf.residue( seqpos ).is_NA() ){
       tr.Fatal << "[FATAL] The Broker is not currently built to deal with nucleic acids. Go in to TorsionClaim::"

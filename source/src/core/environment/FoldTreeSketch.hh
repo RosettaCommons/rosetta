@@ -108,7 +108,7 @@ public:
   Size num_cuts() const;
 
   /// @brief randomly insert a cut using the bias passed in.
-  core::Size insert_cut( utility::vector1< Real > const& bias );
+  core::Size insert_cut( utility::vector1< Real > bias );
 
 private:
 

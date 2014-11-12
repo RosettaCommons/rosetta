@@ -109,13 +109,15 @@ void FragmentCM::set_selector( core::pack::task::residue_selector::ResidueSelect
 }
 
 void FragmentCM::set_mover( simple_moves::FragmentMoverOP mover ){
-  if( Parent::state_check( __FUNCTION__, ( mover.get() == mover_.get() ) ) ){
+
+ // if( Parent::state_check( __FUNCTION__, ( mover().get() == mover_.get() ) ) ){
+  if( Parent::state_check( __FUNCTION__, ( mover.get() == mover_.get() ) ) ) //{
     mover_ = mover;
     type( get_name() );
-  }
+  //}
 }
 
-core::Size determine_frag_size( std::string const& file ){
+core::Size determine_frag_size( std::string const& file ) {
   using namespace core::fragment;
   using namespace basic::options;
 
@@ -232,6 +234,10 @@ void FragmentCM::yield_cut_bias( bool setting ){
 }
 
 void FragmentCM::passport_updated() {
+  if(mover()==NULL){
+    tr.Warning << "[WARNING] error in " << get_name() << " mover is null or not cofigured " << std::endl;
+    return;
+  }
   assert( mover() );
   if( has_passport() ){
     mover()->set_movemap( passport()->render_movemap() );

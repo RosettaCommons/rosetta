@@ -58,7 +58,7 @@
 
 
 #ifdef WIN32
-	#include <basic/datacache/WriteableCacheableMap.hh>
+  #include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 
@@ -157,6 +157,15 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 
   // TODO: Update this to guarantee test_point is downstream from the tracking_residue.
   // Get the initial position of a (presumably) downstream atom to compare after the tracking resiude is updated.
+  if( mobile_residues_.index( false ) == 0 ||
+      mobile_residues_.index( false ) >= (int) pose.total_residue() ){
+    std::ostringstream ss;
+    ss << "The CoMTrackerCM '" << name() << "' was configured to move all the residues in the pose.  "
+       << "This probably isn't what you meant, check your selectors and input pose." << std::endl;
+    throw utility::excn::EXCN_BadInput( ss.str() );
+  }
+  assert( (Size) mobile_residues_.index( false ) <= pose.total_residue() );
+
   RT::Vector test_point = pose.residue( mobile_residues_.index( false ) ).xyz( 1 );
 
   // TODO: throw an excpetion here instead of using an assert
@@ -247,10 +256,10 @@ void CoMTrackerCM::apply( core::pose::Pose& pose ){
 }
 
 void CoMTrackerCM::parse_my_tag( utility::tag::TagCOP tag,
-																 basic::datacache::DataMap& datamap,
-																 protocols::filters::Filters_map const&,
-																 protocols::moves::Movers_map const&,
-																 core::pose::Pose const& ) {
+                                 basic::datacache::DataMap& datamap,
+                                 protocols::filters::Filters_map const&,
+                                 protocols::moves::Movers_map const&,
+                                 core::pose::Pose const& ) {
 
   //  mobile_label_ = tag->getOption< std::string >( "mobile_label" );
   stationary_label_ = tag->getOption< std::string >( "stationary_label", GENERATE_STATIONARY_ATTACHMENT_POINT );
@@ -277,6 +286,11 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 	mobile_residues_ = mobile_selector_->apply( pose );
   Size mobile_connection_point = mobile_residues_.index( true )+1;
 
+  if( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) == mobile_residues_.end() ){
+    std::ostringstream ss;
+    ss << "The mobile_selector for '" << this->get_name() << "' made an empty selection. This is not allowed.";
+    throw utility::excn::EXCN_BadInput( ss.str() );
+  }
   assert( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) != mobile_residues_.end() );
 
   moves::MoverOP this_ptr = get_self_ptr();
@@ -290,8 +304,8 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 
   LocalPosition stationary_attchmnt_pt;
   if( stationary_label_ == GENERATE_STATIONARY_ATTACHMENT_POINT ) {
-	  ResidueSubset stationary_residues = mobile_residues_.invert();
-	  stationary_attchmnt_pt = LocalPosition( "BASE", stationary_residues.index( true ) );
+    ResidueSubset stationary_residues = mobile_residues_.invert();
+    stationary_attchmnt_pt = LocalPosition( "BASE", stationary_residues.index( true ) );
   } else {
     stationary_attchmnt_pt = LocalPosition( stationary_label_, 1 );
   }

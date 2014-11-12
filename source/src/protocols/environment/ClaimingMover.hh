@@ -60,7 +60,7 @@ public:
   ClaimingMover( ClaimingMover const& );
 
   virtual ~ClaimingMover();
-  
+
   /// @brief   Returns a list of claims for this mover.
   /// @details The pose passed as an argument is used for reference informational
   ///          purposes only (for example, you want to know the sequence) or access
@@ -78,13 +78,11 @@ public:
   ///        environment.
   virtual void yield_submovers( std::set< ClaimingMoverOP >& ) const {};
 
-  /// @brief indicate to the environment that this mover would like to close
-  ///        the loops after the environment closes. Perhaps this could be
-  ///        replaced by a claim type?
-  virtual bool is_loop_closer() const { return false; }
-
-
 protected:
+
+  /// @brief convience method that copies all changes from an unprotected pose to a protected pose.
+  void sandboxed_copy( core::pose::Pose const& sandbox_pose,
+                       core::pose::Pose& true_pose ) const;
 
   /// @brief hook that is called each time the passport status is updated
   ///        (presumably because there's a new subenvironment, or the sub-

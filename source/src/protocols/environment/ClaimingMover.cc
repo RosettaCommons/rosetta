@@ -15,6 +15,7 @@
 
 // Package headers
 #include <core/environment/DofPassport.hh>
+#include <protocols/environment/DofUnlock.hh>
 #include <protocols/environment/ProtectedConformation.hh>
 #include <protocols/environment/Environment.hh>
 
@@ -39,6 +40,8 @@ namespace environment {
 using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
 
+core::Real const TOLERANCE = 1e-6;
+
 ClaimingMover::ClaimingMover():
   Mover(),
   passports_()
@@ -52,6 +55,58 @@ ClaimingMover::ClaimingMover( ClaimingMover const& other ):
 
 ClaimingMover::~ClaimingMover() {}
 
+bool ang_delta( core::Real const& a, core::Real const& b ){
+  return std::abs( std::cos( a ) - std::cos( b ) ) > TOLERANCE;
+}
+
+void ClaimingMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
+                                    core::pose::Pose& true_pose ) const {
+  // Copy result into protected conformation in in_pose
+  environment::DofUnlock unlock( true_pose.conformation(), passport() );
+
+  assert( sandbox_pose.conformation().fold_tree() == true_pose.conformation().fold_tree() );
+
+  for ( Size i = 1; i <= true_pose.total_residue(); ++i ) {
+    try {
+      if( true_pose.residue( i ).is_protein() ){
+        if( ang_delta( sandbox_pose.omega( i ), true_pose.omega( i ) ) ){
+          true_pose.set_omega( i, sandbox_pose.omega( i ) );
+        }
+        if( ang_delta( sandbox_pose.phi( i ), true_pose.phi( i ) ) ){
+          true_pose.set_phi( i, sandbox_pose.phi( i ) );
+        }
+        if( ang_delta( sandbox_pose.psi( i ), true_pose.psi( i ) ) ) {
+          true_pose.set_psi( i, sandbox_pose.psi( i ) );
+        }
+        for( Size j = 1; j <= true_pose.conformation().residue( i ).nchi(); ++j ){
+          if( ang_delta( true_pose.chi( (int) j, i ), sandbox_pose.chi( (int) j, i ) ) ){
+            true_pose.set_chi( (int) j, i, sandbox_pose.chi( (int) j, i ) );
+          }
+        }
+      }
+    } catch ( environment::EXCN_Env_Security_Exception const& e ){
+      tr.Error << "[ERROR] Unauthorized changes occurred during loop closure by mover '" << this->get_name()
+      << "': (attempt to write to resid " << i << ")." << std::endl;
+      throw e;
+    }
+  }
+
+  for ( Size i = 1; i <= true_pose.num_jump(); ++i ){
+    core::Real const delta_trans = sandbox_pose.jump( (int) i ).get_translation().distance( true_pose.jump( (int) i).get_translation() );
+    numeric::xyzMatrix< double > const delta_rot = sandbox_pose.jump( (int) i ).get_rotation()*true_pose.jump( (int) i ).get_rotation().inverse();
+    if( delta_trans < TOLERANCE && ( delta_rot.trace() - 3 ) < TOLERANCE ){
+      try {
+        true_pose.set_jump( (int) i, sandbox_pose.jump( (int) i ) );
+      } catch ( environment::EXCN_Env_Security_Exception const& e ){
+        tr.Error << "[ERROR] Unauthorized changes occurred during loop closure by mover '" << this->get_name()
+        << "': (attempt to write to jump id " << i << ")." << std::endl;
+        throw e;
+      }
+    }
+  }
+}
+
+
 //CLAIMING METHODS:
 
 void ClaimingMover::initialize( Pose& ) {
@@ -63,6 +118,7 @@ void ClaimingMover::initialize( Pose& ) {
 //PASSPORT MANAGEMENT METHODS:
 core::environment::DofPassportCOP ClaimingMover::passport() const {
   if( passports_.empty() ){
+    std::cout << "error mover location" << this << std::endl;
     throw utility::excn::EXCN_NullPointer( "ClaimingMover "+this->get_name()+
                                            " tried to access its passports, of which it has none.");
   }
@@ -92,7 +148,7 @@ void ClaimingMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
     }
   } else {
     if( !( passports_.empty() ) ){
-      throw EXCN_Env_Passport( "ClaimingMover lacks a superenvironment passport for a superenvironment with which it is registerd.",
+      throw EXCN_Env_Passport( "ClaimingMover lacks a superenvironment passport for a superenvironment with which it is registered.",
                                get_name(), env_ap );
     }
   }

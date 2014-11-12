@@ -52,23 +52,27 @@ EnvMoverCreator::mover_name() {
 }
 
 EnvMover::EnvMover():
-  Mover()
-{}
-
-EnvMover::EnvMover( EnvironmentOP env ):
-  env_( env )
+  Mover(),
+  movers_( new moves::SequenceMover )
 {}
 
 EnvMover::~EnvMover() {}
 
 void EnvMover::apply( Pose& pose ) {
-  if( movers_.size() == 0 ){
+  if( movers_->size() == 0 ){
     tr.Warning << "[WARNING] The environment " << env_->name()
                << " is being run without any registrant movers." << std::endl;
   }
 
+  env_->register_mover( movers_ );
+
+  for( std::set< moves::MoverOP >::const_iterator mv_it = reg_only_movers_.begin();
+        mv_it != reg_only_movers_.end(); ++mv_it ) {
+    env_->register_mover( *mv_it );
+  }
+
   core::pose::Pose ppose = env_->start( pose );
-  movers_.apply( ppose );
+  movers_->apply( ppose );
   pose = env_->end( ppose );
 }
 
@@ -119,24 +123,18 @@ void EnvMover::parse_subtag( utility::tag::TagCOP tag,
                              filters::Filters_map const &,
                              moves::Movers_map const & movers,
                              core::pose::Pose const& ) {
-  std::set< moves::MoverOP > reg_only_movers;
-
   try {
     if( tag->getName() == "Apply" ){
       moves::MoverOP mover = find_mover( tag, movers );
-      assert( mover );
-      env_->register_mover( mover );
-      movers_.add_mover( mover );
-      if( reg_only_movers.find( mover ) != reg_only_movers.end() ){
+      this->add_apply_mover( mover );
+      if( reg_only_movers_.find( utility::pointer::static_pointer_cast< Mover >( mover ) ) != reg_only_movers_.end() ){
         tr.Warning << "[TIP] You don't need to register the mover "
                    << tag->getOption< std::string >( "name " )
                    << " with the 'Apply' tag ahead of time. The 'Apply' Environment tag does that automatically." << std::endl;
       }
     } else if (tag->getName() == "Register" ){
-
       moves::MoverOP mover = find_mover( tag, movers );
-      env_->register_mover( mover );
-      reg_only_movers.insert( mover );
+      this->add_registered_mover( mover );
     } else {
       std::ostringstream err;
       err << "The Environment cannot be used with the tag '" << *tag << "'.";
@@ -146,6 +144,41 @@ void EnvMover::parse_subtag( utility::tag::TagCOP tag,
     throw utility::excn::EXCN_RosettaScriptsOption( "In Environment '" + get_name() + "': " + e.msg() );
   }
 }
+
+void EnvMover::add_apply_mover( protocols::moves::MoverOP mover_in ) {
+  if( !mover_in ){
+    std::ostringstream ss;
+    ss << "Mover '" << this->get_name() << "' recieved a null pointer in " << __FUNCTION__ << ".";
+    throw utility::excn::EXCN_NullPointer( ss.str() );
+  }
+  movers_->add_mover( mover_in );
+//  environment::ClaimingMoverOP c_mover = dynamic_cast< ClaimingMover* >( mover_in.get() );
+//  if( c_mover ){
+//    movers_->add_mover( c_mover );
+//  } else {
+//    std::ostringstream ss;
+//    ss << "The Mover '" << mover_in->get_name() << "' could not be added to the Environment because it is not a ClaimingMover.";
+//    throw utility::excn::EXCN_BadInput( ss.str() );
+//  }
+}
+
+void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
+  if( !mover_in ){
+    std::ostringstream ss;
+    ss << "Mover '" << this->get_name() << "' recieved a null pointer in " << __FUNCTION__ << ".";
+    throw utility::excn::EXCN_NullPointer( ss.str() );
+  }
+  reg_only_movers_.insert( mover_in );
+//  environment::ClaimingMoverOP c_mover = dynamic_cast< ClaimingMover* >( mover_in.get() );
+//  if( c_mover ){
+//    reg_only_movers_.insert( c_mover );
+//  } else {
+//    std::ostringstream ss;
+//    ss << "The Mover '" << mover_in->get_name() << "' could not be added to the Environment because it is not a ClaimingMover.";
+//    throw utility::excn::EXCN_BadInput( ss.str() );
+//  }
+}
+
 
 std::string EnvMover::get_name() const {
   return "EnvMover("+env_->name()+")";

@@ -74,6 +74,7 @@ void Environment::register_mover( moves::MoverOP mover ){
 
   if( claiming_mover ) {
     if( !is_registered( claiming_mover ) ){
+      tr.Trace << "Registered mover '" << claiming_mover->get_name() << "'" << std::endl;
       registered_movers_.insert( claiming_mover );
 
       std::set< ClaimingMoverOP > submovers;
@@ -82,7 +83,8 @@ void Environment::register_mover( moves::MoverOP mover ){
     }
   } else if ( mover_container ) {
     for( Size i = 0; i < mover_container->nr_moves(); ++i ){
-      register_mover( mover_container->movers()[ i ] );
+      moves::MoverOP const& mover = mover_container->movers()[ i ];
+      register_mover( mover );
     }
   } else if ( mover_applier ) {
     register_mover( mover_applier->mover() );

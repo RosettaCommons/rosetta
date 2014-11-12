@@ -58,7 +58,8 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner,
                     basic::datacache::DataMap const& datamap ):
   EnvClaim( owner ),
   c_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "control_strength" ) ) ),
-  i_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "initialization_strength", "DOES_NOT_CONTROL" ) ) )
+  i_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "initialization_strength", "DOES_NOT_CONTROL" ) ) ),
+  bRelative_( tag->getOption( "relative_only", false ) )
 {
   std::string const& selection = tag->getOption< std::string >( "selection" );
   if( datamap.has( "ResidueSelector", selection ) ){
@@ -75,7 +76,8 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner,
   EnvClaim( owner ),
   selector_( ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
   c_str_( DOES_NOT_CONTROL ),
-  i_str_( DOES_NOT_CONTROL )
+  i_str_( DOES_NOT_CONTROL ),
+  bRelative_( false )
 {}
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner,
@@ -84,7 +86,8 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner,
   EnvClaim( owner ),
   selector_( ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( label, range ) ) ) ),
   c_str_( DOES_NOT_CONTROL ),
-  i_str_( DOES_NOT_CONTROL )
+  i_str_( DOES_NOT_CONTROL ),
+  bRelative_( false )
 {}
 
 DOFElement XYZClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
@@ -109,17 +112,27 @@ void XYZClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elemen
   for( Size seqpos = 1; seqpos <= selection.size(); ++seqpos ){
     if( selection[seqpos] ){
       for( Size i = 1; i <= pose.conformation().residue( seqpos ).atoms().size(); ++i ){
-        core::id::AtomID atom_id( i, seqpos );
-        if( pose.conformation().atom_tree().atom( atom_id ).is_jump() ){
-          for( int j = core::id::RB1; j <= core::id::RB6; ++j ){
-            elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
-                                                               core::id::DOF_Type( j ) ) ) );
+        core::id::AtomID const atom_id( i, seqpos );
+
+        // if the relative setting is activated, only DoFs that build *relative* positions are claimed.
+        // in other words, if the parent is outside the selection, don't claim it.
+        if( !relative() || selection[ pose.conformation().atom_tree().atom( atom_id ).parent()->id().rsd() ] ) {
+          if( pose.conformation().atom_tree().atom( atom_id ).is_jump() ){
+            for( int j = core::id::RB1; j <= core::id::RB6; ++j ){
+              elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
+                                                                 core::id::DOF_Type( j ) ) ) );
+            }
+          } else {
+            for( int j = core::id::PHI; j <= core::id::D; ++j ){
+              elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
+                                                                 core::id::DOF_Type( j ) ) ) );
+            }
           }
         } else {
-          for( int j = core::id::PHI; j <= core::id::D; ++j ){
-            elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
-                                                               core::id::DOF_Type( j ) ) ) );
-          }
+          tr.Debug << this->type() << "Claim owned by '" << owner()->get_name() << "' and strengths ctrl=" << ctrl_strength()
+                   << " and init=" << init_strength() << " skipping " << atom_id << " because its parent ("
+                   << pose.conformation().atom_tree().atom( atom_id ).parent()->id()
+                   << ") doesn't belong to the XYZ selection and it is configured in relative mode." << std::endl;
         }
       }
     }

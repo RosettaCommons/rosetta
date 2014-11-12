@@ -115,6 +115,7 @@ void update_pdb_info( core::pose::PDBInfoCOP input_pdb_info, core::pose::Pose& p
   }
 }
 
+
 void safe_set_conf( core::pose::Pose& pose, core::conformation::ConformationOP conf ){
   if( pose.data().has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ){
     basic::datacache::WriteableCacheableMapOP data_map = utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) );
@@ -187,6 +188,14 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
   process_elements( r_elems, fts, new_vrts );
   result_.new_vrts = new_vrts;
 
+  assert( fts.nres() == conf.size() + result().new_vrts.size() );
+
+  //set up bogus attachments for new VRTs
+  result_.closer_ft = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( conf.fold_tree() ) );
+  for( Size i = 1; i <= result_.new_vrts.size(); ++i ){
+    result_.closer_ft->insert_residue_by_jump( conf.size()+i, conf.size()+i-1 );
+  }
+
   //FTElements: jumps --------------------------------------------------------------------------
   JumpElemVect j_elems = collect_elements< JumpElement >( fts );
   JumpDataMap new_jumps;
@@ -203,7 +212,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
 
   //Render FoldTree ----------------------------------------------------------------------------
   tr.Info << "Broking complete. Constructing consensus FoldTree." << std::endl;
-  core::kinematics::FoldTreeOP ft = render_fold_tree( fts, bias, datacache, conf.fold_tree() );
+  core::kinematics::FoldTreeOP ft = render_fold_tree( fts, bias, datacache, conf );
 
   annotate_fold_tree( ft, new_jumps, ann_ );
 
@@ -218,11 +227,34 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
   }
 }
 
-core::kinematics::FoldTreeOP
-EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
-                                  utility::vector1< core::Real > const& bias,
-                                  basic::datacache::BasicDataCache& datacache,
-                                  core::kinematics::FoldTree const& input_ft ) {
+core::Size find_implied_cut( utility::vector1< core::Size > const& cycle,
+                             core::conformation::Conformation const& conf ){
+  utility::vector1< core::Size > cuts;
+
+  core::Real const CA_CA_CUTOFF = 4.0;
+
+  for( Size i = 2; i <= conf.size(); ++i ){
+    core::Real const dist = conf.residue( i ).xyz( "CA" ).distance( conf.residue( i - 1 ).xyz( "CA" ) );
+    if( dist > CA_CA_CUTOFF ){
+      cuts.push_back( i );
+    }
+  }
+
+  tr.Debug << "  Looking for implied cuts from spatial information indicating cuts at: " << cuts << std::endl;;
+  for( Size i = 1; i <= cuts.size(); ++i ){
+    core::Size const& cut = cuts[i];
+    if( std::find( cycle.begin(), cycle.end(), cut ) != cycle.end() ){
+      tr.Debug << "  Inheriting implied cut at " << cut << " to close ft cycle." << std::endl;
+      return cut;
+    }
+  }
+
+  return 0;
+}
+
+utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const& fts,
+                                                       basic::datacache::BasicDataCache& datacache ){
+
   using namespace basic::datacache;
   using namespace core::pose::datacache;
 
@@ -239,77 +271,142 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 
   //utility::join can't handle empty lists...
   core::Size const hash = ( jump_points.empty() ) ? boost::hash_value( "" ) :
-                                                    boost::hash_value( utility::join( jump_points, "," ) );
+  boost::hash_value( utility::join( jump_points, "," ) );
 
   if( !datacache.has( CacheableDataType::WRITEABLE_DATA ) ){
     datacache.set( CacheableDataType::WRITEABLE_DATA, DataCache_CacheableData::DataOP( new WriteableCacheableMap() ) );
   }
 
   WriteableCacheableMapOP datamap = utility::pointer::dynamic_pointer_cast< WriteableCacheableMap >( datacache.get_ptr( CacheableDataType::WRITEABLE_DATA ) );
-  bool found_data = false;
+  utility::vector1< core::Size > cuts;
 
   if( datamap && datamap->find( "AutoCutData" ) != datamap->end() ){
     BOOST_FOREACH( basic::datacache::WriteableCacheableDataOP data,
-                   datamap->find( "AutoCutData" )->second ) {
+                  datamap->find( "AutoCutData" )->second ) {
       AutoCutDataOP auto_cut_data = utility::pointer::dynamic_pointer_cast< protocols::environment::AutoCutData > ( data );
+
       assert( auto_cut_data );
 
       if( auto_cut_data->hash() == hash ){
         tr.Debug << "  Found appropriate hash-valued AutoCutData. Repeating cut choices." << std::endl;
-        found_data = true;
 
         BOOST_FOREACH( core::Size cut, auto_cut_data->cuts() ){
-          fts.insert_cut( cut );
-          result_.auto_cuts.insert( cut );
+          cuts.push_back( cut );
         }
 
       } else {
         tr.Debug << "  Rejecting AutoCutData because its hash " << auto_cut_data->hash()
-                 << " does not match EnvClaimBroker hash " << hash << std::endl;
+        << " does not match EnvClaimBroker hash " << hash << std::endl;
       }
     }
   } else {
     tr.Debug << "  No AutoCutData found. Cuts will not be generated from pose-cached values." << std::endl;
   }
 
+  return cuts;
+}
+
+core::Size inherit_cuts( utility::vector1< core::Size > const& cycle,
+                         core::kinematics::FoldTree const& input_ft ) {
+  for( int i = 1; i <= input_ft.num_cutpoint(); ++i ){
+    if( std::find( cycle.begin(), cycle.end(), input_ft.cutpoint( i ) ) != cycle.end() ){
+      return input_ft.cutpoint( i );
+    } else {
+      tr.Trace << "  Inherited cut " << input_ft.cutpoint( i ) << " doesn't fit in cycle: "
+      << cycle << std::endl;
+    }
+  }
+  return 0;
+}
+
+
+core::kinematics::FoldTreeOP
+EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
+                                  utility::vector1< core::Real > const& bias,
+                                  basic::datacache::BasicDataCache& datacache,
+                                  core::conformation::Conformation const& input_conf ) {
+
+
+
+  utility::vector1< core::Size > const datamap_autocuts = introduce_datamap_cuts( fts, datacache );
+  for( Size i = 1; i <= datamap_autocuts.size(); ++i ){
+    core::Size const autocut = datamap_autocuts[ i ];
+    fts.insert_cut( autocut );
+    result_.auto_cuts.insert( autocut );
+  }
+
   utility::vector1< Size > cycle = fts.cycle();
+    
+  // this is ugly, but seems to allow me to access the contents of env_
+  // must some property of the new pointer system?
   EnvironmentCOP env( env_ );
+    
   while( !cycle.empty() ){
+    tr.Debug << "Trying to close cycle: " << cycle << std::endl;
+
     bool made_cut = false;
+      
     if( env->inherit_cuts() ){
-      for( int i = 1; i <= input_ft.num_cutpoint(); ++i ){
-        if( std::find( cycle.begin(), cycle.end(), input_ft.cutpoint( i ) ) != cycle.end() ){
-          tr.Debug << "  Inheriting cut at " << input_ft.cutpoint( i ) << " to close ft cycle." << std::endl;
-          fts.insert_cut( input_ft.cutpoint( i ) );
-          made_cut = true;
-          break;
-        } else {
-          tr.Trace << "  Inherited cut " << input_ft.cutpoint( i ) << " doesn't fit in cycle: "
-                   << cycle << std::endl;
-        }
+      core::Size const inherited_cut = inherit_cuts( cycle, input_conf.fold_tree() );
+      if( inherited_cut ){
+        fts.insert_cut( inherited_cut );
+        made_cut = true;
+        tr.Debug << "  Inheriting cut at " << inherited_cut << " to close ft cycle." << std::endl;
       }
     }
 
-    if( !made_cut ) tr.Debug << "  Cut inheritance failed for the cycle '" << cycle << "'." << std::endl;
+    if( !made_cut ){
+      tr.Debug << "  Cut inheritance failed." << std::endl;
+    }
 
-    if( !made_cut && !found_data && env->auto_cut() ){
-        utility::vector1< core::Real > masked_bias( bias.size(), 0 );
+    if( !made_cut && !datamap_autocuts.empty() && env->auto_cut() ){
+      core::Size const cut = find_implied_cut( cycle, input_conf );
+      if( cut ){
+        fts.insert_cut( cut );
+        result_.auto_cuts.insert( cut );
+        made_cut = true;
+        tr.Debug << "  Inheriting implied cut at " << cut << "." << std::endl;
+      }
+    }
+
+    if( !made_cut ){
+      tr.Debug << "  Automatic spatial inferred cut inheritance failed." << std::endl;
+    }
+
+    if( !made_cut && datamap_autocuts.empty() && env->auto_cut() ){
+      utility::vector1< core::Real > masked_bias( bias.size(), 0 );
+
       // k must be strictly less than cycle.size() so that the automatic
       // cut doesn't get placed at the end of the cycle.
+      core::Real bias_sum = 0.0;
       for( Size k = 1; k < cycle.size(); ++k ){
         masked_bias[cycle[k]] = bias[cycle[k]];
+        bias_sum += bias[cycle[k]];
       }
-      Size cut = fts.insert_cut( masked_bias );
-      tr.Debug << "Inserted automatic cut at " << cut << std::endl;
-      result_.auto_cuts.insert( cut );
-    } else if( !made_cut ) {
+
+      try {
+        Size const cut = fts.insert_cut( masked_bias );
+        tr.Debug << "  Inserted automatic cut at " << cut << std::endl;
+        result_.auto_cuts.insert( cut );
+        made_cut = true;
+      } catch( ... ){
+        tr.Error << "[ERROR] Cut insertion failed with biases: [";
+        for( Size k = 1; k <= cycle.size(); ++k ){
+          tr.Error << cycle[k] << ":" << bias[cycle[k]] << ", ";
+        }
+        tr.Error << std::endl;
+        throw;
+      }
+    }
+
+    if( !made_cut ) {
       std::ostringstream ss;
       ss << "Brokering failed (" << __FILE__ << ":" << __LINE__ << ") because the broker couldn't construct a fold tree. "
          << "It could not find a way to resolve the fold tree cycle: "  << cycle <<". Inherited cuts were "
          << ( env->inherit_cuts() ? "on" : "off" ) << " and automatic cuts were " << ( env->auto_cut() ? "on" : "off" )
          << ". At the point of failure were " << fts.num_jumps() << " jumps and "<< fts.num_cuts() << " cuts in the FoldTreeSketch.";
       if( env->inherit_cuts() ){
-        ss << " Availiable inherited cuts are: " << input_ft.cutpoints() << ".";
+        ss << " Availiable inherited cuts are: " << input_conf.fold_tree().cutpoints() << ".";
       } if( env->auto_cut() ){
         ss << " Cut bias was " << bias << "." << std::endl;
       }
@@ -392,14 +489,14 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
   DOFElemVect d_elems = collect_elements< DOFElement >( pose );
   setup_passports( d_elems, init_str_selector );
 
-  // Once all initialization passports for both RTs and Torsions are configured, allow
-  // movers to initialize
-
   // Now that passports are properly configured, allow each mover to initialize.
   // As soon as each mover initializes, access is revoked, so it can be built again
   // for the sampling phase.
+
+  tr.Debug << "Beginning initialization:" << std::endl;
   BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes_ ){
     if( pair.second->begin() != pair.second->end() ){
+      tr.Debug << "  Invoking initialize: " << pair.first->get_name() << std::endl;
       pair.first->passport_updated();
       pair.first->initialize( pose );
       pair.second->revoke_all_access();
@@ -459,12 +556,13 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
     }
 
     if( prev_str.first == EXCLUSIVE ){
-        if( strength >= MUST_CONTROL ){
+        if( strength >= MUST_CONTROL &&
+            ( owner != prev_str.second ) ){
           assert( prev_str.second );
           std::ostringstream ss;
           ss << "While broking for " << style << ", there were conflicting claim strengths on DoF "
              << element.type << " " << element.id << ": "
-             << prev_str.first << " from '" << prev_str.second << "' and "
+             << prev_str.first << " from '" << prev_str.second->get_name() << "' and "
              << strength << " from '" << owner->get_name() << "'." << std::endl;
           throw utility::excn::EXCN_BadInput( ss.str() );
         } else {

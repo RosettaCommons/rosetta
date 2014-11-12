@@ -118,7 +118,7 @@ private:
   core::kinematics::FoldTreeOP render_fold_tree( FoldTreeSketch& fts,
                                                  utility::vector1< core::Real > const& bias,
                                                  basic::datacache::BasicDataCache&,
-                                                 core::kinematics::FoldTree const& input_ft );
+                                                 core::conformation::Conformation const& input_conf );
 
   void annotate_fold_tree( core::kinematics::FoldTreeOP,
                            JumpDataMap const& new_jumps,

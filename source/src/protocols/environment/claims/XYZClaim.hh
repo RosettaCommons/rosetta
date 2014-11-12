@@ -83,6 +83,10 @@ public:
 
   ResidueSelectorCOP selector() const { return selector_; }
 
+  void set_relative( bool s ) { bRelative_ = s; }
+
+  bool relative() const { return bRelative_; }
+
   virtual EnvClaimOP clone() const;
 
   virtual std::string type() const;
@@ -109,6 +113,7 @@ private:
   ResidueSelectorCOP selector_;
   ControlStrength c_str_;
   ControlStrength i_str_;
+  bool bRelative_;
 
 }; //class XYZClaim
 
