@@ -202,7 +202,7 @@ namespace data {
 		p_DMS_ = vector1< Real >( DMS_values_.size(), 0.0 );
 		p_model_.clear(); // 'model' = (is_bonded, occ, binding_energy).
 		for ( Size i = 1; i <= is_bonded_values_.size(); i++ ) {
-			p_model_.push_back( vector1< Real >() );
+			p_model_.push_back( vector1< vector1< Real > >() );
 			for ( Size j = 1; j <= occ_values_.size(); j++ ) {
 				p_model_[ i ].push_back( vector1< Real >( binding_energy_values_.size(), 0.0 ) );
 			}
