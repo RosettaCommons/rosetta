@@ -12,14 +12,14 @@ def __pose_getstate__(self):
     """Generate a state dictionary containing a binary silent struct of the input pose."""
 
     silent_data = rosetta.core.io.silent.SilentFileData()
-    silent_struct = rosetta.core.io.silent.BinaryProteinSilentStruct(self, "pickle")
+    silent_struct = rosetta.core.io.silent.BinarySilentStruct(self, "pickle")
 
     data = StringIO()
     silent_struct.print_header(rosetta.utility.ostream(data))
     silent_data.write_silent_struct(silent_struct, rosetta.utility.ostream(data))
 
     state = {
-            "BinaryProteinSilentStruct" : data.getvalue(),
+            "BinarySilentStruct" : data.getvalue(),
             "name" : self.pdb_info().name() if self.pdb_info() is not None else ""
             }
 
@@ -28,7 +28,7 @@ def __pose_getstate__(self):
 def __pose_setstate__(self, state):
     """Read state dictionary containing a binary silent struct into the pose."""
 
-    data = state["BinaryProteinSilentStruct"]
+    data = state["BinarySilentStruct"]
 
     #Empty tag array reads all tags
     silent_data = rosetta.core.io.silent.SilentFileData()
