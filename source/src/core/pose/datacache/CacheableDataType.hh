@@ -85,7 +85,8 @@ enum Enum {
 	FULL_MODEL_INFO, // pose/full_model_info/FullModelInfo.cc [map residues/chains to full model, for stepwise buildup]
 	MULTIPLE_POSE_INFO, // pose/multiple_pose_info/MultiplePoseInfo.cc [info on sister poses, for stepwise buildup]
 	NCS_RESIDUE_MAPPING,
-	WRITEABLE_DATA,
+	FLOATING_POINT_CLOUD_INFO,
+  WRITEABLE_DATA,
 	CDR_CLUSTER_INFO, // antibody/clusters/CDRClusterSet.cc ( Cacheable Antibody CDR Cluster Information)
 
 	// *** IMPORTANT ***

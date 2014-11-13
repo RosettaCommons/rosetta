@@ -16,7 +16,7 @@
 #include <utility/vector1.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.hh>
+#include <core/pose/xyzStripeHashPose.hh>
 #include <numeric/xyzTransform.hh>
 
 
@@ -30,9 +30,9 @@ public:
 	typedef core::id::AtomID AID;
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseCOP PoseCOP;
-	typedef protocols::sic_dock::xyzStripeHashPose Hash;
-	typedef protocols::sic_dock::xyzStripeHashPoseOP HashOP;
-	typedef protocols::sic_dock::xyzStripeHashPoseCOP HashCOP;
+	typedef core::pose::xyzStripeHashPose Hash;
+	typedef core::pose::xyzStripeHashPoseOP HashOP;
+	typedef core::pose::xyzStripeHashPoseCOP HashCOP;
 	typedef numeric::xyzTransform<Real>  X;
 	typedef numeric::xyzMatrix<Real>     M;
 	typedef numeric::xyzVector<Real>     V;
@@ -49,7 +49,7 @@ public:
 	X       x;
 
 	Rose(PoseCOP p);
-	Rose(PoseCOP p, sic_dock::PoseCoordPickMode const & coord_picker );
+	Rose(PoseCOP p, core::pose::PoseCoordPickMode const & coord_picker );
 	Rose(PoseCOP p, core::id::AtomID_Map<Real>  const & clash_atoms  );
 
 	inline

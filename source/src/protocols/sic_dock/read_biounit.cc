@@ -6,6 +6,7 @@
  #define MAX_UINT8    255
 
  #include <protocols/sic_dock/read_biounit.hh>
+ #include <protocols/sic_dock/types.hh>
 
  #include <basic/Tracer.hh>
  #include <core/chemical/AtomType.hh>
@@ -38,27 +39,19 @@
 // static data
 static thread_local basic::Tracer TR( "protocols.sic_dock.read_biounit" );
 
-// types
- using std::string;
- typedef numeric::xyzVector<core::Real> Vec;
- typedef numeric::xyzMatrix<core::Real> Mat;
-
- using core::id::AtomID;
- using core::pose::Pose;
+ using std::endl;
  using core::Real;
- using core::scoring::ScoreFunctionOP;
  using core::Size;
- using numeric::max;
- using numeric::min;
+ using std::string;
+ using core::pose::Pose;
+ using core::scoring::ScoreFunctionOP;
  using numeric::random::gaussian;
  using numeric::random::uniform;
  using numeric::rotation_matrix_degrees;
  using numeric::conversions::radians;
  using numeric::conversions::degrees;
- using std::string;
  using utility::file_basename;
  using utility::vector1;
- using std::endl;
  using core::import_pose::pose_from_pdb;
 
  namespace protocols {
@@ -69,29 +62,29 @@ using std::cout;
 
 bool
 read_biounit(
-	std::string const & fname,
-	core::pose::Pose & pose,
-	int  const max_res,
-	bool const debug
+	string const & fname,
+	Pose & pose,
+	int  const & max_res,
+	bool const & DEBUG
 ){
-	vector1<core::Real> tmpvec1,tmpvec2;
-	return read_biounit(fname,pose,tmpvec1,tmpvec2,max_res, debug);
+	vector1<Real> tmpvec1,tmpvec2;
+	return read_biounit(fname,pose,tmpvec1,tmpvec2,max_res,DEBUG);
 }
 
 
 bool
 read_biounit(
-	std::string const & fname,
-	core::pose::Pose & pose,
-	utility::vector1<core::Real> & bfactors,
-	utility::vector1<core::Real> & occupancy,
-	int  const max_res,
-	bool const debug
+	string const & fname,
+	Pose & pose,
+	utility::vector1<Real> & bfactors,
+	utility::vector1<Real> & occupancy,
+	int  const & max_res,
+	bool const & DEBUG
 ){
 	std::map<int,char> tmpmap;
 	vector1<int> tmpvec;
 	int tmpint;
-	return read_biounit(fname,pose,bfactors,occupancy,tmpvec,tmpmap,tmpint,max_res, debug);
+	return read_biounit(fname,pose,bfactors,occupancy,tmpvec,tmpmap,tmpint,max_res,DEBUG);
 }
 
 
@@ -104,10 +97,10 @@ read_biounit(
 	vector1<int>  & pdbres,
 	std::map<int,char> & pdbchain,
 	int        & nresmodel1,
-	int  const max_res,
-	bool const debug
+	int  const & max_res,
+	bool const & DEBUG
 ){
-	if(debug) cerr<<"my_read_biounit: reading pdb "<<fname<<endl;
+	if(DEBUG) cerr<<"my_read_biounit: reading pdb "<<fname<<endl;
 	pdbchain.clear();
 	pdbres.clear();
 	try {
@@ -142,10 +135,11 @@ read_biounit(
 				bfactors .push_back( sqrt(bfac/78.95684) );
 				occupancy.push_back(      occ            );
 			}
-			nresmodel1 = min((int)pose.n_residue(),nresmodel1);
+			nresmodel1 = std::min((int)pose.n_residue(),nresmodel1);
 			if(only_one_model) break;
 		}
-		if(debug) pose.dump_pdb(utility::file_basename(fname)+"_ha.pdb");
+		pose.conformation().detect_disulfides();
+		if(DEBUG) pose.dump_pdb(utility::file_basename(fname)+"_ha.pdb");
 	} catch(...) {
 		return false;
 	}
@@ -153,5 +147,5 @@ read_biounit(
 	return true;
 }
 
- } // sic_dock
+ } // rose
  } // protocols

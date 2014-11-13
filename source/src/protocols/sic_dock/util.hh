@@ -128,6 +128,8 @@ core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, c
 
 template<typename T> inline T sqr(T x) { return x*x; }
 
+std::string KMGT(double const & x, int const & w, int const & d);
+
 } // sic_dock
 } // protocols
 

@@ -116,6 +116,9 @@ static FilterRegistrator< protocols::simple_filters::GeometryFilterCreator > reg
 static FilterRegistrator< protocols::simple_filters::HolesFilterCreator > reg_HolesFilterCreator;
 static FilterRegistrator< protocols::simple_filters::InterfaceSasaFilterCreator > reg_InterfaceSasaFilterCreator;
 static FilterRegistrator< protocols::simple_filters::InterfaceBindingEnergyDensityFilterCreator > reg_InterfaceBindingEnergyDensityFilterCreator;
+static FilterRegistrator< protocols::simple_filters::InterRepeatContactFilterCreator > reg_InterRepeatContactFilterCreator;
+static FilterRegistrator< protocols::simple_filters::IntraRepeatContactFilterCreator > reg_IntraRepeatContactFilterCreator;
+static FilterRegistrator< protocols::simple_filters::MotifScoreFilterCreator > reg_MotifScoreFilterCreator;
 static FilterRegistrator< protocols::simple_filters::MultipleSigmoidsFilterCreator > reg_MultipleSigmoidsFilterCreator;
 static FilterRegistrator< protocols::simple_filters::MutationsFilterCreator > reg_MutationsFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NeighborTypeFilterCreator > reg_NeighborTypeFilterCreator;
@@ -128,7 +131,7 @@ static FilterRegistrator< protocols::simple_filters::PoseCommentFilterCreator > 
 static FilterRegistrator< protocols::simple_filters::PoseInfoFilterCreator > reg_PoseInfoFilterCreator;
 static FilterRegistrator< protocols::simple_filters::RangeFilterCreator > reg_RangeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ReportFilterCreator > reg_ReportFilterCreator;
-static FilterRegistrator< protocols::simple_filters::ResidueBurialFilterCreator > reg_ResidueBurialFilterCreator;
+static FilterRegistrator< protocols::simple_filters::RepeatParameterFilterCreator > reg_RepeatParameterFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueCountFilterCreator > reg_ResidueCountFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueDistanceFilterCreator > reg_ResidueDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueIEFilterCreator > reg_ResidueIEFilterCreator;

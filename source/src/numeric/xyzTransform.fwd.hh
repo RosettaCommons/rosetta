@@ -16,7 +16,7 @@
 #ifndef INCLUDED_numeric_xyzTransform_fwd_hh
 #define INCLUDED_numeric_xyzTransform_fwd_hh
 
-#include "platform/types.hh"
+#include "numeric/types.hh"
 
 // C++ headers
 #include <cstddef>
@@ -30,11 +30,14 @@ template< typename > class xyzTransform;
 
 
 // Types
-typedef  xyzTransform< float >               xyzTransform_float;
-typedef  xyzTransform< double >              xyzTransform_double;
+typedef  xyzTransform< float >  Xformf;
+typedef  xyzTransform< double > Xform;
+
+typedef  xyzTransform< numeric::Real > xyzTransform_Real;
+typedef  xyzTransform< float  > xyzTransform_float;
+typedef  xyzTransform< double > xyzTransform_double;
 
 } // namespace numeric
 
 
 #endif // INCLUDED_numeric_xyzTransform_FWD_HH
-

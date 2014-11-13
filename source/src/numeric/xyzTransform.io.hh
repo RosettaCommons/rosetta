@@ -20,7 +20,7 @@
 #include <numeric/xyzTransform.hh>
 #include <numeric/xyzMatrix.io.hh>
 #include <numeric/xyzVector.io.hh>
-
+#include <ObjexxFCL/format.hh>
 // C++ headers
 #include <iostream>
 
@@ -33,7 +33,13 @@ template< typename T >
 std::ostream &
 operator <<( std::ostream & stream, xyzTransform< T > const & m )
 {
-	stream << m.R << m.t;
+	using namespace ObjexxFCL::format;
+	T angle;
+	xyzVector<T> axis = rotation_axis(m.R,angle);
+	// if(axis.x()<0) { axis = -axis; angle = numeric::constants::d::pi_2-angle; }
+	xyzVector<T> dirn = m.t.length() > 0.000001 ? m.t.normalized() : xyzVector<T>(0,0,0);
+	stream << "axis: ( " << F(10,7,axis.x()) << " " << F(10,7,axis.y()) << " " << F(10,7,axis.z()) << " ) " << F(10,6,numeric::conversions::degrees(angle)) << " ";
+	stream << "dirn: ( " << F(10,5,dirn.x()) << " " << F(10,5,dirn.y()) << " " << F(10,5,dirn.z()) << " ) * " << F(10,6,m.t.length());
 	return stream;
 }
 

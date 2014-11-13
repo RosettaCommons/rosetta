@@ -19,6 +19,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/sasa.hh>
 #include <core/pose/util.hh>
+#include <core/pose/xyzStripeHashPose.hh>
 
 namespace protocols {
 namespace sic_dock {
@@ -38,10 +39,9 @@ using std::endl;
 typedef numeric::xyzVector<platform::Real> Vec;
 typedef numeric::xyzMatrix<platform::Real> Mat;
 
-Rose::Rose(PoseCOP pin                                                   ) : p(pin),h(HashCOP( HashOP( new Hash(*p,         BB ,4.0) ) )) {}
-Rose::Rose(PoseCOP pin, sic_dock::PoseCoordPickMode const & coord_picker ) : p(pin),h(HashCOP( HashOP( new Hash(*p,coord_picker,4.0) ) )) {}
-Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms  ) : p(pin),h(HashCOP( HashOP( new Hash(*p,clash_atoms ,4.0) ) )) {}
-
+Rose::Rose(PoseCOP pin                                                     ) : p(pin),h(HashCOP( HashOP( new Hash(*p, core::pose::PoseCoordPickMode_BB ,4.0) ) )) {}
+Rose::Rose(PoseCOP pin, core::pose::PoseCoordPickMode const & coord_picker ) : p(pin),h(HashCOP( HashOP( new Hash(*p,coord_picker,4.0) ) )) {}
+Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms    ) : p(pin),h(HashCOP( HashOP( new Hash(*p,clash_atoms ,4.0) ) )) {}
 
 
 bool Rose::clashes(RCR o) const {

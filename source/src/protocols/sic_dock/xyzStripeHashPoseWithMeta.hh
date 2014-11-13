@@ -10,9 +10,12 @@
 #ifndef INCLUDED_protocols_sic_dock_xyzStripeHashPoseWithMeta_hh
 #define INCLUDED_protocols_sic_dock_xyzStripeHashPoseWithMeta_hh
 
+#include <numeric/geometry/hashing/xyzStripeHashWithMeta.hh>
+#include <numeric/geometry/hashing/xyzStripeHash.hh>
+
 #include <protocols/sic_dock/xyzStripeHashPoseWithMeta.fwd.hh>
 #include <protocols/sic_dock/types.hh>
-#include <numeric/geometry/hashing/xyzStripeHashWithMeta.hh>
+#include <core/pose/xyzStripeHashPose.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/chemical/AtomType.hh>
@@ -25,13 +28,15 @@
 namespace protocols {
 namespace sic_dock {
 
+using core::pose::PoseCoordPickMode;
+
 class xyzStripeHashPoseWithMeta : public numeric::geometry::hashing::xyzStripeHashWithMeta<float> {
 public:
 	xyzStripeHashPoseWithMeta(double radius) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {}
 
 	xyzStripeHashPoseWithMeta(double radius,
 		core::pose::Pose const & p,
-		PoseCoordPickMode m = BB
+		PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {
 		init_with_pose(p,m);
 	}
@@ -46,7 +51,7 @@ public:
 	void
 	init_with_pose(
 		core::pose::Pose const & p,
-		PoseCoordPickMode m = BB
+		PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	){
 		utility::vector1<double> dummy;
 		init_with_pose(p,dummy,m);
@@ -85,41 +90,41 @@ public:
 	init_with_pose(
 		core::pose::Pose const & p,
 		utility::vector1<double> const & meta_in,
-		PoseCoordPickMode m = BB
+		PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	){
 		int natom = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
-			if( NBR==m ) natom++;
-			if( CB==m ) if(r.has("CB")) natom++;
-			if( BB ==m ) natom += r.has("N")+r.has("CA")+r.has("C")+r.has("O")+r.has("CB");
-			if( HVY==m ) natom += r.nheavyatoms();
-			if( ALL==m ) natom += r.natoms();
+			if( core::pose::PoseCoordPickMode_NBR==m ) natom++;
+			if( core::pose::PoseCoordPickMode_CB==m ) if(r.has("CB")) natom++;
+			if( core::pose::PoseCoordPickMode_BB ==m ) natom += r.has("N")+r.has("CA")+r.has("C")+r.has("O")+r.has("CB");
+			if( core::pose::PoseCoordPickMode_HVY==m ) natom += r.nheavyatoms();
+			if( core::pose::PoseCoordPickMode_ALL==m ) natom += r.natoms();
 		}
 		utility::vector1<numeric::xyzVector<float> > atoms(natom);
 		utility::vector1<float>                      meta (natom);
 		platform::uint count = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
-			if(NBR==m) {
+			if(core::pose::PoseCoordPickMode_NBR==m) {
 				int ia = r.nbr_atom();
 				core::id::AtomID const aid(ia,ir);
 				atoms[++count] = p.xyz(aid);
 				meta [  count] = r.atom_type(ia).lj_radius();
-			} else if(CB==m) {
+			} else if(core::pose::PoseCoordPickMode_CB==m) {
 				if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=r.atom_type(r.atom_index("CB")).lj_radius(); }
-			} else if(BB==m) {
+			} else if(core::pose::PoseCoordPickMode_BB==m) {
 				if(r.has( "N")){ atoms[++count]=r.xyz( "N"); meta[count]=r.atom_type(r.atom_index( "N")).lj_radius(); }
 				if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=r.atom_type(r.atom_index("CA")).lj_radius(); }
 				if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=r.atom_type(r.atom_index( "C")).lj_radius(); }
 				if(r.has( "O")){ atoms[++count]=r.xyz( "O"); meta[count]=r.atom_type(r.atom_index( "O")).lj_radius(); }
 				if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=r.atom_type(r.atom_index("CB")).lj_radius(); }
-			} else if(BB==m) {
+			} else if(core::pose::PoseCoordPickMode_BB==m) {
 				if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=r.atom_type(r.atom_index("CA")).lj_radius(); }
 				if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=r.atom_type(r.atom_index( "C")).lj_radius(); }
 				if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=r.atom_type(r.atom_index("CB")).lj_radius(); }
 			} else {
-				int natom = (ALL==m) ? r.natoms() : r.nheavyatoms();
+				int natom = (core::pose::PoseCoordPickMode_ALL==m) ? r.natoms() : r.nheavyatoms();
 				for(int ia = 1; ia <= natom; ++ia) {
 					core::id::AtomID const aid(ia,ir);
 					atoms[++count] = p.xyz(aid);

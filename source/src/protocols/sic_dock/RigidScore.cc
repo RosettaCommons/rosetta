@@ -43,6 +43,7 @@ using numeric::min;
 using core::id::AtomID;
 using std::cout;
 using std::endl;
+
 typedef core::Real Real;
 typedef core::Size Size;
 typedef core::pose::Pose Pose;

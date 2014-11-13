@@ -363,12 +363,10 @@ private:
 	// neighbor_iterator neighbor_end_;
 };
 
-
-// PyRosetta concreate classes
-class xyzStripeHashWithMeta_Real    : public xyzStripeHashWithMeta< platform::Real > {};
-class xyzStripeHashWithMeta_float   : public xyzStripeHashWithMeta< float > {};
-class xyzStripeHashWithMeta_double  : public xyzStripeHashWithMeta< double > {};
-
+class xyzStripeHashWithMeta_float : public xyzStripeHashWithMeta<float>
+{
+	
+};
 
 } // namespace hashing
 } // namespace geometry
@@ -399,7 +397,7 @@ class xyzStripeHashWithMeta_double  : public xyzStripeHashWithMeta< double > {};
 	// 		// return count;
 	// 		++(*this);
 	// 	}
-	// 	neighbor_iterator & operator++() {
+	// 	neighbor_iterator & operator++() { 
 	// 		using ObjexxFCL::format::I;
 	// 		while(iy < iyu){
 	// 			if(iz >= izu){

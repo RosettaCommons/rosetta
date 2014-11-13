@@ -4,7 +4,7 @@
 
 #include <protocols/sic_dock/SICFast.hh>
 
-#include <protocols/sic_dock/xyzStripeHashPose.hh>
+#include <core/pose/xyzStripeHashPose.hh>
 #include <protocols/sic_dock/util.hh>
 
 #include <basic/options/keys/sicdock.OptionKeys.gen.hh>
@@ -40,6 +40,7 @@ using numeric::max;
 using std::cout;
 using std::cerr;
 using std::endl;
+using core::pose::xyzStripeHashPose;
 typedef numeric::xyzVector<platform::Real> Vec;
 typedef numeric::xyzMatrix<platform::Real> Mat;
 

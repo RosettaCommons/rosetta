@@ -192,6 +192,7 @@ static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 static MoverRegistrator< matdes::ExtractSubposeMoverCreator > reg_ExtractSubposeMoverCreator;
 static MoverRegistrator< matdes::MatDesGreedyOptMutationMoverCreator > reg_MatDesGreedyOptMutationMoverCreator;
 static MoverRegistrator< matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
+static MoverRegistrator< matdes::SchemePlaceMotifsMoverCreator > reg_SchemePlaceMotifsMoverCreator;
 
 static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
 static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
@@ -323,6 +324,7 @@ static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTes
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
 static MoverRegistrator< simple_moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
+static MoverRegistrator< simple_moves::RepeatPropagationMoverCreator > reg_RepeatPropagationMoverCreator;
 static MoverRegistrator< simple_moves::ResidueTypeConstraintMoverCreator > ResidueTypeConstraintMoverCreator;
 static MoverRegistrator< simple_moves::ReportEffectivePKACreator > ReportEffectivePKACreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;

@@ -3,7 +3,7 @@
 // :noTabs=false:tabSize=4:indentSize=4:
 
 #include <protocols/sic_dock/scores/TrisBpyScore.hh>
-	#include <protocols/sic_dock/xyzStripeHashPose.hh>
+	#include <core/pose/xyzStripeHashPose.hh>
 	#include <protocols/sic_dock/util.hh>
 	#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 	#include <basic/options/option.hh>
@@ -146,7 +146,7 @@ TrisBpyScore::TrisBpyScore(
 		if(pose_.secstruct(ir)!='L') cb_.push_back(pose_.residue(ir).nbr_atom_xyz());
 		else                         cb_.push_back(Vec(9e9,9e9,9e9));
 	}
-	cc_ = xyzStripeHashPoseCOP( xyzStripeHashPoseOP( new xyzStripeHashPose(pose_,BB,3.2) ) );
+	cc_ = core::pose::xyzStripeHashPoseCOP( core::pose::xyzStripeHashPoseOP( new core::pose::xyzStripeHashPose(pose_,core::pose::PoseCoordPickMode_BB,3.2) ) );
 
 }
 
@@ -182,7 +182,7 @@ TrisBpyScore::score_extra( Xforms const & x1s, Xforms const & x2s, Real&cbc,Real
 			Vec cb = x1*bbx*CBlocal;
 			Vec tmp(cb.x(),cb.y(),0);
 			Real dxy = tmp.length();
-			err = fabs(dxy-3.569);
+			err = std::fabs(dxy-3.569);
 			if( err > tolerance_ ) continue;
 			Vec ca = x1*bbx.t;
 			Real ang = numeric::dihedral(cb,Vec(0,0,0),Vec(0,0,1), Vec(1,0,0));
@@ -191,7 +191,7 @@ TrisBpyScore::score_extra( Xforms const & x1s, Xforms const & x2s, Real&cbc,Real
 				xbpy = xbpy0*chiral[ichiral];
 				Xform const xclash = ~x1*xbpy;
 				Vec const cg = xbpy*CG;
-				Real angerr = fabs(numeric::angle_degrees(ca,cb,cg)-116.7);
+				Real angerr = std::fabs(numeric::angle_degrees(ca,cb,cg)-116.7);
 				if( angerr > tolerance_*8.8 ) continue;
 				err += angerr/8.8;
 				bool clash=false;

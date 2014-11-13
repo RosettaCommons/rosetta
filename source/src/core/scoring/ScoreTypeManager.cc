@@ -190,6 +190,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "facts_elec" ] = facts_elec;
 	name2score_type_[ "facts_solv" ] = facts_solv;
 	name2score_type_[ "facts_sasa" ] = facts_sasa;
+	
 	name2score_type_[ "PB_elec" ] = PB_elec;
 	name2score_type_[ "dslf_ss_dst" ] = dslf_ss_dst;
 	name2score_type_[ "dslf_cs_ang" ] = dslf_cs_ang;

@@ -458,5 +458,20 @@ Real brute_mindis(vector1<Vec> const & pa, vector1<Vec> const & pb, Vec const & 
 	return mindis;
 }
 
+std::string KMGT(double const & x, int const & w, int const & d){
+	using ObjexxFCL::format::F;
+	if( x < 1e3  ) return F( w, d, x/1e0  )+" ";
+	if( x < 1e6  ) return F( w, d, x/1e3  )+"K";
+	if( x < 1e9  ) return F( w, d, x/1e6  )+"M";
+	if( x < 1e12 ) return F( w, d, x/1e9  )+"G";
+	if( x < 1e15 ) return F( w, d, x/1e12 )+"T";
+	if( x < 1e18 ) return F( w, d, x/1e15 )+"P";		
+	if( x < 1e21 ) return F( w, d, x/1e18 )+"E";			
+	if( x < 1e24 ) return F( w, d, x/1e21 )+"Z";			
+	else           return F( w, d, x/1e24 )+"Y";
+
+}
+
+
 } // sic_dock
 } // protocols

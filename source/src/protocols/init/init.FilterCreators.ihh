@@ -101,6 +101,9 @@
 #include <protocols/simple_filters/HolesFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceBindingEnergyDensityFilterCreator.hh>
+#include <protocols/simple_filters/InterRepeatContactFilterCreator.hh>
+#include <protocols/simple_filters/IntraRepeatContactFilterCreator.hh>
+#include <protocols/simple_filters/MotifScoreFilterCreator.hh>
 #include <protocols/simple_filters/MultipleSigmoidsFilterCreator.hh>
 #include <protocols/simple_filters/MutationsFilterCreator.hh>
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
@@ -112,6 +115,7 @@
 #include <protocols/simple_filters/PoseCommentFilterCreator.hh>
 #include <protocols/simple_filters/PoseInfoFilterCreator.hh>
 #include <protocols/simple_filters/RangeFilterCreator.hh>
+#include <protocols/simple_filters/RepeatParameterFilterCreator.hh>
 #include <protocols/simple_filters/ReportFilterCreator.hh>
 #include <protocols/simple_filters/ResidueBurialFilterCreator.hh>
 #include <protocols/simple_filters/ResidueCountFilterCreator.hh>

@@ -61,6 +61,63 @@ static thread_local basic::Tracer TR( "core.io.pose_io" );
 
 using utility::vector1;
 
+
+void
+dump_pdb(
+	pose::Pose const & pose,
+	std::ostream & out,
+	id::AtomID_Mask const & mask,
+	Size & atomno,
+	std::string const & tag,
+	char chain,
+	utility::vector1<Size> resnums
+) {
+	Size const nres( pose.total_residue() );
+
+	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
+
+	if(tag!="") out << "MODEL     " << tag << "\n";
+	for ( Size i=1; i<= nres; ++i ) {
+		conformation::Residue const & rsd( pose.residue(i) );
+		Size const resnum = resnums.size()>=i ? resnums[i] : i;
+		for ( Size j=1; j<= rsd.natoms(); ++j ) {
+			conformation::Atom const & atom( rsd.atom(j) );
+
+ 			if ( ! mask[ id::AtomID( j,i ) ] ) continue;
+
+			//skip outputting virtual atom unless specified.
+ 			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
+			if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
+				rsd.atom_type(j).is_virtual() ) continue;
+
+			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
+			if(chain=='!') chain = chains[ rsd.chain() ];
+			out << "ATOM  " << I(5,++atomno) << ' ' << rsd.atom_name(j) << ' ' <<
+				rsd.name3() << ' ' << chain << I(4,resnum ) << "    " <<
+				F(8,3,atom.xyz()(1)) <<
+				F(8,3,atom.xyz()(2)) <<
+				F(8,3,atom.xyz()(3)) <<
+				F(6,2,1.0) << F(6,2,1.0) << '\n';
+
+			//now add orbitals if the atom type has orbitals
+			if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
+					rsd.atom_type(j).atom_has_orbital()){
+				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
+				BOOST_FOREACH(core::Size orbital_index, orbital_indices){
+					Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
+					out << "ATOM  " << I(5,++atomno) << ' ' << rsd.orbital_name(orbital_index) << ' ' <<
+						rsd.name3() << ' ' << chain << I(4,resnum ) << "    " <<
+						F(8,3,orbital_xyz.x()) <<
+						F(8,3,orbital_xyz.y()) <<
+						F(8,3,orbital_xyz.z()) <<
+						F(6,2,1.0) << F(6,2,1.0) << '\n';
+				}
+			}
+		}
+	}
+	if(tag!="") out << "ENDMDL\n";
+}
+
 void
 dump_pdb(
 	pose::Pose const & pose,

@@ -34,6 +34,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
+#include <cmath>
+
 static thread_local basic::Tracer TR( "core.conformation.membrane.LipidAccInfo" );
 
 /// @brief      Membrane Lipid Accessibility Data
@@ -94,7 +96,7 @@ LipidAccInfo::LipidAccInfo( std::string lipsfile ) {
 				
 			} else {
 				
-				lipid_burial_[ resnum ] = abs( exposure );
+				lipid_burial_[ resnum ] = std::fabs( exposure );
 				num_of_csts++;
 			}
 			

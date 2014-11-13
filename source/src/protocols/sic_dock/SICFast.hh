@@ -18,7 +18,7 @@
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
+#include <core/pose/xyzStripeHashPose.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
@@ -82,7 +82,7 @@ private:
 	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
 	// double CTD, CTD2;
 
-	xyzStripeHashPose *h1_,*h2_;
+	core::pose::xyzStripeHashPose *h1_,*h2_;
 };
 
 

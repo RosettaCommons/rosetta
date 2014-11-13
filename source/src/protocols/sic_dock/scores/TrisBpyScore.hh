@@ -13,7 +13,7 @@
 #include <protocols/sic_dock/scores/TrisBpyScore.fwd.hh>
 #include <protocols/sic_dock/RigidScore.hh>
 
-#include <protocols/motif_hash/motif_hash_stuff.fwd.hh>
+#include <core/scoring/motif/motif_hash_stuff.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
@@ -23,7 +23,7 @@
 #include <protocols/sic_dock/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
+#include <core/pose/xyzStripeHashPose.fwd.hh>
 
 
 namespace protocols {
@@ -45,7 +45,7 @@ class TrisBpyScore : public RigidScore {
  private:
  	Pose const & pose_;
 	numeric::Xforms bbx_;
-	xyzStripeHashPoseCOP cc_;
+	core::pose::xyzStripeHashPoseCOP cc_;
 	Vecs cb_;
 	Real const tolerance_;
 	Real const min_bpy_contacts_;

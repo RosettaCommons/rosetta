@@ -1,0 +1,12 @@
+-s inputs/input.pdb
+-parser:protocol inputs/example.xml
+-out:file:silent MotifScore.out
+-out:file:silent_struct_type score
+
+-mh:path:motifs inputs/xs_bb_ss_CC_sf10_wt100.rpm.bin.gz
+-mh:path:scores_BB_BB inputs/xs_bb_ss_CC_sf10_wt100
+-chemical:exclude_patches common
+-detect_disulf false
+-ignore_unrecognized_res
+-mh:gen_reverse_motifs_on_load true
+-mute all

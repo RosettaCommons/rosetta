@@ -71,10 +71,10 @@ public:
 		return *pair_set_;
 	}
 
-	void insert_ss_into_pose( core::pose::Pose & pose );
-	void insert_dssp_ss_into_pose( core::pose::Pose & pose );
-	void insert_edge_ss_into_pose( core::pose::Pose & pose );
-	void insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose );
+	void insert_ss_into_pose(             core::pose::Pose & pose, bool recompute=true );
+	void insert_dssp_ss_into_pose(        core::pose::Pose & pose, bool recompute=true );
+	void insert_edge_ss_into_pose(        core::pose::Pose & pose, bool recompute=true );
+	void insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose, bool recompute=true );
 
 	char get_dssp_secstruct( core::Size resid );
 

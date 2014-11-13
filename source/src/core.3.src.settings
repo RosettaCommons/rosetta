@@ -75,6 +75,7 @@ sources = {
 		"Pose",
 		"selection",
 		"util",
+		"xyzStripeHashPose",
 	],
 	"core/pose/carbohydrates": [
 		"util",
@@ -111,8 +112,11 @@ sources = {
 	"core/pose/ncbb": [
 		"util",
 	],
+	"core/pose/motif": [
+		"reference_frames",
+	],
 	"core/pose/rna": [
-	"RNA_BasePairClassifier",
+		"RNA_BasePairClassifier",
 		"RNA_IdealCoord",
 		"RNA_SuiteName",
 		"util",
@@ -494,8 +498,8 @@ sources = {
 		"RamachandranEnergy",
 		"RamachandranEnergy2B",
 		"ReferenceEnergy",
-		"ReferenceEnergyNoncanonical",
-		"ResidualDipolarCouplingEnergy",
+		"ReferenceEnergyNoncanonical",				    		
+        "ResidualDipolarCouplingEnergy",
 		"ResidualDipolarCouplingEnergy_Rohl",
 		"ChemicalShiftAnisotropyEnergy",
 		"DipolarCouplingEnergy",
@@ -539,6 +543,11 @@ sources = {
 	],
 	"core/scoring/mm/mmtrie": [
 		"MMEnergyTableAtom",
+	],
+	"core/scoring/motif" : [
+		"motif_hash_stuff",
+		"xfrags",
+		"util",
 	],
 	"core/scoring/nv": [
 		"NVlookup",

@@ -181,6 +181,7 @@ sources = {
 		"MatDesPointMutationCalculator",
 		"SymDofMover",
 		"SymDofMoverSampler",
+		"SchemePlaceMotifsMover",		
 		"SymUnsatHbondFilter",
 	],
 	"protocols/protein_interface_design": [
@@ -285,7 +286,6 @@ sources = {
     		"loophash_util",
     		"designability_score",
     		"read_biounit",
-    		"xyzStripeHashPose",
   	],
   	"protocols/sic_dock/scores" : [
     		"MotifHashRigidScore",
@@ -294,9 +294,6 @@ sources = {
 	"protocols/motif_grafting/movers": [
 		"MotifGraftMover",
 	],
-  	"protocols/motif_hash" : [
-    		"motif_hash_stuff",
-  	],
 }
 include_path = [
 ]

@@ -1,0 +1,8 @@
+<ROSETTASCRIPTS>
+<FILTERS>
+    <MotifScore name=mot1/>
+</FILTERS>
+<PROTOCOLS>
+    <Add filter_name=mot1/>
+</PROTOCOLS>
+</ROSETTASCRIPTS>

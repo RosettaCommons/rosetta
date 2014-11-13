@@ -64,6 +64,31 @@ dump_bfactor_pdb(
 	std::string const & tag="1"
 );
 
+/// @brief Writes  <pose>  data
+void
+dump_pdb(
+	pose::Pose const & pose,
+	std::ostream & out,
+	id::AtomID_Mask const & mask,
+	Size & atomno,
+	std::string const & tag="1",
+	char chain='!',
+	utility::vector1<Size> resnums=utility::vector1<Size>()
+);
+/// @brief Writes  <pose>  data
+inline
+void
+dump_pdb(
+	pose::Pose const & pose,
+	std::ostream & out,
+	id::AtomID_Mask const & mask,
+	std::string const & tag="1",
+	char chain='!',
+	utility::vector1<Size> resnums=utility::vector1<Size>()
+){
+	Size tmp=0;
+	dump_pdb(pose,out,mask,tmp,tag,chain,resnums);
+}
 
 /// @brief Writes  <pose>  data
 void

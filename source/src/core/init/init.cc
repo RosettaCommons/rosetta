@@ -480,6 +480,7 @@ static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreatorCEN > SAXSEnergy
 static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreatorFA > SAXSEnergyCreatorFA_registrator;
 static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreator > SAXSEnergyCreator_registrator;
 
+
 /// Constraint Registrators
 using namespace scoring::constraints;
 static ConstraintRegistrator< core::scoring::constraints::AmbiguousConstraintCreator > AmbiguousConstraintCreator_registrator;
@@ -500,6 +501,7 @@ static ConstraintRegistrator< core::pack::dunbrack::DunbrackConstraintCreator > 
 static ConstraintRegistrator< core::scoring::constraints::SiteConstraintCreator > SiteConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::SiteConstraintResiduesCreator > SiteConstraintResiduesCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::SequenceProfileConstraintCreator > SequenceProfileConstraintCreator_registrator;
+
 
 // SilentStruct registrators
 using namespace core::io::silent;

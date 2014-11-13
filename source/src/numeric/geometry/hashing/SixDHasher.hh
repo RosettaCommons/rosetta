@@ -115,7 +115,7 @@ public:
 
 	inline
 	bool
-	contains( Real6 const & point ) {
+	contains( Real6 const & point ) const {
 		return bounding_box_.contains( Vector( point[1], point[2], point[3] ));
 	}
 
@@ -182,7 +182,7 @@ public:
 		for ( Size ii = 1; ii <= 6; ++ii ) {
 			bin[ ii ] = index / dimprods_[ ii ];
 			index = index % dimprods_[ ii ];
-			std::cout << "bin:  " << bin[ii] << std::endl;
+		//std::cout << "bin:  " << bin[ii] << std::endl;
 		}
 		return bin;
 	}

@@ -422,12 +422,15 @@ PoissonBoltzmannEnergy::protein_position_equal_within(
 																											pose::Pose const & pose2, 
 																											Size atom_num,
 																											Real tol) const {
-	if( &pose1 == NULL || &pose2 == NULL ) {
-		return false;
-	}
-	if( &pose1 == NULL && &pose2 == NULL ) {
-		return true;
-	}
+
+  // error: reference cannot be bound to dereferenced null pointer in well-defined C++ code; comparison may be assumed to always evaluate to false [-Werror,-Wtautological-undefined-compare]
+	//if( &pose1 == NULL || &pose2 == NULL ) {
+	//	return false;
+	//}
+	//if( &pose1 == NULL && &pose2 == NULL ) {
+	//	return true;
+	//}
+
   if(pose1.total_residue() != pose2.total_residue()) {
 		return false;
 	}

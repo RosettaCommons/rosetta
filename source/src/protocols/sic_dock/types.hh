@@ -20,19 +20,6 @@ namespace sic_dock {
 struct Vec3 { numeric::xyzVector<platform::Real> a,b,c; };
 typedef utility::vector1<std::pair<platform::Size,Vec3> > TermInfo;
 
-enum PoseCoordPickMode {
-	NBR,
-	CA,
-	CB,
-	CBorCA,
-	BB,
-	NCAC,
-	NCO,
-	BNP,
-	HVY,
-	ALL
-};
-
 typedef numeric::xyzVector<platform::Real> Vec;
 typedef numeric::xyzMatrix<platform::Real> Mat;
 typedef numeric::xyzTransform<platform::Real> Xform;

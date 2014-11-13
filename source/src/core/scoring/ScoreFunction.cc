@@ -2135,7 +2135,7 @@ ScoreFunction::check_methods() const
 		Real const count( *it );
 		if ( count > 1.5 ) {
 			utility_exit_with_message("multiple methods for same score type!" );
-		} else if ( count < 0.5 && std::abs( weights_[ t ] > 1e-2 ) ) {
+		} else if ( count < 0.5 && std::abs( weights_[ t ] ) > 1e-2 ) {
 			utility_exit_with_message(
 				"no method for scoretype " + name_from_score_type( t ) + " w/nonzero weight!"
 			);

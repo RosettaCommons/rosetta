@@ -7,10 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_sic_dock_xyzStripeHash_fwd_hh
-#define INCLUDED_protocols_sic_dock_xyzStripeHash_fwd_hh
+#ifndef INCLUDED_protocols_sicdock_xyzStripeHash_fwd_hh
+#define INCLUDED_protocols_sicdock_xyzStripeHash_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 #include <numeric/types.hh>
 
 namespace numeric {
@@ -20,6 +21,7 @@ namespace hashing {
 class xyzStripeHash;
 typedef utility::pointer::shared_ptr< xyzStripeHash > xyzStripeHashOP;
 typedef utility::pointer::shared_ptr< xyzStripeHash const > xyzStripeHashCOP;
+typedef utility::pointer::weak_ptr< xyzStripeHash const > xyzStripeHashCAP;
 
 }
 }

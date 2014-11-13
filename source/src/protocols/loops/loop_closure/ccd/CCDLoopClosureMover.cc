@@ -651,6 +651,7 @@ void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
 		if ( alpha < -max_per_move_torsion_delta ) { alpha = -max_per_move_torsion_delta; }
 
 		// Check for total movement during closure run.
+
 		Angle const total_torsion_delta( subtract_degree_angles( starting_pose.torsion( torsion_id ),
 									pose.torsion( torsion_id ) + alpha ) );
 
@@ -749,9 +750,8 @@ void CCDLoopClosureMover::compute_closure_metrics(
 					abs( subtract_degree_angles( starting_pose.torsion( torsion_id ), pose.torsion( torsion_id ) ) );
 		}
 	}
-
 	average_change_in_torsion_angle_ = total_change_in_torsion_angle / loop_.size();
-
+	
 	// Calculate change in Rama score if applicable
 	average_change_in_rama_score_ = 0.0;
 	if (check_rama_scores() ) {

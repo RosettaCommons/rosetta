@@ -51,9 +51,9 @@ public:
 		Normalize();
 		// Make first biggest element positive
 		numeric::Real mag = w;
-		if (abs(x) > abs(mag))      mag = x;
-		if (abs(y) > abs(mag))      mag = y;
-		if (abs(z) > abs(mag))      mag = z;
+		if (std::abs(x) > std::abs(mag))      mag = x;
+		if (std::abs(y) > std::abs(mag))      mag = y;
+		if (std::abs(z) > std::abs(mag))      mag = z;
 		if (mag < 0) {      w *= -1;      x *= -1;      y *= -1;      z *= -1;    }
 		return;
 	}

@@ -4,7 +4,7 @@
 
 #include <protocols/sic_dock/scores/MotifHashRigidScore.hh>
 	#include <protocols/sic_dock/util.hh>
-	#include <protocols/motif_hash/motif_hash_stuff.hh>
+	#include <core/scoring/motif/motif_hash_stuff.hh>
 
 	#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 	#include <basic/options/keys/mh.OptionKeys.gen.hh>
@@ -23,7 +23,7 @@
 	#include <boost/foreach.hpp>
 	#include <protocols/fldsgn/topology/SS_Info2.hh>
 	#include <core/scoring/dssp/Dssp.hh>
-	#include <protocols/sic_dock/xyzStripeHashPose.hh>
+	#include <core/pose/xyzStripeHashPose.hh>
 	#include <boost/foreach.hpp>
 
 namespace protocols {
@@ -80,13 +80,14 @@ MotifHashRigidScore::MotifHashRigidScore(
 	core::scoring::dssp::Dssp(pose2_).insert_ss_into_pose_no_IG_helix(pose2_);
 	ss1_ = pose1_.secstruct();
 	ss2_ = pose1_.secstruct();
-	xs_   = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_from_cli();
-	xshh_ = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_hh_from_cli();
-	xseh_ = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_eh_from_cli();
-	xshe_ = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_he_from_cli();
-	xsee_ = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_ee_from_cli();
-	xspp_ = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_sspair_from_cli();
-	mh_ = protocols::motif_hash::MotifHashManager::get_instance()->motif_hash_from_cli();
+	utility_exit_with_message("MotifHashRigidScore is depricated");
+	xs_   = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_from_cli();
+	xshh_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_hh_from_cli();
+	xseh_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_eh_from_cli();
+	xshe_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_he_from_cli();
+	xsee_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_ee_from_cli();
+	xspp_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_sspair_from_cli();
+	mh_   = NULL;//core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
 	for(Size ir = 1; ir <= pose1_.total_residue(); ++ir){
 		// if( pose1_.secstruct(ir)=='L' ) continue;
 		Vec  N = pose1_.residue(ir).xyz(1);
@@ -104,7 +105,7 @@ MotifHashRigidScore::MotifHashRigidScore(
 	hash_pose1_ = pose1_.n_residue() >= pose2_.n_residue();
 	Pose const & hashpose(hash_pose1_?pose1_:pose2_);
 	Pose const & listpose(hash_pose1_?pose2_:pose1_);
-	reshash_ = new xyzStripeHashPose(hashpose,CBorCA,sqrt(MAX_MOTIF_D2));
+	reshash_ = new core::pose::xyzStripeHashPose(hashpose,core::pose::PoseCoordPickMode_CBorCA,sqrt(MAX_MOTIF_D2));
 	for(int ir = 1; ir <= (int)listpose.n_residue(); ++ir){
 		if     (listpose.residue(ir).has("CB")) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CB"),ir));
 		else if(listpose.residue(ir).has("CA")) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CA"),ir));
@@ -118,10 +119,10 @@ MotifHashRigidScore::~MotifHashRigidScore(){
 }
 
 
-protocols::motif_hash::Real6
+core::scoring::motif::Real6
 get_rt6(Xform const & x){
 	Vec e = x.euler_angles_deg();
-	protocols::motif_hash::Real6 rt6;
+	core::scoring::motif::Real6 rt6;
 	rt6[1] = x.t.x(); rt6[2] = x.t.y(); rt6[3] = x.t.z();
 	rt6[4] =   e.x(); rt6[5] =   e.y(); rt6[6] =   e.z();
 	return rt6;
@@ -129,7 +130,7 @@ get_rt6(Xform const & x){
 
 core::Real
 MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & nsheet, Real & rawscore, Real & sselem_score, Real & coverage, Real & res_score, Real & sheetsc, int &nres, int &Nhh, int &Nee, int &Neh, int &Nh, int &Ne, int &Nl ) const {
-	using namespace protocols::motif_hash;
+	using namespace core::scoring::motif;
 
 	Real tot_weighted=0.0;
 	std::map<Size,Real> ssp1,ssp2,mres1,mres2;
@@ -153,7 +154,7 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 				Xform const x = ~xb1 * xb2;
 				if( x.t.length_squared() <= 49.0 ) tres1.insert(ir);
 				if( x.t.length_squared() <= 49.0 ) tres2.insert(jr);
-				protocols::motif_hash::XformScoreCOP xscore_for_this_ss = xs_;
+				core::scoring::motif::XformScoreCOP xscore_for_this_ss = xs_;
 				if(option[mh::score::noloops]() && ss1_[ir-1]=='L') continue;
 				if(option[mh::score::noloops]() && ss2_[jr-1]=='L') continue;
 				if(ss1_[ir-1]=='H'&&ss2_[jr-1]=='H') xscore_for_this_ss = xshh_;
@@ -230,103 +231,112 @@ MotifHashRigidScore::score( Xforms const & x1, Xforms const & x2 ) const {
 }
 
 int
-MotifHashRigidScore::dump_matching_motifs( Pose const & pose1, Pose const & pose2, std::ostream & out, int & count, xyzStripeHashPoseCOP clash_check, bool print ) const {
-	return mh_->dump_matching_motifs(pose1,pose2,option[mh::motif_match_radius](),out,count,clash_check,print) +
-	       mh_->dump_matching_motifs(pose2,pose1,option[mh::motif_match_radius](),out,count,clash_check,print) ;
+MotifHashRigidScore::dump_matching_motifs( Pose const & /*pose1*/, Pose const & /*pose2*/, std::ostream & /*out*/, int & /*count*/, core::pose::xyzStripeHashPoseCOP /*clash_check*/, bool /*print*/ ) const {
+	// return mh_->dump_matching_motifs(pose1,pose2,option[mh::motif_match_radius](),out,count,clash_check,print) +
+	//        mh_->dump_matching_motifs(pose2,pose1,option[mh::motif_match_radius](),out,count,clash_check,print) ;
+	utility_exit_with_message("MotifHashRigidScore is depricated");
+	return 0;
 }
 int
-MotifHashRigidScore::dump_matching_motifs( Xforms const & x1s, Xforms const & x2s, std::ostream & out, xyzStripeHashPoseCOP clash_check, bool print ) const {
-	if(!mh_) mh_ = protocols::motif_hash::MotifHashManager::get_instance()->motif_hash_from_cli();
-	int nhit = 0;
-	BOOST_FOREACH(Xform const & x1,x1s){
-		Pose pose1(pose1_);
-		xform_pose(pose1,x1);
-		BOOST_FOREACH(Xform const & x2,x2s){
-			Pose pose2(pose2_);
-			xform_pose(pose2,x2);
-			nhit += dump_matching_motifs(pose1,pose2,out,nhit,clash_check,print);
-		}
-	}
-	return nhit;
+MotifHashRigidScore::dump_matching_motifs( Xforms const & /*x1s*/, Xforms const & /*x2s*/, std::ostream & /*out*/, core::pose::xyzStripeHashPoseCOP /*clash_check*/, bool /*print*/ ) const {
+	// if(!mh_) mh_ = core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
+	// int nhit = 0;
+	// BOOST_FOREACH(Xform const & x1,x1s){
+	// 	Pose pose1(pose1_);
+	// 	xform_pose(pose1,x1);
+	// 	BOOST_FOREACH(Xform const & x2,x2s){
+	// 		Pose pose2(pose2_);
+	// 		xform_pose(pose2,x2);
+	// 		nhit += dump_matching_motifs(pose1,pose2,out,nhit,clash_check,print);
+	// 	}
+	// }
+	// return nhit;
+	utility_exit_with_message("MotifHashRigidScore is depricated");
+	return 0;
 }
 
 void
 MotifHashRigidScore::show(
-	std::ostream & out,
-    int width
+	std::ostream & /*out*/,
+    int /*width*/
 ) const {
-	if(!mh_) mh_ = protocols::motif_hash::MotifHashManager::get_instance()->motif_hash_from_cli();
-	Pose pose1,pose2;
-	Stats stats;
-	mh_->stat_matching_motifs(pose1,pose2,stats);
-	out << " " << ObjexxFCL::format::RJ(width,"MH_RAW");
-	out << " " << ObjexxFCL::format::RJ(width,"MH_SPREAD");
-	out << " " << ObjexxFCL::format::RJ(width,"MH_RES");
-	// out << " " << ObjexxFCL::format::RJ(width,"MH_SSPAIR");
-	out << " " << ObjexxFCL::format::RJ(2,"EE");
-	out << " " << ObjexxFCL::format::RJ(width,"MH_COVER");
-	out << " " << ObjexxFCL::format::RJ(4,"NRES");
-	out << " " << ObjexxFCL::format::RJ(3,"NH"  );
-	out << " " << ObjexxFCL::format::RJ(3,"NE"  );
-	out << " " << ObjexxFCL::format::RJ(3,"NL"  );
-	out << " " << ObjexxFCL::format::RJ(5,"P_EE"  );
-	out << " " << ObjexxFCL::format::RJ(5,"P_EH"  );
-	out << " " << ObjexxFCL::format::RJ(5,"P_HH"  );
-	BOOST_FOREACH(Stats::value_type val,stats){
-		out << " " << ObjexxFCL::format::RJ(width,val.first);
-	}
+	utility_exit_with_message("MotifHashRigidScore is depricated");
+	return;
+	// if(!mh_) mh_ = core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
+	// Pose pose1,pose2;
+	// Stats stats;
+	// mh_->stat_matching_motifs(pose1,pose2,stats);
+	// out << " " << ObjexxFCL::format::RJ(width,"MH_RAW");
+	// out << " " << ObjexxFCL::format::RJ(width,"MH_SPREAD");
+	// out << " " << ObjexxFCL::format::RJ(width,"MH_RES");
+	// // out << " " << ObjexxFCL::format::RJ(width,"MH_SSPAIR");
+	// out << " " << ObjexxFCL::format::RJ(2,"EE");
+	// out << " " << ObjexxFCL::format::RJ(width,"MH_COVER");
+	// out << " " << ObjexxFCL::format::RJ(4,"NRES");
+	// out << " " << ObjexxFCL::format::RJ(3,"NH"  );
+	// out << " " << ObjexxFCL::format::RJ(3,"NE"  );
+	// out << " " << ObjexxFCL::format::RJ(3,"NL"  );
+	// out << " " << ObjexxFCL::format::RJ(5,"P_EE"  );
+	// out << " " << ObjexxFCL::format::RJ(5,"P_EH"  );
+	// out << " " << ObjexxFCL::format::RJ(5,"P_HH"  );
+	// BOOST_FOREACH(Stats::value_type val,stats){
+	// 	out << " " << ObjexxFCL::format::RJ(width,val.first);
+	// }
 
 }
 void
 MotifHashRigidScore::show(
-	std::ostream & out,
-	Xforms const & x1s,
-	Xforms const & x2s,
-	xyzStripeHashPoseCOP clash_check,
-	int width
+	std::ostream & /*out*/,
+	Xforms const & /*x1s*/,
+	Xforms const & /*x2s*/,
+	core::pose::xyzStripeHashPoseCOP /*clash_check*/,
+	int /*width*/
 ) const {
-	if(!mh_) mh_ = protocols::motif_hash::MotifHashManager::get_instance()->motif_hash_from_cli();
+	utility_exit_with_message("MotifHashRigidScore is depricated");
+	return;
 
-	Real rawscore,ssscore,coverage,res_score,sheetsc;
-	int nsheetres,nres,Nhh,Nee,Neh,Nh,Ne,Nl;
-	score_meta(x1s,x2s,nsheetres,rawscore,ssscore,coverage,res_score,sheetsc,nres,Nhh,Nee,Neh,Nh,Ne,Nl);
-	out << " " << ObjexxFCL::format::F(width,4,rawscore);
-	out << " " << ObjexxFCL::format::F(width,4,ssscore);
-	out << " " << ObjexxFCL::format::F(width,4,res_score);
-	// out << " " << ObjexxFCL::format::F(width,4,sheetsc);
-	out << " " << ObjexxFCL::format::I(2,nsheetres);
-	out << " " << ObjexxFCL::format::F(width,4,coverage);
-	out << " " << ObjexxFCL::format::I(4,nres);
-	out << " " << ObjexxFCL::format::I(3,Nh);
-	out << " " << ObjexxFCL::format::I(3,Ne);
-	out << " " << ObjexxFCL::format::I(3,Nl);
-	out << " " << ObjexxFCL::format::F(5,3,Real(Nee)/Real(Nee+Neh+Nhh));
-	out << " " << ObjexxFCL::format::F(5,3,Real(Neh)/Real(Nee+Neh+Nhh));
-	out << " " << ObjexxFCL::format::F(5,3,Real(Nhh)/Real(Nee+Neh+Nhh));
+	// if(!mh_) mh_ = core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
 
-	Stats stats;
-	BOOST_FOREACH(Xform const & x1,x1s){
-		BOOST_FOREACH(Xform const & x2,x2s){
-			Pose pose1(pose1_),pose2(pose2_);
-			xform_pose(pose1,x1);
-			xform_pose(pose2,x2);
-			mh_->stat_matching_motifs(pose1,pose2,stats,clash_check,option[mh::motif_match_radius]());
-			mh_->stat_matching_motifs(pose2,pose1,stats,clash_check,option[mh::motif_match_radius]());
-		}
-	}
+	// Real rawscore,ssscore,coverage,res_score,sheetsc;
+	// int nsheetres,nres,Nhh,Nee,Neh,Nh,Ne,Nl;
+	// score_meta(x1s,x2s,nsheetres,rawscore,ssscore,coverage,res_score,sheetsc,nres,Nhh,Nee,Neh,Nh,Ne,Nl);
+	// out << " " << ObjexxFCL::format::F(width,4,rawscore);
+	// out << " " << ObjexxFCL::format::F(width,4,ssscore);
+	// out << " " << ObjexxFCL::format::F(width,4,res_score);
+	// // out << " " << ObjexxFCL::format::F(width,4,sheetsc);
+	// out << " " << ObjexxFCL::format::I(2,nsheetres);
+	// out << " " << ObjexxFCL::format::F(width,4,coverage);
+	// out << " " << ObjexxFCL::format::I(4,nres);
+	// out << " " << ObjexxFCL::format::I(3,Nh);
+	// out << " " << ObjexxFCL::format::I(3,Ne);
+	// out << " " << ObjexxFCL::format::I(3,Nl);
+	// out << " " << ObjexxFCL::format::F(5,3,Real(Nee)/Real(Nee+Neh+Nhh));
+	// out << " " << ObjexxFCL::format::F(5,3,Real(Neh)/Real(Nee+Neh+Nhh));
+	// out << " " << ObjexxFCL::format::F(5,3,Real(Nhh)/Real(Nee+Neh+Nhh));
+
+	// Stats stats;
+	// BOOST_FOREACH(Xform const & x1,x1s){
+	// 	BOOST_FOREACH(Xform const & x2,x2s){
+	// 		Pose pose1(pose1_),pose2(pose2_);
+	// 		xform_pose(pose1,x1);
+	// 		xform_pose(pose2,x2);
+	// 		mh_->stat_matching_motifs(pose1,pose2,stats,clash_check,option[mh::motif_match_radius]());
+	// 		mh_->stat_matching_motifs(pose2,pose1,stats,clash_check,option[mh::motif_match_radius]());
+	// 	}
+	// }
 
 
-	stats["M_EE"     ] = stats["M_EE"     ]/stats["M_NUM"];
-	stats["M_HE"     ] = stats["M_HE"     ]/stats["M_NUM"];
-	// stats["M_EL"     ] = stats["M_EL"     ]/stats["M_NUM"];
-	stats["M_HH"     ] = stats["M_HH"     ]/stats["M_NUM"];
-	// stats["M_HL"     ] = stats["M_HL"     ]/stats["M_NUM"];
-	// stats["M_LL"     ] = stats["M_LL"     ]/stats["M_NUM"];
-	// stats["M_SSPAIR"] = stats["M_SSPAIR"]/stats["M_NUM"];
+	// stats["M_EE"     ] = stats["M_EE"     ]/stats["M_NUM"];
+	// stats["M_HE"     ] = stats["M_HE"     ]/stats["M_NUM"];
+	// // stats["M_EL"     ] = stats["M_EL"     ]/stats["M_NUM"];
+	// stats["M_HH"     ] = stats["M_HH"     ]/stats["M_NUM"];
+	// // stats["M_HL"     ] = stats["M_HL"     ]/stats["M_NUM"];
+	// // stats["M_LL"     ] = stats["M_LL"     ]/stats["M_NUM"];
+	// // stats["M_SSPAIR"] = stats["M_SSPAIR"]/stats["M_NUM"];
 
-	BOOST_FOREACH(Stats::value_type val,stats){
-		out << " " << ObjexxFCL::format::F(width,5,val.second);
-	}
+	// BOOST_FOREACH(Stats::value_type val,stats){
+	// 	out << " " << ObjexxFCL::format::F(width,5,val.second);
+	// }
 }
 void
 MotifHashRigidScore::show(

@@ -274,6 +274,7 @@ enum ScoreType {
 	facts_solv,
 	facts_sasa,
 
+
 	// Goap
 	goap,
 	goap_dist,

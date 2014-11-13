@@ -84,6 +84,7 @@ sources = {
 	],
 	"numeric/random": [
 		"random",
+		"random_xyz",		
 		"WeightedSampler",
 	],
 	"numeric/statistics": [

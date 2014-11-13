@@ -361,7 +361,7 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 ) const
 {
 	//fpd Im not even sure if this function is used?  Anyway, it doesn't work with the new dslf_fa13 potential
-	assert( !sfxn.has_nonzero_weight(dslf_fa13) );
+	runtime_assert( !sfxn.has_nonzero_weight(dslf_fa13) );
 
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( pose.residue( atomid.rsd() ).has_variant_type( core::chemical::REPLONLY )){

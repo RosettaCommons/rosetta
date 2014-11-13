@@ -411,8 +411,8 @@ Dssp::paired(Size res1, Size res2, bool antiparallel) {
 
 
 void
-Dssp::insert_ss_into_pose( core::pose::Pose & pose ) {
-	compute( pose );
+Dssp::insert_ss_into_pose( core::pose::Pose & pose, bool recompute ) {
+	if( recompute ) compute( pose );
 	dssp_reduced( dssp_secstruct_ );
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		pose.set_secstruct( i, dssp_secstruct_(i) );
@@ -420,8 +420,8 @@ Dssp::insert_ss_into_pose( core::pose::Pose & pose ) {
 }
 
 void
-Dssp::insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose ) {
-	compute( pose );
+Dssp::insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose, bool recompute ) {
+	if( recompute ) compute( pose );
 	dssp_reduced_IG_as_L( dssp_secstruct_ );
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		pose.set_secstruct( i, dssp_secstruct_(i) );
@@ -429,8 +429,8 @@ Dssp::insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose ) {
 }
 
 void
-Dssp::insert_dssp_ss_into_pose( core::pose::Pose & pose ) {
-	compute( pose );
+Dssp::insert_dssp_ss_into_pose( core::pose::Pose & pose, bool recompute ) {
+	if( recompute ) compute( pose );
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		char ss = dssp_secstruct_(i);
 		if(ss==' ') ss = '_';
@@ -438,8 +438,8 @@ Dssp::insert_dssp_ss_into_pose( core::pose::Pose & pose ) {
 	}
 }
 void
-Dssp::insert_edge_ss_into_pose( core::pose::Pose & pose ) {
-	compute( pose );
+Dssp::insert_edge_ss_into_pose( core::pose::Pose & pose, bool recompute ) {
+	if( recompute ) compute( pose );
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		char ss = dssp_secstruct_(i);
 		if(ss==' ') ss = 'L';

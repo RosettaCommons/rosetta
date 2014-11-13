@@ -82,7 +82,7 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 				//check that all sets in the group have the same number of residues
 				Size numResInSet = grp_i[1].size();
 				for(Size kk=2; kk<=grp_i.size(); ++kk){
-						assert(grp_i[kk].size() == numResInSet);
+						runtime_assert(grp_i[kk].size() == numResInSet);
 				}
 				//go through the sets and set them to be equal
 				for(Size kk=1; kk<=grp_i.size(); ++kk){
