@@ -186,10 +186,17 @@ FullModelInfo::size() const {
 	return full_model_parameters_->size();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 FullModelInfo::chains_in_full_model() const {
  	return full_model_parameters_->chains_in_full_model();
+}
+scoring::constraints::ConstraintSetCOP
+FullModelInfo::cst_set() const {
+ 	return full_model_parameters_->cst_set();
+}
+Pose const &
+FullModelInfo::full_model_pose_for_constraints() const {
+ 	return full_model_parameters_->full_model_pose_for_constraints();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

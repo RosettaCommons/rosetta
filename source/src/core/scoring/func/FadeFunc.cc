@@ -17,11 +17,13 @@
 #include <core/types.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/exit.hh>
 
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ Headers
 #include <iostream>
+#include <sstream>
 
 #include <utility/vector1.hh>
 
@@ -95,10 +97,22 @@ FadeFunc::dfunc( Real const z ) const
 
 void
 FadeFunc::read_data( std::istream& in ) {
-	in >> cutoff_lower_ >> cutoff_upper_ >> fade_zone_ >> well_depth_ ;
+
+	std::string line;
+	getline( in, line );
+	std::istringstream linestream( line ); // do not go to next line
+
+	runtime_assert( linestream.good() );
+	linestream >> cutoff_lower_;
+	runtime_assert( linestream.good() );
+	linestream >> cutoff_upper_;
+	runtime_assert( linestream.good() );
+	linestream >> fade_zone_;
+	runtime_assert( linestream.good() );
+	linestream >> well_depth_ ;
 
 	well_offset_ = 0.0;
-	if( in.good() )  in >> well_offset_;
+	if( linestream.good() )  linestream >> well_offset_;
 
 }
 

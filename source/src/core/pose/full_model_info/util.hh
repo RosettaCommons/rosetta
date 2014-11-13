@@ -41,7 +41,13 @@ namespace full_model_info {
 	update_res_list_in_full_model_info_and_pdb_info( pose::Pose & pose, utility::vector1< Size > const & res_list_new );
 
 	void
+	update_pose_objects_from_full_model_info( core::pose::Pose & pose );
+
+	void
 	update_pdb_info_from_full_model_info( core::pose::Pose & pose );
+
+	// void
+	// update_constraint_set_from_full_model_info( core::pose::Pose & pose );
 
 	utility::vector1< char >
 	figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose );

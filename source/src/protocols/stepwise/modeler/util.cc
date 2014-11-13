@@ -454,7 +454,7 @@ merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2,
 
 	full_model_info.set_res_list( new_res_list );
 	//		pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
-	update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
+	update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
 
 }
 
@@ -665,7 +665,7 @@ slice_out_pose( pose::Pose & pose,
 	sliced_out_full_model_info->set_res_list( apply_numbering( residues_to_delete, original_res_list ) );
 	sliced_out_full_model_info->clear_other_pose_list();
 	sliced_out_pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, sliced_out_full_model_info );
-	update_pdb_info_from_full_model_info( sliced_out_pose ); // for output pdb or silent file -- residue numbering.
+	update_pose_objects_from_full_model_info( sliced_out_pose ); // for output pdb or silent file -- residue numbering.
 
 	// remainder piece.
 	utility::vector1< Size > const residues_to_retain = get_other_residues( residues_to_delete, pose.total_residue() );
@@ -675,7 +675,7 @@ slice_out_pose( pose::Pose & pose,
 	pose.conformation() = pose_scratch.conformation();
 
 	full_model_info.set_res_list( apply_numbering( residues_to_retain, original_res_list )  );
-	update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
+	update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
 
 	//		try_reroot_at_fixed_domain( pose );
 

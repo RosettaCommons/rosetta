@@ -743,7 +743,9 @@ ConstraintSet::on_connection_change( core::conformation::signals::ConnectionEven
 			if( utility::pointer::equal(conformation_pt_, event.conformation) ) {
 				this->detach_from_conformation();
 			} else {
-				tr.Error << "ERROR: HUH?!? weird stuff is going on. ConstraintSet is hearing disconnection voices that it shouldn't" << std::endl;
+				if ( !conformation_pt_.expired() ) {
+					tr.Error << "ERROR: HUH?!? weird stuff is going on. ConstraintSet is hearing disconnection voices that it shouldn't" << std::endl;
+				}
 			}
 			break;
 

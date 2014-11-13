@@ -186,7 +186,8 @@ namespace modeler {
 	void
 	StepWiseModeler::reinitialize( pose::Pose & pose ){
 
-		pose.remove_constraints(); // modeler can stick in additional constraints
+		// if using native constraints, those got added to pose during align_pose_and_add_rmsd_constraints()
+		pose.constraint_set( cst_set_ );
 
 		// Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
 		working_parameters_.reset();
@@ -215,7 +216,9 @@ namespace modeler {
 		revise_root_and_moving_res_list( pose, moving_res_list_ ); // specify reference_res_? [i.e. anchor_res?]
 
 		Real const rmsd_screen = options_->rmsd_screen();
+		cst_set_ = pose.constraint_set()->clone();
 		if ( !options_->disallow_realign() ) align::align_pose_and_add_rmsd_constraints( pose, get_native_pose(), moving_res_list_, rmsd_screen );
+
 		working_parameters_ = working_parameters::setup_working_parameters_for_swa( moving_res_list_, pose,	get_native_pose(),
 																																								options_->bridge_res(), working_minimize_res_  );
 

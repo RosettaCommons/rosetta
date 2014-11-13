@@ -14,6 +14,7 @@
 
 
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 #include <utility/tools/make_vector1.hh>
 #include <map>
 #include <iostream>
@@ -79,7 +80,8 @@ namespace monte_carlo {
 	{
 	}
 
-	SWA_Move::SWA_Move( utility::vector1< std::string > swa_move_string_vector ):
+	SWA_Move::SWA_Move( utility::vector1< std::string > swa_move_string_vector,
+											core::pose::full_model_info::FullModelParametersCOP full_model_parameters /* = 0 */ ):
 		utility::pointer::ReferenceCount(),
 		move_type_( NO_MOVE )
 	{
@@ -93,9 +95,18 @@ namespace monte_carlo {
 
 		bool string_is_ok( false );
 		while ( n <= num_strings ) {
-			std::vector <int> ints = ints_of( swa_move_string_vector[ n ], string_is_ok );
+			//			std::vector <int> ints = ints_of( swa_move_string_vector[ n ], string_is_ok );
+			std::vector< int > resnum;
+			std::vector< char > chains;
+			string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains );
 			if ( !string_is_ok ) break;
-			for ( Size i = 0; i < ints.size(); i++ ) move_element_.push_back( ints[i] );
+			for ( Size i = 0; i < resnum.size(); i++ ) {
+				if ( full_model_parameters ) {
+					move_element_.push_back( full_model_parameters->conventional_to_full( resnum[i], chains[i] ) );
+				} else {
+					move_element_.push_back( resnum[i] );
+				}
+			}
 			n++;
 		}
 
@@ -103,8 +114,18 @@ namespace monte_carlo {
 		while ( n <= num_strings ){
 			AttachmentType attachment_type = attachment_type_from_string( swa_move_string_vector[ n ] );
 			n++;
-			Size attachment_res = int_of( swa_move_string_vector[ n ] );
+
+			//			Size attachment_res = int_of( swa_move_string_vector[ n ] );
+			// attachment res should be one integer.
+			std::vector< int > resnum;
+			std::vector< char > chains;
+			string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains );
+			runtime_assert( string_is_ok );
+			runtime_assert( resnum.size() == 1 );
+			Size attachment_res = resnum[0];
+			if ( full_model_parameters ) attachment_res = full_model_parameters->conventional_to_full( resnum[0], chains[0] );
 			n++;
+
 			attachments_.push_back( Attachment( attachment_res, attachment_type ) );
 		}
 	}

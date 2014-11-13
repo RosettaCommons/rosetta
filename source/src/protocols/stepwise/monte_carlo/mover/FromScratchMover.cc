@@ -100,7 +100,7 @@ namespace mover {
 		new_full_model_info->set_res_list( resnum );
 		if ( pose.total_residue() > 1 ) new_full_model_info->add_other_pose( pose.clone() );
 		set_full_model_info( new_pose, new_full_model_info );
-		update_pdb_info_from_full_model_info( new_pose ); // for output pdb or silent file -- residue numbering.
+		update_pose_objects_from_full_model_info( new_pose ); // for output pdb or silent file -- residue numbering.
 
 		pose = new_pose; // switch focus to new pose.
 	}

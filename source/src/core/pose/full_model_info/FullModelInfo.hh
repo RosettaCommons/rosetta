@@ -25,6 +25,7 @@
 #include <basic/datacache/CacheableData.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 // C++
 #include <string>
@@ -84,6 +85,8 @@ public:
 	utility::vector1< Size > const & calc_rms_res() const;
 	utility::vector1< Size > const & rna_syn_chi_res() const;
 	utility::vector1< Size > const & rna_terminal_res() const;
+	scoring::constraints::ConstraintSetCOP cst_set() const;
+ 	Pose const & full_model_pose_for_constraints() const;
 
 	void clear_res_list();
 

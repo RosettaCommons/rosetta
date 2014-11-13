@@ -20,6 +20,8 @@
 #include <core/pose/full_model_info/FullModelParameterType.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <map>
@@ -152,6 +154,13 @@ namespace full_model_info {
 
 		Size size() const { return full_sequence_.size(); }
 
+		void
+		read_cst_file( std::string const cst_file, core::chemical::ResidueTypeSet const & rsd_type_set );
+
+		scoring::constraints::ConstraintSetCOP cst_set() const { return cst_set_; }
+
+		Pose const & full_model_pose_for_constraints() const { return *full_model_pose_for_constraints_; }
+
 	private:
 
 		void
@@ -208,6 +217,9 @@ namespace full_model_info {
 		utility::vector1< int >  conventional_numbering_; // permits user to use numbering other than 1, 2, 3...
 		utility::vector1< char > conventional_chains_;    // permits user to use chains other than A, B, C, ..
 		std::map< Size, std::string > non_standard_residues_; // for DNA, non-natural protein/RNA, ligands, ions, etc.
+
+		core::scoring::constraints::ConstraintSetCOP cst_set_;
+		pose::PoseCOP full_model_pose_for_constraints_;
 
 		std::map< FullModelParameterType, utility::vector1< Size > > parameter_values_at_res_;
 		// this is set at the same time as above.

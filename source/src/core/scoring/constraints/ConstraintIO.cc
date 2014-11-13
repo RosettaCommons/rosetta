@@ -573,6 +573,11 @@ ConstraintIO::read_constraints_new(
 			cset->add_constraint( cst_op );
 		} else if ( ! data.eof() ) { // not end of line
 			tr.Error << "ERROR: reading constraints from file" << std::endl;
+			using namespace basic::options;
+			using namespace basic::options::OptionKeys;
+			if ( option[ OptionKeys::constraints::exit_on_bad_read ]() ) {
+				utility_exit_with_message( "ERROR: reading constraints from file"  );
+			}
 			break;
 		}
 	} // while
@@ -616,7 +621,9 @@ ConstraintIO::read_individual_constraint_new(
 		using namespace basic::options::OptionKeys;
 		if ( option[ OptionKeys::constraints::exit_on_bad_read ]() ) { //OL Aug 12 2010,
 			//changed option default from 'true' to 'false'. This was way confusing!
-			//hard exits can be rather annoying... after waiting for 24h in the queue of a cluster.
+			// hard exits can be rather annoying... after waiting for 24h in the queue of a cluster.
+			//changed back to 'true' -- found several 'silent' cases where I wish
+			// there had been a hard exit-- rhiju
 			utility_exit_with_message( error_msg );
 		}
 	}

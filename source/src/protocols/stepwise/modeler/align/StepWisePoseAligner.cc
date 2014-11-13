@@ -460,7 +460,7 @@ namespace align {
 
 		using namespace core::pose::full_model_info;
 
-		pose.remove_constraints();
+		//		pose.remove_constraints();
 		if ( rmsd_screen == 0.0 ) return;
 		runtime_assert( reference_pose_local_ != 0 ); // needs to be setup by apply() above.
 

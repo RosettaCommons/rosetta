@@ -18,7 +18,10 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
@@ -113,6 +116,8 @@ namespace full_model_info {
 		full_sequence_( src.full_sequence_ ),
 		conventional_numbering_( src.conventional_numbering_ ),
 		conventional_chains_( src.conventional_chains_ ),
+		cst_set_( src.cst_set_ ),
+		full_model_pose_for_constraints_( src.full_model_pose_for_constraints_ ),
 		parameter_values_at_res_( src.parameter_values_at_res_ ),
 		parameter_values_as_res_lists_( src.parameter_values_as_res_lists_ )
 	{
@@ -499,6 +504,27 @@ namespace full_model_info {
 						 FullModelParameters const & b
 						 ){
 		return !( a == b );
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// this is pretty clumsy -- keeping the constraints with an associated pose -- but
+	// its what we have in Rosetta.
+	void
+	FullModelParameters::read_cst_file( std::string const cst_file, core::chemical::ResidueTypeSet const & rsd_type_set ) {
+
+		using namespace core::scoring::constraints;
+		PoseOP pose( new Pose );
+		make_pose_from_sequence( *pose, full_sequence_, rsd_type_set, false /*auto termini*/ );
+
+		PDBInfoOP pdb_info( new PDBInfo( *pose ) );
+		pdb_info->set_numbering( conventional_numbering_ );
+		pdb_info->set_chains( conventional_chains_ );
+		pose->pdb_info( pdb_info );
+		full_model_pose_for_constraints_ = pose;
+
+		ConstraintSetOP cst_set( new ConstraintSet );
+		ConstraintIO::get_instance()->read_constraints( cst_file, cst_set, *pose );
+		cst_set_ = cst_set;
 	}
 
 

@@ -19,6 +19,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.fwd.hh>
 #include <core/types.hh>
+#include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
 #include <ostream>
@@ -112,7 +113,8 @@ namespace monte_carlo {
 
 		SWA_Move( SWA_Move const & src );
 
-		SWA_Move( utility::vector1< std::string > swa_move_string_vector );
+		SWA_Move( utility::vector1< std::string > swa_move_string_vector,
+							core::pose::full_model_info::FullModelParametersCOP full_model_parameters = 0 /* to convert resnum, chain to Rosetta res */ );
 
 		SWA_Move &
 		operator=( SWA_Move const & src );

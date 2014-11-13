@@ -39,6 +39,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
@@ -437,13 +438,14 @@ namespace full_model_info {
 		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
+		if ( option[ constraints::cst_file ].user() && pose_pointers.size() > 0 )	full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ], pose_pointers[ 1 ]->residue( 1 ).residue_type_set() );
 
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 			Pose & pose = *pose_pointers[n];
 			FullModelInfoOP full_model_info_for_pose( new FullModelInfo( full_model_parameters ) );
 			full_model_info_for_pose->set_res_list( pose_res_lists[ n ] );
 			pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_for_pose );
-			update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
+			update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering -- and constraints.
 		}
 
 	}

@@ -35,11 +35,12 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
@@ -50,7 +51,6 @@
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
-//#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -87,6 +87,7 @@ stepwise_monte_carlo()
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
+	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
 	PoseOP native_pose, align_pose;
 	initialize_native_and_align_pose( native_pose, align_pose, rsd_set );
@@ -111,7 +112,7 @@ stepwise_monte_carlo()
 	options->initialize_from_command_line();
 	stepwise_monte_carlo.set_options( options );
 	stepwise_monte_carlo.set_native_pose( align_pose ); //allows for alignment to be to non-native
-	stepwise_monte_carlo.set_move( SWA_Move( option[ OptionKeys::stepwise::move ]() ) );
+	stepwise_monte_carlo.set_move( SWA_Move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() ) );
 	stepwise_monte_carlo.set_enumerate( option[ OptionKeys::stepwise::enumerate ]());
 	stepwise_monte_carlo.set_do_preminimize_move( do_preminimize_move );
 
@@ -162,6 +163,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( out::overwrite );
 		option.add_relevant( out::nstruct );
 		option.add_relevant( score::weights );
+		option.add_relevant( constraints::cst_file );
 		option.add_relevant( OptionKeys::full_model::other_poses );
 		option.add_relevant( OptionKeys::full_model::extra_min_res );
 		option.add_relevant( OptionKeys::full_model::jump_res );

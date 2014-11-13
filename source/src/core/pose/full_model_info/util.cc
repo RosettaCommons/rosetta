@@ -16,11 +16,13 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/types.hh>
+#include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/stream_util.hh>
@@ -141,12 +143,63 @@ reorder_res_list_after_append( utility::vector1< Size > const & res_list,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
+update_pdb_info_from_full_model_info( pose::Pose & pose ){
+
+	using namespace core::pose;
+
+	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+
+	PDBInfoOP pdb_info( new PDBInfo( pose ) );
+	pdb_info->set_numbering( const_full_model_info( pose ).full_model_parameters()->full_to_conventional( res_list ) );
+	pdb_info->set_chains(    figure_out_conventional_chains_from_full_model_info( pose ) );
+
+	pose.pdb_info( pdb_info );
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+update_constraint_set_from_full_model_info( pose::Pose & pose ){
+
+	using namespace core::pose;
+	using namespace core::scoring::constraints;
+	using namespace core::id;
+
+	ConstraintSetOP cst_set( new ConstraintSet );
+
+	ConstraintSetCOP full_model_cst_set = const_full_model_info( pose ).cst_set();
+	if ( full_model_cst_set != 0 ){
+		pose::Pose const & full_model_pose = const_full_model_info( pose ).full_model_pose_for_constraints();
+		utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+		id::SequenceMappingOP sequence_map( new SequenceMapping );
+		for ( Size n = 1; n <= full_model_pose.total_residue(); n++ ){
+			if ( res_list.has_value( n ) ){
+				sequence_map->push_back( res_list.index( n ) );
+			} else {
+				sequence_map->push_back( 0 );
+			}
+		}
+		cst_set = full_model_cst_set->remapped_clone( full_model_pose, pose, sequence_map );
+	}
+	pose.constraint_set( cst_set );
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+update_pose_objects_from_full_model_info( pose::Pose & pose ) {
+	update_pdb_info_from_full_model_info( pose );
+	update_constraint_set_from_full_model_info( pose );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
 update_res_list_in_full_model_info_and_pdb_info( pose::Pose & pose, utility::vector1< Size > const & res_list_new ){
 	FullModelInfoOP full_model_info = const_full_model_info( pose ).clone_info();
 	full_model_info->set_res_list( res_list_new );
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
 	runtime_assert( check_full_model_info_OK( pose ) );
-	update_pdb_info_from_full_model_info( pose );
+	update_pose_objects_from_full_model_info( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,22 +225,6 @@ reorder_full_model_info_after_prepend( pose::Pose & pose, Size const res_to_add,
 	update_res_list_in_full_model_info_and_pdb_info( pose, res_list_new );
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-update_pdb_info_from_full_model_info( pose::Pose & pose ){
-
-	using namespace core::pose;
-
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
-
-	PDBInfoOP pdb_info( new PDBInfo( pose ) );
-	pdb_info->set_numbering( const_full_model_info( pose ).full_model_parameters()->full_to_conventional( res_list ) );
-	pdb_info->set_chains(    figure_out_conventional_chains_from_full_model_info( pose ) );
-
-	pose.pdb_info( pdb_info );
-
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 utility::vector1< char >

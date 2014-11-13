@@ -26,6 +26,7 @@
 #include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
@@ -134,6 +135,7 @@ namespace modeler {
 		bool figure_out_prepack_res_;
 		bool prepack_res_was_inputted_;
 		packer::StepWiseMasterPackerOP master_packer_;
+		scoring::constraints::ConstraintSetOP cst_set_;
 
 	};
 
