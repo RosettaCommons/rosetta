@@ -488,10 +488,17 @@ private: // data
     bool rosetta_scripts_keep_current_ds_ ;
 	Size rosetta_scripts_min_loop_ ;
 	bool rosetta_scripts_ ;
-
 	//for saving results from multiple runs
 	core::pose::PoseOP last_input_pose_;
+	
 	forge::remodel::RemodelAccumulator accumulator_;
+	bool relax_bb_for_disulf_;
+	bool use_match_rt_ ;
+	bool use_disulf_fa_score_;
+	core::Real disulf_fa_max_ ;
+
+
+
 
 
 

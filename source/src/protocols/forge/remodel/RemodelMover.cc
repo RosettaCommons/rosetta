@@ -206,6 +206,10 @@ RemodelMover::RemodelMover() :
 	rosetta_scripts_min_loop_ = 1;
 	last_input_pose_ = NULL;
 	rosetta_scripts_ = false;
+	relax_bb_for_disulf_ = false;
+	use_match_rt_ = true;
+	use_disulf_fa_score_ = false;
+	disulf_fa_max_ = -0.25;
 
 }
 
@@ -243,7 +247,11 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 	rosetta_scripts_min_loop_( rval.rosetta_scripts_min_loop_),
 	rosetta_scripts_( rval.rosetta_scripts_),
 	last_input_pose_(rval.last_input_pose_),
-	accumulator_(rval.accumulator_)
+	accumulator_(rval.accumulator_),
+	relax_bb_for_disulf_(rval.relax_bb_for_disulf_),
+	use_match_rt_(rval.use_match_rt_),
+	use_disulf_fa_score_(rval.use_disulf_fa_score_),
+	disulf_fa_max_(rval.disulf_fa_max_)
 
 
 
@@ -896,7 +904,8 @@ void RemodelMover::apply( Pose & pose ) {
 					match_rt_limit = option[OptionKeys::remodel::match_rt_limit];
 				}
 
-				disulfPass = designMover.find_disulfides_in_the_neighborhood( pose, disulf_partners, match_rt_limit, rosetta_scripts_min_loop_, rosetta_scripts_include_current_ds_, rosetta_scripts_keep_current_ds_);
+				disulfPass = designMover.find_disulfides_in_the_neighborhood( pose, disulf_partners, match_rt_limit, rosetta_scripts_min_loop_, rosetta_scripts_include_current_ds_, rosetta_scripts_keep_current_ds_,
+																			  relax_bb_for_disulf_, use_match_rt_, use_disulf_fa_score_, disulf_fa_max_);
 				if ( disulfPass != true ) {
 					i--; //for now control disulf with num_trajectory flag, too.
 					continue;
@@ -2379,14 +2388,42 @@ RemodelMover::parse_my_tag(
 	}	else {
 		rosetta_scripts_keep_current_ds_ = false;
 	}
-	TR << "Setting min_loop " << rosetta_scripts_min_loop_ << std::endl;
+	TR << "Setting keep_current_disulfides " << rosetta_scripts_keep_current_ds_ << std::endl;
 
 	if( tag->hasOption("include_current_disulfides") ) {
 		rosetta_scripts_include_current_ds_ = tag->getOption< bool>( "include_current_disulfides", false ); 
 	}	else {
 		rosetta_scripts_include_current_ds_ = false;
 	}
-	TR << "Setting min_loop " << rosetta_scripts_min_loop_ << std::endl;
+	TR << "Setting include_current_disulfides " << rosetta_scripts_include_current_ds_ << std::endl;
+
+	if( tag->hasOption("relax_bb_for_disulf") ) {
+		relax_bb_for_disulf_ = tag->getOption< bool>( "relax_bb_for_disulf", false ); 
+	}	else {
+		relax_bb_for_disulf_ = false;
+	}
+	TR << "Setting relax_bb_for_disulf " << relax_bb_for_disulf_ << std::endl;
+
+	if( tag->hasOption("use_match_rt") ) {
+		use_match_rt_ = tag->getOption< bool>( "use_match_rt", false ); 
+	}	else {
+		use_match_rt_ = true;
+	}
+	TR << "Setting use_match_rt " << use_match_rt_ << std::endl;
+
+	if( tag->hasOption("use_disulf_fa_score") ) {
+		use_disulf_fa_score_ = tag->getOption< bool>( "use_disulf_fa_score", false ); 
+	}	else {
+		use_disulf_fa_score_ = false;
+	}
+	TR << "Setting use_disulf_fa_score " << use_disulf_fa_score_ << std::endl;
+
+	if( tag->hasOption("disulf_fa_max") ) {
+		disulf_fa_max_ = tag->getOption< core::Real>( "disulf_fa_max", -0.25 ); 
+	}	else {
+		disulf_fa_max_ = -0.25;
+	}
+	TR << "Setting disulf_fa_max " << disulf_fa_max_ << std::endl;
 }
 
 

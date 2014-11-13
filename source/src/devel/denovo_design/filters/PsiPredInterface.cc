@@ -157,6 +157,7 @@ PsiPredInterface::parse_psipred_output( core::pose::Pose const & /*pose*/,
 		core::Size resi( 0 );
 		char resn( 'X' ), ss( 'Y' );
 		core::Real loop( 0.0 ), helix( 0.0 ), sheet( 0.0 );
+
 		line_stream >> resi >> resn >> ss >> loop >> helix >> sheet;
 		//TR << "Read line, resi=" << resi << " resn=" << resn << " ss=" << ss << " loop=" << loop << " helix=" << helix << " casheet=" << sheet << std::endl;
 
@@ -243,6 +244,10 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 
 		PsiPredResult chain_result( parse_psipred_output( *(poses[i]), buffer.str(), chain_blueprint, psipred_horiz_filename ) );
 
+		//for (core::Size j = 1; j <= chain_result.psipred_prob.size(); ++j) {
+		//	TR << "chainresult" << j << "  " << chain_result.psipred_prob[j] << std::endl;
+		//}
+
 		result.psipred_prob.insert(result.psipred_prob.end(), chain_result.psipred_prob.begin(), chain_result.psipred_prob.end());
 		result.psipred2_confidence.insert(result.psipred2_confidence.end(), chain_result.psipred2_confidence.begin(), chain_result.psipred2_confidence.end());
 		result.pred_ss += chain_result.pred_ss;
@@ -255,6 +260,10 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 
 	// parse and save result in the cache
 	}
+
+	//for (core::Size j = 1; j <= result.psipred_prob.size(); ++j) {
+	//	TR << "result" << j << "  " << result.psipred_prob[j] << std::endl;
+	//}
 
 	return result;
 }

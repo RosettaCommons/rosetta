@@ -91,8 +91,9 @@ public: // options
 
 	void set_state( std::string state_tag );
 
-	bool find_disulfides_in_the_neighborhood( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, const core::Energy & match_rt_limit, const Size & rosetta_scripts_min_loop_,
-											const bool & rosetta_scripts_include_current_ds_, const bool & rosetta_scripts_keep_current_ds_);
+	bool find_disulfides_in_the_neighborhood( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, const core::Energy & match_rt_limit, const Size & rosetta_scripts_min_loop,
+											const bool & rosetta_scripts_include_current_ds, const bool & rosetta_scripts_keep_current_ds,
+											const bool & relax_bb_for_disulf, const bool & use_match_rt, const bool & use_disulf_fa_score, const core::Real disulf_fa_max);
 	void make_disulfide( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm );
 	void make_disulfide_fast( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners);
 

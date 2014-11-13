@@ -43,6 +43,7 @@
 #include <protocols/forge/remodel/RemodelRotamerLinks.hh>
 #include <protocols/forge/methods/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 
 // C++ headers
 
@@ -568,9 +569,40 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 }
 
+core::Real build_and_score_disulfide(core::pose::Pose & blank_pose, core::scoring::ScoreFunctionOP sfxn, const bool relax_bb, core::Size const res1, core::Size const res2) {
 
-bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size,Size> > & disulf_partners, const core::Energy & match_rt_limit, const Size & rosetta_scripts_min_loop_,
-															const bool & rosetta_scripts_include_current_ds_, const bool & rosetta_scripts_keep_current_ds_) {
+	
+	//blank_pose.dump_pdb("pre_disulf.pdb");
+
+	core::conformation::Residue old_res1 = blank_pose.residue(res1);
+	core::conformation::Residue old_res2 = blank_pose.residue(res2);
+
+	core::kinematics::MoveMapOP mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
+	mm->set_bb(relax_bb);
+	mm->set_chi(true);
+	//utility::vector1<std::pair<core::Size, core::Size> > disulf;
+	//disulf.push_back(std::pair<core::Size, core::Size>(res1, res2));
+
+	//make_disulfide(blank_pose, disulf, mm);
+	
+	core::conformation::form_disulfide(blank_pose.conformation(), res1, res2);
+	core::util:: rebuild_disulfide(blank_pose, res1,res2, NULL /*task*/, NULL /*scfxn*/, mm, NULL /*min scfxn*/);
+
+	core::Real const score = (*sfxn)(blank_pose) * 0.50;
+	//sfxn->show( TR, blank_pose );
+	//blank_pose.dump_pdb("with_disulf.pdb");
+
+
+	blank_pose.replace_residue(res1, old_res1, false);
+	blank_pose.replace_residue(res2, old_res2, false);
+	//blank_pose.dump_pdb("post_disulf.pdb");
+
+	return score;
+}
+
+bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size,Size> > & disulf_partners, const core::Energy & match_rt_limit, const Size & rosetta_scripts_min_loop,
+															const bool & rosetta_scripts_include_current_ds, const bool & rosetta_scripts_keep_current_ds,
+															const bool & relax_bb_for_disulf, const bool & use_match_rt, const bool & use_disulf_fa_score, const core::Real disulf_fa_max) {
 
 	using core::scoring::disulfides::DisulfideMatchingPotential;
 	using namespace core::chemical;
@@ -673,47 +705,86 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	}
 	TR << std::endl;
 
+	core::pose::Pose pose_copy = pose;
+	for (core::Size i = 1; i <= pose_copy.total_residue(); ++i) {
+		if (pose_copy.residue(i).name3() != "GLY") {
+			protocols::simple_moves::MutateResidue make_ala(i,"ALA");
+			make_ala.apply(pose_copy);
+			TR << "Mutating residue " << i << " to ALA" << std::endl;
+		}
+	}
+	core::scoring::ScoreFunctionOP sfxn_disulfide_only = core::scoring::ScoreFunctionOP(new core::scoring::ScoreFunction());
+	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
+
+
 	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
 		for ( utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; itr2++ ) {
-			if ((nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop_))) &&
-					std::abs( core::SSize(*itr2 - *itr) )  > std::abs( core::SSize(rosetta_scripts_min_loop_) ) &&
+			if ((nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop))) &&
+					std::abs( core::SSize(*itr2 - *itr) )  > std::abs( core::SSize(rosetta_scripts_min_loop) ) &&
 				(*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart) {
 				TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 				// distance check
 				if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
 					//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-					if (!rosetta_scripts_keep_current_ds_ || ( pose.residue(*itr).name() != "CYD" && pose.residue(*itr2).name() != "CYD")) {
+					if (!rosetta_scripts_keep_current_ds || ( pose.residue(*itr).name() != "CYD" && pose.residue(*itr2).name() != "CYD")) {
 						Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
 						if ( dist_squared > 25 ) {
 							TR << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;
 
 						} else {
-							disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
-							TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
-							int seqGap = (int)*itr2 - (int)*itr;
 							//if ( match_rt < option[OptionKeys::remodel::match_rt_limit] && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
-							if ( match_rt < match_rt_limit && std::abs( seqGap ) > 1  ) {
-								TR << "DISULF possible " << dist_squared << std::endl;
-								TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-								TR << "match_rt " << match_rt << std::endl;
-								std::pair< Size, Size > temp_pair;
-								std::pair< Size, Size > alt_pair;
+							if (use_disulf_fa_score == true) {
+								core::Real const disulfide_fa_score = build_and_score_disulfide(pose_copy, sfxn_disulfide_only, relax_bb_for_disulf, *itr, *itr2);
+								TR << "DISULF FA SCORE RES " << *itr << " " << *itr2 << " " << disulfide_fa_score << std::endl;
+								if ( disulfide_fa_score < disulf_fa_max   ) {
+									TR << "DISULF possible " << dist_squared << std::endl;
+									TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+									//TR << " " << match_rt << std::endl;
+									std::pair< Size, Size > temp_pair;
+									std::pair< Size, Size > alt_pair;
+									
+									temp_pair = std::make_pair( *itr, *itr2 );
+									alt_pair = std::make_pair( *itr2, *itr );
+									
+									if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
+										std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
+										disulf_partners.push_back( temp_pair );									
+									}
 
-								temp_pair = std::make_pair( *itr, *itr2 );
-								alt_pair = std::make_pair( *itr2, *itr );
-
-								if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
-									std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
-									disulf_partners.push_back( temp_pair );
-								}
+										
 
 
+									pass = 1;
+								} else {
+									if (rosetta_scripts_include_current_ds && pose.residue(*itr).is_bonded(pose.residue(*itr2))) {
+										TR << "DISULF \tIncluding pre-existing disulfide despite failed disulf_fa_max check." << std::endl;
+										std::pair< Size, Size > temp_pair;
+										std::pair< Size, Size > alt_pair;
+										
+										temp_pair = std::make_pair( *itr, *itr2 );
+										alt_pair = std::make_pair( *itr2, *itr );
+										
+										if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
+											std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
+											disulf_partners.push_back( temp_pair );									
+										}
+									} else {
+										TR << "DISULF \tFailed disulf_fa_max check." << std::endl;
+									}
+								}							
 
 
-								pass = 1;
-							} else {
-								if (rosetta_scripts_include_current_ds_ && pose.residue(*itr).is_bonded(pose.residue(*itr2))) {
-									TR << "DISULF \tIncluding pre-existing disulfide despite failed match_rt_limit check." << std::endl;
+							}
+
+
+
+							if (use_match_rt == true) {
+								disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
+								TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
+								if ( match_rt < match_rt_limit  ) {
+									TR << "DISULF possible " << dist_squared << std::endl;
+									TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+									TR << "match_rt " << match_rt << std::endl;
 									std::pair< Size, Size > temp_pair;
 									std::pair< Size, Size > alt_pair;
 
@@ -724,10 +795,30 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 										std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
 										disulf_partners.push_back( temp_pair );
 									}
+
+										
+
+
+									pass = 1;
 								} else {
-									TR << "DISULF \tFailed match_rt_limit check." << std::endl;
+									if (rosetta_scripts_include_current_ds && pose.residue(*itr).is_bonded(pose.residue(*itr2))) {
+										TR << "DISULF \tIncluding pre-existing disulfide despite failed match_rt_limit check." << std::endl;
+										std::pair< Size, Size > temp_pair;
+										std::pair< Size, Size > alt_pair;
+										
+										temp_pair = std::make_pair( *itr, *itr2 );
+										alt_pair = std::make_pair( *itr2, *itr );
+										
+										if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
+											std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
+											disulf_partners.push_back( temp_pair );									
+										}
+									} else {
+										TR << "DISULF \tFailed match_rt_limit check." << std::endl;
+									}
 								}
 							}
+
 						}
 
 					} else {

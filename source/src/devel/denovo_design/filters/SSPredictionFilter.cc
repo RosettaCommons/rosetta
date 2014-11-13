@@ -144,6 +144,7 @@ SSPredictionFilter::compute_mismatch_prob( utility::vector1< core::Real > const 
 	core::Real sum( 0.0 );
 	for ( core::Size i=1; i<=probabilities.size(); ++i ) {
 		sum += log( probabilities[i]);
+		//TR << i << "  " << probabilities[i] << "  " <<log(probabilities[i]) << std::endl;
 	}
 
 	TR << "Probability of correct secondary structure is " << exp(sum/probabilities.size()) << "^(n_residues) -- Final value=" << 1-exp(sum/probabilities.size()) << std::endl;
