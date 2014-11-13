@@ -62,20 +62,20 @@
 /// @brief Assert that the condition holds. Evaluated for both debug and release builds
 #define runtime_assert(_Expression) \
 	if ( !(_Expression) ) { \
-		utility::cond_exit(_Expression, __FILE__, __LINE__, #_Expression); \
+		utility::exit(__FILE__, __LINE__, #_Expression); \
 	}
 
 /// @brief Assert that the condition holds. Evaluated for both debug and release builds
 #define runtime_assert_msg(_Expression, msg) \
 	if ( !(_Expression) ) { \
-		utility::cond_exit(_Expression, __FILE__, __LINE__, #_Expression " MSG:" msg ); \
+		utility::exit(__FILE__, __LINE__, #_Expression " MSG:" msg ); \
 	}
 
 /// @brief Assert that the condition holds. Evaluated for both debug and release builds
 // Does the same thing as runtime_assert_msg but allows C++ strings to be used for the message.
 #define runtime_assert_string_msg(_Expression, msg) \
 	if ( !(_Expression) ) { \
-		utility::cond_exit(_Expression, __FILE__, __LINE__, msg ); \
+		utility::exit(__FILE__, __LINE__, msg ); \
 	}
 
 namespace utility {
