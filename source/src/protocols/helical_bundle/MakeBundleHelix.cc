@@ -26,6 +26,7 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/random/random.hh>
+#include <numeric/xyz.functions.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -84,6 +85,9 @@ MakeBundleHelix::MakeBundleHelix():
 		delta_omega1_(),
 		delta_z1_(),
 		delta_t_(0.0),
+		allow_dihedrals_(true),
+		allow_bondangles_(false),
+		allow_bondlengths_(false),
 		last_apply_failed_(false)
 {}
 
@@ -156,10 +160,26 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 	core::pose::Pose helixpose_copy = helixpose;
 	place_atom_positions(helixpose_copy, atom_positions, helix_start, helix_end);
 
+	//Copy the bond length values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
+	//to the ideal pose.
+	if(allow_bondlengths()) {
+		if(TR.Debug.visible()) TR.Debug << "Copying bond length values." << std::endl;
+		copy_helix_bondlengths(helixpose, helixpose_copy, helix_start, helix_end);
+	}
+
+	//Copy the bond angle values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
+	//to the ideal pose.
+	if(allow_bondangles()) {
+		if(TR.Debug.visible()) TR.Debug << "Copying bond angle values." << std::endl;
+		copy_helix_bondangles(helixpose, helixpose_copy, helix_start, helix_end);
+	}
+
 	//Copy the dihedral values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
 	//to the ideal pose.
-	if(TR.Debug.visible()) TR.Debug << "Copying dihedral values." << std::endl;
-	copy_helix_dihedrals(helixpose, helixpose_copy, helix_start, helix_end);
+	if(allow_dihedrals()) {
+		if(TR.Debug.visible()) TR.Debug << "Copying dihedral values." << std::endl;
+		copy_helix_dihedrals(helixpose, helixpose_copy, helix_start, helix_end);
+	}
 
 	//Align the ideal pose to the pose in which we set the x,y,z coordinates of mainchain atoms.
 	if(TR.Debug.visible()) TR.Debug << "Aligning to ideal helix." << std::endl;
@@ -296,6 +316,56 @@ void MakeBundleHelix::place_atom_positions(
 		}
 		++index;
 	}
+
+	pose.update_residue_neighbors();
+
+	return;
+}
+
+/// @brief Copy backbone bond length values from one pose, where helix mainchain atom coordinates have been
+/// set with the Crick equations, to another with ideal geometry.
+void MakeBundleHelix::copy_helix_bondlengths(
+	core::pose::Pose &pose,
+	core::pose::Pose const &ref_pose,
+	core::Size const helix_start,
+	core::Size const helix_end
+) const {
+	for(core::Size ir=helix_start; ir<=helix_end; ++ir) {
+		for(core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
+			if(ia==1 && ir==helix_start) continue; //Skip the first atom.
+			core::id::AtomID const thisatom( ia, ir );
+			core::id::AtomID const prevatom( (ia==1 ? iamax : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom, in which case the previous atom is iamax in the previous residue.
+			pose.conformation().set_bond_length( thisatom, prevatom, ref_pose.xyz(thisatom).distance( ref_pose.xyz(prevatom) ) );
+		}
+	}
+
+	//TODO properly handle the first and last residues using the extra residue xyz coordinates that were generated!
+
+	pose.update_residue_neighbors();
+
+	return;
+}
+
+/// @brief Copy backbone bond angle values from one pose, where helix mainchain atom coordinates have been
+/// set with the Crick equations, to another with ideal geometry.
+void MakeBundleHelix::copy_helix_bondangles(
+	core::pose::Pose &pose,
+	core::pose::Pose const &ref_pose,
+	core::Size const helix_start,
+	core::Size const helix_end
+) const {
+	for(core::Size ir=helix_start; ir<=helix_end; ++ir) {
+		for(core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
+			if(ia==1 && ir==helix_start) continue; //Skip the first atom.
+			if(ia==iamax && ir==helix_end) continue; //Skip the last atom.
+			core::id::AtomID const thisatom( ia, ir );
+			core::id::AtomID const prevatom( (ia==1 ? iamax : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom in this residue, in which case the previous atom is iamax in the previous residue.
+			core::id::AtomID const nextatom( (ia==iamax ? 1 : ia + 1), (ia==iamax ? ir+1 : ir) ); //The next atom is ia+1 in this residue, unless this atom is the last atom in this residue, in which case the next atom is the first atom in the next residue.
+			pose.conformation().set_bond_angle( prevatom, thisatom, nextatom, numeric::angle_radians<core::Real>( ref_pose.xyz(prevatom), ref_pose.xyz(thisatom), ref_pose.xyz(nextatom) ) );
+		}
+	}
+
+	//TODO properly handle the first and last residues using the extra residue xyz coordinates that were generated!
 
 	pose.update_residue_neighbors();
 

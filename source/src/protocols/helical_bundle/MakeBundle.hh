@@ -238,6 +238,42 @@ public:
 	///
 	core::Size default_helix_length() const;
 
+	/// @brief Set the default for whether bond lengths should be set by the mover
+	///
+	void set_default_allow_bondlengths(bool const &val) { default_allow_bondlengths_=val; default_allow_bondlengths_set_=true; }
+
+	/// @brief Returns true if and only if the default for whether bond lengths should be set by the mover has been set
+	///
+	bool default_allow_bondlengths_set() const { return default_allow_bondlengths_set_; }
+
+	/// @brief Returns the default for whether bond lengths should be set by the mover
+	///
+	bool default_allow_bondlengths() const;
+
+	/// @brief Set the default for whether bond lengths should be set by the mover
+	///
+	void set_default_allow_bondangles(bool const &val) { default_allow_bondangles_=val; default_allow_bondangles_set_=true; }
+
+	/// @brief Returns true if and only if the default for whether bond lengths should be set by the mover has been set
+	///
+	bool default_allow_bondangles_set() const { return default_allow_bondangles_set_; }
+
+	/// @brief Returns the default for whether bond lengths should be set by the mover
+	///
+	bool default_allow_bondangles() const;
+
+	/// @brief Set the default for whether bond lengths should be set by the mover
+	///
+	void set_default_allow_dihedrals(bool const &val) { default_allow_dihedrals_=val; default_allow_dihedrals_set_=true; }
+
+	/// @brief Returns true if and only if the default for whether bond lengths should be set by the mover has been set
+	///
+	bool default_allow_dihedrals_set() const { return default_allow_dihedrals_set_; }
+
+	/// @brief Returns the default for whether bond lengths should be set by the mover
+	///
+	bool default_allow_dihedrals() const;
+
 private:
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE DATA                                                      //
@@ -347,6 +383,30 @@ private:
 	/// @brief Has the default number of residues in the helix been specified?
 	///
 	bool default_helix_length_set_;
+
+	/// @brief Default allow_bondlengths value (should the mover be allowed to set bond lengths?)
+	///
+	bool default_allow_bondlengths_;
+
+	/// @brief Has the allow_bondlengths value been specified?
+	///
+	bool default_allow_bondlengths_set_;
+
+	/// @brief Default allow_bondangles value (should the mover be allowed to set bond lengths?)
+	///
+	bool default_allow_bondangles_;
+
+	/// @brief Has the allow_bondangles value been specified?
+	///
+	bool default_allow_bondangles_set_;
+
+	/// @brief Default allow_dihedrals value (should the mover be allowed to set bond lengths?)
+	///
+	bool default_allow_dihedrals_;
+
+	/// @brief Has the allow_dihedrals value been specified?
+	///
+	bool default_allow_dihedrals_set_;
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //

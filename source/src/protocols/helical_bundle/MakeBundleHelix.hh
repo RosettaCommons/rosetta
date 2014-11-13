@@ -227,6 +227,32 @@ public:
 	bool last_apply_failed() const { return last_apply_failed_; }
 
 
+	/// @brief Sets whether this mover is allowed to set mainchain dihedrals.
+	///
+	void set_allow_dihedrals( bool const val ) { allow_dihedrals_=val; return; }
+
+	/// @brief Sets whether this mover is allowed to set mainchain bond angles.
+	///
+	void set_allow_bondangles( bool const val ) { allow_bondangles_=val; return; }
+
+	/// @brief Sets whether this mover is allowed to set mainchain bond lengths.
+	///
+	void set_allow_bondlengths( bool const val ) { allow_bondlengths_=val; return; }
+
+
+	/// @brief Returns "true" if and only if this mover is allowed to set mainchain dihedrals.
+	///
+	bool allow_dihedrals() const { return allow_dihedrals_; }
+
+	/// @brief Returns "true" if and only if this mover is allowed to set mainchain bond angles.
+	///
+	bool allow_bondangles() const { return allow_bondangles_; }
+
+	/// @brief Returns "true" if and only if this mover is allowed to set mainchain bond lengths.
+	///
+	bool allow_bondlengths() const { return allow_bondlengths_; }
+
+
 private:
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE DATA                                                      //
@@ -294,6 +320,20 @@ private:
 	///
 	core::Real delta_t_;
 
+	/// @brief Should the mover set dihedral values?
+	/// @details True by default.
+	bool allow_dihedrals_;
+
+	/// @brief Should the mover set bond angle values?
+	/// @details False by default.  If true, the generated backbone is non-ideal but might
+	/// conform to a perfect helix of helices more precisely.
+	bool allow_bondangles_;
+
+	/// @brief Should the mover set bond length values?
+	/// @details False by default.  If true, the generated backbone is non-ideal but might
+	/// conform to a perfect helix of helices more precisely.
+	bool allow_bondlengths_;
+
 	/// @brief Did the last apply fail?
 	/// @details Initialized to "false"; "true" if the last apply failed.
 	bool last_apply_failed_;
@@ -323,6 +363,24 @@ private:
 	void place_atom_positions(
 		core::pose::Pose &pose,
 		utility::vector1 < utility::vector1 < numeric::xyzVector < core::Real >  > > const &atom_positions,
+		core::Size const helix_start,
+		core::Size const helix_end
+	) const;
+
+	/// @brief Copy backbone bond length values from one pose, where helix mainchain atom coordinates have been
+	/// set with the Crick equations, to another with ideal geometry.
+	void copy_helix_bondlengths(
+		core::pose::Pose &pose,
+		core::pose::Pose const &ref_pose,
+		core::Size const helix_start,
+		core::Size const helix_end
+	) const;
+
+	/// @brief Copy backbone bond angle values from one pose, where helix mainchain atom coordinates have been
+	/// set with the Crick equations, to another with ideal geometry.
+	void copy_helix_bondangles(
+		core::pose::Pose &pose,
+		core::pose::Pose const &ref_pose,
 		core::Size const helix_start,
 		core::Size const helix_end
 	) const;

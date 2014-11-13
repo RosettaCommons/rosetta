@@ -97,7 +97,13 @@ MakeBundle::MakeBundle():
 		default_invert_(false),
 		default_invert_set_(false),
 		default_helix_length_(0),
-		default_helix_length_set_(false)
+		default_helix_length_set_(false),
+		default_allow_bondlengths_(false),
+		default_allow_bondlengths_set_(false),
+		default_allow_bondangles_(false),
+		default_allow_bondangles_set_(false),
+		default_allow_dihedrals_(true),
+		default_allow_dihedrals_set_(false)
 {}
 
 ///
@@ -201,6 +207,8 @@ MakeBundle::parse_my_tag(
 
 	if(TR.visible()) TR << "Parsing options for MakeBundle (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
 
+	runtime_assert_string_msg( !tag->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );
+
 	//Set options for the MakeBundle mover:
 	if (tag->hasOption("symmetry")) {
 		set_symmetry( tag->getOption<core::Size>("symmetry", 0) );
@@ -212,6 +220,26 @@ MakeBundle::parse_my_tag(
 	if ( tag->hasOption("reset") ) {
 		set_reset_pose( tag->getOption<bool>("reset", false) );
 		if(TR.visible()) TR << "Reset mode set to " << (reset_pose() ? "true" : "false") << "." << std::endl;
+	}
+
+	//Set defaults for whether the mover can set bond lengths, bond angles, and dihedrals:
+	if (tag->hasOption("set_bondlengths")) {
+		set_default_allow_bondlengths( tag->getOption<bool>("set_bondlengths", false) );
+		if(TR.visible()) {
+			TR << "Set the default permission for the mover to set bondlengths to " << (default_allow_bondlengths() ? "true." : "false.") << std::endl;
+		}
+	}
+	if (tag->hasOption("set_bondangles")) {
+		set_default_allow_bondangles( tag->getOption<bool>("set_bondangles", false) );
+		if(TR.visible()) {
+			TR << "Set the default permission for the mover to set bondangles to " << (default_allow_bondangles() ? "true." : "false.") << std::endl;
+		}
+	}
+	if (tag->hasOption("set_dihedrals")) {
+		set_default_allow_dihedrals( tag->getOption<bool>("set_dihedrals", true) );
+		if(TR.visible()) {
+			TR << "Set the default permission for the mover to set dihedrals to " << (default_allow_dihedrals() ? "true." : "false.") << std::endl;
+		}
 	}
 
 	//Set defaults for the major helix:
@@ -241,9 +269,9 @@ MakeBundle::parse_my_tag(
 		set_default_z1( tag->getOption<core::Real>("z1", 0) );
 		if(TR.visible()) TR << "Default z1 (minor helix rise per residue) set to " << default_z1() << "." << std::endl;
 	}
-	if (tag->hasOption("delta_omega1_all")) {
-		set_default_delta_omega1_all( tag->getOption<core::Real>("delta_omega1_all", 0) );
-		if(TR.visible()) TR << "Default delta_omega1_all (minor helix rotation) set to " << default_delta_omega1_all() << "." << std::endl;
+	if (tag->hasOption("delta_omega1")) {
+		set_default_delta_omega1_all( tag->getOption<core::Real>("delta_omega1", 0) );
+		if(TR.visible()) TR << "Default delta_omega1 (minor helix rotation) set to " << default_delta_omega1_all() << "." << std::endl;
 	}
 
 	//Set defaults for other params:
@@ -272,6 +300,7 @@ MakeBundle::parse_my_tag(
 	for( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
 		if ( (*tag_it)->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
 			at_least_one_helix = true;
+			runtime_assert_string_msg( !(*tag_it)->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );
 			add_helix(); //This will set all of the parameters to defaults
 			core::Size const helix_index( n_helices() ); //The index of the current helix
 			if( TR.visible() ) TR << "Added a helix." << std::endl;
@@ -282,6 +311,26 @@ MakeBundle::parse_my_tag(
 				if(TR.visible()) TR << "\tRead minor helix parameters from " << paramsfile << "." << std::endl;
 			}
 			//SECOND, check for params that have been set manually, and set accordingly.
+			//Params for what DOFs can be set:
+			if ((*tag_it)->hasOption("set_bondlengths")) {
+				helix(helix_index)->set_allow_bondlengths( (*tag_it)->getOption<bool>("set_bondlengths", false) );
+				if(TR.visible()) {
+					TR << "\tSet the permission for the mover to set bondlengths for this helix to " << (default_allow_bondlengths() ? "true." : "false.") << std::endl;
+				}
+			}
+			if ((*tag_it)->hasOption("set_bondangles")) {
+				helix(helix_index)->set_allow_bondangles( (*tag_it)->getOption<bool>("set_bondangles", false) );
+				if(TR.visible()) {
+					TR << "\tSet the permission for the mover to set bondangles for this helix to " << (default_allow_bondangles() ? "true." : "false.") << std::endl;
+				}
+			}
+			if ((*tag_it)->hasOption("set_dihedrals")) {
+				helix(helix_index)->set_allow_dihedrals( (*tag_it)->getOption<bool>("set_dihedrals", true) );
+				if(TR.visible()) {
+					TR << "\tSet the permission for the mover to set dihedrals for this helix to " << (default_allow_dihedrals() ? "true." : "false.") << std::endl;
+				}
+			}
+
 			//Major helix params:
 			if( (*tag_it)->hasOption( "r0" ) ) {
 				core::Real const r0val( (*tag_it)->getOption<core::Real>("r0", 0) );
@@ -310,10 +359,10 @@ MakeBundle::parse_my_tag(
 				helix(helix_index)->set_z1(z1val);
 				if(TR.visible()) TR << "\tSet z1 value (minor helix rise per residue) to " << z1val << "." << std::endl;
 			}
-			if( (*tag_it)->hasOption( "delta_omega1_all" ) ) {
-				core::Real const deltaomega1val( (*tag_it)->getOption<core::Real>("delta_omega1_all", 0) );
+			if( (*tag_it)->hasOption( "delta_omega1" ) ) {
+				core::Real const deltaomega1val( (*tag_it)->getOption<core::Real>("delta_omega1", 0) );
 				helix(helix_index)->set_delta_omega1_all(deltaomega1val);
-				if(TR.visible()) TR << "\tSet delta_omega1_all value (minor helix rotation) to " << deltaomega1val << "." << std::endl;
+				if(TR.visible()) TR << "\tSet delta_omega1 value (minor helix rotation) to " << deltaomega1val << "." << std::endl;
 			}
 
 			//Other params:
@@ -355,6 +404,10 @@ void MakeBundle::add_helix() {
 	if(default_r0_set()) helix(newindex)->set_r0( default_r0() );
 	if(default_omega0_set()) helix(newindex)->set_omega0( default_omega0() );
 	if(default_delta_omega0_set()) helix(newindex)->set_delta_omega0( default_delta_omega0() );
+
+	if(default_allow_bondlengths_set()) helix(newindex)->set_allow_bondlengths( default_allow_bondlengths() );
+	if(default_allow_bondangles_set()) helix(newindex)->set_allow_bondangles( default_allow_bondangles() );
+	if(default_allow_dihedrals_set()) helix(newindex)->set_allow_dihedrals( default_allow_dihedrals() );
 
 	if(default_crick_params_file_set()) helix(newindex)->set_minor_helix_params_from_file(default_crick_params_file()); //The default Crick params are read in from a file, but...
 	//Manual settings can override what was read in:
@@ -443,6 +496,27 @@ bool MakeBundle::default_invert() const {
 core::Size MakeBundle::default_helix_length() const {
 	runtime_assert_string_msg( default_helix_length_set(), "In protocols::helical_bundle::MakeBundle::default_helix_length(): The default number of residues per helix has not been set!" );
 	return default_helix_length_;
+}
+
+/// @brief Returns the default for whether bond lengths should be set by the mover
+///
+bool MakeBundle::default_allow_bondlengths() const {
+	runtime_assert_string_msg( default_allow_bondlengths_set(), "In protocols::helical_bundle::MakeBundle::default_allow_bondlengths(): The default allow_bondlengths value has not been set!" );
+	return default_allow_bondlengths_;
+}
+
+/// @brief Returns the default for whether bond angles should be set by the mover
+///
+bool MakeBundle::default_allow_bondangles() const {
+	runtime_assert_string_msg( default_allow_bondangles_set(), "In protocols::helical_bundle::MakeBundle::default_allow_bondangles(): The default allow_bondangles value has not been set!" );
+	return default_allow_bondangles_;
+}
+
+/// @brief Returns the default for whether dihedral angles should be set by the mover
+///
+bool MakeBundle::default_allow_dihedrals() const {
+	runtime_assert_string_msg( default_allow_dihedrals_set(), "In protocols::helical_bundle::MakeBundle::default_allow_dihedrals(): The default allow_dihedrals value has not been set!" );
+	return default_allow_dihedrals_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
