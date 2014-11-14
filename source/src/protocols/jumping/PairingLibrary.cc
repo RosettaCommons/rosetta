@@ -68,7 +68,7 @@ namespace utility {
 using protocols::jumping::StandardPairingLibrary;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< StandardPairingLibrary > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< StandardPairingLibrary >::singleton_mutex_{};
 template <> std::atomic< StandardPairingLibrary * > utility::SingletonBase< StandardPairingLibrary >::instance_( 0 );
 #else
 template <> StandardPairingLibrary * utility::SingletonBase< StandardPairingLibrary >::instance_( 0 );

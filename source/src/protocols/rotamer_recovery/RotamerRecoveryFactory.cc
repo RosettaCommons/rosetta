@@ -45,7 +45,7 @@ namespace utility {
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< RotamerRecoveryFactory > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< RotamerRecoveryFactory >::singleton_mutex_{};
 template <> std::atomic< RotamerRecoveryFactory * > utility::SingletonBase< RotamerRecoveryFactory >::instance_( 0 );
 #else
 template <> RotamerRecoveryFactory * utility::SingletonBase< RotamerRecoveryFactory >::instance_( 0 );

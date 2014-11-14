@@ -31,7 +31,7 @@ namespace utility {
 using core::scoring::saxs::SinXOverX;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< SinXOverX > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< SinXOverX >::singleton_mutex_{};
 template <> std::atomic< SinXOverX * > utility::SingletonBase< SinXOverX >::instance_( 0 );
 #else
 template <> SinXOverX * utility::SingletonBase< SinXOverX >::instance_( 0 );

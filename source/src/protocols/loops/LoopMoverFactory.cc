@@ -45,7 +45,7 @@ namespace utility {
 using protocols::loops::LoopMoverFactory;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< LoopMoverFactory > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< LoopMoverFactory >::singleton_mutex_{};
 template <> std::atomic< LoopMoverFactory * > utility::SingletonBase< LoopMoverFactory >::instance_( 0 );
 #else
 template <> LoopMoverFactory * utility::SingletonBase< LoopMoverFactory >::instance_( 0 );

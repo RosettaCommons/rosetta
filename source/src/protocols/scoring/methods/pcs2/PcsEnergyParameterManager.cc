@@ -63,7 +63,7 @@ namespace utility {
 using protocols::scoring::methods::pcs2::PcsEnergyParameterManager;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< PcsEnergyParameterManager > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< PcsEnergyParameterManager >::singleton_mutex_{};
 template <> std::atomic< PcsEnergyParameterManager * > utility::SingletonBase< PcsEnergyParameterManager >::instance_( 0 );
 #else
 template <> PcsEnergyParameterManager * utility::SingletonBase< PcsEnergyParameterManager >::instance_( 0 );

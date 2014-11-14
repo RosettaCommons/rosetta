@@ -74,7 +74,7 @@ namespace utility {
 using core::pack::interaction_graph::SurfacePotential;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< SurfacePotential > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< SurfacePotential >::singleton_mutex_{};
 template <> std::atomic< SurfacePotential * > utility::SingletonBase< SurfacePotential >::instance_( 0 );
 #else
 template <> SurfacePotential * utility::SingletonBase< SurfacePotential >::instance_( 0 );

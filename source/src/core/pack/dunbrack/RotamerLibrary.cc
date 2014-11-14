@@ -102,7 +102,7 @@ namespace utility {
 using core::pack::dunbrack::RotamerLibrary;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< RotamerLibrary > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< RotamerLibrary >::singleton_mutex_{};
 template <> std::atomic< RotamerLibrary * > utility::SingletonBase< RotamerLibrary >::instance_( 0 );
 #else
 template <> RotamerLibrary * utility::SingletonBase< RotamerLibrary >::instance_( 0 );

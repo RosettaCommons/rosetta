@@ -68,7 +68,7 @@ namespace utility {
 using core::pack::interaction_graph::RotamerDotsRadiusData;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< RotamerDotsRadiusData > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< RotamerDotsRadiusData >::singleton_mutex_{};
 template <> std::atomic< RotamerDotsRadiusData * > utility::SingletonBase< RotamerDotsRadiusData >::instance_( 0 );
 #else
 template <> RotamerDotsRadiusData * utility::SingletonBase< RotamerDotsRadiusData >::instance_( 0 );

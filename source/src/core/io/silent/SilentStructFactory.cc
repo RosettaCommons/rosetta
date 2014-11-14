@@ -41,7 +41,7 @@ namespace utility {
 using core::io::silent::SilentStructFactory;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< SilentStructFactory > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< SilentStructFactory >::singleton_mutex_{};
 template <> std::atomic< SilentStructFactory * > utility::SingletonBase< SilentStructFactory >::instance_( 0 );
 #else
 template <> SilentStructFactory * utility::SingletonBase< SilentStructFactory >::instance_( 0 );

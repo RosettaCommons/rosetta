@@ -60,7 +60,7 @@ namespace utility {
 using protocols::scoring::methods::pcs2::PcsGridSearchParameterManager;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< PcsGridSearchParameterManager > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< PcsGridSearchParameterManager >::singleton_mutex_{};
 template <> std::atomic< PcsGridSearchParameterManager * > utility::SingletonBase< PcsGridSearchParameterManager >::instance_( 0 );
 #else
 template <> PcsGridSearchParameterManager * utility::SingletonBase< PcsGridSearchParameterManager >::instance_( 0 );

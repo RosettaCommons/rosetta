@@ -43,7 +43,7 @@ namespace utility {
 using protocols::matdes::SymDofMoverSampler;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< SymDofMoverSampler > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< SymDofMoverSampler >::singleton_mutex_{};
 template <> std::atomic< SymDofMoverSampler * > utility::SingletonBase< SymDofMoverSampler >::instance_( 0 );
 #else
 template <> SymDofMoverSampler * utility::SingletonBase< SymDofMoverSampler >::instance_( 0 );

@@ -38,7 +38,7 @@ namespace utility {
 using protocols::noesy_assign::MethylNameLibrary;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< MethylNameLibrary > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< MethylNameLibrary >::singleton_mutex_{};
 template <> std::atomic< MethylNameLibrary * > utility::SingletonBase< MethylNameLibrary >::instance_( 0 );
 #else
 template <> MethylNameLibrary * utility::SingletonBase< MethylNameLibrary >::instance_( 0 );

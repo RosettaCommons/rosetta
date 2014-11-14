@@ -43,7 +43,7 @@ namespace utility {
 using core::pack::task::operation::ResLvlTaskOperationFactory;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< ResLvlTaskOperationFactory > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< ResLvlTaskOperationFactory >::singleton_mutex_{};
 template <> std::atomic< ResLvlTaskOperationFactory * > utility::SingletonBase< ResLvlTaskOperationFactory >::instance_( 0 );
 #else
 template <> ResLvlTaskOperationFactory * utility::SingletonBase< ResLvlTaskOperationFactory >::instance_( 0 );

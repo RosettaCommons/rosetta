@@ -27,7 +27,7 @@ namespace utility {
 using utility::Inline_File_Provider;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< Inline_File_Provider > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< Inline_File_Provider >::singleton_mutex_{};
 template <> std::atomic< Inline_File_Provider * > utility::SingletonBase< Inline_File_Provider >::instance_( 0 );
 #else
 template <> Inline_File_Provider * utility::SingletonBase< Inline_File_Provider >::instance_( 0 );

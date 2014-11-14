@@ -46,7 +46,7 @@ namespace utility {
 using protocols::loops::loop_mover::refine::LoopRefineInnerCycleFactory;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< LoopRefineInnerCycleFactory > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< LoopRefineInnerCycleFactory >::singleton_mutex_{};
 template <> std::atomic< LoopRefineInnerCycleFactory * > utility::SingletonBase< LoopRefineInnerCycleFactory >::instance_( 0 );
 #else
 template <> LoopRefineInnerCycleFactory * utility::SingletonBase< LoopRefineInnerCycleFactory >::instance_( 0 );

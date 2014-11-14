@@ -33,7 +33,7 @@ namespace utility {
 using basic::resource_manager::FallbackConfigurationFactory;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< FallbackConfigurationFactory > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< FallbackConfigurationFactory >::singleton_mutex_{};
 template <> std::atomic< FallbackConfigurationFactory * > utility::SingletonBase< FallbackConfigurationFactory >::instance_( 0 );
 #else
 template <> FallbackConfigurationFactory * utility::SingletonBase< FallbackConfigurationFactory >::instance_( 0 );

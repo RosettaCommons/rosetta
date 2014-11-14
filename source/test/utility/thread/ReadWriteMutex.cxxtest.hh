@@ -27,6 +27,7 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 
+#include <thread>
 #include <chrono>
 
 

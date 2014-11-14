@@ -48,7 +48,7 @@ namespace utility {
 using basic::sampling::orientations::QuaternionGridManager;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< QuaternionGridManager > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< QuaternionGridManager >::singleton_mutex_{};
 template <> std::atomic< QuaternionGridManager * > utility::SingletonBase< QuaternionGridManager >::instance_( 0 );
 #else
 template <> QuaternionGridManager * utility::SingletonBase< QuaternionGridManager >::instance_( 0 );

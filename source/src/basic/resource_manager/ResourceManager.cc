@@ -43,7 +43,7 @@ namespace utility {
 using basic::resource_manager::ResourceManager;
 
 #if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< ResourceManager > ::singleton_mutex_;
+template <> std::mutex utility::SingletonBase< ResourceManager >::singleton_mutex_{};
 template <> std::atomic< ResourceManager * > utility::SingletonBase< ResourceManager >::instance_( 0 );
 #else
 template <> ResourceManager * utility::SingletonBase< ResourceManager >::instance_( 0 );
