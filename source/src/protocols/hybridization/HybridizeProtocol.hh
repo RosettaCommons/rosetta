@@ -41,7 +41,6 @@ public:
 
 	void init();
 
-	void read_template_structures(utility::file::FileName template_list);
 	void read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames);
 
 	void add_template(
@@ -62,6 +61,12 @@ public:
 		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0),
 		std::string filename="default" );
+
+	void validate_template(
+		std::string filename,
+		std::string fasta,
+		core::pose::PoseOP template_pose
+	);
 
 	void pick_starting_template(core::Size & initial_template_index,
 		core::Size & initial_template_index_icluster,

@@ -196,11 +196,6 @@ HybridizeProtocol::HybridizeProtocol() :
 	using namespace basic::options::OptionKeys;
 
 	init();
-
-	// initialization may come from command line or from RS
-	if (option[cm::hybridize::template_list].user()) {
-		read_template_structures( option[cm::hybridize::template_list]() );
-	}
 }
 
 // sets default options
@@ -631,47 +626,49 @@ void HybridizeProtocol::add_template(
 	template_cst_reses_.push_back(cst_reses);
 }
 
-
-///@brief  Old way of parsing hybrid config files; RosettaScripts is now preferred.
-void HybridizeProtocol::read_template_structures(utility::file::FileName template_list)
+// validate input templates match input sequence
+// TO DO: if only sequences mismatch try realigning
+void HybridizeProtocol::validate_template(
+		std::string filename,
+		std::string fasta,
+		core::pose::PoseOP template_pose)
 {
-	utility::io::izstream f_stream( template_list );
-	std::string line;
-	while (!f_stream.eof()) {
-		getline(f_stream, line);
+	core::Size nres_fasta = fasta.length(), nres_templ = template_pose->total_residue();
+	core::Size next_ligand = nres_fasta+1; // ligands must be sequentially numbered
 
-		if (line.size() == 0) continue;
+	for (core::Size i=1; i<=nres_templ; ++i) {
+		char templ_aa = template_pose->residue(i).name1();
+		core::Size i_fasta = template_pose->pdb_info()->number(i);
 
-		std::istringstream str_stream(line);
-		std::string template_fn;
-		std::string cst_fn;
-		core::Size cluster_id(0);
-		core::Real weight(1.);
-		core::Real domain_assembly_weight(0.);
-		if (!str_stream.eof()) {
-			str_stream >> template_fn;
-			if (template_fn.empty()) continue;
-			if (template_fn[0] == '#') continue;
-
-			if (!str_stream.eof()) str_stream >> cst_fn;
-			if (!str_stream.eof()) str_stream >> cluster_id;
-			if (!str_stream.eof()) str_stream >> weight;
-
-			TR << template_fn << " " << cst_fn << " " << cluster_id << " " << weight << std::endl;
-
-			std::string cst_reses_str;
-			utility::vector1<core::Size> cst_reses;
-			if ( str_stream >> cst_reses_str ) {
-				utility::vector1<std::string> cst_reses_parsed = utility::string_split( cst_reses_str , ',' ) ;
-				for (Size i=1; i<= cst_reses_parsed.size(); ++i ) {
-					cst_reses.push_back( (core::Size) std::atoi( cst_reses_parsed[i].c_str() ) );
+		// ligands
+		if (i_fasta > nres_fasta) {
+			bool number_correct = (i_fasta==next_ligand);
+			bool is_ligand = !template_pose->residue(i).is_protein();
+			if (!(number_correct && is_ligand)) {
+				TR.Error << "Error in input numbering in template " << filename
+					<< " while reading residue " << i << std::endl;
+				if (!is_ligand) {
+					TR.Error << "   Residue number " << i_fasta << " is outside of input fasta range." << std::endl;
+					utility_exit();
+				} else {
+					TR.Error << "   Ligands must be numbered sequentially after protein residues." << std::endl;
+					TR.Error << "   Expected: " << next_ligand << "   Saw: " << i_fasta << std::endl;
+					utility_exit();
 				}
 			}
-			add_template(template_fn, cst_fn, "", weight,domain_assembly_weight, cluster_id, cst_reses);
+			next_ligand++;
+		} else {
+			char fasta_aa = fasta[i_fasta-1];
+			if (fasta_aa != templ_aa) {
+				TR.Error << "Sequence mismatch between input fasta and template " << filename
+					<< " at residue " << i_fasta << std::endl;
+				TR.Error << "   Expected: " << fasta_aa << "   Saw: " << templ_aa << std::endl;
+				utility_exit();
+			}
 		}
 	}
-	f_stream.close();
 }
+
 
 void HybridizeProtocol::read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames)
 {
@@ -1350,10 +1347,6 @@ HybridizeProtocol::parse_my_tag(
 		moves::Movers_map const &,
 		core::pose::Pose const & pose )
 {
-	// config file
-	if( tag->hasOption( "config_file" ) )
-		read_template_structures( tag->getOption< std::string >( "config_file" ) );
-
 	// basic options
 	stage1_increase_cycles_ = tag->getOption< core::Real >( "stage1_increase_cycles", 1. );
 	stage2_increase_cycles_ = tag->getOption< core::Real >( "stage2_increase_cycles", 1. );
@@ -1496,6 +1489,7 @@ HybridizeProtocol::parse_my_tag(
 			}
 		}
 
+		std::string fasta = pose.sequence();
 		if ( (*tag_it)->getName() == "Template" ) {
 			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
 			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );
@@ -1505,6 +1499,7 @@ HybridizeProtocol::parse_my_tag(
 			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 			utility::vector1<core::Size> cst_reses;
 			add_template(template_fn, cst_fn, symm_file, weight, domain_assembly_weight, cluster_id, cst_reses);
+			validate_template( template_fn, fasta, templates_[templates_.size()] );
 		}
 
 		// strand pairings

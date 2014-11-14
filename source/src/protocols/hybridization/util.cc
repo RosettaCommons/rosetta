@@ -515,9 +515,6 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 						if ( ires == jres && iatom <= jatom) continue;
 
 						core::Real dist1 = tmpl.residue(ires).xyz(iatom).distance( tmpl.residue(jres).xyz(jatom) );
-						core::Real dist2 = pose.residue(ires_tgt).xyz(iatom).distance( pose.residue(jres_tgt).xyz(jatom) );
-
-TR << ires_tgt << "." << iatom << " to " << jres_tgt << "." << jatom << " : " << dist1 << " v " << dist2 << std::endl;
 
 						if ( dist1 <= MAXDIST ) {
 							using namespace core::scoring::func;
