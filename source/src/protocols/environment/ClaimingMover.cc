@@ -118,7 +118,6 @@ void ClaimingMover::initialize( Pose& ) {
 //PASSPORT MANAGEMENT METHODS:
 core::environment::DofPassportCOP ClaimingMover::passport() const {
   if( passports_.empty() ){
-    std::cout << "error mover location" << this << std::endl;
     throw utility::excn::EXCN_NullPointer( "ClaimingMover "+this->get_name()+
                                            " tried to access its passports, of which it has none.");
   }

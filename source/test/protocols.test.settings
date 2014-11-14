@@ -62,14 +62,14 @@ sources = {
 	],
 
         "environment" : [
-                # "CoMTrack",
-                # "EnvironmentJump",
-                # "EnvironmentTorsion",
-                # "ProtectedConf",
+                 "CoMTrack",
+                 "EnvironmentJump",
+                 "EnvironmentTorsion",
+                 "ProtectedConf",
         ],
 
         "environment/claims" : [
-                # "ClaimTests",
+                 "ClaimTests",
         ],
 
 	"enzdes" : [

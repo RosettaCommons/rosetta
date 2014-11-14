@@ -47,7 +47,9 @@ DofPassport::DofPassport( std::string const& mover,
 DofPassport::~DofPassport() {}
 
 std::set< core::id::DOF_ID >::const_iterator DofPassport::begin() const {
-  if( accessible_dofs_.begin()->rsd() == 0 ){
+  if( accessible_dofs_.size() == 0 ){
+    return accessible_dofs_.end();
+  } else if( accessible_dofs_.begin()->rsd() == 0 ){
     return ++accessible_dofs_.begin();
   } else {
     return accessible_dofs_.begin();
