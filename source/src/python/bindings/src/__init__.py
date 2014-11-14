@@ -111,7 +111,7 @@ if config['low_memory_mode']:
 else:
     if config['numeric']:
         import rosetta.numeric
-
+        import rosetta.numeric.geometry.hashing
 
     if config['basic']:
         import rosetta.basic
