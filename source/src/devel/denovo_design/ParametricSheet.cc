@@ -444,8 +444,8 @@ ParametricSheet::create_ca_point( core::Size const strand,
 	// check to see what exists
 	bool const prev_strand_exists( check_strand_and_resi_values( prev_strand, resi ) );
 	bool const prev2_strand_exists( check_strand_and_resi_values( prev2_strand, resi ) );
-	core::Vector h_point1;
-	core::Vector h_point2;
+	core::Vector h_point1(0);
+	core::Vector h_point2(0);
 	if ( prev_strand_exists  && prev2_strand_exists ) {
 		h_point1 = ca_coords_[prev_strand][resi];
 		h_point2 = ca_coords_[prev2_strand][resi];
@@ -459,8 +459,8 @@ ParametricSheet::create_ca_point( core::Size const strand,
 	print_vector( h_point1, "H point1" );
 	print_vector( h_point2, "H point2" );
 
-	core::Vector c_point1;
-	core::Vector c_point2;
+	core::Vector c_point1(0);
+	core::Vector c_point2(0);
 	// find c-vector
 	bool const prev_resi_exists( check_strand_and_resi_values( strand, prev_resi ) );
 	bool const prev2_resi_exists( check_strand_and_resi_values( strand, prev2_resi ) );
@@ -479,7 +479,7 @@ ParametricSheet::create_ca_point( core::Size const strand,
 	print_vector( c_point2, "C point2" );
 
 	// find reference point = strand-1, resi-1
-	core::Vector reference_point;
+	core::Vector reference_point(0);
 	if ( check_strand_and_resi_values( prev_strand, prev_resi ) ) {
 		reference_point = ca_coords_[prev_strand][prev_resi];
 	} else {
@@ -516,7 +516,7 @@ ParametricSheet::generate_strand( core::Size const strand, core::Size const prev
 {
 	// TODO : fix this shit. Generation of sheets should start in the center and move outward
 	// starting on the end of strands is bad because twist doesn't get properly accounted for
-	// the strand-1 is to correct 
+	// the strand-1 is to correct
 	core::Size const center_resi( ( ca_coords_[ strand ].size() / 2) + 2 );
 	//core::Size const center_resi( strand_len_+4 );
 	//core::Size const center_resi(1);

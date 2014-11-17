@@ -35,6 +35,8 @@ cd %(workdir)s
     > log
 
 
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 #
 # After that, do whatever you want.
 # Files will be diffed verbatim, so if you want to log output and compare it,

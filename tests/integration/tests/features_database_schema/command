@@ -34,6 +34,8 @@ cd %(workdir)s
 	| egrep -vf ../../ignore_list \
 	> log_db_output
 
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 if type -P sqlite3 &>/dev/null; then
    sqlite3 features_database_schema.db3 '.dump' > features_database_schema.db3.dump 
 else

@@ -5,6 +5,8 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > startfrom_file_log
 
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @mover_flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
