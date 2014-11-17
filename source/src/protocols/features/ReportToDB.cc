@@ -705,6 +705,7 @@ void
 ReportToDB::initialize_pose(
 	Pose & pose
 ) const {
+	pose.update_residue_neighbors(); // As some of the sub-features may need neighbor information
 	if (remove_xray_virt_) {
 		TR << "Removing virtual residue left behind by xray refinement" << endl;
 		while (pose.residue( pose.total_residue() ).aa() == core::chemical::aa_vrt )

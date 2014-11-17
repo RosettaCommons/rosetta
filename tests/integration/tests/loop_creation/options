@@ -2,6 +2,6 @@
 -parser:protocol parser_script.xml
 
 -nstruct 1
-
+-loops:frag_files valid_frags.15mers
 -mute core.util.prof ## dont show timing info
 

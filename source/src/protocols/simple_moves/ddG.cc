@@ -427,6 +427,7 @@ ddG::calculate( pose::Pose const & pose_original )
 
 	// work on a copy, don't/can't modify the original comformation.
 	pose::Pose pose = pose_original;
+	pose.update_residue_neighbors(); // Neighbors needed for task operation calculations later
 
 	// Dummy state as default (<= pb_enabled_=false)
 	std::string original_state = "stateless";

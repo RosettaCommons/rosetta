@@ -17,7 +17,7 @@
 		        nucleic acid options
 			<Set hbonds:exclude_DNA_DNA_hbond=true/>
 			<Set hbonds:use_hb_env_dep_DNA=true/>
-			<Set hbonds:include_intra_res_RNA=false/>
+			<Set hbonds:exclude_intra_res_RNA=true/>
 
 			Membrane options
 			<Set hbonds:Mbhbond=false/>

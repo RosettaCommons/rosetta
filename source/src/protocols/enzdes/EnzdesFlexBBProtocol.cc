@@ -216,6 +216,7 @@ EnzdesFlexBBProtocol::apply(
 		determine_flexible_regions( pose, fixbb_pack_task );
 
 		//we should also make those residues designable that have been deemed flexible
+		pose.update_residue_neighbors(); // Neighbors needed for modified_task
 		PackerTaskOP design_pack_task_template = modified_task( pose, *fixbb_pack_task );
 
 		//make a polyalanine copy of the pose
@@ -588,7 +589,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 
 			core::Size length( lstop - lstart +1 );
 
-			flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( i, lstart, lstop, length, pose, 
+			flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( i, lstart, lstop, length, pose,
 				EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
 			) ) );
 			tr << " " << lstart << "-" << lstop;
@@ -616,7 +617,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 		for( utility::vector1< loops::Loop >::const_iterator lit = loops_helper.v_begin(); lit != loops_helper.v_end(); ++lit){
 			no_flex_regions++;
 			core::Size lstart( lit->start() ), lstop( lit->stop() );
-			flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, lstart, lstop, lstop - lstart + 1, pose, 
+			flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, lstart, lstop, lstop - lstart + 1, pose,
 				EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
 			) ) );
 			tr << " " << lstart << "-" << lstop;
@@ -664,7 +665,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 				while( flex_res[j] && (j <= pose.total_residue()) ) j++;
 
 				no_flex_regions++;
-				flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose, 
+				flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose,
 					EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
 				) ) );
 				//fragment_counters_.push_back( 1 );
@@ -735,7 +736,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	kinematic_mover_->set_pivots(rbegin, rmid, rend);
 
-	protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber( new protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( 
+	protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber( new protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber(
 			protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP( kinematic_mover_ )
 		) );
 

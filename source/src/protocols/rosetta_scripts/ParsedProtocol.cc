@@ -532,7 +532,8 @@ ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
 
   TR << "=======================BEGIN FILTER " << filter_name << "=======================" << std::endl;
 	info().insert( info().end(), mover_pair.first.first->info().begin(), mover_pair.first.first->info().end() );
-//	pose.update_residue_neighbors();
+	// Since filters get const poses, they don't necessarily have an opportunity to update neighbors themselves
+	pose.update_residue_neighbors();
 	moves::MoverStatus status( mover_pair.first.first->get_last_move_status() );
   bool const pass( status==protocols::moves::MS_SUCCESS  && mover_pair.filter().apply( pose ) );
   if ( !mover_pair.report_filter_at_end_ ) { //report filter now

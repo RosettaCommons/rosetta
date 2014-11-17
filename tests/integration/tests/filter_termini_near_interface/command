@@ -38,6 +38,8 @@ cd %(workdir)s
 	| egrep -vf ../../ignore_list \
 	> nterm.log
 
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s \
 	@flags \
 	-parser:protocol filter_c_terminus.xml \

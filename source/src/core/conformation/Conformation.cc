@@ -136,9 +136,9 @@ Conformation::Conformation( Conformation const & src ) :
 
 	// carbohydrates?
 	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
-	
+
 	// membranes
-	membrane_info_ = src.membrane_info_; 
+	membrane_info_ = src.membrane_info_;
 
 	// chain info
 	chain_endings_ = src.chain_endings_;
@@ -182,7 +182,7 @@ Conformation::operator=( Conformation const & src )
 
 		// carbohydrates?
 		contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
-		
+
 		// membranes
 		membrane_info_ = src.membrane_info_;
 
@@ -537,7 +537,7 @@ Conformation::update_membrane_position( Vector center, Vector normal ) {
 
 	// Set membrane center
 	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::center, center );
-	
+
 	// Set membrane normal
 	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::normal, normal );
 
@@ -550,18 +550,18 @@ Conformation::update_membrane_position( Vector center, Vector normal ) {
 /// an orthogonal coordinate frame
 void
 Conformation::check_valid_membrane() const {
-	
+
 	using namespace core::kinematics;
-	
+
 	// Grab the membrane stub
 	core::SSize jump = membrane_info_->membrane_jump();
 	Stub membrane_stub = downstream_jump_stub( jump );
-	
+
 	// Check the stub still contains an orthogonal coordinate frame
 	if (! membrane_stub.is_orthogonal( 0.0001 ) ) {
 		utility_exit_with_message( "Cannot set xyz to create an invalid coordinate frame" );
 	}
-	
+
 }
 
 // Trees /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2628,7 +2628,9 @@ Conformation::update_domain_map( DomainMap & domain_map ) const
 {
 	domain_map.dimension( size() );
 	domain_map = 0;
-	atom_tree_->update_domain_map( domain_map, dof_moved_, xyz_moved_ );
+	if( size() ) {
+		atom_tree_->update_domain_map( domain_map, dof_moved_, xyz_moved_ );
+	}
 }
 
 /// @details called after domain map information is transferred to the Energies class

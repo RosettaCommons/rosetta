@@ -503,6 +503,7 @@ EnzdesRemodelMover::initialize(
 	//temporary hardcoded: only one region to be remodeled
 	flex_region_ = enz_prot_->enz_flexible_region( region_to_remodel_ );
 
+	pose.update_residue_neighbors(); // Neighbors needed for modified_task
 	this->set_task( enz_prot_->modified_task( pose, *orig_task_ ) );
 }
 

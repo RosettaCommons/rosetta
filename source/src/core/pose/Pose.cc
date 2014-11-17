@@ -1303,8 +1303,9 @@ Pose::center()
 void
 Pose::update_residue_neighbors()
 {
-	runtime_assert( total_residue() != 0 ); // Avoid crash on empty Pose (e.g. if PDB occupancy is all zero)
-	residue( total_residue() ); // completely unnecessary temporary hack to force refold if nec.
+	if( total_residue() > 0 ) {
+		residue( total_residue() ); // completely unnecessary temporary hack to force refold if nec.
+	}
 
 	if ( conformation_->structure_moved() ) {
 		energies_->structure_has_moved( total_residue() );

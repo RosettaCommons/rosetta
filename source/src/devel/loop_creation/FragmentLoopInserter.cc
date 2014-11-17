@@ -97,7 +97,10 @@ modify_flanking_regions_(false)
 	using namespace core::fragment;
 
 //	utility::vector1<core::Size> frag_sizes( option[ OptionKeys::loops::frag_sizes ].value() );
-	FileVectorOption frag_files( option[ OptionKeys::loops::frag_files ] );
+	FileVectorOption frag_files;
+	if( option[ OptionKeys::loops::frag_files ].user() ) {
+		frag_files = option[ OptionKeys::loops::frag_files ];
+	}
 
 //	if( frag_sizes.size() != frag_files.size() ){
 //		utility_exit_with_message( "You must specify as many fragment sizes as fragment file names " );

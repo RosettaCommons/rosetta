@@ -168,4 +168,17 @@ public: // tests
 					pose2.pdb_info()->chain(i));
 		}
 	}
+
+	void test_update_residue_neighbors() {
+		// These are tests mainly just to make sure that the calls don't crash.
+		using namespace core::pose;
+
+		Pose empty;
+		empty.update_residue_neighbors();
+
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "core/pose/pdbinfo_test_in.pdb" );
+		pose.update_residue_neighbors();
+	}
+
 };
