@@ -48,7 +48,7 @@
 using namespace core;
 
 /// @brief Test Suite for Membrane Embedding factory
-class MembranePositionRTTest : public CxxTest::TestSuite {
+class SetMembranePositionTest : public CxxTest::TestSuite {
     
 public:
     
@@ -115,7 +115,7 @@ public:
 		
 		// Simple rotation 1
 		Vector rot_1( 0, 1, 0 );
-		SetMembraneNomalMoverOP first_move( new SetMembraneNomalMover( rot_1 ) );
+		SetMembraneNomalMoverOP first_move( new SetMembraneNormalMover( rot_1 ) );
 		first_move->apply( *pose_ );
 		TS_ASSERT_DELTA( angle_of( current_normal, pose_->conformation().membrane_info()->membrane_normal() ), 1.57, 0.001);
 		TS_ASSERT( position_equal_within_delta( rot_1, pose_->conformation().membrane_info()->membrane_normal(), 0.0001 ) );
@@ -158,5 +158,5 @@ private: // data
     // Resulting Membrane Protein
     core::pose::PoseOP pose_;
     
-}; // class MembranePositionRTTest
+}; // class SetMembranePositionTest
 

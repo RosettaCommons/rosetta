@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    mpdocking.cc
-/// @brief   Dock two membrane proteins in the membrane
-/// @details last Modified: 4/4/14
+/// @file    spanfile_from_pdb.cc
+/// @brief   Write a spanfile from a PDB file
+/// @details last Modified: 10/17/14
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // App headers
@@ -56,6 +56,8 @@ using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 using namespace protocols::membrane::geometry;
 
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.spanfile_from_pdb" );
@@ -72,33 +74,7 @@ void show( utility::vector1< T_ > vector){
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void print_spanfile( SpanningTopologyOP topology, Size nres, std::string pdbfile, std::string spanfile ){
-
-	TR.Debug << "printing spanfile" << std::endl;
-
-	// print header
-	utility::io::ozstream OUT;
-	OUT.open( spanfile );
-	OUT << "spanfile from PDB " << pdbfile << std::endl;
-	OUT << topology->total_spans() << " " << nres << std::endl;
-	OUT << "antiparallel" << std::endl;
-	OUT << "n2c" << std::endl;
-	
-	// print spans
-	for ( Size i = 1; i <= topology->total_spans(); ++i ){
-		OUT << "\t" << topology->span(i)->start() << "\t" << topology->span(i)->end() << std::endl;
-	}
-	OUT.close();
-	TR << "wrote " << spanfile << std::endl;
-}// print spanfile
-
-////////////////////////////////////////////////////////////////////////////////
-
-void spanfile_from_pdb(){
-
-	TR << "spanfile_from_pdb" << std::endl;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+PoseOP read_pose() {
 	
 	// cry if PDB not given
 	if ( ! option[OptionKeys::in::file::s].user() ){
@@ -107,9 +83,17 @@ void spanfile_from_pdb(){
 	
 	// read in pose
 	PoseOP pose = core::import_pose::pose_from_pdb(
-							option[OptionKeys::in::file::s].value_string() );
+												   option[OptionKeys::in::file::s].value_string() );
 	TR.Debug << "got pose of length " << pose->total_residue() << std::endl;
 	
+	return pose;
+	
+}// read pose
+
+////////////////////////////////////////////////////////////////////////////////
+
+Real read_thickness() {
+
 	// set or read in thickness
 	Real thickness;
 	if ( option[OptionKeys::membrane_new::thickness].user() ){
@@ -122,52 +106,33 @@ void spanfile_from_pdb(){
 	}
 	TR.Debug << "got thickness: " << thickness << std::endl;
 
-	// get pose info
-	std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));
-	utility::vector1< Real > z_coord = pose_info.first;
-	utility::vector1< Size > chain_info = pose_info.second;
-	TR.Debug << "got pose info:" << std::endl;
-
-	// create SpanningTopology from pose
-	SpanningTopologyOP topo_whole_pose( new SpanningTopology( z_coord, chain_info, thickness ) );
-	TR.Debug << "got whole pose topology: " << std::endl;
-//	topo_whole_pose->show();
+	return thickness;
 	
-	// get filename
-	std::string pdbfile( option[OptionKeys::in::file::s].value_string() );
-	utility::trim( pdbfile );
-	std::string spanfile( pdbfile );
-	utility::trim( spanfile, ".pdb");
-	spanfile = spanfile + ".span";
+}// get thickness
 
-	// if more than one chain, print SpanningTopology for whole pose
-	if ( pose->chain( pose->total_residue() ) > 1 ){
-		topo_whole_pose->write_spanfile( spanfile );
-	}
+////////////////////////////////////////////////////////////////////////////////
 
+void spanfile_for_each_chain( PoseOP pose, Real thickness, std::string spanfile) {
+	
 	// split pose into chains
 	utility::vector1< PoseOP > split_poses = pose->split_by_chain();
-
-	TR << "split pose into " << split_poses.size() << " poses." << std::endl;
-
+	
 	// loop over chains
 	for ( Size i = 1; i <= split_poses.size(); ++i ){
-
-		TR.Debug << "going over chains: " << i << std::endl;
-
+		
 		// get pose info
 		std::pair< utility::vector1< Real >, utility::vector1< Size > > split_pose_info( get_chain_and_z( split_poses[i] ));
 		utility::vector1< Real > split_z_coord( split_pose_info.first );
 		utility::vector1< Size > split_chain_info( split_pose_info.second );
-
+		
 		// create SpanningTopology from poses
 		SpanningTopologyOP topo_pose( new SpanningTopology( split_z_coord, split_chain_info, thickness ) );
 		
-		// get filename
+		// get filename for spanfile for each chain
 		char chain( split_poses[i]->pdb_info()->chain(i) );
 		std::string split_spanfile( spanfile );
 		utility::trim( split_spanfile, ".span" );
-
+		
 		// output filename depends on number of chains
 		if ( pose->chain( pose->total_residue() ) > 1 ){
 			split_spanfile = split_spanfile + chain + ".span";
@@ -179,6 +144,41 @@ void spanfile_from_pdb(){
 		// print SpanningTopology for poses
 		topo_pose->write_spanfile( split_spanfile );
 	}
+
+}// spanfile for each chain
+
+////////////////////////////////////////////////////////////////////////////////
+
+void spanfile_from_pdb(){
+
+	TR << "spanfile_from_pdb" << std::endl;
+
+	// read input
+	PoseOP pose = read_pose();
+	Real thickness = read_thickness();
+	
+	// get pose info
+	std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));
+	utility::vector1< Real > z_coord = pose_info.first;
+	utility::vector1< Size > chain_info = pose_info.second;
+
+	// create SpanningTopology from pose
+	SpanningTopologyOP topo_whole_pose( new SpanningTopology( z_coord, chain_info, thickness ) );
+	
+	// get filename for spanfile containing whole topology info
+	std::string pdbfile( option[OptionKeys::in::file::s].value_string() );
+	utility::trim( pdbfile );
+	std::string spanfile( pdbfile );
+	utility::trim( spanfile, ".pdb");
+	spanfile = spanfile + ".span";
+
+	// if more than one chain, write SpanningTopology for whole pose
+	if ( pose->chain( pose->total_residue() ) > 1 ){
+		topo_whole_pose->write_spanfile( spanfile );
+	}
+
+	// write spanfile for each individual chain
+	spanfile_for_each_chain( pose, thickness, spanfile );
 	
 }// spanfile_from_pdb
 
@@ -191,17 +191,15 @@ main( int argc, char * argv [] )
 {
 	try {
 
-		// initialize option system, random number generators, and all factory-registrators
+		// initialize option system, RNG, and all factory-registrators
 		devel::init(argc, argv);
-		//protocols::init(argc, argv);
 
 		// call my function
 		spanfile_from_pdb();
-
-	} catch ( utility::excn::EXCN_Base const & e ) {
+		
+	}
+	catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-
-	return 0;
 }

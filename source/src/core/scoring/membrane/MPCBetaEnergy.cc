@@ -118,7 +118,7 @@ MPCbetaEnergy::residue_energy(
 	core::Size const seqpos = rsd.seqpos();
 	
 	// Determine total number of tmhs from membrane pose
-	Size num_tmh = pose.conformation().membrane_info()->spanning_topology()->total_spans();
+	Size num_tmh = pose.conformation().membrane_info()->spanning_topology()->nspans();
 	
 	// Compute CBeta score at the position
 	membrane_cb_score = compute_mpcbeta_score( cenlist, seqpos, num_tmh );

@@ -35,7 +35,8 @@ sources = {
 		"util",
 	],
 	"protocols/docking/membrane":[
-#		"MPDockingMover",	
+		"MPDockingMover",
+		"MPDockingSetupMover",	
 	],
 	"protocols/docking/stateless": [
 		"SaneDockingProtocol",

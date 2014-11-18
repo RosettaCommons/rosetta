@@ -38,7 +38,7 @@ namespace simple_moves {
 using namespace core;
 
 /// @brief Uniform Rotation Mover
-class UniformPositionRotationMover : public protocols::moves::Mover {
+class UniformRotationMover : public protocols::moves::Mover {
 	
 public:
 	
@@ -49,7 +49,7 @@ public:
 	/// @brief Custom Constructor
 	/// @details Specify a new normal to rotate membranes to
 	///	to move this position to
-	UniformPositionRotationMover(
+	UniformRotationMover(
 								 Real alpha,
 								 Vector axis,
 								 core::SSize rb_jump
@@ -57,15 +57,15 @@ public:
 	
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
-	UniformPositionRotationMover( UniformPositionRotationMover const & src );
+	UniformRotationMover( UniformRotationMover const & src );
 	
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
-	UniformPositionRotationMover &
-	operator=( UniformPositionRotationMover const & src );
+	UniformRotationMover &
+	operator=( UniformRotationMover const & src );
 	
 	/// @brief Destructor
-	~UniformPositionRotationMover();
+	~UniformRotationMover();
 	
 	/////////////////////
 	/// Mover Methods ///
@@ -81,7 +81,7 @@ public:
 private: // methods
 	
 	/// @brief Construct a Default Membrane Position Mover
-	UniformPositionRotationMover();
+	UniformRotationMover();
 	
 private:
 	
@@ -95,7 +95,7 @@ private:
 };
 
 /// @brief Uniform Translation Mover
-class UniformPositionTranslationMover : public protocols::moves::Mover {
+class UniformTranslationMover : public protocols::moves::Mover {
 	
 public:
 	
@@ -105,22 +105,22 @@ public:
 	
 	/// @brief Custom Constructor
 	/// @details Specify a new center position to translate this stub to
-	UniformPositionTranslationMover(
+	UniformTranslationMover(
 									Vector new_position_,
 									SSize rb_jump
 									);
 	
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
-	UniformPositionTranslationMover( UniformPositionTranslationMover const & src );
+	UniformTranslationMover( UniformTranslationMover const & src );
 	
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
-	UniformPositionTranslationMover &
-	operator=( UniformPositionTranslationMover const & src );
+	UniformTranslationMover &
+	operator=( UniformTranslationMover const & src );
 	
 	/// @brief Destructor
-	~UniformPositionTranslationMover();
+	~UniformTranslationMover();
 	
 	/////////////////////
 	/// Mover Methods ///
@@ -136,7 +136,7 @@ public:
 private:
 	
 	/// @brief Construct a Default Membrane Position Mover
-	UniformPositionTranslationMover();
+	UniformTranslationMover();
 	
 private:
 	

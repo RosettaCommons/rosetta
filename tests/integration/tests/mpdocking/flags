@@ -1,0 +1,3 @@
+-in:file:s inputs/1AFO_AB.pdb
+-membrane_new:setup:spanfiles inputs/1AFO_AB.span
+-docking:partners A_B

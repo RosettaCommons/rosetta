@@ -118,7 +118,7 @@ MPLipoEnergy::finalize_total_energy(
 	
 	// Determine total number of tmhs from membrane pose
 	TR << "WARNING: MPLipoEnergy: Using the number of spans instead of the number of inserted helices!!!" << std::endl;
-	Size num_tmh = pose.conformation().membrane_info()->spanning_topology()->total_spans();
+	Size num_tmh = pose.conformation().membrane_info()->spanning_topology()->nspans();
 	
 	// Initialize MP Lips Score
 	Real mplipo_energy( 0 );

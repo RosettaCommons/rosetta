@@ -8,10 +8,11 @@
 
 /// @file	    protocols/membrane/MembranePositionFromTopologyMover.fwd.hh
 ///
-/// @brief      Compute the Initial Position of the membrane
-/// @details	Compute the initial position of the membrane from
+/// @brief      Computes and sets the initial position of the membrane
+/// @details	Computes and sets the initial position of the membrane from
 ///				sequence or structure (can be specified by the user at construction
-///				or as a seutp cmd flag)
+///				or as a setup cmd flag).
+///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
 ///
 ///				NOTE: Requires a membrane pose!
 ///				NOTE: sequence not yet implemented

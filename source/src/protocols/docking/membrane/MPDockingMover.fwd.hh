@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file       protocols/membrane/MPDockingMover.fwd.hh
-/// @brief      Dock two membrane proteins
+/// @brief      Dock two proteins, which are made into membrane proteins
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 /// @note       Last Modified (6/24/14)
 
@@ -23,8 +23,8 @@ namespace docking {
 namespace membrane {
 
 class MPDockingMover;
-typedef utility::pointer::owning_ptr< MPDockingMover > MPDockingMoverOP;
-typedef utility::pointer::owning_ptr< MPDockingMover const > MPDockingMoverCOP;
+typedef utility::pointer::shared_ptr< MPDockingMover > MPDockingMoverOP;
+typedef utility::pointer::shared_ptr< MPDockingMover const > MPDockingMoverCOP;
 
 } // membrane
 } // docking

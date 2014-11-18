@@ -57,3 +57,4 @@ get_commit_id.sh
 .unit_test_results.json
 _performance_
 *~
+run_membrane_utests.py

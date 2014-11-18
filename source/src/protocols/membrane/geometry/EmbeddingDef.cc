@@ -17,8 +17,10 @@
 
 // Unit headers
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
+#include <protocols/membrane/geometry/util.hh>
 
 // Project Headers
+#include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/conformation/membrane/Exceptions.hh>
 
@@ -41,17 +43,26 @@ using namespace core;
 EmbeddingDef::EmbeddingDef() :
 	utility::pointer::ReferenceCount()
 {
-	core::Vector normal(0, 0, 1);
-	core::Vector center(0, 0, 0);
-	EmbeddingDef( normal, center );
+	center_.assign( 0, 0, 0 );
+	normal_.assign( 0, 0, 1 );
 }
 
 /// @brief Standard Constructor
-EmbeddingDef::EmbeddingDef( core::Vector const normal, core::Vector const center ) :
+EmbeddingDef::EmbeddingDef( core::Vector const center, core::Vector const normal ) :
     utility::pointer::ReferenceCount(),
-    normal_( normal ),
+	normal_( normal ),
     center_( center )
 {}
+
+/// @brief Constructor from pose and two residue numbers
+EmbeddingDef::EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end ) :
+    utility::pointer::ReferenceCount()
+{
+    normal_.assign( 0, 0, 0 );
+    center_.assign( 0, 0, 0 );
+
+	from_span( pose, start, end );
+}
 
 /// @brief Copy Constructor
 EmbeddingDef::EmbeddingDef( EmbeddingDef const & config ) :
@@ -66,10 +77,7 @@ EmbeddingDef::~EmbeddingDef() {}
 /// @brief Standard Rosetta Show Method for Debugging
 void
 EmbeddingDef::show( std::ostream & output ) const {
-    
-    output << "Embedding Setup " << std::endl;
-    output << "normal=(" << normal_.x() << "," << normal_.y() << "," << normal_.z() << ")" << std::endl;
-    output << "center=(" << center_.x() << "," << center_.y() << "," << center_.z() << ")" << std::endl;
+	output << "Embedding: center: " << center_.to_string() << ", normal: " << normal_.to_string() << std::endl;
 }
 
 /// @brief Check reasonable range of vectors in embedding object
@@ -112,23 +120,44 @@ bool EmbeddingDef::equals( EmbeddingDef & other ) {
     return true;
 }
 
-/// @brief Check reasonable range of vector
-void EmbeddingDef::check_vector( core::Vector vector ) const {
-    TR << "Checking vector " << std::endl;
+/// @brief Embedding object from span
+/// @details Takes the coords of two residues and calculates center and normal
+///				from this. Normal always shows in positive z-direction!
+void EmbeddingDef::from_span( core::pose::PoseOP pose, core::Size start, core::Size end ) {
+
+    TR << "Computing membrane embedding from TMspan " << start << " to " << end << std::endl;
     
-    // warn if vector is origin
-    if ( vector.to_string() == "(0, 0, 0)"){
-        TR << "WARNING: your vector is (0, 0, 0)!" << std::endl;
-    }
-    
-    // Fail if vector is out of range
-    if ( vector.x() < -1000 || vector.x() > 1000 ||
-        vector.y() < -1000 || vector.y() > 1000 ||
-        vector.z() < -1000 || vector.z() > 1000 ){
-        
-        throw new core::conformation::membrane::EXCN_Illegal_Arguments("Unreasonable range for center or normal! Check your input vectors!");
-    }
-}// check_vector
+	// get CA atom positions of anchor residues
+	core::Vector pos1 = pose->residue( start ).atom( 2 ).xyz();
+	core::Vector pos2 = pose->residue( end ).atom( 2 ).xyz();
+	
+	// check TMspan
+	// the reason this is not an exception is that we need this functionality
+	// when transforming a protein into the membrane
+	if ( pos1.z() < 0 && pos2.z() < 0 ){
+		TR << "WARNING: Your TMspan does not span the membrane!" << std::endl;
+	}
+	else if ( pos1.z() > 0 && pos2.z() > 0 ){
+		TR << "WARNING: Your TMspan does not span the membrane!" << std::endl;
+	}
+	
+	// compute center
+	core::Vector center = 0.5 * ( pos1 + pos2 );
+
+	// compute normal in direction of increasing z-axis
+	core::Vector normal;
+	if ( pos1.z() > pos2.z() ){
+		normal = pos1 - pos2;
+	}
+	else {
+		normal = pos2 - pos1;
+	}
+	normal.normalize();
+
+	center_.assign( center.x(), center.y(), center.z() );
+	normal_.assign( normal.x(), normal.y(), normal.z() );
+	
+}// from span
 
 
 } // geometry

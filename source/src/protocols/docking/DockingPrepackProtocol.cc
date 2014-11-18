@@ -15,6 +15,7 @@
 /// @file DockingPrepackProtocol.cc
 /// @brief Prepacking of the bound sturcture before docking.
 /// @author Robin A Thottungal (raugust1@jhu.edu)
+///			added to: JKLeman (julia.koehler1982@gmail.com)
 
 // Unit Headers
 #include <protocols/docking/DockingPrepackProtocol.hh>
@@ -26,23 +27,32 @@
 #include <protocols/docking/DockingInitialPerturbation.hh>
 
 // Project headers
+#include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
+
 #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <core/types.hh>
+#include <numeric/xyzVector.hh>
 
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
@@ -77,6 +87,7 @@ void DockingPrepackProtocol::setup_defaults()
 	trans_magnitude_ = 1000.0;
 	pack_operations_ = SequenceMoverOP( new SequenceMover() );
 	dock_ppk_ = false;
+	membrane_ = false;
 }
 
 DockingPrepackProtocol::~DockingPrepackProtocol(){
@@ -96,6 +107,9 @@ void DockingPrepackProtocol::init_from_options()
 
 	if( option[ OptionKeys::docking::dock_ppk ].user() )
 		set_dock_ppk(option[ OptionKeys::docking::dock_ppk ]());
+
+	if( option[ OptionKeys::membrane_new::setup::spanfiles ].user() )
+		membrane_ = true;
 }
 
 void DockingPrepackProtocol::set_dock_ppk(bool dock_ppk)
@@ -110,15 +124,20 @@ void DockingPrepackProtocol::register_options()
 	option.add_relevant( OptionKeys::docking::dock_rtmin );
 	option.add_relevant( OptionKeys::docking::sc_min );
 	option.add_relevant( OptionKeys::docking::partners );
+	option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
 }
 
 void DockingPrepackProtocol::score_and_output(std::string outfilename,
 	core::pose::Pose & pose )
 {
+	using namespace core::scoring;
+
 	// Creating a job compatible with JD2
 	static protocols::jd2::JobOP job = jd2::JobDistributor::get_instance()->current_job();
 	//job_ = jd2::JobDistributor::get_instance()->current_job();
+		
 	core::Real score_pose  = ( *scorefxn() )( pose ); // scoring the pose
+
 	// Getting the name of current job
 	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job ) );
 	job->add_string_real_pair("E"+outfilename, score_pose);
@@ -162,17 +181,73 @@ void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	setup_pack_operation_movers();
 }
 
+// gets translation axis (= projection of COM axis into the membrane plane)
+core::Vector const DockingPrepackProtocol::membrane_axis( core::pose::Pose & pose, int jumpnum )
+{
+	using namespace rigid;
+	using namespace core::pose;
+	using namespace numeric;
+		
+	// get translation axis from mover that takes pose and jump
+	// axis is between COMs
+	RigidBodyTransMoverOP com_trans( new RigidBodyTransMover( pose, jumpnum ) );
+	core::Vector const com_axis( com_trans->trans_axis() );
+	TR.Debug << "com axis: " << com_axis.to_string() << std::endl;
+
+	// get membrane normal
+	core::Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
+
+	// get cross-product between axis and membrane normal
+	// gives vector in membrane but perpendicular to the axis we want
+	core::Vector const in_membrane_axis = cross( com_axis, normal );
+
+	// get cross-product between this axis and the membrane normal
+	// should be axis that is the projection of the COM axis into the membrane plane
+	core::Vector const trans_axis = cross( in_membrane_axis, normal );
+	TR.Debug << "trans_axis: " << trans_axis.to_string() << std::endl;
+	
+	return trans_axis;
+}// membrane axis
+
 void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 {
+	// create a membrane protein from the pose
+	if ( membrane_ ) {
+		membrane::AddMembraneMoverOP add_mem( new membrane::AddMembraneMover() );
+		add_mem->apply( pose );
+
+		// get correct scorefunction for membrane proteins and set it in the parent class
+		core::scoring::ScoreFunctionOP mem_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "fa_menv_smooth_2014.wts" );
+		set_scorefxn( mem_sfxn );
+	}
+
 	finalize_setup(pose);
 
 	score_and_output("initial",pose);
 
 	//Move each partners away from the others
 	for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
-	  rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
-		translate_away->step_size( trans_magnitude_ );
-		translate_away->apply(pose);
+		
+		// if membrane protein: translate in membrane plane
+		if ( membrane_ ) {
+
+			// get membrane axis
+			core::Vector trans_axis( membrane_axis( pose, *jump ) );
+
+			// create new translation mover
+			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(trans_axis, *jump) );
+
+			// do actual translation
+			translate_away->step_size( trans_magnitude_ );
+			translate_away->apply(pose);
+		}
+		
+		// if not membrane protein
+		else {
+			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
+			translate_away->step_size( trans_magnitude_ );
+			translate_away->apply(pose);
+		}
 	}
 	score_and_output("away",pose);
 
@@ -181,13 +256,31 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	score_and_output("away_packed",pose);
 
 	//bringing the packed structures together
-	for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-		rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(pose, *jump) );
-		translate_back->step_size( trans_magnitude_ );
-		translate_back->trans_axis().negate();
-		translate_back->apply(pose);
-        //fa_dock_slide_into_contact_ = new FaDockingSlideIntoContact(*jump);
-        //fa_dock_slide_into_contact_-> apply(pose);
+	for( DockJumps::const_iterator jump= movable_jumps().begin(); jump != movable_jumps().end(); ++jump ) {
+
+		// for membrane protein, translate in membrane plane
+		if ( membrane_ ) {
+
+			core::Vector trans_axis( membrane_axis( pose, *jump ) );
+			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(trans_axis, *jump) );
+			translate_back->step_size( trans_magnitude_ );
+
+			// why this needs to be commented out to work is a mystery
+//			translate_back->trans_axis().negate();
+			translate_back->apply(pose);
+		}
+		
+		// if not membrane protein
+		else {
+			rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
+
+			translate_back->step_size( trans_magnitude_ );
+			translate_back->trans_axis().negate();
+			translate_back->apply(pose);
+
+			//fa_dock_slide_into_contact_ = new FaDockingSlideIntoContact(*jump);
+			//fa_dock_slide_into_contact_-> apply(pose);
+		}
 	}
 
 	if (dock_ppk_){

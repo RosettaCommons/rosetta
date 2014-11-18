@@ -9,10 +9,9 @@
 
 /// @file		protocols/membrane/SetMembranePositionMover.fwd.hh
 ///
-/// @brief		Membrane Position Rotation/Translation Mover
-///	@details	Apply a uniform rigid translation & rotation of the
-///				membrane defined by the center/normal coordinates
-///				stored in the membrane.
+/// @brief		Sets the membrane position normal and center
+///	@details	Sets the membrane position normal and center
+///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
 ///				Last Modified: 6/28/14
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
@@ -32,9 +31,9 @@ typedef utility::pointer::shared_ptr< SetMembranePositionMover > SetMembranePosi
 typedef utility::pointer::shared_ptr< SetMembranePositionMover const > SetMembranePositionMoverCOP;
 
 /// @brief Membrane Position Rotation Mover (by jump)
-class SetMembraneNomalMover;
-typedef utility::pointer::shared_ptr< SetMembraneNomalMover > SetMembraneNomalMoverOP;
-typedef utility::pointer::shared_ptr< SetMembraneNomalMover const > SetMembraneNomalMoverCOP;
+class SetMembraneNormalMover;
+typedef utility::pointer::shared_ptr< SetMembraneNormalMover > SetMembraneNomalMoverOP;
+typedef utility::pointer::shared_ptr< SetMembraneNormalMover const > SetMembraneNomalMoverCOP;
 
 /// @brief Memrbane Position Translaiton Mover (by stub)
 class SetMembraneCenterMover;

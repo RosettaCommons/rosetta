@@ -26,15 +26,14 @@ namespace protocols {
 namespace simple_moves {
 
 /// @brief Uniform Rotation Mover
-class UniformPositionRotationMover;
-typedef utility::pointer::shared_ptr< UniformPositionRotationMover > UniformPositionRotationMoverOP;
-typedef utility::pointer::shared_ptr< UniformPositionRotationMover const > UniformPositionRotationMoverCOP;
+class UniformRotationMover;
+typedef utility::pointer::shared_ptr< UniformRotationMover > UniformRotationMoverOP;
+typedef utility::pointer::shared_ptr< UniformRotationMover const > UniformRotationMoverCOP;
 
 /// @brief Uniform Translation Mover
-class UniformPositionTranslationMover;
-typedef utility::pointer::shared_ptr< UniformPositionTranslationMover > UniformPositionTranslationMoverOP;
-typedef utility::pointer::shared_ptr< UniformPositionTranslationMover const > UniformPositionTranslationMoverCOP;
-
+class UniformTranslationMover;
+typedef utility::pointer::shared_ptr< UniformTranslationMover > UniformTranslationMoverOP;
+typedef utility::pointer::shared_ptr< UniformTranslationMover const > UniformTranslationMoverCOP;
 
 } // simple_moves
 } // protocols

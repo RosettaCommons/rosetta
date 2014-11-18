@@ -38,7 +38,7 @@
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
-
+#include <numeric/conversions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
 
@@ -55,14 +55,10 @@ public: // test functions
 		
 		using namespace core::pose;
 		using namespace core::import_pose;
-		using namespace basic::options;
         
         // Initialize core & options system
         core_init();
-		
-		// Set Anchored FoldTree Option
-		option[ OptionKeys::membrane_new::anchored_foldtree ](true);
-        
+		      
         // Load in pose from pdb
         pose_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *pose_, "protocols/membrane/1C3W_TR_A.pdb" );
@@ -86,18 +82,18 @@ public: // test functions
 		
 		// Move the CA of the first residue to the center
 		Vector new_position(0, 0, 0);
-		UniformPositionTranslationMoverOP translate( new UniformPositionTranslationMover( new_position, 1 ) );
+		UniformTranslationMoverOP translate( new UniformTranslationMover( new_position, 1 ) );
 		translate->apply( *pose_ );
 		
 		// Grab the first CA of the first pose residue
 		Vector xyz1( pose_->residue( 1 ).atom( 2 ).xyz() );
 		
-		// Check first position stub center was shifted correctly
+		// Check whether first position was shifted correctly
 		TS_ASSERT( position_equal_within_delta( new_position, xyz1, 0.0001 ) );
 		
 		// Grab the second CA of the first pose residue
-		Vector xyz2( pose_->residue( 2 ).atom( 2 ).xyz() );
-		Vector new_position2(-0.071, 2.588, -2.753);
+		Vector xyz2( pose_->residue( 80 ).atom( 2 ).xyz() );
+		Vector new_position2( 6.872, 4.208, 29.430 );
 		TS_ASSERT( position_equal_within_delta( new_position2, xyz2, 0.0001 ) );
 		
 	}
@@ -112,7 +108,7 @@ public: // test functions
 		// Move the CA of the first residue to the center
 		Vector axis(0, 0, 1);
 		Real theta(2.289);
-		UniformPositionRotationMoverOP rotate( new UniformPositionRotationMover( theta, axis, 1 ) );
+		UniformRotationMoverOP rotate( new UniformRotationMover( theta, axis, 1 ) );
 		rotate->apply( *pose_ );
 		
 		// Grab the first CA of the first pose residue

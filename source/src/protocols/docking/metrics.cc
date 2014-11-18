@@ -142,10 +142,14 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 		FoldTree ft( pose.fold_tree() );
 		native_docking_pose.fold_tree(ft);
 
-		//score to set up interface object
+		// score to set up interface object
+		// scoring only happened here to update the residue neighbors
 		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
 		(*scorefxn)( native_docking_pose );
-
+//		dock_scorefxn->show( TR );
+		
+//		native_docking_pose.update_residue_neighbors();
+		
 		protocols::scoring::Interface interface( rb_jump );
 		interface.distance( 8.0 );
 		interface.calculate( native_docking_pose );

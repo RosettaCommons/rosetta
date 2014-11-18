@@ -16,6 +16,7 @@
 /// @brief Prepacking of the bound structure before
 ///        docking
 /// @author Robin A Thottungal (raugust1@jhu.edu)
+///			added to: JKLeman (julia.koehler1982@gmail.com)
 #ifndef INCLUDED_protocols_docking_DockingPrepackProtocol_hh
 #define INCLUDED_protocols_docking_DockingPrepackProtocol_hh
 
@@ -35,7 +36,10 @@
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.fwd.hh>
 
-#include <utility/vector1.hh>
+// Utility headers
+#include <core/types.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
 
 namespace protocols {
@@ -65,12 +69,18 @@ public:
 	void score_and_output(std::string filename,core::pose::Pose &);
 	void set_dock_ppk(bool dock_ppk);
 
+	// gets translation axis (= projection of COM axis into the membrane plane)
+	core::Vector const membrane_axis( core::pose::Pose &, int jumpnum );
+
 private:
 	// add @brief for members
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_away_vec_;
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_back_vec_;
 
 	core::Real trans_magnitude_;
+	
+	/// @brief membrane for translating in the membrane plane
+	bool membrane_;
 
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover_;
 	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack_;
@@ -83,6 +93,7 @@ private:
 	void finalize_setup( core::pose::Pose & );
 	void register_options();
 	void init_from_options();
+	
 };
 
 }

@@ -69,6 +69,10 @@ public: // getters
 	/// @details Get the end position of a transmembrane span
     Size end();
 
+	
+	/// @brief Get residue closest to center
+	Size center();
+	
 	/// @brief Shift by offset
 	/// @details Shift the transmembrane span by a user-provided offset
 	void shift( Size offset );

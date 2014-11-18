@@ -304,6 +304,8 @@ sources = {
 		"SetMembranePositionMover",
 		"MembranePositionFromTopologyMover",
 		"RandomMembranePositionMover",
+		"TransformIntoMembraneMover",
+		"TranslationRotationMover", 
 		"metrics",
     ],
     "protocols/membrane/io": [

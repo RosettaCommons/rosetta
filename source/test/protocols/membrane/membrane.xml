@@ -1,8 +1,8 @@
 <JD2ResourceManagerJobInputter>
     <ResourceLocators>
-        <FileSystemResourceLocator tag="spanning_locator" base_path="test/core/membrane/io"/>
-        <FileSystemResourceLocator tag="embedding_locator" base_path="test/core/membrane/io"/>
-        <FileSystemResourceLocator tag="startstruct_locator" base_path="test/core/membrane/io"/>
+        <FileSystemResourceLocator tag="spanning_locator" base_path="test/protocols/membrane/io"/>
+        <FileSystemResourceLocator tag="embedding_locator" base_path="test/protocols/membrane/io"/>
+        <FileSystemResourceLocator tag="startstruct_locator" base_path="test/protocols/membrane/io"/>
     </ResourceLocators>
     <ResourceOptions>
         <PoseFromPDBOptions

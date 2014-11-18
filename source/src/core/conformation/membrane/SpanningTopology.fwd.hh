@@ -24,20 +24,20 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-    namespace conformation {
-        namespace membrane {
-            
-            /// @brief      Class: Membrane Spanning Topology
-            /// @details    Stores information describing the membrane spanning
-            ///             topology of a pose. This definition is a dependency for embedding definitions
-            ///             and requires a spanningfile from OCTOPUS for initialization
-            class SpanningTopology;
-            typedef utility::pointer::shared_ptr< SpanningTopology > SpanningTopologyOP;
-            typedef utility::pointer::shared_ptr< SpanningTopology const > SpanningTopologyCOP;
-            
-            
-        } // membrane
-    } // conformation
+namespace conformation {
+namespace membrane {
+
+/// @brief      Class: Membrane Spanning Topology
+/// @details    Stores information describing the membrane spanning
+///             topology of a pose. This definition is a dependency for embedding definitions
+///             and requires a spanningfile from OCTOPUS for initialization
+class SpanningTopology;
+typedef utility::pointer::shared_ptr< SpanningTopology > SpanningTopologyOP;
+typedef utility::pointer::shared_ptr< SpanningTopology const > SpanningTopologyCOP;
+
+
+} // membrane
+} // conformation
 } // core
 
 #endif // INCLUDED_core_membrane_properties_SpanningTopology_fwd_hh

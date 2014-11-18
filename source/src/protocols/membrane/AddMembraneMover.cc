@@ -104,6 +104,9 @@ AddMembraneMover::AddMembraneMover() :
 	include_lips_( false ),
 	center_(0.0, 0.0, 0.0),
 	normal_(0.0, 0.0, 10.0),
+	spanfile_(),
+	topology_( new SpanningTopology() ),
+	lipsfile_(),
 	membrane_rsd_( 0 )
 {
 	register_options();
@@ -119,6 +122,9 @@ AddMembraneMover::AddMembraneMover( core::SSize membrane_rsd ) :
 	include_lips_( false ),
 	center_(0.0, 0.0, 0.0),
 	normal_(0.0, 0.0, 10.0),
+	spanfile_(),
+	topology_( new SpanningTopology() ),
+	lipsfile_(),
 	membrane_rsd_( membrane_rsd )
 {
 	register_options();
@@ -130,31 +136,57 @@ AddMembraneMover::AddMembraneMover( core::SSize membrane_rsd ) :
 /// center at emb_center and normal at emb_normal and will load
 /// in spanning regions from list of spanfile provided
 AddMembraneMover::AddMembraneMover(
-	 Vector emb_center,
-	 Vector emb_normal,
+	 Vector mem_center,
+	 Vector mem_normal,
 	 std::string spanfile,
 	 core::SSize membrane_rsd
 	 ) :
 	 protocols::moves::Mover(),
-	 fullatom_( true ), 
-	 include_lips_( false ),
-	 center_( emb_center ),
-	 normal_( emb_normal ),
-	 spanfile_( spanfile ),
-	 membrane_rsd_( membrane_rsd )
+	fullatom_( true ),
+	include_lips_( false ),
+	center_( mem_center ),
+	normal_( mem_normal ),
+	spanfile_( spanfile ),
+	topology_( new SpanningTopology() ),
+	lipsfile_(),
+	membrane_rsd_( membrane_rsd )
 {
 	register_options();
 	init_from_cmd();
 }
-				
+
+/// @brief Custom Constructor - for PyRosetta
+/// @details Creates a membrane pose setting the membrane
+/// center at emb_center and normal at emb_normal and will load
+/// in spanning regions from topology object
+AddMembraneMover::AddMembraneMover(
+	Vector mem_center,
+	Vector mem_normal,
+	SpanningTopologyOP topology,
+	core::SSize membrane_rsd
+	) :
+	protocols::moves::Mover(),
+	fullatom_( true ),
+	include_lips_( false ),
+	center_( mem_center ),
+	normal_( mem_normal ),
+	spanfile_(),
+	topology_( topology ),
+	lipsfile_(),
+	membrane_rsd_( membrane_rsd )
+{
+	register_options();
+	init_from_cmd();
+}
+
 /// @brief Custorm Constructur with lips info - for PyRosetta
 /// @details Creates a membrane pose setting the membrane
 /// center at emb_center and normal at emb_normal and will load
 /// in spanning regions from list of spanfile provided. Will also
 /// load in lips info from lips_acc info provided
 AddMembraneMover::AddMembraneMover(
-	Vector emb_center,
-	Vector emb_normal,
+	Vector mem_center,
+	Vector mem_normal,
 	std::string spanfile,
 	std::string lips_acc,
 	core::SSize membrane_rsd
@@ -162,9 +194,10 @@ AddMembraneMover::AddMembraneMover(
 	protocols::moves::Mover(),
 	fullatom_( true ),
 	include_lips_( true ),
-	center_( emb_center ),
-	normal_( emb_normal ),
+	center_( mem_center ),
+	normal_( mem_normal ),
 	spanfile_( spanfile ),
+	topology_( new SpanningTopology() ),
 	lipsfile_( lips_acc ),
 	membrane_rsd_( membrane_rsd )
 {
@@ -178,9 +211,10 @@ AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
 	protocols::moves::Mover( src ), 
 	fullatom_( src.fullatom_ ), 
 	include_lips_( src.include_lips_ ),
-	center_( src.center_ ), 
+	center_( src.center_ ),
 	normal_( src.normal_ ),
 	spanfile_( src.spanfile_ ),
+	topology_( src.topology_ ),
 	lipsfile_( src.lipsfile_ ),
 	membrane_rsd_( src.membrane_rsd_ )
 {}
@@ -316,25 +350,32 @@ AddMembraneMover::apply( Pose & pose ) {
 		 pose.residue( membrane_rsd_ ).has_property( "MEMBRANE" ) ) {
 		TR << "Adding membrane residue from user specified position" << std::endl;
 		membrane_pos = membrane_rsd_;
+		
 	} else if ( check_pdb_for_mem( pose ) ) {
 		// TODO: Strenghten MEM search criteria in check pdb for mem
 		TR << "Adding membrane from PDB to the pose" << std::endl;
 		membrane_pos = pose.conformation().chain_end(1);
+		
 	} else {
 		TR << "Adding a new membrane residue to the pose" << std::endl;
 		membrane_pos = setup_membrane_virtual( pose );
 	}
 	
  	// Load spanning topology objects
-	SpanningTopologyOP spans( new SpanningTopology( spanfile_, pose.total_residue()-1 ) );
+	if ( topology_->nres_topo() == 0 ){
+		topology_->fill_from_spanfile( spanfile_, pose.total_residue() );
+	}
+
+	// get number of jumps in foldtree
+	Size numjumps = pose.fold_tree().num_jump();
 	
 	// Setup Membrane Info Object
 	MembraneInfoOP mem_info;
 	if ( !include_lips_ ) {
-		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), membrane_pos, spans, 1 ) );
+		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), membrane_pos, topology_, numjumps ) );
 	} else {
 		LipidAccInfoOP lips( new LipidAccInfo( lipsfile_ ) );
-		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), membrane_pos, spans, lips, 1 ) );
+		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), membrane_pos, topology_, lips, numjumps ) );
 	}
 	
 	// Add Membrane Info Object to conformation
@@ -378,7 +419,8 @@ AddMembraneMover::init_from_cmd() {
 	}
 	
 	// Read in User-Provided spanfile
-	if ( option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
+	if ( spanfile_.size() == 0 &&
+		option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
 		spanfile_ = option[ OptionKeys::membrane_new::setup::spanfiles ]()[1];
 	}
 	
@@ -412,6 +454,7 @@ AddMembraneMover::init_from_cmd() {
 		normal_.y() = option[ OptionKeys::membrane_new::setup::normal ]()[2];
 		normal_.z() = option[ OptionKeys::membrane_new::setup::normal ]()[3];
 	}
+
 }
 
 /// @brief Helper Method - Setup Membrane Virtual
@@ -419,9 +462,6 @@ AddMembraneMover::init_from_cmd() {
 /// the pose typeset (fullatom or centroid). Add this virtual
 /// residue by appending to the last residue of the pose. Then set
 /// this position as the root of the fold tree.
-///
-/// do not call this method before anchoring the pose with a virtual. Moves will
-/// not occur in a reasonable way if so. @ralford 7/2/14
 core::Size
 AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	

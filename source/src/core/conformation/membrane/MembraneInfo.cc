@@ -292,9 +292,9 @@ MembraneInfo::lipid_acc_data() const {
 core::SSize
 MembraneInfo::membrane_jump() const { return membrane_jump_; }
 
-/// @brief Check membrane fold tree
-/// @details Check that the membrane jump num is a jump point and located at the root
-/// of the fold tree in addition to maintaining a reasonable fold tree
+/// @brief	 Check membrane fold tree
+/// @details Check that the membrane jump num is a jump point and checking
+///			 for a reasonable fold tree
 bool
 MembraneInfo::check_membrane_fold_tree( FoldTree const & ft_in ) const {
 

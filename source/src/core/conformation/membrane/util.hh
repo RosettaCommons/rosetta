@@ -37,8 +37,8 @@ utility::vector1< std::string > spanfile_names();
 // read single spanfile from options
 std::string spanfile_name();
 
-} // membrane
-} // conformation
-} // core
+}// membrane
+}// conformation
+}// core
 
 #endif // INCLUDED_core_conformation_membrane_util_hh

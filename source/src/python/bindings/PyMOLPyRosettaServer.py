@@ -410,6 +410,7 @@ class PR_PyMOLServer:
         elif ptype.startswith('Mem'):
             e_type_len = ord(data[0])
             e_type = data[1:(1 + e_type_len)].tostring()
+            pymol.cmd.delete(name + 'membrane_planes')
 
             pymol.cmd.delete('membrane_planes')
 
@@ -892,8 +893,7 @@ def draw_membrane_planes( plane_points, normal_vector ):
     # Create the top plane
     top_plane = [
         BEGIN, TRIANGLE_FAN,
-        ALPHA, 0.5,
-
+		ALPHA, 0.5,
         COLOR, color.x, color.y, color.z,
         NORMAL, normal.x, normal.y, normal.z,
         ]
@@ -911,8 +911,7 @@ def draw_membrane_planes( plane_points, normal_vector ):
     # Create the bottom plane
     bottom_plane = [
         BEGIN, TRIANGLE_FAN,
-        ALPHA, 0.5,
-
+		ALPHA, 0.5,
         COLOR, color.x, color.y, color.z,
         NORMAL, normal.x, normal.y, normal.z,
         ]

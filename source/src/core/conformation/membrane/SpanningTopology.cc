@@ -60,7 +60,9 @@ using namespace core;
 SpanningTopology::SpanningTopology() :
 	utility::pointer::ReferenceCount(),
 	topology_()
-{}
+{
+	nres_topo_ = 0;
+}
 
 /// @brief	Custom Constructor - Transmembrane Spans from Spanfile
 /// @details Use transmembrane spans provided to consturct a spanning topology object
@@ -117,8 +119,16 @@ SpanningTopology::~SpanningTopology(){}
 ///	Methods ///
 ///////////////
 
-/// @brief Show the current spans stored in this SpanningTopology Object
-/// @details Generating a String Representation of Spanning Topology Object for debugging purposes
+/// @brief fill from spanfile
+/// @details fill object from spanfile, can be used after creating empty object
+void SpanningTopology::fill_from_spanfile( std::string spanfile, Size total_residues ){
+
+    TR << "Filling membrane spanning topology from spanfile " << spanfile << std::endl;
+    create_from_spanfile( spanfile, total_residues );
+	
+}// fill from spanfile
+
+/// @brief Generating a String Representation of Spanning Topology Object for debugging purposes
 void SpanningTopology::show( std::ostream & output ) const {
     
 	// Print Total number of transmembrane Spans
@@ -131,6 +141,24 @@ void SpanningTopology::show( std::ostream & output ) const {
     }
 
 } // show
+
+// concatenate 2nd topology object
+SpanningTopologyOP SpanningTopology::concatenate_topology( SpanningTopologyOP topo ){
+	
+	// add spans
+	for ( Size i = 1; i <= topo->nspans(); ++i ){
+		SpanOP span = topo->span( i );
+		span->shift( topo->nres_topo() );
+		topology_.push_back( span );
+	}
+	
+	// update nres of topo1 object
+	nres_topo_ += topo->nres_topo();
+	
+	return SpanningTopologyOP( new SpanningTopology( *this ) );
+}
+	
+//////////////////////////////////////////////////////////////////////////////
 
 // write spanfile
 void SpanningTopology::write_spanfile( std::string output_filename ){
@@ -158,10 +186,19 @@ void SpanningTopology::write_spanfile( std::string output_filename ){
 /// @brief Return Spanning Topology
 /// @details return spanning topology as a vector1 of transmembrane spans
 utility::vector1< SpanOP >
-SpanningTopology::get_spans() { return topology_; } // get topology
+SpanningTopology::get() { return topology_; } // get topology
 
 // add span to end of SpanningTopology object, doesn't reorder
-void SpanningTopology::add_span( SpanOP span ) {
+void SpanningTopology::add_span( SpanOP span, Size offset ){
+	span->shift( offset );
+	topology_.push_back( span );
+}// add span
+
+//////////////////////////////////////////////////////////////////////////////
+
+// add span to end of SpanningTopology object, doesn't reorder
+void SpanningTopology::add_span( Size start, Size end, Size offset ){
+	SpanOP span( new Span( start+offset, end+offset ) );
 	topology_.push_back( span );
 }// add span
 
@@ -179,14 +216,14 @@ SpanningTopology::span( Size span_number ){ return topology_[ span_number ]; } /
 /// @brief Get total number of spans
 /// @details Return the number of transmembrane spanning regions in this object
 Size
-SpanningTopology::total_spans() { return topology_.size(); } // total_spans
+SpanningTopology::nspans() { return topology_.size(); } // total_spans
 
 /// @brief Is the residue in the membrane region?
 /// @details Return true if this residue is in a transmembrane span
 bool SpanningTopology::in_span( Size resnum ){
     
     // go through spans and check whether residue is in spans
-    for ( Size i = 1; i <= total_spans(); ++i ) {
+    for ( Size i = 1; i <= nspans(); ++i ) {
         if ( resnum >= span(i)->start() && resnum <= span(i)->end() ){
             return true;
         }
@@ -259,7 +296,7 @@ Size SpanningTopology::nres_topo(){
 
 /// @brief Create spanning topology object from spanfile
 SpanningTopology
-SpanningTopology::create_from_spanfile( std::string spanfile, Size  ){
+SpanningTopology::create_from_spanfile( std::string spanfile, Size nres ){
  
 	// Setup vars for reading spanfile using izstream
     std::string line;
@@ -282,10 +319,17 @@ SpanningTopology::create_from_spanfile( std::string spanfile, Size  ){
     l >> total_tmhelix >> total_residues_in_span_file;
 	nres_topo_ = total_residues_in_span_file;
 
-		// check number of residues
-	//if ( nres != total_residues_in_span_file ){
-	//	utility_exit_with_message(
-	//			"SpanningTopology: Total_residues in span file " + /utility::to_string(total_residues_in_span_file) +
+	TR << "nres: " << nres << std::endl;
+	TR << "nres_topo: " << nres_topo() << std::endl;
+	TR << "total residues in spanfile: " << total_residues_in_span_file << std::endl;
+ 
+	// check number of residues: the pose sometimes has an additional membrane residue
+//	if ( nres > 0 &&
+//		( total_residues_in_span_file != nres - 1 ||
+//		  total_residues_in_span_file != nres ||
+//		  total_residues_in_span_file != nres + 1 )){
+//		utility_exit_with_message(
+//				"SpanningTopology: Total_residues in span file " + utility::to_string(total_residues_in_span_file) +
 //				" does not match total_residues in pose " + utility::to_string(nres) );
 //	}
     

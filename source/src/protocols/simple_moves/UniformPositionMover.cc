@@ -51,7 +51,7 @@ using namespace core;
 ////////////////////
 
 /// @brief Construct a Default Uniform Position Mover
-UniformPositionRotationMover::UniformPositionRotationMover() :
+UniformRotationMover::UniformRotationMover() :
 	Mover(),
 	alpha_( 0.0 ),
 	axis_( 0.0, 0.0, 1.0 ),
@@ -60,7 +60,7 @@ UniformPositionRotationMover::UniformPositionRotationMover() :
 
 /// @brief Custom Constructor
 /// @details Specify a new normal axis
-UniformPositionRotationMover::UniformPositionRotationMover(
+UniformRotationMover::UniformRotationMover(
 	Real alpha,
 	Vector axis,
 	core::SSize rb_jump
@@ -73,7 +73,7 @@ UniformPositionRotationMover::UniformPositionRotationMover(
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-UniformPositionRotationMover::UniformPositionRotationMover( UniformPositionRotationMover const & src ) :
+UniformRotationMover::UniformRotationMover( UniformRotationMover const & src ) :
 	Mover( src ),
 	alpha_( src.alpha_ ),
 	axis_( src.axis_ ),
@@ -82,8 +82,8 @@ UniformPositionRotationMover::UniformPositionRotationMover( UniformPositionRotat
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
-UniformPositionRotationMover &
-UniformPositionRotationMover::operator=( UniformPositionRotationMover const & src )
+UniformRotationMover &
+UniformRotationMover::operator=( UniformRotationMover const & src )
 {
 	
 	// Abort self-assignment.
@@ -92,12 +92,12 @@ UniformPositionRotationMover::operator=( UniformPositionRotationMover const & sr
 	}
 	
 	// Otherwise, create a new object
-	return *( new UniformPositionRotationMover( *this ) );
+	return *( new UniformRotationMover( *this ) );
 	
 }
 
 /// @brief Destructor
-UniformPositionRotationMover::~UniformPositionRotationMover() {}
+UniformRotationMover::~UniformRotationMover() {}
 
 /////////////////////
 /// Mover Methods ///
@@ -105,27 +105,27 @@ UniformPositionRotationMover::~UniformPositionRotationMover() {}
 
 /// @brief Get the name of this mover
 std::string
-UniformPositionRotationMover::get_name() const {
-	return "UniformPositionRotationMover";
+UniformRotationMover::get_name() const {
+	return "UniformRotationMover";
 }
 
 /// @brief Apply Rotation move
 /// @brief Rotate position over jump given an axis & angle
 void
-UniformPositionRotationMover::apply( Pose & pose ) {
+UniformRotationMover::apply( Pose & pose ) {
 	
 	using namespace numeric;
 	using namespace core::kinematics;
 	
 	// Grab the upstream & downstream stubs from the pose
-	Stub membrane_stub( pose.conformation().downstream_jump_stub( rb_jump_ ) );
-	Stub anchor_stub( pose.conformation().upstream_jump_stub( rb_jump_ ) );
+	Stub downstream_stub( pose.conformation().downstream_jump_stub( rb_jump_ ) );
+	Stub upstream_stub( pose.conformation().upstream_jump_stub( rb_jump_ ) );
 	
-	// Compute Rotation (detla_rot)
+	// Compute Rotation (delta_rot)
 	xyzMatrix< core::Real > delta_rot = rotation_matrix( axis_, alpha_ );
-	membrane_stub.M = delta_rot * membrane_stub.M;
+	downstream_stub.M = delta_rot * downstream_stub.M;
 	
-	Jump flexible_jump = Jump( RT( membrane_stub, anchor_stub ) );
+	Jump flexible_jump = Jump( RT( downstream_stub, upstream_stub ) );
 	
 	// Set jump in the pose
 	pose.set_jump( rb_jump_, flexible_jump );
@@ -133,22 +133,22 @@ UniformPositionRotationMover::apply( Pose & pose ) {
 }
 
 
-// Position Translation Mover /////////////////////////////////////////////////////////////////
+// Position Translation Mover //////////////////////////////////////////////////
 
 ////////////////////
 /// Constructors ///
 ////////////////////
 
-/// @brief Construct a Default Membrane Position Mover
-UniformPositionTranslationMover::UniformPositionTranslationMover() :
+/// @brief Construct a Translation Mover
+UniformTranslationMover::UniformTranslationMover() :
 	Mover(),
 	new_position_( 0.0, 0.0, 0.0 ),
 	rb_jump_( 1 )
 {}
 
 /// @brief Custom Constructor
-/// @details Specify a new membrane center to move to
-UniformPositionTranslationMover::UniformPositionTranslationMover(
+/// @details Specify a new point to move to
+UniformTranslationMover::UniformTranslationMover(
 	Vector new_position,
 	SSize rb_jump
 	) :
@@ -159,7 +159,7 @@ UniformPositionTranslationMover::UniformPositionTranslationMover(
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-UniformPositionTranslationMover::UniformPositionTranslationMover( UniformPositionTranslationMover const & src ) :
+UniformTranslationMover::UniformTranslationMover( UniformTranslationMover const & src ) :
 	Mover( src ),
 	new_position_( src.new_position_ ),
 	rb_jump_( src.rb_jump_ )
@@ -167,8 +167,8 @@ UniformPositionTranslationMover::UniformPositionTranslationMover( UniformPositio
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
-UniformPositionTranslationMover &
-UniformPositionTranslationMover::operator=( UniformPositionTranslationMover const & src )
+UniformTranslationMover &
+UniformTranslationMover::operator=( UniformTranslationMover const & src )
 {
 	
 	// Abort self-assignment.
@@ -177,12 +177,12 @@ UniformPositionTranslationMover::operator=( UniformPositionTranslationMover cons
 	}
 	
 	// Otherwise, create a new object
-	return *( new UniformPositionTranslationMover( *this ) );
+	return *( new UniformTranslationMover( *this ) );
 	
 }
 
 /// @brief Destructor
-UniformPositionTranslationMover::~UniformPositionTranslationMover() {}
+UniformTranslationMover::~UniformTranslationMover() {}
 
 /////////////////////
 /// Mover Methods ///
@@ -190,26 +190,24 @@ UniformPositionTranslationMover::~UniformPositionTranslationMover() {}
 
 /// @brief Get the name of this mover
 std::string
-UniformPositionTranslationMover::get_name() const {
-	return "UniformPositionTranslationMover";
+UniformTranslationMover::get_name() const {
+	return "UniformTranslationMover";
 }
 
-/// @brief Apply Rotation/Translation to Membrane
-/// @brief Translate the membrane position in this pose
-/// to the new center position, and rotate to new normal
+/// @brief Apply Translation
 void
-UniformPositionTranslationMover::apply( Pose & pose ) {
+UniformTranslationMover::apply( Pose & pose ) {
 	
 	using namespace numeric;
 	using namespace core::kinematics;
 	
-	// Grab the stub of the membrane residue & its anchoring jump
+	// Grab the upstream and downstream stubs in the foldtree
 	Stub downstream_stub( pose.conformation().downstream_jump_stub( rb_jump_ ) );
 	Stub upstream_stub( pose.conformation().upstream_jump_stub( rb_jump_ ) );
 	
 	downstream_stub.v = new_position_;
 	
-	// Create a jump between the membrane and its anchoring point
+	// Create a jump between the upstream and downsteam jump
 	Jump flexible_jump = Jump( RT( upstream_stub, downstream_stub ) );
 	
 	// Set jump in the pose

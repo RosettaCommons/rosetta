@@ -8,10 +8,11 @@
 
 /// @file	    protocols/membrane/MembranePositionFromTopologyMover.cc
 ///
-/// @brief      Compute the Initial Position of the membrane
-/// @details	Compute the initial position of the membrane from
+/// @brief      Computes and sets the initial position of the membrane
+/// @details	Computes and sets the initial position of the membrane from
 ///				sequence or structure (can be specified by the user at construction
-///				or as a seutp cmd flag)
+///				or as a setup cmd flag).
+///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
 ///
 ///				NOTE: Requires a membrane pose!
 ///				NOTE: sequence not yet implemented
@@ -32,16 +33,13 @@
 
 // Package Headers
 #include <core/pose/Pose.hh>
-#include <core/types.hh> 
-
+#include <core/types.hh>
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
-
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh> 
-
+#include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/Residue.hh>
-
+#include <protocols/membrane/geometry/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 
@@ -52,7 +50,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.membrane.InitializeMembranePositionMover" );
+static thread_local basic::Tracer TR( "protocols.membrane.MembranePositionMoverFromTopologyMover" );
 
 namespace protocols {
 namespace membrane {
@@ -156,6 +154,7 @@ MembranePositionFromTopologyMover::apply( Pose & pose ) {
 	
 	using namespace core;
 	using namespace protocols::membrane;
+	using namespace protocols::membrane::geometry;
 	
 	// Initialize starting vectors
 	Vector normal( 0, 0, 0 );
@@ -176,51 +175,6 @@ std::string
 MembranePositionFromTopologyMover::get_name() const {
 	return "MembranePositionFromTopologyMover";
 }
-
-/// @brief Compute Membrane Center/Normal from Membrane Spanning
-/// topology
-void
-MembranePositionFromTopologyMover::compute_structure_based_membrane_position(
-  Pose & pose,
-  Vector & center,
-  Vector & normal
-) {
-	
-	using namespace core;
-	using namespace numeric;
-
-	// utility
-	core::Size const CA( 2 );
-
-	// Initialize inside and outside
-	Vector inside(0);
-	Vector outside(0);
-	
-	// Count tmhleices
-	core::Size total_spans = pose.conformation().membrane_info()->spanning_topology()->total_spans();
-	
-	// iterate over spans
-	for ( Size j = 1; j <= total_spans; ++j ) {
-		
-		Vector const & start = pose.residue( pose.conformation().membrane_info()->spanning_topology()->span( j )->start() ).atom( CA ).xyz();
-		Vector const & end = pose.residue( pose.conformation().membrane_info()->spanning_topology()->span( j )->end() ).atom( CA ).xyz();
-		
-		// Add odd helices from outside in
-		if ( j % 2 == 0 ) {
-			inside += start;
-			outside += end;
-		} else {
-			outside += start;
-			inside += end;
-		}
-	}
-	
-	// Calculate new normal and center from spanning
-	normal = outside - inside;
-	normal.normalize();
-	center = 0.5 * ( outside + inside ) / total_spans;
-
-}// compute structure-based position
 
 } // membrane
 } // protocols

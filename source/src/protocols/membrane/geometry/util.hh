@@ -19,15 +19,16 @@
 #define INCLUDED_protocols_membrane_geometry_util_hh
 
 // Package Headers
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
-
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-
-#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
+
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -95,9 +96,33 @@ return_nearest_residue(
 ///				vector2 is chainID of CA atoms of the pose
 std::pair< utility::vector1< Real >, utility::vector1< Real > > get_chain_and_z( pose::PoseOP pose );
 
+/// @brief Compute Membrane Center/Normal from Membrane Spanning
+/// topology
+void compute_structure_based_membrane_position(
+			  pose::Pose & pose,
+			  Vector & center,
+			  Vector & normal
+			  );
+
+/// @brief Compute Membrane Center/Normal from Membrane Spanning
+/// topology
+protocols::membrane::geometry::EmbeddingDefOP
+compute_structure_based_membrane_position( pose::Pose & pose );
+
+/// @brief Check reasonable range of vector
+void check_vector( core::Vector const vector );
+
+/// @brief Average EmbeddingDefs
+/// @details Get average center and normal from a vector of EmbeddingDefs
+EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts );
+
 /// @brief Normalize normal vector to length 15 for visualization
 void membrane_normal_to_length_15( pose::Pose & pose );
 
+/// @brief Set membrane residue to root of foldtree
+/// @details Requires MembraneInfo to be constructed beforehand;
+///			 use AddMembraneMover to do that
+void reorder_membrane_foldtree( pose::Pose & pose );
 
 } // geometry
 } // membrane

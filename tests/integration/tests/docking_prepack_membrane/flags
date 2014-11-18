@@ -1,0 +1,10 @@
+-s input/2knc_tr.pdb
+-membrane_new:setup:spanfiles input/2knc_tr.span
+-nstruct 1
+-overwrite
+-score:weights fa_membrane_2014.wts #for scoring as a membrane protein
+-packing:pack_missing_sidechains 0 #needed for JD2 not to pack before it is defined as a membrane protein
+-out:file:scorefile score_prpk_2knc.sc
+-out:file:fullatom #output in fullatom scorefile
+-mute core.util.prof # dont show timing info
+-mute core.io.database

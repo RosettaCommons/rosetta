@@ -86,7 +86,7 @@ public: // test functions
 		topo_from_pdb_ = SpanningTopologyOP( new SpanningTopology( zcoord_, chainID_, thickness ) );
 
 		// check topology
-		TS_ASSERT_EQUALS( topo_from_pdb_->total_spans(), 2 );
+		TS_ASSERT_EQUALS( topo_from_pdb_->nspans(), 2 );
 		TS_ASSERT_EQUALS( topo_from_pdb_->span(1)->start(), 15 );
 		TS_ASSERT_EQUALS( topo_from_pdb_->span(1)->end(),   31 );
 		TS_ASSERT_EQUALS( topo_from_pdb_->span(2)->start(), 55 );
@@ -104,7 +104,7 @@ public: // test functions
 		topo_from_spanfile_ = SpanningTopologyOP( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 ) );
 		
 		// check topology
-		TS_ASSERT_EQUALS( topo_from_spanfile_->total_spans(), 2 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->nspans(), 2 );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->span(1)->start(), 15 );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->span(1)->end(),   31 );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->span(2)->start(), 55 );

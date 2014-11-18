@@ -17,7 +17,6 @@
 #include <core/conformation/membrane/util.hh>
 
 // Package Headers
-#include <core/conformation/Conformation.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
@@ -48,13 +47,14 @@ utility::vector1< std::string > spanfile_names(){
 	utility::vector1< std::string > spanfiles = option[OptionKeys::membrane_new::setup::spanfiles]();
 	
 	return spanfiles;
-	
+
 }// read spanfiles
 
 // read single spanfile from options
 std::string spanfile_name(){
 	return spanfile_names()[1];
 }
+
 
 } // membrane
 } // conformation

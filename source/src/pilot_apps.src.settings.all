@@ -462,8 +462,10 @@ sources = {
 		"mpdocking",
 		"spanfile_from_pdb",
 		"mpdocking_setup",
-		"mpframework_test",
-		"mpfolding",
+#		"mpframework_test",
+#		"mpfolding",
+		"transform_into_membrane",
+		"add_membrane",
 	],
 	"pilot/johnk" : [
 		#"chet_trp_to_gly",

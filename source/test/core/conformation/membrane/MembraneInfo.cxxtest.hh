@@ -73,7 +73,7 @@ public: // test functions
 		Vector center(0, 0, 0);
 		Vector normal(0, 0, 1);
 		
-		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, true ) );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile ) );
 		add_memb->apply( *pose_ );
 		
 	}
@@ -114,7 +114,7 @@ public: // test functions
 		TS_ASSERT_EQUALS( jump, 1 );
 		
 		// Spanning topology (no lips info yet)
-		core::Size total_spans = membrane_info->spanning_topology()->total_spans();
+		core::Size total_spans = membrane_info->spanning_topology()->nspans();
 		TS_ASSERT_EQUALS( total_spans, 7 );
 		
 	}

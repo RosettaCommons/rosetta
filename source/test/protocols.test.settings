@@ -212,13 +212,20 @@ sources = {
 
 	"membrane" : [
 		"AddMembraneMover",
-		"SetMembranePositionMover",
 		"MembranePositionFromTopologyMover",
-                "membrane_metrics",
+		"SetMembranePositionMover",
+		"TransformIntoMembraneMover",
+		"TranslationRotationMover",
+		"membrane_metrics",
     ],
+    "membrane/geometry" : [
+        "EmbeddingDef",
+		"Embedding",
+		"MembraneGeometryUtil",
+	],
     "membrane/io" : [
-        #"SpanFileLoader",
-		#"LipsFileLoader",
+#        "SpanFileLoader",
+#		"LipsFileLoader",
 	],
 	"motif_grafting" : [
 		"MotifGraftMover"
@@ -499,6 +506,11 @@ testinputfiles = [
 	"membrane/1C3W_TR_A.pdb",
 	"membrane/1C3W_A.span",
 	"membrane/1C3W_w_mem.span",
+	"membrane/1AFO_AB.pdb",
+	"membrane/1AFO_AB.span",
+	"membrane/1AFO_AB_before_out.pdb",
+	"membrane/geometry/1AFO_AB.pdb",
+	"membrane/geometry/1AFO_AB.span",
     "membrane/1afo_in.pdb",
     "membrane/1afo_decoy.pdb",
     "membrane/1afo_tr.span",

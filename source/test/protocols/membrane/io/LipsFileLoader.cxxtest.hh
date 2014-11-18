@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		core/membrane/io/SpanFileIO.cxxtest.hh
+/// @file 		protocols/membrane/io/SpanFileIO.cxxtest.hh
 ///
 /// @brief 		Test Suite for izstream reader class that reads in OCTOPUS file data
 /// @details
@@ -19,12 +19,12 @@
 #include <test/core/init_util.hh>
 
 // Tested Classes
-#include <core/membrane/io/LipoFileLoader.hh>
+#include <protocols/membrane/io/LipoFileLoader.hh>
 
 #include <core/conformation/membrane/LipidAccInfo.hh>
 #include <core/conformation/membrane/Exceptions.hh>
 
-#include <core/membrane/io/LipoFileOptions.hh>
+#include <protocols/membrane/io/LipoFileOptions.hh>
 #include <protocols/loops/LoopsFileOptions.hh>
 
 // Resource Manager Headers
@@ -53,7 +53,7 @@ public: // test methods
 	void setUp()
 	{
         
-        using namespace core::membrane::io;
+        using namespace protocols::membrane::io;
         using namespace protocols::loops;
         
         // Core init
@@ -86,7 +86,7 @@ public: // test methods
         std::istringstream lstream("unit_test");
         
         // Load the data
-        utility::pointer::ReferenceCountOP lips_exp = loader_.create_resource( opts1_, "core/membrane/io/1afo_test.lips", lstream );
+        utility::pointer::ReferenceCountOP lips_exp = loader_.create_resource( opts1_, "protocols/membrane/io/1afo_test.lips", lstream );
 
         // Ensure resources were returned
         TS_ASSERT( lips_exp );
@@ -102,7 +102,7 @@ public: // test methods
     void test_resource_definition()
     {
         
-        using namespace core::membrane::io;
+        using namespace protocols::membrane::io;
         using namespace core::conformation::membrane;
         using namespace basic::resource_manager;
         using namespace protocols::jd2;
@@ -152,11 +152,11 @@ private: // resource definition
         return
         "<JD2ResourceManagerJobInputter>\n"
         "  <ResourceLocators>\n"
-        "    <FileSystemResourceLocator tag=1afo base_path=\"core/membrane/io/\" />\n"
+        "    <FileSystemResourceLocator tag=1afo base_path=\"protocols/membrane/io/\" />\n"
         "  </ResourceLocators>\n"
         "  <Resources>\n"
         "    <PoseFromPDB tag=1afo_startstruct locator=1afo locatorID=\"1afo_test.pdb\" />\n"
-        "    <LipoFile tag=1afo_lips file=\"core/membrane/io/1afo_test.lips\" />\n"
+        "    <LipoFile tag=1afo_lips file=\"protocols/membrane/io/1afo_test.lips\" />\n"
         "  </Resources>\n"
         "  <Jobs>\n"
         "    <Job name=membrane>\n"
@@ -170,10 +170,10 @@ private: // resource definition
 private: // data
     
     // Set up a permanent loader class (gets reinitialized per test)
-    core::membrane::io::LipoFileLoader loader_;
+    protocols::membrane::io::LipoFileLoader loader_;
     
     // Storing opts pointers
-    core::membrane::io::LipoFileOptions opts1_;
+    protocols::membrane::io::LipoFileOptions opts1_;
     protocols::loops::LoopsFileOptions opts2_; // this is hysterical
     
 };

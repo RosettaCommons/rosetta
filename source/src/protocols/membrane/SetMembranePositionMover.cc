@@ -9,10 +9,9 @@
 
 /// @file		protocols/membrane/SetMembranePositionMover.cc
 ///
-/// @brief		Membrane Position Rotation/Translation Mover
-///	@details	Apply a uniform rigid translation & rotation of the
-///				membrane defined by the center/normal coordinates
-///				stored in the membrane.
+/// @brief		Sets the membrane position normal and center
+///	@details	Sets the membrane position normal and center
+///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
 ///				Last Modified: 6/28/14
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
@@ -182,7 +181,7 @@ SetMembranePositionMoverCreator::keyname() const {
 /// @brief Mover name for Rosetta Scripts
 std::string
 SetMembranePositionMoverCreator::mover_name() {
-	return "SetMembranePositionMoverr";
+	return "SetMembranePositionMover";
 }
 
 // Membrane Position Rotation Mover /////////////////////////////////////////////////////////////////
@@ -192,7 +191,7 @@ SetMembranePositionMoverCreator::mover_name() {
 ////////////////////
 
 /// @brief Construct a Default Membrane Position Mover
-SetMembraneNomalMover::SetMembraneNomalMover() :
+SetMembraneNormalMover::SetMembraneNormalMover() :
 	Mover(),
 	normal_( 0.0, 0.0, 1.0 )
 {}
@@ -200,22 +199,22 @@ SetMembraneNomalMover::SetMembraneNomalMover() :
 /// @brief Custom Constructor
 /// @details Specify a new membrane normal
 ///	to move this position to
-SetMembraneNomalMover::SetMembraneNomalMover( Vector normal ) :
+SetMembraneNormalMover::SetMembraneNormalMover( Vector normal ) :
 	Mover(),
 	normal_( normal )
 {}
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-SetMembraneNomalMover::SetMembraneNomalMover( SetMembraneNomalMover const & src ) :
+SetMembraneNormalMover::SetMembraneNormalMover( SetMembraneNormalMover const & src ) :
 	Mover( src ),
 	normal_( src.normal_ )
 {}
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
-SetMembraneNomalMover &
-SetMembraneNomalMover::operator=( SetMembraneNomalMover const & src )
+SetMembraneNormalMover &
+SetMembraneNormalMover::operator=( SetMembraneNormalMover const & src )
 {
 	
 	// Abort self-assignment.
@@ -224,12 +223,12 @@ SetMembraneNomalMover::operator=( SetMembraneNomalMover const & src )
 	}
 	
 	// Otherwise, create a new object
-	return *( new SetMembraneNomalMover( *this ) );
+	return *( new SetMembraneNormalMover( *this ) );
 	
 }
 
 /// @brief Destructor
-SetMembraneNomalMover::~SetMembraneNomalMover() {}
+SetMembraneNormalMover::~SetMembraneNormalMover() {}
 
 /////////////////////
 /// Mover Methods ///
@@ -237,14 +236,14 @@ SetMembraneNomalMover::~SetMembraneNomalMover() {}
 
 /// @brief Get the name of this mover
 std::string
-SetMembraneNomalMover::get_name() const {
-	return "SetMembraneNomalMover";
+SetMembraneNormalMover::get_name() const {
+	return "SetMembraneNormalMover";
 }
 
 /// @brief Apply Rotation move to Membrane
 /// @brief Rotate membrane position to new normal
 void
-SetMembraneNomalMover::apply( Pose & pose ) {
+SetMembraneNormalMover::apply( Pose & pose ) {
 	
 	using namespace numeric;
 	using namespace core::kinematics;
@@ -274,19 +273,19 @@ SetMembraneNomalMover::apply( Pose & pose ) {
 
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
-SetMembraneNomalMover::clone() const {
-	return ( protocols::moves::MoverOP( new SetMembraneNomalMover( *this ) ) );
+SetMembraneNormalMover::clone() const {
+	return ( protocols::moves::MoverOP( new SetMembraneNormalMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
-SetMembraneNomalMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new SetMembraneNomalMover() );
+SetMembraneNormalMover::fresh_instance() const {
+	return protocols::moves::MoverOP( new SetMembraneNormalMover() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
-SetMembraneNomalMover::parse_my_tag(
+SetMembraneNormalMover::parse_my_tag(
 	utility::tag::TagCOP, //tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
@@ -301,7 +300,7 @@ SetMembraneNomalMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 SetMembraneNomalMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetMembraneNomalMover );
+	return protocols::moves::MoverOP( new SetMembraneNormalMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

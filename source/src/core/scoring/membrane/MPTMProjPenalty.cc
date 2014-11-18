@@ -112,7 +112,7 @@ MPTMProjPenalty::finalize_total_energy(
     SpanningTopologyOP topology = pose.conformation().membrane_info()->spanning_topology();
 	
 	// Read through spanning topology
-	for ( Size j = 1; j <= topology->total_spans(); ++j ) {
+	for ( Size j = 1; j <= topology->nspans(); ++j ) {
 		
 		// Get the center and normal z position
 		Real const & start_z_pos = pose.conformation().membrane_info()->residue_z_position( topology->span(j)->start() );

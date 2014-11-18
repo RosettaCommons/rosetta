@@ -773,6 +773,7 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 	if ( axis.is_zero() ) {
 		axis = centroid_axis(pose);
 	}
+
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 	TRBM << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
 	//TRBM << "Translate: " << "Jump (before): " << flexible_jump << " step_size:  " << step_size_ <<

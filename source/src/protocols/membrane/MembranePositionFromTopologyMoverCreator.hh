@@ -13,6 +13,14 @@
 /// @details	Compute the initial position of the membrane from
 ///				sequence or structure (can be specified by the user at construction
 ///				or as a seutp cmd flag)
+/// @file		protocols/membrane/MembranePositionRTMover.hh
+///
+/// @brief		Sets the membrane position normal and center
+///	@details	Sets the membrane position normal and center
+///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
+///				Last Modified: 6/28/14
+///
+/// @author		Rebecca Alford (rfalford12@gmail.com)
 ///
 ///				NOTE: Requires a membrane pose!
 ///				NOTE: sequence not yet implemented

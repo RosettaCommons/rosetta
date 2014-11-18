@@ -9,10 +9,9 @@
 
 /// @file		protocols/membrane/SetMembranePositionMoverCreator.hh
 ///
-/// @brief		Membrane Position Rotation/Translation Mover Creator
-///	@details	Apply a uniform rigid translation & rotation of the
-///				membrane defined by the center/normal coordinates
-///				stored in the membrane.
+/// @brief		Sets the membrane position normal and center
+///	@details	Sets the membrane position normal and center
+///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
 ///				Last Modified: 6/28/14
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)

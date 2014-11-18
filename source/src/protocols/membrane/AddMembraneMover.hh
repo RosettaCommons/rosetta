@@ -28,7 +28,7 @@
 #include <protocols/moves/Mover.hh> 
 
 // Project Headers
-#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <core/conformation/membrane/Span.fwd.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
 
@@ -40,11 +40,14 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
+// C++ Headers
+#include <cstdlib>
+
 namespace protocols {
 namespace membrane {
 
-using namespace core::pose;
 using namespace core;
+using namespace core::pose;
 using namespace core::conformation::membrane;
 using namespace protocols::moves;
 	  
@@ -76,10 +79,21 @@ public:
 	/// center at emb_center and normal at emb_normal and will load
 	/// in spanning regions from list of spanfiles provided
 	AddMembraneMover(
-		Vector emb_center,
-		Vector emb_normal,
+		Vector mem_center,
+		Vector mem_normal,
 		std::string spanfile,
 		core::SSize membrane_rsd=0
+	);
+
+	/// @brief Custom Constructor - mainly for PyRosetta
+	/// @details Creates a membrane pose setting the membrane
+	/// center at emb_center and normal at emb_normal and from a
+	/// topology object
+	AddMembraneMover(
+					 Vector mem_center,
+					 Vector mem_normal,
+					 SpanningTopologyOP topology,
+					 core::SSize membrane_rsd=0
 	);
 				
 	/// @brief Custorm Constructur with lips info - mainly for PyRosetta
@@ -177,6 +191,7 @@ private:
 
 	// SpanningTopology
 	std::string spanfile_;
+	SpanningTopologyOP topology_;
 
 	// Lipid Accessibility Info - Lips Files
 	std::string lipsfile_;

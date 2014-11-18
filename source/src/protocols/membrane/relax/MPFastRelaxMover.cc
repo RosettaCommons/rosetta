@@ -18,7 +18,7 @@
 /// @note       Last Modified (7/20/14)
 
 // Unit Headers
-#include <protocls/membrane/relax/MPFastRleaxMover.hh> 
+#include <protocls/membrane/relax/MPFastRelaxMover.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh> 

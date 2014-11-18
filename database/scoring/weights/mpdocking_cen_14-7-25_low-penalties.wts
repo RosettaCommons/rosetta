@@ -1,0 +1,20 @@
+#test for mpdocking
+#membrane
+mp_pair 1.0
+mp_env 2.019
+mp_cbeta 2.5
+mp_nonhelix 0.1
+mp_termini 0.1
+mp_tmproj 0.1
+rama 0.15
+rsigma 1.0
+sheet 1.0
+ss_pair 1.0
+hs_pair 1.0
+
+#docking
+interchain_env 0.1
+interchain_pair 0.1
+interchain_vdw 10.0
+interchain_contact 0.2
+

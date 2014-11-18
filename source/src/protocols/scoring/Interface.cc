@@ -165,6 +165,10 @@ Interface::protein_calculate( core::pose::Pose const & pose )
 	using namespace core;
 	using namespace conformation;
 
+	// update_residue_neighbors should be called before calling the energy_graph method
+	// however, the pose is const and can't be changed; needs to be fixed!
+//	pose.update_residue_neighbors();
+
 	core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	std::vector< int>::iterator new_end_pos;
 

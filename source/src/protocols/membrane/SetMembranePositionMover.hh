@@ -9,10 +9,9 @@
 
 /// @file		protocols/membrane/SetMembranePositionMover.hh
 ///
-/// @brief		Membrane Position Rotation/Translation Mover
-///	@details	Apply a uniform rigid translation & rotation of the
-///				membrane defined by the center/normal coordinates
-///				stored in the membrane.
+/// @brief		Sets the membrane position normal and center
+///	@details	Sets the membrane position normal and center
+///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
 ///				Last Modified: 6/28/14
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
@@ -111,7 +110,7 @@ private:
 /// @brief Membrane Position Rotation Move
 /// @details Rotate the orientation of the membrane position to a new
 /// normal position. Applies rotation to jump
-class SetMembraneNomalMover : public Mover {
+class SetMembraneNormalMover : public Mover {
 	
 public:
 	
@@ -120,24 +119,24 @@ public:
 	////////////////////
 	
 	/// @brief Construct a Default Membrane Position Mover
-	SetMembraneNomalMover();
+	SetMembraneNormalMover();
 	
 	/// @brief Custom Constructor
 	/// @details Specify a new normal to rotate membranes to
 	///	to move this position to
-	SetMembraneNomalMover( Vector normal );
+	SetMembraneNormalMover( Vector normal );
 	
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
-	SetMembraneNomalMover( SetMembraneNomalMover const & src );
+	SetMembraneNormalMover( SetMembraneNormalMover const & src );
 	
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
-	SetMembraneNomalMover &
-	operator=( SetMembraneNomalMover const & src );
+	SetMembraneNormalMover &
+	operator=( SetMembraneNormalMover const & src );
 	
 	/// @brief Destructor
-	~SetMembraneNomalMover();
+	~SetMembraneNormalMover();
 	
 	/////////////////////
 	/// Mover Methods ///

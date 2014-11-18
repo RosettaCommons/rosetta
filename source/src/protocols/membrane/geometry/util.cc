@@ -23,20 +23,21 @@
 
 // Project Headers
 #include <core/conformation/membrane/Exceptions.hh>
+#include <core/conformation/membrane/Span.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <protocols/membrane/geometry/EmbeddingDef.hh>
 
 // Package Headers
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID_Map.hh>
-
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -59,12 +60,12 @@ static thread_local basic::Tracer TR( "protocols.membrane.geometry.util" );
 using basic::Error;
 using basic::Warning;
 
+using namespace core;
+using namespace core::conformation::membrane;
+
 namespace protocols {
 namespace membrane {
 namespace geometry {
-
-using namespace core;
-using namespace core::conformation::membrane;
 
 
 //////////////// Utility Functions from Docking Protocol - Geometry Util for Center of Mass ////////////////
@@ -179,20 +180,162 @@ get_chain_and_z( pose::PoseOP pose ) {
 	
 } // get chain and z from pose
 
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Compute Membrane Center/Normal from Membrane Spanning
+/// topology
+void compute_structure_based_membrane_position(
+										pose::Pose & pose,
+										Vector & center,
+										Vector & normal
+										) {
+	// create EmbeddingDef to return
+	EmbeddingDefOP embed = compute_structure_based_membrane_position( pose );
+
+	// set new center and normal
+	center = embed->center();
+	normal = embed->normal();
+	
+}// compute structure-based position
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Compute Membrane Center/Normal from Membrane Spanning
+/// topology
+EmbeddingDefOP compute_structure_based_membrane_position( pose::Pose & pose ){
+		
+	using namespace core;
+	using namespace numeric;
+	using namespace core::conformation;
+	using namespace core::conformation::membrane;
+	
+	TR << "compute_structure_based_membrane_position" << std::endl;
+	TR << "center: " << pose.conformation().membrane_info()->membrane_center().to_string() << std::endl;
+	TR << "normal: " << pose.conformation().membrane_info()->membrane_normal().to_string() << std::endl;
+	
+	// utility
+	core::Size const CA( 2 );
+	
+	// initalize vectors
+	Vector center (0, 0, 0);
+	Vector normal (0, 0, 0);
+	
+	// Count TMhelices
+	core::Size nspans = pose.conformation().membrane_info()->spanning_topology()->nspans();
+	
+	// iterate over spans
+	for ( core::Size j = 1; j <= nspans; ++j ) {
+		
+		// get coords where spans enter the membrane on either side
+		Vector const & start = pose.residue( pose.conformation().membrane_info()->spanning_topology()->span( j )->start() ).atom( CA ).xyz();
+		Vector const & end = pose.residue( pose.conformation().membrane_info()->spanning_topology()->span( j )->end() ).atom( CA ).xyz();
+		
+		// add vectors according to span orientation
+		// this also works for multiple chains
+		if ( start.z() < end.z() ){ // inside out
+			normal += ( end - start );
+		}
+		else {						// outside in
+			normal -= ( end - start );
+		}
+		center += ( start + end ) / 2;
+		
+		// TODO: better checking of out/in or in/out orientation, especially
+		// for odd and even spans and for multiple chains
+		
+		// TODO: more highres: don't just take a single CA atom for start and end
+		// but the COM of the residues i, i-1, i+1
+	}
+	
+	// divide by number of spans
+	center /= nspans;
+	normal /= nspans;
+	normal.normalize();
+	
+	// create EmbeddingDef to return
+	EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
+	
+	TR << "after transformation" << std::endl;
+	TR << "center: " << embedding->center().to_string() << std::endl;
+	TR << "normal: " << embedding->normal().to_string() << std::endl;
+	
+	return embedding;
+			
+}// compute structure based membrane position
+
+/// @brief Check reasonable range of vector
+void check_vector( core::Vector const vector ) {
+
+	TR << "Checking vector " << std::endl;
+
+	// warn if vector is origin
+	if ( vector.to_string() == "(0, 0, 0)"){
+	TR << "WARNING: your vector is (0, 0, 0)!" << std::endl;
+	}
+
+	// Fail if vector is out of range
+	if ( vector.x() < -1000 || vector.x() > 1000 ||
+	vector.y() < -1000 || vector.y() > 1000 ||
+	vector.z() < -1000 || vector.z() > 1000 ) {
+
+		throw new conformation::membrane::EXCN_Illegal_Arguments("Unreasonable range for center or normal! Check your input vectors!");
+	}
+}// check_vector
+
+/// @brief Average EmbeddingDefs
+/// @details Get average center and normal from a vector of EmbeddingDefs
+EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts ) {
+
+    // Initialize vars
+    core::Vector center(0, 0, 0);
+    core::Vector normal(0, 0, 0);
+    
+	// Compute resulting center and normal
+    for ( Size i = 1 ; i <= parts.size(); ++i ) {
+        center += parts[i]->center();
+		if ( parts[i]->normal().z() > 0 ){
+			normal += parts[i]->normal(); // normals in positive z are added
+		}
+		else {
+			normal += (-1) * ( parts[i]->normal() ); // normals in negative z are subtracted
+		}
+    }
+	
+    center /= parts.size();
+    normal /= parts.size();
+    
+	// Create new embedding setup and return it
+    EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
+    return embedding;
+
+}
+
 /// @brief Normalize normal vector to length 15 for visualization
 void membrane_normal_to_length_15( pose::Pose & pose ){
-	
+
 	// get center and normal
 	Vector center = pose.conformation().membrane_info()->membrane_center();
 	Vector normal = pose.conformation().membrane_info()->membrane_normal();
-	
+
 	// normalize normal vector
 	normal.normalize( 15 );
-	
+
 	// Update membrane position with new coords
 	pose.conformation().update_membrane_position( center, normal );
 }
 
+/// @brief Set membrane residue to root of foldtree
+/// @details Requires MembraneInfo to be constructed beforehand;
+///			 use AddMembraneMover to do that
+void reorder_membrane_foldtree( pose::Pose & pose ) {
+
+	// get foldtree from pose
+	core::kinematics::FoldTree foldtree = pose.fold_tree();
+
+	// reorder foldtree
+	foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
+
+	// set foldtree in pose
+	pose.fold_tree( foldtree );
+}
 
 } // geometry
 } // membrane

@@ -85,37 +85,52 @@ public: // constructors
 
 public: // methods
 
-	/// @brief Show the current spans stored in this SpanningTopology Object
-	/// @details Generating a String Representation of Spanning Topology Object for debugging purposes
+	//////////////////////
+	// OUTPUT FUNCTIONS //
+	//////////////////////
+    
+	/// @brief  Generate string representation of Spanning Topology Object for debugging purposes.
 	virtual void show( std::ostream & output=std::cout ) const;
 
 	// write spanfile
 	void write_spanfile( std::string output_filename );
+	
+	/////////////////////////
+	// GETTERS AND SETTERS //
+	/////////////////////////
+	
+    // get topology
+    utility::vector1< SpanOP > get();
+    
+	// get number of spans
+    Size nspans();
 
-    /// @brief Return Spanning Topology
-	/// @details return spanning topology as a vector1 of transmembrane spans
-    utility::vector1< SpanOP > get_spans();
-
-	/// @brief Return Transmembrane Span
-	/// @details Return transmembrane span by it's index in the spanning topology object
+    // get span by number
     SpanOP span( Size span_number );
+	
+	// fill from spanfile - can be used after creating empty object
+	void fill_from_spanfile( std::string spanfile, Size total_residues = 0 );
+	
+	// concatenate 2nd topology object
+	SpanningTopologyOP concatenate_topology( SpanningTopologyOP topo );
+	
+	// add span to end of SpanningTopology object, doesn't reorder
+	void add_span( SpanOP span, Size offset = 0 );
 
 	// add span to end of SpanningTopology object, doesn't reorder
-	void add_span( SpanOP span );
+	void add_span( Size start, Size end, Size offset = 0 );
 
 	// reorder spans, for instance after adding one
 	void reorder_spans();
-
-    //// @brief Get total number of spans
-	/// @details Return the number of transmembrane spanning regions in this object
-    Size total_spans();
-
-    /// @brief Is the residue in the membrane region?
-	/// @details Return true if this residue is in a transmembrane span
+    	
+	//////////////////
+	// FOR CHECKING //
+	//////////////////
+	
+    // is residue in membrane?
     bool in_span( Size residue );
-
-	/// @brief Does the span cross the membrane
-	/// @details Determine if the membrane spanning region crosses the whole membrane
+	
+	// does the span cross z=0, i.e. really spanning the membrane?
 	bool spanning( utility::vector1< Real > res_z_coord, SpanOP span );
 
     /// @brief Determine if this Spanning Topology Object is Valid

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		core/membrane/io/SpanFileIO.cxxtest.hh
+/// @file 		protocols/membrane/io/SpanFileIO.cxxtest.hh
 ///
 /// @brief 		Test Suite for izstream reader class that reads in OCTOPUS file data
 /// @details
@@ -19,12 +19,12 @@
 #include <test/core/init_util.hh>
 
 // Tested Classes
-#include <core/membrane/io/SpanFileLoader.hh>
+#include <protocols/membrane/io/SpanFileLoader.hh>
 
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Exceptions.hh>
 
-#include <core/membrane/io/SpanFileOptions.hh>
+#include <protocols/membrane/io/SpanFileOptions.hh>
 #include <protocols/loops/LoopsFileOptions.hh>
 
 // Resource Manager Headers
@@ -59,7 +59,7 @@ public: // test methods
 	void setUp()
 	{
         
-        using namespace core::membrane::io;
+        using namespace protocols::membrane::io;
         using namespace protocols::loops;
         
         // Core init
@@ -92,10 +92,10 @@ public: // test methods
         std::istringstream lstream;
         
         // Loading the four edge cases
-        sp_single_tmh_ = loader_.create_resource( opts1_, "core/membrane/io/single_tmh.span", lstream );
-        sp_multiple_tmh_ = loader_.create_resource( opts1_, "core/membrane/io/multiple_tmh.span", lstream );
-        sp_edge_tmh_ = loader_.create_resource( opts1_, "core/membrane/io/edge_tmh.span", lstream );
-        sp_full_tmh_ = loader_.create_resource( opts1_, "core/membrane/io/full_tmh.span", lstream );
+        sp_single_tmh_ = loader_.create_resource( opts1_, "protocols/membrane/io/single_tmh.span", lstream );
+        sp_multiple_tmh_ = loader_.create_resource( opts1_, "protocols/membrane/io/multiple_tmh.span", lstream );
+        sp_edge_tmh_ = loader_.create_resource( opts1_, "protocols/membrane/io/edge_tmh.span", lstream );
+        sp_full_tmh_ = loader_.create_resource( opts1_, "protocols/membrane/io/full_tmh.span", lstream );
         
         
         // Ensure resources were returned
@@ -123,7 +123,7 @@ public: // test methods
     void test_resource_definition()
     {
             
-        using namespace core::membrane::io;
+        using namespace protocols::membrane::io;
         using namespace core::conformation::membrane;
         using namespace basic::resource_manager;
         using namespace protocols::jd2;
@@ -172,11 +172,11 @@ private: // resource definition xml
         return
         "<JD2ResourceManagerJobInputter>\n"
         "  <ResourceLocators>\n"
-        "    <FileSystemResourceLocator tag=1afo base_path=\"core/membrane/io/\" />\n"
+        "    <FileSystemResourceLocator tag=1afo base_path=\"protocols/membrane/io/\" />\n"
         "  </ResourceLocators>\n"
         "  <Resources>\n"
         "    <PoseFromPDB tag=1afo_startstruct locator=1afo locatorID=\"1afo_test.pdb\" />\n"
-        "    <SpanFile tag=1afo_topology file=\"core/membrane/io/1afo_test.span\" />\n"
+        "    <SpanFile tag=1afo_topology file=\"protocols/membrane/io/1afo_test.span\" />\n"
         "  </Resources>\n"
         "  <Jobs>\n"
         "    <Job name=membrane>\n"
@@ -190,10 +190,10 @@ private: // resource definition xml
 private: // data
     
     // Set up a permanent loader class (gets reinitialized per test)
-    core::membrane::io::SpanFileLoader loader_;
+    protocols::membrane::io::SpanFileLoader loader_;
     
     // Storing opts pointers
-    core::membrane::io::SpanFileOptions opts1_;
+    protocols::membrane::io::SpanFileOptions opts1_;
     protocols::loops::LoopsFileOptions opts2_; // this is hysterical
     
     // Expected cases (argh I hate this generic OP thing)

@@ -103,10 +103,14 @@ Span::end() {
     return end_;
 }
 
+/// @brief get residue closest to center
+Size Span::center(){
+	return ( ( start_ + end_ ) / 2 );
+}
+	
 /// @brief Shift by offset
 /// @details Shift the transmembrane span by a user-provided offset
-void
-Span::shift( Size offset ) {
+void Span::shift( Size offset ) {
 	start_ += offset;
 	end_ += offset;
 	not_valid();
@@ -155,9 +159,7 @@ bool Span::is_valid(){
 	
 } // is valid
 
-// TODO: No idea why this is here - should get rid of it...
-void
-Span::not_valid(){
+void Span::not_valid(){
 	
 	if ( ! is_valid() ){
 		throw utility::excn::EXCN_Msg_Exception( "Span is invalid!" );

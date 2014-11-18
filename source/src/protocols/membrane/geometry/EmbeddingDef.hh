@@ -22,6 +22,7 @@
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
 
 // Project Headers
+#include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
@@ -46,7 +47,10 @@ public:
 	EmbeddingDef();
 	
 	/// @brief Standard Constructor
-	EmbeddingDef( core::Vector const normal, core::Vector const center );
+	EmbeddingDef( core::Vector const center, core::Vector const normal );
+	
+	/// @brief Constructor from pose and two residue numbers
+	EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end );
 	
 	/// @brief Copy Constructor
 	EmbeddingDef( EmbeddingDef const & EmbeddingDef );
@@ -78,15 +82,14 @@ public:
 	/// @brief Equals method
 	bool equals( EmbeddingDef & other );
 	
+	/// @brief From span
+	void from_span( core::pose::PoseOP pose, core::Size start, core::Size end );
+	
 private: // data
 	
 	core::Vector normal_;
 	core::Vector center_;
-	
-private: // function
-	
-	void check_vector( core::Vector vector ) const;
-	
+		
 };
     
 } // geometry

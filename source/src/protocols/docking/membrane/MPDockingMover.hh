@@ -17,14 +17,19 @@
 
 // Unit Headers
 #include <protocols/docking/membrane/MPDockingMover.fwd.hh>
-#include <protocols/moves/Mover.hh> 
+#include <protocols/moves/Mover.hh>
+
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/membrane/MembraneInfo.fwd.hh>
 
 // Project Headers
 #include <protocols/membrane/AddMembraneMover.fwd.hh>
-#include <protocols/docking/DockMCMProtocol.fwd.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/docking/DockingProtocol.fwd.hh>
+
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+
+#include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 
@@ -33,8 +38,21 @@
 #include <core/types.hh> 
 
 // Utility Headers
+//#include <basic/options/option.hh>
+//#include <basic/options/keys/in.OptionKeys.gen.hh>
+//#include <basic/options/keys/out.OptionKeys.gen.hh>
+
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
+
+#include <basic/Tracer.hh>
+
+#include <protocols/viewer/viewers.hh>
+
+// C++ Headers
+#include <cstdlib>
+#include <string>
+#include <cmath>
 
 namespace protocols {
 namespace docking {
@@ -42,11 +60,15 @@ namespace membrane {
 
 using namespace core;
 using namespace core::pose;
+using namespace core::scoring;
+using namespace protocols::membrane;
 using namespace protocols::moves;
-	  
-/// @brief Add Membrane components to the pose - includes
-///	spanning topology, lips info, embeddings, and a membrane
-/// virtual residue describing the membrane position
+using namespace protocols::docking;
+	
+/// @brief Docks two proteins together in the membrane bilayer
+/// @details Requires running mpdocking_setup first to create a single pose;
+///			 Should also run docking_prepack before which uses the membrane option
+///			 when passed the -membrane_new::setup::spanfiles flag
 class MPDockingMover : public protocols::moves::Mover {
 
 public:
@@ -56,9 +78,7 @@ public:
 	/////////////////////
 
 	/// @brief Default Constructor
-	/// @details Create a membrane pose setting the membrane center
-	/// at center=(0, 0, 0), normal=(0, 0, 1) and loads in spans
-	/// and lips from the command line interface.
+	/// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
 	MPDockingMover();
 		
 	/// @brief Copy Constructor
@@ -71,10 +91,10 @@ public:
 public: // methods
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	virtual MoverOP clone() const;
 	
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual MoverOP fresh_instance() const;
 	
 	/////////////////////
 	/// Mover Methods ///
@@ -83,32 +103,31 @@ public: // methods
 	/// @brief Get the name of this Mover (MPDockingMover)
 	virtual std::string get_name() const;
 		
-	/// @brief Add Membrane Components to Pose
-	/// @details Add membrane components to pose which includes
-	///	spanning topology, lips info, embeddings, and a membrane
-	/// virtual residue describing the membrane position
+	/// @brief Add membrane components to the pose, then dock proteins along
+	///			the flexible jump
 	virtual void apply( Pose & pose );
 	
 private: // methods
 	
 	// setup
 	void setup();
+	
+	// read native pose for proper RMSD calculation
+	void read_native( const Pose & pose );
 
 private: // data
 
 	// add membrane mover
-	protocols::membrane::AddMembraneMoverOP add_membrane_mover_;
-	
-	// dock MCM protocol
-	protocols::docking::DockMCMProtocolOP dock_mcm_protocol_;
-	
-	// sequence mover
-	protocols::moves::RandomMoverOP random_mover_;
-	
+	AddMembraneMoverOP add_membrane_mover_;
+
+	// docking protocol
+	DockingProtocolOP docking_protocol_;
+
 	// scorefunction
-	core::scoring::ScoreFunctionOP scorefunction_;
-	
-	// kT
+	ScoreFunctionOP lowres_scorefxn_;
+	ScoreFunctionOP highres_scorefxn_;
+
+	// kT for the MC protocol
 	Real kT_;
 
 	// Membrane Center/Normal pair used for setup

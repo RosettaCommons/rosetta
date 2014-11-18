@@ -39,6 +39,7 @@
 // C++ Headers
 #include <string>
 #include <cstdlib>
+#include <iostream>
 
 namespace protocols {
 namespace membrane {
@@ -56,53 +57,47 @@ public: // constructors
 	/// @details Construct an empty embedding object
 	Embedding();
 
-	/// @brief Custom Cosntructor - From Topology
-	/// @details Constructs a membrane embedding object from spanning topology
-	/// This is kind of a bogus topology since we don't know about the structure
-	Embedding( SpanningTopologyOP topology );
+	/// @brief	Constructs bogus object from topology
+	Embedding( SpanningTopologyOP topology, Real radius );
 
 	/// @brief Custom Constructor - from topology & structure
 	/// @details Construct Embedding from Structure & Topology
 	Embedding( SpanningTopologyOP topology, PoseOP pose );
-
-	/// @brief	Constructs from user-defined embedding
-	/// @details COnstruct embedding from topology, pose and user defined embedding
-	Embedding( SpanningTopologyOP topology, PoseOP pose, EmbeddingDefOP user_embedding );
 
 	/// @brief	Destructor
 	~Embedding();
     
 public: // methods
 
-	/// @brief Show this embedding
-	/// @details Show the embedding parameters - center & normal
-	void show();
+	// show object
+	virtual void show( std::ostream & out=std::cout );
+	
+	// number of span embeddings in object
+	Size nspans();
 
-	/// @brief Get Embedding associated with a particular transmembrane span
-	EmbeddingDefOP span_embedding( Size span_number );
+	// get span embedding by number
+	EmbeddingDefOP embedding( Size span_number );
 
-	/// @brief Get a vector of embeddings per transmembrane span
-	utility::vector1< EmbeddingDefOP > span_embeddings();
+	// get all span embeddings
+	utility::vector1< EmbeddingDefOP > embeddings();
 
-	/// @brief Get the embedding definition for chains
-	EmbeddingDefOP chain_embedding();
+	// get chain embedding
+	EmbeddingDefOP total_embed();
 
-	/// @brief Compute the total embedding from multiple embeddings
-	EmbeddingDefOP sum_of_parts( utility::vector1< EmbeddingDefOP > parts );
+	//////////////////////
+	/// HELPER METHODS ///
+	//////////////////////
 
-	/// @brief Compute Embedding from transmembrane spans
+	// from TMspans
 	utility::vector1< EmbeddingDefOP > from_spans( SpanningTopologyOP topology, PoseOP pose );
-
-	/// @brief Compute emmebrane embedding from a single transmembrane span 
-	EmbeddingDefOP from_span( Size start, Size end, PoseOP pose );
 
 private: // data
 
 	// embedding per span
-	utility::vector1< EmbeddingDefOP > span_embeddings_;
+	utility::vector1< EmbeddingDefOP > embeddings_;
 
-	// embedding per chain
-	EmbeddingDefOP chain_embedding_;
+	// average embedding of all span embeddings
+	EmbeddingDefOP total_embed_;
 
 }; // Embedding
 
