@@ -618,13 +618,17 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					}
 
 					TR << "Beginning centroid-mode loop rebuilding..." << endl;
-					builder->set_loops(*loops);
-					builder->set_score_function(cen_scorefxn_);
-					builder->apply(pose);
+					if ( ! option[OptionKeys::loops::skip_initial_loop_build].user() ) {
+						builder->set_loops(*loops);
+						builder->set_score_function(cen_scorefxn_);
+						builder->apply(pose);
 
-					if ( ! builder->was_successful() ) {
-						set_last_move_status(protocols::moves::FAIL_RETRY);
-						return;
+						if ( ! builder->was_successful() ) {
+							set_last_move_status(protocols::moves::FAIL_RETRY);
+							return;
+						}
+					} else {
+						TR << "Skipping initial loop build. " << endl;
 					}
 					if ( option[ in::file::native ].user() ) {
 						setPoseExtraScore(pose, "rebuild_rms",   core::scoring::native_CA_rmsd(native_pose, pose));

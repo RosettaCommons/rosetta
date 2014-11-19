@@ -2088,6 +2088,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'combine_rate', 'Real', desc='Combine successive loops at this rate', default='0.0' ),
 		## Options affecting growing/combining of loops
 		## subprotocol components
+		Option( 'skip_initial_loop_build', 'Boolean',
+			desc='Skip the initial loop build step where existing loop torsions are discarded and the loop is built from scratch. ',
+			legal=['true','false'], default='false'
+		),
 		Option( 'remodel', 'String', default = 'no',
 		legal=['no','perturb_ccd','perturb_kic','perturb_kic_refactor','perturb_kic_with_fragments','quick_ccd','quick_ccd_moves','old_loop_relax','sdwindow'], desc = ''),
 		Option( 'intermedrelax', 'String',                 default = 'no',
