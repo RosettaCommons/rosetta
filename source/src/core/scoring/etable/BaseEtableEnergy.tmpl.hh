@@ -1655,6 +1655,9 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_background_energies(
 	EtableRotamerTrieCOP trie2 = ( static_cast< TrieCollection const & >
 		( pose.energies().data().get( EnergiesCacheableDataType::ETABLE_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
+	//fpd
+	if (trie2 == NULL) return;
+
 	//prepare_for_residue_pair( set.resid(), residue.seqpos(), pose );
 
 	// figure out which trie countPairFunction needs to be used for this set

@@ -977,6 +977,8 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	RotamerTrieBaseCOP trie2 = ( static_cast< TrieCollection const & >
 		( pose.energies().data().get( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
+	if (trie2 == NULL) return;
+
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( pose.residue( set.resid() ), residue, trie1, trie2, pose, sfxn );
 

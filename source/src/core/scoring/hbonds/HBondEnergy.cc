@@ -1142,6 +1142,9 @@ HBondEnergy::evaluate_rotamer_background_energies(
 	HBondRotamerTrieCOP trie2 = ( static_cast< TrieCollection const & >
 																( pose.energies().data().get( HBOND_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
+	//fpd
+	if (trie2 == NULL) return;
+
 	TrieCountPairBaseOP cp( new HBCountPairFunction );
 
 	/// now execute the trie vs trie algorithm.
