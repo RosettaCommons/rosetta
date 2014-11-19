@@ -120,6 +120,11 @@ FaMPEnvEnergy::setup_for_derivatives(
 	
 	using namespace core::scoring::membrane;
 	
+    // Check if pose is a membrane pose
+    if (! pose.conformation().is_membrane() ) {
+        utility_exit_with_message( "Cannot use the membrane framework supported energy functions on a pose without a MembraneInfo object. Have you used AddMembraneMover yet?");
+    }
+    
 	// Setup Projection and Derivatives
 	init( pose );
 
@@ -188,6 +193,11 @@ FaMPEnvEnergy::setup_for_scoring(
 	ScoreFunction const &
 	) const {
 	
+    // Check if pose is a membrane pose
+    if (! pose.conformation().is_membrane() ) {
+        utility_exit_with_message( "Cannot use the membrane framework supported energy functions on a pose without a MembraneInfo object. Have you used AddMembraneMover yet?");
+    }
+    
 	// Setup Projection and Derivatives
 	init( pose );
 
@@ -213,7 +223,7 @@ FaMPEnvEnergy::version() const {
 
 void
 FaMPEnvEnergy::init( pose::Pose & pose ) const {
-
+    
 	// Alloc appropriate Farrays
 	setup_for_fullatom( pose );
 	

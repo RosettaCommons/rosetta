@@ -138,8 +138,10 @@ Conformation::Conformation( Conformation const & src ) :
 	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
 
 	// membranes
-	membrane_info_ = src.membrane_info_;
-
+    if ( membrane_info_ ) {
+        membrane_info_ = membrane::MembraneInfoOP( new membrane::MembraneInfo( *src.membrane_info_ ) );
+    }
+    
 	// chain info
 	chain_endings_ = src.chain_endings_;
 	// secstruct

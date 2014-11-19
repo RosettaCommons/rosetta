@@ -137,6 +137,11 @@ FaMPEnvSmoothEnergy::setup_for_derivatives(
    ScoreFunction const &
    ) const
 {
+    
+    // Check if pose is a membrane pose
+    if (! pose.conformation().is_membrane() ) {
+        utility_exit_with_message( "Cannot use the membrane framework supported energy functions on a pose without a MembraneInfo object. Have you used AddMembraneMover yet?");
+    }
 	
 	pose.update_residue_neighbors();
 	Size const nres( pose.total_residue() );
@@ -198,6 +203,11 @@ FaMPEnvSmoothEnergy::setup_for_scoring(
    ScoreFunction const &
    ) const
 {
+    // Check if pose is a membrane pose
+    if (! pose.conformation().is_membrane() ) {
+        utility_exit_with_message( "Cannot use the membrane framework supported energy functions on a pose without a MembraneInfo object. Have you used AddMembraneMover yet?");
+    }
+    
 	pose.update_residue_neighbors();
 }
 

@@ -87,6 +87,11 @@ MPCbetaEnergy::clone() const {
 void
 MPCbetaEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
+    // Check Structure is a membrane protein
+    if (! pose.conformation().is_membrane() ) {
+        utility_exit_with_message("Error: Cannot use mpframework energy term using a non membrane pose!");
+    }
+    
 	pose.update_residue_neighbors();
 	mpdata_.compute_centroid_environment( pose );
 }
@@ -98,11 +103,6 @@ MPCbetaEnergy::residue_energy(
 			   pose::Pose const & pose,
 			   EnergyMap & emap
 				) const {
-	
-	// Check Structure is a membrane protein
-	if (! pose.conformation().is_membrane() ) {
-		utility_exit_with_message("Error: Cannot use mpframework energy term using a non membrane pose!");
-	}
 	
 	// Initialize Scores
 	Real membrane_cb_score( 0.0 );

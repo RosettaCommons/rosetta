@@ -154,8 +154,8 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
     this->steepness_ = src.steepness_;
     this->membrane_rsd_num_ = src.membrane_rsd_num_;
     this->membrane_jump_ = src.membrane_jump_;
-    this->lipid_acc_data_ = src.lipid_acc_data_;
-    this->spanning_topology_ = src.spanning_topology_;
+    this->lipid_acc_data_ = LipidAccInfoOP( new LipidAccInfo( *src.lipid_acc_data_ ) );
+    this->spanning_topology_ = SpanningTopologyOP( new SpanningTopology( *src.spanning_topology_ ) );
     
     return *this;
 }

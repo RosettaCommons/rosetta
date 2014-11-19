@@ -99,6 +99,11 @@ MPTMProjPenalty::finalize_total_energy(
 	
 	using namespace core::conformation::membrane;
 	using namespace core::scoring::membrane;
+    
+    // Check Structure is a membrane protein
+    if (! pose.conformation().is_membrane() ) {
+        utility_exit_with_message("Error: Cannot use mpframework energy term using a non membrane pose!");
+    }
 	
 	// Initialize TM Projection
 	core::Real tm_proj( 0.0 );
