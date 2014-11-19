@@ -144,7 +144,7 @@ class Pairing {
 	}
 
 	Size get_register()  {
-		return is_anti() ? Pos1() + Pos2() : std::abs( float( Pos1() - Pos2() ) );
+		return is_anti() ? Pos1() + Pos2() : (Size)(std::abs( float( Pos1() - Pos2() ) ) );
 	}
 
 	bool operator < ( Pairing const& p ) const {

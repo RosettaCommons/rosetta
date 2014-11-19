@@ -81,7 +81,7 @@ TMscore::convert_FArray2D_to_vector0( FArray2D< core::Real > const & p1,
 																			)
 {
 	core::Size n( p1.size()/3 );
-  xyz.resize( n );
+  xyz.resize( n , core::Vector(0,0,0));
   for( core::Size i = 0; i < n; ++i ){
 		core::Vector v;
 		v[0] = p1( 1, i+1 ); v[1] = p1( 2, i+1 ); v[2] = p1( 3, i+1 ); // Be careful of indexing
@@ -110,7 +110,7 @@ TMscore::get_ali_params()
 
 	core::Size i( 0 );
   for(i=1; i<=n_init_max-1; ++i){
-		core::Size denom( 1.0 );
+		core::Size denom( 1 );
 		for( core::Size j=0; j<=i-1; ++j ) denom *= 2;
 
     L_ini_.push_back( core::Size(nseq_ / denom) );

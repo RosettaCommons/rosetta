@@ -307,10 +307,10 @@ FaMPEnvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 
 	core::Real nres = pose.total_residue();
 	
-	fa_proj_.resize( nres );
-	fa_proj_coord_.resize( nres );
-	fa_proj_deriv_.resize( nres );
-	fa_z_position_.resize( nres );
+	fa_proj_.resize( (core::Size)nres );
+	fa_proj_coord_.resize( (core::Size)nres );
+	fa_proj_deriv_.resize( (core::Size)nres );
+	fa_z_position_.resize( (core::Size)nres );
 	
 	static Size const MAX_AMINOACID_SIZE = 15;
 	

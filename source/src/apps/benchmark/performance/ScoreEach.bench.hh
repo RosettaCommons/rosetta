@@ -130,7 +130,7 @@ public:
 			// whole structure energies
 			core::scoring::ScoreFunction scorefxn;
 			try{
-				core::Size reps( base_scale_factor_*scaleFactor );
+				core::Size reps( (core::Size)(base_scale_factor_*scaleFactor) );
 				if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 				for(core::Size i=0; i < reps; i++) {
 					scorefxn.set_weight(score_type_, 1);
@@ -167,7 +167,7 @@ public:
 
 		OneBodyEnergy const & e1b( static_cast< OneBodyEnergy const & > ( *enmeth_ ));
 		EnergyMap emap;
-		core::Size reps( base_scale_factor_*scaleFactor );
+		core::Size reps( (core::Size)(base_scale_factor_*scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e1b.score_types() );
@@ -196,7 +196,7 @@ public:
 
 		ShortRangeTwoBodyEnergy const & e2b( static_cast< ShortRangeTwoBodyEnergy const & > (*enmeth_) );
 		EnergyMap emap;
-		core::Size reps( base_scale_factor_*scaleFactor );
+		core::Size reps( (core::Size)(base_scale_factor_*scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );
@@ -232,7 +232,7 @@ public:
 		EnergyMap emap;
 		LREnergyContainerOP lrec = pose_->energies().nonconst_long_range_container( e2b.long_range_type() );
 
-		core::Size reps( base_scale_factor_*scaleFactor );
+		core::Size reps( (core::Size)(base_scale_factor_*scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );

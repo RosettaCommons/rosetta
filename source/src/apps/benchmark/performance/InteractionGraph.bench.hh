@@ -147,7 +147,7 @@ public:
 
 		dba.annealer_file( trajectory_fname_ );
 
-		core::Size reps( base_scale_ * scaleFactor );
+		core::Size reps( (core::Size)(base_scale_ * scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // Do at least one rep, regardless of scaling factor
 		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			dba.run(); // the main piece of code to benchmark

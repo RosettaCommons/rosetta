@@ -461,7 +461,12 @@ PB::write_config (core::pose::Pose const & pose) const {
 	core::Real space(0.5);
 	numeric::xyzVector <core::Real> dimension_fine = length + numeric::xyzVector <core::Real> (fadd,fadd,fadd);
 	numeric::xyzVector <core::Real> dimension_coarse = length * cfac;
-	numeric::xyzVector <core::Size> n_grid = static_cast< numeric::xyzVector <core::Size> > (dimension_fine / space + numeric::xyzVector <core::Real> (1.,1.,1.));
+
+	numeric::xyzVector <core::Real> tmpv = dimension_fine / space + numeric::xyzVector <core::Real> (1.,1.,1.); // bazzoli: to avoid warning by my compiler
+	numeric::xyzVector <core::Size> n_grid;
+	n_grid.x() = (core::Size)tmpv.x();
+	n_grid.y() = (core::Size)tmpv.y();
+	n_grid.z() = (core::Size)tmpv.z();
 
 	using namespace ObjexxFCL::format;
 	config_ostr << "#" << std::endl;

@@ -86,7 +86,7 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
-		core::Size reps( 1 * scaleFactor );
+		core::Size reps( (core::Size)(1 * scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // do at least one repetition, regardless of scale factor.
 		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			core::pose::Pose runpose = *pose_; // don't start from the last iteration's pose

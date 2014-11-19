@@ -71,8 +71,8 @@ void StepWiseSamplerSizedComb::init() {
 	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
 		Real const curr_size = rotamer_list_[i]->size();
 		id_list_.push_back( 0 );
-		size_list_.push_back( curr_size );
-		size_ *= curr_size;
+		size_list_.push_back( (Size)curr_size );
+		size_ = (Size)(size_ * curr_size);
 		if ( curr_size == 0 ) TR << "Got a null rotamer sampler!" << std::endl;
 	}
 	set_init( true );

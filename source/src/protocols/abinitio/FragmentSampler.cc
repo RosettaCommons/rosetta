@@ -616,9 +616,9 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	core::Size radius_size(0);
 	if(option[lh::radius_size].user())
 	{
-		radius_size = option[lh::radius_size].value();
+		radius_size = (core::Size)(option[lh::radius_size].value());
 	}else{
-		radius_size = 2.0;
+		radius_size = 2;
 	}
 
 	//set up membrane topology

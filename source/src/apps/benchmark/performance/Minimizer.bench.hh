@@ -58,7 +58,7 @@ public:
 	};
 
 	virtual void run(core::Real scaleFactor) {
-		core::Size reps( TScale*scaleFactor );
+		core::Size reps( (core::Size)(TScale*scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
 		for(core::Size i=0; i<reps; i++) {
 			std::string stype = "unknow";

@@ -3461,7 +3461,7 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 		outPDB_stream.close();
 		outPDB_stream.clear();
 
-		std::string output_espGrid_filename = "new_" + espGrid_filename;
+		std::string output_espGrid_filename = "_" + espGrid_filename;
 		newG.print_to_oegrid(output_espGrid_filename);
 		newG.write_espGrid_to_pdb("espGrid.pdb");
 
@@ -3478,7 +3478,7 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 		calculator.Init();
 		calculator.Calc(protein_pose);
 		std::vector<DOT> surface_dots = calculator.GetDots(0);
-		std::cout << "Generated surface dots: " << surface_dots.size() << std::endl;
+		//std::cout << "Generated surface dots: " << surface_dots.size() << std::endl;
 		//core::Size zeronormal_dots = 0;
 		//core::Size skipped_dots = 0;
 		//core::Size selected_dots = 0;
@@ -4346,9 +4346,9 @@ void ElectrostaticpotentialGrid::change_espGrid_for_darc( std::string const & es
   int pfounddir = espGrid_filename.find_last_of("/\\");
   int pfounddot = espGrid_filename.find_last_of(".");
 	std::string tag = espGrid_filename.substr((pfounddir+1),(pfounddot-(pfounddir+1)));
-	std::string output_espGrid_filename = "new_" + tag + ".agd";
+	std::string output_espGrid_filename = "DARC_" + tag + ".agd";
 	print_to_oegrid(output_espGrid_filename);
-
+        std::cout<< "Written espGrid file : "<< output_espGrid_filename << std::endl;
 	//Print grid points into a PDB file
 	using namespace basic::options;
 	if (option[ OptionKeys::pocket_grid::dump_espGrid ]()){
@@ -4504,10 +4504,7 @@ void ElectrostaticpotentialGrid::get_oegrid_dimensions( std::string const & inpu
     std::cout<< "Can't open input file " << input_OEgrid_filename << std::endl;
     exit(1);
   }
-  else  if (inFile) {
-    std::cout<< "Input OE Grid file : " << input_OEgrid_filename << std::endl;
-  }
-
+  
   int linenum = 1;
   std::string line;
   while (std::getline(inFile, line)) {
@@ -4535,7 +4532,7 @@ void ElectrostaticpotentialGrid::get_oegrid_dimensions( std::string const & inpu
     linenum++;
   }
   inFile.close();
-	std::cout<<"Midpoint X Y Z : "<<espGrid_mid_.x()<<" "<<espGrid_mid_.y()<<" "<<espGrid_mid_.z()<<"\n"<<"Dimension X Y Z : "<<espGrid_dim_.x()<<" "<<espGrid_dim_.y()<<" "<<espGrid_dim_.z()<<"\n"<<"spacing : "<<espGrid_spacing_<<std::endl;
+	//std::cout<<"Midpoint X Y Z : "<<espGrid_mid_.x()<<" "<<espGrid_mid_.y()<<" "<<espGrid_mid_.z()<<"\n"<<"Dimension X Y Z : "<<espGrid_dim_.x()<<" "<<espGrid_dim_.y()<<" "<<espGrid_dim_.z()<<"\n"<<"spacing : "<<espGrid_spacing_<<std::endl;
 
 	return;
 }
@@ -4576,22 +4573,36 @@ void ElectrostaticpotentialGrid::print_to_oegrid( std::string const & output_OEg
 
 void  ElectrostaticpotentialGrid::resize_espGrid_to_match_pocketGrid( std::string const & espGrid_filename, PocketGrid const & pg ) {
 
-	numeric::xyzVector<core::Size> tmp_espGrid_dim;
-	numeric::xyzVector<core::Real> tmp_espGrid_mid;
-	core::Real tmp_espGrid_spacing;
-	std::list< utility::vector1<core::Real> > tmp_espGrid_points_list;
-	std::vector < std::vector < std::vector <core::Real> > > tmp_espGrid;
-
 	get_oegrid_dimensions(espGrid_filename);
 	fill_espGrid_values(espGrid_filename);
-
-	tmp_espGrid.clear();
-	tmp_espGrid_spacing = espGrid_spacing_;
-	tmp_espGrid_dim = pg.dim_;
-	tmp_espGrid_mid.x() = pg.xcorn_+ ((pg.xdim_-1)/2*tmp_espGrid_spacing);
-	tmp_espGrid_mid.y() = pg.ycorn_+ ((pg.ydim_-1)/2*tmp_espGrid_spacing);
-	tmp_espGrid_mid.z() = pg.zcorn_+ ((pg.zdim_-1)/2*tmp_espGrid_spacing);
-
+	numeric::xyzVector<core::Size> trim_espGrid_dim = pg.dim_;
+	core::Real trim_espGrid_spacing = espGrid_spacing_;
+	std::vector < std::vector < std::vector <core::Real> > > trim_espGrid;
+	trim_espGrid.clear();
+	//assgn mid points for resized esp grid
+	numeric::xyzVector<core::Real> trim_espGrid_mid;
+ //find the center coordinates of the pocketGrid	
+    core::Real cen_x = pg.xcorn_+ ((pg.xdim_-1)/2*pg.stepSize_);
+    core::Real cen_y = pg.ycorn_+ ((pg.ydim_-1)/2*pg.stepSize_);
+    core::Real cen_z = pg.zcorn_+ ((pg.zdim_-1)/2*pg.stepSize_);
+    //convert center coordinates of the pocketGrid to grid points(in terms of espGrid)
+    core::Real grdX = (cen_x - ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()+1)/2) * espGrid_spacing_) ))/espGrid_spacing_;
+    core::Real grdY = (cen_y - ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()+1)/2) * espGrid_spacing_) ))/espGrid_spacing_;
+    core::Real grdZ = (cen_z - ( espGrid_mid_.z() - ((static_cast<core::Real>(espGrid_dim_.z()+1)/2) * espGrid_spacing_) ))/espGrid_spacing_;
+    //rounded grid points are the nearest neighbour points                                                                                            
+    core::Size nn_grdX = (core::Size) std::floor(grdX+.5);
+    core::Size nn_grdY = (core::Size) std::floor(grdY+.5);
+    core::Size nn_grdZ = (core::Size) std::floor(grdZ+.5);
+    //convert bact to carteesian coordinates and assign as mid points for the new trimmed espGrid
+    trim_espGrid_mid.x() = nn_grdX * espGrid_spacing_ + ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()+1)/2) * espGrid_spacing_) );
+    trim_espGrid_mid.y() = nn_grdY * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()+1)/2) * espGrid_spacing_) );
+    trim_espGrid_mid.z() = nn_grdZ * espGrid_spacing_ + ( espGrid_mid_.z() - ((static_cast<core::Real>(espGrid_dim_.z()+1)/2) * espGrid_spacing_) );
+	
+	//assign midpoint of pocket grid as mid point of esp grid
+	//trim_espGrid_mid.x() = pg.xcorn_+ ((pg.xdim_-1)/2*trim_espGrid_spacing);
+	//trim_espGrid_mid.y() = pg.ycorn_+ ((pg.ydim_-1)/2*trim_espGrid_spacing);
+	//trim_espGrid_mid.z() = pg.zcorn_+ ((pg.zdim_-1)/2*trim_espGrid_spacing);
+	
 	core::Real espGrid_xcorn = espGrid_mid_.x() - ((espGrid_dim_.x()-1)/2*espGrid_spacing_);
 	core::Real espGrid_ycorn = espGrid_mid_.y() - ((espGrid_dim_.y()-1)/2*espGrid_spacing_);
 	core::Real espGrid_zcorn = espGrid_mid_.z() - ((espGrid_dim_.z()-1)/2*espGrid_spacing_);
@@ -4599,27 +4610,30 @@ void  ElectrostaticpotentialGrid::resize_espGrid_to_match_pocketGrid( std::strin
 	core::Real yskip = (pg.ycorn_-espGrid_ycorn)/espGrid_spacing_;
 	core::Real zskip = (pg.zcorn_-espGrid_zcorn)/espGrid_spacing_;
 
-	tmp_espGrid.resize(tmp_espGrid_dim.x());
-	for (core::Size tx=0;tx<tmp_espGrid_dim.x();tx++){
-		tmp_espGrid[tx].resize(tmp_espGrid_dim.y());
-		for (core::Size ty=0;ty<tmp_espGrid_dim.y();ty++){
-			tmp_espGrid[tx][ty].resize(tmp_espGrid_dim.z(), 0);
+	trim_espGrid.resize(trim_espGrid_dim.x());
+	for (core::Size tx=0;tx<trim_espGrid_dim.x();tx++){
+		trim_espGrid[tx].resize(trim_espGrid_dim.y());
+		for (core::Size ty=0;ty<trim_espGrid_dim.y();ty++){
+			trim_espGrid[tx][ty].resize(trim_espGrid_dim.z(), 0);
 		}
 	}
-
-	for(int x=(int)(0+xskip),newx=0; x<(int)(xskip+tmp_espGrid_dim.x()); ++x,++newx){
-		for(int y=(int)(0+yskip),newy=0; y<(int)(yskip+tmp_espGrid_dim.y()); ++y,++newy){
-			for(int z=(int)(0+zskip),newz=0; z<(int)(zskip+tmp_espGrid_dim.z()); ++z,++newz){
-				tmp_espGrid[newx][newy][newz] = espGrid_[x][y][z];
+//std::cout<<" skip :"<<xskip<<" "<<yskip<<" "<<zskip<<std::endl;
+//std::cout<<" dim :"<<trim_espGrid_dim.x()<<" "<<trim_espGrid_dim.y()<<" "<<trim_espGrid_dim.z()<<std::endl;
+//std::cout<<" mid :"<<trim_espGrid_mid.x()<<" "<<trim_espGrid_mid.y()<<" "<<trim_espGrid_mid.z()<<std::endl;
+	for(int x=(int)(0+xskip),newx=0; x<(int)(xskip+trim_espGrid_dim.x()); ++x,++newx){
+		for(int y=(int)(0+yskip),newy=0; y<(int)(yskip+trim_espGrid_dim.y()); ++y,++newy){
+			for(int z=(int)(0+zskip),newz=0; z<(int)(zskip+trim_espGrid_dim.z()); ++z,++newz){
+				trim_espGrid[newx][newy][newz] = espGrid_[x][y][z];
 			}
 		}
 	}
 
 	espGrid_.clear();
-	espGrid_dim_ = tmp_espGrid_dim;
-	espGrid_mid_ = tmp_espGrid_mid;
-	espGrid_spacing_ = tmp_espGrid_spacing;
-	espGrid_ = tmp_espGrid;
+	espGrid_dim_ = trim_espGrid_dim;
+	espGrid_mid_ = trim_espGrid_mid;
+	espGrid_spacing_ = trim_espGrid_spacing;
+	espGrid_ = trim_espGrid;
+
 	return;
 
 }

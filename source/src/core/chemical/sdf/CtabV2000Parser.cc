@@ -136,7 +136,7 @@ bool CtabV2000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 
 	core::Size const a1( utility::string2Size( line.substr(0,3) ) );
 	core::Size const a2( utility::string2Size( line.substr(3,3) ) );
-	core::Size const type( utility::string2Real( line.substr(6,3) ) );
+	core::Size const type( (core::Size)(utility::string2Real( line.substr(6,3) )) );
 	//std::string const stereo(line,9,3);
 	//std::string const topology(line,15,3);
 	//std::string const reacting_center(line,18,3);
@@ -174,7 +174,7 @@ bool CtabV2000Parser::parse_property_line( std::string line, MolFileIOMolecule &
 				TR.Error << "CHG record in mol/sdf file refers to non-existant atom." << std::endl;
 				return false;
 			} else {
-				atom->formal_charge(charge);
+				atom->formal_charge((int)charge);
 			}
 		}
 	}

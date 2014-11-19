@@ -196,7 +196,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 			core::conformation::Residue const & rsd( pose.residue(i) );
 			bool residue_charged = false;
-			if ( std::find(charged_chains.begin(), charged_chains.end(), rsd.chain()) != charged_chains.end() ) {
+			if ( std::find(charged_chains.begin(), charged_chains.end(), (int)rsd.chain()) != charged_chains.end() ) {
 				residue_charged = true;
 				TR << rsd.type().name() << ",";
 			}

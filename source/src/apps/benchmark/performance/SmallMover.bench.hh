@@ -58,7 +58,7 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
-		core::Size reps( 2000*scaleFactor );
+		core::Size reps( (core::Size)(2000*scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
 		for(core::Size i=0; i<reps; i++) {
 			small_mover.apply(*pose);

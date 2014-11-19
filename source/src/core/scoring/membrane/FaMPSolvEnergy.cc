@@ -444,7 +444,7 @@ FaMPSolvEnergy::eval_dE_dR_over_r(
 /// @brief Versioning
 core::Size
 FaMPSolvEnergy::version() const {
-	return 2.0;
+	return (core::Size)2.0;
 }
 
 void
@@ -497,8 +497,8 @@ FaMPSolvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 	
 	core::Real nres = pose.total_residue();
 	
-	fa_z_position_.resize( nres );
-	fa_proj_.resize( nres );
+	fa_z_position_.resize( (core::Size)nres );
+	fa_proj_.resize( (core::Size)nres );
 	
 	static Size const MAX_AMINOACID_SIZE = 15;
 	

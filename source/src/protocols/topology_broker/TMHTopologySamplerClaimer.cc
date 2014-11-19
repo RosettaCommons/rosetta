@@ -619,9 +619,10 @@ TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 			origin = *grid_points.rbegin();
 			sequence_counter = 1;
 		}
+
+		tr.Debug << "sequence_counter:  " << sequence_counter << std::endl;
 		switch(sequence_counter)
 		{
-			tr.Debug << "sequence_counter:  " << sequence_counter << std::endl;
 			case 1:
 				add_vector = core::Vector(15,0,0);
 				break;

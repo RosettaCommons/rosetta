@@ -1126,9 +1126,9 @@ vector_of_xyzvectors_to_FArray(utility::vector1< xyzVector<T> > const & input)
 	ObjexxFCL::FArray2D< T > output(3,input.size());
 	for(numeric::Real index = 1; index <= input.size();++index)
 	{
-		output(1,index) = input[index].x();
-		output(2,index) = input[index].y();
-		output(3,index) = input[index].z();
+		output(1,(int)index) = input[(int)index].x(); // bazzoli: added cast to silence warning.
+		output(2,(int)index) = input[(int)index].y();
+		output(3,(int)index) = input[(int)index].z();
 	}
 	return output;
 }
@@ -1143,9 +1143,9 @@ FArray_to_vector_of_xyzvectors(ObjexxFCL::FArray2D<T> const & input)
 	utility::vector1< xyzVector<T> > output(input.size2(),xyzVector<T>());
 	for(numeric::Real index = 1; index <= input.size2();++index)
 	{
-		output[index].x(input(1,index));
-		output[index].y(input(2,index));
-		output[index].z(input(3,index));
+		output[(int)index].x(input(1,(int)index));
+		output[(int)index].y(input(2,(int)index));
+		output[(int)index].z(input(3,(int)index));
 	}
 
 	return output;

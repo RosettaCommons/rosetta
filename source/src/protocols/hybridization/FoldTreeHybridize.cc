@@ -1741,7 +1741,7 @@ void FoldTreeHybridize::auto_frag_insertion_weight(
 		if (strand_pairings_template_indices_.count(i)) continue;
 		template_pos_coverage += template_chunks_[i].num_loop();
 	}
-	template_pos_coverage *= chunk_insertion_weight_;
+	template_pos_coverage = Size(template_pos_coverage * chunk_insertion_weight_);
 
 	core::Size frag_1mer_pos_coverage = frag_1mer_trial_mover->get_total_frames()*frag_1mer_n_frags;
 	core::Size small_frag_pos_coverage = small_frag_trial_mover->get_total_frames()*small_n_frags;

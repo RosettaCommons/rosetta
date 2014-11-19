@@ -114,7 +114,7 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
-		core::Size reps( 10000*scaleFactor );
+		core::Size reps( (core::Size)(10000*scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scaling factor
 		for(core::Size i=0; i<reps; i++) {
 			utility::tag::Tag::create(rosetta_script_);

@@ -1,0 +1,14 @@
+-protein input/rosetta_4ERF.pdb
+-ray_file input/eggshell_rosetta_4ERF_54.txt
+-ligand input/4ERF_XTL_0001.pdb
+-extra_res_fa input/4ERF_XTL.params
+-num_particles 10
+-num_runs 10
+-steric_weight 1.1
+-missing_point_weight 4.3
+-extra_point_weight 3.2
+-include_hydrogens false
+-atom_radius_buffer 0
+-atom_radius_scale 1
+-search_conformers false
+-darc_shape_only

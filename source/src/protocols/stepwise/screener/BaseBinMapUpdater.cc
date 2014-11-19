@@ -72,12 +72,12 @@ namespace screener {
 	void
 	BaseBinMapUpdater::update_base_bin_map( utility::vector1< Real > const & rigid_body_values ){
 		BaseBin base_bin;
-		base_bin.centroid_x  = rigid_body_values[6];
-		base_bin.centroid_y  = rigid_body_values[5];
-		base_bin.centroid_z  = rigid_body_values[4];
-		base_bin.euler_alpha = rigid_body_values[3];
-		base_bin.euler_z     = rigid_body_values[2];
-		base_bin.euler_gamma = rigid_body_values[1];
+		base_bin.centroid_x  = (int)(rigid_body_values[6]);
+		base_bin.centroid_y  = (int)(rigid_body_values[5]);
+		base_bin.centroid_z  = (int)(rigid_body_values[4]);
+		base_bin.euler_alpha = (int)(rigid_body_values[3]);
+		base_bin.euler_z     = (int)(rigid_body_values[2]);
+		base_bin.euler_gamma = (int)(rigid_body_values[1]);
 		update_base_bin_map( base_bin );
 	}
 

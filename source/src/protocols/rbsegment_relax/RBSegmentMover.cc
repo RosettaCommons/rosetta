@@ -413,7 +413,7 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 						penalty_res_[newj0] && penalty_res_[newj1]) {
 					sc_scale = 100.0;
 				}
-				score_aln += sc_scale;
+				score_aln = (int)(score_aln + sc_scale);
 			}
 		}
 	} else {
@@ -429,7 +429,7 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 						penalty_res_[newj0] && penalty_res_[newj1]) {
 					sc_scale = 100.0;
 				}
-				score_aln += sc_scale * abs(offsets_working[j] - offsets_working[j-1]);
+				score_aln = int(score_aln + sc_scale * abs(offsets_working[j] - offsets_working[j-1]));
 			}
 		}
 	}

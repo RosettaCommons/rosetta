@@ -419,7 +419,7 @@ DockingSlideIntoContact::DockingSlideIntoContact() : Mover()
 	using namespace core::scoring;
 	Mover::type( "DockingSlideIntoContact" );
 	rb_jump_ = 1;
-	slide_axis_(0.0);
+	//slide_axis_(0);
 	scorefxn_ = ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH );
 	scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
 }
@@ -525,7 +525,7 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact()
 	Mover::type( "FaDockingSlideIntoContact" );
 	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
-	slide_axis_(0.0);
+	//slide_axis_(0.0);
 }
 
 

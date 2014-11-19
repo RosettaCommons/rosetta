@@ -39,11 +39,11 @@ public:
 		TM_max = 0.0;
 		TM10_max = 0.0;
 		maxsub_max = 0.0;
-		n_GDT05_max = 0.0;
-		n_GDT1_max = 0.0;
-		n_GDT2_max = 0.0;
-		n_GDT4_max = 0.0;
-		n_GDT8_max = 0.0;
+		n_GDT05_max = 0;
+		n_GDT1_max = 0;
+		n_GDT2_max = 0;
+		n_GDT4_max = 0;
+		n_GDT8_max = 0;
 		GDTTS = 0.0;
 		GDTHA = 0.0;
 		maxsub = 0.0;

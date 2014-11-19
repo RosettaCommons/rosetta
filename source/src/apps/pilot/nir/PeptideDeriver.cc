@@ -239,7 +239,7 @@ void derive(core::pose::Pose const & pose) {
 				from = 1;
 				to = 10;
 		} else {
-				from = option[ peptide_deriver::length_to_derive ]();
+				from = (Size)(option[ peptide_deriver::length_to_derive ]());
 				to = from;
 		}
 

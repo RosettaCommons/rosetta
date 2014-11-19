@@ -95,9 +95,9 @@ int main( int argc, char * argv [] ) {
   NEW_OPT( num_runs, "no. of runs for PSO", 100 );
   NEW_OPT( num_particles, "no. of particles for PSO", 100 );
   NEW_OPT( origin_cutoff, "value for setting minimum and maximum origin cut off", 7.0 );
-  NEW_OPT( missing_point_weight, "missing point weight", 13.32 );
-  NEW_OPT( extra_point_weight, "extra point weight", 8.13 );
-  NEW_OPT( steric_weight, "steric weight for PSO", 3.12 );
+  NEW_OPT( missing_point_weight, "missing point weight", 5.1 );
+  NEW_OPT( extra_point_weight, "extra point weight", 5.9 );
+  NEW_OPT( steric_weight, "steric weight for PSO", 1.06 );
   NEW_OPT( print_output_complex, "print DARC output ligand model with protein as PDB file", true );
   NEW_OPT( minimize_output_complex, "minimize the best scoring DARC output model", false );
   NEW_OPT( calculate_thetaLig, "calcualte ligand theta value", false );

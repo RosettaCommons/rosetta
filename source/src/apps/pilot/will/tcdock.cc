@@ -2092,7 +2092,7 @@ struct TCDock {
 			cout << " " << I(3,nout+1);
 			cout << endl;
 			vector1<Size> const & dumplist(option[tcdock::dump_pdbs]());
-			bool dumpthis = (std::find(dumplist.begin(),dumplist.end(),nout+1) != dumplist.end() );
+			bool dumpthis = (std::find(dumplist.begin(),dumplist.end(),Size(nout+1)) != dumplist.end() );
 			if(option[tcdock::dump_pdb_primary_sub]() > nout ) dump_pdb(h.icmp2+(int)da2,h.icmp1+(int)da1,h.iori,fn+"_sub1.pdb"+(option[tcdock::dump_gz]()?".gz":""), h.reverse, false );
 			if(dumpthis || option[tcdock::dump_pdb]() > nout ) dump_pdb(h.icmp2+(int)da2,h.icmp1+(int)da1,h.iori,fn+"_full.pdb"+(option[tcdock::dump_gz]()?".gz":""), h.reverse, true  );
 			#ifdef USE_OPENMP

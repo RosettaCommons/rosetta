@@ -162,7 +162,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 	if( basic::options::option[basic::options::OptionKeys::docking::multibody].user() ){
 		utility::vector1<int> mbjumps = basic::options::option[basic::options::OptionKeys::docking::multibody]();
 		for(Size ij = 1; ij <= symm_conf.Symmetry_Info()->get_njumps_subunit(); ++ij){
-			if( mbjumps.size()==0 || std::find(mbjumps.begin(),mbjumps.end(),ij)!=mbjumps.end() ){
+			if( mbjumps.size()==0 || std::find(mbjumps.begin(),mbjumps.end(),(int)ij)!=mbjumps.end() ){
 				TR << "add subunit jump mover " << ij << std::endl;
 				docking_lowres_protocol_->add_mover( MoverOP( new rigid::RigidBodyPerturbMover(ij,rot_magnitude_,trans_magnitude_) ) );
 			}

@@ -158,7 +158,7 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 			(*it)->set_eliminated_due_to_dist_violations( violated > ( params.nr_conformers_violatable_*structures_.size() ) );
 			std::ostringstream elim_msg;
 			std::sort( distance_deltas.begin(), distance_deltas.end() );
-			core::Size median_position( utility::round( 0.5*distance_deltas.size()+0.5 ) );
+			core::Size median_position( (core::Size)(utility::round( 0.5*distance_deltas.size()+0.5 )) );
 			elim_msg << violated << " ("<<distance_deltas.size()<<") violated by >" << distance_deltas[median_position] << "A (" << params.dcut_ << "A) ";
 			(*it)->set_elimination_comment( elim_msg.str() );
 		} else {  //local dist viol
@@ -168,8 +168,8 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 
 			//find smallest interval that fits 99% of the deltas
 			//with default setting of 99% this is basically the length difference between shortest and longest distance
-			Size const num_element_cluster( utility::round( 1.0*distance_deltas.size() * params.local_distviol_range_  ) );
-			Size const low_quartil_pos( utility::round( 1.0*distance_deltas.size()*0.25 ) );
+			Size const num_element_cluster( (core::Size)(utility::round( 1.0*distance_deltas.size() * params.local_distviol_range_  )) );
+			Size const low_quartil_pos( (core::Size)(utility::round( 1.0*distance_deltas.size()*0.25 )) );
 			Real const low_quartil_dist( distance_deltas[ low_quartil_pos ]+(*it)->distance_bound() );
 			tr.Debug << "peak: " << (*it)->peak_id() << " " << (*it)->filename() << " check " << num_element_cluster << " of a total " << distance_deltas.size() << " distances for max-extension " << std::endl;
 			Real max_extension( 1000 );

@@ -221,7 +221,7 @@ unsigned_periodic_range(
 void
 angle_in_range( double & ang )
 {
-	int const odd = std::abs( double( mod( static_cast< int >( ang / double(180.0) ), 2 ) ) ); // 1 if ang/180 is odd,0 if ang/180 is even
+	int const odd = (int)std::fabs( double( mod( static_cast< int >( ang / double(180.0) ), 2 ) ) ); // 1 if ang/180 is odd,0 if ang/180 is even
 	ang = mod( ang, double(180.0) );
 	if ( odd == 0 ) return;
 	if ( ang > 0.0 ) {

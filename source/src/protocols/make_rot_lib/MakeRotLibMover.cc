@@ -259,7 +259,7 @@ MakeRotLibMover::init_rotamers( TorsionRangeVec const & chi_ranges, core::Size n
 
 	// TODO: check that the chi range % stepsize is zero
   for ( Size i(1); i <= chi_ranges.size(); ++i ) {
-    total_chi_num_bins[ i ] = ( ( chi_ranges[ i ].high - chi_ranges[ i ].low ) / chi_ranges[ i ].step ) + 1;
+    total_chi_num_bins[ i ] = (Size)( ( ( chi_ranges[ i ].high - chi_ranges[ i ].low ) / chi_ranges[ i ].step ) + 1 );
     num_rotamers *= total_chi_num_bins[ i ];
   }
 

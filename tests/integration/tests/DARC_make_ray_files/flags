@@ -1,0 +1,12 @@
+-protein input/rosetta_4ERF.pdb
+-bound_ligand input/4ERF_XTL_0001.pdb
+-extra_res_fa input/4ERF_XTL.params
+-espGrid_file input/4ERF.agd
+-lig_grid
+-central_relax_pdb_num 54
+-add_grid_size 0 
+-add_ext_grid_size 1
+-multiple_origin
+-set_origin 5
+-origin_res_num 85:A
+-pocket_static_grid

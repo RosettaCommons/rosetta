@@ -88,7 +88,7 @@ public: // penalty method
 private:
 	
 	/// @brief Version
-	core::Size version() const { return 2.0; }
+	core::Size version() const { return (core::Size)2.0; }
 	
 	// MP Base potential (database)
 	MembraneData const & mpdata_;

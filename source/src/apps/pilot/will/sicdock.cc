@@ -557,7 +557,7 @@ int main(int argc, char *argv[]) {
 		if( option[sicdock::sample_number].user() && option[sicdock::sample_radius].user() ){
 			utility_exit_with_message("cant specify both -sicdock::sample_radius and -sicdock::sample_number");
 		} else if( option[sicdock::sample_number].user() ){
-			qgrid = m->request_by_size(option[sicdock::sample_number]());
+			qgrid = m->request_by_size((long)(option[sicdock::sample_number]()));
 		} else if( option[sicdock::sample_radius].user() ){
 			qgrid = m->request_by_radius(option[sicdock::sample_radius]());
 		} else {

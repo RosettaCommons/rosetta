@@ -108,7 +108,7 @@ bool CtabV3000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 				TR.Warning << "Problem parsing formal charge in sdf/mol file, skipping." << std::endl;
 				continue;
 			}
-			atom.formal_charge( charge );
+			atom.formal_charge( (int)charge );
 		}
 		// Put other properties here -- we don't care about them at the moment, though.
 	}

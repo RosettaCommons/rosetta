@@ -439,7 +439,7 @@ LeGrandSasa::get_2way_orientation(
 	theta_a2b_index = static_cast< int >( theta_a2b );
 	++theta_a2b_index; // for fortran goes from 1 to n
 	if ( theta_a2b_index < 1 ) { // as in the case when atan2 returns a negative...
-		theta_a2b_index = theta_a2b + num_theta_; // let t = -32; -32 + 64 = 32
+		theta_a2b_index = (core::Size)(theta_a2b + num_theta_); // let t = -32; -32 + 64 = 32
 	} else if ( theta_a2b_index > num_theta_ ) {
 		theta_a2b_index = 1; // reset back to index of 1?
 	}

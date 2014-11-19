@@ -169,7 +169,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
   }
 
   rigid_core_ = select_parts( rigid_core, tag->getOption( "random_grow_by",
-                                                          option[ OptionKeys::loops::random_grow_loops_by ]() ) );
+                                                          (core::Size)(option[ OptionKeys::loops::random_grow_loops_by ]() ) ) );
 
 }
 

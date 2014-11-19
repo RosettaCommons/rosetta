@@ -5564,7 +5564,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'add_esp', 'Boolean', default='false', desc='add electrostatic calculations'),
 		Option( 'darc_shape_only', 'Boolean', default='false', desc='darc with shape only'),
 		Option( 'darc_elsts_only', 'Boolean', default='false', desc='darc with electrostatics only'),
-		Option( 'esp_weight', 'Real', default='1', desc='add weight for electrostatic energy'),
+		Option( 'esp_weight', 'Real', default='0.024', desc='add weight for electrostatic energy'),
 		Option( 'esp_protein_wt', 'Real', default='0', desc='add weight for electrostatic energy inside protein'),
 		Option( 'esp_surface_wt', 'Real', default='0', desc='add weight for electrostatic energy on protein surface'),
     Option( 'delphi_grid', 'Boolean', desc="input electrostatic potential grid if from DELPHI, default is ZAP grid",default='false' ),

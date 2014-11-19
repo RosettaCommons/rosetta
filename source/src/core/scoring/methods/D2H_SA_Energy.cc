@@ -297,8 +297,8 @@ D2H_SA_Energy::finalize_total_energy(
 		}
 	}
 
-	rsd_sasa_raw[1]=rsd_sasa[rsa_index_start+position_[1]-1];
-	tmp.push_back(rsd_sasa[rsa_index_start+position_[1]-1]);
+	rsd_sasa_raw[1]=rsd_sasa[(core::Size)(rsa_index_start+position_[1]-1)];
+	tmp.push_back(rsd_sasa[(core::Size)(rsa_index_start+position_[1]-1)]);
 	utility::vector1< Size > group_index(len,0);
 	for(Size i=2;i<=len;i++) {
 		group_index[i-1]=group_mean.size()+1;
@@ -307,9 +307,9 @@ D2H_SA_Energy::finalize_total_energy(
 			group_median.push_back(numeric::median(tmp));
 			tmp.clear();
 		}
-		
-		tmp.push_back(rsd_sasa[rsa_index_start+position_[i]-1]);
-		rsd_sasa_raw[i]=rsd_sasa[rsa_index_start+position_[i]-1];
+
+		tmp.push_back(rsd_sasa[(core::Size)(rsa_index_start+position_[i]-1)]);
+		rsd_sasa_raw[i]=rsd_sasa[(core::Size)(rsa_index_start+position_[i]-1)];
 	}
 	group_index[len]=group_mean.size()+1;
 	group_mean.push_back(numeric::statistics::mean(tmp.begin(),tmp.end(),0.0));
@@ -318,7 +318,7 @@ D2H_SA_Energy::finalize_total_energy(
 	for(Size i=1;i<=len;i++) {
 		rsd_sasa_grouped[i]=group_mean[group_index[i]];
 		rsd_sasa_grouped_median[i]=group_median[group_index[i]];
-		TR.Debug << "MEAN: " << i << " " << position_[i] << " " << rsa_index_start+position_[i]-1 << " " << rsd_sasa[rsa_index_start+position_[i]-1] << " " << rsd_sasa_raw[i] << " " << rsd_sasa_grouped[i] << " " << rsd_sasa_grouped_median[i] << " " << data_[i] << " " << group_[i] << " " << group_index[i] << " " << len << std::endl;
+		TR.Debug << "MEAN: " << i << " " << position_[i] << " " << rsa_index_start+position_[i]-1 << " " << rsd_sasa[(core::Size)(rsa_index_start+position_[i]-1)] << " " << rsd_sasa_raw[i] << " " << rsd_sasa_grouped[i] << " " << rsd_sasa_grouped_median[i] << " " << data_[i] << " " << group_[i] << " " << group_index[i] << " " << len << std::endl;
 	}
 
 	Real m = numeric::statistics::mean(rsd_sasa_grouped.begin(),rsd_sasa_grouped.end(),0.0);

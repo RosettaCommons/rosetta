@@ -45,6 +45,8 @@ struct ResourceConfiguration {
 
 public: // show methods
 
+	virtual ~ResourceConfiguration() {}
+
 	virtual
 	void
 	show( std::ostream & out ) const;

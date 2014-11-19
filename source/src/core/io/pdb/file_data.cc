@@ -1386,9 +1386,9 @@ build_pose_as_is1(
 				numeric::xyzVector < core::Real > const metal_xyz = new_rsd->xyz(1); //Atom 1 is always the metal of a residue representing a metal ion.  (There's a check for this in residue_io.cc).
 
 				core::Size closest_metalbinding_residue=0;
-				core::Size metalbinding_dist_sq = 0.0;
+				core::Size metalbinding_dist_sq = 0;
 				core::Size closest_residue=0;
-				core::Size closest_dist_sq = 0.0;
+				core::Size closest_dist_sq = 0;
 
 				for(core::Size jr=1, nres=pose.n_residue(); jr<=nres; ++jr) { //Loop through all residues already added, looking for possible residues to root the metal onto.
 					if(!pose.residue(jr).is_protein()) continue; //I'm not interested in tethering metals to non-protein residues.
@@ -1400,13 +1400,13 @@ build_pose_as_is1(
 
 					if(closest_residue==0 || current_dist_sq < closest_dist_sq) {
 						closest_residue = jr;
-						closest_dist_sq = current_dist_sq;
+						closest_dist_sq = (core::Size)current_dist_sq;
 					}
 					if(	pose.residue(jr).is_metalbinding() &&
 								(closest_metalbinding_residue==0 || current_dist_sq < metalbinding_dist_sq)
 						) {
 							closest_metalbinding_residue = jr;
-							metalbinding_dist_sq = current_dist_sq;
+							metalbinding_dist_sq = (core::Size)current_dist_sq;
 					}
 				} //Inner loop through all residues
 

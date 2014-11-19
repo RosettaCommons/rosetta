@@ -949,7 +949,7 @@ void run(std::string fname) {
 #endif
 					tmp = hisp;
 					// do I need to end this??
-					if(std::find(ifres.begin(),ifres.end(),ihis)==ifres.end()) continue;
+					if(std::find(ifres.begin(),ifres.end(),Size(ihis))==ifres.end()) continue;
      if(hisp.secstruct(ihis)!='H') continue;
      TR << "ihis: " << ihis << " " << hits.size() << std::endl;
      for(Size jhis=ihis+1; jhis<=nres-1; ++jhis) {
