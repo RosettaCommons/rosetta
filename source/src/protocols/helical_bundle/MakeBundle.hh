@@ -21,6 +21,14 @@
 #include <protocols/helical_bundle/MakeBundle.fwd.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.fwd.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.hh>
+#include <protocols/helical_bundle/parameters/BundleParameters.fwd.hh>
+#include <protocols/helical_bundle/parameters/BundleParameters.hh>
+#include <protocols/helical_bundle/parameters/BundleParametersSet.fwd.hh>
+#include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
+#include <core/conformation/parametric/Parameters.fwd.hh>
+#include <core/conformation/parametric/Parameters.hh>
+#include <core/conformation/parametric/ParametersSet.fwd.hh>
+#include <core/conformation/parametric/ParametersSet.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -50,6 +58,18 @@ namespace helical_bundle {
 
 class MakeBundle : public protocols::moves::Mover
 {
+public: //Typedefs
+
+		typedef core::conformation::parametric::Parameters Parameters;
+		typedef core::conformation::parametric::ParametersOP ParametersOP;
+		typedef core::conformation::parametric::ParametersSet ParametersSet;
+		typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
+
+		typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
+		typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
+		typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
+		typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
+
 public:
 	MakeBundle();
 	virtual ~MakeBundle();

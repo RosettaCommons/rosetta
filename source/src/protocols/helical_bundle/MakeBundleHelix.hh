@@ -20,6 +20,14 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.fwd.hh>
 #include <protocols/helical_bundle/util.hh>
+#include <protocols/helical_bundle/parameters/BundleParameters.fwd.hh>
+#include <protocols/helical_bundle/parameters/BundleParameters.hh>
+#include <protocols/helical_bundle/parameters/BundleParametersSet.fwd.hh>
+#include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
+#include <core/conformation/parametric/Parameters.fwd.hh>
+#include <core/conformation/parametric/Parameters.hh>
+#include <core/conformation/parametric/ParametersSet.fwd.hh>
+#include <core/conformation/parametric/ParametersSet.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -48,6 +56,18 @@ namespace helical_bundle {
 
 class MakeBundleHelix : public protocols::moves::Mover
 {
+public:
+		//Typedefs:
+		typedef core::conformation::parametric::Parameters Parameters;
+		typedef core::conformation::parametric::ParametersOP ParametersOP;
+		typedef core::conformation::parametric::ParametersSet ParametersSet;
+		typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
+
+		typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
+		typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
+		typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
+		typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
+
 public:
 	MakeBundleHelix();
 	virtual ~MakeBundleHelix();
@@ -79,11 +99,11 @@ public:
 
 	/// @brief Set whether the helix direction should be inverted.
 	///
-	void set_invert_helix(bool const invert_in ) { invert_=invert_in; }
+	void set_invert_helix(bool const invert_in ) { bundle_parameters_->set_invert_helix(invert_in); return; }
 
 	/// @brief Return whether the helix direction will be inverted.
 	///
-	bool invert_helix() const { return invert_; }
+	bool invert_helix() const { return bundle_parameters_->invert_helix(); }
 
 	/// @brief Set the length of the helix, in residues.
 	///
@@ -116,60 +136,60 @@ public:
 	///
 	void set_r0(core::Real const &val) {
 		runtime_assert_string_msg( val>=0.0,  "In protocols::helical_bundle::MakeBundleHelix::set_r0(): the value of r0 must be greater than or equal to 0." );
-		r0_=val;
+		bundle_parameters_->set_r0(val);
 		return;
 	}
 
 	/// @brief Get the r0 value.
 	///
-	core::Real r0() const { return r0_; }
+	core::Real r0() const { return bundle_parameters_->r0(); }
 
 	/// @brief Set the omega0 value.
 	///
-	void set_omega0(core::Real const &val) { omega0_=val; return; }
+	void set_omega0(core::Real const &val) { bundle_parameters_->set_omega0(val); return; }
 
 	/// @brief Get the omega0 value.
 	///
-	core::Real omega0() const { return omega0_; }
+	core::Real omega0() const { return bundle_parameters_->omega0(); }
 
 	/// @brief Set the delta_omega0 value.
 	///
-	void set_delta_omega0( core::Real const &delta_omega0_in ) { delta_omega0_=delta_omega0_in; return; }
+	void set_delta_omega0( core::Real const &delta_omega0_in ) { bundle_parameters_->set_delta_omega0(delta_omega0_in); return; }
 
 	/// @brief Get the delta_omega0 value.
 	///
-	core::Real delta_omega0() const { return delta_omega0_; }
+	core::Real delta_omega0() const { return bundle_parameters_->delta_omega0(); }
 
 	/// @brief Get the r1 value for a given mainchain atom.
 	///
-	core::Real r1( core::Size const index ) const { return r1_[index]; }
+	core::Real r1( core::Size const index ) const { return bundle_parameters_->r1(index); }
 
 	/// @brief Set the omega1 value.
 	///
-	void set_omega1(core::Real const &val) { omega1_=val; return; }
+	void set_omega1(core::Real const &val) { bundle_parameters_->set_omega1(val); return; }
 
 	/// @brief Get the omega1 value.
 	///
-	core::Real omega1() const { return omega1_; }
+	core::Real omega1() const { return bundle_parameters_->omega1(); }
 
 	/// @brief Set the z1 value.
 	///
-	void set_z1(core::Real const &val) { z1_=val; return; }
+	void set_z1(core::Real const &val) { bundle_parameters_->set_z1(val); return; }
 
 	/// @brief Get the z1 value.
 	///
-	core::Real z1() const { return z1_; }
+	core::Real z1() const { return bundle_parameters_->z1(); }
 
 	/// @brief Get the delga_omega1 value for a given mainchain atom.
 	///
-	core::Real delta_omega1( core::Size const index ) const { return delta_omega1_[index]; }
+	core::Real delta_omega1( core::Size const index ) const { return bundle_parameters_->delta_omega1(index); }
 
 	/// @brief Get the delta_z1 value for a given mainchain atom.
 	///
-	core::Real delta_z1( core::Size const index ) const { return delta_z1_[index]; }
+	core::Real delta_z1( core::Size const index ) const { return bundle_parameters_->delta_z1(index); }
 
 	/// @brief Get the delta_t value.
-	core::Real delta_t() const { return delta_t_; }
+	core::Real delta_t() const { return bundle_parameters_->delta_t(); }
 
 	/// @brief Set the major helix parameters
 	void set_major_helix_params (
@@ -177,9 +197,10 @@ public:
 		core::Real const &omega0_in,
 		core::Real const &delta_omega0_in
 	) {
-		r0_ = r0_in;
-		omega0_ = omega0_in;
-		delta_omega0_ = delta_omega0_in;
+		runtime_assert_string_msg( r0_in>=0.0,  "In protocols::helical_bundle::MakeBundleHelix::set_major_helix_params(): the value of r0 must be greater than or equal to 0." );
+		bundle_parameters_->set_r0(r0_in);
+		bundle_parameters_->set_omega0(omega0_in);
+		bundle_parameters_->set_delta_omega0(delta_omega0_in);
 		return;
 	}
 
@@ -192,33 +213,43 @@ public:
 		utility::vector1 < core::Real > const &delta_omega1_in,
 		utility::vector1 < core::Real > const &delta_z1_in
 	) {
-		r1_ = r1_in;
-		omega1_ = omega1_in;
-		z1_ = z1_in;
-		delta_omega1_ = delta_omega1_in;
-		delta_z1_ = delta_z1_in;
+		bundle_parameters_->set_r1(r1_in);
+		bundle_parameters_->set_omega1(omega1_in);
+		bundle_parameters_->set_z1(z1_in);
+		bundle_parameters_->set_delta_omega1(delta_omega1_in);
+		bundle_parameters_->set_delta_z1(delta_z1_in);
 		return;
 	}
 
-	/// @brief Set delta_t_
+	/// @brief Set delta_t
 	///
-	void set_delta_t ( core::Real const &delta_t_in) { delta_t_=delta_t_in; return; }
+	void set_delta_t ( core::Real const &delta_t_in) { bundle_parameters_->set_delta_t(delta_t_in); return; }
 
 	/// @brief Set global omega1 offset
 	/// @detail The overall omega1 offset is the sum of this global value and the per-atom
 	/// delta_omega1 values.
-	void set_delta_omega1_all ( core::Real const &delta_omega1_all_in ) { delta_omega1_all_=delta_omega1_all_in; return; }
+	void set_delta_omega1_all ( core::Real const &delta_omega1_all_in ) { bundle_parameters_->set_delta_omega1_all(delta_omega1_all_in); return; }
 
 	/// @brief Get global omega1 offset
 	/// @detail The overall omega1 offset is the sum of this global value and the per-atom
 	/// delta_omega1 values.
-	core::Real delta_omega1_all () const { return delta_omega1_all_; }
+	core::Real delta_omega1_all () const { return bundle_parameters_->delta_omega1_all(); }
 
 	/// @brief Set the minor helix parameters by reading them in from a file.
 	///
 	void set_minor_helix_params_from_file ( std::string const &filename )
 	{
-		read_minor_helix_params ( filename, r1_, omega1_, z1_, delta_omega1_, delta_z1_ );
+		utility::vector1 <core::Real> r1;
+		core::Real omega1(0.0);
+		core::Real z1(0.0);
+		utility::vector1 <core::Real> delta_omega1;
+		utility::vector1 <core::Real> delta_z1;
+		read_minor_helix_params ( filename, r1, omega1, z1, delta_omega1, delta_z1 );
+		bundle_parameters_->set_r1(r1);
+		bundle_parameters_->set_omega1(omega1);
+		bundle_parameters_->set_z1(z1);
+		bundle_parameters_->set_delta_omega1(delta_omega1);
+		bundle_parameters_->set_delta_z1(delta_z1);
 		return;
 	}
 
@@ -229,28 +260,28 @@ public:
 
 	/// @brief Sets whether this mover is allowed to set mainchain dihedrals.
 	///
-	void set_allow_dihedrals( bool const val ) { allow_dihedrals_=val; return; }
+	void set_allow_dihedrals( bool const val ) { bundle_parameters_->set_allow_dihedrals(val); return; }
 
 	/// @brief Sets whether this mover is allowed to set mainchain bond angles.
 	///
-	void set_allow_bondangles( bool const val ) { allow_bondangles_=val; return; }
+	void set_allow_bondangles( bool const val ) { bundle_parameters_->set_allow_bondangles(val); return; }
 
 	/// @brief Sets whether this mover is allowed to set mainchain bond lengths.
 	///
-	void set_allow_bondlengths( bool const val ) { allow_bondlengths_=val; return; }
+	void set_allow_bondlengths( bool const val ) { bundle_parameters_->set_allow_bondlengths(val); return; }
 
 
 	/// @brief Returns "true" if and only if this mover is allowed to set mainchain dihedrals.
 	///
-	bool allow_dihedrals() const { return allow_dihedrals_; }
+	bool allow_dihedrals() const { return bundle_parameters_->allow_dihedrals(); }
 
 	/// @brief Returns "true" if and only if this mover is allowed to set mainchain bond angles.
 	///
-	bool allow_bondangles() const { return allow_bondangles_; }
+	bool allow_bondangles() const { return bundle_parameters_->allow_bondangles(); }
 
 	/// @brief Returns "true" if and only if this mover is allowed to set mainchain bond lengths.
 	///
-	bool allow_bondlengths() const { return allow_bondlengths_; }
+	bool allow_bondlengths() const { return bundle_parameters_->allow_bondlengths(); }
 
 
 private:
@@ -262,9 +293,12 @@ private:
 	/// @details Default true.
 	bool reset_pose_;
 
-	/// @brief Should the helix direction be inverted?
-	/// @details Default false.
-	bool invert_;
+	/// @brief An owning pointer for the BundleParameters object.
+	/// @details The BundleParameters object holds all of the Crick parameters for creating
+	/// a helical bundle.  This gets passed to the pose that is created or modified, and
+	/// stored in the Conformation object, so that other movers can modify or perturb the
+	/// object created (or just read its parameters).
+	BundleParametersOP bundle_parameters_;
 
 	/// @brief Length of the helix, in residues.  Defaults to 10.
 	///
@@ -277,62 +311,6 @@ private:
 	/// @brief Name (full-length, not 3-letter code) of the residue type that will cap the helix.
 	/// @details If blank, there will be no cap.  Defaults to blank.
 	std::string tail_residue_name_;
-
-	/// @brief The r0 value for the major helix.
-	///
-	core::Real r0_;
-
-	/// @brief The omega0 value for the major helix.
-	///
-	core::Real omega0_;
-
-	/// @brief The delta_omega0 value for the major helix.
-	///
-	core::Real delta_omega0_;
-
-	/// @brief The vector of r1 values, one for each mainchain atom in the residue type.
-	///
-	utility::vector1 < core::Real > r1_;
-
-	/// @brief The omega1 value, constant for all mainchain atoms.
-	///
-	core::Real omega1_;
-
-	/// @brief The omega1 offset, constant for all mainchain atoms.
-	/// @details Though the effective omega1 value ends up being delta_omega1_[atom] + delta_omega1_all_, it is
-	/// convenient to keep these separate so that the former can be loaded from a file and the latter can be set
-	/// by the user.
-	core::Real delta_omega1_all_;
-
-	/// @brief The z1 (rise per residue) value, constant for all mainchain atoms.
-	///
-	core::Real z1_;
-
-	/// @brief The vector of delta_omega1 values, one for each mainchain atom in the residue type.
-	///
-	utility::vector1 < core::Real > delta_omega1_;
-
-	/// @brief The vector of delta_z1 values, one for each mainchain atom in the residue type.
-	///
-	utility::vector1 < core::Real > delta_z1_;
-
-	/// @brief An offset factor for the value of t, the residue index.
-	///
-	core::Real delta_t_;
-
-	/// @brief Should the mover set dihedral values?
-	/// @details True by default.
-	bool allow_dihedrals_;
-
-	/// @brief Should the mover set bond angle values?
-	/// @details False by default.  If true, the generated backbone is non-ideal but might
-	/// conform to a perfect helix of helices more precisely.
-	bool allow_bondangles_;
-
-	/// @brief Should the mover set bond length values?
-	/// @details False by default.  If true, the generated backbone is non-ideal but might
-	/// conform to a perfect helix of helices more precisely.
-	bool allow_bondlengths_;
 
 	/// @brief Did the last apply fail?
 	/// @details Initialized to "false"; "true" if the last apply failed.
@@ -406,6 +384,11 @@ private:
 	/// @brief Set whether the last call to the apply() function failed or not.
 	/// @details Should only be called by the apply() function.
 	void set_last_apply_failed( bool const val ) { last_apply_failed_=val; return; }
+
+	/// @brief Add Crick parameter information to the Conformation object within the pose.
+	/// @details This function updates the bundle_parameters_ object's links to residues within the pose,
+	/// and then copies the owning pointer into the pose's Conformation object.
+	void add_parameter_info_to_pose( core::pose::Pose &pose );
 
 };
 

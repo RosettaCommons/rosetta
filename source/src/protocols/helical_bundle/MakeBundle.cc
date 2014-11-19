@@ -140,6 +140,10 @@ void MakeBundle::apply (core::pose::Pose & pose)
 	core::Real const omega0_offset_increment = numeric::constants::d::pi_2 / static_cast<core::Real>(repeats);
 	core::Real omega0_offset = 0;
 
+	//The BundleParametersSet object that will hold the Crick parameters and will be passed into the Conformation object of the pose on which we will be operating.
+	BundleParametersSetOP output_parameters_set = BundleParametersSetOP( new BundleParametersSet );
+	output_parameters_set->set_bundle_symmetry( symmetry() ); //Store the symmetry of this bundle.
+
 	for(core::Size irepeat=1; irepeat<=repeats; ++irepeat) { //Loop through all of the symmetry copies.
 		for(core::Size ihelix=1, ihelixmax=n_helices(); ihelix<=ihelixmax; ++ihelix) { //Loop through all of the helices defined for each symmetry repeat.
 			protocols::helical_bundle::MakeBundleHelixOP make_helix( utility::pointer::dynamic_pointer_cast<protocols::helical_bundle::MakeBundleHelix>(helix(ihelix)->clone()) );
@@ -153,7 +157,7 @@ void MakeBundle::apply (core::pose::Pose & pose)
 
 			//Add the newly-generated helix to the pose for the bundle.
 			if(newpose.empty()) newpose=helixpose;
-			else newpose.append_pose_by_jump(helixpose,1);			
+			else newpose.append_pose_by_jump(helixpose,1); //This will also append the ParametersSet object -- but this creates a list of ParametersSets, rather than one ParametersSet with a list of Parameters.
 		}
 		if(repeats>1) omega0_offset += omega0_offset_increment;
 	}
@@ -161,6 +165,15 @@ void MakeBundle::apply (core::pose::Pose & pose)
 	if(failed) {
 		if(TR.visible()) TR << "Build of helical bundle failed, likely due to bad Crick parameters resulting in nonsensical geometry.  Returning input pose." << std::endl;
 	} else {
+
+		//At this point, newpose has a bunch of ParametersSet objects, each with one Parameters object.  We want a single ParametersSet object with all of the Parameters objects.
+		//So we do some shuffling around:
+		for(core::Size i=1, imax=newpose.conformation().n_parameters_sets(); i<=imax; ++i) { //Loop through all ParametersSets
+			output_parameters_set->add_parameters( newpose.conformation().parameters_set(i)->parameters(1) ); //Put all of the Parameters objects into this ParametersSet object.
+		}
+		newpose.conformation().clear_parameters_set_list(); //Delete all of the ParametersSet objects in newpose.
+		newpose.conformation().add_parameters_set( utility::pointer::dynamic_pointer_cast<ParametersSet>( output_parameters_set ) );
+
 		if(reset_pose()) {
 			if(TR.Debug.visible()) TR.Debug << "Replacing input pose with helical bundle." << std::endl;
 			pose.clear();

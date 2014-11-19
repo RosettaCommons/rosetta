@@ -131,6 +131,10 @@ sources = {
 		"GraftingTest",
 	],
 
+	"helical_bundle" : [
+		"params_data_storage",
+	],
+
 	"hotspot_hashing" : [
 		"hotspot_hashing",
 	],

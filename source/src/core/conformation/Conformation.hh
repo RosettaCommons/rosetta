@@ -10,7 +10,8 @@
 /// @brief  conformation container
 /// @file   core/conformation/Conformation.hh
 /// @author Phil Bradley
-
+/// @author Rebecca Alford (rfalford12@gmail.com), Julia Koehler Leman (julia.koehler1982@gmail.com),  Jeff Gray (jgray@jhu.edu) -- added membrane modelling framework
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added support for parametric conformation generation, 17 Nov 2014.
 
 #ifndef INCLUDED_core_conformation_Conformation_hh
 #define INCLUDED_core_conformation_Conformation_hh
@@ -51,6 +52,10 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
+#include <core/conformation/parametric/ParametersSet.hh>
+#include <core/conformation/parametric/ParametersSet.fwd.hh>
+#include <core/conformation/parametric/Parameters.hh>
+#include <core/conformation/parametric/Parameters.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
@@ -87,6 +92,14 @@ public:  // typedefs
 	typedef kinematics::AtomTree   AtomTree;
 	typedef kinematics::AtomTreeOP AtomTreeOP;
 	typedef id::AtomID AtomID;
+
+	typedef core::conformation::parametric::ParametersSet ParametersSet;
+	typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
+	typedef core::conformation::parametric::ParametersSetCOP ParametersSetCOP;
+	typedef core::conformation::parametric::Parameters Parameters;
+	typedef core::conformation::parametric::ParametersOP ParametersOP;
+	typedef core::conformation::parametric::ParametersOP ParametersCOP;
+
 
 	//typedef id::AtomID_Map AtomID_Map;
 
@@ -380,7 +393,21 @@ public:  // Residues
 		return *residues_[ seqpos ];
 	}
 
-	/// @brief access one of the residues, using OP
+	/// @brief Access one of the residues, using OP
+	/// @details Non-const access.
+	inline
+	ResidueOP
+	residue_op( Size seqpos ) {
+		runtime_assert( seqpos >= 1 );
+		runtime_assert( seqpos <= size() );
+		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
+		if ( residue_torsions_need_updating_ )    update_residue_torsions();
+		return residues_[ seqpos ];
+	}
+
+
+	/// @brief access one of the residues, using COP
+	///
 	inline
 	ResidueCOP
 	residue_cop( Size seqpos ) const {
@@ -662,6 +689,59 @@ public:  // Bonds, Connections, Atoms, & Stubs
   ///
   void
   fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds);
+
+public: // Access to the ParametersSets -- Vikram K. Mulligan (vmullig@uw.edu), 17 Nov. 2014
+
+/// @brief Create a new (empty) ParametersSet object and add its owning pointer
+/// to the current Conformation object.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+virtual
+void create_new_parameters_set() {
+	parameters_set_.push_back( ParametersSetOP( new ParametersSet ) );
+	return;
+}
+
+/// @brief Add a (predefined) ParametersSet object (via its owning pointer)
+/// to the current Conformation object.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+virtual
+void add_parameters_set( ParametersSetOP newset ) {
+	parameters_set_.push_back( newset );
+	return;
+}
+
+/// @brief Get the number of parameters sets defined for this Conformation.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+virtual
+core::Size n_parameters_sets() const {
+	return parameters_set_.size();
+}
+
+/// @brief Delete the list of ParametersSetOP objects.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+virtual
+void clear_parameters_set_list() {
+	parameters_set_.clear();
+	return;
+}
+
+/// @brief Access one of the ParametersSets objects linked to this Conformation.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+virtual
+ParametersSetOP parameters_set( core::Size const index ) {
+	runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
+		"In core::conformation::Conformation::parameters_set() : Index is out of range.  Index value is expected to be greater than zero and less than or equal to the number of parameters sets in this Conformation object.");
+	return parameters_set_[index];
+}
+
+/// @brief Const access to one of the ParametersSets objects linked to this Conformation.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+virtual
+ParametersSetCOP parameters_set( core::Size const index ) const {
+	runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
+		"In core::conformation::Conformation::parameters_set() : Index is out of range.  Index value is expected to be greater than zero and less than or equal to the number of parameters sets in this Conformation object.");
+	return parameters_set_[index];
+}
 
 
 public:  // Conformation Cutting/Pasting
@@ -1375,6 +1455,16 @@ private:
 
 	/// @brief atom tree for the kinematics
 	AtomTreeOP atom_tree_;
+
+	/// @brief Parameter sets for parametric conformation generation.
+	/// @details This is a list of pointers to parameter set objects.
+	/// The list is empty by default; the list only contains anything
+	/// if the conformation has parametrically-generated bits. Each
+	/// ParametersSet is intended to describe an assemblage of secondary
+	/// structure (e.g. a helical bundle); each Parameters object in a
+	/// ParametersSet is intended to describe a single piece of (likely
+	/// contiguous) structure (e.g. a single helix in a helical bundle).
+	utility::vector1 < ParametersSetOP > parameters_set_;
 
 	// Does this conformation contain any carbohydrate residues at all?
 	bool contains_carbohydrate_residues_;

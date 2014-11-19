@@ -118,6 +118,10 @@ sources = {
 	"core/conformation/orbitals": [
 		"OrbitalXYZCoords",
 	],
+        "core/conformation/parametric": [
+		"Parameters",
+                "ParametersSet",
+        ],
 	"core/conformation/symmetry": [
 		"SymDof",
 		"SymmData",

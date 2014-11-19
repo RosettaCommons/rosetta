@@ -71,25 +71,14 @@ MakeBundleHelixCreator::mover_name()
 MakeBundleHelix::MakeBundleHelix():
 		Mover("MakeBundleHelix"),
 		reset_pose_(true),
-		invert_(false),
+		bundle_parameters_( BundleParametersOP( new BundleParameters ) ),
 		helix_length_(10),
 		residue_name_("ALA"),
 		tail_residue_name_(""),
-		r0_(8.0),
-		omega0_(1.0),
-		delta_omega0_(0.0),
-		r1_(),
-		omega1_(2.21),
-		delta_omega1_all_(0),
-		z1_(1.5),
-		delta_omega1_(),
-		delta_z1_(),
-		delta_t_(0.0),
-		allow_dihedrals_(true),
-		allow_bondangles_(false),
-		allow_bondlengths_(false),
 		last_apply_failed_(false)
-{}
+{
+	set_minor_helix_params_from_file("alpha_helix"); //By default, set the minor helix parameters to those of an alpha helix (read in from the database).
+}
 
 ///
 ///@brief Destructor for MakeBundleHelix mover.
@@ -194,6 +183,9 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 		if(TR.Debug.visible()) TR.Debug << "Appending helix to pose." << std::endl;
 		pose.append_pose_by_jump(helixpose, 1);
 	}
+
+	if(TR.Debug.visible()) TR.Debug << "Adding Crick parameter data to Conformation oject." << std::endl;
+	add_parameter_info_to_pose( pose );
 
 	if(TR.Debug.visible()) TR.Debug << "Finished apply function." << std::endl;
 
@@ -413,6 +405,33 @@ void MakeBundleHelix::align_mainchain_atoms(
 		core::scoring::superimpose_pose( pose, ref_pose, amap );
 
 		return;
+}
+
+/// @brief Add Crick parameter information to the Conformation object within the pose.
+/// @details This function updates the bundle_parameters_ object's links to residues within the pose,
+/// and then copies the owning pointer into the pose's Conformation object.  The bundle_parameters_
+/// object will be added to a new ParameterSet object in the Conformation object.
+void MakeBundleHelix::add_parameter_info_to_pose( core::pose::Pose &pose )
+{
+	bool const has_tails( tail_residue_name()!="" );
+	core::Size const first_res( pose.n_residue() - helix_length() - ( has_tails ? 2 : 0 ) + 1 );
+	core::Size const last_res( pose.n_residue() - ( has_tails ? 1 : 0 ));
+
+	BundleParametersOP output_parameters( utility::pointer::dynamic_pointer_cast<BundleParameters>( bundle_parameters_->clone() ) );
+
+	output_parameters->reset_residue_list();
+
+	for(core::Size ir=first_res; ir<=last_res; ++ir) { //Loop through all of the helix residues.
+		output_parameters->add_residue( pose.conformation().residue_op( ir ) ); //Add owning pointers to the residue objects.
+	}
+
+	//Create a new ParametersSet in the Conformation object:
+	pose.conformation().create_new_parameters_set();
+
+	//Add the output_parameters ParametersSet to the new ParametersSet
+	pose.conformation().parameters_set( pose.conformation().n_parameters_sets() )->add_parameters( utility::pointer::dynamic_pointer_cast<Parameters>(output_parameters) );
+
+	return;
 }
 
 } //namespace helical_bundle

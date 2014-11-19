@@ -1331,7 +1331,7 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		//Rebuild the N-terminal proton.  This has to be done in a slightly irritating way because Rosetta doesn't really like the fact
 		//that the last residue is connected to the first:
 		{
-			core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+			core::chemical::ResidueTypeSetCOP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 			core::pose::Pose dialanine;
 			core::pose::make_pose_from_sequence(dialanine, "AA", *standard_residues, true); //The termini are OPEN.
 			core::Real omegaval = numeric::dihedral_degrees(

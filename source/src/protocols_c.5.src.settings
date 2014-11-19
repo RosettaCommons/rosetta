@@ -38,6 +38,10 @@ sources = {
 		"MakeBundleHelix",
 		"util",
         ],
+        "protocols/helical_bundle/parameters": [
+		"BundleParameters",
+		"BundleParametersSet",
+        ],
 }
 include_path = [
 ]

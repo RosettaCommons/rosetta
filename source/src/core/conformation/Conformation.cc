@@ -50,6 +50,8 @@
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/MembraneParams.hh>
+#include <core/conformation/parametric/ParametersSet.hh>
+#include <core/conformation/parametric/Parameters.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -108,6 +110,7 @@ Conformation::Conformation() :
 	utility::pointer::ReferenceCount(),
 	fold_tree_( FoldTreeOP( new FoldTree ) ),
 	atom_tree_( AtomTreeOP( new AtomTree ) ),
+	parameters_set_(), //Empty list by default; almost no memory overhead for non-parametric Conformation objects.
 	contains_carbohydrate_residues_( false) ,
 	residue_coordinates_need_updating_( false ),
 	residue_torsions_need_updating_( false ),
@@ -133,6 +136,15 @@ Conformation::Conformation( Conformation const & src ) :
 	fold_tree_ = FoldTreeOP( new FoldTree( *src.fold_tree_ ) );
 	atom_tree_ = AtomTreeOP( new AtomTree( *src.atom_tree_ ) );
 	atom_tree_->set_weak_pointer_to_self( atom_tree_ );
+
+	// parametric conformations
+	parameters_set_.clear();
+	if(src.parameters_set_.size() > 0) {
+		for(core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i) {
+			parameters_set_.push_back( ParametersSetOP( new ParametersSet( *src.parameters_set_[i] ) ) );
+			parameters_set_[i]->update_residue_links( get_self_ptr() ); //Make sure that the new parameters_set_ has proper links to the residue objects in this new conformation
+		}
+	}
 
 	// carbohydrates?
 	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
@@ -180,6 +192,9 @@ Conformation::operator=( Conformation const & src )
 		(*fold_tree_) = (*src.fold_tree_);
 		(*atom_tree_) = (*src.atom_tree_);
 
+		// parametric conformations
+		parameters_set_ = src.parameters_set_;
+
 		// carbohydrates?
 		contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
 
@@ -226,6 +241,7 @@ Conformation::clear()
 
 	fold_tree_->clear();
 	atom_tree_->clear();
+	parameters_set_.clear();
 	residues_.clear();
 	dof_moved_.clear();
 	xyz_moved_.clear();
@@ -2079,6 +2095,34 @@ Conformation::insert_conformation_by_jump(
 
 	// AtomTree
 	setup_atom_tree();
+
+	// ParametersSet
+	// These are appended to the current ParametersSet list
+	{
+		core::Size n_sets(conf.n_parameters_sets());
+		if(n_sets > 0) {
+			for(core::Size iset=1; iset<=n_sets; ++iset) {
+				add_parameters_set( conf.parameters_set(iset)->clone() );
+				core::Size curset( n_parameters_sets() );
+				//Ensure that all of the residue pointers in the Parameters objects in the newly-created object
+				//point to residues in THIS Conformation object.
+				core::Size n_params( conf.parameters_set(iset)->n_parameters() );
+				if(n_params > 0) {
+					for(core::Size iparams=1; iparams<=n_params; ++iparams) { //Loop through all Parameters objects in this ParametersSet
+						core::Size n_res( conf.parameters_set(iset)->parameters(iparams)->n_residue() );
+						if(n_res>0) {
+							for(core::Size ires=1; ires<=n_res; ++ires) { //Loop through all Residue objects in this Parameters object
+								core::Size old_index( conf.parameters_set(iset)->parameters(iparams)->residue_cop(ires)->seqpos() );
+								core::Size new_index( old_index + insert_seqpos - 1 );
+								//Replace the owning pointer to the Residue object with one pointing at the corresponding residue in this Conformation object:
+								parameters_set(curset)->parameters(iparams)->set_residue(ires, residue_op(new_index)  );
+							} // Looping through Residue objects
+						} // if(n_res) > 0
+					} // Looping through Parameters objects
+				} // if(n_params) > 0
+			} // Looping through ParametersSet objects
+		} // if(n_sets) > 0
+	}
 
 	// not sure if this is necessary, perhaps around the insertion? can't hurt though...
 	residue_torsions_need_updating_ = true;
