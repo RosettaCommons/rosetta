@@ -2691,11 +2691,11 @@ Splice::remove_hairpin( core::pose::Pose & pose ) const{
 				TR << "Total number of constraints at start: " << constraints.size() << std::endl;
 				core::Size cst_num(0);
 				BOOST_FOREACH( ConstraintCOP const c, constraints ) {
-					if( c->type() == "SequenceProfile" ) { //only remove profile sequence constraints
-						pose.remove_constraint( c );
-						cst_num++;
-					}
-				}
+							if (( c->type() == "SequenceProfile" ) and (c->residues()[1]>=pose.conformation().chain_begin(chain_num_)) and (c->residues()[1]<=pose.conformation().chain_end(chain_num_))) { //only remove profile sequence constraints of pose that is being splice out
+								pose.remove_constraint( c );
+								cst_num++;
+							}
+						}
 				TR << "Removed a total of " << cst_num << " sequence constraints." << std::endl;
 				TR << "After removal the total number of constraints is: " << pose.constraint_set()->get_all_constraints().size()
 						<< std::endl;
