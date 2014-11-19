@@ -123,11 +123,6 @@ FaMPSolvEnergy::setup_for_derivatives(
 	pose::Pose & pose,
 	ScoreFunction const & scfxn
 	) const {
-    
-    // Check if pose is a membrane pose
-    if (! pose.conformation().is_membrane() ) {
-        utility_exit_with_message( "Cannot use the membrane framework supported energy functions on a pose without a MembraneInfo object. Have you used AddMembraneMover yet?");
-    }
 	
 	init( pose );
 	pose.update_residue_neighbors();
@@ -266,11 +261,6 @@ void
 FaMPSolvEnergy::setup_for_scoring(
 	pose::Pose & pose, ScoreFunction const &
 	) const {
-    
-    // Check if pose is a membrane pose
-    if (! pose.conformation().is_membrane() ) {
-        utility_exit_with_message( "Cannot use the membrane framework supported energy functions on a pose without a MembraneInfo object. Have you used AddMembraneMover yet?");
-    }
 	
 	// Initialize fullatom data
 	init( pose );
