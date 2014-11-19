@@ -1,0 +1,57 @@
+<dock_design>
+	<TASKOPERATIONS>
+		<InitializeFromCommandline name=init/>
+		
+		<SeqprofConsensus name=seqprofcons min_aa_probability=2 conservation_cutoff_protein_interface_design=0 conservation_cutoff_aligned_segments=1 probability_larger_than_current=0 ignore_pose_profile_length_mismatch=1> avoid identities that are very unlikely according to the PSSM. At the binding interface use cutoff -2. At the CDRs (but not interface) cutoff -0. Rest of the Ab cutoff 2. 3Aug13 experimenting with rest of Ab cutoff 2, interface-1 and cdr cutoff 1 to reduce memory. For antibodies: conservation_cutoff_protein_interface_design=PIDO, conservation_cutoff_aligned_segments=CDRs.
+			<ProteinInterfaceDesign design_chain1=1 design_chain2=0/> 8A cutoff around the ligand defines the binding surface
+			<RestrictToAlignedSegments chain=1>
+				<L1 source_pdb="%%source_pdb%%" start_res=24 stop_res=40/>
+				<L2 source_pdb="%%source_pdb%%" start_res=47 stop_res=56/>
+				<L3 source_pdb="%%source_pdb%%" start_res=90 stop_res=101/>
+				<H1 source_pdb="%%source_pdb%%" start_res=130 stop_res=142/>
+				<H2 source_pdb="%%source_pdb%%" start_res=149 stop_res=164/>
+				<H3 source_pdb="%%source_pdb%%" start_res=202 stop_res=220/>
+			</RestrictToAlignedSegments>
+		</SeqprofConsensus>
+
+		 RestrictToRepacking name=rtr />
+		<NoRepackDisulfides name=noRepackDisulfs/>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		sc12_w_correction weights=score12_w_corrections>
+			Reweight scoretype="res_type_constraint" weight=0.3/>
+			Reweight scoretype="coordinate_constraint" weight=0.5/>
+			Reweight scoretype=chainbreak weight=1/>
+		/sc12_w_correction>
+		score12_chainbreak weights=score12_w_corrections>
+			Reweight scoretype=chainbreak weight=1/>
+		/score12_chainbreak>
+
+		<soft_rep_coordcst weights=soft_rep>
+			<Reweight scoretype=coordinate_constraint weight=0.06/>
+		</soft_rep_coordcst>
+	</SCOREFXNS>
+	<FILTERS>
+		ScoreType name=chainbreak_val scorefxn=score12_chainbreak score_type=chainbreak threshold=0.5/>
+		DesignableResidues name=designable />
+	</FILTERS>
+	<MOVERS>
+		<Splice name=insert_H3 debug=0 protein_family=antibodies torsion_database="../../../../database/protocol_data/splice/antibodies/torsion_databases/kappa/H3.db" database_pdb_entry="3HZY" scorefxn=soft_rep_coordcst ccd=0 res_move=100 randomize_cut=0 template_file="%%source_pdb%%" thread_ala=0 design_task_operations=init,seqprofcons,noRepackDisulfs design=1 segment=H3 tail_segment="c" min_seg=0  rb_sensitive=1 use_sequence_profiles=1 chain_num=1/>	
+		<Splice name=insert_H1_H2 debug=0 protein_family=antibodies torsion_database="../../../../database/protocol_data/splice/antibodies/torsion_databases/kappa/H1_H2.db" database_pdb_entry="1X9Q" scorefxn=soft_rep_coordcst ccd=0 res_move=100 randomize_cut=0 template_file="%%source_pdb%%" thread_ala=0 design_task_operations=init,seqprofcons,noRepackDisulfs design=1 segment=H1_H2 tail_segment="n" min_seg=0  rb_sensitive=1 use_sequence_profiles=1 chain_num=1/>
+		<Splice name=insert_L1_L2 debug=0 protein_family=antibodies torsion_database="../../../../database/protocol_data/splice/antibodies/torsion_databases/kappa/L1_L2.db" database_pdb_entry="1BBD" scorefxn=soft_rep_coordcst ccd=0 res_move=100 randomize_cut=0 template_file="%%source_pdb%%" thread_ala=0 design_task_operations=init,seqprofcons,noRepackDisulfs design=1 segment=L1_L2 tail_segment="n" min_seg=0  rb_sensitive=1 use_sequence_profiles=1 chain_num=1/>
+		<Splice name=insert_L3 debug=0 protein_family=antibodies torsion_database="../../../../database/protocol_data/splice/antibodies/torsion_databases/kappa/L3.db" database_pdb_entry="4JO4" scorefxn=soft_rep_coordcst ccd=0 res_move=100 randomize_cut=0 template_file="%%source_pdb%%" thread_ala=0 design_task_operations=init,seqprofcons,noRepackDisulfs design=1 segment=L3 tail_segment="c" min_seg=0  rb_sensitive=1 use_sequence_profiles=1 chain_num=1/>
+	
+Splice name=splice debug=0 protein_family=antibodies torsion_database="../../../../database/protocol_data/splice/antibodies/torsion_databases/kappa/H3.db" database_pdb_entry="4JB9" scorefxn=sc12_w_correction ccd=0 res_move=100 randomize_cut=0 template_file="%%source_pdb%%" thread_ala=0 design_task_operations=seqprofcons,init design=1 segment=H3 tail_segment="n" min_seg=1  rb_sensitive=1 use_sequence_profiles=0 chain_num=1/>
+
+		<RBIn name=rb_transform rigid_body_dbase="../../../../database/protocol_data/splice/antibodies/RBO_databases/kappa/rb.database" from_entry=1 to_entry=750 randomize=true/>
+		Splice name=splice torsion_database="../../../../database/protocol_data/splice/antibodies/torsion_databases/kappa/H3.db" database_pdb_entry="4JB9" scorefxn=sc12_w_correction ccd=0 res_move=100 randomize_cut=0 template_file="%%source_pdb%%" splice_filter=chainbreak_val thread_ala=0 design_task_operations=init,rtr design=1 protein_family=antibodies segment=H1_H2 tail_segment="n" use_sequence_profiles=0 min_seg=1 skip_alignment=0 debug=0/> 
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover=rb_transform/>
+		<Add mover=insert_L1_L2/> 
+		<Add mover=insert_L3/>
+		<Add mover=insert_H1_H2/>
+		<Add mover=insert_H3/>
+		<Add mover=rb_transform/>
+	</PROTOCOLS>
+</dock_design>

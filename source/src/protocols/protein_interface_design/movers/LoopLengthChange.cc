@@ -93,17 +93,30 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 	core::kinematics::FoldTree const & ft = pose.fold_tree();
 	core::Size jump_count( 0 );
   if( delta() < 0 ){
-    //TR << "DEBUG: I will try to delete residues" << std::endl;
+    TR << "DEBUG: I will try to delete residues" << std::endl;
+		TR << "Loop end is " << loop_end() << " delta is " << delta() << std::endl; 
+		
+
 		for( int del(0); del>delta(); --del ){
     	//TR<<"loop_end -delta()+ del =" <<loop_end()-delta()+ del<<std::endl;
-    	if( ft.is_jump_point( loop_end() + del ) ){
-    					TR<<"LoopLengthChange called across a jump. I'm skipping the jump residue"<<std::endl;
-    					jump_count++;
-    				}
-      //TR << "DEBUG: I will now delete residue " << loop_end() + del -delta()+ jump_count << std::endl;
-			pose.delete_polymer_residue( loop_end() + del -delta()+ jump_count );
-      //string res = static_cast<ostringstream*>( &(ostringstream() << loop_cut() - del + jump_count) )->str();
-     // pose.dump_pdb("llc_res_"+res+".pdb");
+			if (tail_segment_){
+				TR << "DEBUG: I will now delete residue " << loop_end() + del << std::endl;
+				//string res = static_cast<ostringstream*>( &(ostringstream() << loop_end() + del) )->str();
+        //pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
+				pose.delete_polymer_residue( loop_end() + del ); // there will never be jumps within the tail segment
+			}
+			else{
+				if( ft.is_jump_point( loop_end() + del - delta() - jump_count ) ){
+              TR<<"LoopLengthChange called across a jump. I'm skipping the jump residue"<<std::endl;
+              jump_count++;
+        }
+	
+				TR << "DEBUG: I will now delete residue " << loop_end() + del - delta() - jump_count << std::endl;
+				//string res = static_cast<ostringstream*>( &(ostringstream() << loop_end() + del - delta() - jump_count) )->str();
+        //pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
+				pose.delete_polymer_residue( loop_end() + del - delta() - jump_count ); // was before pose.delete_polymer_residue( loop_end() + del - delta() + jump_count );
+				//pose.dump_pdb("llc_res_after_del_res_"+res+".pdb");
+			}
 //			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() );
 //			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() + 1 );
 		}

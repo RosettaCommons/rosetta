@@ -24,6 +24,8 @@ static thread_local basic::Tracer TR( "devel.splice.RBInMover" );
 #include <utility/tag/Tag.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
@@ -154,7 +156,7 @@ RBInMover::init(){
     }
     if( randomize() ){
         TR<<"Randomizing the order in the jump_library"<<std::endl;
-        std::random_shuffle( jump_library_.begin(), jump_library_.end() );
+        numeric::random::random_permutation(jump_library_.begin(), jump_library_.end(), numeric::random::rg());
     }
     current_entry_ = 1;/// this should already be initialized, but just in case
     checkpoint(); /// first pass should also checkpoint to keep the order of entries

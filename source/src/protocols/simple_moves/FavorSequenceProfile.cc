@@ -140,12 +140,15 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 	core::Size stop_seq = pose.total_residue();
   core::id::SequenceMappingOP smap( new core::id::SequenceMapping() );
 	if( chain_ > 1 ){
-		smap->set_offset(pose.conformation().chain_begin( chain_ ));
+		*smap = core::id::SequenceMapping::identity( pose.total_residue() );
+		smap->set_offset(pose.conformation().chain_begin( chain_ )-1);
+		smap->show();
 	}
 	else{//set smap to identity
 		*smap = core::id::SequenceMapping::identity( pose.total_residue() );
 	}
-	 utility::vector1<bool> use_all_residues;
+
+	utility::vector1<bool> use_all_residues;
    use_all_residues.resize(pose.total_residue(),true);
 
 	if (string_exclude_resnums_.length()!=0)	{

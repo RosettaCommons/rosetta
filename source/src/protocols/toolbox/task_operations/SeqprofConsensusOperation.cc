@@ -78,7 +78,10 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	protein_interface_design_( /* NULL */ ),
 	conservation_cutoff_protein_interface_design_( -100000 ),
 	debug_( false ),
+	keep_native_(false),
+	chain_num_(1),
 	restrict_to_repacking_(true)
+
 {
 	if( basic::options::option[ basic::options::OptionKeys::in::file::pssm ].user() )
 		seqprof_filename_ = basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1];
@@ -159,7 +162,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
     asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
 		task.request_symmetrize_by_intersection();
   }
-	tr<< "the size of sequence profile is: "<<seqprof->profile().size() <<std::endl;
+	tr<< "the size of sequence profile is: "<<seqprof->profile().size() - 1 <<std::endl;
 	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/ );
 	tr.Debug<< "FOR DEBUGGING!: last_res="<<last_res<<std::endl;
 /// following paragraph determines where PIDO and RestrictToAlignedInterface are defined.
@@ -286,7 +289,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	bool prot_res_without_profile_information_exist(false);
 	for( core::Size i = last_res + 1; i <= asymmetric_unit_res; ++i){
 		if (restrict_to_repacking_)// Gideon Oct14, For cases where we want residues that don't have sequence constraints to design
-			task.nonconst_residue_task(i).restrict_to_repacking();
+		task.nonconst_residue_task(i).restrict_to_repacking();
 		if( pose.residue_type( i ).is_protein() ) prot_res_without_profile_information_exist = true;
 	}
 
@@ -340,7 +343,6 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			utility_exit_with_message( "SeqprofConsensus subtag not recognized: " + sub_tag->getName() );
 		}
 	}//foreach
-
 	if (!(conservation_cutoff_protein_interface_design() <= conservation_cutoff_aligned_segments() ))
 		tr<<tr.bgRed<<"WARNING! conservation_cutoff_protein_interface_design() > conservation_cutoff_aligned_segments() "<<tr.Reset<<std::endl;
 

@@ -97,6 +97,10 @@ public:
 	void conservation_cutoff_protein_interface_design( core::Real const c ){ conservation_cutoff_protein_interface_design_ = c; }
 	void debug( bool const b ){ debug_ = b; }
 	bool debug() const{ return debug_; }
+	core::Size chain_num() const{ return chain_num_; }
+	void chain_num(core::Size const d) { chain_num_=d; }
+	bool keep_native() const{ return keep_native_; }
+	void keep_native(bool const b) { keep_native_=b; }
 private:
 
 	std::string seqprof_filename_;
@@ -104,7 +108,6 @@ private:
 	core::sequence::SequenceProfileOP seqprof_;
 	/// @brief mininum probability that an aa must have in the sequence profile to be considered
 	core::Real min_aa_probability_;
-	bool keep_native_;
 	/// @brief whether probability of a given aa to be included needs to be higher than the probability of the aa in the input pose
 	bool prob_larger_current_;
 
@@ -120,10 +123,12 @@ private:
 
 	ProteinInterfaceDesignOperationOP protein_interface_design_; //dflt NULL; this is used to define which residues are considered to be interface, for conservation_cutoff_interface_design_
 	core::Real conservation_cutoff_protein_interface_design_; // dflt -100000;
-	core::Size chain_num_; //dflt set to 1
-
 	bool debug_; // dflt false; if true be more chatty
-	bool restrict_to_repacking_; // dflt true; if set to false then all the protein can go through design and not just residues with seqeunce constratins. Gideon Oct14
+	bool keep_native_;//if set to true then the the native sequence of the protein is allowed in design, even if not favored by the PSSM, Gideon Lapidoth 2014
+	core::Size chain_num_; //dflt set to 1
+bool restrict_to_repacking_;
+
+
 };
 
 /// @brief a Task operation that will check whether the amino acid at a

@@ -131,7 +131,7 @@ CutChainMover::chain_id(core::Size const ID){
 void
 CutChainMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-  bond_length( tag->getOption< core::Real >( "bond_length", 4.0 ) );
+  bond_length( tag->getOption< core::Real >( "bond_length", 4.0 ) ); // EH!? Covalent bond length is more like 1.33 angstrom
   chain_id( tag->getOption< core::Size >( "chain_id", 1 ) );
 	TR<<" bond_length: "<<bond_length();
 	TR<<"Chain id: "<<chain_id();

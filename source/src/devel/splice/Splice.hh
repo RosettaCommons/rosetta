@@ -241,7 +241,6 @@ public:
 
 	core::Size source_pdb_to_res() const{ return source_pdb_to_res_; }
 	void source_pdb_to_res( core::Size const s ){ source_pdb_to_res_ = s; }
-
 	void delete_hairpin( bool const b ){ delete_hairpin_ = b; }
 	bool delete_hairpin() const{ return delete_hairpin_; }
 	core::Size delete_hairpin_n() const{ return delete_hairpin_n_; }
@@ -249,7 +248,6 @@ public:
 	core::Size delete_hairpin_c() const{ return delete_hairpin_c_; }
 	void delete_hairpin_c( core::Size const c ){ delete_hairpin_c_ = c;}
 	void remove_hairpin( core::pose::Pose & pose ) const; // the function that actually removes the hairpin
-
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -257,7 +255,7 @@ private:
 	void copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res );
 	core::Size find_non_active_site_cut_site(core::pose::Pose const & pose);
 	void superimpose_source_on_pose( core::pose::Pose const &, core::pose::Pose & );
-	void chainbreak_check( core::pose::Pose const & pose , core::Real const tolerance , bool fail_retry_if_found , bool crash_if_found );
+	void chainbreak_check( core::pose::Pose const & pose , core::Real const tolerance , bool fail_retry_if_found , bool crash_if_found ); 
 
 	// This vector will hold the segment names by order so when the segments are concatenated into a single profile it
 	// is done by user defined order
@@ -411,8 +409,11 @@ private:
 	bool superimposed_; //dflt true; when doing splice out, is the source pdb superimposed on the template pdb? This is usually the case. If it isn't we expect the user to specify the stem sites on the source and template exactly. Only dihedral restraints will be used in this case.
 	core::Size source_pdb_from_res_, source_pdb_to_res_; //dflt 0,0; see above superimposed.
 	bool ignore_chain_break_;//dflt false, if we want to ignore the checking if the source PDB has a chainbreak
+	core::Real tolerance_; //dflt 0.23
 	bool delete_hairpin_; // dflt false; if true cut out the top of the hairpin leaving two stumps
 	core::Size delete_hairpin_n_, delete_hairpin_c_; // the n and c points for cutting; n_ is counted from the cysteine and c_ is counted from the next cutsite
+
+
 };
 
 } //splice

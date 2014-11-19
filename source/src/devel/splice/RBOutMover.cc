@@ -147,6 +147,7 @@ RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose
     pose.fold_tree( ft );
     core::kinematics::Jump const pose_disulf_jump( pose.jump( 1 ) );
 
+    TR << "The jump in pose is " << pose_disulf_jump << std::endl;
     return pose_disulf_jump;
 }
 

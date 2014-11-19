@@ -1,0 +1,15 @@
+<dock_design>
+        <SCOREFXNS>
+		  <sc12_w_correction weights=score12_w_corrections/>
+        </SCOREFXNS>
+        <FILTERS>
+        </FILTERS>
+        <MOVERS>
+                <RBOut name=rbout template_fname="%%templatePdb%%" jump_dbase_fname="%%dbName%%"/>
+        </MOVERS>
+        <APPLY_TO_POSE>
+        </APPLY_TO_POSE>
+        <PROTOCOLS>
+                <Add mover_name=rbout/>
+        </PROTOCOLS>
+</dock_design>
