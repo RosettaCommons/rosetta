@@ -77,6 +77,12 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
 
+
+    if len(output) > 1024*1024*1:  # truncating logs if they too large (more then 1Mb in size)...
+        lines = output.split('\n')
+        output = '\n'.join( lines[:32] + ['...truncated...'] + lines[-32:] )
+
+
     output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
 
     r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
