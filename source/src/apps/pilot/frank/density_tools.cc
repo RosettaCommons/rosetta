@@ -64,7 +64,9 @@ OPT_1GRP_KEY(File, edensity, alt_mapfile)
 OPT_1GRP_KEY(Integer, denstools, nresbins)
 OPT_1GRP_KEY(Real, denstools, lowres)
 OPT_1GRP_KEY(Real, denstools, hires)
-OPT_1GRP_KEY(Boolean, denstools, rescale_map)
+OPT_1GRP_KEY(Real, denstools, truncate_lowres)
+OPT_1GRP_KEY(Real, denstools, truncate_hires)
+OPT_1GRP_KEY(Boolean, denstools, truncate_map)
 OPT_1GRP_KEY(Boolean, denstools, verbose)
 OPT_1GRP_KEY(Boolean, denstools, super_verbose)
 OPT_1GRP_KEY(Boolean, denstools, dump_map_and_mask)
@@ -199,6 +201,8 @@ densityTools()
 	// resolution limits for analysis
 	core::Real hires = option[ denstools::hires ]();
 	core::Real lowres = option[ denstools::lowres ]();
+	core::Real truncate_hires = option[ denstools::truncate_hires ]();
+	core::Real truncate_lowres = option[ denstools::truncate_lowres ]();
 	core::Real mask_radius = option[ denstools::mask_radius ]();
 	bool perres =option[ denstools::perres ]();
 
@@ -207,11 +211,15 @@ densityTools()
 	ObjexxFCL::FArray3D< std::complex<double> > FrhoO, FrhoO2;
 
 	if (hires == 0.0) hires = core::scoring::electron_density::getDensityMap().maxNominalRes();
+	if (truncate_hires == 0.0) truncate_hires = core::scoring::electron_density::getDensityMap().maxNominalRes();
 
 	runtime_assert( lowres > hires );
+	runtime_assert( truncate_lowres > truncate_hires );
 
 	hires = 1.0/hires;
 	lowres = 1.0/lowres;
+	truncate_lowres = 1.0/truncate_lowres;
+	truncate_hires = 1.0/truncate_hires;
 
 	//  fft
 	std::cout << "Stage 1: FFT rho_obs" << std::endl;
@@ -225,7 +233,7 @@ densityTools()
 	poseCoords pose;
 	core::pose::Pose fullpose;  // needed for per-residue stats (if requested)
 	std::string pdbfile;
-	if (userpose) {
+	if (userpose && !option[ denstools::truncate_map ]) {
 		pdbfile = basic::options::start_file();
 		readPDBcoords( pdbfile, pose );
 
@@ -249,6 +257,22 @@ densityTools()
 	}
 
 	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires, resobins, resobin_counts, bin_squared);
+
+	// rescale
+	if (option[ denstools::truncate_map ]) {
+		utility::vector1< core::Real > trunc = mapI;
+		for (int i=1; i<=(int)mapI.size(); ++i) {
+			if (resobins[i] <= truncate_lowres || resobins[i] >= truncate_hires)
+				trunc[i] = 0;
+			else
+				trunc[i] = 1;
+		}
+
+		core::scoring::electron_density::getDensityMap().scaleIntensities( trunc, lowres, hires, bin_squared );
+		core::scoring::electron_density::getDensityMap().writeMRC( "map_trunc.mrc" );
+		std::cout << "Wrote truncated map" << std::endl;
+		return;
+	}
 
 	// map vs map stats
 	std::cout << "Stage 3: map vs map" << std::endl;
@@ -387,7 +411,9 @@ main( int argc, char * argv [] )
 	NEW_OPT(denstools::hires, "high res limit", 0.0);
 	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
 	NEW_OPT(denstools::nresbins, "# resolution bins for statistics", 200);
-	NEW_OPT(denstools::rescale_map, "dump map with map I scaled to to model I?", false);
+	NEW_OPT(denstools::truncate_map, "dump map with map I scaled to to model I?", false);
+	NEW_OPT(denstools::truncate_lowres, "low res truncation", 1000.0);
+	NEW_OPT(denstools::truncate_hires, "high res truncation", 0.0);
 	NEW_OPT(denstools::dump_map_and_mask, "dump mrc of rho_calc and eps_calc", false);
 	NEW_OPT(denstools::mask, "mask all calcs", false);
 	NEW_OPT(denstools::mask_modelmap, "mask model-map calcs only", false);

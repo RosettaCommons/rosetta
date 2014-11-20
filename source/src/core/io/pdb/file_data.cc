@@ -51,7 +51,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/pose/PDBInfo.hh> 
+#include <core/pose/PDBInfo.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
@@ -917,7 +917,7 @@ write_additional_pdb_data(
 			}
 		}
 	}
-    
+
     // Added by JKLeman to write VRT representing the membrane bilayer,
     // these are NOT MEM and EMB residues, these are the ones representing the whole bilayer (LB)
     if ( option[ OptionKeys::in::membrane ] &&
@@ -931,11 +931,11 @@ write_additional_pdb_data(
         // ?? needs to be a const, but how can I change a const after initialization???
 //        Real const thickness( pose.conformation().membrane_info()->membrane_thickness());
         thickness = option[ OptionKeys::out::membrane_pdb_thickness];
-                
+
         // set variables for membrane plane
         core::Real spacing( 5 );
         core::Real width( 100 );
-        
+
         // get atom numbers from pose
 /*
                 core::Size atomno(0);
@@ -949,7 +949,7 @@ write_additional_pdb_data(
         // weird correction needed to make it work
         TR << "pose atoms: " << atomno << std::endl;
         atomno -= 2;
-        
+
         // write membrane
         for ( core::Real i = -width; i <= width; i += spacing ){
             for ( core::Real j = -width; j <= width; j += spacing ){
@@ -1426,7 +1426,7 @@ build_pose_as_is1(
 				pose.append_residue_by_bond( *new_rsd );
 			} else {
 				//fpd look for missing density in the input PDB
-				//fpd if there is a discontinuity in numbering AND bondlength > 3A
+				//fpd if there is a bondlength > 3A
 				//fpd we will consider this missing density
 				Residue const &last_rsd( pose.residue( old_nres ) );
 				core::Real bondlength = ( last_rsd.atom( last_rsd.upper_connect_atom() ).xyz() -
@@ -1435,10 +1435,21 @@ build_pose_as_is1(
 				if ( bondlength > 3.0 ) {
 					TR << "[ WARNING ] missing density found at residue (rosetta number) " << old_nres << std::endl;
 					pose.append_residue_by_jump( *new_rsd, old_nres );
-					if (!pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) &&
-					    !pose.residue_type(old_nres).has_variant_type( UPPERTERM_TRUNC_VARIANT ) )
-						core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC_VARIANT, old_nres );
-					core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWERTERM_TRUNC_VARIANT, old_nres+1 );
+
+					if (pose.residue_type(old_nres).is_protein()) {
+						if (!pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) &&
+						    !pose.residue_type(old_nres).has_variant_type( UPPERTERM_TRUNC_VARIANT ) )
+							core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC_VARIANT, old_nres );
+					} else {
+						if (!pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ))
+							core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, old_nres );
+					}
+
+					if (pose.residue_type(old_nres+1).is_protein()) {
+						core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWERTERM_TRUNC_VARIANT, old_nres+1 );
+					} else {
+						core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, old_nres+1 );
+					}
 				} else {
 					//TR.Debug << rsd_type.name() << " " << i << " is appended to chain" << chainID << std::endl;
 					pose.append_residue_by_bond( *new_rsd );

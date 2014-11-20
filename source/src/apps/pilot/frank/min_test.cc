@@ -94,6 +94,7 @@ OPT_1GRP_KEY(Boolean, min, debug)
 OPT_1GRP_KEY(Boolean, min, debug_verbose)
 OPT_1GRP_KEY(Boolean, min, cartesian)
 OPT_1GRP_KEY(Boolean, min, pack)
+OPT_1GRP_KEY(Integer, min, repeats)
 OPT_1GRP_KEY(String, min, minimizer)
 
 
@@ -118,6 +119,8 @@ public:
 		mm.set_jump( true );
 		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
 		mm.set( core::id::D, option[ OptionKeys::relax::minimize_bond_lengths ]() );
+
+		core::Size repeats = option[ OptionKeys::min::repeats ]();
 
 		if ( option[ OptionKeys::relax::jump_move ].user() )
 			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
@@ -186,7 +189,7 @@ public:
 				std::cout << "SYMTORSION MINTEST: " << "\n";
 				std::cout << "start score: " << (*scorefxn)(pose) << "\n";
 				long t1=clock();
-				minimizer.run( pose, mm, *scorefxn, options );
+				for (int i=1; i<=(int)repeats; ++i) minimizer.run( pose, mm, *scorefxn, options );
 				long t2=clock();
 				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
 				std::cout << "end score: " << (*scorefxn)(pose) << "\n";
@@ -198,7 +201,7 @@ public:
 				std::cout << "TORSION MINTEST: " << "\n";
 				std::cout << "start score: " << (*scorefxn)(pose) << "\n";
 				long t1=clock();
-				minimizer.run( pose, mm, *scorefxn, options );
+				for (int i=1; i<=(int)repeats; ++i) minimizer.run( pose, mm, *scorefxn, options );
 				long t2=clock();
 				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
 				std::cout << "end score: " << (*scorefxn)(pose) << "\n";
@@ -252,6 +255,7 @@ try {
 	NEW_OPT(min::debug, "debug derivs?", false);
 	NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
 	NEW_OPT(min::cartesian, "cartesian minimization?", false);
+	NEW_OPT(min::repeats, "#repeats", 1);
 	NEW_OPT(min::pack, "pack first?", false);
 	NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
 
