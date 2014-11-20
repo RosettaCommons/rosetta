@@ -985,7 +985,7 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 			TR << "Ended change dofs. Now testing chain breaks." << std::endl;
 			
 			if (!ccd()){
-				core::Real tolerance = 0.23; // 0.23 angstrom deviation from mean peptide bond length
+				core::Real tolerance = tolerance_; // 0.23 angstrom deviation from mean peptide bond length
       	bool fail_retry_if_found = true;
       	bool crash_if_found = false;
       	chainbreak_check( pose , tolerance, fail_retry_if_found , crash_if_found );
@@ -1633,7 +1633,7 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 				}
 
 			/// TESTING FOR CHAINBREAK BEFORE MIN SEG
-			core::Real tolerance = 0.23; // 0.23 angstrom deviation from mean peptide bond length 
+			core::Real tolerance = tolerance_; // 0.23 angstrom deviation from mean peptide bond length
 			bool fail_retry_if_found = true;
       bool crash_if_found = false;
       chainbreak_check( pose , tolerance, fail_retry_if_found , crash_if_found );
