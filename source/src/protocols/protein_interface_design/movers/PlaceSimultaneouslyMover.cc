@@ -441,19 +441,26 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
              new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
          } else {
              Size status=0;
-             for( PlacementAuctionMover::ResidueAuction::iterator selected_auction_result = new_auction.begin(); selected_auction_result != new_auction.end(); ++selected_auction_result) {
+             // Modifying a container you're iterating over is perilous, as iterators may become invalid.
+             // Luckily for a multimap only the iterator being deleted is invalidated. We can make a copy and increment the main iterator before we delete the copy.
+             for( PlacementAuctionMover::ResidueAuction::iterator selected_auction_iterator = new_auction.begin(); selected_auction_iterator != new_auction.end(); /*intentionally left blank*/ ) {
+               PlacementAuctionMover::ResidueAuction::iterator selected_auction_result( selected_auction_iterator );
+               ++selected_auction_iterator; // Increment before delete, because it will be invalid after the deletion of the copy
                if ( each_auction_result->second.first == selected_auction_result->second.first ) {
-                     if ( cst_score < selected_auction_result->first ) {
+                   if ( cst_score < selected_auction_result->first ) {
                          new_auction.erase( selected_auction_result );
+                         // selected_auction_result is now an invalid iterator
+                         // NOTE: Inserting into a multimap we're iterating over doesn't invalidate iterators, but it may mean we will encounter the inserted value during the current round of iteration.
+                         //       This may not be the behavior we're after here.
                          new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
                    }
                    status=1;
                }
-           }
+             }
 
            if (status==0) {
                    new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
-             }
+           }
 
          } //insert when there is something
 
