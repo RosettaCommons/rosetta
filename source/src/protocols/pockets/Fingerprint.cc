@@ -767,12 +767,12 @@ spherical_coor_triplet best_triplet = {0,0,0,0};
 		gpu_memory_.num_particles = num_particles;
 
 		// Custom weights
-		float weights[4] = {missing_point_weight, steric_weight, extra_point_weight, num_particles};
+		float weights[4] = {static_cast<float>(missing_point_weight), static_cast<float>(steric_weight), static_cast<float>(extra_point_weight), static_cast<float>(num_particles)};
 		if(!gpu_memory_.weights) gpu_memory_.weights = gpu_.AllocateMemory(sizeof(weights));
 		gpu_.WriteData(gpu_memory_.weights, weights, sizeof(weights));
 
 		// electrostatic weights
-		float elec_weights[4] = {electrostatics_weight,num_particles,0.0,0.0};
+		float elec_weights[4] = {static_cast<float>(electrostatics_weight),static_cast<float>(num_particles),0.0,0.0};
 		if(!gpu_memory_.elec_weights) gpu_memory_.elec_weights = gpu_.AllocateMemory(sizeof(elec_weights));
 		gpu_.WriteData(gpu_memory_.elec_weights, elec_weights, sizeof(elec_weights));
 
@@ -806,26 +806,26 @@ spherical_coor_triplet best_triplet = {0,0,0,0};
 		ligCoM.clear();
 
 		for ( core::Size c = 0; c < nconformers; ++c ) {
-			core::pose::PoseOP tmp_pose = new core::pose::Pose(pf.pose(), c+1, c+1);
+			core::pose::PoseOP tmp_pose(new core::pose::Pose(pf.pose(), c+1, c+1));
 			core::Size const lig_res_num = pf.compute_ligand_resnum(*tmp_pose);
-			core::conformation::ResidueCOP ligand_rsd = new core::conformation::Residue( tmp_pose->conformation().residue(lig_res_num) );
+			core::conformation::ResidueCOP ligand_rsd( core::conformation::ResidueOP( new core::conformation::Residue( tmp_pose->conformation().residue(lig_res_num) ) ) );
 			numeric::xyzVector<core::Real> ligand_com(0.);
 			//copy atomcoords without hydrogens (included 'radius') for shapeonly calculations
 			//aslo copy center of mass of each conformers
 			for (Size i = 1; i <= ligand_natoms_shapecalc; ++i) {
-				basic::gpu::float4 atomcoord_shapecalc = { ligand_rsd->atom(i).xyz()(1), ligand_rsd->atom(i).xyz()(2), ligand_rsd->atom(i).xyz()(3), ligand_rsd->atom_type(i).lj_radius() };
+				basic::gpu::float4 atomcoord_shapecalc = { static_cast<float>(ligand_rsd->atom(i).xyz()(1)), static_cast<float>(ligand_rsd->atom(i).xyz()(2)), static_cast<float>(ligand_rsd->atom(i).xyz()(3)), static_cast<float>(ligand_rsd->atom_type(i).lj_radius()) };
 				atomcoords_shapecalc.push_back(atomcoord_shapecalc);
 				ligand_com.x() += ligand_rsd->atom(i).xyz()(1);
 				ligand_com.y() += ligand_rsd->atom(i).xyz()(2);
 				ligand_com.z() += ligand_rsd->atom(i).xyz()(3);
 			}
 			ligand_com /= ligand_natoms_shapecalc;
-			basic::gpu::float4 lig_conf_com = { ligand_com.x(), ligand_com.y(), ligand_com.z(), ligand_natoms_shapecalc };
+			basic::gpu::float4 lig_conf_com = { static_cast<float>(ligand_com.x()), static_cast<float>(ligand_com.y()), static_cast<float>(ligand_com.z()), static_cast<float>(ligand_natoms_shapecalc) };
 			ligCoM.push_back(lig_conf_com);
 
 			//copy atomcoords with hydrogens (and 'charges') for electrostatic calculations
 			for (Size i = 1; i <= ligand_natoms_elstscalc; ++i) {
-				basic::gpu::float4 atomcoord_elstscalc = { ligand_rsd->atom(i).xyz()(1), ligand_rsd->atom(i).xyz()(2), ligand_rsd->atom(i).xyz()(3), ligand_rsd->atomic_charge(i) };
+				basic::gpu::float4 atomcoord_elstscalc = { static_cast<float>(ligand_rsd->atom(i).xyz()(1)), static_cast<float>(ligand_rsd->atom(i).xyz()(2)), static_cast<float>(ligand_rsd->atom(i).xyz()(3)), static_cast<float>(ligand_rsd->atomic_charge(i)) };
 			atomcoords_elstscalc.push_back(atomcoord_elstscalc);
 			}
 		}
@@ -851,12 +851,12 @@ spherical_coor_triplet best_triplet = {0,0,0,0};
 		std::vector<basic::gpu::float4> RAYorigins;
 
   for (utility::vector1<numeric::xyzVector<core::Real> >::const_iterator i_mori = multi_origin_list_.begin(); i_mori != multi_origin_list_.end(); ++i_mori) {
-			basic::gpu::float4 ray_origin = { i_mori->x(), i_mori->y(), i_mori->z(), 0.0 };
+		basic::gpu::float4 ray_origin = { static_cast<float>(i_mori->x()), static_cast<float>(i_mori->y()), static_cast<float>(i_mori->z()), 0.0 };
 			RAYorigins.push_back(ray_origin);
 		}
 
 		for (std::list<spherical_coor_triplet>::const_iterator gi = triplet_fingerprint_data_.begin(); gi != triplet_fingerprint_data_.end(); ++gi) {
-			basic::gpu::float4 ray = { gi->phi, gi->psi, gi->rho, gi->ori };
+			basic::gpu::float4 ray = { static_cast<float>(gi->phi), static_cast<float>(gi->psi), static_cast<float>(gi->rho), static_cast<float>(gi->ori) };
 			rays.push_back(ray);
 		}
 
@@ -878,17 +878,17 @@ spherical_coor_triplet best_triplet = {0,0,0,0};
 		if(!gpu_.use()) return;
 
 		float grid_dim[4] = {
-			esp_dim_.x(),
-			esp_dim_.y(),
-			esp_dim_.z(),
-			esp_spacing_
+			static_cast<float>(esp_dim_.x()),
+			static_cast<float>(esp_dim_.y()),
+			static_cast<float>(esp_dim_.z()),
+			static_cast<float>(esp_spacing_)
 		};
 
 		float grid_mid[4] = {
-			esp_mid_.x(),
-			esp_mid_.y(),
-			esp_mid_.z(),
-			esp_spacing_
+			static_cast<float>(esp_mid_.x()),
+			static_cast<float>(esp_mid_.y()),
+			static_cast<float>(esp_mid_.z()),
+			static_cast<float>(esp_spacing_)
 		};
 
 		if(!gpu_memory_.grid_dim) gpu_memory_.grid_dim = gpu_.AllocateMemory(sizeof(grid_dim));

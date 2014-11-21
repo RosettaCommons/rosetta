@@ -617,8 +617,8 @@ int GPU::_ExecuteKernel(const char *kernel_name, int total_threads, int max_conc
 	kernelRuntime_ = 0.0;
 
 	do {
-		size_t globalWorkSize = { UPPER_MULTIPLE(total_threads, use_threads) };
-		size_t localWorkSize = { use_threads };
+		size_t globalWorkSize = { static_cast<size_t>(UPPER_MULTIPLE(total_threads, use_threads))};
+		size_t localWorkSize = { static_cast<size_t>(use_threads) };
 
 		errNum_ = clEnqueueNDRangeKernel(this_device().commandQueue, kernel, 1, NULL, &globalWorkSize, &localWorkSize, 0, NULL, &kernelEvent );
 
