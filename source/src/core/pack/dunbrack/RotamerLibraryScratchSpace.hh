@@ -122,6 +122,13 @@ public:
 
 private:
 
+  //////////////////////////////////////////////////////
+  // IMPORTANT: If you add a new member variable here,
+  // be sure it's zero initialized in the constructor.
+  // (Not all uses of RotamerLibraryScratchSpace will be
+  // handed to a Dunbrack rotamer library before use.)
+  //////////////////////////////////////////////////////
+
 	Real rotprob_;
 	Real negln_rotprob_;
 	Size4 rotwell_;

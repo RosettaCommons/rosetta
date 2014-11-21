@@ -25,7 +25,12 @@ namespace dunbrack {
 RotamerLibraryScratchSpace::RotamerLibraryScratchSpace() :
 	utility::pointer::ReferenceCount(),
 	rotprob_( 0.0 ),
-	negln_rotprob_( 0.0 )
+	negln_rotprob_( 0.0 ),
+	fa_dun_tot_( 0.0 ),
+	fa_dun_rot_( 0.0 ),
+	fa_dun_semi_( 0.0 ),
+	fa_dun_dev_( 0.0 ),
+	entropy_( 0.0 )
 {}
 
 RotamerLibraryScratchSpace::~RotamerLibraryScratchSpace() {}

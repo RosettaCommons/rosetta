@@ -346,6 +346,9 @@ public:
 
 private:
 
+	/// @brief Private default constructor -- You must use the parameterized constructor to create!
+	EnzdesFlexibleRegion();
+
 	//index of this region in the overall scheme of things
 	core::Size index_;
 
