@@ -993,8 +993,9 @@ void JobDistributor::jd2_signal_handler(int signal_)
 		std::cout << "Process was terminated!" << std::endl;
 
 #ifndef WIN32
-	if (signal_ == SIGKILL)
-		std::cout << "Process was SIGKILL!" << std::endl;
+// // You can't catch SIGKILL - don't bother trying
+//	if (signal_ == SIGKILL)
+//		std::cout << "Process was SIGKILL!" << std::endl;
 	if (signal_ == SIGQUIT)
 		std::cout << "Process was SIGQUIT!" << std::endl;
 #endif
@@ -1019,7 +1020,8 @@ void JobDistributor::setup_system_signal_handler(void(*signal_fn)(int))
 	signal(SIGTERM, signal_fn);
 
 #ifndef WIN32
-	signal(SIGKILL, signal_fn);
+// // You can't catch SIGKILL - don't bother trying
+//	signal(SIGKILL, signal_fn);
 	signal(SIGQUIT, signal_fn);
 #endif
 #endif
@@ -1034,7 +1036,8 @@ void JobDistributor::remove_system_signal_handler()
 	signal(SIGABRT, SIG_DFL);
 	signal(SIGTERM, SIG_DFL);
 #ifndef WIN32
-	signal(SIGKILL, SIG_DFL);
+// // You can't catch SIGKILL - don't bother trying
+//	signal(SIGKILL, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 #endif
 #endif
