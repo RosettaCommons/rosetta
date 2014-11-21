@@ -1,0 +1,3 @@
+-s input/2xa0_complex.pdb
+-ddg_list input/ddg.txt
+-target_chain_list A
