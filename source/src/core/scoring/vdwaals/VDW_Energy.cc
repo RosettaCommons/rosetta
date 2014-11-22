@@ -88,6 +88,7 @@ VDW_Energy::VDW_Energy( methods::EnergyMethodOptions const & options ):
 	atom_type_set_name_( options.atom_vdw_atom_type_set_name() ),
 	vdw_scale_factor_( 0.8 ) // hack from rosetta++
 {
+	calculate_hydrogen_interaction_cutoff();
 }
 
 
@@ -97,15 +98,6 @@ VDW_Energy::clone() const
 {
 	return methods::EnergyMethodOP( new VDW_Energy( *this ) );
 }
-
-/// @details  copy c-tor
-VDW_Energy::VDW_Energy( VDW_Energy const & src ):
-	parent( src ),
-	atom_vdw_( src.atom_vdw_ ),
-	atom_type_set_name_( src.atom_type_set_name_ ),
-	vdw_scale_factor_( src.vdw_scale_factor_ )
-{}
-
 
 /////////////////////////////////////////////////////////////////////////////
 // scoring

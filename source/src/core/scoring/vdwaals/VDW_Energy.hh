@@ -48,13 +48,17 @@ public:
 	/// @brief  C-tor, requires options to tell us the atom_type_set_name for the AtomVDW data
 	VDW_Energy( methods::EnergyMethodOptions const & options );
 
+private:
+
+	/// @brief Private unimplemented default constructor - must be initialized with options object.
+	VDW_Energy();
+
+public:
+
 	/// clone
 	virtual
 	methods::EnergyMethodOP
 	clone() const;
-
-	/// @brief COPY C-TOR
-	VDW_Energy( VDW_Energy const & src );
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring

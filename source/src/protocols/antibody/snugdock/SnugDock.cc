@@ -58,7 +58,14 @@ namespace antibody {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///@brief default constructor
-SnugDock::SnugDock() : docking::DockingHighRes() {
+SnugDock::SnugDock() :
+		docking::DockingHighRes(),
+		loop_refinement_method_( "refine_kic" ),
+		h3_filter_( true ),
+		debug_( false ),
+		h3_filter_tolerance_( 20 ),
+		number_of_high_resolution_cycles_( 50 )
+{
 	init();
 }
 
@@ -287,9 +294,11 @@ void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, Snug
 	// Movers
 	lhs.high_resolution_step_ = rhs.high_resolution_step_;
 	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
-	
+	lhs.pre_minimization_ = rhs.pre_minimization_;
+
 	// H3 filter options
 	lhs.h3_filter_ = rhs.h3_filter_;
+	lhs.debug_ = rhs.debug_;
 	lhs.h3_filter_tolerance_ = rhs.h3_filter_tolerance_;
 
 	lhs.number_of_high_resolution_cycles_ = rhs.number_of_high_resolution_cycles_;
