@@ -30,13 +30,16 @@ namespace utilities {
 
 /// @brief Manage a collection of loop-sampling algorithms.
 ///
-/// @details This class is meant to make a group of LoopMover objects behave 
-/// like a single LoopMover.  Methods like add_mover() and add_filter() are 
+/// @details This class is meant to make a group of LoopMover objects behave
+/// like a single LoopMover.  Methods like add_mover() and add_filter() are
 /// also provided to add movers to the group.
 
 class LoopMoverGroup : public LoopMover {
 
 public:
+
+	/// @brief Default constructor
+	LoopMoverGroup();
 
 	/// @brief Return the name of this mover.
 	string get_name() const { return "LoopMoverGroup"; }
@@ -53,7 +56,7 @@ public:
 	/// @brief Remove all movers and filters from this group.
 	void clear();
 
-	/// @brief Indicate that the current set of movers in this group is meant as 
+	/// @brief Indicate that the current set of movers in this group is meant as
 	/// some sort of default, and should be cleared when a new mover is added.
 	void mark_as_default();
 
@@ -62,7 +65,7 @@ public:
 
 protected:
 	/// @brief Apply all the movers added to this group.
-	/// @details This method will immediately return false if any of the child 
+	/// @details This method will immediately return false if any of the child
 	/// movers reports failure.
 	bool do_apply(Pose & pose);
 

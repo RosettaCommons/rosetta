@@ -31,6 +31,10 @@ namespace utilities {
 using namespace std;
 using core::scoring::ScoreFunctionOP;
 
+LoopMoverGroup::LoopMoverGroup():
+		is_default_(false)
+{}
+
 bool LoopMoverGroup::do_apply(Pose & pose) { // {{{1
 	foreach (LoopMoverOP child, get_nested_loop_movers()) {
 		child->apply(pose);
