@@ -1,2 +1,5 @@
+# Enables recommended membrane protein scoring options: turn on
+# interpolation between membrane layers in low resolution and correct
+# for hydrogen bonding strength based on membrane depth
 no_interpolate_Mpair 1
 Hbond_depth_correction 1

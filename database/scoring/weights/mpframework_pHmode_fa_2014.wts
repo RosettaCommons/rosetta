@@ -1,3 +1,9 @@
+# #file: mpframework_pHmode_fa_2014.wts
+# @desc: Combines the smoothed membrane all atom energy function with
+# pH mode - enables the packer to sample protonated rotamers where
+# applicable at a given pH (specified via command line)
+# @note: supported by the membrane framework
+# @cite: Terms from [Barth, 2007, PNAS] and [Kilambi, 2013, Proteins]
 METHOD_WEIGHTS ref  0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
 fa_atr 0.8
 fa_rep 0.44
@@ -20,5 +26,6 @@ dslf_cs_ang 2
 dslf_ss_dih 5
 dslf_ca_dih 5
 pro_close 1.0
+e_pH 1.0
 rama  0.2
 omega  0.5

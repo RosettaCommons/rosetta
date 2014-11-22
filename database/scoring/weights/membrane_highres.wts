@@ -1,3 +1,9 @@
+# @file: membrane_highres
+# @desc: All atom energy function for membrane proteins: combines Rosetta's
+# all atom energy function with membrane environment and solvation from the
+# lazaridis-karplus implicit membrane model.
+# @note: deprecated - use mpframework instead
+# @cite: Barth, 2007, PNAS
 METHOD_WEIGHTS ref  0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
 fa_atr 0.78
 fa_rep 0.43

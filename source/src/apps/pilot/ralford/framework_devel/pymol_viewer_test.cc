@@ -90,7 +90,7 @@ public:
 		MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
 		init_memb->apply( pose ); 
 
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function("fa_menv_smooth_2014");
+		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function("mpframework_smooth_fa_2014");
 
 		TR << "Setting up a new movemap" << std::endl;
 		// Setup a MoveMap Object

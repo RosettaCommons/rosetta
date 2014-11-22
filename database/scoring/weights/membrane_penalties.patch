@@ -1,4 +1,6 @@
-#penalty, in effect?, weight
+# Turn on recommended empirically derived membrane penalties
+# at the low resolution stage - accommodates for membrane proteins
+# that are unfavorably embedded in the membrane bilayer
 TMprojection 1 50
 non-helix 1 50
 termini 1 50

@@ -60,7 +60,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::register_options();
 
 		// Create a new energy function
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "fa_menv_smooth_2014" );
+		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2014" );
 
 		// Load in mutants for the appropriate task
 		utility::vector1< MutationOP > ompA_mutations = ompA_task(); 

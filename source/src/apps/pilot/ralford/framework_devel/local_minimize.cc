@@ -82,7 +82,7 @@ public:
 		initialize_memb.apply(pose);
 
 		// Setup the Membrane Energy Function
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "fa_membrane_2014" );
+		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_fa_2014" );
 
 		// Set up a movemap - bb, chi and jump are all moveable
 		MoveMapOP movemap( new MoveMap() ); 

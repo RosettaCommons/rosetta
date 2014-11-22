@@ -1,4 +1,6 @@
-#all terms for mpdocking, first test
+# Rosetta Membrane Framework Symmetric Protein-Protein Docking Highres weights
+# Description: High resolution weights for symmetric docking for membranes - combines
+# smoothed high resolution energy function with fa_elec term from highres asymmetric docking
 #membrane
 fa_atr 0.78
 fa_rep 0.43
@@ -6,7 +8,7 @@ fa_sol 0.00
 fa_intra_rep 0.004
 fa_pair 0.48
 fa_plane 0
-fa_dun 0.56
+fa_dun 0.01
 fa_mpsolv 0.60
 fa_mpenv 0.48
 ref 1
@@ -22,10 +24,6 @@ dslf_ca_dih 5
 pro_close 1.0
 rama  0.2
 omega  0.5
-mp_nonhelix 1.0
-mp_tmproj 1.0
-mp_termini 1.0
 
 #docking
 fa_elec 0.026
-

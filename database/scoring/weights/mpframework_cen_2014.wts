@@ -1,23 +1,20 @@
-# #file: score_membrane.wts
+# #file: mpframework_cen_2014.wts
 # @desc: Scores low resolution pairwise, packing density, and environment energies
 # in a 5-layer membrane environment. Also includes penalties for structures unfavorably
 # embedded in the membrane.
-# @note: Deprecated: Consider using mpframework_cen_2014 (2014)
+# @note: supported by the membrane framework
 # @cite: [Yarov-Yaravoy, 2006, Proteins]
-Mpair 1.0
-Menv 2.019
-Mcbeta 2.5
-Menv_non_helix 2.019
-Menv_termini 2.019
-Menv_tm_proj 2.019
+mp_pair 1.0
+mp_env 2.019
+mp_cbeta 2.5
+mp_nonhelix 2.019
+mp_termini 2.019
+mp_tmproj 2.019
 rama 0.15
-vdw 3.0
 rsigma 1.0
 sheet 1.0
 ss_pair 1.0
 hs_pair 1.0
-Mlipo 1.0
+#Mlipo 1.0
 
 STRAND_STRAND_WEIGHTS 0 6
-
-

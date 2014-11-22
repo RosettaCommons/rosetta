@@ -88,8 +88,8 @@ public:
 		using namespace protocols::membrane::symmetry; 
 
 		// Setting up the membrane energy functions (low & high resolution)
-		ScoreFunctionOP sfxn_low = ScoreFunctionFactory::create_score_function( "mpsymdocking_lowres" );
-		ScoreFunctionOP sfxn_high = ScoreFunctionFactory::create_score_function( "mpsymdocking_hires" );
+		ScoreFunctionOP sfxn_low = ScoreFunctionFactory::create_score_function( "mpframework_symdock_cen_2014" );
+		ScoreFunctionOP sfxn_high = ScoreFunctionFactory::create_score_function( "mpframework_symdock_fa_2014" );
 	
 
 		//TR << "Creating setup symm" << std::endl;

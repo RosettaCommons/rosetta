@@ -3,5 +3,5 @@
 -membrane_new:setup:center 0 0 0
 -membrane_new:setup:normal 0 0 1
 -ignore_unrecognized_res
--score:weights fa_membrane_2014
+-score:weights mpframework_fa_2014
 -membrane_new:scoring:hbond
