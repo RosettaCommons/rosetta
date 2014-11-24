@@ -1059,7 +1059,7 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 		bicubic_interpolation(
 			ShanonEntropy_(i0,j0), S_dsecophi_(i0,j0), S_dsecopsi_(i0,j0), S_dsecophipsi_(i0,j0),
 			ShanonEntropy_(i0,j1), S_dsecophi_(i0,j1), S_dsecopsi_(i0,j1), S_dsecophipsi_(i0,j1),
-			ShanonEntropy_(i1,j1), S_dsecophi_(i1,j0), S_dsecopsi_(i1,j0), S_dsecophipsi_(i1,j0),
+			ShanonEntropy_(i1,j0), S_dsecophi_(i1,j0), S_dsecopsi_(i1,j0), S_dsecophipsi_(i1,j0),
 			ShanonEntropy_(i1,j1), S_dsecophi_(i1,j1), S_dsecopsi_(i1,j0), S_dsecophipsi_(i1,j1),
 			phi_alpha, psi_alpha,
 			PHIPSI_BINRANGE, PHIPSI_BINRANGE,
