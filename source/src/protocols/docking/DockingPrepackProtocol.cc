@@ -217,7 +217,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		add_mem->apply( pose );
 
 		// get correct scorefunction for membrane proteins and set it in the parent class
-		core::scoring::ScoreFunctionOP mem_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "fa_menv_smooth_2014.wts" );
+		core::scoring::ScoreFunctionOP mem_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2014.wts" );
 		set_scorefxn( mem_sfxn );
 	}
 
