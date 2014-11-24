@@ -1410,7 +1410,7 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 	Size const i = rsd1.seqpos();
 	Size const j = rsd2.seqpos();
 
-	if ( abs( static_cast< int > ( i - j ) ) < 2 ) return 0.0;
+	if ( std::abs( static_cast< int > ( i - j ) ) < 2 ) return 0.0;
 
 	//	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	//	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
@@ -1540,7 +1540,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 
 			Size j( ( *iter )->get_other_ind( i ) );
 
-			if ( abs( static_cast< int > ( i - j ) ) < 2 ) continue;
+			if ( std::abs( static_cast< int > ( i - j ) ) < 2 ) continue;
 
 			conformation::Residue const & rsd2( pose.residue( j ) );
 			if ( !rsd2.is_RNA() ) continue;
@@ -1601,7 +1601,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 
 				Size j( ( *iter )->get_other_ind( i ) );
 
-				if ( abs( static_cast< int > ( i - j ) ) < 2 ) continue;
+				if ( std::abs( static_cast< int > ( i - j ) ) < 2 ) continue;
 
 				conformation::Residue const & rsd2( pose.residue( j ) );
 				if ( !rsd2.is_RNA() ) continue;
@@ -1688,7 +1688,7 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 	Size const i( rsd1.seqpos() );
 	Size const j( rsd2.seqpos() );
 
-	if ( abs( static_cast< int > ( i - j ) ) <= 2 ) return 0.0;
+	if ( std::abs( static_cast< int > ( i - j ) ) <= 2 ) return 0.0;
 
 	//For speed, a cached set of atom numbers that go with RNA_backbone_oxygen_atoms_ (which is a bunch of strings)
 	//	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
@@ -1827,7 +1827,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 
 			Size j( ( *iter )->get_other_ind( i ) );
 
-			if ( abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
+			if ( std::abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
 
 			conformation::Residue const & rsd2( pose.residue( j ) );
 			if ( !rsd2.is_RNA() ) continue;
@@ -1952,7 +1952,7 @@ RNA_LowResolutionPotential::rna_repulsive_pair_energy_one_way(
 
 	Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
-	if ( abs( static_cast< int > ( i - j ) ) <= 2 ) return 0.0;
+	if ( std::abs( static_cast< int > ( i - j ) ) <= 2 ) return 0.0;
 
 	// Go over sugar and phosphate oxygen atoms!
 	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
@@ -2042,7 +2042,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 
 			Size j( ( *iter )->get_other_ind( i ) );
 
-			if ( abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
+			if ( std::abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
 
 			conformation::Residue const & rsd2( pose.residue( j ) );
 			if ( !rsd2.is_RNA() ) continue;
@@ -2101,7 +2101,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 				//Edges always have first node < second node. Just in case we picked the wrong one:
 				if ( i == j ) j = ( *iter )->get_first_node_ind();
 
-				if ( abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
+				if ( std::abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
 
 				conformation::Residue const & rsd2( pose.residue( j ) );
 				if ( !rsd2.is_RNA() ) continue;

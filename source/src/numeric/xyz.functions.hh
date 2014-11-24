@@ -857,7 +857,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		// and is more stable for small sine_theta
 
 		theta = acos( cos_theta );
-		assert( abs( x*x + y*y + z*z - 1 ) <= T( 0.01 ) );
+		assert( std::abs( x*x + y*y + z*z - 1 ) <= T( 0.01 ) );
 
 		return xyzVector< T >( x, y, z );
 	} else if ( cos_theta >= ONE - tolerance ) {
@@ -891,7 +891,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		}
 		theta = NumericTraits< T >::pi(); // theta == pi
 		// For a valid orthogonal matrix R, axis should be a normal vector
-		assert( abs( x*x + y*y + z*z - 1 ) <= T( 0.01 ) );
+		assert( std::abs( x*x + y*y + z*z - 1 ) <= T( 0.01 ) );
 		return xyzVector< T >( x, y, z );
 	}
 }
@@ -942,23 +942,23 @@ eigenvalue_jacobi( xyzMatrix< T > const & a, T const & tol )
 		assert( n_iterations <= 50 );
 
 		// Determine index of upper-triangular element that will be zeroed out
-		if ( abs( m.xy_ ) >= abs( m.xz_ ) ) {
-			if ( abs( m.xy_ ) >= abs( m.yz_ ) ) {
+		if ( std::abs( m.xy_ ) >= std::abs( m.xz_ ) ) {
+			if ( std::abs( m.xy_ ) >= std::abs( m.yz_ ) ) {
 				i = 1; j = 2;
 			} else {
 				i = 2; j = 3;
 			}
-		} else if ( abs( m.xz_ ) >= abs( m.yz_ ) ) {
+		} else if ( std::abs( m.xz_ ) >= std::abs( m.yz_ ) ) {
 			i = 1; j = 3;
 		} else {
 			i = 2; j = 3;
 		}
 
 		// After four iterations, skip the rotation if the off-diagonal element is small
-		T const ij_scaled = abs( T( 100 ) * m(i,j) );
+		T const ij_scaled = std::abs( T( 100 ) * m(i,j) );
 		if ( ( n_iterations > 4 )
-		 && abs( m(i,i) ) + ij_scaled == abs( m(i,i) )
-		 && abs( m(j,j) ) + ij_scaled == abs( m(j,j) ) ) {
+		 && std::abs( m(i,i) ) + ij_scaled == std::abs( m(i,i) )
+		 && std::abs( m(j,j) ) + ij_scaled == std::abs( m(j,j) ) ) {
 			m(i,j) = m(j,i) = T( 0 );
 		} else {
 			// Compute the rotation matrix
@@ -1007,23 +1007,23 @@ eigenvector_jacobi( xyzMatrix< T > const & a, T const & tol, xyzMatrix< T > & J 
 		assert( n_iterations <= 50 );
 
 		// Determine index of upper-triangular element that will be zeroed out
-		if ( abs( m.xy_ ) >= abs( m.xz_ ) ) {
-			if ( abs( m.xy_ ) >= abs( m.yz_ ) ) {
+		if ( std::abs( m.xy_ ) >= std::abs( m.xz_ ) ) {
+			if ( std::abs( m.xy_ ) >= std::abs( m.yz_ ) ) {
 				i = 1; j = 2;
 			} else {
 				i = 2; j = 3;
 			}
-		} else if ( abs( m.xz_ ) >= abs( m.yz_ ) ) {
+		} else if ( std::abs( m.xz_ ) >= std::abs( m.yz_ ) ) {
 			i = 1; j = 3;
 		} else {
 			i = 2; j = 3;
 		}
 
 		// After four iterations, skip the rotation if the off-diagonal element is small
-		T const ij_scaled = abs( T( 100 ) * m(i,j) );
+		T const ij_scaled = std::abs( T( 100 ) * m(i,j) );
 		if ( ( n_iterations > 4 )
-		 && abs( m(i,i) ) + ij_scaled == abs( m(i,i) )
-		 && abs( m(j,j) ) + ij_scaled == abs( m(j,j) ) ) {
+		 && std::abs( m(i,i) ) + ij_scaled == std::abs( m(i,i) )
+		 && std::abs( m(j,j) ) + ij_scaled == std::abs( m(j,j) ) ) {
 			m(i,j) = m(j,i) = T( 0 );
 		} else {
 			// Compute the rotation matrix
@@ -1064,7 +1064,7 @@ jacobi_rotation( xyzMatrix< T > const & m, int const i, int const j, xyzMatrix< 
 	static T const ONE( 1 );
 
 	T const tau = ( m(i,i) - m(j,j) ) / ( 2 * m(i,j) );
-	T const t = ( tau < ZERO ? -ONE : ONE ) / ( abs( tau ) + sqrt( ONE + ( tau * tau ) ) );
+	T const t = ( tau < ZERO ? -ONE : ONE ) / ( std::abs( tau ) + sqrt( ONE + ( tau * tau ) ) );
 
 	T const c = ONE / sqrt( ONE + ( t * t ) );
 	T const s = c * t;

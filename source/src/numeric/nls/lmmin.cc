@@ -655,7 +655,7 @@ void lm_lmpar(int n, double *r, int ldr, int *ipvt, double *diag,
 //
 //     in the least squares sense, and dxnorm is the euclidean
 //     norm of d*x, then either par=0 and (dxnorm-delta) < 0.1*delta,
-//     or par>0 and abs(dxnorm-delta) < 0.1*delta.
+//     or par>0 and std::abs(dxnorm-delta) < 0.1*delta.
 //
 //     Using lm_qrsolv, this subroutine completes the solution of the problem
 //     if it is provided with the necessary information from the

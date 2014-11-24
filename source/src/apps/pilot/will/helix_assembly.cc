@@ -573,7 +573,7 @@ int main(int argc, char *argv[]) {
 
 		if(hits.size()) hits[1].header(cout);
 		for(int ihit = 1; ihit <= (int)hits.size(); ++ihit){
-			cout<<"TERM_HELIX_HIT "<<hits[ihit].pdb<<"_"<<abs(hits[ihit].chain)<<(hits[ihit].chain<0?"C":"N")<<" "<<hits[ihit]<<endl;
+			cout<<"TERM_HELIX_HIT "<<hits[ihit].pdb<<"_"<<std::abs(hits[ihit].chain)<<(hits[ihit].chain<0?"C":"N")<<" "<<hits[ihit]<<endl;
 		}
 
 		std::map<string,vector1<std::pair<int,Xform> > > seenit;
@@ -586,7 +586,7 @@ int main(int argc, char *argv[]) {
 				if( a.cenres > nresmodel1 ) continue; // at least one of pair in asym unit
 				for(int jhit = 1; jhit <= (int)hits.size(); ++jhit){
 					if( ihit==jhit ) continue;
-					if( abs(hits[ihit].cenres-hits[jhit].cenres) < 10 ) continue;
+					if( std::abs(hits[ihit].cenres-hits[jhit].cenres) < 10 ) continue;
 					HelixHit const & b(hits[jhit]);
 					if(phase==1 && a.chain>0 && b.chain>0 )	hitpairs.push_back(std::make_pair(ihit,jhit));
 					if(phase==2 && a.chain<0 && b.chain<0 )	hitpairs.push_back(std::make_pair(ihit,jhit));
@@ -600,7 +600,7 @@ int main(int argc, char *argv[]) {
 			int const jhit = hitpairs[ipair].second;
 			HelixHit const & a(hits[ihit]);
 			HelixHit const & b(hits[jhit]);
-			int const chain_pair_id = min(abs(a.chain),abs(b.chain))*chainlower.size()+max(abs(a.chain),abs(b.chain));
+			int const chain_pair_id = min( std::abs(a.chain),std::abs(b.chain))*chainlower.size()+max( std::abs(a.chain),std::abs(b.chain));
 			Xform const xa0 = a.frame();
 			Xform const xb0 = b.frame();
 
@@ -608,7 +608,7 @@ int main(int argc, char *argv[]) {
 			for(int ii = 1; ii <= (int)hits.size(); ++ii){
 				if(hits[ii].cenres>nresmodel1) break;
 				for(int jj = 1; jj <= (int)hits.size(); ++jj){
-					int tmp = min(abs(hits[ii].chain),abs(hits[jj].chain))*chainlower.size()+max(abs(hits[ii].chain),abs(hits[jj].chain));
+					int tmp = min( std::abs(hits[ii].chain),std::abs(hits[jj].chain))*chainlower.size()+max( std::abs(hits[ii].chain),std::abs(hits[jj].chain));
 					cout <<" "<< (chainpair_redundant[tmp] ? string_of(jj) : "-");
 				}
 				cout << endl;
@@ -703,28 +703,28 @@ int main(int argc, char *argv[]) {
 						if( x.R.col_y().dot(ix->second.R.col_y()) < REDUNDANT_DOT_CUT ) continue;
 						if( x.R.col_z().dot(ix->second.R.col_z()) < REDUNDANT_DOT_CUT ) continue;
 						redundant = true;
-						if(abs(a.chain)!=abs(b.chain)){
+						if( std::abs(a.chain)!= std::abs(b.chain)){
 							chainpair_redundant[chain_pair_id] = true;
 							chainpair_redundant[ix->first    ] = true;
 						}
 					}
 
 					// cout
-					// 	<<hits[ihit].pdb<<"_"<<abs(hits[ihit].chain)<<(hits[ihit].chain<0?"C":"N")<<" "
-					// 	<<hits[jhit].pdb<<"_"<<abs(hits[jhit].chain)<<(hits[jhit].chain<0?"C":"N")<<" "
+					// 	<<hits[ihit].pdb<<"_"<<std::abs(hits[ihit].chain)<<(hits[ihit].chain<0?"C":"N")<<" "
+					// 	<<hits[jhit].pdb<<"_"<<std::abs(hits[jhit].chain)<<(hits[jhit].chain<0?"C":"N")<<" "
 					// 	<< Aseq+Bseq << " " << Bseq+Aseq << endl;
 
 					if(redundant) {
 						if(DEBUG) cout<<"REDUNDANT      "
-						<<hits[ihit].pdb<<"_"<<abs(hits[ihit].chain)<<(hits[ihit].chain<0?"C":"N")<<" "
-						<<hits[jhit].pdb<<"_"<<abs(hits[jhit].chain)<<(hits[jhit].chain<0?"C":"N")<<" "
+						<<hits[ihit].pdb<<"_"<<std::abs(hits[ihit].chain)<<(hits[ihit].chain<0?"C":"N")<<" "
+						<<hits[jhit].pdb<<"_"<<std::abs(hits[jhit].chain)<<(hits[jhit].chain<0?"C":"N")<<" "
 						<< endl;
 						continue;
 					}
 
 					cout<<"HELIX_JUNCTION "
-						<<hits[ihit].pdb<<"_"<<abs(hits[ihit].chain)<<(hits[ihit].chain<0?"C":"N")<<" "
-						<<hits[jhit].pdb<<"_"<<abs(hits[jhit].chain)<<(hits[jhit].chain<0?"C":"N")<<" "
+						<<hits[ihit].pdb<<"_"<<std::abs(hits[ihit].chain)<<(hits[ihit].chain<0?"C":"N")<<" "
+						<<hits[jhit].pdb<<"_"<<std::abs(hits[jhit].chain)<<(hits[jhit].chain<0?"C":"N")<<" "
 						// <<I(3,ihit)<<" "
 						// <<I(3,jhit)<<" "
 					    <<I(5,Ares) << " "
@@ -777,8 +777,8 @@ int main(int argc, char *argv[]) {
 					}
 				}
 				if(PYMOL_CMD){
-					cout<<"PYMOL_CMD "<<ihit<<"_"<<jhit<<" select HH=( (chain "<<chr_chains[abs(a.chain)-1]<< " and resi "<<a.startres<<"-"<<a.stopres<<") or (chain "<<chr_chains[abs(b.chain)-1]<< " and resi "<<b.startres<<"-"<<b.stopres<<") )"<<endl;
-					cout<<"PYMOL_CMD "<<ihit<<"_"<<jhit<<" select HC=( (chain "<<chr_chains[abs(a.chain)-1]<< " and resi "<<a.cenres<<") or (chain "<<chr_chains[abs(b.chain)-1]<< " and resi "<<b.cenres<<") )"<<endl;
+					cout<<"PYMOL_CMD "<<ihit<<"_"<<jhit<<" select HH=( (chain "<<chr_chains[std::abs(a.chain)-1]<< " and resi "<<a.startres<<"-"<<a.stopres<<") or (chain "<<chr_chains[std::abs(b.chain)-1]<< " and resi "<<b.startres<<"-"<<b.stopres<<") )"<<endl;
+					cout<<"PYMOL_CMD "<<ihit<<"_"<<jhit<<" select HC=( (chain "<<chr_chains[std::abs(a.chain)-1]<< " and resi "<<a.cenres<<") or (chain "<<chr_chains[std::abs(b.chain)-1]<< " and resi "<<b.cenres<<") )"<<endl;
 					cout<<"PYMOL_CMD "<<ihit<<"_"<<jhit<<" select none" << endl;
 					cout<<"PYMOL_CMD "<<ihit<<"_"<<jhit<<" hide lines; show rib;"<<endl;
 					cout<<"PYMOL_CMD "<<ihit<<"_"<<jhit<<" show sti, HH and name n+ca+c+o+cb+h"<<endl;

@@ -292,17 +292,17 @@ PDBInfo::on_length_change( core::conformation::signals::LengthEvent const & even
 			break;
 		}
 		case LengthEvent::RESIDUE_APPEND: {
-			append_res( event.position, event.residue->natoms(), abs( event.length_change ) );
+			append_res( event.position, event.residue->natoms(), std::abs( event.length_change ) );
 			obsolete( true );
 			break;
 		}
 		case LengthEvent::RESIDUE_PREPEND: {
-			prepend_res( event.position, event.residue->natoms(), abs( event.length_change ) );
+			prepend_res( event.position, event.residue->natoms(), std::abs( event.length_change ) );
 			obsolete( true );
 			break;
 		}
 		case LengthEvent::RESIDUE_DELETE: {
-			delete_res( event.position, abs( event.length_change ) );
+			delete_res( event.position, std::abs( event.length_change ) );
 			//Shouldn't obsolete PDBInfo on delete - every residue that still exists has valid information
 			//obsolete( true );
 			break;

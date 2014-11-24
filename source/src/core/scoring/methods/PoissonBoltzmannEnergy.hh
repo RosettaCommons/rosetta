@@ -159,7 +159,7 @@ private:
 	///
 	/// Compare if two poses are close in fold within tolerance.
 	///
-	/// To be specific, it returns True if for all a in A and b in B, abs(a.xyz - b.xyz) <= tol,
+	/// To be specific, it returns True if for all a in A and b in B, std::abs(a.xyz - b.xyz) <= tol,
 	/// for A and B are sets of all atoms in protein 1 and protein 2, respectively.
 	///
 	/// @param pose1 A protein's pose

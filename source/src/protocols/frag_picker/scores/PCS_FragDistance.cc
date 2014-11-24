@@ -120,7 +120,7 @@ bool PCS_FragDistance::cached_score(FragmentCandidateOP fragment, FragmentScoreM
 				if ( !((target_ca_dist_(res1,res2) == 0.0) && (target_ca_dev_(res1,res2) == 0.0)) ) {
 
 					Real dev(target_ca_dev_(res1,res2));
-					Real diff(abs(target_ca_dist_(res1,res2) - chunk_ca_distances_(v1,v2)));
+					Real diff( std::abs(target_ca_dist_(res1,res2) - chunk_ca_distances_(v1,v2)));
 
 					Real sig_function = ( 1 / ( 1 + exp(-2*(diff/dev) + 5 )));// + (1 / ( 1 + exp(+2*(diff/dev) + 5 )));
 

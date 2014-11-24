@@ -376,7 +376,7 @@ DomainAssembly::run()
 
 			for (Size ires=1; ires <= nres_domain1; ++ires) {
 				for (Size jres=nres_domain1+1; jres <= full_length_pose->total_residue(); ++jres) {
-					Size seq_sep = abs(resnum[ires] - resnum[jres]);
+					Size seq_sep = std::abs(resnum[ires] - resnum[jres]);
 					if (seq_sep>=6 && seq_sep <=8) {
 						core::Real gd = gap_distance(seq_sep);
 						Size iatom = full_length_pose->residue_type(ires).atom_index("CA");

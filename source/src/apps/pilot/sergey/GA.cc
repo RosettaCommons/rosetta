@@ -58,7 +58,7 @@ public:
 	CheeseFunction() {}
 
 	Real operator ()( core::optimization::Multivec const & phipsi ) const {
-		// "Fi(x) = 10 + abs(x)/10 - 10.*cos(2.*PI*x)";
+		// "Fi(x) = 10 + std::abs(x)/10 - 10.*cos(2.*PI*x)";
 		const utility::vector1< Real > &v(phipsi);
 
 		Real x0 = 20.;
@@ -68,7 +68,7 @@ public:
 		for(Size i=1; i<=v.size(); i++) {
 			Real x = v[i] - x0;
 			res += 10+x*x - 10.*cos(2.*PI*x);
-			//res += 10 + abs(x)/10 - 10.*cos(2.*PI*x);
+			//res += 10 + std::abs(x)/10 - 10.*cos(2.*PI*x);
 
 			//double a = 10. + fabs(x)/10. - 10.*cos(2.*PI*x);  res += a*a;
 			//double a = 10. + fabs(x)/10. - 10.*cos(2.*PI*x);  res += a;

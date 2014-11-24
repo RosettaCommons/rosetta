@@ -242,7 +242,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 
 	Vector3f t = c_B - H*c_A;
 	double L = t.dot(hN) ;
-	double rise=abs(L);
+	double rise= std::abs(L);
 
   capture_stream<<"getParams:N:\n"<<N<<endl;
   capture_stream<<"getParams:helical axis:\n"<<hN<<endl;
@@ -405,7 +405,7 @@ TR.Debug<<"sin_omega "<<sin_omega<<endl;
 
 	Vector3f t = c_B - H*c_A;
 	double L = t.dot(hN) ;
-	//double rise=abs(L);  // unused ~Labonte
+	//double rise= std::abs(L);  // unused ~Labonte
 
 
 	Matrix3f Ncross;

@@ -477,7 +477,7 @@ void dixon_eig( // {{{1
 	for (int i = 0; i < num_solutions; i++) {
 		u[i+1].resize(3);
 
-		if (abs(eigenvectors(0, i)) > 1e-8) {
+		if ( std::abs(eigenvectors(0, i)) > 1e-8) {
 			u[i+1][1] = eigenvectors(1, i) / eigenvectors(0, i);
 			u[i+1][2] = eigenvectors(4, i) / eigenvectors(0, i);
 		}

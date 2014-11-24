@@ -422,7 +422,7 @@ findUU(
 	for ( int j = 1; j <= 3; ++j ) {
 		sigma3 += bb(j,3)*Ra(j);
 	}
-	//cems the abs() fixes some round off error situations where the w_w values are
+	//cems the std::abs() fixes some round off error situations where the w_w values are
 	//cems very small and accidentally negative.  (theoretically they are positive,
 	//cems but in practice round off error makes them negative)
 	if ( sigma3 < 0.0 ) {
@@ -796,7 +796,7 @@ rmsfitca2(
 
 	rms_ctx *= temp3;
 
-//   // the abs() are theoretically unneccessary since the eigen values of a real symmetric
+//   // the std::abs() are theoretically unneccessary since the eigen values of a real symmetric
 //   // matrix are non-negative.  in practice sometimes small eigen vals end up just negative
 	rms_sum = 0.0;
 	for ( i = 1; i <= npoints; ++i ) {
@@ -807,7 +807,7 @@ rmsfitca2(
 	// rms_sum = rms_sum; //   /temp3   (will use natsel instead)
 
 //  // and combine the outer and cross terms into the final calculation.
-//  //  (the abs() just saves us a headache when the roundoff error accidantally makes the sum negative)
+//  //  (the std::abs() just saves us a headache when the roundoff error accidantally makes the sum negative)
 
 	esq = std::sqrt( std::abs( rms_sum - ( 2.0 * rms_ctx ) ) / natsel );
 
@@ -966,7 +966,7 @@ rmsfitca3(
 	rms_ctx = std::sqrt(std::abs(ev(1))) + std::sqrt(std::abs(ev(2))) +
 	 handedness*std::sqrt(std::abs(ev(3)));
 	//	std::cerr << handedness << std::endl;
-//            // the abs() are theoretically unneccessary since the eigen values
+//            // the std::abs() are theoretically unneccessary since the eigen values
 //            // of a real symmetric matrix are non-negative.
 //            // in practice sometimes small eigen vals end up as tiny negatives.
 
@@ -976,7 +976,7 @@ rmsfitca3(
 	rms2_sum = (xre + xrp)/mass - temp1;
 
 //            // and combine the outer and cross terms into the final calculation.
-//            //  (the abs() just saves us a headache when the roundoff error
+//            //  (the std::abs() just saves us a headache when the roundoff error
 //            // accidantally makes the sum negative)
 
 	esq = std::sqrt(std::abs(rms2_sum-2.0*rms_ctx));

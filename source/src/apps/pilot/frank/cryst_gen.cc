@@ -486,7 +486,7 @@ public:
 	score() {
 		Real score=0;
 		for (int i=1; i<=(int)lattice_shifts.size(); ++i) {
-			score += abs(lattice_shifts[i][0])+abs(lattice_shifts[i][1])+abs(lattice_shifts[i][2]);
+			score += std::abs(lattice_shifts[i][0])+std::abs(lattice_shifts[i][1])+std::abs(lattice_shifts[i][2]);
 		}
 		score += std::fabs(origin[0]) + std::fabs(origin[1]) + std::fabs(origin[2]);
 		return score;

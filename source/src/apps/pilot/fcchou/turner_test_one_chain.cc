@@ -1049,7 +1049,7 @@ one_chain_SWA_cluster(){
 						angle = suite_torsion[1][m - 1];
 					}
 					//std::cout << angle << ' ' << cluster_center[n][m] << std::endl;
-					if ( abs( angle - cluster_center[n][m] ) > 20 ) {
+					if ( std::abs( angle - cluster_center[n][m] ) > 20 ) {
 						//std::cout << std::endl;
 						break;
 					}

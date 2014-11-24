@@ -1451,7 +1451,7 @@ ElectronDensity::getPhaseError(
 	}
 
 	for (Size i=1; i<=nbuckets; ++i) {
-		phaseError[i] = abs( phaseError[i]) / counter[i] ;
+		phaseError[i] = std::abs( phaseError[i]) / counter[i] ;
 		phaseError[i] = phaseError[i] * (2-phaseError[i]*phaseError[i]) / (1-phaseError[i]*phaseError[i]);  // approx von mises Kappa
 		phaseError[i] = sqrt(1/phaseError[i]);  // convert Kappa to sigma^2
 	}

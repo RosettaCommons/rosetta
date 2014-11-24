@@ -485,7 +485,7 @@ void SingleGrid::diffuse_ring(core::Vector const & coords, core::Real radius, co
 				core::grid::CartGrid<core::Real>::GridPt point(x_index,y_index,z_index);
 				core::Vector origin = grid_.coords(point);
 				core::Real distance_squared = origin.distance_squared(coords);
-				//core::Real rad_distance_squared = abs(radius2-distance_squared);
+				//core::Real rad_distance_squared = std::abs(radius2-distance_squared);
 
 				//if((distance_squared < radius2 + half_width) || (distance_squared > radius2-half_width))
 				//if(distance_squared <radius2)

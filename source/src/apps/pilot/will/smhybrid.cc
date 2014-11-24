@@ -1519,7 +1519,7 @@ struct PoseWrap : public ReferenceCount {
 		// 	if(isattach) continue;
 		// 	// if( nearcut[i] ) continue;
 		//
-		// 	Real dis = (floater.distance( pose.residue(i).xyz(2) )); dis = abs(dis);
+		// 	Real dis = (floater.distance( pose.residue(i).xyz(2) )); dis = std::abs(dis);
 		// 	if( dis < best ) {
 		// 		// TR << "floating_sc " << i << " " << dis << std::endl;
 		// 		sc_attch_rsd = i;

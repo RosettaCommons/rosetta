@@ -756,7 +756,7 @@ compute_cav_ball_clusters( CavBalls & cavballs, SasaOptions const & opts ) {
 	// assume that cb1 has the right cluster before each 2nd loop
 		for( Size j = i+1; j <= cavballs.size(); j++ ) {
 			CavityBall & cb2( cavballs[j] );
-			if( abs( cb1.xyz().x() - cb2.xyz().x() ) > 6.0 ) continue;
+			if( std::abs( cb1.xyz().x() - cb2.xyz().x() ) > 6.0 ) continue;
 			// core::Real d = cb1.xyz().distance(cb2.xyz());
 			if( overlap(cb1,cb2) >= opts.min_cluster_overlap ) {
 				int c = numeric::min(cb1.cluster_,cb2.cluster_);
@@ -772,7 +772,7 @@ compute_cav_ball_clusters( CavBalls & cavballs, SasaOptions const & opts ) {
 			CavityBall & cb1( cavballs[i] );
 			for( Size j = i+1; j <= cavballs.size(); j++ ) {
 				CavityBall & cb2( cavballs[j] );
-				if( abs( cb1.xyz().x() - cb2.xyz().x() ) > 6.0 ) continue;
+				if( std::abs( cb1.xyz().x() - cb2.xyz().x() ) > 6.0 ) continue;
 				// core::Real d = cb1.xyz().distance(cb2.xyz());
 				if( cb2.cluster_ != cb1.cluster_ && overlap(cb1,cb2) >= opts.min_cluster_overlap ) {
 					fail = true;

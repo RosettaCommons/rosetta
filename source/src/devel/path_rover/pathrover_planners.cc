@@ -26,8 +26,8 @@ void Linear_planner_iterator::calc_step_vector(double max_step_size)
 	for(unsigned int i = 0; i < _v_step_delta.size();i++)
 	{
 		double cur_diff = diff_angle(_v_from[i], _v_to[i]);
-		if (abs(cur_diff) > max_diff)
-			max_diff = abs(cur_diff);
+		if ( std::abs(cur_diff) > max_diff)
+			max_diff = std::abs(cur_diff);
 		_v_step_delta[i] = cur_diff;
 	}
 	// make sure there are at least one steps (so reduce max_step_size to force that if neede)
@@ -39,7 +39,7 @@ void Linear_planner_iterator::calc_step_vector(double max_step_size)
 	{
 		_v_step_delta[i] *= normalize_factor;
 	}
-	_total_steps_num = int(round(abs(max_diff / max_step_size)));
+	_total_steps_num = int(round( std::abs(max_diff / max_step_size)));
 
 }
 } // namespace pathways

@@ -195,7 +195,7 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 		dis_pair.pos1 = pos1;
 		dis_pair.pos2 = pos2;
-		dis_pair.seq_sep = abs((int)(pos1-pos2));
+		dis_pair.seq_sep = std::abs((int)(pos1-pos2));
 		//TODO: use ss1, ss2 to do... something? with the secondary structure
 		dis_pair.ss_type = 1;//PLACEHOLDER!
 

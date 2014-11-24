@@ -302,7 +302,7 @@ main( int argc, char* argv [] )
 		outfile << pdb.secstruct(res1) << " ";
 		outfile << pdb.secstruct(res2) << " ";
 
-		outfile << abs(res1-res2) << " ";
+		outfile << std::abs(res1-res2) << " ";
 
 		outfile << pdb.residue(res1).xyz("CB").distance(pdb.residue(res2).xyz("CB")) << " ";
 		outfile << cen_pdb.residue(res1).xyz("CEN").distance(cen_pdb.residue(res2).xyz("CEN")) << " ";

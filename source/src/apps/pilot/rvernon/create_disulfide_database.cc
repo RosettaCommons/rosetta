@@ -334,7 +334,7 @@ main( int argc, char* argv [] )
 		std::cout << pdb.secstruct(res1) << " ";
 		std::cout << pdb.secstruct(res2) << " ";
 
-		std::cout << abs(res1-res2) << " ";
+		std::cout << std::abs(res1-res2) << " ";
 
 		std::cout << this_rt << std::endl;
 

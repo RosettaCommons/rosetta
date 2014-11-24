@@ -395,7 +395,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		// cpjx I think the weighting factor is the denominator 2 below?
 		// cpjx		  r = r * exp( - (distmin**2) / 2.)
 		r = r * exp( - pow(distmin, 2) * settings.weight );
-		// rounding errors a problem, so ensure abs(r) <1
+		// rounding errors a problem, so ensure std::abs(r) <1
 		r = MIN(0.999, MAX(r, -0.999));
 		norm_sum += r;
 

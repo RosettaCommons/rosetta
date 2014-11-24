@@ -314,7 +314,7 @@ numeric::xyzVector<numeric::Real> Quaternion::euler() const {
             Times(Quaternion(cos(b/2), 0, sin(b/2), 0). // b about y
             Times(Quaternion(cos(c/2), 0, 0, sin(c/2)))); // c about z
         // and check that q is parallel to *this.
-        numeric::Real t = abs(q.w * w + q.x * x + q.y * y + q.z * z);
+        numeric::Real t = std::abs(q.w * w + q.x * x + q.y * y + q.z * z);
         assert(t > 1 - 16 * numeric_limits<numeric::Real>::epsilon());
     #endif
     return numeric::xyzVector<numeric::Real>(a,b,c);

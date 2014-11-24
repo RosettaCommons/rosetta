@@ -95,7 +95,7 @@ bool ScoringScheme::is_good(
 	static Real const TOL(1e-5);
 	using std::abs;
 	return (
-		abs( num - 9999.000 ) > TOL && abs( num - 0 ) > TOL
+		std::abs( num - 9999.000 ) > TOL && std::abs( num - 0 ) > TOL
 	);
 }
 

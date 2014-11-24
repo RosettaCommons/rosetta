@@ -574,7 +574,7 @@ BuriedUnsatisfiedPolarsCalculator2::adjacent_bbbb_check(
 	std::string const & test_atom_name
 ) const
 {
-	bool adjacent = abs(static_cast< int >(bunsat_resi - test_resi)) <= 1;
+	bool adjacent = std::abs(static_cast< int >(bunsat_resi - test_resi)) <= 1;
 	bool bunsat_bb = (bunsat_atom_name == "H" || bunsat_atom_name == "O");
 	bool test_bb = (test_atom_name == "H" && test_atom_name == "O");
 	return (adjacent && bunsat_bb && test_bb);

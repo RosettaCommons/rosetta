@@ -441,13 +441,13 @@ shift_angles(
 	if( n_pos_angles >= n_neg_angles ){
 		Real avg_pos_angle( average( pos_angles ) );
 		for( Size i = 1; i <= n_angles; ++i ){
-			if( angles[ i ] < 0  && abs( angles[ i ] - avg_pos_angle ) > pi ) angles[ i ] += ( 2 * pi );
+			if( angles[ i ] < 0  && std::abs( angles[ i ] - avg_pos_angle ) > pi ) angles[ i ] += ( 2 * pi );
 		}
 	}
 	else{
 		Real avg_neg_angle( average( neg_angles ) );
 		for( Size i = 1; i <= n_angles; ++i ){
-			if( angles[ i ] >= 0  && abs( angles[ i ] - avg_neg_angle ) > pi ) angles[ i ] -= ( 2 * pi );
+			if( angles[ i ] >= 0  && std::abs( angles[ i ] - avg_neg_angle ) > pi ) angles[ i ] -= ( 2 * pi );
 		}
 	}
 

@@ -98,7 +98,7 @@ Real gaussian_deriv( Real x, Real mean, Real sd, Real weight ) {
 	}
 
 	using namespace std;
-	Real r = abs( x - mean );
+	Real r = std::abs( x - mean );
 	Real answer = dgaussian( x, mean, sd , weight ) * ( 1 / ( sd * sd ) ) * r;
 	return answer;
 }
@@ -113,7 +113,7 @@ Real dexponential( Real x, Real anchor, Real rate, Real weight ) {
 	}
 
 	using namespace std;
-	Real r = abs( x - anchor );
+	Real r = std::abs( x - anchor );
 	Real answer = weight * rate * exp( -1 * rate * r );
 	return answer;
 }
@@ -127,7 +127,7 @@ Real exponential_deriv( Real x, Real anchor, Real rate, Real weight ) {
 	}
 
 	using namespace std;
-	Real r = abs( x - anchor );
+	Real r = std::abs( x - anchor );
 	return weight  * rate * rate * exp( -1 * rate * r );
 }
 

@@ -1283,8 +1283,8 @@ check_whether_same_direction_strands_connect_two_sheets_or_a_loop(
 		// calculates a torsion angles between four atoms of 'CA' of strand "i" and 'CA' of strand "j"
 		Real torsion_between_strands = numeric::dihedral_degrees(first_0_xyz,	middle_0_xyz, third_0_xyz, fourth_0_xyz);
 			TR.Info << "torsion_between_strands: " << torsion_between_strands << endl;
-			TR.Info << "abs(torsion_between_strands): " << abs(torsion_between_strands) << endl;
-		if (abs(torsion_between_strands) >	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)
+			TR.Info << "abs(torsion_between_strands): " << std::abs(torsion_between_strands) << endl;
+		if ( std::abs(torsion_between_strands) >	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)
 		{
 			return true; // don't use this sandwich, sheets are connected by same direction strand so this sandwich is not our target to extract
 		}

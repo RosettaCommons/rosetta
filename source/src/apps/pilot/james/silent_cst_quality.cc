@@ -113,7 +113,7 @@ public:
 					<< F( width, precision, decoy_violations_[resi][resj] )
 					<< F(
 						width, precision,
-						abs( native_distances_ [resi][resj] - dist_mins_[resi][resj] )
+						std::abs( native_distances_ [resi][resj] - dist_mins_[resi][resj] )
 					)
 					<< std::endl;
 			}

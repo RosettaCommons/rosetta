@@ -141,7 +141,7 @@ int main( int argc, char* argv [] ) {
 						// determine whether sequence separation exceeds threshold
 						Size pos_i = pose.pdb_info()->number(i);
 						Size pos_j = pose.pdb_info()->number(j);
-						Size seqsep = abs(pos_j - pos_i);
+						Size seqsep = std::abs( int(pos_j) - int(pos_i));
 						if (seqsep < min_seqsep) continue;
 
 						// sometimes pose_tag is too big.

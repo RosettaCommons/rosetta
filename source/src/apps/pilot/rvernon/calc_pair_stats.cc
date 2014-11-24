@@ -136,16 +136,16 @@ main( int argc, char* argv [] )
 
 							Size d2h1(999), d2l1(999), d2e1(999);
 							for ( Size ss_dist(1); ss_dist <= (*it)->total_residue(); ss_dist++ ) {
-								if ((abs(ss_dist - n1) < d2h1) and ((*it)->secstruct(ss_dist) == 'H')) d2h1 = (abs(ss_dist - n1));
-								if ((abs(ss_dist - n1) < d2l1) and ((*it)->secstruct(ss_dist) == 'L')) d2l1 = (abs(ss_dist - n1));
-								if ((abs(ss_dist - n1) < d2e1) and ((*it)->secstruct(ss_dist) == 'E')) d2e1 = (abs(ss_dist - n1));
+								if (( std::abs(ss_dist - n1) < d2h1) and ((*it)->secstruct(ss_dist) == 'H')) d2h1 = ( std::abs(ss_dist - n1));
+								if (( std::abs(ss_dist - n1) < d2l1) and ((*it)->secstruct(ss_dist) == 'L')) d2l1 = ( std::abs(ss_dist - n1));
+								if (( std::abs(ss_dist - n1) < d2e1) and ((*it)->secstruct(ss_dist) == 'E')) d2e1 = ( std::abs(ss_dist - n1));
 							}
 
 							Size d2h2(999), d2l2(999), d2e2(999);
 							for ( Size ss_dist(1); ss_dist <= (*it)->total_residue(); ss_dist++ ) {
-								if ((abs(ss_dist - n2) < d2h2) and ((*it)->secstruct(ss_dist) == 'H')) d2h2 = (abs(ss_dist - n2));
-								if ((abs(ss_dist - n2) < d2l2) and ((*it)->secstruct(ss_dist) == 'L')) d2l2 = (abs(ss_dist - n2));
-								if ((abs(ss_dist - n2) < d2e2) and ((*it)->secstruct(ss_dist) == 'E')) d2e2 = (abs(ss_dist - n2));
+								if (( std::abs(ss_dist - n2) < d2h2) and ((*it)->secstruct(ss_dist) == 'H')) d2h2 = ( std::abs(ss_dist - n2));
+								if (( std::abs(ss_dist - n2) < d2l2) and ((*it)->secstruct(ss_dist) == 'L')) d2l2 = ( std::abs(ss_dist - n2));
+								if (( std::abs(ss_dist - n2) < d2e2) and ((*it)->secstruct(ss_dist) == 'E')) d2e2 = ( std::abs(ss_dist - n2));
 							}
 
 
@@ -157,12 +157,12 @@ main( int argc, char* argv [] )
 
 
 
-								//outfile << pdb_file_location << "." << n1 << "." << n2 << " " << res1.aa() << " "  << d2l1 << " " << d2h1 << " " << d2e1 << " " << res2.aa() << " " << d2l2 << " " << d2h2 << " " << d2e2 << " " << (*it)->secstruct(n1) << " " << (*it)->secstruct(n2) << " " << abs(n2 - n1) << " " << (*it)->total_residue() << " " << res1.xyz("CA").distance( res2.xyz("CA") ) << " " << res1.xyz("CB").distance( res2.xyz("CB") ) << " " << dot_product(res1.xyz("CA")-res1.xyz("CB").normalize(), res2.xyz("CA")-res2.xyz("CB").normalize() ) << " " << angle_of(res1.xyz("CA")-res1.xyz("CB"), res2.xyz("CA")-res2.xyz("CB") ) << " " << dot_product(res1.xyz("C")-res1.xyz("CA"), res2.xyz("C")-res2.xyz("CA") ) << " " << angle_of(res1.xyz("C")-res1.xyz("CA"), res2.xyz("C")-res2.xyz("CA") ) << " " << angle_of( res1.xyz("CB"), res1.xyz("CA"), res2.xyz("CA") ) << " " << angle_of( res2.xyz("CB"), res2.xyz("CA"), res1.xyz("CA") ) << std::endl;
+								//outfile << pdb_file_location << "." << n1 << "." << n2 << " " << res1.aa() << " "  << d2l1 << " " << d2h1 << " " << d2e1 << " " << res2.aa() << " " << d2l2 << " " << d2h2 << " " << d2e2 << " " << (*it)->secstruct(n1) << " " << (*it)->secstruct(n2) << " " << std::abs(n2 - n1) << " " << (*it)->total_residue() << " " << res1.xyz("CA").distance( res2.xyz("CA") ) << " " << res1.xyz("CB").distance( res2.xyz("CB") ) << " " << dot_product(res1.xyz("CA")-res1.xyz("CB").normalize(), res2.xyz("CA")-res2.xyz("CB").normalize() ) << " " << angle_of(res1.xyz("CA")-res1.xyz("CB"), res2.xyz("CA")-res2.xyz("CB") ) << " " << dot_product(res1.xyz("C")-res1.xyz("CA"), res2.xyz("C")-res2.xyz("CA") ) << " " << angle_of(res1.xyz("C")-res1.xyz("CA"), res2.xyz("C")-res2.xyz("CA") ) << " " << angle_of( res1.xyz("CB"), res1.xyz("CA"), res2.xyz("CA") ) << " " << angle_of( res2.xyz("CB"), res2.xyz("CA"), res1.xyz("CA") ) << std::endl;
 
-								//outfile << pdb_file_location << "." << n1 << "." << n2 << " " << res1.aa() << " "  << d2l1 << " " << d2h1 << " " << d2e1 << " " << res2.aa() << " " << d2l2 << " " << d2h2 << " " << d2e2 << " " << (*it)->secstruct(n1) << " " << (*it)->secstruct(n2) << " " << abs(n2 - n1) << " " << (*it)->total_residue() << " " << res1.xyz("CA").distance( res2.xyz("CA") ) << " " << res1.xyz("CB").distance( res2.xyz("CB") ) << " " << dot_ca_cb << " " << angle_of(res1.xyz("CA")-res1.xyz("CB"), res2.xyz("CA")-res2.xyz("CB") ) << " " << dot_ca_c << " " << angle_of(res1.xyz("CA")-res1.xyz("C"), res2.xyz("CA")-res2.xyz("C") ) << " " << angle_of( res1.xyz("CB"), res1.xyz("CA"), res2.xyz("CA") ) << " " << angle_of( res2.xyz("CB"), res2.xyz("CA"), res1.xyz("CA") ) << std::endl;
+								//outfile << pdb_file_location << "." << n1 << "." << n2 << " " << res1.aa() << " "  << d2l1 << " " << d2h1 << " " << d2e1 << " " << res2.aa() << " " << d2l2 << " " << d2h2 << " " << d2e2 << " " << (*it)->secstruct(n1) << " " << (*it)->secstruct(n2) << " " << std::abs(n2 - n1) << " " << (*it)->total_residue() << " " << res1.xyz("CA").distance( res2.xyz("CA") ) << " " << res1.xyz("CB").distance( res2.xyz("CB") ) << " " << dot_ca_cb << " " << angle_of(res1.xyz("CA")-res1.xyz("CB"), res2.xyz("CA")-res2.xyz("CB") ) << " " << dot_ca_c << " " << angle_of(res1.xyz("CA")-res1.xyz("C"), res2.xyz("CA")-res2.xyz("C") ) << " " << angle_of( res1.xyz("CB"), res1.xyz("CA"), res2.xyz("CA") ) << " " << angle_of( res2.xyz("CB"), res2.xyz("CA"), res1.xyz("CA") ) << std::endl;
 
 
-							outfile << pdb_file_location << "." << n1 << "." << n2 << " " << res1.aa() << " " << res2.aa() << " " << (*it)->secstruct(n1) << " " << (*it)->secstruct(n2) << " " << abs(n2 - n1) << " " << res1.xyz("CEN").distance( res2.xyz("CEN") ) << " " << dot_ca_cen << " " << dot_ca_c << std::endl;
+							outfile << pdb_file_location << "." << n1 << "." << n2 << " " << res1.aa() << " " << res2.aa() << " " << (*it)->secstruct(n1) << " " << (*it)->secstruct(n2) << " " << std::abs(n2 - n1) << " " << res1.xyz("CEN").distance( res2.xyz("CEN") ) << " " << dot_ca_cen << " " << dot_ca_c << std::endl;
 
 								//} else {
 
@@ -172,7 +172,7 @@ main( int argc, char* argv [] )
 								//float dot_ca_c = dot_product( (res1.xyz("CA")-res1.xyz("C")).normalize(), (res2.xyz("CA")-res2.xyz("C")).normalize() );
 								//float dot_ca_cb = dot_product( (res1.xyz("CA")-res1.xyz("CB")).normalize(), (res2.xyz("CA")-res2.xyz("CB")).normalize() );
 
-								//outfile << pdb_file_location << "." << n1 << "." << n2 << " "  << res1.aa() << " "  << d2l1 << " " << d2h1 << " " << d2e1 << " " << res2.aa() << " " << d2l2 << " " << d2h2 << " " << d2e2 << " " << (*it)->secstruct(n1) << " " << (*it)->secstruct(n2) << " " << abs(n2 - n1) << " " << (*it)->total_residue() << " " << res1.xyz("CA").distance( res2.xyz("CA") ) << " " << dot_ca_cb << " " << dot_ca_c << " " << dot_ca_cen << std::endl;
+								//outfile << pdb_file_location << "." << n1 << "." << n2 << " "  << res1.aa() << " "  << d2l1 << " " << d2h1 << " " << d2e1 << " " << res2.aa() << " " << d2l2 << " " << d2h2 << " " << d2e2 << " " << (*it)->secstruct(n1) << " " << (*it)->secstruct(n2) << " " << std::abs(n2 - n1) << " " << (*it)->total_residue() << " " << res1.xyz("CA").distance( res2.xyz("CA") ) << " " << dot_ca_cb << " " << dot_ca_c << " " << dot_ca_cen << std::endl;
 								//}
 						}
 

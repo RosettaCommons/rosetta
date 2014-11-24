@@ -288,7 +288,7 @@ max( T const & a, T const & b, T const & c, T const & d, T const & e, T const & 
 // Math Functions
 
 
-/// @brief abs( x ) == | x |
+/// @brief std::abs( x ) == | x |
 template< typename T >
 inline
 T
@@ -334,7 +334,7 @@ inline
 X
 sign( X const & x, Y const & y )
 {
-	return ( y >= Y( 0 ) ? abs( x ) : -abs( x ) );
+	return ( y >= Y( 0 ) ? std::abs( x ) : -std::abs( x ) );
 }
 
 
@@ -697,7 +697,7 @@ eq_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 	using std::abs; // Can use std::abs or user-defined abs
 	assert( r_tol >= T( 0 ) );
 	assert( a_tol >= T( 0 ) );
-	return ( abs( x - y ) <= min( r_tol * max( abs( x ), abs( y ) ), a_tol ) );
+	return ( std::abs( x - y ) <= min( r_tol * max( std::abs( x ), std::abs( y ) ), a_tol ) );
 }
 
 
@@ -710,7 +710,7 @@ lt_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 	using std::abs; // Can use std::abs or user-defined abs
 	assert( r_tol >= T( 0 ) );
 	assert( a_tol >= T( 0 ) );
-	return ( x < y + min( r_tol * max( abs( x ), abs( y ) ), a_tol ) );
+	return ( x < y + min( r_tol * max( std::abs( x ), std::abs( y ) ), a_tol ) );
 }
 
 
@@ -723,7 +723,7 @@ le_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 	using std::abs; // Can use std::abs or user-defined abs
 	assert( r_tol >= T( 0 ) );
 	assert( a_tol >= T( 0 ) );
-	return ( x <= y + min( r_tol * max( abs( x ), abs( y ) ), a_tol ) );
+	return ( x <= y + min( r_tol * max( std::abs( x ), std::abs( y ) ), a_tol ) );
 }
 
 
@@ -736,7 +736,7 @@ ge_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 	using std::abs; // Can use std::abs or user-defined abs
 	assert( r_tol >= T( 0 ) );
 	assert( a_tol >= T( 0 ) );
-	return ( x >= y - min( r_tol * max( abs( x ), abs( y ) ), a_tol ) );
+	return ( x >= y - min( r_tol * max( std::abs( x ), std::abs( y ) ), a_tol ) );
 }
 
 
@@ -749,7 +749,7 @@ gt_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 	using std::abs; // Can use std::abs or user-defined abs
 	assert( r_tol >= T( 0 ) );
 	assert( a_tol >= T( 0 ) );
-	return ( x > y - min( r_tol * max( abs( x ), abs( y ) ), a_tol ) );
+	return ( x > y - min( r_tol * max( std::abs( x ), std::abs( y ) ), a_tol ) );
 }
 
 

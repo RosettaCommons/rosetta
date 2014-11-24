@@ -113,7 +113,7 @@ void ProfileScoreBlosum62::do_caching(VallChunkOP chunk) {
 						sign = 1.0;
 					}
 
-					Real blosum( pow(abs(blosum_matrix_[k1][k2]), 1/4) );
+					Real blosum( pow( std::abs(blosum_matrix_[k1][k2]), 1/4) );
 
 					score -= sign/(1+exp((-10*diff*blosum)+5));
 

@@ -100,12 +100,12 @@ LeeRichards::compute(
 	xunit -= plane * xunit.dot(plane);
 	xunit.normalize();
 	yunit = plane.cross(xunit);
-	assert( abs( 0.0 - xunit.dot(yunit) ) < 1e-9 );
-	assert( abs( 0.0 - xunit.dot(plane) ) < 1e-9 );
-	assert( abs( 0.0 - plane.dot(yunit) ) < 1e-9 );
-	assert( abs( 1.0 - xunit.length()   ) < 1e-9 );
-	assert( abs( 1.0 - yunit.length()   ) < 1e-9 );
-	assert( abs( 1.0 - plane.length()   ) < 1e-9 );
+	assert( std::abs( 0.0 - xunit.dot(yunit) ) < 1e-9 );
+	assert( std::abs( 0.0 - xunit.dot(plane) ) < 1e-9 );
+	assert( std::abs( 0.0 - plane.dot(yunit) ) < 1e-9 );
+	assert( std::abs( 1.0 - xunit.length()   ) < 1e-9 );
+	assert( std::abs( 1.0 - yunit.length()   ) < 1e-9 );
+	assert( std::abs( 1.0 - plane.length()   ) < 1e-9 );
 	// std::cerr << xunit << std::endl;
 	// std::cerr << yunit << std::endl;
 	// std::cerr << plane << std::endl;

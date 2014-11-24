@@ -837,7 +837,7 @@ public:
 		if( option[local::target_net_charge_active] ) {
 
 			int net_charge_target = option[local::target_net_charge];
-			int charge_diff = abs( get_net_charge(pose) - net_charge_target );
+			int charge_diff = std::abs( get_net_charge(pose) - net_charge_target );
 
 
       Real refweight_max_absvalue(3.2);
@@ -849,9 +849,9 @@ public:
 				int net_charge = get_net_charge( pose );
 
 				//fine-tunes the changes to refweight depending on the charge difference
-				if( abs(net_charge - net_charge_target) > 10 )     { refweight_increment = 0.5; }
-				else if( abs(net_charge - net_charge_target) > 2 ) { refweight_increment = 0.1; }
-				else if( abs(net_charge - net_charge_target) < 2 ) { refweight_increment = 0.02;}
+				if( std::abs(net_charge - net_charge_target) > 10 )     { refweight_increment = 0.5; }
+				else if( std::abs(net_charge - net_charge_target) > 2 ) { refweight_increment = 0.1; }
+				else if( std::abs(net_charge - net_charge_target) < 2 ) { refweight_increment = 0.02;}
 
 
 				//not positive enough
@@ -896,7 +896,7 @@ public:
 				TR << "Refweights D E K R " << custom_ref_weights[3] << " " << custom_ref_weights[4] << " " << custom_ref_weights[9] << " " << custom_ref_weights[15] << std::endl;
 				packrot_mover->apply( pose );
 
-				charge_diff = abs( get_net_charge(pose) - net_charge_target );
+				charge_diff = std::abs( get_net_charge(pose) - net_charge_target );
 
 				counter++;
 

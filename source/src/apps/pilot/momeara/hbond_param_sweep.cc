@@ -464,7 +464,7 @@ public:
 		Vector const & new_Dxyz( new_don_rsd.atom(
                              new_don_rsd.atom_base(hatm)).xyz());
 		{
-			Real delta(abs(distance(Axyz,Hxyz) - distance(new_Axyz,new_Hxyz)));
+			Real delta( std::abs(distance(Axyz,Hxyz) - distance(new_Axyz,new_Hxyz)));
 			if(delta > threshold){
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
@@ -473,7 +473,7 @@ public:
 			}
 		}
 		{
-			Real delta(abs(distance(Axyz,Dxyz) - distance(new_Axyz,new_Dxyz)));
+			Real delta( std::abs(distance(Axyz,Dxyz) - distance(new_Axyz,new_Dxyz)));
 			if(delta > threshold){
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
@@ -482,7 +482,7 @@ public:
 			}
 		}
 		{
-			Real delta(abs(distance(ABxyz,Hxyz) - distance(new_ABxyz,new_Hxyz)));
+			Real delta( std::abs(distance(ABxyz,Hxyz) - distance(new_ABxyz,new_Hxyz)));
 			if(delta > threshold){
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
@@ -491,7 +491,7 @@ public:
 			}
 		}
 		{
-			Real delta(abs(distance(ABxyz,Dxyz) - distance(new_ABxyz,new_Dxyz)));
+			Real delta( std::abs(distance(ABxyz,Dxyz) - distance(new_ABxyz,new_Dxyz)));
 			if(delta > threshold){
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
@@ -500,7 +500,7 @@ public:
 			}
 		}
 		{
-			Real delta(abs(distance(AB2xyz,Hxyz) - distance(new_AB2xyz,new_Hxyz)));
+			Real delta( std::abs(distance(AB2xyz,Hxyz) - distance(new_AB2xyz,new_Hxyz)));
 			if(delta > threshold){
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
@@ -509,7 +509,7 @@ public:
 			}
 		}
 		{
-			Real delta(abs(distance(AB2xyz,Dxyz) - distance(new_AB2xyz,new_Dxyz)));
+			Real delta( std::abs(distance(AB2xyz,Dxyz) - distance(new_AB2xyz,new_Dxyz)));
 			if(delta > threshold){
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";

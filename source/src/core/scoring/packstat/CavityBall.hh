@@ -53,7 +53,7 @@ public:
 	// }
 	//
 	// inline PackstatReal overlap( CavityBall * b) const {
-	// 	PackstatReal o = abs(distance(this->xyz_,b->xyz_) - (radius_+b->radius()));
+	// 	PackstatReal o = std::abs(distance(this->xyz_,b->xyz_) - (radius_+b->radius()));
 	// 	return std::max( o/radius_, o/b->radius_ );
 	// }
 	// // int recursive_mark_hole_neighbors( utility::vector1<CavityBall> & holes, int const cluster );

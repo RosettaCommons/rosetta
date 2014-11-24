@@ -36,7 +36,7 @@
 #include <iostream>
 #include <numeric>
 //#include <stdio.h>     //for remove( ) and rename( )
-#include <stdlib.h> // for abs()
+#include <stdlib.h> // for std::abs()
 #include <vector>
 
 //Core

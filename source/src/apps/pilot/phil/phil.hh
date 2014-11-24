@@ -177,7 +177,7 @@ set_chain_end_fold_tree(
 bool
 is_small( Real const x )
 {
-	return ( abs(x)<1e-3 );
+	return ( std::abs(x)<1e-3 );
 }
 
 /// @details  Split a string to a vector1
@@ -438,9 +438,9 @@ init_torsions_still_present(
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		if ( is_flexible[i] && pose.residue(i).is_protein() ) {
 			Residue const & rsd( pose.residue(i) );
-			if ( ( abs( subtract_degree_angles( pose.phi  (i), init_phi   ) ) < 1e-3 || rsd.is_lower_terminus() ) &&
-					 ( abs( subtract_degree_angles( pose.psi  (i), init_psi   ) ) < 1e-3 || rsd.is_upper_terminus() ) &&
-					 ( abs( subtract_degree_angles( pose.omega(i), init_omega ) ) < 1e-3 || rsd.is_upper_terminus() ) ) {
+			if ( ( std::abs( subtract_degree_angles( pose.phi  (i), init_phi   ) ) < 1e-3 || rsd.is_lower_terminus() ) &&
+					 ( std::abs( subtract_degree_angles( pose.psi  (i), init_psi   ) ) < 1e-3 || rsd.is_upper_terminus() ) &&
+					 ( std::abs( subtract_degree_angles( pose.omega(i), init_omega ) ) < 1e-3 || rsd.is_upper_terminus() ) ) {
 				done = false;
 				break;
 			}

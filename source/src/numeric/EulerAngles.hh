@@ -113,9 +113,9 @@ class EulerAngles : public xyzVector<T>
 	///
 	///  II        |         I
 	///            |
-	///    p.      |      .q (cos(-theta'), abs(sin(theta')))
+	///    p.      |      .q (cos(-theta'), std::abs(sin(theta')))
 	///       .    |    .
-	/// theta'( .  |  .  )  theta' = asin( abs(sin(theta))
+	/// theta'( .  |  .  )  theta' = asin( std::abs(sin(theta))
 	/// -----------------------
 	///            |
 	///            |

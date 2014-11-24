@@ -155,7 +155,7 @@ public:
 		out << pdb_posB_ << sep;
 		out << chainB_ << sep;
 		out << isDS_ << sep;
-		out << abs(static_cast<int>(posA_-posB_+1)) << sep;
+		out << std::abs(static_cast<int>(posA_-posB_+1)) << sep;
 		out << sameSecondary_ << sep;
 		out << cb_score_factor_ << sep;
 

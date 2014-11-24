@@ -1528,7 +1528,7 @@ split_fa_dun(
 	fa_dun_rot = scratch.fa_dun_rot();
 	fa_dun_dev = scratch.fa_dun_dev();
 	//semirotameric returns 0 for fa_dun_rot!
-	if( abs( fa_dun_tot - fa_dun_rot - fa_dun_dev ) > 0.01 ) fa_dun_rot = ( fa_dun_tot - fa_dun_dev );
+	if( std::abs( fa_dun_tot - fa_dun_rot - fa_dun_dev ) > 0.01 ) fa_dun_rot = ( fa_dun_tot - fa_dun_dev );
 
 	rotamer_from_chi( rsd, rotvec );
 }

@@ -362,7 +362,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 				k_[jatm][iatm] = k_uniform_;
 
 			} else {
-				if( abs(int(ires - jres)) <= 1 ){
+				if( std::abs(int(ires - jres)) <= 1 ){
 					k_[iatm][jatm] = k_short_;
 					k_[jatm][iatm] = k_short_;
 

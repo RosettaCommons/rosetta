@@ -417,8 +417,8 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 			}
 		}
 	} else {
-		score_aln += abs(offsets_working[1]);
-		score_aln += abs(offsets_working[offsets_.size()]);
+		score_aln += std::abs(offsets_working[1]);
+		score_aln += std::abs(offsets_working[offsets_.size()]);
 		for (core::uint j = 2; j <= offsets_.size(); ++j) {
 			if (offsets_working[j] != offsets_working[j - 1]) {
 				core::Real sc_scale = 1.0;

@@ -303,7 +303,7 @@ main( int argc, char* argv [] )
 		outfile << pdb.secstruct(res1) << " ";
 		outfile << pdb.secstruct(res2) << " ";
 
-		outfile << abs(res1-res2) << " ";
+		outfile << std::abs(res1-res2) << " ";
 
 		outfile << pdb.phi(res1) << " " << pdb.psi(res1) << " ";
 		outfile << pdb.phi(res2) << " " << pdb.psi(res2) << " ";

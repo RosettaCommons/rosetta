@@ -141,9 +141,9 @@ bool PCluster::testNeighbor(PCluster & c2){
         while (j!=c2.points_.end()){
           int jctend=std::min(500,(int)c2.points_.size()-jcount);
           for (int jct=0; jct<jctend; ++j, ++jct){
-            if (abs((int) i->x - (int) j->x)<=1)
-              if (abs((int) i->y - (int) j->y)<=1)
-                if (abs((int) i->z - (int) j->z)<=1){
+						if ( std::abs((int) i->x - (int) j->x)<=1)
+							if ( std::abs((int) i->y - (int) j->y)<=1)
+								if ( std::abs((int) i->z - (int) j->z)<=1){
                   points_.splice(points_.end(), c2.points_);
                   minX=std::min(minX, c2.minX);
                   minY=std::min(minY, c2.minY);
@@ -164,9 +164,9 @@ bool PCluster::testNeighbor(PCluster & c2){
 
     for (std::list<Cxyz>::iterator i = points_.begin(); i!=points_.end(); ++i){
       for (std::list<Cxyz>::iterator j = c2.points_.begin(); j!=c2.points_.end(); ++j){
-        if (abs((int) i->x - (int) j->x)<=1)
-          if (abs((int) i->y - (int) j->y)<=1)
-            if (abs((int) i->z - (int) j->z)<=1){
+				if ( std::abs((int) i->x - (int) j->x)<=1)
+					if ( std::abs((int) i->y - (int) j->y)<=1)
+						if ( std::abs((int) i->z - (int) j->z)<=1){
 
               minX=std::min(minX, c2.minX);
               minY=std::min(minY, c2.minY);

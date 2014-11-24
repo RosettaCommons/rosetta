@@ -584,8 +584,8 @@ Real ik_his_clamp(Pose & pose,
 										//#pragma omp parallel for schedule(dynamic,1)
 										//#endif
           for(Size rsd3 = 1; rsd3 <= tmp1.n_residue(); ++rsd3) {
-												if( abs((int)rsd1-(int)rsd3) < 3 ) continue;
-												if( abs((int)rsd2-(int)rsd3) < 3 ) continue;
+												if( std::abs((int)rsd1-(int)rsd3) < 3 ) continue;
+												if( std::abs((int)rsd2-(int)rsd3) < 3 ) continue;
 
 												Residue rtmp3(tmp1.residue(rsd3));
 												tmp1.replace_residue(rsd3,his.residue(1),true);
@@ -641,9 +641,9 @@ Real ik_his_clamp(Pose & pose,
                 //tmp3.dump_pdb("test3.pdb");
 
                 for(Size rsd4 = 1; rsd4 <= tmp1.n_residue(); ++rsd4) {
-																		if( abs((int)rsd1-(int)rsd4) < 3 ) continue;
-																		if( abs((int)rsd2-(int)rsd4) < 3 ) continue;
-																		if( abs((int)rsd3-(int)rsd4) < 3 ) continue;
+																		if( std::abs((int)rsd1-(int)rsd4) < 3 ) continue;
+																		if( std::abs((int)rsd2-(int)rsd4) < 3 ) continue;
+																		if( std::abs((int)rsd3-(int)rsd4) < 3 ) continue;
                   //ik_his4(tmp1,his4,rsd1,rsd2,rsd3,rsd4,symcen1,symaxs1,ZN);
 
 																		Residue rtmp4(tmp3.residue(rsd4));

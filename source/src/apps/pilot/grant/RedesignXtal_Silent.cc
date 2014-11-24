@@ -293,7 +293,7 @@ nativeParentMap.insert( nativerealpair );
  core::Real diversity = 0;
 
  for( core::Size ii = 1; ii <=currentseqdis.size(); ++ii){
- diversity += abs(currentseqdis[ii] - nativeseqdis[ii]);
+ diversity += std::abs(currentseqdis[ii] - nativeseqdis[ii]);
  }
 
 

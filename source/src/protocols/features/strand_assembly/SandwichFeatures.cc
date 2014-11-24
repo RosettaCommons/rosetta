@@ -808,7 +808,7 @@ SandwichFeatures::parse_my_tag(
 					//	example: (in 1BQB chain A) 121 is possible (but this should be excluded as same direction strand)
 					//	example: (in 1A0Q chain L) 127 is possible for 3-6-9 angle (but this should be excluded as same direction strand)
 	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_ = tag->getOption<Real>("max_abs_inter_strand_dihedral_to_not_be_same_direction_strands", 100.0);
-					//	usage:	if (abs(torsion_between_strands) >	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)
+					//	usage:	if ( std::abs(torsion_between_strands) >	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)
 					//	example: (in 1U3J chain A) 105 is possible for 4-7-11-13 dihedral angle (but this should be excluded as same direction strand)
 					//	example: (in 1QAC chain A) 128.5 is possible for 4-7-10-13 dihedral angle (but this should be excluded as same direction strand)
 					//	example: (in 1A3R chain L) 130 is possible for 4-7-10-14 dihedral angle (but this should be excluded as same direction strand)

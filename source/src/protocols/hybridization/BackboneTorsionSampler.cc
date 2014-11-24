@@ -129,7 +129,7 @@ void BackboneTorsionSampler::perturb(core::pose::Pose & pose,
     }
     for (core::Size ires=1; ires <= pose.total_residue() ; ++ires) {
         if (local != 0) {
-            if ( abs((int) ires - (int) perturbed_res_) > (int) ((local - 1) * level/2)) continue;
+            if ( std::abs((int) ires - (int) perturbed_res_) > (int) ((local - 1) * level/2)) continue;
         }
 
         if (pose.residue_type(ires).is_protein()) {

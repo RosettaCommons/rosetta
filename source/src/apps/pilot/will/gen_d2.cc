@@ -651,8 +651,8 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
 										//#pragma omp parallel for schedule(dynamic,1)
 										//#endif
           for(Size rsd3 = 1; rsd3 <= pose.n_residue(); ++rsd3) {
-												if( abs((int)rsd1-(int)rsd3) < 1 ) continue;
-												if( abs((int)rsd2-(int)rsd3) < 1 ) continue;
+												if( std::abs((int)rsd1-(int)rsd3) < 1 ) continue;
+												if( std::abs((int)rsd2-(int)rsd3) < 1 ) continue;
 												Pose tmp1;
 												//#ifdef USE_OPENMP
 												//#pragma omp critical
@@ -712,9 +712,9 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
                 tmp3.dump_pdb("test3.pdb");
 
                 for(Size rsd4 = 1; rsd4 <= tmp1.n_residue(); ++rsd4) {
-																		if( abs((int)rsd1-(int)rsd4) < 1 ) continue;
-																		if( abs((int)rsd2-(int)rsd4) < 1 ) continue;
-																		if( abs((int)rsd3-(int)rsd4) < 1 ) continue;
+																		if( std::abs((int)rsd1-(int)rsd4) < 1 ) continue;
+																		if( std::abs((int)rsd2-(int)rsd4) < 1 ) continue;
+																		if( std::abs((int)rsd3-(int)rsd4) < 1 ) continue;
 
 																		Vec CB = tmp3.xyz(AtomID(5,rsd4));
 																		Real cdis = projperp(symaxs1,CB-symcen1).length();

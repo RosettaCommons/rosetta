@@ -157,7 +157,7 @@ PNatLigPoseOptEData::do_score(
 	}
 
 	// -1 is here just to make lower scores better -- don't need kT (I think)
-	// abs() is here in case log(N/P) == 0, so that we get +0 instead of -0 (which seems to break the minimizer?)
+	// std::abs() is here in case log(N/P) == 0, so that we get +0 instead of -0 (which seems to break the minimizer?)
 	Real const total_score = std::abs( -1.0 * multiplier_ * std::log( numerator / partition ) );
 	//std::cout << " total score: " << total_score << std::endl;
 

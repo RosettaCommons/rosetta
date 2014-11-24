@@ -303,7 +303,7 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	BOOST_FOREACH( std::string const shorten, shorten_by_keys ){
 		if( shorten == "" ) continue;
 		int const shorten_i( -1 * atoi( shorten.c_str() ) );
-		runtime_assert( ( core::Size ) abs( shorten_i ) < loop_length );
+		runtime_assert( ( core::Size ) std::abs( shorten_i ) < loop_length );
 		delta_length_.push_back( shorten_i );
 	}
 

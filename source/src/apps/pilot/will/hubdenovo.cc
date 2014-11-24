@@ -158,7 +158,7 @@ static core::io::silent::SilentFileData sfd;
 static thread_local basic::Tracer TR( "hubdenovo" );
 
 // bool hocstcmp (std::pair<Size,Size> i, std::pair<Size,Size> j) {
-// 	return abs(i.first-i.second) < abs(j.first-j.second);
+// 	return std::abs(i.first-i.second) < std::abs(j.first-j.second);
 // }
 string peek(std::istream & in) {
 	std::streampos i = in.tellg();

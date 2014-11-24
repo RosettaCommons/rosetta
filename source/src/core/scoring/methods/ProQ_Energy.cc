@@ -859,7 +859,7 @@ void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & v
 				ir != ire; ++ir ) {
 			int const j( (*ir)->get_other_ind( i ) ); 
 //				for(int j=i+1;j<=nres;++j) { 
-			if(abs(i-j)>1) {
+			if( std::abs(i-j)>1) {
 				conformation::Residue const & rsd_j( pose.residue(j) );
 				for(Size ii=1;ii<=rsd_i.nheavyatoms();++ii) {
 					core::conformation::Atom const & atom_i = rsd_i.atom(ii);
@@ -972,8 +972,8 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 				ire = graph.get_node(i)->const_edge_list_end();
 				ir != ire; ++ir ) {
 			int const j( (*ir)->get_other_ind( i ) );
-			//if(i>j && abs(i-j)>5) {
-			if(abs(i-j)>5) {
+			//if(i>j && std::abs(i-j)>5) {
+			if( std::abs(i-j)>5) {
 				Real dist=crd(pose,i,j);
 				if(dist<36) { // 6Å
 					//			conformation::Residue const & rsd_j( pose.residue(j) );

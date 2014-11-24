@@ -729,8 +729,8 @@ private:
 	/// given by either:
 	/// score = 0.5 * K * (val-val0)^2
 	/// or
-	/// score = 0.5 * K * (val-val0)^2 if abs(val-val0) < 1
-	///       = 0.5 * K * abs(val-val0) otherwise
+	/// score = 0.5 * K * (val-val0)^2 if std::abs(val-val0) < 1
+	///       = 0.5 * K * std::abs(val-val0) otherwise
 	Real eval_score( Real val, Real K, Real val0 ) const;
 
 	/// @breif Evaluate the derivative for a

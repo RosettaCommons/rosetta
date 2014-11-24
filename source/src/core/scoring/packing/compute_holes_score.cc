@@ -414,7 +414,7 @@ compute_holes_deriv(
 	      if( params.have_params(at,ss) ) {
 	         val += params.nb_weight(at,ss) * pb.smooth_nb(i);
 	         val -= params.intercept(at,ss) + params.intercept();
-	      } else if ( abs(val) > 9e-6 ) {
+	      } else if ( std::abs(val) > 9e-6 ) {
 	         TR << "no holes params but dalphaball score for atom is not 0!!!! " << val << std::endl;
 	      }
 	      result.score += val;

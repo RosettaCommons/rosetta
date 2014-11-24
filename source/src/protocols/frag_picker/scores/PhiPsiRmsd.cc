@@ -146,11 +146,11 @@ bool PhiPsiRmsd::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP s
 	for (Size i = 1; i <= fragment->get_length(); ++i) {
 		if (!existing_data_[i + offset_q])
 			continue;
-		stmp = abs(chunk_phi_(i + offset_v) - query_phi_(i + offset_q));
-		if ( stmp > 180.0 ) stmp = abs(360.0 - stmp);
+		stmp = std::abs(chunk_phi_(i + offset_v) - query_phi_(i + offset_q));
+		if ( stmp > 180.0 ) stmp = std::abs(360.0 - stmp);
 		score += stmp * stmp;
-		stmp = abs(chunk_psi_(i + offset_v) - query_psi_(i + offset_q));
-		if ( stmp > 180.0 ) stmp = abs(360.0 - stmp);
+		stmp = std::abs(chunk_psi_(i + offset_v) - query_psi_(i + offset_q));
+		if ( stmp > 180.0 ) stmp = std::abs(360.0 - stmp);
 		score += stmp * stmp;
 	}
 
@@ -186,11 +186,11 @@ bool PhiPsiRmsd::describe_score(FragmentCandidateOP f,
 	Real score = 0.0;
 	Real stmp = 0.0;
 	for (Size i = 1; i <= f->get_length(); ++i) {
-		stmp = abs(chunk_phi_(i + offset_v) - query_phi_(i + offset_q));
+		stmp = std::abs(chunk_phi_(i + offset_v) - query_phi_(i + offset_q));
 		score += stmp * stmp;
-		if ( stmp > 180.0 ) stmp = abs(360.0 - stmp);
-		stmp = abs(chunk_psi_(i + offset_v) - query_psi_(i + offset_q));
-		if ( stmp > 180.0 ) stmp = abs(360.0 - stmp);
+		if ( stmp > 180.0 ) stmp = std::abs(360.0 - stmp);
+		stmp = std::abs(chunk_psi_(i + offset_v) - query_psi_(i + offset_q));
+		if ( stmp > 180.0 ) stmp = std::abs(360.0 - stmp);
 		score += stmp * stmp;
 	}
 

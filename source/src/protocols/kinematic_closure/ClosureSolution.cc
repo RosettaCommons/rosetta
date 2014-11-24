@@ -295,7 +295,7 @@ Real ClosureSolution::get_jacobian() const {
 			J(3, i) = dot_i;
 		}
 
-		jacobian_ = 1 / max(abs(J.determinant()), 1e-100);
+		jacobian_ = 1 / max( std::abs(J.determinant()), 1e-100);
 	}
 
 	return jacobian_;

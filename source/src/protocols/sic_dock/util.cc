@@ -290,7 +290,7 @@ bool residue_is_floppy(core::pose::Pose const & pose, Size const ir, Real const 
 	for(Size ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia){
 		Vec const & p1 = pose.residue(ir).xyz(ia);
 		for(Size jr = 1; jr <= pose.n_residue(); ++jr){
-			if( abs((int)ir-(int)jr) < 3 ) continue;
+			if( std::abs((int)ir-(int)jr) < 3 ) continue;
 			for(Size ja = 1; ja <= pose.residue(jr).nheavyatoms(); ++ja){
 				Vec const & p2 = pose.residue(jr).xyz(ja);
 				if(p1.distance_squared(p2) < 25.0) contacts += 1.0;

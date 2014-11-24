@@ -205,7 +205,7 @@ bool PDB::isSSBonded(int /*conformerID*/, int resNum)
   std::map<int, string>::iterator it;
   for ( it = residListOne.begin(); it != residListOne.end(); it++ )
     {
-      if( (it->second == "C" || it->second == "c") && abs(it->first - resNum) >= 4 )
+      if( (it->second == "C" || it->second == "c") && std::abs(it->first - resNum) >= 4 )
 	if( getDist(CYS_SG.Coord, ATOMS[1][it->first]["SG"].Coord ) <= 2.5 )
 	  return true;
     }
@@ -691,7 +691,7 @@ void PDB::initHBond(float /*DIST*/, float /*ANGLE*/)
 		//search for donors
 		for( PairList::const_iterator itD = donorList.begin(); itD != donorList.end(); itD++ ) {
 			PDB_Entry D = conf[ itD->first ], D_Heavy = conf[ itD->second ];
-			if( abs( A.resNum - D.resNum) < 2) continue; //minimal 2 residues apart
+			if( std::abs( A.resNum - D.resNum) < 2) continue; //minimal 2 residues apart
 
 			float D_ON = getDist(A,D_Heavy);
 			float D_CH = getDist(A_Heavy,D);

@@ -359,7 +359,7 @@ enum HBSeqSep{
 	seq_sep_M4, // // acc_rsd.seqpos() - don_rsd.seqpos() = -4
 	seq_sep_M3, // // acc_rsd.seqpos() - don_rsd.seqpos() = -3
 	seq_sep_M2, // // acc_rsd.seqpos() - don_rsd.seqpos() = -2
-	seq_sep_PM1, // // abs(acc_rsd.seqpos() - don_rsd.seqpos()) = 1
+	seq_sep_PM1, // // std::abs(acc_rsd.seqpos() - don_rsd.seqpos()) = 1
 	seq_sep_P2, // // acc_rsd.seqpos() - don_rsd.seqpos() = 2
 	seq_sep_P3, // // acc_rsd.seqpos() - don_rsd.seqpos() = -3
 	seq_sep_P4, // // acc_rsd.seqpos() - don_rsd.seqpos() = 4
