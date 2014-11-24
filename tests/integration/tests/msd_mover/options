@@ -1,0 +1,3 @@
+-parser:protocol msd.xml 
+-run:msd_job_dist 
+-s 1avz.pdb.gz 1m27.pdb.gz

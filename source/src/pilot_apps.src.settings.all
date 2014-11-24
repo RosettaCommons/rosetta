@@ -795,6 +795,9 @@ sources = {
 		#"docking_parallel",
 		#"complex_interface_optimize",
 	],
+	"pilot/sevya" : [
+		#"msd",
+	],
 	"pilot/smlewis" : [
 		#"Extender",
 		#"LoopAnalyzer",

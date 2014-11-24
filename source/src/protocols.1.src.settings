@@ -84,6 +84,7 @@ sources = {
 		"MPIMultiCommJobDistributor",
 		"MPIWorkPartitionJobDistributor",
 		"MPIWorkPoolJobDistributor",
+		"MSDJobDistributor",
 		"MultiThreadedJobDistributor",
 		"MultiThreadingJob",
 		"NoOutputJobOutputterCreator",
@@ -158,6 +159,7 @@ sources = {
 		"TrialCounter",
 		"TrialMover",
 		"util",
+		"VectorPoseMover",
 		"WhileMover",
 	],
 	"protocols/rosetta_scripts": [

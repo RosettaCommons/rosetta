@@ -717,6 +717,14 @@ Options = Option_Group( '',
 			desc='Shuffle job order',
 			legal=['true','false'], default='false'
 			),
+		Option( 'msd_job_dist', 'Boolean',
+			desc='Use MSD Job Distributor',
+			legal=['true','false'], default='false'
+			),
+		Option( 'msd_randomize', 'Boolean',
+			desc='Randomize order of input poses for MSD',
+			legal=['true', 'false'], default='false'
+			),
 		Option( 'n_cycles', 'Integer',
 			desc='Option to control miscellaneous cycles within protocols.  This has no core meaning - it is meant to reduce option-bloat by having every protocol define separate cycles options.  Check your protocol\'s documentation to see if it is used.',
 			lower='1', default='1'

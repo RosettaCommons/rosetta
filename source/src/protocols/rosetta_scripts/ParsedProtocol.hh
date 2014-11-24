@@ -35,6 +35,7 @@
 
 #include <utility/vector1.hh>
 
+
 namespace protocols {
 namespace rosetta_scripts {
 
@@ -92,6 +93,10 @@ public:
 		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
 		return( movers_[ mover_number ].first.first );
 	}
+	MoverFilterPair get_mover_filter_pair( core::Size const mover_number ) const {
+		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
+		return( movers_[ mover_number ] );
+	}
 	void set_resid( core::Size const resid );
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new ParsedProtocol ); }
@@ -112,7 +117,8 @@ public:
 	std::string call_order() const{ return call_order_; }
 private:
 	void finish_protocol(Pose & pose);
-  ///@brief apply the mover of the pair
+  
+	///@brief apply the mover of the pair
   void apply_mover(Pose & pose, MoverFilterPair const & mover_pair);
 
   ///@brief apply the filter of the pair
@@ -121,6 +127,7 @@ private:
 
 	void random_order_protocol(Pose & pose);
 	void random_single_protocol(Pose & pose);
+
 private:
 
 	MoverFilterVector movers_;

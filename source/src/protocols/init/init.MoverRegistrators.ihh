@@ -310,6 +310,8 @@ static MoverRegistrator< simple_moves::CoupledMoverCreator> reg_CoupledMoverCrea
 static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
+static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;
+static MoverRegistrator< simple_moves::FindConsensusSequenceCreator > reg_FindConsensusSequenceCreator;
 static MoverRegistrator< simple_moves::ForceDisulfidesMoverCreator > reg_ForceDisulfidesMoverCreator;
 static MoverRegistrator< simple_moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< simple_moves::LoadPDBMoverCreator > reg_LoadPDBMoverCreator;
@@ -321,6 +323,7 @@ static MoverRegistrator< simple_moves::MinPackMoverCreator > reg_MinPackMoverCre
 static MoverRegistrator< simple_moves::ModifyVariantTypeMoverCreator > reg_ModifyVariantTypeMoverCreator;
 static MoverRegistrator< simple_moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
+static MoverRegistrator< simple_moves::MSDMoverCreator > reg_MSDMoverCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
 static MoverRegistrator< simple_moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
