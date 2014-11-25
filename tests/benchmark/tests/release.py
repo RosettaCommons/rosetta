@@ -125,7 +125,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git .'.format(**vars()))
-    execute('Adding files and commiting new release...', 'cd {working_dir}/{git_repository_name} && git add * && git add main/source/bin main/source/build && git ci -a -m "{release_name}"'.format(**vars()))
+    execute('Adding files and commiting new release...', 'cd {working_dir}/{git_repository_name} && git add * && git add -f main/source/bin/* main/source/build/* && git ci -a -m "{release_name}"'.format(**vars()))
 
     res, oldest_sha = execute('Getting HEAD~N old commit...', 'cd {working_dir}/{git_repository_name} && git rev-parse HEAD~{_number_of_rosetta_binary_revisions_to_keep_in_git_}'.format(_number_of_rosetta_binary_revisions_to_keep_in_git_=_number_of_rosetta_binary_revisions_to_keep_in_git_, **vars()), return_='tuple')
     if not res:  # if there is no histore error would be raised, but that also mean that rebase is not needed...

@@ -19,6 +19,7 @@ from ConfigParser import ConfigParser
 import argparse
 
 from tests import *  # Tests states and key names
+from hpc_drivers import *
 
 # Calculating value of Platform dict
 Platform = {}
@@ -31,6 +32,8 @@ else:                                Platform['os'] = 'unknown'
 #Platform['arch'] = platform.architecture()[0][:2]  # PlatformBits
 Platform['compiler'] = 'gcc' if Platform['os'] == 'linux' else 'clang'
 
+
+def print_(x): print x
 
 
 def main(args):
@@ -79,7 +82,7 @@ def main(args):
         Config = ConfigParser( dict(here=os.path.abspath('./') ) )
         Config.readfp( file(Options.config) )
         config = Config.items('config')
-    else: config = {}
+    else: config = dict(hpc_driver='MultiCore', branch='unknown', revision=42)
 
     config = dict(config, cpu_count=Options.jobs, memory=memory)
     print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
@@ -128,12 +131,14 @@ def main(args):
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 
+            hpc_driver = eval(config['hpc_driver'] + '_HPC_Driver')(working_dir, config, config, tracer=lambda x: print_(x), set_daemon_message=lambda x:None)
+
             api_version = test_suite._api_version_ if hasattr(test_suite, '_api_version_') else ''
 
             if api_version < '1.0':
                 res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
             else:
-                res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), config=config, verbose=True, debug=Options.debug)
+                res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), config=config, hpc_driver=hpc_driver, verbose=True, debug=Options.debug)
 
             if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))

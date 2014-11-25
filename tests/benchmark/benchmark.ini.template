@@ -5,6 +5,9 @@
 
 [config]  # additional config-options for various tests. All this fields will be pass as keys in 'config' function argument
 
+# HPC Driver, might have one of the following values: MultiCore, Condor
+hpc_driver = MultiCore
+
 # when running by daemons branch:revision will be set to appropriate values to represent currently checked version of main repository
 branch = unknown
 revision = 42
