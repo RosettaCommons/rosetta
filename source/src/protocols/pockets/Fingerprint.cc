@@ -783,6 +783,10 @@ spherical_coor_triplet best_triplet = {0,0,0,0};
 
 		core::Size const nconformers = pf.compute_ligand_nconformers();
 
+		using namespace basic::options;
+		core::Real const radius_scale = option[ OptionKeys::fingerprint::atom_radius_scale ];
+		core::Real const atom_buffer = option[ OptionKeys::fingerprint::atom_radius_buffer ];
+
 		//Get no. of atoms present in the input ligand and copy to GPU memory
 		//for shape-only calculation we are not including hydrogens
 		//for electrosstatic calculations we include hydrogens
@@ -813,7 +817,8 @@ spherical_coor_triplet best_triplet = {0,0,0,0};
 			//copy atomcoords without hydrogens (included 'radius') for shapeonly calculations
 			//aslo copy center of mass of each conformers
 			for (Size i = 1; i <= ligand_natoms_shapecalc; ++i) {
-				basic::gpu::float4 atomcoord_shapecalc = { static_cast<float>(ligand_rsd->atom(i).xyz()(1)), static_cast<float>(ligand_rsd->atom(i).xyz()(2)), static_cast<float>(ligand_rsd->atom(i).xyz()(3)), static_cast<float>(ligand_rsd->atom_type(i).lj_radius()) };
+				core::Real const this_atom_radius = ( ligand_rsd->atom_type(i).lj_radius() - atom_buffer ) * radius_scale;
+				basic::gpu::float4 atomcoord_shapecalc = { static_cast<float>(ligand_rsd->atom(i).xyz()(1)), static_cast<float>(ligand_rsd->atom(i).xyz()(2)), static_cast<float>(ligand_rsd->atom(i).xyz()(3)), static_cast<float>(this_atom_radius) };
 				atomcoords_shapecalc.push_back(atomcoord_shapecalc);
 				ligand_com.x() += ligand_rsd->atom(i).xyz()(1);
 				ligand_com.y() += ligand_rsd->atom(i).xyz()(2);
@@ -1817,7 +1822,7 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
 
   for (Size i = 1, i_end = ligand_natoms; i <= i_end; ++i) {
 
-    numeric::xyzVector<core::Real> this_atomcoors = curr_ligand_rsd->atom(i).xyz() - *i_mori;;
+    numeric::xyzVector<core::Real> this_atomcoors = curr_ligand_rsd->atom(i).xyz() - *i_mori;
     core::Real const this_atom_radius = ( curr_ligand_rsd->atom_type(i).lj_radius() - atom_buffer ) * radius_scale;
 
     // find the atom center (in spherical coors)
