@@ -105,6 +105,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 	}
 	if( tag->hasOption( "ab_fold_tree" ) ){
 		ab_fold_tree( tag->getOption< bool >( "ab_fold_tree",false) );
+        host_chain_ = tag->getOption< core::Size >( "host_chain", 1);
 			return;
 		}
 	std::string const ft_name( tag->getOption< std::string >( "fold_tree_file", "" ) );
@@ -201,11 +202,14 @@ SetAtomTree::set_ab_fold_tree( core::pose::Pose & pose)
 	core::conformation::Conformation const & conf(pose.conformation());
 	utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain
 	//find all cysteines in the pose
-	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+    TR<<"Num of chains in pose:"<<conf.num_chains()<<std::endl;
+	for (core::Size i = conf.chain_begin(host_chain_); i <= conf.chain_end(host_chain_); ++i) {
+        //TR<<i<<std::endl;
 		if (pose.residue(i).has_variant_type(core::chemical::DISULFIDE)) {
 			cys_pos.push_back(i);
 		}
 	}
+    TR<<"cys positions in host chain:"<<cys_pos<<std::endl;
 	/// build simple ft for the cut
 	if (cys_pos.size()==0)
 		utility_exit_with_message(" You are using an antibody fold tree but the structure does not have any disulfides :( \n");
@@ -214,18 +218,19 @@ SetAtomTree::set_ab_fold_tree( core::pose::Pose & pose)
 	ft.add_edge(cys_pos[2],vl_vh_cut , -1);
 	ft.add_edge(cys_pos[3],vl_vh_cut+1 , -1);
 	ft.add_edge(cys_pos[4],cys_pos[3], -1);
-	ft.add_edge(cys_pos[4],conf.chain_end(1), -1);
+	ft.add_edge(cys_pos[4],conf.chain_end(host_chain_), -1);
 	ft.add_edge(cys_pos[2],cys_pos[4], 1);
 
-	core::Size AB_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, 1, conf.chain_end(1) );
+	core::Size AB_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(host_chain_), conf.chain_end(host_chain_) );
 	TR<<"Antibody center of mass is residue: "<<AB_CoM<<std::endl;
 	core::Size cys_CoM=find_nearest_disulfide(pose, AB_CoM);
+    TR<<"Antibody cysteine center of mass: "<<cys_CoM<<std::endl;
 	if (conf.num_chains()>1){
 
-		core::Size Lig_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(2), conf.chain_end(2) );
+		core::Size Lig_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(conf.num_chains()+1-host_chain_), conf.chain_end(conf.num_chains()+1-host_chain_) );
 		ft.add_edge(cys_CoM,Lig_CoM, 2);
-		ft.add_edge(conf.chain_begin(2),Lig_CoM, -1);
-		ft.add_edge(Lig_CoM, conf.chain_end(2),-1);
+		ft.add_edge(conf.chain_begin(conf.num_chains()+1-host_chain_),Lig_CoM, -1);
+		ft.add_edge(Lig_CoM, conf.chain_end(conf.num_chains()+1-host_chain_),-1);
 	}
 
 	ft.delete_self_edges();
