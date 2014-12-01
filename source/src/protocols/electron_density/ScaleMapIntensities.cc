@@ -58,12 +58,14 @@ ScaleMapIntensities::ScaleMapIntensities() : moves::Mover() {
 }
 
 void ScaleMapIntensities::init() {
-	res_low_=1000.0;
-	res_high_= res_fade_= 0;
+	res_low_=10000.0;
+	res_high_= 0;
+	fade_width_ = 0.1;
 	nresbins_=50;
 	asymm_only_=false;
 	ignore_bs_=false;
 	mask_=true;
+	mask_output_=false;
 	outmap_name_="";
 	bin_squared_=true;
 	b_sharpen_=0.0;
@@ -109,7 +111,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 	utility::vector1< core::Real > fade(nresbins_,1.0);
 	utility::vector1< core::Real > mapI, modelI(nresbins_,0.0);
 
-	core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_, 1.0/res_low_, 1.0/res_high_, resobins, counts, bin_squared_);
+	core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_, 0.0, 0.0, resobins, counts, bin_squared_);
 
 	if (b_sharpen_ == 0) {
 		////
@@ -117,62 +119,57 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		////
 		ObjexxFCL::FArray3D< double > rhoC, rhoMask;
 		ObjexxFCL::FArray3D< std::complex<double> > Frho;
-		core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0, rhoC, rhoMask );
+		core::scoring::electron_density::getDensityMap().calcRhoC( litePose, res_high_, rhoC, rhoMask );  // truncate mask at highres limit
 		numeric::fourier::fft3(rhoC, Frho);
 
-		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI, bin_squared_ );
+		if (outmap_name_.length()>0) {
+			core::scoring::electron_density::ElectronDensity tmp = core::scoring::electron_density::getDensityMap();
+			tmp.set_data( rhoC );
+			tmp.writeMRC( outmap_name_+"_rho_calc.mrc" );
+			tmp.set_data( rhoMask );
+			tmp.writeMRC( outmap_name_+"_mask_calc.mrc" );
+		}
+		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, modelI, bin_squared_ );
 
 		// reuse rhoC
 		if (mask_) {
-			for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i) rhoC[i] = rhoMask[i] * core::scoring::electron_density::getDensityMap().data()[i];
+			for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i)
+				rhoC[i] = rhoMask[i] * core::scoring::electron_density::getDensityMap().data()[i];
+			if (mask_output_) core::scoring::electron_density::getDensityMap().set_data( rhoC );
 		} else {
 			for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i) rhoC[i] = core::scoring::electron_density::getDensityMap().data()[i];
 		}
 		numeric::fourier::fft3(rhoC, Frho);
-		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI, bin_squared_ );
-
-		if (res_fade_ > 0 && res_high_ > res_fade_) {
-			core::Real inv_fade_s = 0.5/(res_fade_) + 0.5/(res_high_);
-			core::Real fade_width = 1/(res_high_) - 1/(res_fade_);
-			core::Real sigma = 12.0/fade_width;
-			for (Size i=1; i<=nresbins_; ++i) {
-				fade[i] = 1/(1+exp(sigma*(resobins[i]-inv_fade_s)) );
-			}
-		}
+		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_ );
 
 		for (Size i=1; i<=nresbins_; ++i) {
-			if (mapI[i] > 0 && fade[i]*modelI[i] >= 0 )
-				rescale_factor[i] = fade[i]*sqrt(modelI[i] / mapI[i]);
+			if ( mapI[i] > 0 )
+				rescale_factor[i] = sqrt(modelI[i] / mapI[i]);
 		}
-	} else {
+	} else if (!truncate_only_) {
 		////
 		//// bfactor sharpen
 		////
 		ObjexxFCL::FArray3D< std::complex<double> > Frho;
 		numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().data(), Frho);
- 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 1.0/res_low_, 1.0/res_high_, mapI, bin_squared_);
+ 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_);
 
-		if (res_fade_ > 0 && res_high_ < res_fade_) {
-			core::Real inv_fade_s = 0.5/(res_fade_) + 0.5/(res_high_);
-			core::Real fade_width = 1/(res_high_) - 1/(res_fade_);
-			core::Real sigma = 12.0/fade_width;
-			for (Size i=1; i<=nresbins_; ++i) {
-				fade[i] = 1/(1+exp(sigma*(resobins[i]-inv_fade_s)) );
-			}
-		}
 		for (Size i=1; i<=nresbins_; ++i) {
-			rescale_factor[i] = fade[i]*std::sqrt( exp(-b_sharpen_*resobins[i]*resobins[i]) );
+			rescale_factor[i] = std::sqrt( exp(-b_sharpen_*resobins[i]*resobins[i]) );
 		}
 	}
 
 	TR << "SCALING MAP:" << std::endl;
-	TR << "resbin   fade   model   map   rescale" << std::endl;
+	TR << "resbin   model   map   rescale" << std::endl;
 	for (Size i=1; i<=nresbins_; ++i)
-		TR << resobins[i] << "  " << fade[i] << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
+		TR << resobins[i] << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
 
-	core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, 1.0/res_low_, 1.0/res_high_, bin_squared_ );
-	if (outmap_name_.length()>0)
-		core::scoring::electron_density::getDensityMap().writeMRC( outmap_name_ );
+	core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, 0.0, 0.0, bin_squared_ );
+	core::scoring::electron_density::getDensityMap().reciprocalSpaceFilter( res_low_, res_high_, fade_width_);
+
+	if (outmap_name_.length()>0) {
+		core::scoring::electron_density::getDensityMap().writeMRC( outmap_name_+"_scaled.mrc" );
+	}
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -193,11 +190,17 @@ ScaleMapIntensities::parse_my_tag(
 	if ( tag->hasOption("b_sharpen") ) {
 		b_sharpen_ = tag->getOption<core::Real>("b_sharpen");
 	}
-	if ( tag->hasOption("res_fade") ) {
-		res_fade_ = tag->getOption<core::Real>("res_fade");
+	if ( tag->hasOption("truncate_only") ) {
+		truncate_only_ = tag->getOption<core::Real>("truncate_only");
+	}
+	if ( tag->hasOption("fade_width") ) {
+		fade_width_ = tag->getOption<core::Real>("fade_width");
 	}
 	if ( tag->hasOption("mask") ) {
 		mask_ = tag->getOption<bool>("mask");
+	}
+	if ( tag->hasOption("mask_output") ) {
+		mask_output_ = tag->getOption<bool>("mask_output");
 	}
 	if ( tag->hasOption("nresbins") ) {
 		nresbins_ = tag->getOption<core::Size>("nresbins");

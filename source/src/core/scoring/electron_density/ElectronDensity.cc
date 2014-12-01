@@ -1203,12 +1203,12 @@ ElectronDensity::getResolutionBins(
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
 	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
-	if (minreso>min_allowed) {
-		TR << "Forcing res min to " << 1/min_allowed << std::endl;
+	if ( minreso>min_allowed || minreso==0 ) {
+		TR.Debug << "Forcing res min to " << 1/min_allowed << std::endl;
 		minreso = min_allowed;
 	}
-	if (maxreso<max_allowed) {
-		TR << "Forcing res max to " << 1/max_allowed << std::endl;
+	if ( maxreso<max_allowed || maxreso==0 ) {
+		TR.Debug << "Forcing res max to " << 1/max_allowed << std::endl;
 		maxreso = max_allowed;
 	}
 
@@ -1262,12 +1262,12 @@ ElectronDensity::getIntensities(
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
 	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
-	if (minreso>min_allowed) {
-		TR << "Forcing res min to " << 1/min_allowed << std::endl;
+	if ( minreso>min_allowed || minreso==0 ) {
+		TR.Debug << "Forcing res min to " << 1/min_allowed << std::endl;
 		minreso = min_allowed;
 	}
-	if (maxreso<max_allowed) {
-		TR << "Forcing res max to " << 1/max_allowed << std::endl;
+	if ( maxreso<max_allowed || maxreso==0 ) {
+		TR.Debug << "Forcing res max to " << 1/max_allowed << std::endl;
 		maxreso = max_allowed;
 	}
 
@@ -1330,12 +1330,12 @@ ElectronDensity::getFSC(
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
 	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
-	if (minreso>min_allowed) {
-		TR << "Forcing res min to " << 1/min_allowed << std::endl;
+	if ( minreso>min_allowed || minreso==0 ) {
+		TR.Debug << "Forcing res min to " << 1/min_allowed << std::endl;
 		minreso = min_allowed;
 	}
-	if (maxreso<max_allowed) {
-		TR << "Forcing res max to " << 1/max_allowed << std::endl;
+	if ( maxreso<max_allowed || maxreso==0 ) {
+		TR.Debug << "Forcing res max to " << 1/max_allowed << std::endl;
 		maxreso = max_allowed;
 	}
 
@@ -1394,12 +1394,12 @@ ElectronDensity::getPhaseError(
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
 	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
-	if (minreso>min_allowed) {
-		TR << "Forcing res min to " << 1/min_allowed << std::endl;
+	if ( minreso>min_allowed || minreso==0 ) {
+		TR.Debug << "Forcing res min to " << 1/min_allowed << std::endl;
 		minreso = min_allowed;
 	}
-	if (maxreso<max_allowed) {
-		TR << "Forcing res max to " << 1/max_allowed << std::endl;
+	if ( maxreso<max_allowed || maxreso==0 ) {
+		TR.Debug << "Forcing res max to " << 1/max_allowed << std::endl;
 		maxreso = max_allowed;
 	}
 
@@ -1459,19 +1459,22 @@ ElectronDensity::getPhaseError(
 
 
 void
-ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core::Real maxreso, core::Real minreso, bool S2_bin/*=false*/ ) {
+ElectronDensity::scaleIntensities(
+			utility::vector1< core::Real > scale_i,
+			core::Real maxreso, core::Real minreso,
+			bool S2_bin/*=false*/ ) {
 	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
 	Size nbuckets = scale_i.size();
 
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
 	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
-	if (minreso>min_allowed) {
-		TR << "Forcing res min to " << 1/min_allowed << std::endl;
+	if ( minreso>min_allowed || minreso==0 ) {
+		TR.Debug << "Forcing res min to " << 1/min_allowed << std::endl;
 		minreso = min_allowed;
 	}
-	if (maxreso<max_allowed) {
-		TR << "Forcing res max to " << 1/max_allowed << std::endl;
+	if ( maxreso<max_allowed || maxreso==0 ) {
+		TR.Debug << "Forcing res max to " << 1/max_allowed << std::endl;
 		maxreso = max_allowed;
 	}
 
@@ -1498,11 +1501,9 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 				Real bucket_offset0 = bucket-bucket_i;
 				Real bucket_offset1 = 1.0-bucket_offset0;
 
-				if ( bucket_i > (int)nbuckets ) {
-					Fdensity(x,y,z) = 0.0;
-				} else if ( bucket_i == (int)nbuckets ) {
-					// linear decay in last bin
-					Fdensity(x,y,z) *= bucket_offset1*scale_i[nbuckets];
+				// fpd: no longer truncate here, if we want truncation, apply that separately
+				if ( bucket_i >= (int)nbuckets ) {
+					Fdensity(x,y,z) *= scale_i[nbuckets];
 				} else if ( bucket_i <= 0 ) {
 					Fdensity(x,y,z) *= scale_i[1];
 				} else {
@@ -1517,6 +1518,41 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 	// clear derived data
 	density_change_trigger();
 }
+
+
+void
+ElectronDensity::reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, core::Real fadewidth ) {
+	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
+
+	int H,K,L;
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1(); ++x) {
+				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+
+				Real r_i = 1.0 / sqrt(S2(H,K,L));
+
+				Real fade = 1.0;
+				if (r_i > minreso+fadewidth/2.0 || r_i < maxreso-fadewidth/2.0) {
+					fade = 0.0;
+				} else if (r_i > minreso-fadewidth/2.0) {
+					Real del = (r_i-(minreso-fadewidth/2.0))/fadewidth;
+					fade = (1-del*del);
+					fade = fade*fade;
+				} else if (r_i < minreso+fadewidth/2.0) {
+					Real del = (r_i-(minreso-fadewidth/2.0))/fadewidth;
+					fade = (del*del-1);
+					fade = fade*fade;
+				}
+
+				Fdensity(x,y,z) *= fade;
+			}
+		}
+	}
+}
+
 
 
 core::Real

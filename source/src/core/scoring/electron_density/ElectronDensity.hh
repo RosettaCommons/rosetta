@@ -187,6 +187,10 @@ public:
 	void
 	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso, bool S2_bin=false );
 
+	/// @brief Compute intensities, update density
+	void
+	reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, core::Real fadewidth );
+
 	/// @brief get Rho Calc
 	void
 	calcRhoC(
