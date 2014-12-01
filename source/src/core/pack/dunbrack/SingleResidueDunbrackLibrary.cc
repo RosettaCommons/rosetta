@@ -514,7 +514,7 @@ SingleResidueDunbrackLibrary::rotno_2_rotwell(
 	rotwell.resize( n_rotameric_chi_ );
 	std::fill( rotwell.begin(), rotwell.end(), 1 );
 	for ( Size ii = 1; ii <= n_rotameric_chi_; /* no increment */ ) {
-		if ( remainder > n_chi_products_[ ii ] ) {
+		if ( remainder >= n_chi_products_[ ii ] ) {
 			remainder -= n_chi_products_[ ii ];
 			++rotwell[ ii ];
 		} else {
@@ -590,7 +590,7 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	SemiRotamericSingleResidueDunbrackLibrary< ONE >   srsrdl_1( chemical::aa_ala, true, true ); //e.g. asn,phe
 	SemiRotamericSingleResidueDunbrackLibrary< TWO >   srsrdl_2( chemical::aa_ala, true, true ); // e.g. glu
 	// three and four do not exist... they could in the future if needed.
-	
+
 	chemical::ResidueType rt( NULL, NULL, NULL, NULL );
 	conformation::Residue rsd( rt, true );
 	RotamerLibraryScratchSpace scratch;
