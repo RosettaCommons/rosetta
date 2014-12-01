@@ -65,8 +65,10 @@ public:
 
 		typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
 		typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
+		typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
 		typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
 		typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
+		typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
 
 public:
 	MakeBundleHelix();
@@ -164,6 +166,9 @@ public:
 	///
 	core::Real r1( core::Size const index ) const { return bundle_parameters_->r1(index); }
 
+	/// @brief Const-access to the whole r1 vector.
+	utility::vector1 < core::Real > const & r1_vect() const { return bundle_parameters_->r1_vect(); }
+
 	/// @brief Set the omega1 value.
 	///
 	void set_omega1(core::Real const &val) { bundle_parameters_->set_omega1(val); return; }
@@ -180,13 +185,19 @@ public:
 	///
 	core::Real z1() const { return bundle_parameters_->z1(); }
 
-	/// @brief Get the delga_omega1 value for a given mainchain atom.
+	/// @brief Get the delta_omega1 value for a given mainchain atom.
 	///
 	core::Real delta_omega1( core::Size const index ) const { return bundle_parameters_->delta_omega1(index); }
+
+	/// @brief Const-access to the whole delta_omega1 vector.
+	utility::vector1 < core::Real > const & delta_omega1_vect() const { return bundle_parameters_->delta_omega1_vect(); }
 
 	/// @brief Get the delta_z1 value for a given mainchain atom.
 	///
 	core::Real delta_z1( core::Size const index ) const { return bundle_parameters_->delta_z1(index); }
+
+	/// @brief Const-access to the whole delta_z1 vector.
+	utility::vector1 < core::Real > const & delta_z1_vect() const { return bundle_parameters_->delta_z1_vect(); }
 
 	/// @brief Get the delta_t value.
 	core::Real delta_t() const { return bundle_parameters_->delta_t(); }
@@ -283,6 +294,13 @@ public:
 	///
 	bool allow_bondlengths() const { return bundle_parameters_->allow_bondlengths(); }
 
+	/// @brief Const-access to bundle parameters.
+	///
+	BundleParametersCOP bundle_parameters() const { return bundle_parameters_; }
+
+	/// @brief Set a new set of bundle parameters.
+	///
+	void set_bundle_parameters( BundleParametersOP newparams ) {  bundle_parameters_ = newparams; return; }
 
 private:
 ////////////////////////////////////////////////////////////////////////////////
@@ -323,63 +341,6 @@ private:
 	/// @brief If there are tail residues, set their backbone dihedral angles
 	/// to something reasonable (a helical conformation).
 	void set_tail_dihedrals( core::pose::Pose &helixpose ) const;
-
-	/// @brief Generate the x,y,z coordinates of the mainchain atoms using the Crick equations.
-	/// @details Coordinates will be returned as a vector of vectors of xyzVectors.  The outer
-	/// index will refer to residue number, and the inner index will refer to atom number.
-	/// Returns failed=true if coordinates could not be generated, false otherwise.
-	void generate_atom_positions(
-		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > &outvector,
-		core::pose::Pose const &helixpose,
-		core::Size const helix_start,
-		core::Size const helix_end,
-		bool &failed
-	) const;
-
-	/// @brief Place the helix mainchain atoms based on the Crick equations.
-	///
-	void place_atom_positions(
-		core::pose::Pose &pose,
-		utility::vector1 < utility::vector1 < numeric::xyzVector < core::Real >  > > const &atom_positions,
-		core::Size const helix_start,
-		core::Size const helix_end
-	) const;
-
-	/// @brief Copy backbone bond length values from one pose, where helix mainchain atom coordinates have been
-	/// set with the Crick equations, to another with ideal geometry.
-	void copy_helix_bondlengths(
-		core::pose::Pose &pose,
-		core::pose::Pose const &ref_pose,
-		core::Size const helix_start,
-		core::Size const helix_end
-	) const;
-
-	/// @brief Copy backbone bond angle values from one pose, where helix mainchain atom coordinates have been
-	/// set with the Crick equations, to another with ideal geometry.
-	void copy_helix_bondangles(
-		core::pose::Pose &pose,
-		core::pose::Pose const &ref_pose,
-		core::Size const helix_start,
-		core::Size const helix_end
-	) const;
-
-	/// @brief Copy backbone dihedral values from one pose, where helix mainchain atom coordinates have been
-	/// set with the Crick equations, to another with ideal geometry.
-	void copy_helix_dihedrals(
-		core::pose::Pose &pose,
-		core::pose::Pose const &ref_pose,
-		core::Size const helix_start,
-		core::Size const helix_end
-	) const;
-
-	/// @brief Align mainchain atoms of pose to ref_pose mainchain atoms.
-	///
-	void align_mainchain_atoms(
-		core::pose::Pose &pose,
-		core::pose::Pose const &ref_pose,
-		core::Size const helix_start,
-		core::Size const helix_end
-	) const;
 
 	/// @brief Set whether the last call to the apply() function failed or not.
 	/// @details Should only be called by the apply() function.

@@ -36,6 +36,9 @@ sources = {
 		"FitSimpleHelixMultiFunc",
 		"MakeBundle",
 		"MakeBundleHelix",
+		"PerturbBundle",
+		"PerturbBundleHelix",
+		"PerturbBundleOptions",
 		"util",
         ],
         "protocols/helical_bundle/parameters": [

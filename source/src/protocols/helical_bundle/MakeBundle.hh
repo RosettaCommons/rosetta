@@ -67,8 +67,10 @@ public: //Typedefs
 
 		typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
 		typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
+		typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
 		typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
 		typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
+		typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
 
 public:
 	MakeBundle();
@@ -124,6 +126,15 @@ public:
 	/// @brief Get the symmetry of the bundle.
 	/// @details See bundle_symmetry_ member variable for details.
 	core::Size symmetry() const { return bundle_symmetry_; }
+
+	/// @brief Set how many of the symmetry copies actually get generated.
+	/// @details See bundle_symmetry_copies_ member variable for details.
+	void set_symmetry_copies( core::Size const symmetry_copies_in ) { bundle_symmetry_copies_ = symmetry_copies_in; return; }
+
+	/// @brief Get how many of the symmetry copies actually get generated.
+	/// @details See bundle_symmetry_copies_ member variable for details.
+	core::Size symmetry_copies() const { return bundle_symmetry_copies_; }
+
 
 	/// @brief Set the default r0 value (major helix radius)
 	///
@@ -312,6 +323,12 @@ private:
 	/// 3-fold rotational symmetry, and so forth.  Note that this need not correspond to the number of
 	/// helices defined.  If 2 helices are defined with 3-fold symmetry, you end up with 6 helices.
 	core::Size bundle_symmetry_;
+
+	/// @brief The symmetry copies to generate.
+	/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
+	/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
+	/// first 4 symmetry repeats would be generated.
+	core::Size bundle_symmetry_copies_;
 
 
 	/// DEFAULTS: Default values for helix parameters if no other values are set:

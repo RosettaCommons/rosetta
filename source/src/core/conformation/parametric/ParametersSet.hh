@@ -90,7 +90,7 @@ namespace core {
 					/// @brief Only for copying Conformation objects, this ensures that the new ParametersSet object's
 					/// Parameters objects have lists of ResidueOPs that point to residues in the new Conformation object,
 					/// rather than to residues that only exist in the Parameters objects.
-					void update_residue_links( core::conformation::ConformationOP new_conf );
+					void update_residue_links( core::conformation::Conformation &new_conf );
 
 					/// @brief Get the number of Parameters objects associated with this ParametersSet.
 					///

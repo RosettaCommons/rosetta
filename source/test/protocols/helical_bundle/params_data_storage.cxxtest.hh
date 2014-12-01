@@ -199,4 +199,141 @@ public:
 		return;
 	}
 
+	/// @brief Test storage of Crick parameters when copying poses.
+	/// @details Failure of this test indicates that the Crick parameters are not being
+	/// properly copied when poses are duplicated.
+	void test_params_data_copying()
+	{
+		using namespace protocols::helical_bundle;
+		using namespace protocols::helical_bundle::parameters;
+
+		TS_TRACE( "Starting test_params_data_copying unit test." );
+		TS_TRACE( "Written by Vikram K. Mulligan, Baker Laboratory." );
+		TS_TRACE( "If this test should fail, it means that Crick parameter data are not being properly copied when a pose is copied." );
+
+		MakeBundleOP makebundle ( new MakeBundle ); //Create the mover
+
+		makebundle->set_reset_pose(true); //destroy the original pose.
+		makebundle->set_symmetry(2); //Twofold symmetry.
+
+		//Add two helices:
+		//Note -- with twofold symmetry, a total of four will be created.
+		makebundle->add_helix();
+		makebundle->add_helix();
+
+		//Set parameters for the two helices:
+		TS_TRACE( "Defining two helices.  (There will be four total, with two-fold symmetry)." );
+		TS_TRACE( "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 invert=false(default)" );
+		makebundle->helix(1)->set_r0(5.0);
+		makebundle->helix(1)->set_omega0(0.05);
+		makebundle->helix(1)->set_delta_omega0(0.1);
+		TS_TRACE( "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 invert=true" );
+		makebundle->helix(2)->set_r0(6.5);
+		makebundle->helix(2)->set_omega0(0.03);
+		makebundle->helix(2)->set_delta_omega0(1.5);
+		makebundle->helix(2)->set_invert_helix(true);
+
+		//Apply the mover:
+		makebundle->apply(*testpose_);
+
+		//Make a clone of the pose:
+		TS_TRACE( "Attempting to clone the pose." );
+		core::pose::PoseOP poseclone(testpose_->clone());
+
+		char outbuffer [1024];
+		TS_TRACE( "Reading Crick parameters from the cloned pose." );
+		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", poseclone->conformation().parameters_set(1)->n_parameters());
+		TS_TRACE( outbuffer );
+		for(core::Size i=1; i<=4; ++i) {
+			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( poseclone->conformation().parameters_set(1)->parameters(i) ) );
+			TS_ASSERT(h1params);
+			core::Real r0_1(h1params->r0());
+			core::Real omega0_1(h1params->omega0());
+			core::Real delta_omega0_1(h1params->delta_omega0());
+			bool invert_1(h1params->invert_helix());
+			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
+			TS_TRACE( outbuffer );
+
+			if(i==1 || i==3) {
+				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
+				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT( invert_1 == false );
+			} else {
+				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
+				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT( invert_1 == true );
+			}
+
+		}
+
+		//Make a copy of the pose:
+		TS_TRACE( "Attempting to copy the pose." );
+		core::pose::Pose posecopy(*testpose_);
+
+		TS_TRACE( "Reading Crick parameters from the copied pose." );
+		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy.conformation().parameters_set(1)->n_parameters());
+		TS_TRACE( outbuffer );
+		for(core::Size i=1; i<=4; ++i) {
+			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( posecopy.conformation().parameters_set(1)->parameters(i) ) );
+			TS_ASSERT(h1params);
+			core::Real r0_1(h1params->r0());
+			core::Real omega0_1(h1params->omega0());
+			core::Real delta_omega0_1(h1params->delta_omega0());
+			bool invert_1(h1params->invert_helix());
+			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
+			TS_TRACE( outbuffer );
+
+			if(i==1 || i==3) {
+				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
+				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT( invert_1 == false );
+			} else {
+				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
+				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT( invert_1 == true );
+			}
+
+		}
+
+		//Make a copy of the pose:
+		TS_TRACE( "Attempting to copy the pose using the assignment operator." );
+		core::pose::Pose posecopy2;
+		posecopy2 = *testpose_;
+
+		TS_TRACE( "Reading Crick parameters from the assignment-copied pose." );
+		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy2.conformation().parameters_set(1)->n_parameters());
+		TS_TRACE( outbuffer );
+		for(core::Size i=1; i<=4; ++i) {
+			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( posecopy2.conformation().parameters_set(1)->parameters(i) ) );
+			TS_ASSERT(h1params);
+			core::Real r0_1(h1params->r0());
+			core::Real omega0_1(h1params->omega0());
+			core::Real delta_omega0_1(h1params->delta_omega0());
+			bool invert_1(h1params->invert_helix());
+			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
+			TS_TRACE( outbuffer );
+
+			if(i==1 || i==3) {
+				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
+				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT( invert_1 == false );
+			} else {
+				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
+				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT( invert_1 == true );
+			}
+
+		}
+
+		TS_TRACE( "Finished test_params_data_storage unit test." );
+
+		return;
+	}
+
 }; //class params_data_storage_Tests

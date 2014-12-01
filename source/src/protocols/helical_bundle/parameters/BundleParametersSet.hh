@@ -77,7 +77,18 @@ namespace protocols {
 					/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
 					/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
 					/// be replicated a total of three times).					
-					core::Size bundle_symmetry() { return bundle_symmetry_; }
+					core::Size bundle_symmetry() const { return bundle_symmetry_; }
+
+					/// @brief Returns the number of symmetry copies to generate.
+					/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
+					/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
+					/// first 4 symmetry repeats would be generated.				
+					core::Size bundle_symmetry_copies() const { return bundle_symmetry_copies_; }
+
+					/// @brief Get the number of helices defined in each symmetry copy of this bundle.
+					///
+					core::Size n_helices() { return n_helices_; }
+
 
 				public: //Setters
 
@@ -87,17 +98,37 @@ namespace protocols {
 					/// be replicated a total of three times).					
 					void set_bundle_symmetry( core::Size const val ) { bundle_symmetry_ = val; return; }
 
+					/// @brief Sets the number of symmetry copies to generate.
+					/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
+					/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
+					/// first 4 symmetry repeats would be generated.				
+					void set_bundle_symmetry_copies( core::Size const val ) { bundle_symmetry_copies_ = val; return; }
+
+					/// @brief Set the number of helices defined in each symmetry copy of this bundle.
+					///
+					void set_n_helices( core::Size const val ) { n_helices_=val; return; }
+
 				private:
 
-				/********************************************************************************
-							PRIVATE DATA
-				*********************************************************************************/
+					/********************************************************************************
+								PRIVATE DATA
+					*********************************************************************************/
 
-				/// @brief The symmetry of the bundle created.
-				/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
-				/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
-				/// be replicated a total of three times).
-				core::Size bundle_symmetry_;
+					/// @brief The symmetry of the bundle created.
+					/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
+					/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
+					/// be replicated a total of three times).
+					core::Size bundle_symmetry_;
+
+					/// @brief The symmetry copies to generate.
+					/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
+					/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
+					/// first 4 symmetry repeats would be generated.
+					core::Size bundle_symmetry_copies_;
+
+					/// @brief The number of helices defined in each symmetry copy of this bundle.
+					///
+					core::Size n_helices_;
 
 
 			}; //class BundleParametersSet

@@ -55,7 +55,7 @@ namespace core {
 				residue_list_.clear();
 				if(src.residue_list_.size()>0) {
 					for(core::Size i=1, imax=src.residue_list_.size(); i<=imax; ++i) {
-						residue_list_.push_back( core::conformation::ResidueOP( new core::conformation::Residue( *src.residue_list_[i] ) ) ); //This copies the residue that was being pointed at.
+						residue_list_.push_back( src.residue_list_[i]->clone() ); //This copies the residue that was being pointed at.
 						//Note that when copying a Conformation, I need to add logic that will ensure that the Parameters objects that result have owning pointers to the residues in the Conformation,
 						//rather than to residues that only exist in the Parameters object.
 					}

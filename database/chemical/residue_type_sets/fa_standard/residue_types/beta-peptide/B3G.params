@@ -1,4 +1,8 @@
 #rosetta residue topology file
+#We are referring to this beta-amino acid as beta-3-glycine, in
+#analogy to the alpha-amino acids.  Confusingly, this is also
+#referred to in the literature as beta-Ala (or 3-amino propanoic
+#acid).
 NAME B3G
 IO_STRING B3G G
 TYPE POLYMER #residue type

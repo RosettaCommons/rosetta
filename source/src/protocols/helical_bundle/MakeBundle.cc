@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/helical_bundle/MakeBundle.cc
-/// @brief  Headers for MakeBundle.cc.  Builds a helical bundle using the Crick parameters.
+/// @brief  Builds a helical bundle using the Crick parameters.
 /// @details The bundle is centred on the origin, with the outer helix axis pointing along the
 /// global z-axis.  This mover calls the MakeBundleHelix mover.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -76,6 +76,7 @@ MakeBundle::MakeBundle():
 		reset_pose_(true),
 		make_bundle_helix_movers_(),
 		bundle_symmetry_(0),
+		bundle_symmetry_copies_(0),
 		default_r0_(0),
 		default_r0_set_(false),
 		default_omega0_(0),
@@ -136,13 +137,16 @@ void MakeBundle::apply (core::pose::Pose & pose)
 
 	core::pose::Pose newpose;
 
-	core::Size const repeats = (symmetry()<2 ? 1 : symmetry());
-	core::Real const omega0_offset_increment = numeric::constants::d::pi_2 / static_cast<core::Real>(repeats);
-	core::Real omega0_offset = 0;
+	core::Size const total_repeats(symmetry()<2 ? 1 : symmetry());
+	core::Size const repeats(symmetry_copies()< 1 ? total_repeats : symmetry_copies());
+	core::Real const omega0_offset_increment(numeric::constants::d::pi_2 / static_cast<core::Real>(total_repeats));
+	core::Real omega0_offset(0.0);
 
 	//The BundleParametersSet object that will hold the Crick parameters and will be passed into the Conformation object of the pose on which we will be operating.
-	BundleParametersSetOP output_parameters_set = BundleParametersSetOP( new BundleParametersSet );
+	BundleParametersSetOP output_parameters_set(BundleParametersSetOP( new BundleParametersSet ));
 	output_parameters_set->set_bundle_symmetry( symmetry() ); //Store the symmetry of this bundle.
+	output_parameters_set->set_bundle_symmetry_copies( symmetry_copies() ); //Store the number of symmetry copies to actually generate.
+	output_parameters_set->set_n_helices( n_helices() ); //Store the number of helices that are defined for each symmetry repeat.
 
 	for(core::Size irepeat=1; irepeat<=repeats; ++irepeat) { //Loop through all of the symmetry copies.
 		for(core::Size ihelix=1, ihelixmax=n_helices(); ihelix<=ihelixmax; ++ihelix) { //Loop through all of the helices defined for each symmetry repeat.
@@ -228,6 +232,19 @@ MakeBundle::parse_my_tag(
 		if(TR.visible()) {
 			if(symmetry()<2) TR << "Symmetry mode set to false." << std::endl;
 			else TR << symmetry() << "-fold symmetry set." << std::endl;
+		}
+	}
+	if (tag->hasOption("symmetry_copies")) {
+		set_symmetry_copies( tag->getOption<core::Size>("symmetry_copies", 0) );
+		if(TR.visible()) {
+			if(symmetry_copies()<1) TR << "All symmetry copies will be generated." << std::endl;
+			if(symmetry_copies()==1) TR << "Only the first symmetry copy will be generated." << std::endl;
+			else {
+				TR << symmetry_copies() << " symmetry copies will be generated." << std::endl;
+				if(symmetry_copies() > symmetry()) {
+					TR << "Note!  The number of symmetry copies is greater than the bundle symmetry.  This only really makes sense for helical repeat symmetries (i.e. symmetries with z-offset)." << std::endl;
+				}
+			}
 		}
 	}
 	if ( tag->hasOption("reset") ) {

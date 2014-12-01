@@ -226,6 +226,9 @@ namespace protocols {
 						return r1_[index];
 					}
 
+					/// @brief Const-access to the whole r1 vector.
+					utility::vector1 < core::Real > const & r1_vect() const { return r1_; }
+
 					/// @brief Returns the minor helix turn per residue, defined for all atoms.
 					/// @details In radians.
 					core::Real omega1() const { return omega1_; }
@@ -245,12 +248,18 @@ namespace protocols {
 						return delta_omega1_[index];
 					}
 
+					/// @brief Const-access to the whole delta_omega1 vector.
+					utility::vector1 < core::Real > const & delta_omega1_vect() const { return delta_omega1_; }
+
 					/// @brief Returns the minor helix offset along the minor helix axis, defined on a per-atom basis, in Angstroms, for the atom with the index value.
 					/// @details The index value is checked to see whether it is in range ONLY in debug-mode compiliation.
 					core::Real delta_z1( core::Size const index ) const {
 						assert( index<=delta_z1_.size() && index>0 );
 						return delta_z1_[index];
 					}
+
+					/// @brief Const-access to the whole delta_z1 vector.
+					utility::vector1 < core::Real > const & delta_z1_vect() const { return delta_z1_; }
 
 					/// @brief Should the helix direction be reversed?
 					///

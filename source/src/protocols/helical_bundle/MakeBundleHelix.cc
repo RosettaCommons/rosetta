@@ -87,7 +87,9 @@ MakeBundleHelix::~MakeBundleHelix() {}
 ///
 ///@brief Clone operator to create a pointer to a fresh MakeBundleHelix object that copies this one.
 protocols::moves::MoverOP MakeBundleHelix::clone() const {
-	return protocols::moves::MoverOP( new MakeBundleHelix( *this ) );
+	MakeBundleHelixOP newmover(new MakeBundleHelix( *this ));
+	newmover->set_bundle_parameters( utility::pointer::dynamic_pointer_cast< BundleParameters >(bundle_parameters()->clone()) );
+	return utility::pointer::dynamic_pointer_cast<protocols::moves::Mover>( newmover );
 }
 
 ///
@@ -137,7 +139,10 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > atom_positions;
 	if(TR.Debug.visible()) TR.Debug << "Generating atom positions." << std::endl;
 	bool failed=false;
-	generate_atom_positions(atom_positions, helixpose, helix_start, helix_end, failed );
+	generate_atom_positions(atom_positions, helixpose, helix_start, helix_end, r0(),
+		omega0(), delta_omega0(), delta_t(), invert_helix(), r1_vect(), omega1(), z1(),
+		delta_omega1_vect(), delta_omega1_all(), delta_z1_vect(), failed );
+
 	set_last_apply_failed(failed);
 	if(failed) {
 		if(TR.visible()) TR << "Mover failed.  The Crick parameters do not generate a sensible helix.  Returning input pose." << std::endl;
@@ -241,169 +246,6 @@ void MakeBundleHelix::set_tail_dihedrals( core::pose::Pose &helixpose ) const
 		if(helixpose.residue(helixpose.n_residue()-1).type().is_alpha_aa() || helixpose.residue(helixpose.n_residue()-1).type().is_beta_aa()) {
 			helixpose.set_omega(helixpose.n_residue()-1, 180.0);
 		}
-		return;
-}
-
-/// @brief Generate the x,y,z coordinates of the mainchain atoms using the Crick equations.
-/// @details Coordinates will be returned as a vector of vectors of xyzVectors.  The outer
-/// index will refer to residue number, and the inner index will refer to atom number.
-/// Returns failed=true if coordinates could not be generated, false otherwise.
-void MakeBundleHelix::generate_atom_positions(
-	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > &outvector,
-	core::pose::Pose const &helixpose,
-	core::Size const helix_start,
-	core::Size const helix_end,
-	bool &failed
-) const {
-
-	outvector.clear();
-	failed=false;
-
-	core::Real t = -1.0 * static_cast<core::Real>(helix_length() + 2) / 2.0 + delta_t();
-
-	for(core::Size ir2=helix_start-1; ir2<=helix_end+1; ++ir2) { //Loop through all residues in the helix, padded by one on either side
-		core::Size ir = ir2;
-		//Repeat start and end residues to pad by one:
-		if(ir2==helix_start-1) ir=helix_start;
-		if(ir2==helix_end+1) ir=helix_end;
-		utility::vector1 < numeric::xyzVector <core::Real> > innervector;
-		for(core::Size ia=1, iamax=helixpose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) { //Loop through all mainchain atoms in the current helix residue
-			innervector.push_back( numeric::crick_equations::XYZ_BUNDLE(
-				t, r0(), omega0(),
-				delta_omega0() + ( invert_helix() ? numeric::constants::d::pi : 0 ),
-				r1(ia), omega1()-omega0(), z1(), delta_omega1(ia)+delta_omega1_all(), delta_z1(ia), failed )
-			);
-			if(invert_helix()) {
-				innervector[ia].x( -1.0*innervector[ia].x() );
-				//innervector[ia].y( -1.0*innervector[ia].y() );
-				innervector[ia].z( -1.0*innervector[ia].z() );
-			}
-			if(failed) break;
-		}
-		if(failed) break;
-		outvector.push_back(innervector);
-		t+=1.0;
-	}
-
-	if(failed) outvector.clear();
-
-	return;
-}
-
-/// @brief Place the helix mainchain atoms based on the Crick equations.
-///
-void MakeBundleHelix::place_atom_positions(
-	core::pose::Pose &pose,
-	utility::vector1 < utility::vector1 < numeric::xyzVector < core::Real >  > > const &atom_positions,
-	core::Size const helix_start,
-	core::Size const helix_end
-) const {
-
-	//Index in the outer vector for the current residue.
-	core::Size index=2;
-
-	for(core::Size ir=helix_start; ir<=helix_end; ++ir) {
-		for(core::Size ia=1, iamax=atom_positions[index].size(); ia<=iamax; ++ia) {
-			pose.set_xyz( core::id::AtomID( ia, ir ), atom_positions[index][ia] );
-		}
-		++index;
-	}
-
-	pose.update_residue_neighbors();
-
-	return;
-}
-
-/// @brief Copy backbone bond length values from one pose, where helix mainchain atom coordinates have been
-/// set with the Crick equations, to another with ideal geometry.
-void MakeBundleHelix::copy_helix_bondlengths(
-	core::pose::Pose &pose,
-	core::pose::Pose const &ref_pose,
-	core::Size const helix_start,
-	core::Size const helix_end
-) const {
-	for(core::Size ir=helix_start; ir<=helix_end; ++ir) {
-		for(core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
-			if(ia==1 && ir==helix_start) continue; //Skip the first atom.
-			core::id::AtomID const thisatom( ia, ir );
-			core::id::AtomID const prevatom( (ia==1 ? iamax : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom, in which case the previous atom is iamax in the previous residue.
-			pose.conformation().set_bond_length( thisatom, prevatom, ref_pose.xyz(thisatom).distance( ref_pose.xyz(prevatom) ) );
-		}
-	}
-
-	//TODO properly handle the first and last residues using the extra residue xyz coordinates that were generated!
-
-	pose.update_residue_neighbors();
-
-	return;
-}
-
-/// @brief Copy backbone bond angle values from one pose, where helix mainchain atom coordinates have been
-/// set with the Crick equations, to another with ideal geometry.
-void MakeBundleHelix::copy_helix_bondangles(
-	core::pose::Pose &pose,
-	core::pose::Pose const &ref_pose,
-	core::Size const helix_start,
-	core::Size const helix_end
-) const {
-	for(core::Size ir=helix_start; ir<=helix_end; ++ir) {
-		for(core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
-			if(ia==1 && ir==helix_start) continue; //Skip the first atom.
-			if(ia==iamax && ir==helix_end) continue; //Skip the last atom.
-			core::id::AtomID const thisatom( ia, ir );
-			core::id::AtomID const prevatom( (ia==1 ? iamax : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom in this residue, in which case the previous atom is iamax in the previous residue.
-			core::id::AtomID const nextatom( (ia==iamax ? 1 : ia + 1), (ia==iamax ? ir+1 : ir) ); //The next atom is ia+1 in this residue, unless this atom is the last atom in this residue, in which case the next atom is the first atom in the next residue.
-			pose.conformation().set_bond_angle( prevatom, thisatom, nextatom, numeric::angle_radians<core::Real>( ref_pose.xyz(prevatom), ref_pose.xyz(thisatom), ref_pose.xyz(nextatom) ) );
-		}
-	}
-
-	//TODO properly handle the first and last residues using the extra residue xyz coordinates that were generated!
-
-	pose.update_residue_neighbors();
-
-	return;
-}
-
-/// @brief Copy backbone dihedral values from one pose, where helix mainchain atom coordinates have been
-/// set with the Crick equations, to another with ideal geometry.
-void MakeBundleHelix::copy_helix_dihedrals(
-	core::pose::Pose &pose,
-	core::pose::Pose const &ref_pose,
-	core::Size const helix_start,
-	core::Size const helix_end
-) const {
-	for(core::Size ir=helix_start; ir<=helix_end; ++ir) {
-		for(core::Size itors=1, itorsmax=ref_pose.residue(ir).mainchain_torsions().size(); itors<=itorsmax; ++itors) {
-			pose.conformation().set_torsion( core::id::TorsionID( ir, core::id::BB, itors ), ref_pose.conformation().torsion( core::id::TorsionID( ir, core::id::BB, itors ) ) );
-		}
-	}
-
-	//TODO properly handle the first and last residues using the extra residue xyz coordinates that were generated!
-
-	pose.update_residue_neighbors();
-
-	return;
-}
-
-/// @brief Align mainchain atoms of pose to ref_pose mainchain atoms.
-///
-void MakeBundleHelix::align_mainchain_atoms(
-	core::pose::Pose &pose,
-	core::pose::Pose const &ref_pose,
-	core::Size const helix_start,
-	core::Size const helix_end
-) const {
-		core::id::AtomID_Map< core::id::AtomID > amap;
-		core::pose::initialize_atomid_map(amap, pose, core::id::BOGUS_ATOM_ID);
-
-		for(core::Size ir=helix_start; ir<=helix_end; ++ir) {
-			for(core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
-				amap[core::id::AtomID(ia,ir)] = core::id::AtomID(ia,ir);
-			}
-		}
-
-		core::scoring::superimpose_pose( pose, ref_pose, amap );
-
 		return;
 }
 

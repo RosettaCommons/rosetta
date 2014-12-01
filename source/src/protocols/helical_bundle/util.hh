@@ -56,6 +56,83 @@ namespace helical_bundle {
 		utility::vector1 < core::Real > &delta_z1
 	);
 
+	/// @brief Generate the x,y,z coordinates of the mainchain atoms using the Crick equations.
+	/// @details Coordinates will be returned as a vector of vectors of xyzVectors.  The outer
+	/// index will refer to residue number, and the inner index will refer to atom number.
+	/// Returns failed=true if coordinates could not be generated, false otherwise.
+	void generate_atom_positions(
+		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > &outvector,
+		core::pose::Pose const &helixpose,
+		core::Size const helix_start,
+		core::Size const helix_end,
+		core::Real const &r0,
+		core::Real const &omega0,
+		core::Real const &delta_omega0,
+		core::Real const &delta_t,
+		bool const invert_helix,
+		utility::vector1 < core::Real > const &r1,
+		core::Real const &omega1,
+		core::Real const &z1,
+		utility::vector1 < core::Real > const &delta_omega1,
+		core::Real const &delta_omega1_all,
+		utility::vector1 < core::Real > const &delta_z1,
+		bool &failed
+	);
+
+	/// @brief Place the helix mainchain atoms based on the Crick equations.
+	///
+	void place_atom_positions(
+		core::pose::Pose &pose,
+		utility::vector1 < utility::vector1 < numeric::xyzVector < core::Real >  > > const &atom_positions,
+		core::Size const helix_start,
+		core::Size const helix_end
+	);
+
+	/// @brief Copy backbone bond length values from one pose, where helix mainchain atom coordinates have been
+	/// set with the Crick equations, to another with ideal geometry.
+	void copy_helix_bondlengths(
+		core::pose::Pose &pose,
+		core::pose::Pose const &ref_pose,
+		core::Size const helix_start,
+		core::Size const helix_end
+	);
+
+	/// @brief Copy backbone bond angle values from one pose, where helix mainchain atom coordinates have been
+	/// set with the Crick equations, to another with ideal geometry.
+	void copy_helix_bondangles(
+		core::pose::Pose &pose,
+		core::pose::Pose const &ref_pose,
+		core::Size const helix_start,
+		core::Size const helix_end
+	);
+
+	/// @brief Copy backbone dihedral values from one pose, where helix mainchain atom coordinates have been
+	/// set with the Crick equations, to another with ideal geometry.
+	void copy_helix_dihedrals(
+		core::pose::Pose &pose,
+		core::pose::Pose const &ref_pose,
+		core::Size const helix_start,
+		core::Size const helix_end
+	);
+
+	/// @brief Align mainchain atoms of pose to ref_pose mainchain atoms.
+	///
+	void align_mainchain_atoms(
+		core::pose::Pose &pose,
+		core::pose::Pose const &ref_pose,
+		core::Size const helix_start,
+		core::Size const helix_end
+	);
+
+	/// @brief Align mainchain atoms of pose to ref_pose mainchain atoms,
+	/// moving ONLY the residues involved in the alignment.
+	void align_mainchain_atoms_of_residue_range(
+		core::pose::Pose &pose,
+		core::pose::Pose const &ref_pose,
+		core::Size const helix_start,
+		core::Size const helix_end
+	);
+
 } //namespace helical_bundle
 } //namespace protocols
 

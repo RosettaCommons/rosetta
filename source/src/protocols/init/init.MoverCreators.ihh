@@ -115,6 +115,8 @@
 #include <protocols/helical_bundle/FitSimpleHelixCreator.hh>
 #include <protocols/helical_bundle/MakeBundleCreator.hh>
 #include <protocols/helical_bundle/MakeBundleHelixCreator.hh>
+#include <protocols/helical_bundle/PerturbBundleCreator.hh>
+#include <protocols/helical_bundle/PerturbBundleHelixCreator.hh>
 
 #include <protocols/idealize/IdealizeMoverCreator.hh>
 

@@ -1,4 +1,6 @@
 #rosetta residue topology file
+#This is beta-3-homoalanine, also referred to in the literature as
+#3-aminobutanoic acid (beta-Abu).
 NAME B3A
 IO_STRING B3A A
 TYPE POLYMER #residue type

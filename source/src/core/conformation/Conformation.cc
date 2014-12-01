@@ -140,9 +140,9 @@ Conformation::Conformation( Conformation const & src ) :
 	// parametric conformations
 	parameters_set_.clear();
 	if(src.parameters_set_.size() > 0) {
-		for(core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i) {
-			parameters_set_.push_back( ParametersSetOP( new ParametersSet( *src.parameters_set_[i] ) ) );
-			parameters_set_[i]->update_residue_links( get_self_ptr() ); //Make sure that the new parameters_set_ has proper links to the residue objects in this new conformation
+		for(core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i) {
+			parameters_set_.push_back( src.parameters_set_[i]->clone() );
+			parameters_set_[parameters_set_.size()]->update_residue_links( *this );
 		}
 	}
 
@@ -193,7 +193,13 @@ Conformation::operator=( Conformation const & src )
 		(*atom_tree_) = (*src.atom_tree_);
 
 		// parametric conformations
-		parameters_set_ = src.parameters_set_;
+		parameters_set_.clear();
+		if(src.parameters_set_.size() > 0) {
+			for(core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i) {
+				parameters_set_.push_back( src.parameters_set_[i]->clone() );
+				parameters_set_[parameters_set_.size()]->update_residue_links( *this );
+			}
+		}
 
 		// carbohydrates?
 		contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;

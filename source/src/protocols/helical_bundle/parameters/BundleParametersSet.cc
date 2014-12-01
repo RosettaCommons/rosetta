@@ -45,13 +45,17 @@ namespace protocols {
 			/// @brief Constructor.
 			///
 			BundleParametersSet::BundleParametersSet() :
-				bundle_symmetry_(0)
+				bundle_symmetry_(0),
+				bundle_symmetry_copies_(0),
+				n_helices_(0)
 			{
 			}
 
 			BundleParametersSet::BundleParametersSet( BundleParametersSet const & src ) :
 				core::conformation::parametric::ParametersSet(src),
-				bundle_symmetry_( src.bundle_symmetry_ )
+				bundle_symmetry_( src.bundle_symmetry_ ),
+				bundle_symmetry_copies_( src.bundle_symmetry_copies_ ),
+				n_helices_(src.n_helices_)
 			{
 			}
 

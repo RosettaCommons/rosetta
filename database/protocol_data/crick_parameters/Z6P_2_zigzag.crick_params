@@ -1,0 +1,24 @@
+# Parameters for a beta-amino acid Z6P positive zig-zag,
+# such as that potentailly formed by trans-ACPC.  This is
+# a predicted beta-amino acid secondary structure type that
+# resembles a strand with a positive twist.
+# Phi/theta/psi/omega values were taken from Beke et al. (2006) J. Comp. Chem. 27(1):20-38.
+# Phi/theta/psi/omega = -57.5, -69.6, -171.5, 180.0
+# This file was generated using the following commandline flags for the fit_helixparams app:
+# -extra_res_fa ~/rosetta_devcopy/Rosetta/main/database/chemical/residue_type_sets/fa_standard/residue_types/beta-peptide/B3A.params
+# -residue_type B3A -residue_repeats 12 -mainchain_torsions -57.5 -69.6 -171.5 180 
+# -min_tolerance 1e-15 -r1_guess 1.0 -omega1_guess 3.14 -dz1_guess 3.8
+r1	1.142625444635
+r1	1.668568200069
+r1	1.224111507031
+r1	-0.166908638148
+omega1	3.270295648213
+z1	3.653864783218
+delta_omega1	0.707203071905
+delta_omega1	0.000000000000
+delta_omega1	-0.860109955636
+delta_omega1	0.974620044207
+delta_z1	-0.966806026339
+delta_z1	0.000000000000
+delta_z1	0.838197552704
+delta_z1	1.787217671742

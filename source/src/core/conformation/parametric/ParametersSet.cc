@@ -48,6 +48,8 @@ namespace core {
 			{
 			}
 
+			/// @brief Copy constructor.
+			///
 			ParametersSet::ParametersSet( ParametersSet const & src ) :
 				utility::pointer::ReferenceCount()
 			#ifdef PTR_MODERN
@@ -77,7 +79,7 @@ namespace core {
 			/// @brief Only for copying Conformation objects, this ensures that the new ParametersSet object's
 			/// Parameters objects have lists of ResidueOPs that point to residues in the new Conformation object,
 			/// rather than to residues that only exist in the Parameters objects.
-			void ParametersSet::update_residue_links( core::conformation::ConformationOP new_conf ) {
+			void ParametersSet::update_residue_links( core::conformation::Conformation &new_conf ) {
 				core::Size const nparams=parameters_.size();
 				if(nparams==0) return; //Do nothing if this object contains no Parameters objects.
 				for(core::Size i=1; i<=nparams; ++i) {
@@ -85,8 +87,8 @@ namespace core {
 					if(nresidue==0) continue; //Do nothing to this Parameters object if it has no residues in its residue list.
 					for(core::Size j=1; j<=nresidue; ++j) {
 						core::Size seq_pos=parameters_[i]->residue(j)->seqpos();
-						assert( seq_pos > 0 && seq_pos <= new_conf->size() );
-						parameters_[i]->set_residue(j, new_conf->residue_op(seq_pos));
+						assert( seq_pos > 0 && seq_pos <= new_conf.size() );
+						parameters_[i]->set_residue(j, new_conf.residue_op(seq_pos));
 					}
 				}
 				return;
