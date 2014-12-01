@@ -147,8 +147,15 @@ void ClaimingMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
     }
   } else {
     if( !( passports_.empty() ) ){
-      throw EXCN_Env_Passport( "ClaimingMover lacks a superenvironment passport for a superenvironment with which it is registered.",
+      if( passports_.top().first.lock()->id() == env->id() ) {
+        std::ostringstream ss;
+        ss << "ClaimingMover " << this->get_name() << " already has a passport for " << env->name()
+           << ". This probably means Environment::start got called multiple times." << std::endl;
+        throw EXCN_Env_Passport( ss.str(), get_name(), env_ap );
+      } else {
+        throw EXCN_Env_Passport( "ClaimingMover lacks a superenvironment passport for a superenvironment with which it is registered.",
                                get_name(), env_ap );
+      }
     }
   }
 

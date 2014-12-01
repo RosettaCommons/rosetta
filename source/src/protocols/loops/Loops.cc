@@ -88,15 +88,27 @@ Loops::Loops( utility::vector1< bool > const& selection,
     } else if( !selection[i] && prev ){
       assert( start != 0 );
       if( randomize_cutpoints ){
-        this->add_loop( protocols::loops::Loop( start, i, numeric::random::rg().random_range( (int) start+1, (int) i-1 ) ) );
+        this->add_loop( protocols::loops::Loop( start, i - 1, numeric::random::rg().random_range( (int) start+1, (int) i-1 ) ) );
       } else {
-        this->add_loop( protocols::loops::Loop( start, i, (i - start) / 2 ) );
+        this->add_loop( protocols::loops::Loop( start, i - 1, (i - start) / 2 ) );
       }
       start = 0;
     }
 
     prev = selection[i];
   }
+
+  // if the last residue is true, the loop doesn't get added. For a regular loop, I imagine
+  // that this is not useful, but this code gets used for other stuff...
+  if( start ){
+    core::Size end = selection.size();
+    if( randomize_cutpoints ){
+      this->add_loop( protocols::loops::Loop( start, end, numeric::random::rg().random_range( (int) start+1, (int) end ) ) );
+    } else {
+      this->add_loop( protocols::loops::Loop( start, end, (end - start + 1) / 2 ) );
+    }
+  }
+
 }
 
 // destructor

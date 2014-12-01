@@ -116,7 +116,12 @@ void XYZClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elemen
 
         // if the relative setting is activated, only DoFs that build *relative* positions are claimed.
         // in other words, if the parent is outside the selection, don't claim it.
-        if( !relative() || selection[ pose.conformation().atom_tree().atom( atom_id ).parent()->id().rsd() ] ) {
+        core::kinematics::tree::AtomCOP parent = pose.conformation().atom_tree().atom( atom_id ).parent();
+        if( !parent ){
+          tr.Debug << this->type() << "Claim owned by '" << owner()->get_name() << "' and strengths ctrl="
+                   << ctrl_strength() << " and init=" << init_strength() << " skipping " << atom_id
+                   << " because its parent is null." << std::endl;
+        } else if ( !relative() || selection[ parent->id().rsd() ] ) {
           if( pose.conformation().atom_tree().atom( atom_id ).is_jump() ){
             for( int j = core::id::RB1; j <= core::id::RB6; ++j ){
               elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,

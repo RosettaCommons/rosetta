@@ -65,6 +65,9 @@ public:
 
   virtual bool is_protected() const { return true; }
 
+  //@brief return a copy of in_rsd with variants matched to seqpos in this conformation
+  ResidueOP match_variants( core::Size seqpos, Residue const& in_rsd ) const;
+  
 //Annotation functions:
   SequenceAnnotationCOP resolver() const;
 
@@ -86,7 +89,7 @@ public:
   virtual void replace_residue( Size seqpos, core::conformation::Residue const & new_rsd,
                                 utility::vector1< std::pair< std::string, std::string > > const& atom_pairs );
 
-  virtual void replace_residue( Size seqpos, core::conformation::Residue const & new_rsd, bool orient_backbone );
+  virtual void replace_residue( Size seqpos, core::conformation::Residue const& new_rsd, bool orient_backbone );
 
   virtual void set_stub_transform( core::id::StubID const & stub_id1,
                                    core::id::StubID const & stub_id2,

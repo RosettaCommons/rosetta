@@ -86,7 +86,7 @@ protected:
 
   /// @brief hook that is called each time the passport status is updated
   ///        (presumably because there's a new subenvironment, or the sub-
-  ///        environment has expired). A conformation is provided for reference.
+  ///        environment has expired).
   virtual void passport_updated() {}
 
   /// @brief hook that provides information about the final result of broking

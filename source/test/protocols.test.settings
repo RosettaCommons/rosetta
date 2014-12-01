@@ -18,6 +18,7 @@ sources = {
 	],
 	"abinitio/abscript" : [
 		"FragmentCMTest",
+                "RigidChunkTest",
 	],
 
 	"antibody": [
@@ -409,6 +410,7 @@ testinputfiles = [
 	"abinitio/score5_pcs_only.wts_patch",
 	"abinitio/score3_pcs_only.wts_patch",
         "abinitio/abscript/one_frag3_per_pos",
+        "abinitio/abscript/ubq_frag.pdb",
 	"antibody/2j88.pdb",
 	"antibody/1bln_AB_chothia.pdb",
 	"antibody/1bln_AB_aho.pdb",

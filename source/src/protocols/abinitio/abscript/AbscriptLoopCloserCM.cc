@@ -129,7 +129,8 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 
   //Produce unprotected pose
   core::pose::Pose pose( in_pose );
-  pose.set_new_conformation( in_pose.conformation().clone() );
+  core::conformation::ConformationOP deprotected( new core::conformation::Conformation( in_pose.conformation() ) );
+  pose.set_new_conformation( deprotected );
 
   tr.Debug << "Closing loops with current fold tree: " << in_pose.fold_tree();
   tr.Debug << "Using final fold tree: " << *final_ft_ << std::endl;
@@ -152,6 +153,9 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
   DofUnlock unlock( in_pose.conformation(), passport() );
 
   for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
+    tr.Debug << "Movemap for " << in_pose.residue( i ).name3() << i
+             << ": bb(" << ( movemap_->get_bb( i ) ? "T" : "F" )
+             << ") chi(" << ( movemap_->get_chi( i ) ? "T" : "F" ) << ")" << std::endl;
     try {
       if( pose.omega( i ) != in_pose.omega( i ) ){
         in_pose.set_omega( i, pose.omega( i ) );
@@ -252,13 +256,29 @@ void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
     if( movemap_->get_bb( i ) ){
       pos_list.push_back( i );
     }
+    if( tr.Trace.visible() ){
+      for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+        tr.Trace << ( movemap_->get_bb(i) ? "T" : "F" );
+      }
+      tr.Trace << std::endl;
+    }
+  }
+
+  if( pos_list.size() == 0 &&
+      pose.fold_tree().num_cutpoint() - final_ft_->num_cutpoint() > 0 ){
+    std::ostringstream ss;
+    ss << this->get_name() << " tried to start closing the fold tree by idealization ("
+       << pose.fold_tree().num_cutpoint() - final_ft_->num_cutpoint()
+       << " cuts are to be closed) but was not given any movable positions." << std::endl;
+    throw utility::excn::EXCN_BadInput( ss.str() );
   }
 
   idealizer->set_pos_list( pos_list );
 
   core::kinematics::FoldTree fold_tree( pose.fold_tree() );
   pose.fold_tree( *final_ft_ );
-  idealizer->apply( pose );
+  if( pos_list.size() > 0 ) // req'd because an empty pos_list is treated as all
+    idealizer->apply( pose );
   pose.fold_tree( fold_tree );
   (*scorefxn_)( pose );
   //jd2::output_intermediate_pose( pose, "loops_closed_preprocessed" );

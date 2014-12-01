@@ -20,9 +20,13 @@
 
 // Project headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/ResidueFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/BondedAtom.hh>
+
+#include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/id/TorsionID.hh>
 
@@ -314,16 +318,98 @@ std::string dof_id_to_string( core::id::DOF_ID const& id, ProtectedConformation 
   return ss.str();
 }
 
-template< typename Param >
-void ProtectedConformation::replace_residue_sandbox( Size const seqpos, Residue const & new_rsd, Param p ){
-  // TODO: accommodate design?
+ResidueOP rm_variant(
+  ResidueOP new_rsd,
+  Residue const& old_rsd,
+  core::chemical::ResidueTypeSet const& rsd_set,
+  core::chemical::VariantType variant,
+  core::conformation::Conformation const& conf )
+{
+  core::chemical::ResidueType const& new_type( rsd_set.get_residue_type_with_variant_removed( new_rsd->type(), variant ) );
+  new_rsd = ResidueOP( ResidueFactory::create_residue( new_type, *new_rsd, conf ) ) ;
+  tr.Warning << "[WARNING] to replace " << old_rsd.name3() << old_rsd.seqpos() << " with "
+             << new_rsd->name3() << new_rsd->seqpos() << " variant "
+             << new_rsd->type().properties().get_string_from_variant( variant )
+             << " was removed." << std::endl;
 
-  if( new_rsd.natoms() != this->residue( seqpos ).natoms() ){
+  return new_rsd;
+}
+
+ResidueOP add_variant(
+  ResidueOP new_rsd,
+  Residue const& old_rsd,
+  core::chemical::ResidueTypeSet const& rsd_set,
+  core::chemical::VariantType variant,
+  core::conformation::Conformation const& conf )
+{
+  core::chemical::ResidueType const& new_type( rsd_set.get_residue_type_with_variant_added( new_rsd->type(), variant ) );
+  new_rsd = ResidueOP( ResidueFactory::create_residue( new_type, *new_rsd, conf ) ) ;
+  tr.Warning << "[WARNING] to replace " << old_rsd.name3() << old_rsd.seqpos() << " with "
+             << new_rsd->name3() << new_rsd->seqpos() << " variant "
+             << new_rsd->type().properties().get_string_from_variant(variant)
+             << " was added." << std::endl;
+
+  return new_rsd;
+}
+
+
+
+ResidueOP ProtectedConformation::match_variants(
+  core::Size seqpos,
+  Residue const& in_rsd ) const
+{
+  using namespace core::chemical;
+  using namespace core::conformation;
+
+  Residue const& old_rsd = residue( seqpos );
+  ResidueTypeSet const& rsd_set( in_rsd.residue_type_set() );
+  ResidueOP new_rsd = ResidueOP( new Residue( in_rsd ) );
+
+  // add any variants in the old residue that aren't in the new residue
+  utility::vector1< std::string > old_variants = old_rsd.type().properties().get_list_of_variants();
+  for( Size i = 1; i <= old_variants.size(); ++i ){
+    VariantType variant = old_rsd.type().properties().get_variant_from_string( old_variants[i] );
+    if ( !new_rsd->type().has_variant_type( variant ) &&
+         old_rsd.type().has_variant_type( variant ) ){
+      new_rsd = add_variant( new_rsd, old_rsd, rsd_set, variant, *this );
+    }
+  }
+
+  // remove any variants in the new residue that aren't in the old residue
+  utility::vector1< std::string > new_variants = in_rsd.type().properties().get_list_of_variants();
+  for( Size i = 1; i <= new_variants.size(); ++i ){
+    VariantType variant = in_rsd.type().properties().get_variant_from_string( new_variants[i] );
+    if ( new_rsd->type().has_variant_type( variant ) &&
+         !old_rsd.type().has_variant_type( variant ) ){
+      new_rsd = rm_variant( new_rsd, old_rsd, rsd_set, variant, *this );
+    }
+  }
+
+  return new_rsd;
+}
+
+template< typename Param >
+void ProtectedConformation::replace_residue_sandbox( Size const seqpos, Residue const& in_rsd, Param p ){
+  // TODO: accommodate design?
+  ResidueOP new_rsd = ResidueOP( new Residue( in_rsd ) );
+
+  if ( new_rsd->name3() != this->residue( seqpos ).name3() ){
     std::ostringstream ss;
     ss << "Residue replacement of residue " << residue( seqpos ).name3() << seqpos << " ("
        << residue( seqpos ).natoms() << " atoms) failed because the input residue ("
-       << new_rsd.name3() << ", " << new_rsd.natoms() << " atoms) differed in the number of atoms from the current residue.";
+       << new_rsd->name3() << ", " << new_rsd->natoms() << " atoms) had a different identity than the current residue.";
     throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );
+  } else if( new_rsd->natoms() != this->residue( seqpos ).natoms() ){
+
+    new_rsd = match_variants( seqpos, *new_rsd );
+
+    if( new_rsd->natoms() != this->residue( seqpos ).natoms() ) {
+      std::ostringstream ss;
+      ss << "Residue replacement of residue " << residue( seqpos ).name3() << seqpos << " ("
+         << residue( seqpos ).natoms() << " atoms) failed because the input residue ("
+         << new_rsd->name3() << ", " << new_rsd->natoms() << " atoms) differed in the number of atoms from the current residue.";
+      throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );
+    }
   }
 
   typedef std::map< core::id::DOF_ID, core::Real > DofMap;
@@ -331,7 +417,7 @@ void ProtectedConformation::replace_residue_sandbox( Size const seqpos, Residue 
   Residue const old_rsd( residue( seqpos ) );
 
   //do the actual replacement
-  Parent::replace_residue( seqpos, new_rsd, p );
+  Parent::replace_residue( seqpos, *new_rsd, p );
 
   DofMap new_dofs = collect_dofs( seqpos, this );;
 
@@ -340,7 +426,7 @@ void ProtectedConformation::replace_residue_sandbox( Size const seqpos, Residue 
     if( old_dofs.size() != new_dofs.size() ){
       std::ostringstream ss;
       ss << "residue replacement of residue " << residue( seqpos ).name3() << seqpos << " with a "
-         << new_rsd.name3() << " (" << new_rsd.natoms() << " failed"
+         << new_rsd->name3() << " (" << new_rsd->natoms() << " failed"
          << ": dofs were created or destroyed during replacement (old size: " << old_dofs.size()
          << "; new size: " << new_dofs.size() << ")" << std::endl;
       throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );

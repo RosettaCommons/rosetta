@@ -1980,6 +1980,19 @@ ResidueType::add_variant_type( std::string const & variant_type )
 	properties_->set_variant_type( variant_type, true );
 }
 
+void
+ResidueType::remove_variant_type( VariantType const variant_type )
+{
+  properties_->set_variant_type( variant_type, false );
+}
+
+void
+ResidueType::remove_variant_type( std::string const& variant_type )
+{
+  properties_->set_variant_type( variant_type, false );
+}
+
+
 //bool
 //ResidueType::has_variant_type( VariantType const variant_type ) const
 //{

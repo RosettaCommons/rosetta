@@ -1507,6 +1507,12 @@ public:
 	/// @brief Add a variant type to this ResidueType by string.
 	void add_variant_type( std::string const & variant_type );
 
+  /// @brief Remove a variant type to this ResidueType.
+  void remove_variant_type( VariantType const variant_type );
+
+  /// @brief Remove a variant type to this string.
+  void remove_variant_type( std::string const & variant_type );
+
 	/// @brief  Generic variant access.
 	bool has_variant_type( VariantType const variant_type ) const
 	{
