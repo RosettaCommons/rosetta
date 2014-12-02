@@ -420,7 +420,7 @@ correct_dunbrack() {
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->aa_map((core::chemical::AA)aa);
 
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
-			boost::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
+			utility::pointer::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
 				core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( *(restype[1]) ) );
 
 		if (!rotlib) continue;
@@ -475,8 +475,7 @@ correct_dunbrack() {
 		core::conformation::ResidueOP working_res ( core::conformation::ResidueFactory::create_residue ( *(restype[1]) ) );
 
 		// semirotameric sampling
-		core::Real start,step;
-		if (aa == aa_asn || aa == aa_gln || aa == aa_his || aa == aa_trp) { start = -180.0; step = 10.0; }
+		core::Real start=-180.0,step=10.0;
 		if (aa == aa_asp || aa == aa_glu) { start = -90.0; step = 5.0; }
 		if (aa == aa_phe || aa == aa_tyr) { start = -30.0; step = 5.0; }
 
@@ -561,7 +560,7 @@ correct_dunbrack() {
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->aa_map((core::chemical::AA)aa);
 
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
-			boost::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
+			utility::pointer::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
 				core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( *(restype[1]) ) );
 
 		if (!rotlib) continue;
@@ -755,7 +754,7 @@ calc_scores() {
 		runtime_assert( rsd.aa() == aa ); // sanity check!
 
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
-			boost::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
+			utility::pointer::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
 				core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rsd.type() ) );
 
 		if (!rotlib) continue;
@@ -797,8 +796,7 @@ calc_scores() {
 		// semirot
 		if ( !is_semi_rot( (core::chemical::AA)aa ) ) continue;
 
-		core::Real start,step;
-		if (aa == aa_asn || aa == aa_gln || aa == aa_his || aa == aa_trp) { start = -180.0; step = 10.0; }
+		core::Real start=-180.0,step=10.0;
 		if (aa == aa_asp || aa == aa_glu) { start = -90.0; step = 5.0; }
 		if (aa == aa_phe || aa == aa_tyr) { start = -30.0; step = 5.0; }
 
@@ -866,7 +864,7 @@ make_fragments() {
 			char ss = pose.secstruct(i);
 	    core::pose::PoseOP frag( new core::pose::Pose);
 			core::Real phi, psi;
-			core::Size center;
+			core::Size center=0;
 			bool have_connected_frag=true;
 
 			if (ss == 'L') {
@@ -942,6 +940,8 @@ make_fragments() {
 
 				center = 3;
 			}
+
+			assert( center != 0 );
 
 			mutate_to_ala( *frag, center);
 			phi = frag->phi(center);
