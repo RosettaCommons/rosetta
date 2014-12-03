@@ -869,23 +869,23 @@ make_fragments() {
 
 			if (ss == 'L') {
 				for (int j=i-2; j<i+2; ++j) {
-					if ( pose.fold_tree().is_cutpoint(j) ) {
+					if ( pose.fold_tree().is_cutpoint(j) || !pose.residue(j).is_protein()) {
 						have_connected_frag = false;
 					}
 				}
-				if (!have_connected_frag) continue;
+				if (!have_connected_frag || !pose.residue(i+2).is_protein()) continue;
 				for (int j=i-2; j<=i+2; ++j) frag->append_residue_by_bond( pose.residue(j) );
 				center = 3;
 			}
 
 			if (ss == 'H') {
-				if (i-4<=0 || i-4 >= ((int)pose.total_residue())) continue;
+				if (i-4<=0 || i+4 >= ((int)pose.total_residue())) continue;
 				for (int j=i-4; j<i+4; ++j) {
-					if ( pose.fold_tree().is_cutpoint(j) ) {
+					if ( pose.fold_tree().is_cutpoint(j) || !pose.residue(j).is_protein()) {
 						have_connected_frag = false;
 					}
 				}
-				if (!have_connected_frag) continue;
+				if (!have_connected_frag || !pose.residue(i+4).is_protein()) continue;
 				for (int j=i-4; j<=i+4; ++j) frag->append_residue_by_bond( pose.residue(j) );
 
 				center = 5;
@@ -893,11 +893,11 @@ make_fragments() {
 
 			if (ss == 'E') {
 				for (int j=i-2; j<i+2; ++j) {
-					if ( pose.fold_tree().is_cutpoint(j) ) {
+					if ( pose.fold_tree().is_cutpoint(j) || !pose.residue(j).is_protein()) {
 						have_connected_frag = false;
 					}
 				}
-				if (!have_connected_frag) continue;
+				if (!have_connected_frag || !pose.residue(i+2).is_protein()) continue;
 				for (int j=i-2; j<=i+2; ++j) frag->append_residue_by_bond( pose.residue(j) );
 
 				// find bb hbonds
@@ -908,21 +908,38 @@ make_fragments() {
 					core::conformation::Residue const &rsd_j( pose.residue(j) );
 
 					for ( graph::Graph::EdgeListConstIter
-							iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-							irue = energy_graph.get_node(i)->const_edge_list_end();
+							iru  = energy_graph.get_node(j)->const_edge_list_begin(),
+							irue = energy_graph.get_node(j)->const_edge_list_end();
 							iru != irue; ++iru ) {
 						EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
 						int k=(int)edge->get_other_ind(j);
 
 						core::conformation::Residue const &rsd_k( pose.residue(k) );
 
+						if (!rsd_k.is_protein()) continue;
 						if (k>=i-2 && k<=i+2) continue;
 
 						// check hbonding (O--H <= 3Å)
 						core::Real dist1 = 999.0;
-						if (rsd_k.aa() != core::chemical::aa_pro) dist1 = (rsd_j.atom("O").xyz() - rsd_k.atom("H").xyz()).length_squared();
+						if (rsd_k.aa() != core::chemical::aa_pro) {
+							if (rsd_k.is_lower_terminus() && !rsd_k.has("H")) {
+								dist1 =                  (rsd_j.atom("O").xyz() - rsd_k.atom("1H").xyz()).length_squared();
+								dist1 = std::min( dist1, (rsd_j.atom("O").xyz() - rsd_k.atom("2H").xyz()).length_squared() );
+								dist1 = std::min( dist1, (rsd_j.atom("O").xyz() - rsd_k.atom("3H").xyz()).length_squared() );
+							} else {
+								dist1 = (rsd_j.atom("O").xyz() - rsd_k.atom("H").xyz()).length_squared();
+							}
+						}
 						core::Real dist2 = 999.0;
-						if (rsd_j.aa() != core::chemical::aa_pro) dist2 = (rsd_j.atom("H").xyz() - rsd_k.atom("O").xyz()).length_squared();
+						if (rsd_j.aa() != core::chemical::aa_pro) {
+							if (rsd_j.is_lower_terminus() && !rsd_j.has("H")) {
+								dist2 =                  (rsd_j.atom("1H").xyz() - rsd_k.atom("O").xyz()).length_squared();
+								dist2 = std::min( dist1, (rsd_j.atom("2H").xyz() - rsd_k.atom("O").xyz()).length_squared() );
+								dist2 = std::min( dist1, (rsd_j.atom("3H").xyz() - rsd_k.atom("O").xyz()).length_squared() );
+							} else {
+								dist2 = (rsd_j.atom("H").xyz() - rsd_k.atom("O").xyz()).length_squared();
+							}
+						}
 						if (dist1<=9 || dist2<=9) incl[k]=true;
 					}
 				}
@@ -933,7 +950,7 @@ make_fragments() {
 
 				for (int j=1; j<=(int)incl.size(); ++j) {
 					if (incl[j]) {
-						if (j==1 || !incl[j-1]) frag->append_residue_by_jump( pose.residue(j), 1 );
+						if (j==1 || pose.fold_tree().is_cutpoint(j-1) || !incl[j-1]) frag->append_residue_by_jump( pose.residue(j), 1 );
 						else frag->append_residue_by_bond( pose.residue(j) );
 					}
 				}
