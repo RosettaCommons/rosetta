@@ -522,7 +522,11 @@ void RigidChunkCM::initialize( Pose& pose ){
         tr.Trace << "Replacing simulation " << pose.residue( sim_pos ).name3() << sim_pos
                  << " with template " << templ_res.name3() << templ_pos << std::endl;
 
-        pose.replace_residue( sim_pos, templ_res , false );
+        ProtectedConformation const& conf = static_cast< ProtectedConformation const& >( pose.conformation() );
+        pose.replace_residue( sim_pos, *conf.match_variants( sim_pos, templ_res ) , false );
+
+        assert( reference.residue( sim_pos ).is_lower_terminus() == pose.residue( sim_pos ).is_lower_terminus() );
+        assert( reference.residue( sim_pos ).is_upper_terminus() == pose.residue( sim_pos ).is_upper_terminus() );
 
       } catch ( EXCN_Env_Security_Exception& e ) {
         std::ostringstream ss;
@@ -582,7 +586,10 @@ void RigidChunkCM::initialize( Pose& pose ){
         tr.Debug << "fixing lower connection for " << sim_pos << std::endl;
         fix_mainchain_connect( pose, sim_pos, templ(), templ_pos );
       } else {
-        tr.Debug << "NOT fixing lower connection for " << sim_pos << std::endl;
+        tr.Debug << "NOT fixing lower connection for " << sim_pos
+                 << " ( lower_terminus : " << ( pose.residue( sim_pos ).is_lower_terminus() ? "T" : "F" )
+                 << ", cutpoint " << ( pose.fold_tree().is_cutpoint( sim_pos - 1 ) ? "T" : "F" )
+                 << std::endl;
       }
 
     }
