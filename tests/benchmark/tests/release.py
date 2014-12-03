@@ -261,18 +261,20 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
                         elif os.path.isdir(src): shutil.copytree(src, dest)
                         execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
 
-                rosetta_namespace_dir = working_dir+'/'+git_repository_name+'/rosetta'
-                if os.path.isdir(src): shutil.copytree(buildings_path + '/rosetta', rosetta_namespace_dir)
-                for path, _, files in os.walk(rosetta_namespace_dir):
-                    for f in files:
-                        add = False
-                        name = path + '/' + f
-                        if name == rosetta_namespace_dir+'/config.json': add = True
-                        else:
-                            for ending in '.so .py .pyc .pyd .dylib'.split():
-                                if name.endswith(ending): add = True
+                build_rosetta_namespace_dir = buildings_path + '/rosetta'
+                git_rosetta_namespace_dir = working_dir+'/'+git_repository_name+'/rosetta'
+                if os.path.isdir(build_rosetta_namespace_dir):
+                    shutil.copytree(build_rosetta_namespace_dir, git_rosetta_namespace_dir)
+                    for path, _, files in os.walk(git_rosetta_namespace_dir):
+                        for f in files:
+                            add = False
+                            name = path + '/' + f
+                            if name == git_rosetta_namespace_dir+'/config.json': add = True
+                            else:
+                                for ending in '.so .py .pyc .pyd .dylib'.split():
+                                    if name.endswith(ending): add = True
 
-                        if add: execute('Git add {name}...', 'cd {working_dir}/{git_repository_name} && git add {name}'.format(**vars()))
+                            if add: execute('Git add {name}...', 'cd {working_dir}/{git_repository_name} && git add {name}'.format(**vars()))
 
 
                 res, git_output = execute('Git commiting changes...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{release_name}"'.format(**vars()), return_='tuple')
