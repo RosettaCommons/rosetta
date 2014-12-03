@@ -213,13 +213,14 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
             release_name = 'PyRosetta.{kind}.{os}.{branch}:{revision}'.format(kind=kind, os=platform['os'], branch=config['branch'], revision=config['revision'])
             archive = working_dir + '/' + release_name + '.tar.bz2'
 
-            file_list = 'app database demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python rosetta.so'.split()  # rosetta dir is spefial, we omit it here  # ignore_list: _build_ .test.output
+            file_list = 'app database demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python.so libboost_python.dylib rosetta.so'.split()  # rosetta dir is spefial, we omit it here  # ignore_list: _build_ .test.output
             # debug: file_list = 'app demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python'.split()  #  ignore_list: _build_ .test.output
 
             # Creating tar.bz2 archive with binaries
             def arch_filter(tar_info):
                 if tar_info.name == release_name: return tar_info
                 if tar_info.name == release_name+ '/database': tar_info.type = tarfile.DIRTYPE
+
                 for e in file_list:
                     if tar_info.name.startswith(release_name+'/'+e): return tar_info
 
@@ -259,6 +260,20 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
                         if os.path.isfile(src): shutil.copy(src, dest)
                         elif os.path.isdir(src): shutil.copytree(src, dest)
                         execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
+
+                rosetta_namespace_dir = working_dir+'/'+git_repository_name+'/rosetta'
+                if os.path.isdir(src): shutil.copytree(buildings_path + '/rosetta', rosetta_namespace_dir)
+                for path, _, files in os.walk(rosetta_namespace_dir):
+                    for f in files:
+                        add = False
+                        name = path + '/' + f
+                        if name == rosetta_namespace_dir+'/config.json': add = True
+                        else:
+                            for ending in '.so .py .pyc .pyd .dylib'.split():
+                                if name.endswith(ending): add = True
+
+                        if add: execute('Git add {name}...', 'cd {working_dir}/{git_repository_name} && git add {name}'.format(**vars()))
+
 
                 res, git_output = execute('Git commiting changes...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{release_name}"'.format(**vars()), return_='tuple')
                 if res  and 'nothing to commit, working directory clean' not in git_output: raise BenchmarkError('Could not commit changess to: {}!'.format(git_origin))
