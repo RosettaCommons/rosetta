@@ -99,6 +99,7 @@ sources = {
 	],
 	"io/silent" : [
 		"binary_protein_silent",
+		"binary_protein_silent_multipose",
 		"pdb_silent",
 		"protein_silent",
 		"symmetric_binary_protein_silent",

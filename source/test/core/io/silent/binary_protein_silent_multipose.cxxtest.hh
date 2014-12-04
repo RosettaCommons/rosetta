@@ -8,9 +8,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/io/silent/protein_silent.cxxtest.hh
-/// @brief  test suite for protein silent-file format
-/// @author James Thompson
+/// @file   core/io/silent/binary_protein_silent_multipose.cxxtest.hh
+/// @brief  Test suite for multiple poses stored in the same binary silent file.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -48,10 +48,10 @@ static basic::Tracer TR("test.core.io.silent.protein_silent");
 
 using namespace core;
 
-class BinarySilentTests : public CxxTest::TestSuite {
+class BinarySilentMultiposeTests : public CxxTest::TestSuite {
 
 public:
-	BinarySilentTests() {};
+	BinarySilentMultiposeTests() {};
 
 	// Shared initialization goes here.
 	void setUp() {
@@ -71,71 +71,51 @@ public:
 	void tearDown() {
 	}
 
-
-	void test_save_and_restore_centroid() {
-		using namespace core::chemical;
-		ResidueTypeSetCOP	cen_rsd_set =
-			core::chemical::ChemicalManager::get_instance()->residue_type_set(
-				"centroid"
-			);
-		pose::Pose ref_pose, restored_pose;
-		core::import_pose::pose_from_pdb( ref_pose, *cen_rsd_set, "core/io/bin_silentfile_test.pdb");
-		double rms_threshold = 1e-2;
-		double score_threshold = 1e-1;
-		TS_ASSERT( !ref_pose.is_fullatom() );
-		// Read the ProteinSilentStruct from the silent-file
-		core::io::silent::SilentFileData sfd;
-		std::string const silent_outfile( "core/io/bin_silentfile_centroid.out" ); // read file w/ non-ideal geometry
-		utility::file::file_delete( silent_outfile );
-		core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
-		sfd.write_silent_struct( pss, silent_outfile );
-
-		sfd.read_file(silent_outfile);
-		TS_ASSERT( sfd.size() > 0 );
-		core::io::silent::SilentFileData::iterator iter = sfd.begin();
-		iter->fill_pose( restored_pose );
-		TS_ASSERT( !restored_pose.is_fullatom() );
-		// test rms difference
-		Real rms_to_restored = scoring::CA_rmsd( ref_pose, restored_pose );
-		TR << "RMS error from centroid save/restore: " << rms_to_restored << std::endl;
-		TS_ASSERT( rms_to_restored < rms_threshold );
-
-		// test score13 difference
-		core::scoring::ScoreFunctionOP scorefxn =
-			core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-		Real score_ref = (*scorefxn)(ref_pose);
-		Real score_restored = (*scorefxn)(restored_pose);
-		Real score_del = std::fabs( score_restored - score_ref );
-		TR << "Score difference: " << score_del << std::endl;
-		TS_ASSERT( score_del < score_threshold );
-		utility::file::file_delete( silent_outfile );
-	}
-
-	void test_save_and_restore()
+	void test_save_multiple_poses_and_restore()
 	{
+	TR << "Starting test_save_multiple_poses_and_restore()." << std::endl;
+	TR << "Author: Vikram K. Mulligan, Baker lab (vmullig@uw.edu)." << std::endl;
+	TR << "If this test were to fail, it would indicate that binary silent files are not properly storing multiple poses." << std::endl;
+
 	double rms_threshold = 1e-2;
 	double score_threshold = 1e-1;
 
-	pose::Pose ref_pose, restored_pose;
+	pose::Pose ref_pose, restored_pose, ref_pose_2, restored_pose_2;
 	core::chemical::ResidueTypeSetCOP rsd =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
-	std::string const silent_outfile( "core/io/bin_silentfile_test.out" ); // read file w/ non-ideal geometry
+
+	//Import the poses:
+	core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/test_in.pdb"));
+	core::import_pose::pose_from_pdb( ref_pose_2, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
+
+	//Write out the poses:
+	std::string const silent_outfile( "core/io/bin_silentfile_multipose_test.out" );
 	utility::file::file_delete( silent_outfile );
 	core::io::silent::SilentFileData sfd;
 	core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
 	sfd.write_silent_struct( pss, silent_outfile );
-	// Read the ProteinSilentStruct from the silent-file
+	core::io::silent::BinarySilentStruct pss2( ref_pose_2, "tag2" );
+	sfd.write_silent_struct( pss2, silent_outfile );
 
-	sfd.read_file( silent_outfile );
-	TS_ASSERT( sfd.size() > 0 );
-	core::io::silent::SilentFileData::iterator iter = sfd.begin();
+
+	// Read the ProteinSilentStruct from the silent-file
+	core::io::silent::SilentFileData sfd2;
+	sfd2.read_file( silent_outfile );
+	TS_ASSERT( sfd2.size() > 0 );
+	core::io::silent::SilentFileData::iterator iter = sfd2.begin();
 	iter->fill_pose( restored_pose, *rsd );
+	++iter;
+	iter->fill_pose( restored_pose_2, *rsd );
 
 	// test rms difference
 	Real rms_to_restored = scoring::CA_rmsd( ref_pose, restored_pose );
-	TR << "RMS error from save/restore: " << rms_to_restored << std::endl;
+	TR << "RMS error from save/restore #1: " << rms_to_restored << std::endl;
 	TS_ASSERT( rms_to_restored < rms_threshold );
+
+	Real rms_to_restored_2 = scoring::CA_rmsd( ref_pose_2, restored_pose_2 );
+	TR << "RMS error from save/restore #2: " << rms_to_restored_2 << std::endl;
+	TS_ASSERT( rms_to_restored_2 < rms_threshold );
+
 
 	// test score13 difference
 	core::scoring::ScoreFunctionOP scorefxn =
@@ -143,56 +123,78 @@ public:
 	Real score_ref = (*scorefxn)(ref_pose);
 	Real score_restored = (*scorefxn)(restored_pose);
 	Real score_del = std::fabs( score_restored - score_ref );
-	TR << "Score difference: " << score_del << std::endl;
+	TR << "Score difference #1: " << score_del << std::endl;
 	if ( score_del > score_threshold ) {
 		restored_pose.dump_pdb( "restored_pose_wrong_score.pdb" );
 		ref_pose.dump_pdb( "ref_pose_wrong_score.pdb" );
 	}
 	TS_ASSERT( score_del < score_threshold );
 
+	Real score_ref_2 = (*scorefxn)(ref_pose_2);
+	Real score_restored_2 = (*scorefxn)(restored_pose_2);
+	Real score_del_2 = std::fabs( score_restored_2 - score_ref_2 );
+	TR << "Score difference #2: " << score_del_2 << std::endl;
+	if ( score_del_2 > score_threshold ) {
+		restored_pose_2.dump_pdb( "restored_pose_wrong_score_2.pdb" );
+		ref_pose_2.dump_pdb( "ref_pose_wrong_score_2.pdb" );
+	}
+	TS_ASSERT( score_del_2 < score_threshold );
+
 	//	utility::file::file_delete( silent_outfile );
 
 	}
 
-	/// @brief Test whether poses that have had their lenghts modified in Rosetta can
-	/// be written and read properly.
-	void test_save_and_restore_inserting_residues()
+	void test_save_multiple_poses_with_resize_and_restore()
 	{
-		TR << "Starting test_save_and_restore_inserting_residues." << std::endl;
-		TR << "Author: Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)." << std::endl;
-		TR << "Failure of this test would indicate that there's a problem storing structures whose length Rosetta has modified." << std::endl;
+		TR << "Starting test_save_multiple_poses_with_resize_and_restore()." << std::endl;
+		TR << "Author: Vikram K. Mulligan, Baker lab (vmullig@uw.edu)." << std::endl;
+		TR << "If this test were to fail, it would indicate that binary silent files are not properly storing multiple poses when one of the poses is resized." << std::endl;
+
 		double rms_threshold = 1e-2;
 		double score_threshold = 1e-1;
 
-		pose::Pose ref_pose, restored_pose;
+		pose::Pose ref_pose, restored_pose, ref_pose_2, restored_pose_2;
 		core::chemical::ResidueTypeSetCOP rsd =
 				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
+		core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/test_in.pdb"));
+		core::import_pose::pose_from_pdb( ref_pose_2, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
 
+		//Add a residue to ref_pose_2 ONLY (and leave ref_pose alone!)
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd->name_map( "ALA" ) ) );
-		core::Size nres = ref_pose.n_residue();
-		if(ref_pose.residue(nres).has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT)) {
-			core::pose::remove_variant_type_from_pose_residue( ref_pose, core::chemical::UPPER_TERMINUS_VARIANT, nres );
+		core::Size nres = ref_pose_2.n_residue();
+		if(ref_pose_2.residue(nres).has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT)) {
+			core::pose::remove_variant_type_from_pose_residue( ref_pose_2, core::chemical::UPPER_TERMINUS_VARIANT, nres );
 		}
-		ref_pose.append_residue_by_bond(*new_rsd, true, 0, nres, 0, false);
-		core::pose::add_variant_type_to_pose_residue( ref_pose, core::chemical::UPPER_TERMINUS_VARIANT, ref_pose.n_residue() );
+		ref_pose_2.append_residue_by_bond(*new_rsd, true, 0, nres, 0, false);
+		core::pose::add_variant_type_to_pose_residue( ref_pose_2, core::chemical::UPPER_TERMINUS_VARIANT, ref_pose_2.n_residue() );
 
-		std::string const silent_outfile( "core/io/bin_silentfile_test_inserting_residues.out" );
+		std::string const silent_outfile( "core/io/bin_silentfile_multipose_test.out" );
 		utility::file::file_delete( silent_outfile );
 		core::io::silent::SilentFileData sfd;
 		core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
 		sfd.write_silent_struct( pss, silent_outfile );
-		// Read the ProteinSilentStruct from the silent-file
+		core::io::silent::BinarySilentStruct pss2( ref_pose_2, "tag2" );
+		sfd.write_silent_struct( pss2, silent_outfile );
 
-		sfd.read_file( silent_outfile );
-		TS_ASSERT( sfd.size() > 0 );
-		core::io::silent::SilentFileData::iterator iter = sfd.begin();
+
+		// Read the ProteinSilentStruct from the silent-file
+		core::io::silent::SilentFileData sfd2;
+		sfd2.read_file( silent_outfile );
+		TS_ASSERT( sfd2.size() > 0 );
+		core::io::silent::SilentFileData::iterator iter = sfd2.begin();
 		iter->fill_pose( restored_pose, *rsd );
+		++iter;
+		iter->fill_pose( restored_pose_2, *rsd );
 
 		// test rms difference
 		Real rms_to_restored = scoring::CA_rmsd( ref_pose, restored_pose );
-		TR << "RMS error from save/restore: " << rms_to_restored << std::endl;
+		TR << "RMS error from save/restore #1: " << rms_to_restored << std::endl;
 		TS_ASSERT( rms_to_restored < rms_threshold );
+
+		Real rms_to_restored_2 = scoring::CA_rmsd( ref_pose_2, restored_pose_2 );
+		TR << "RMS error from save/restore #2: " << rms_to_restored_2 << std::endl;
+		TS_ASSERT( rms_to_restored_2 < rms_threshold );
+
 
 		// test score13 difference
 		core::scoring::ScoreFunctionOP scorefxn =
@@ -200,12 +202,22 @@ public:
 		Real score_ref = (*scorefxn)(ref_pose);
 		Real score_restored = (*scorefxn)(restored_pose);
 		Real score_del = std::fabs( score_restored - score_ref );
-		TR << "Score difference: " << score_del << std::endl;
+		TR << "Score difference #1: " << score_del << std::endl;
 		if ( score_del > score_threshold ) {
 			restored_pose.dump_pdb( "restored_pose_wrong_score.pdb" );
 			ref_pose.dump_pdb( "ref_pose_wrong_score.pdb" );
 		}
 		TS_ASSERT( score_del < score_threshold );
+
+		Real score_ref_2 = (*scorefxn)(ref_pose_2);
+		Real score_restored_2 = (*scorefxn)(restored_pose_2);
+		Real score_del_2 = std::fabs( score_restored_2 - score_ref_2 );
+		TR << "Score difference #2: " << score_del_2 << std::endl;
+		if ( score_del_2 > score_threshold ) {
+			restored_pose_2.dump_pdb( "restored_pose_wrong_score_2.pdb" );
+			ref_pose_2.dump_pdb( "ref_pose_wrong_score_2.pdb" );
+		}
+		TS_ASSERT( score_del_2 < score_threshold );
 
 		//	utility::file::file_delete( silent_outfile );
 
