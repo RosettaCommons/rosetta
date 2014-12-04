@@ -13,10 +13,11 @@
 // Headers {{{1
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
-#include <test/protocols/loop_modeling/utilities.hh>
+#include <test/util/rosettascripts.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 
 // Protocol headers
 #include <protocols/filters/Filter.hh>
@@ -30,21 +31,29 @@
 #include <protocols/loop_modeling/LoopModeler.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.hh>
-#include <protocols/loop_modeling/utilities/PeriodicMover.hh>
+#include <protocols/loop_modeling/utilities/PrepareForCentroid.hh>
+#include <protocols/loop_modeling/utilities/PrepareForFullatom.hh>
+#include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
+#include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 
 // Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
+#include <boost/foreach.hpp>
 
 // C++ headers
 #include <string>
 #include <iostream>
+#include <fstream>
+
+#define foreach BOOST_FOREACH
 
 // Namespaces {{{1
 using namespace std;
 using namespace protocols::loop_modeling;
 using namespace protocols::rosetta_scripts;
+using core::import_pose::pose_from_pdb;
 
 using utility::excn::EXCN_Msg_Exception;
 
@@ -145,23 +154,23 @@ class LoopModelerTests : public CxxTest::TestSuite {
 
 public:
 
-	void setUp() { protocols_init(); } // {{{1
+	void setUp() { protocols_init(); }  // {{{1
 	// }}}1
 
 	static LoopMovers get_centroid_movers(LoopModelerOP modeler) { // {{{1
-		return modeler->centroid_stage_->movers_->nested_movers_;
+		return modeler->centroid_stage_->movers_->get_children();
 	}
 
 	static LoopMovers get_centroid_refiners(LoopModelerOP modeler) { // {{{1
-		return modeler->centroid_stage_->refiners_->nested_movers_;
+		return modeler->centroid_stage_->refiners_->get_children();
 	}
 
 	static LoopMovers get_fullatom_movers(LoopModelerOP modeler) { // {{{1
-		return modeler->fullatom_stage_->movers_->nested_movers_;
+		return modeler->fullatom_stage_->movers_->get_children();
 	}
 
 	static LoopMovers get_fullatom_refiners(LoopModelerOP modeler) { // {{{1
-		return modeler->fullatom_stage_->refiners_->nested_movers_;
+		return modeler->fullatom_stage_->refiners_->get_children();
 	}
 	// }}}1
 
@@ -176,15 +185,15 @@ public:
 
 	static void assert_default_centroid_params(LoopModelerOP modeler) { // {{{1
 		TS_ASSERT_EQUALS(modeler->is_centroid_stage_enabled_, true);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->sfxn_cycles_, 3);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->sfxn_cycles_, 5);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->temp_cycles_, 20);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->scale_temp_cycles_, true);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->mover_cycles_, 1);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_sfxn_rep_, false);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_sfxn_rama_, false);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_temp_, true);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->initial_temp_, 1.5);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->final_temp_, 0.5);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->initial_temp_, 2.0);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->final_temp_, 1.0);
 	}
 
 	static void assert_default_centroid_movers(LoopModelerOP modeler) { // {{{1
@@ -209,12 +218,12 @@ public:
 
 	static void assert_default_fullatom_params(LoopModelerOP modeler) { // {{{1
 		TS_ASSERT_EQUALS(modeler->is_fullatom_stage_enabled_, true);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->sfxn_cycles_, 3);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->sfxn_cycles_, 5);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->temp_cycles_, 10);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->scale_temp_cycles_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->mover_cycles_, 2);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rep_, false);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rama_, false);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rep_, true);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rama_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_temp_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->initial_temp_, 1.5);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->final_temp_, 0.5);
@@ -231,16 +240,9 @@ public:
 		LoopMovers const & refiners = get_fullatom_refiners(modeler);
 
 		TS_ASSERT_EQUALS(refiners.size(), 3);
-		TS_ASSERT_EQUALS(refiners[1]->get_name(), "PeriodicMover");
+		TS_ASSERT_EQUALS(refiners[1]->get_name(), "RepackingRefiner");
 		TS_ASSERT_EQUALS(refiners[2]->get_name(), "RotamerTrialsRefiner");
 		TS_ASSERT_EQUALS(refiners[3]->get_name(), "MinimizationRefiner");
-
-		utilities::PeriodicMoverOP periodic_refiner =
-			utility::pointer::dynamic_pointer_cast< utilities::PeriodicMover > ( refiners[1] );
-
-		TS_ASSERT_EQUALS(periodic_refiner->period_, 20);
-		TS_ASSERT_EQUALS(periodic_refiner->mover_->get_name(), "RepackingRefiner");
-
 	}
 
 	static void assert_default_fullatom_stage(LoopModelerOP modeler) { // {{{1
@@ -280,8 +282,11 @@ public:
 	void test_modeler_options() { // {{{1
 		string tag =
 			"<LoopModeler"
-			"  loops_file=\"protocols/loop_modeling/inputs/loop.txt\""
-			"  auto_refine=no/>";
+			"  loops_file=\"protocols/loop_modeling/inputs/2pia.loop\""
+			"  auto_refine=no>"
+			"  <Loop start=49 cut=55 stop=61 skip_rate=0.5 rebuild=no/>"
+			"  <Loop start=11 cut=17 stop=23 skip_rate=0.4 rebuild=yes/>"
+			"</LoopModeler>";
 		LoopModelerOP modeler = parse_tag<LoopModeler>(tag);
 
 		assert_default_build_params(modeler);
@@ -290,15 +295,78 @@ public:
 		assert_default_centroid_movers(modeler);
 		assert_default_fullatom_movers(modeler);
 
-		TS_ASSERT_EQUALS(modeler->get_loops().size(), 1);
-		TS_ASSERT_EQUALS(modeler->get_loops()[1].start(), 34);
-		TS_ASSERT_EQUALS(modeler->get_loops()[1].cut(), 41);
-		TS_ASSERT_EQUALS(modeler->get_loops()[1].stop(), 46);
-		TS_ASSERT_EQUALS(modeler->get_loops()[1].skip_rate(), 0);
-		TS_ASSERT_EQUALS(modeler->get_loops()[1].is_extended(), true);
+		LoopMoverOP movers[6] = {
+			modeler,
+			modeler->prepare_for_centroid_,
+			modeler->build_stage_,
+			modeler->centroid_stage_, 
+			modeler->prepare_for_fullatom_,
+			modeler->fullatom_stage_,
+		};
+
+		foreach (LoopMoverOP mover, movers) {
+			TS_ASSERT_EQUALS(mover->get_loops()->size(), 3);
+			TS_ASSERT_EQUALS(mover->get_loop(1).start(), 30);
+			TS_ASSERT_EQUALS(mover->get_loop(1).cut(), 41);
+			TS_ASSERT_EQUALS(mover->get_loop(1).stop(), 41);
+			TS_ASSERT_EQUALS(mover->get_loop(1).skip_rate(), 0);
+			TS_ASSERT_EQUALS(mover->get_loop(1).is_extended(), true);
+			TS_ASSERT_EQUALS(mover->get_loop(2).start(), 49);
+			TS_ASSERT_EQUALS(mover->get_loop(2).cut(), 55);
+			TS_ASSERT_EQUALS(mover->get_loop(2).stop(), 61);
+			TS_ASSERT_EQUALS(mover->get_loop(2).skip_rate(), 0.5);
+			TS_ASSERT_EQUALS(mover->get_loop(2).is_extended(), false);
+			TS_ASSERT_EQUALS(mover->get_loop(3).start(), 11);
+			TS_ASSERT_EQUALS(mover->get_loop(3).cut(), 17);
+			TS_ASSERT_EQUALS(mover->get_loop(3).stop(), 23);
+			TS_ASSERT_EQUALS(mover->get_loop(3).skip_rate(), 0.4);
+			TS_ASSERT_EQUALS(mover->get_loop(3).is_extended(), true);
+		}
 
 		TS_ASSERT(get_centroid_refiners(modeler).empty());
 		TS_ASSERT(get_fullatom_refiners(modeler).empty());
+	}
+
+	void test_fast_option() { // {{{1
+		string tag;
+		LoopModelerOP modeler;
+		
+		tag = "<LoopModeler fast=yes/>";
+		modeler = parse_tag<LoopModeler>(tag);
+
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_sfxn_cycles(), 3);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_temp_cycles(), 3);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_mover_cycles(), 2);
+
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_sfxn_cycles(), 3);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_temp_cycles(), 3);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_mover_cycles(), 2);
+
+		tag =
+			"<LoopModeler>"
+			"  <Centroid fast=yes/>"
+			"  <Fullatom fast=no/>"
+			"</LoopModeler>";
+		modeler = parse_tag<LoopModeler>(tag);
+
+		assert_default_fullatom_stage(modeler);
+
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_sfxn_cycles(), 3);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_temp_cycles(), 3);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_mover_cycles(), 2);
+
+		tag =
+			"<LoopModeler>"
+			"  <Centroid fast=no/>"
+			"  <Fullatom fast=yes/>"
+			"</LoopModeler>";
+		modeler = parse_tag<LoopModeler>(tag);
+
+		assert_default_centroid_stage(modeler);
+
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_sfxn_cycles(), 3);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_temp_cycles(), 3);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_mover_cycles(), 2);
 	}
 
 	void test_build_options() { // {{{1
@@ -331,10 +399,9 @@ public:
 		assert_default_fullatom_stage(modeler);
 
 		TS_ASSERT_EQUALS(modeler->is_centroid_stage_enabled_, false);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->sfxn_cycles_, 21);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->temp_cycles_, 53);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->scale_temp_cycles_, false);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->mover_cycles_, 11);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_sfxn_cycles(), 21);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_temp_cycles(), 53);
+		TS_ASSERT_EQUALS(modeler->centroid_stage_->get_mover_cycles(), 11);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_sfxn_rep_, true);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_sfxn_rama_, true);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_temp_, false);
@@ -360,10 +427,9 @@ public:
 		assert_default_fullatom_movers(modeler);
 
 		TS_ASSERT_EQUALS(modeler->is_fullatom_stage_enabled_, false);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->sfxn_cycles_, 28);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->temp_cycles_, 55);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->scale_temp_cycles_, false);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->mover_cycles_, 18);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_sfxn_cycles(), 28);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_temp_cycles(), 55);
+		TS_ASSERT_EQUALS(modeler->fullatom_stage_->get_mover_cycles(), 18);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rep_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rama_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_temp_, false);
@@ -408,6 +474,8 @@ public:
 			"  <MinimizationRefiner/>"
 			"  <LoopBuilder/>"
 			"  <LoopProtocol/>"
+			"  <PrepareForCentroid/>"
+			"  <PrepareForFullatom/>"
 			"</LoopModeler>";
 		LoopModelerOP modeler = parse_tag<LoopModeler>(tag);
 
@@ -419,7 +487,7 @@ public:
 
 		LoopMovers const & movers = get_centroid_movers(modeler);
 
-		TS_ASSERT_EQUALS(movers.size(), 7);
+		TS_ASSERT_EQUALS(movers.size(), 9);
 		TS_ASSERT_EQUALS(movers[1]->get_name(), "LegacyKicSampler");
 		TS_ASSERT_EQUALS(movers[2]->get_name(), "KicMover");
 		TS_ASSERT_EQUALS(movers[3]->get_name(), "RotamerTrialsRefiner");
@@ -427,6 +495,7 @@ public:
 		TS_ASSERT_EQUALS(movers[5]->get_name(), "MinimizationRefiner");
 		TS_ASSERT_EQUALS(movers[6]->get_name(), "LoopBuilder");
 		TS_ASSERT_EQUALS(movers[7]->get_name(), "LoopProtocol");
+		TS_ASSERT_EQUALS(movers[8]->get_name(), "PrepareForCentroid");
 	}
 
 	void test_illegal_movers() { // {{{1
@@ -486,7 +555,25 @@ public:
 		TS_ASSERT_EQUALS(movers.size(), 1);
 		TS_ASSERT_EQUALS(movers[1]->get_name(), "LegacyKicSampler");
 	}
+
+	void test_apply() { // {{{1
+		string pdb_path = "protocols/loop_modeling/inputs/2pia.pdb";
+		string loops_path = "protocols/loop_modeling/inputs/2pia.loop";
+
+		LoopModelerOP modeler( new LoopModeler() );
+		Pose pose; pose_from_pdb(pose, pdb_path);
+		LoopsOP loops( new Loops(loops_path) );
+
+		modeler->set_loops(loops);
+		modeler->centroid_stage()->set_sfxn_cycles(1);
+		modeler->centroid_stage()->set_temp_cycles(1);
+		modeler->centroid_stage()->set_mover_cycles(1);
+		modeler->disable_fullatom_stage();	// Repacking before fullatom too slow.
+
+		// Just checking to make sure no exceptions get thrown.
+
+		modeler->apply(pose);
+	}
 	// }}}1
 
 };
-

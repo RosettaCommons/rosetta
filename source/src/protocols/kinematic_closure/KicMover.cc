@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// Unit headers
+// Headers {{{1
 #include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/internal.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
@@ -16,8 +16,8 @@
 #include <protocols/kinematic_closure/ClosureSolution.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
 #include <protocols/kinematic_closure/perturbers/PerturberSet.hh>
-#include <protocols/kinematic_closure/perturbers/RamaPerturber.hh>
-#include <protocols/kinematic_closure/perturbers/BondAnglePerturber.hh>
+#include <protocols/kinematic_closure/perturbers/Rama2bPerturber.hh>
+#include <protocols/kinematic_closure/perturbers/OmegaPerturber.hh>
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.hh>
 #include <protocols/kinematic_closure/pivot_pickers/StandardPivots.hh>
 #include <protocols/kinematic_closure/solution_pickers/SolutionPicker.hh>
@@ -36,13 +36,12 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility headers
-#include <utility/exit.hh>
-#include <numeric/random/random.hh>
 #include <boost/foreach.hpp>
+#include <numeric/random/random.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
-namespace protocols {
-namespace kinematic_closure {
-
+// Namespaces {{{1
 using namespace std;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -50,6 +49,10 @@ using protocols::kinematic_closure::pivot_pickers::PivotPickerOP;
 using protocols::kinematic_closure::solution_pickers::SolutionPickerOP;
 using protocols::loop_modeling::FoldTreeRequest;
 using protocols::loop_modeling::FTR_LOOPS_WITH_CUTS;
+// }}}1
+
+namespace protocols {
+namespace kinematic_closure {
 
 protocols::moves::MoverOP KicMoverCreator::create_mover() const { // {{{1
 	return protocols::moves::MoverOP( new KicMover );
@@ -62,9 +65,10 @@ std::string KicMoverCreator::keyname() const { // {{{1
 
 KicMover::KicMover() { // {{{1
 	using perturbers::PerturberOP;
+
 	perturbers_ = perturbers::PerturberSetOP( new perturbers::PerturberSet );
-	perturbers_->add(PerturberOP( new perturbers::RamaPerturber ));
-	perturbers_->add(PerturberOP( new perturbers::BondAnglePerturber ));
+	perturbers_->add(PerturberOP( new perturbers::Rama2bPerturber ));
+	perturbers_->add(PerturberOP( new perturbers::OmegaPerturber ));
 	perturbers_->mark_as_default();
 
 	pivot_picker_ = pivot_pickers::PivotPickerOP( new pivot_pickers::StandardPivots );
@@ -93,6 +97,14 @@ bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	type(problem_solved ? "kic" : "kic-no-op");
 	return problem_solved;
+}
+
+void KicMover::get_children_names( // {{{1
+		utility::vector1<string> & names, string indent) const {
+
+	names.push_back(indent + get_name());
+	names.push_back(indent + "  " + pivot_picker_->get_name());
+	perturbers_->get_perturber_names(names, indent + "  ");
 }
 
 pivot_pickers::PivotPickerOP KicMover::get_pivot_picker() { // {{{1

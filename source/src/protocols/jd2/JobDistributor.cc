@@ -43,6 +43,7 @@
 #include <protocols/moves/PyMolMover.hh>
 
 // Utility headers
+#include <utility/basic_sys_util.hh>
 #include <utility/thread/threadsafe_creation.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
@@ -470,6 +471,7 @@ JobDistributor::run_one_job(
 	//timing information
 	time_t const jobstarttime = time(NULL);
 	core::Size const elapsedtime(jobstarttime - allstarttime);
+	current_job_->start_timing();
 
 	if ((option[OptionKeys::run::maxruntime].user())
 			&& (option[OptionKeys::run::maxruntime]() > 0)

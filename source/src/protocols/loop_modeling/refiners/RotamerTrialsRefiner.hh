@@ -20,28 +20,43 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-// Protocols headers
-#include <protocols/loops/Loop.fwd.hh>
-
 namespace protocols {
 namespace loop_modeling {
 namespace refiners {
-
-using core::pose::Pose;
-using core::pack::task::TaskFactoryOP;
-using core::scoring::ScoreFunctionCOP;
-using protocols::loops::Loop;
 
 /// @brief Refine sampled loops using rotamer trials.
 class RotamerTrialsRefiner : public LoopMover {
 
 public:
 	
-	/// @brief Default constructor.
-	RotamerTrialsRefiner();
-
 	/// @copydoc LoopMover::get_name
 	string get_name() const { return "RotamerTrialsRefiner"; }
+
+	/// @copydoc LoopMover::parse_my_tag
+	void parse_my_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap & data,
+			protocols::filters::Filters_map const & filters,
+			protocols::moves::Movers_map const & movers,
+			Pose const & pose);
+
+	/// @brief Get the score function to be used on the next call to apply().
+	core::scoring::ScoreFunctionOP get_score_function();
+
+	/// @brief Set the score function to be used on the next call to apply().
+	void set_score_function(core::scoring::ScoreFunctionOP score_function);
+
+	/// @brief Get the task factory to be used on the next call to apply().
+	/// @details If no task factory has been set, this will raise an exception.
+	core::pack::task::TaskFactoryOP get_task_factory();
+
+	/// @brief Get the task factory to be used on the next call to apply().
+	/// @details If no task factory has been set, the fallback will be returned.
+	core::pack::task::TaskFactoryOP get_task_factory(
+			core::pack::task::TaskFactoryOP fallback);
+
+	/// @brief Set the task factory to be used on the next call to apply().
+	void set_task_factory(core::pack::task::TaskFactoryOP task_factory);
 
 protected:
 
@@ -49,15 +64,10 @@ protected:
 	/// being sampled.
 	bool do_apply(Pose & pose);
 
-private:
-	TaskFactoryOP task_factory_;
-
 };
 
 }
 }
 }
 
-
 #endif
-

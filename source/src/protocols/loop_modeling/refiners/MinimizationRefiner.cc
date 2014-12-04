@@ -11,6 +11,7 @@
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefinerCreator.hh>
+#include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 
 // Core headers
 #include <core/kinematics/MoveMap.hh>
@@ -36,6 +37,8 @@ using namespace std;
 using core::optimization::MinimizerOptions;
 using core::optimization::MinimizerOptionsOP;
 using core::optimization::MinimizerOptionsCOP;
+using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunctionCOP;
 using protocols::simple_moves::MinMover;
 using protocols::simple_moves::MinMoverOP;
 using protocols::simple_moves::symmetry::SymMinMover;
@@ -52,32 +55,80 @@ MinimizationRefiner::MinimizationRefiner(
 		bool cartesian, MinimizerOptionsOP options) {
 
 	use_cartesian(cartesian);
-	min_options(options);
+	set_min_options(options);
 }
 
-void MinimizationRefiner::min_options(MinimizerOptionsOP options) {
+void MinimizationRefiner::parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose) {
+
+	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	utilities::set_scorefxn_from_tag(*this, tag, data);
+}
+
+bool MinimizationRefiner::do_apply(Pose & pose) {
+	using core::kinematics::MoveMap;
+	using core::kinematics::MoveMapOP;
+	using core::pose::symmetry::is_symmetric;
+	using core::scoring::ScoreFunctionCOP;
+	using protocols::loops::loops_set_move_map;
+
+	pose.update_residue_neighbors();
+
+	Loops const & loops = *get_loops();
+	MinMoverOP minimizer( is_symmetric(pose) ? new SymMinMover : new MinMover );
+	ScoreFunctionCOP score_function = get_score_function();
+	MoveMapOP move_map( new MoveMap ); loops_set_move_map(
+			pose, loops,
+			/*fix sidechains:*/ false,
+			*move_map,
+			/*neighbor radius:*/ 10.0,
+			/*allow omega moves:*/ true,
+			/*allow takeoff torsion moves:*/ false);
+
+	minimizer->score_function(score_function);
+	minimizer->movemap(move_map);
+	minimizer->min_options(min_options_);
+	minimizer->cartesian(use_cartesian_);
+	minimizer->apply(pose);
+
+	return true;
+}
+
+ScoreFunctionOP MinimizationRefiner::get_score_function() {
+	return get_tool<ScoreFunctionOP>(ToolboxKeys::SCOREFXN);
+}
+
+void MinimizationRefiner::set_score_function(ScoreFunctionOP score_function) {
+	set_tool(ToolboxKeys::SCOREFXN, score_function);
+}
+
+void MinimizationRefiner::set_min_options(MinimizerOptionsOP options) {
 	// If no minimizer options are given, use default values that seem to work 
 	// well.  These values were chosen based a simple benchmark run, but in that 
 	// benchmark no parameters really performed that much better or worse than 
 	// any others.  So loop modeling doesn't seem to be that sensitive to the 
 	// exact choice of minimizer options.
 
-	if ( ! options) {
-		min_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions(
+	if ( ! options ) {
+		min_options_ = MinimizerOptionsOP( new MinimizerOptions(
 				"dfpmin",   // min_type
 				1e-3,       // min_tolerance
 				true,       // use_nblist
-				false) );     // deriv_check
+				false) );   // deriv_check
 	} else {
 		min_options_ = options;
 	}
 }
 
-MinimizerOptionsOP MinimizationRefiner::min_options() {
+MinimizerOptionsOP MinimizationRefiner::get_min_options() {
 	return min_options_;
 }
 
-MinimizerOptionsCOP MinimizationRefiner::min_options() const {
+MinimizerOptionsCOP MinimizationRefiner::get_min_options() const {
 	return min_options_;
 }
 
@@ -89,30 +140,6 @@ bool MinimizationRefiner::use_cartesian() const {
 	return use_cartesian_;
 }
 
-bool MinimizationRefiner::do_apply(Pose & pose) {
-	using core::kinematics::MoveMapOP;
-	using core::pose::symmetry::is_symmetric;
-	using core::scoring::ScoreFunctionCOP;
-	using protocols::loops::move_map_from_loops;
-
-	pose.update_residue_neighbors();
-
-	Loops const & loops = get_loops();
-	ScoreFunctionCOP score_function = get_score_function();
-	MoveMapOP move_map = move_map_from_loops(pose, loops, false, 10.0, false);
-	MinMoverOP minimizer( is_symmetric(pose) ? new SymMinMover : new MinMover );
-
-	minimizer->score_function(score_function);
-	minimizer->movemap(move_map);
-	minimizer->min_options(min_options_);
-	minimizer->cartesian(use_cartesian_);
-	minimizer->apply(pose);
-
-	return true;
-}
-
 }
 }
 }
-
-

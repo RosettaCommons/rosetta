@@ -48,6 +48,7 @@
 #include <protocols/features/RotamerFeaturesCreator.hh>
 #include <protocols/features/RotamerBoltzmannWeightFeaturesCreator.hh>
 #include <protocols/features/RotamerRecoveryFeaturesCreator.hh>
+#include <protocols/features/RuntimeFeaturesCreator.hh>
 #include <protocols/features/SaltBridgeFeaturesCreator.hh>
 #include <protocols/features/ScoreTypeFeaturesCreator.hh>
 #include <protocols/features/SecondaryStructureSegmentFeaturesCreator.hh>
@@ -57,6 +58,7 @@
 #include <protocols/features/ScreeningFeaturesCreator.hh>
 #include <protocols/features/ScoreFunctionFeaturesCreator.hh>
 #include <protocols/features/TaskOperationFeaturesCreator.hh>
+#include <protocols/features/TotalScoreFeaturesCreator.hh>
 #include <protocols/features/TrajectoryMapFeaturesCreator.hh>
 #include <protocols/features/UnrecognizedAtomFeaturesCreator.hh>
 //#include <protocols/features/BatchFeaturesCreator.hh>

@@ -142,6 +142,7 @@
 #include <protocols/ligand_docking/TranslateCreator.hh>
 #include <protocols/ligand_docking/WriteLigandMolFileCreator.hh>
 
+#include <protocols/loop_build/LoopmodelWrapperCreator.hh>
 #include <protocols/loop_build/LoopMover_SlidingWindowCreator.hh>
 
 #include <protocols/loop_modeling/LoopModelerCreator.hh>
@@ -151,6 +152,8 @@
 #include <protocols/loop_modeling/refiners/RepackingRefinerCreator.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefinerCreator.hh>
 #include <protocols/loop_modeling/samplers/LegacyKicSamplerCreator.hh>
+#include <protocols/loop_modeling/utilities/PrepareForCentroidCreator.hh>
+#include <protocols/loop_modeling/utilities/PrepareForFullatomCreator.hh>
 
 #include <protocols/loophash/LoopHashMoverWrapperCreator.hh>
 #include <protocols/loophash/LoopHashDiversifierCreator.hh>

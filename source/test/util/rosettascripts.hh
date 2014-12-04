@@ -42,19 +42,29 @@
 #ifndef INCLUDED_util_rosettascripts_HH
 #define INCLUDED_util_rosettascripts_HH
 
+// Test headers
+#include <cxxtest/TestSuite.h>
+
+// Core headers
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/types.hh>
+
+// Protocol headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.hh>
+#include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/moves/NullMover.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-
-#include <core/types.hh>
-
+// Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/exit.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <basic/datacache/DataMap.hh>
 
+// C++ headers
 #include <string>
 #include <sstream>
 
@@ -78,6 +88,28 @@ using protocols::moves::NullMover;
 inline TagCOP tagptr_from_string(std::string input) {
 	std::stringstream instream( input );
 	return utility::tag::Tag::create( instream );
+}
+
+
+/// @brief Construct a mover from an XML string.
+template <class MoverSubclass>
+utility::pointer::shared_ptr<MoverSubclass> parse_tag(std::string tag_string) {
+	std::istringstream tag_stream(tag_string);
+	utility::tag::TagCOP tag = utility::tag::Tag::create(tag_stream);
+	basic::datacache::DataMap data;
+	protocols::filters::Filters_map filters;
+	protocols::moves::Movers_map movers;
+	core::pose::Pose pose;
+
+	protocols::moves::MoverOP base_mover(
+			protocols::moves::MoverFactory::get_instance()->newMover(
+				tag, data, filters, movers, pose ) );
+	utility::pointer::shared_ptr<MoverSubclass> mover = 
+		utility::pointer::dynamic_pointer_cast<MoverSubclass>(base_mover);
+
+	TSM_ASSERT("Instantiated the wrong type of mover", mover.get());
+
+	return mover;
 }
 
 ///@brief setup filters map with some of the the RosettaScript defaults

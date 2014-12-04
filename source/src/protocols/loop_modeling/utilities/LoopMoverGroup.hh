@@ -22,7 +22,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {
@@ -38,17 +38,22 @@ class LoopMoverGroup : public LoopMover {
 
 public:
 
-	/// @brief Default constructor
+	/// @brief Default constructor.
 	LoopMoverGroup();
 
 	/// @brief Return the name of this mover.
 	string get_name() const { return "LoopMoverGroup"; }
 
+	/// @brief Add the names of all the algorithms invoked by this loop mover to 
+	/// the given list.  Indentation is used to represent hierarchy.
+	void get_children_names(
+			utility::vector1<std::string> & names, std::string indent="") const;
+
 	/// @brief Add a mover to this group.
-	void add_mover(LoopMoverOP task);
+	LoopMoverOP add_mover(LoopMoverOP task);
 
 	/// @brief Add a filter to this group.
-	void add_filter(protocols::filters::FilterOP filter);
+	LoopMoverOP add_filter(protocols::filters::FilterOP filter);
 
 	/// @brief Add a nested group to this group.
 	LoopMoverGroupOP add_mover_group();

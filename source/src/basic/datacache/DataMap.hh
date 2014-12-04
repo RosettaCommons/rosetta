@@ -57,7 +57,8 @@ public:
 		std::string const name,
 		utility::pointer::ReferenceCountOP const op
 	);
-	bool has( std::string const type, std::string const name="" ) const;
+	bool has( std::string const type ) const;
+	bool has( std::string const type, std::string const name ) const;
 	template< class Ty > Ty get( std::string const type, std::string const name ) const;
 	template< class Ty > utility::pointer::shared_ptr< Ty > get_ptr( std::string const type, std::string const name ) const;
 	std::map< std::string, utility::pointer::ReferenceCountOP > & operator [](

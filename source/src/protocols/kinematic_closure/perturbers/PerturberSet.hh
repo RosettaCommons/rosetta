@@ -16,7 +16,7 @@
 #include <protocols/kinematic_closure/perturbers/PerturberSet.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace kinematic_closure {
@@ -58,6 +58,11 @@ public:
 	/// @brief Indicate that the current set of perturbers is meant as some sort
 	/// of default, and should be cleared if a new perturber is manually added.
 	void mark_as_default();
+
+	/// @brief Add the names of all the perturbers contained in this set to the 
+	/// given list.  Indentation is used to indicate hierarchy.
+	void get_perturber_names(
+			utility::vector1<std::string> & names, std::string indent="") const;
 
 private:
 	utility::vector1<PerturberOP> perturbers_;

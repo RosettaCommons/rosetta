@@ -31,6 +31,9 @@ public:
 	FixedPivots(Size start, Size stop, Size cut);
 
 public:
+	/// @copydoc PivotPicker::get_name
+	std::string get_name() const { return "FixedPivots"; }
+
 	/// @copydoc PivotPicker::pick
 	Loop pick(Pose const & pose, Loop const & loop);
 

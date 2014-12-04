@@ -16,8 +16,9 @@
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.fwd.hh>
 
 // Core headers
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocols headers
 #include <protocols/simple_moves/MinMover.fwd.hh>
@@ -35,7 +36,16 @@ public:
 	/// used under the hood.
 	MinimizationRefiner(
 			bool cartesian=false,
-			core::optimization::MinimizerOptionsOP options=NULL);
+			core::optimization::MinimizerOptionsOP options=
+				core::optimization::MinimizerOptionsOP());
+
+	/// @copydoc LoopMover::parse_my_tag
+	void parse_my_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap & data,
+			protocols::filters::Filters_map const & filters,
+			protocols::moves::Movers_map const & movers,
+			Pose const & pose);
 
 	/// @copydoc LoopMover::get_name
 	string get_name() const { return "MinimizationRefiner"; }
@@ -44,17 +54,23 @@ public:
 	void use_cartesian(bool setting);
 
 	/// @brief Return true if cartesian minimization will be used.  The 
-	/// alternative is AtomTree minimization.
+	/// alternative is atom tree minimization.
 	bool use_cartesian() const;
 
+	/// @brief Get the score function to be used on the next call to apply().
+	core::scoring::ScoreFunctionOP get_score_function();
+
+	/// @brief Set the score function to be used on the next call to apply().
+	void set_score_function(core::scoring::ScoreFunctionOP score_function);
+
 	/// @brief Set the minimizer options.
-	void min_options(core::optimization::MinimizerOptionsOP options);
+	void set_min_options(core::optimization::MinimizerOptionsOP options);
 	
 	/// @brief Non-const access to the minimizer options.  May be NULL.
-	core::optimization::MinimizerOptionsOP min_options();
+	core::optimization::MinimizerOptionsOP get_min_options();
 	
 	/// @brief Const access to the minimizer options.  May be NULL.
-	core::optimization::MinimizerOptionsCOP min_options() const;
+	core::optimization::MinimizerOptionsCOP get_min_options() const;
 	
 protected:
 

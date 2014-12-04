@@ -10,24 +10,20 @@
 // Unit headers
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefinerCreator.hh>
+#include <protocols/loop_modeling/refiners/packing_helper.hh>
+#include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 
 // Core headers
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-// Protocols headers
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/loops_main.hh>
-
-// Utility headers
-#include <utility/vector1.hh>
-#include <iostream>
-#include <ctime>
+// RosettaScripts headers
+#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/moves/Mover.hh>
 
 namespace protocols {
 namespace loop_modeling {
@@ -35,8 +31,8 @@ namespace refiners {
 
 using namespace std;
 using core::pose::Pose;
-using core::scoring::ScoreFunctionCOP;
-using protocols::loops::Loop;
+using core::pack::task::TaskFactoryOP;
+using core::scoring::ScoreFunctionOP;
 
 protocols::moves::MoverOP RotamerTrialsRefinerCreator::create_mover() const {
 	return protocols::moves::MoverOP( new RotamerTrialsRefiner );
@@ -46,40 +42,40 @@ std::string RotamerTrialsRefinerCreator::keyname() const {
 	return "RotamerTrialsRefiner";
 }
 
-RotamerTrialsRefiner::RotamerTrialsRefiner() {
-	using namespace core::pack::task;
-	using namespace core::pack::task::operation;
-	using core::pack::task::operation::InitializeFromCommandline;
-	using core::pack::task::operation::IncludeCurrent;
+void RotamerTrialsRefiner::parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose) {
 
-	task_factory_ = TaskFactoryOP( new TaskFactory );
-	task_factory_->push_back(TaskOperationCOP( new InitializeFromCommandline ));
-	task_factory_->push_back(TaskOperationCOP( new IncludeCurrent ));
-
-	// Should read resfile if present.
+	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	utilities::set_scorefxn_from_tag(*this, tag, data);
+	utilities::set_task_factory_from_tag(*this, tag, data);
 }
 
 bool RotamerTrialsRefiner::do_apply(Pose & pose) {
+	return packing_helper(pose, this, core::pack::rotamer_trials);
+}
 
-	using core::pack::rotamer_trials;
-	using core::pack::task::PackerTaskOP;
+ScoreFunctionOP RotamerTrialsRefiner::get_score_function() {
+	return get_tool<ScoreFunctionOP>(ToolboxKeys::SCOREFXN);
+}
 
-	PackerTaskOP packer_task =
-		task_factory_->create_task_and_apply_taskoperations(pose);
+void RotamerTrialsRefiner::set_score_function(ScoreFunctionOP score_function) {
+	set_tool(ToolboxKeys::SCOREFXN, score_function);
+}
 
-	utility::vector1<bool> loop_residues = 
-		protocols::loops::select_loop_residues(pose, get_loops(), true, 10.0);
+TaskFactoryOP RotamerTrialsRefiner::get_task_factory() {
+	return get_tool<TaskFactoryOP>(ToolboxKeys::TASK_FACTORY);
+}
 
-	core::pose::symmetry::make_residue_mask_symmetric(pose, loop_residues);
+TaskFactoryOP RotamerTrialsRefiner::get_task_factory(TaskFactoryOP fallback) {
+	return get_tool<TaskFactoryOP>(ToolboxKeys::TASK_FACTORY, fallback);
+}
 
-	packer_task->set_bump_check(true);
-	packer_task->restrict_to_repacking();
-	packer_task->restrict_to_residues(loop_residues);
-
-	rotamer_trials(pose, *get_score_function(), packer_task);
-	pose.update_residue_neighbors();
-
-	return true;
+void RotamerTrialsRefiner::set_task_factory(TaskFactoryOP task_factory) {
+	set_tool(ToolboxKeys::TASK_FACTORY, task_factory);
 }
 
 }

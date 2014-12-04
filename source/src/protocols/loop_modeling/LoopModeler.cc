@@ -20,11 +20,14 @@
 // Protocols headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
-#include <protocols/loop_modeling/loggers/Logger.hh>
+#include <protocols/kinematic_closure/perturbers/OmegaPerturber.hh>
+#include <protocols/kinematic_closure/perturbers/Rama2bPerturber.hh>
+#include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
-#include <protocols/loop_modeling/utilities/PeriodicMover.hh>
+#include <protocols/loop_modeling/utilities/PrepareForCentroid.hh>
+#include <protocols/loop_modeling/utilities/PrepareForFullatom.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
@@ -33,6 +36,8 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/simple_filters/BuriedUnsatHbondFilter.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 
@@ -40,6 +45,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -48,8 +54,12 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/rms_util.tmpl.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -57,32 +67,46 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
 // C++ headers
 #include <iostream>
 #include <cmath>
+#include <ctime>
 
 #define foreach BOOST_FOREACH
 
 // Namespaces {{{1
 using namespace std;
+using namespace basic::options;
 
 using core::Real;
 using core::Size;
-using core::pose::Pose;
-using core::scoring::ScoreFunctionOP;
-using core::scoring::ScoreFunctionCOP;
-using protocols::filters::FilterOP;
-using protocols::loops::Loop;
-using protocols::loops::Loops;
-using protocols::moves::MoverOP;
-using protocols::moves::MonteCarloOP;
-using core::util::switch_to_residue_type_set;
 using core::chemical::CENTROID;
 using core::chemical::FA_STANDARD;
+using core::pose::Pose;
+using core::import_pose::pose_from_pdb;
+using core::scoring::ScoreFunctionCOP;
+using core::scoring::ScoreFunctionOP;
+using core::util::switch_to_residue_type_set;
+using core::pack::task::TaskFactoryOP;
+using core::pack::task::TaskFactoryCOP;
+
+using protocols::filters::FilterOP;
+using protocols::loop_modeling::utilities::PrepareForCentroid;
+using protocols::loop_modeling::utilities::PrepareForCentroidOP;
+using protocols::loop_modeling::utilities::PrepareForFullatom;
+using protocols::loop_modeling::utilities::PrepareForFullatomOP;
+using protocols::loops::Loop;
+using protocols::loops::Loops;
+using protocols::moves::MonteCarloOP;
+using protocols::moves::MoverOP;
 
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;
@@ -92,6 +116,8 @@ using protocols::moves::Movers_map;
 
 namespace protocols {
 namespace loop_modeling {
+
+static basic::Tracer TR("protocols.loop_modeling.LoopModeler");
 
 MoverOP LoopModelerCreator::create_mover() const { // {{{1
 	return MoverOP( new LoopModeler );
@@ -103,23 +129,31 @@ string LoopModelerCreator::keyname() const { // {{{1
 // }}}1
 
 LoopModeler::LoopModeler() { // {{{1
-	dont_manage_score_function();
-
-	build_stage_ = utility::pointer::static_pointer_cast< LoopBuilder >( register_nested_loop_mover( LoopMoverOP( new LoopBuilder ) ) );
-	centroid_stage_ = utility::pointer::static_pointer_cast< LoopProtocol >( register_nested_loop_mover( LoopMoverOP( new LoopProtocol ) ) );
-	fullatom_stage_ = utility::pointer::static_pointer_cast< LoopProtocol >( register_nested_loop_mover( LoopMoverOP( new LoopProtocol ) ) );
+	build_stage_ = add_child( LoopBuilderOP( new LoopBuilder ) );
+	centroid_stage_ = add_child( LoopProtocolOP( new LoopProtocol ) );
+	fullatom_stage_ = add_child( LoopProtocolOP( new LoopProtocol ) );
+	prepare_for_centroid_ = add_child( PrepareForCentroidOP( new PrepareForCentroid ) );
+	prepare_for_fullatom_ = add_child( PrepareForFullatomOP( new PrepareForFullatom ) );
 
 	is_build_stage_enabled_ = true;
 	is_centroid_stage_enabled_ = true;
 	is_fullatom_stage_enabled_ = true;
-	repack_everything_before_fullatom_ = false;
+
+	set_fa_scorefxn(loops::get_fa_scorefxn());
+	set_cen_scorefxn(loops::get_cen_scorefxn());
 
 	setup_kic_config();
 }
 
 LoopModeler::~LoopModeler() {} // {{{1
 
-// }}}1
+MoverOP LoopModeler::clone() const { // {{{1
+	// This is dangerous.  It only works if something else is holding a shared 
+	// pointer to this object.  The proper thing to do would be to construct a 
+	// new loop modeler on the fly, but I think this is impossible because 
+	// there's no way to make a deep copy of a data map.
+	return utility::pointer::const_pointer_cast<Mover>(shared_from_this());
+}
 
 void LoopModeler::parse_my_tag( // {{{1
 		TagCOP tag,
@@ -128,40 +162,61 @@ void LoopModeler::parse_my_tag( // {{{1
 		Movers_map const & movers,
 		Pose const & pose) {
 
+	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	utilities::set_task_factory_from_tag(*this, tag, data);
+
 	// Parse the 'config' option.
 
-	string config = tag->getOption<string>("config", "");
+	string config = tag->getOption<string>("config", "kic");
 
-	if (config == "")           { /* Don't change anything. */ }
-	else if (config == "empty") { setup_empty_config(); }
-	else if (config == "kic")   { setup_kic_config(); }
-	else if (config == "ngk")   { setup_next_gen_kic_config(); }
-	else { 
+	if (config == "empty") {
+		setup_empty_config();
+	} else if (config == "kic") {
+		setup_kic_config();
+	} else if (config == "kic_with_frags") {
+		setup_kic_with_fragments_config();
+	} else { 
 		stringstream message;
-		message << "Unknown <LoopModeler config option: '" << config << "'";
+		message << "Unknown <LoopModeler> config option: '" << config << "'";
 		throw utility::excn::EXCN_Msg_Exception(message.str());
 	}
 
 	// Parse the 'auto_refine' option.
 
 	if (! tag->getOption<bool>("auto_refine", true)) {
-		clear_refiners();
+		centroid_stage_->clear_refiners();
+		fullatom_stage_->clear_refiners();
 	}
 
-	// Parse the 'loops_file' option.
+	// Pares the 'scorefxn_fa' and 'scorefxn_cen' options.
 
-	if (tag->hasOption("loops_file")) {
-		string loops_file = tag->getOption<string>("loops_file");
-		set_loops(Loops(loops_file));
+	using protocols::rosetta_scripts::parse_score_function;
+
+	if (tag->hasOption("scorefxn_fa")) {
+		set_fa_scorefxn(parse_score_function(tag, "scorefxn_fa", data, ""));
+	}
+	if (tag->hasOption("scorefxn_cen")) {
+		set_cen_scorefxn(parse_score_function(tag, "scorefxn_cen", data, ""));
+	}
+
+	// Parse the 'fast' option.
+	
+	if (tag->getOption<bool>("fast", false)) {
+		centroid_stage_->mark_as_test_run();
+		fullatom_stage_->mark_as_test_run();
 	}
 
 	// Parse subtags.
 
 	foreach (TagCOP subtag, tag->getTags()) {
 
+		// Ignore <Loop> subtags (parsed by parent class).
+
+		if (subtag->getName() == "Loop") { continue; }
+
 		// Parse <Build> subtags.
 
-		if (subtag->getName() == "Build") {
+		else if (subtag->getName() == "Build") {
 			build_stage_->parse_my_tag(subtag, data, filters, movers, pose);
 			is_build_stage_enabled_ = ! subtag->getOption<bool>("skip", ! is_build_stage_enabled_);
 		}
@@ -183,143 +238,109 @@ void LoopModeler::parse_my_tag( // {{{1
 		// Parse LoopMover subtags.
 
 		else {
-			LoopMoverOP loop_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
-			add_shared_mover(loop_mover);
+			LoopMoverOP centroid_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
+			LoopMoverOP fullatom_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
+
+			centroid_stage_->add_mover(centroid_mover);
+			fullatom_stage_->add_mover(fullatom_mover);
 		}
 	}
 }
-// }}}1
 
 bool LoopModeler::do_apply(Pose & pose) { // {{{1
-	Pose original_pose(pose);
+	Pose native_pose(pose);
+	if (option[OptionKeys::in::file::native].user() ) {
+		pose_from_pdb(native_pose, option[OptionKeys::in::file::native]());
+	}
+	prepare_for_fullatom_->set_original_pose(pose);
 
 	// Converting the pose to centroid mode can sometimes cause headaches with 
-	// non-canonical reside type sets, so this conditional makes sure that this 
+	// non-canonical residue type sets, so this conditional makes sure that this 
 	// conversion only happens if necessary.
 	
 	if (is_build_stage_enabled_ || is_centroid_stage_enabled_) {
-		convert_to_centroid(pose);
-		if (is_build_stage_enabled_) { build_stage_->apply(pose); }
-		if (is_centroid_stage_enabled_) { centroid_stage_->apply(pose); }
+		prepare_for_centroid_->apply(pose);
+	}
+	
+	// Build stage
+
+	if (is_build_stage_enabled_) {
+		long start_time = time(NULL);
+		TR << "Build Stage" << endl;
+		build_stage_->apply(pose);
+		long end_time = time(NULL);
+		TR << "Build Time: " << end_time - start_time << " sec" << endl;
 	}
 
-	convert_to_fullatom(pose, original_pose);
-	if (is_fullatom_stage_enabled_) { fullatom_stage_->apply(pose); }
+	// Centroid stage
+
+	if (is_centroid_stage_enabled_) {
+		long start_time = time(NULL);
+		TR << "Centroid Stage" << endl;
+		centroid_stage_->apply(pose);
+		long end_time = time(NULL);
+		TR << "Centroid Time: " << end_time - start_time << " sec" << endl;
+	}
+
+	// Fullatom stage
+
+	if (is_fullatom_stage_enabled_) {
+		long start_time = time(NULL);
+		TR << "Fullatom Stage" << endl;
+		prepare_for_fullatom_->apply(pose);
+		fullatom_stage_->apply(pose);
+		long end_time = time(NULL);
+		TR << "Fullatom Time: " << end_time - start_time << " sec" << endl;
+	}
+
+	// Report score and rmsd
+	
+	LoopsCOP loops = get_loops();
+	ObjexxFCL::FArray1D_bool loop_residues (pose.total_residue(), false);
+
+	for (Size i = 1; i <= pose.total_residue(); i++) {
+		if (loops->is_loop_residue(i)) { loop_residues[i-1] = true; }
+	}
+
+	using core::scoring::rmsd_no_super_subset;
+	using core::scoring::is_protein_backbone;
+	using core::scoring::chainbreak;
+
+	Real total_score = pose.is_fullatom() ? 
+		fullatom_stage_->get_score_function()->score(pose):
+		centroid_stage_->get_score_function()->score(pose);
+	Real chainbreak_score = pose.energies().total_energies()[chainbreak];
+	Real backbone_rmsd = rmsd_no_super_subset(
+			native_pose, pose, loop_residues, is_protein_backbone);
+
+	TR << "Total Score: " << total_score << endl;
+	TR << "Chainbreak Score: " << chainbreak_score << endl;
+	TR << "Loop Backbone RMSD: " << backbone_rmsd << endl;
+
+	core::pose::setPoseExtraScore(pose, "total_score", total_score);
+	core::pose::setPoseExtraScore(pose, "chainbreak_score", chainbreak_score);
+	core::pose::setPoseExtraScore(pose, "loop_backbone_rmsd", backbone_rmsd);
+
+	if (pose.is_fullatom()) {
+		protocols::simple_filters::BuriedUnsatHbondFilter unsats(20, 0);
+		Real delta_unsats = unsats.compute(pose) - unsats.compute(native_pose);
+		TR << "Delta Buried Unsatisfied H-bonds: " << showpos << delta_unsats << endl;
+		core::pose::setPoseExtraScore(pose, "delta_buried_unsats", delta_unsats);
+	}
 
 	return true;
 }
 
-void LoopModeler::convert_to_centroid(Pose & pose) { // {{{1
-	if (! pose.is_centroid()) {
-		switch_to_residue_type_set(pose, CENTROID);
-	}
-}
-
-void LoopModeler::convert_to_fullatom(Pose & pose, Pose & original_pose) { // {{{1
-	using namespace core::pack::task;
-	using namespace core::pack::task::operation;
-	using core::chemical::DISULFIDE;
-	using core::kinematics::MoveMap;
-	using core::kinematics::MoveMapOP;
-	using core::optimization::AtomTreeMinimizer;
-	using core::optimization::AtomTreeMinimizerOP;
-	using core::optimization::MinimizerOptions;
-	using core::optimization::symmetry::SymAtomTreeMinimizer;
-	using core::pose::symmetry::is_symmetric;
-	using core::pose::symmetry::make_residue_mask_symmetric;
-	using core::pose::symmetry::make_symmetric_movemap;
-	using protocols::simple_moves::PackRotamersMover;
-	using protocols::simple_moves::PackRotamersMoverOP;
-	using protocols::simple_moves::symmetry::SymPackRotamersMover;
-
-	// If the pose is already fullatom, this means that the centroid stages were 
-	// skipped and that the pose has been fullatom the whole time.  So we don't 
-	// need to do anything unless a full repack has been requested.
-
-	if (pose.is_fullatom() && ! repack_everything_before_fullatom_) { return; }
-
-	// Convert the pose to fullatom mode.
-
-	switch_to_residue_type_set(pose, FA_STANDARD);
-
-	// Decide which sidechains (if any) to copy directly from the input pose.  No 
-	// sidechains will be copied if the input pose is in centroid mode or if a 
-	// full repack was requested.  Otherwise, all sidechains that are from 
-	// outside the loop will be copied.
-	
-	vector1<bool> residues_to_repack(pose.total_residue(), true);
-
-	if (original_pose.is_fullatom() && ! repack_everything_before_fullatom_) {
-		for (Size i = 1; i < pose.total_residue(); i++) {
-			if (! get_loops().is_loop_residue(i)) {
-				pose.replace_residue(i, original_pose.residue(i), true);
-				residues_to_repack[i] = false;
-			}
-		}
-	}
-
-	// Setup a packer task that will pack any residues that weren't copied from 
-	// the input pose.  Disulfides are explicitly not packed.
-
-	pose.conformation().detect_disulfides();
-
-	TaskFactoryOP task_factory( new TaskFactory );
-	task_factory->push_back(TaskOperationCOP( new InitializeFromCommandline ));
-	task_factory->push_back(TaskOperationCOP( new RestrictToRepacking ));
-	task_factory->push_back(TaskOperationCOP( new NoRepackDisulfides ));
-
-	PackerTaskOP task = task_factory->create_task_and_apply_taskoperations(pose);
-	make_residue_mask_symmetric(pose, residues_to_repack);
-	task->restrict_to_residues(residues_to_repack);
-
-	// Setup a move map for the minimizer that will allow only sidechain DOFs to 
-	// move.  Again, disulfides are explicitly left in place.
-
-	MoveMap move_map;
-	move_map.set_bb(false);
-	move_map.set_chi(true);
-
-	for (Size i = 1; i <= pose.total_residue(); i++) {
-		if (pose.residue(i).has_variant_type(DISULFIDE)) {
-			move_map.set_chi(i, false);
-		}
-	}
-
-	// Apply the packer and the minimizer, accounting for symmetry.
-
-	PackRotamersMoverOP packer;
-	AtomTreeMinimizerOP minimizer;
-	MinimizerOptions min_options("dfpmin_armijo_nonmonotone", 1e-5, true, false);
-	ScoreFunctionCOP fa_score_function = fullatom_stage_->get_score_function();
-
-	if (is_symmetric(pose)) {
-		packer = PackRotamersMoverOP( new SymPackRotamersMover(fa_score_function, task) );
-		minimizer = AtomTreeMinimizerOP( new SymAtomTreeMinimizer );
-		make_symmetric_movemap(pose, move_map);
-	} else {
-		packer = PackRotamersMoverOP( new PackRotamersMover(fa_score_function, task) );
-		minimizer = AtomTreeMinimizerOP( new AtomTreeMinimizer );
-	}
-
-	packer->apply(pose);
-	minimizer->run(pose, move_map, *fa_score_function, min_options);
-}
-
-// }}}1
-
 void LoopModeler::setup_empty_config() { // {{{1
-	build_stage_->set_score_function(loops::get_cen_scorefxn());
-
-	centroid_stage_->set_sfxn_cycles(3);
+	centroid_stage_->set_sfxn_cycles(5);
 	centroid_stage_->set_temp_cycles(20, true);
 	centroid_stage_->set_mover_cycles(1);
-	centroid_stage_->set_score_function(loops::get_cen_scorefxn());
+	centroid_stage_->set_temperature_schedule(2.0, 1.0);
 	centroid_stage_->clear_movers_and_refiners();
 
-	fullatom_stage_->set_sfxn_cycles(3);
+	fullatom_stage_->set_sfxn_cycles(5);
 	fullatom_stage_->set_temp_cycles(10, true);
 	fullatom_stage_->set_mover_cycles(2);
-	fullatom_stage_->set_score_function(loops::get_fa_scorefxn());
 	fullatom_stage_->clear_movers_and_refiners();
 }
 
@@ -330,38 +351,75 @@ void LoopModeler::setup_kic_config() { // {{{1
 
 	setup_empty_config();
 
-	add_shared_mover(LoopMoverOP( new KicMover ));
-
+	centroid_stage_->add_mover(LoopMoverOP( new KicMover ));
 	centroid_stage_->add_refiner(LoopMoverOP( new MinimizationRefiner ));
-	fullatom_stage_->add_refiner(LoopMoverOP( new PeriodicMover(LoopMoverOP( new RepackingRefiner ), 20) ));
+	centroid_stage_->mark_as_default();
+
+	fullatom_stage_->set_temperature_ramping(true);
+	fullatom_stage_->set_rama_term_ramping(true);
+	fullatom_stage_->set_repulsive_term_ramping(true);
+	fullatom_stage_->add_mover(LoopMoverOP( new KicMover ));
+	fullatom_stage_->add_refiner(LoopMoverOP( new RepackingRefiner(20) ));
 	fullatom_stage_->add_refiner(LoopMoverOP( new RotamerTrialsRefiner ));
 	fullatom_stage_->add_refiner(LoopMoverOP( new MinimizationRefiner ));
-
-	mark_as_default();
+	fullatom_stage_->mark_as_default();
 }
 
-void LoopModeler::setup_next_gen_kic_config() { // {{{1
+void LoopModeler::setup_kic_with_fragments_config() { // {{{1
+	using namespace basic::options;
 	using namespace protocols::kinematic_closure;
+	using namespace protocols::kinematic_closure::perturbers;
 
-	utility_exit_with_message("Next-generation KIC not yet supported by LoopModeler.");
-
-	/*
 	setup_kic_config();
 
-	KicMoverOP kic_mover = new KicMover;
-	kic_mover->add_perturber(new BondAnglePerturber);
-	kic_mover->add_perturber(new TabooPerturber);
-	kic_mover->add_perturber(new NeighborDependentRamaPerturber);
+	// Read fragment data from the command line.
 
-	add_shared_mover(kic_mover);
+	vector1<core::fragment::FragSetOP> frag_libs;
 
-	fullatom_stage_->set_ramp_rama(true);
-	fullatom_stage_->set_ramp_repulsive(true);
+	if ( option[ OptionKeys::loops::frag_files ].user()) {
+		loops::read_loop_fragments(frag_libs);
+	} else {
+		stringstream message;
+		message << "Must specify the -loops:frag_sizes and -loops:frag_files ";
+		message << "options in order to use the FragmentPerturber." << endl;
+		throw utility::excn::EXCN_Msg_Exception(message.str());
+	}
 
-	mark_as_default();
-	*/
+	// Enable fragments during the build stage.
+
+	build_stage_->use_fragments(frag_libs);
+
+	// Create a centroid "KIC with fragments" mover (see note).
+
+	KicMoverOP centroid_kic_mover( new KicMover );
+	centroid_kic_mover->add_perturber(perturbers::PerturberOP( new FragmentPerturber(frag_libs) ));
+	centroid_stage_->add_mover(centroid_kic_mover);
+	centroid_stage_->mark_as_default();
+
+	// Create a fullatom "KIC with fragments" mover (see note).
+
+	KicMoverOP fullatom_kic_mover( new KicMover );
+	fullatom_kic_mover->add_perturber(perturbers::PerturberOP( new FragmentPerturber(frag_libs) ));
+	fullatom_stage_->add_mover(fullatom_kic_mover);
+	fullatom_stage_->mark_as_default();
+
+	// Note: Because loop movers can query their parents for attributes like 
+	// score functions and task operations, no loop mover can have more than one 
+	// parent.  This is why two separate centroid and fullatom KicMover objects 
+	// must be created.
 }
-// }}}1
+
+LoopBuilderOP LoopModeler::build_stage() { // {{{1
+	return build_stage_;
+}
+
+LoopProtocolOP LoopModeler::centroid_stage() { // {{{1
+	return centroid_stage_;
+}
+
+LoopProtocolOP LoopModeler::fullatom_stage() { // {{{1
+	return fullatom_stage_;
+}
 
 void LoopModeler::enable_build_stage() { // {{{1
 	is_build_stage_enabled_ = true;
@@ -387,58 +445,28 @@ void LoopModeler::disable_fullatom_stage() { // {{{1
 	is_fullatom_stage_enabled_ = false;
 }
 
-LoopBuilderOP LoopModeler::build_stage() { // {{{1
-	return build_stage_;
+TaskFactoryOP LoopModeler::get_task_factory() { // {{{1
+	return get_tool<TaskFactoryOP>(ToolboxKeys::TASK_FACTORY);
 }
 
-LoopProtocolOP LoopModeler::centroid_stage() { // {{{1
-	return centroid_stage_;
+TaskFactoryOP LoopModeler::get_task_factory(TaskFactoryOP fallback) { // {{{1
+	return get_tool<TaskFactoryOP>(ToolboxKeys::TASK_FACTORY, fallback);
 }
 
-LoopProtocolOP LoopModeler::fullatom_stage() { // {{{1
-	return fullatom_stage_;
-}
-// }}}1
-
-void LoopModeler::repack_everything_before_fullatom(bool setting) { // {{{1
-	repack_everything_before_fullatom_ = setting;
-}
-// }}}1
-
-void LoopModeler::add_shared_mover(LoopMoverOP mover) { // {{{1
-	centroid_stage_->add_mover(mover);
-	fullatom_stage_->add_mover(mover);
+void LoopModeler::set_task_factory(TaskFactoryOP task_factory) { // {{{1
+	set_tool(ToolboxKeys::TASK_FACTORY, task_factory);
 }
 
-void LoopModeler::add_shared_refiner(LoopMoverOP refiner) { // {{{1
-	centroid_stage_->add_refiner(refiner);
-	fullatom_stage_->add_refiner(refiner);
+void LoopModeler::set_fa_scorefxn(ScoreFunctionOP function) { // {{{1
+	prepare_for_fullatom_->set_score_function(function);
+	fullatom_stage_->set_score_function(function);
 }
 
-void LoopModeler::add_shared_filter(FilterOP filter) { // {{{1
-	centroid_stage_->add_filter(filter);
-	fullatom_stage_->add_filter(filter);
+void LoopModeler::set_cen_scorefxn(ScoreFunctionOP function) { // {{{1
+	build_stage_->set_score_function(function);
+	centroid_stage_->set_score_function(function);
 }
 
-void LoopModeler::clear_movers() { // {{{1
-	centroid_stage_->clear_movers();
-	fullatom_stage_->clear_movers();
-}
-
-void LoopModeler::clear_refiners() { // {{{1
-	centroid_stage_->clear_refiners();
-	fullatom_stage_->clear_refiners();
-}
-
-void LoopModeler::clear_movers_and_refiners() { // {{{1
-	centroid_stage_->clear_movers_and_refiners();
-	fullatom_stage_->clear_movers_and_refiners();
-}
-
-void LoopModeler::mark_as_default() { // {{{1
-	centroid_stage_->mark_as_default();
-	fullatom_stage_->mark_as_default();
-}
 // }}}1
 
 }

@@ -27,6 +27,9 @@ namespace pivot_pickers {
 class LoopPivots : public PivotPicker {
 
 public:
+	/// @copydoc PivotPicker::get_name
+	std::string get_name() const { return "LoopPivots"; }
+
 	/// @copydoc PivotPicker::pick
 	Loop pick(Pose const & pose, Loop const & loop);
 

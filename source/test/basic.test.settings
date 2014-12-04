@@ -13,10 +13,13 @@ sources = {
 	"options" : [
 		"options_system",
 	],
-        "resource_manager" : [
-        	"ResourceLoaderFactory",
-        	"ResourceOptionsFactory",
-        ],
+	"datacache" : [
+		"HierarchicalDataMap",
+	],
+	"resource_manager" : [
+		"ResourceLoaderFactory",
+		"ResourceOptionsFactory",
+	],
 	"resource_manager/locator" : [
 		"FileSystemResourceLocatorTests",
 		"StringResourceStream",
@@ -24,7 +27,7 @@ sources = {
 }
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
-libraries    = [
+libraries	= [
 	"basic",
 	"numeric",
 	"utility",

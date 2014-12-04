@@ -3,7 +3,7 @@
 /// @brief Generally useful loop-sampling meta-algorithms.
 ///
 /// @details This namespace contains generally useful LoopMover subclasses that
-/// don't directly perform loop sampling.  For example, the PeriodicMover and 
-/// RepeatedMover classes just control how often a given loop mover is called.  
-/// The LoopMoverGroup classes makes it easy to work with a collection of loop 
+/// don't directly perform loop sampling.  For example, the AcceptanceCheck 
+/// class makes it possible create protocols with additional acceptance checks.  
+/// The LoopMoverGroup class makes it easy to work with a collection of loop 
 /// movers.

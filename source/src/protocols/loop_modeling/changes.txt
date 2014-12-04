@@ -1,0 +1,32 @@
+The loop_modeling namespace refactored a lot of legacy code from the loops 
+namespace to make it cleaner and more extensible.  However, it was not always 
+possible or desirable to reproduce the legacy behavior exactly.  Below is a 
+list of ways the refactored code differs from the legacy code:
+
+1. Different repacking schedule.  The legacy code would repack twice in a row 
+   every 40 iterations.  Iterations count even if KIC fails, so some of these 
+   repacks would be skipped.  The legacy code also did a repack at the end of 
+   every outer cycle.  The refactored code repacks once every 
+   20 successful KIC moves.
+
+2. The legacy code uses a different minimization algorithm in the centroid 
+   and fullatom stages.  The refactored code uses the same minimization for 
+   both stages.  Benchmarks show no difference either way.
+
+3. Legacy NGK uses the rama2b score term instead of the rama term.  Refactored 
+   NGK uses whatever score function the user provides, which typically means 
+   just the rama term.  If either of the rama or rama2b terms have non-zero 
+   weight, though, they will be ramped.
+
+4. Legacy KIC uses different score function pointers for packing and 
+   minimizing.  I can't find any difference between the score functions objects 
+   themselves.  In any case, refactored KIC only uses one score function.
+
+5. When converting from centroid to fullatom, legacy KIC repacks any residue 
+   within 3 residues of the loop (so 18 residues for a 12 residue loop).  
+   Refactored KIC only repacks the loop itself.
+
+6. I'm not totally sure about this, but I think legacy KIC only minimizes 
+   phis and psis while legacy NGK also minimizes omegas.  Refactored KIC 
+   always minimizes omegas.
+

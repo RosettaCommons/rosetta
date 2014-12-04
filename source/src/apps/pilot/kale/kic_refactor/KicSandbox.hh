@@ -1,5 +1,3 @@
-#pragma once
-
 // Core headers {{{1
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -9,15 +7,9 @@
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
-#include <protocols/loop_modeling/refiners/LocalMinimizationRefiner.hh>
+#include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
-#include <protocols/loop_modeling/utilities/RepeatedMover.hh>
-#include <protocols/loop_modeling/utilities/PeriodicMover.hh>
-#include <protocols/loop_modeling/loggers/Logger.hh>
-#include <protocols/loop_modeling/loggers/ProgressBar.hh>
-#include <protocols/loop_modeling/loggers/PdbLogger.hh>
-#include <protocols/loop_modeling/loggers/ScoreVsRmsd.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
 
 // Utility headers {{{1
@@ -38,8 +30,6 @@ OPT_1GRP_KEY(String, kale, algorithm)
 OPT_1GRP_KEY(File, kale, structure)
 OPT_1GRP_KEY(IntegerVector, kale, loop)
 OPT_1GRP_KEY(IntegerVector, kale, iterations)
-OPT_2GRP_KEY(Boolean, kale, out, mc_poses)
-OPT_2GRP_KEY(Boolean, kale, out, progress_bar)
 // }}}1
 
 namespace apps {
@@ -68,8 +58,8 @@ public:
 	IndexList iterations;
 };
 
-typedef utility::pointer::owning_ptr<KicSandbox> KicSandboxOP;
-typedef utility::pointer::owning_ptr<KicSandbox const> KicSandboxCOP;
+typedef utility::pointer::shared_ptr<KicSandbox> KicSandboxOP;
+typedef utility::pointer::shared_ptr<KicSandbox const> KicSandboxCOP;
 
 KicSandbox::KicSandbox(int argc, char *argv[]) {
 
@@ -80,15 +70,9 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 	using protocols::loops::Loop;
 	using protocols::loop_modeling::LoopProtocol;
 	using protocols::loop_modeling::samplers::LegacyKicSampler;
-	using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
+	using protocols::loop_modeling::refiners::MinimizationRefiner;
 	using protocols::loop_modeling::refiners::RotamerTrialsRefiner;
 	using protocols::loop_modeling::refiners::RepackingRefiner;
-	using protocols::loop_modeling::utilities::RepeatedMover;
-	using protocols::loop_modeling::utilities::PeriodicMover;
-	using protocols::loop_modeling::loggers::LoggerOP;
-	using protocols::loop_modeling::loggers::ProgressBar;
-	using protocols::loop_modeling::loggers::PdbLogger;
-	using protocols::loop_modeling::loggers::ScoreVsRmsd;
 	using protocols::kinematic_closure::KicMover;
 
 	using namespace basic::options;
@@ -100,8 +84,6 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 	NEW_OPT(kale::structure, "Input PDB file", "bamf");
 	NEW_OPT(kale::loop, "Residues to sample", 0);
 	NEW_OPT(kale::iterations, "Iterations in each loop", default_iterations);
-	NEW_OPT(kale::out::mc_poses, "Log a pose after every MC check", true);
-	NEW_OPT(kale::out::progress_bar, "Draw a progress bar", true);
 
 	devel::init(argc, argv);
 
@@ -121,8 +103,6 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 	string pdb_path = option[OptionKeys::kale::structure]();
 	IndexList loop_indices = option[OptionKeys::kale::loop]();
 	iterations = option[OptionKeys::kale::iterations]();
-	bool log_mc_poses = option[OptionKeys::kale::out::mc_poses]();
-	bool progress_bar = option[OptionKeys::kale::out::progress_bar]();
 
 	cout << "Algorithm:     " << algorithm << endl;
 	cout << "Structure:     " << pdb_path << endl;
@@ -134,7 +114,7 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 	                          << iterations[3] << endl;
 	// }}}1
 
-	protocol = new LoopProtocol;
+	protocol = LoopProtocolOP( new LoopProtocol );
 
 	// Configure the pose {{{1
 
@@ -144,23 +124,16 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 
 	loop = Loop(loop_indices[1], loop_indices[2], loop_indices[2]);
 
-	// Configure the logging output {{{1
-
-	protocol->add_logger(new ScoreVsRmsd(pose, loop));
-
-	if (progress_bar) protocol->add_logger(new ProgressBar);
-	else if (log_mc_poses) protocol->add_logger(new PdbLogger);
-
 	// Configure the sampling algorithm {{{1
 	
 	if (algorithm == "refactor") {
-		protocol->add_mover(new KicMover);
-		protocol->add_mover(new PeriodicMover(new RepackingRefiner, 20));
-		protocol->add_mover(new RotamerTrialsRefiner);
-		protocol->add_mover(new LocalMinimizationRefiner);
+		protocol->add_mover(LoopMoverOP( new KicMover ));
+		protocol->add_mover(LoopMoverOP( new RepackingRefiner(20) ));
+		protocol->add_mover(LoopMoverOP( new RotamerTrialsRefiner ));
+		protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
 	}
 	else if (algorithm == "refactor-only") {
-		protocol->add_mover(new KicMover);
+		protocol->add_mover(LoopMoverOP( new KicMover ));
 	}
 	else {
 		utility_exit_with_message("Unknown algorithm: " + algorithm);

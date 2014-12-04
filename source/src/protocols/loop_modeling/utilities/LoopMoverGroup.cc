@@ -14,14 +14,14 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Protocol headers
-#include <protocols/loops/Loop.hh>
 #include <protocols/filters/Filter.hh>
 
 // Utility headers
 #include <boost/foreach.hpp>
+#include <utility/vector1.hh>
+
 #define foreach BOOST_FOREACH
 
 namespace protocols {
@@ -29,27 +29,32 @@ namespace loop_modeling {
 namespace utilities {
 
 using namespace std;
-using core::scoring::ScoreFunctionOP;
 
-LoopMoverGroup::LoopMoverGroup():
-		is_default_(false)
-{}
+LoopMoverGroup::LoopMoverGroup() // {{{1
+	: is_default_(false) {}
 
 bool LoopMoverGroup::do_apply(Pose & pose) { // {{{1
-	foreach (LoopMoverOP child, get_nested_loop_movers()) {
+	foreach (LoopMoverOP child, get_children()) {
 		child->apply(pose);
 		if (! child->was_successful()) return false;
 	}
 	return true;
 }
 
-void LoopMoverGroup::add_mover(LoopMoverOP mover) { // {{{1
+void LoopMoverGroup::get_children_names( // {{{1
+		utility::vector1<string> & names, string indent) const {
+
+	foreach (LoopMoverOP mover, get_children()) {
+		mover->get_children_names(names, indent);
+	}
+}
+LoopMoverOP LoopMoverGroup::add_mover(LoopMoverOP mover) { // {{{1
 	if (is_default_) { clear(); }
-	register_nested_loop_mover(mover);
+	return add_child(mover);
 }
 
-void LoopMoverGroup::add_filter(protocols::filters::FilterOP filter) { // {{{1
-	add_mover(LoopMoverOP( new utilities::LoopFilter(filter) ));
+LoopMoverOP LoopMoverGroup::add_filter(protocols::filters::FilterOP filter) { // {{{1
+	return add_mover(LoopMoverOP( new utilities::LoopFilter(filter) ));
 }
 
 LoopMoverGroupOP LoopMoverGroup::add_mover_group() { // {{{1
@@ -59,7 +64,7 @@ LoopMoverGroupOP LoopMoverGroup::add_mover_group() { // {{{1
 }
 
 void LoopMoverGroup::clear() { // {{{1
-	deregister_nested_loop_movers();
+	clear_children();
 	is_default_ = false;
 }
 
@@ -68,7 +73,7 @@ void LoopMoverGroup::mark_as_default() { // {{{1
 }
 
 bool LoopMoverGroup::empty() const { // {{{1
-	return get_nested_loop_movers().empty();
+	return count_children() == 0;
 }
 // }}}1
 

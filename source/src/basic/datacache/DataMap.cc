@@ -47,16 +47,23 @@ DataMap::add( std::string const type, std::string const name, utility::pointer::
 }
 
 bool
-DataMap::has( std::string const type, std::string const name/*=""*/ ) const {
+DataMap::has( std::string const type ) const {
 	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
-
 	it = data_map_.find( type );
-	if( it == data_map_.end() ) return false;
-	std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it2;
-	it2 = it->second.find( name );
-	if( it2 == it->second.end() ) return false;
+	return it != data_map_.end();
+}
 
-	return true;
+bool
+DataMap::has( std::string const type, std::string const name ) const {
+	if( has( type ) ) {
+		std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
+		std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it2;
+		it = data_map_.find( type );
+		it2 = it->second.find( name );
+		return it2 != it->second.end();
+	} else {
+		return false;
+	}
 }
 
 std::map< std::string, utility::pointer::ReferenceCountOP > &

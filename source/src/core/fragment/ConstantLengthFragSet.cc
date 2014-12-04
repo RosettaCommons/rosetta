@@ -48,6 +48,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <boost/foreach.hpp>
 
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
 
@@ -241,7 +242,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 		Real psi = float_of(line.substr(27, 9));
 		Real omega = float_of(line.substr(36, 9));
 
-    BBTorsionSRFDOP res( new BBTorsionSRFD(3, ss, aa) );  // 3 protein torsions
+		BBTorsionSRFDOP res( new BBTorsionSRFD(3, ss, aa) );  // 3 protein torsions
 
 		// set torsions
 		res->set_torsion(1, phi);

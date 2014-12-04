@@ -27,6 +27,9 @@ public:
 	FixedOffsetPivots(Size offset=5) : offset_(offset) {}
 
 public:
+	/// @copydoc PivotPicker::get_name
+	std::string get_name() const { return "FixedOffsetPivots"; }
+
 	/// @copydoc PivotPicker::pick
 	Loop pick(Pose const & pose, Loop const & loop);
 

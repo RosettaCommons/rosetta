@@ -11,27 +11,25 @@
 /// @brief  August 2008 job distributor as planned at RosettaCon08 - Job classes
 /// @author Steven Lewis smlewi@gmail.com
 
-///Unit headers
+// Unit headers
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
-///Project headers
-
+// Project headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputterObserver.hh>
 
 #include <core/pose/Pose.hh>
 
-///Utility headers
+// Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/basic_sys_util.hh>
 
-///C++ headers
+// C++ headers
 #include <string>
+#include <ctime>
 
 #include <utility/vector1.hh>
 
@@ -47,7 +45,9 @@ Job::Job( InnerJobOP inner_job, core::Size nstruct_index )
 	: inner_job_(inner_job),
 		nstruct_index_(nstruct_index),
 		status_prefix_( "" ),
-		completed_(false)
+		completed_(false),
+		start_time_(0),
+		timestamp_("")
 {
 	//TR.Trace << "Using Job (base class) for JobDistributor" << std::endl;
 }
@@ -164,6 +164,24 @@ void Job::set_bad(bool value)  {
 	inner_job_->set_bad( value );
 }
 
+core::Size Job::start_time() const {
+	return start_time_;
+}
+
+core::Size Job::elapsed_time() const {
+	// If start_time == 0, start_timing() was never called.
+	runtime_assert (start_time_ != 0)
+	return time(NULL) - start_time_;
+}
+
+std::string Job::timestamp() const {
+	return timestamp_;
+}
+
+void Job::start_timing() {
+	start_time_ = time(NULL);
+	timestamp_ = utility::timestamp_short();
+}
 
 void Job::add_output_observer( JobOutputterObserverAP an_observer ) {
 	output_observers_.insert( an_observer );

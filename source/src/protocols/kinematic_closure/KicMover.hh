@@ -28,6 +28,7 @@
 
 // Utility headers
 #include <boost/noncopyable.hpp>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace kinematic_closure {
@@ -82,6 +83,10 @@ public:
 	std::string get_name() const { return "KicMover"; }
 
 public:
+
+	/// @copydoc LoopMover::get_children_names
+	void get_children_names(
+			utility::vector1<std::string> & names, std::string indent="") const;
 
 	/// @brief Return the PivotPicker being used by this mover.
 	pivot_pickers::PivotPickerOP get_pivot_picker();

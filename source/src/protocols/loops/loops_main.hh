@@ -82,6 +82,17 @@ loops_set_move_map(
 	Loops const & loops,
 	bool const fix_template_sc,
 	core::kinematics::MoveMap & mm,
+	core::Real neighbor_dist,
+	bool const allow_omega_move,
+	bool const allow_takeoff_torsion_move
+);
+
+void
+loops_set_move_map(
+	core::pose::Pose & pose,
+	Loops const & loops,
+	bool const fix_template_sc,
+	core::kinematics::MoveMap & mm,
 	core::Real neighbor_dist = 10.0
 );
 
@@ -91,6 +102,15 @@ loops_set_move_map(
 	Loops const & loops,
 	utility::vector1<bool> const & allow_sc_move,
 	core::kinematics::MoveMap & mm
+);
+
+void
+loops_set_move_map(
+	Loops const & loops,
+	utility::vector1<bool> const & allow_sc_move,
+	core::kinematics::MoveMap & mm,
+	bool const allow_omega_move,
+	bool const allow_takeoff_torsion_move
 );
 
 /// @brief Create a new MoveMapOP for use in minimizing the given loop.

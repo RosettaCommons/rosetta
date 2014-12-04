@@ -28,6 +28,7 @@
 using namespace std;
 
 using utility::tag::TagCOP;
+using utility::pointer::dynamic_pointer_cast;
 using basic::datacache::DataMap;
 using protocols::filters::Filters_map;
 using protocols::moves::Movers_map;
@@ -49,9 +50,9 @@ LoopMoverOP loop_mover_from_tag(
 
 	MoverOP base_mover = MoverFactory::get_instance()->newMover(
 				tag, data, filters, movers, pose);
-	LoopMoverOP loop_mover = utility::pointer::dynamic_pointer_cast< protocols::loop_modeling::LoopMover > ( base_mover );
+	LoopMoverOP loop_mover = dynamic_pointer_cast< LoopMover > ( base_mover );
 
-	if (loop_mover.get() == NULL) {
+	if ( ! loop_mover ) {
 		stringstream message;
 		message << "<" << tag->getName() << "> is not a loop mover, so ";
 		message << "cannot be used in the <LoopModeler> protocol." << endl;

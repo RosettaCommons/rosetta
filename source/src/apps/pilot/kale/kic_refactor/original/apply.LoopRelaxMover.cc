@@ -384,7 +384,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	}
 
 
-	// Full Atom Loop Modeling {{{1
+	// Convert to Fullatom Mode {{{1
 	///////////////////////////////////////////////////////////////////////////////////////
 	////
 	////  Full atom part

@@ -18,6 +18,7 @@
 
 #include <string.h> // strncpy
 #include <string>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <vector>

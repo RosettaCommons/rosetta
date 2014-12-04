@@ -28,11 +28,12 @@
 // Protocol headers
 #include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/kinematic_closure/perturbers/IdealizeNonPhiPsi.hh>
-#include <protocols/kinematic_closure/perturbers/RamaPerturber.hh>
+#include <protocols/kinematic_closure/perturbers/Rama2bPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
 #include <protocols/kinematic_closure/pivot_pickers/LoopPivots.hh>
 #include <protocols/kinematic_closure/solution_pickers/FilteredSolutions.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
+#include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -46,6 +47,7 @@ using namespace std;
 using namespace basic::options;
 
 using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunctionCOP;
 using protocols::filters::Filters_map;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
@@ -65,14 +67,17 @@ string LoopBuilderCreator::keyname() const { // {{{1
 // }}}1
 
 LoopBuilder::LoopBuilder() { // {{{1
-	using namespace protocols::kinematic_closure;
 	using protocols::kinematic_closure::KicMover;
+	using protocols::kinematic_closure::KicMoverOP;
 	using protocols::kinematic_closure::perturbers::IdealizeNonPhiPsi;
-	using protocols::kinematic_closure::perturbers::RamaPerturber;
+	using protocols::kinematic_closure::perturbers::Rama2bPerturber;
+	using protocols::kinematic_closure::perturbers::PerturberOP;
 	using protocols::kinematic_closure::pivot_pickers::LoopPivots;
+	using protocols::kinematic_closure::pivot_pickers::PivotPickerOP;
 	using protocols::kinematic_closure::solution_pickers::FilteredSolutions;
 	using protocols::kinematic_closure::solution_pickers::FilteredSolutionsOP;
 	using protocols::loop_modeling::refiners::MinimizationRefiner;
+	using protocols::loop_modeling::refiners::MinimizationRefinerOP;
 
 	max_attempts_ = option[OptionKeys::loops::max_kic_build_attempts]();
 
@@ -86,27 +91,38 @@ LoopBuilder::LoopBuilder() { // {{{1
 	solution_picker->dont_check_rama();
 	solution_picker->be_lenient();
 
-	kic_mover_ = protocols::kinematic_closure::KicMoverOP( new KicMover );
-	kic_mover_->add_perturber(perturbers::PerturberOP( new IdealizeNonPhiPsi ));
-	kic_mover_->add_perturber(perturbers::PerturberOP( new RamaPerturber ));
-	kic_mover_->set_pivot_picker(pivot_pickers::PivotPickerOP( new LoopPivots ));
-	kic_mover_->set_solution_picker(solution_picker);
+	kic_mover_ = add_child( KicMoverOP( new KicMover ) );
+	kic_mover_->add_perturber( PerturberOP( new IdealizeNonPhiPsi ) );
+	kic_mover_->add_perturber( PerturberOP( new Rama2bPerturber ) );
+	kic_mover_->set_pivot_picker( PivotPickerOP( new LoopPivots ) );
+	kic_mover_->set_solution_picker( solution_picker );
 
-	minimizer_ = refiners::MinimizationRefinerOP( new MinimizationRefiner );
+	minimizer_ = add_child( MinimizationRefinerOP( new MinimizationRefiner ) );
+}
+    
+LoopBuilder::~LoopBuilder() {} // {{{1
+    
+void LoopBuilder::parse_my_tag( // {{{1
+		TagCOP tag,
+		DataMap & data,
+		Filters_map const & filters,
+		Movers_map const & movers,
+		Pose const & pose) {
 
-	register_nested_loop_mover(kic_mover_);
-	register_nested_loop_mover(minimizer_);
+	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	utilities::set_scorefxn_from_tag(*this, tag, data);
+	max_attempts_ = tag->getOption<Size>("max_attempts", max_attempts_);
 }
 
 void LoopBuilder::use_fragments( // {{{1
 		utility::vector1<core::fragment::FragSetCOP> const & frag_libs) {
 
 	using protocols::kinematic_closure::perturbers::IdealizeNonPhiPsi;
-	using protocols::kinematic_closure::perturbers::RamaPerturber;
+	using protocols::kinematic_closure::perturbers::Rama2bPerturber;
 	using protocols::kinematic_closure::perturbers::FragmentPerturber;
 	using protocols::kinematic_closure::perturbers::PerturberOP;
 
-	// Note that a RamaPerturber is added just before the FragmentPerturber.
+	// Note that a Rama2bPerturber is added just before the FragmentPerturber.
 	// This is very important for benchmark runs seeking to recover the input
 	// structure.  The FragmentPerturber will use a fragment even if it only
 	// overlaps with the region being sampled by one residue.  When this happens,
@@ -114,25 +130,15 @@ void LoopBuilder::use_fragments( // {{{1
 	// For the benchmarks mentioned above, where the input loop is also the
 	// target loop, this is a subtle but effective form of cheating.
 	//
-	// In production runs, the RamaPerturber doesn't really need to be here.  But
-	// there's also no reason for it not to be here, since it takes a negligible
-	// amount of time to run.  And it's probably best to use the same algorithm
-	// in the production runs as in the benchmark runs.
+	// In production runs, the Rama2bPerturber doesn't really need to be here.  
+	// But there's also no reason for it not to be here, since it takes a 
+	// negligible amount of time to run.  And it's probably best to use the same 
+	// algorithm in the production runs as in the benchmark runs.
 
 	kic_mover_->clear_perturbers();
 	kic_mover_->add_perturber(PerturberOP( new IdealizeNonPhiPsi ));
-	kic_mover_->add_perturber(PerturberOP( new RamaPerturber ));
+	kic_mover_->add_perturber(PerturberOP( new Rama2bPerturber ));
 	kic_mover_->add_perturber(PerturberOP( new FragmentPerturber(frag_libs) ));
-}
-
-void LoopBuilder::parse_my_tag( // {{{1
-		TagCOP tag,
-		DataMap &,
-		Filters_map const &,
-		Movers_map const &,
-		Pose const &) {
-
-	max_attempts_ = tag->getOption<Size>("max_attempts", max_attempts_);
 }
 
 bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
@@ -162,14 +168,22 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	return minimizer_->was_successful();
 }
 
-void LoopBuilder::set_max_attempts(Size attempts) { // {{{1
-	max_attempts_ = attempts;
-}
 
 Size LoopBuilder::get_max_attempts() const { // {{{1
 	return max_attempts_;
 }
 
+void LoopBuilder::set_max_attempts(Size attempts) { // {{{1
+	max_attempts_ = attempts;
+}
+
+ScoreFunctionOP LoopBuilder::get_score_function() { // {{{1
+	return get_tool<ScoreFunctionOP>(ToolboxKeys::SCOREFXN);
+}
+
+void LoopBuilder::set_score_function(ScoreFunctionOP score_function) { // {{{1
+	set_tool(ToolboxKeys::SCOREFXN, score_function);
+}
 // }}}1
 
 

@@ -527,12 +527,30 @@ loops_set_move_map(
 	Real neighbor_dist
 )
 {
+	using namespace basic::options;
+	loops_set_move_map(
+			pose, loops, fix_template_sc, mm, neighbor_dist,
+			option[OptionKeys::loops::allow_omega_move].user(),
+			option[OptionKeys::loops::allow_takeoff_torsion_move].user());
+}
+
+void
+loops_set_move_map(
+	pose::Pose & pose,
+	Loops const & loops,
+	bool const fix_template_sc,
+	core::kinematics::MoveMap & mm,
+	Real neighbor_dist,
+	bool const allow_omega_move,
+	bool const allow_takeoff_torsion_move
+)
+{
 	using namespace core::id;
 	pose.update_residue_neighbors();
 
 	utility::vector1<bool> allow_sc_move( pose.total_residue(), false);
 	select_loop_residues( pose, loops, !fix_template_sc, allow_sc_move, neighbor_dist);
-	loops_set_move_map( loops, allow_sc_move,mm);
+	loops_set_move_map( loops, allow_sc_move,mm, allow_omega_move, allow_takeoff_torsion_move);
 
 	//fpd symmetric version
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
@@ -540,12 +558,6 @@ loops_set_move_map(
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-/// @details omega backbone torsion is always fixed. phi/psi backbone torsions within
-/// the loop region are flexible. Depending on whether -fix_natsc flag, sidechain DOFs
-/// of loop residues and/or their neighboring residues in the template will be set as
-/// movable.
-//////////////////////////////////////////////////////////////////////////////////////
 void
 loops_set_move_map(
 	Loops const & loops,
@@ -553,12 +565,25 @@ loops_set_move_map(
 	core::kinematics::MoveMap & mm
 )
 {
+	using namespace basic::options;
+	loops_set_move_map(
+			loops, allow_sc_move, mm,
+			option[OptionKeys::loops::allow_omega_move].user(),
+			option[OptionKeys::loops::allow_takeoff_torsion_move].user());
+}
+
+void
+loops_set_move_map(
+	Loops const & loops,
+	utility::vector1<bool> const & allow_sc_move,
+	core::kinematics::MoveMap & mm,
+	bool const allow_omega_move,
+	bool const allow_takeoff_torsion_move
+)
+{
 	using namespace core::id;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-
-	bool const allow_omega_move = basic::options::option[ OptionKeys::loops::allow_omega_move ].user();
-	bool const allow_takeoff_torsion_move = basic::options::option[ OptionKeys::loops::allow_takeoff_torsion_move ].user();
 
 	// allow chi to move
 	mm.set_bb( false );
@@ -593,8 +618,6 @@ loops_set_move_map(
 			mm.set_jump( i, false );
 		}
 	}
-
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////

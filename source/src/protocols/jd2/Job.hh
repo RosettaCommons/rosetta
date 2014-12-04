@@ -169,12 +169,19 @@ public:
 
 	bool bad() const;
 
+	core::Size start_time() const;
+
+	core::Size elapsed_time() const;
+
+	std::string timestamp() const;
+
 	void set_completed(bool value = true)  {
 		completed_ = value;
 	}
 
 	void set_bad(bool value = true);
 
+	void start_timing();
 	void add_output_observer( JobOutputterObserverAP an_observer );
 	void remove_output_observer( JobOutputterObserverAP old_observer );
 	void call_output_observers( core::pose::Pose const & pose );
@@ -204,6 +211,9 @@ private:
 	//Oliver??
 
 	bool completed_;
+
+	core::Size start_time_;  // seconds
+	std::string timestamp_;
 
 #ifndef PTR_MODERN
 	typedef std::set< JobOutputterObserverAP > JobOutputterObservers;

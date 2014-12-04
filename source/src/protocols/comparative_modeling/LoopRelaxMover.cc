@@ -91,12 +91,6 @@
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
-#include <protocols/loop_modeling/utilities/RepeatedMover.hh>
-#include <protocols/loop_modeling/utilities/PeriodicMover.hh>
-#include <protocols/loop_modeling/loggers/Logger.hh>
-#include <protocols/loop_modeling/loggers/ProgressBar.hh>
-#include <protocols/loop_modeling/loggers/PdbLogger.hh>
-#include <protocols/loop_modeling/loggers/ScoreVsRmsd.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/kinematic_closure/perturbers/BondAnglePerturber.hh>
 #include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
@@ -574,8 +568,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					using protocols::loop_modeling::LoopMoverOP;
 					using protocols::loop_modeling::LoopProtocol;
 					using protocols::loop_modeling::LoopProtocolOP;
-					using protocols::loop_modeling::loggers::ProgressBar;
-					using protocols::loop_modeling::loggers::LoggerOP;
 					using protocols::loop_modeling::refiners::MinimizationRefiner;
 					using protocols::kinematic_closure::KicMover;
 					using protocols::kinematic_closure::KicMoverOP;
@@ -654,7 +646,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						protocol->set_mover_cycles(1);
 						protocol->add_mover(kic_mover);
 						protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
-						protocol->add_logger(LoggerOP( new ProgressBar("Perturb: ") ));
 						protocol->apply(pose);
 					}
 
@@ -1149,9 +1140,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				using protocols::loop_modeling::refiners::RepackingRefiner;
 				using protocols::loop_modeling::refiners::RotamerTrialsRefiner;
 				using protocols::loop_modeling::refiners::MinimizationRefiner;
-				using protocols::loop_modeling::utilities::PeriodicMover;
-				using protocols::loop_modeling::loggers::LoggerOP;
-				using protocols::loop_modeling::loggers::ProgressBar;
 				using protocols::kinematic_closure::KicMover;
 				using protocols::kinematic_closure::KicMoverOP;
 				using protocols::kinematic_closure::perturbers::BondAnglePerturber;
@@ -1179,7 +1167,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				}
 				if (option[OptionKeys::loops::fast]) {
 					sfxn_cycles = 3;
-					temp_cycles = 12;
+					temp_cycles = loops->loop_size();
+				}
+				if (option[OptionKeys::run::test_cycles]) {
+					sfxn_cycles = 3;
+					temp_cycles = 3;
 				}
 				if (option[OptionKeys::loops::repack_period].user()) {
 					repack_period = option[OptionKeys::loops::repack_period]();
@@ -1199,10 +1191,9 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				protocol->set_temp_cycles(temp_cycles);
 				protocol->set_mover_cycles(2);
 				protocol->add_mover(kic_mover);
-				protocol->add_mover(LoopMoverOP( new PeriodicMover(LoopMoverOP( new RepackingRefiner ), repack_period) ));
+				protocol->add_mover(LoopMoverOP( new RepackingRefiner(repack_period) ));
 				protocol->add_mover(LoopMoverOP( new RotamerTrialsRefiner ));
 				protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
-				protocol->add_logger(LoggerOP( new ProgressBar("Refine:  ") ));
 				protocol->apply(pose);
 			}
 

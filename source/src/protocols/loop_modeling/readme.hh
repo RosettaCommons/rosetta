@@ -2,15 +2,18 @@
 ///
 /// @brief Framework for loop structure prediction.
 ///
-/// @details The most important classes in this namespace are LoopProtocol and 
-/// LoopMover.  LoopMover provides an interface for loop sampling algorithms.  
-/// Methods are provided for specifying which loops need to be sampled and for 
-/// setting up a compatible fold tree.  Some important LoopMover subclasses 
-/// include RepackingRefiner, MinimizationRefiner, and KicMover.  The 
-/// LoopProtocol class provides a framework for combining any number of loop 
-/// movers into a single Monte Carlo simulation.  Aspects of the simulation 
-/// like the number of iterations, the score function, and the temperature can 
-/// be easily controlled.
+/// @details The most important classes in this namespace are LoopModeler, 
+/// LoopProtocol and LoopMover.  LoopMover provides an interface for loop 
+/// sampling algorithms.  Methods are provided for specifying which loops need 
+/// to be sampled and for setting up a compatible fold tree.  Some important 
+/// LoopMover subclasses include RepackingRefiner, MinimizationRefiner, and 
+/// KicMover.  The LoopProtocol class provides a framework for combining any 
+/// number of loop movers into a single Monte Carlo simulation.  Aspects of the 
+/// simulation like the number of iterations, the score function, and the 
+/// temperature can be easily controlled.  LoopModeler combines initial loop 
+/// building, centroid refinement, and fullatom refinement into a complete loop 
+/// modeling simulation.  It also provides a lot of configurability, especially 
+/// from rosetta scripts.
 ///
 /// Below is an excerpt from protocols::comparative_modeling::LoopRelaxMover 
 /// that shows some of the classes from this namespace in action.  This code 
@@ -28,7 +31,7 @@
 /// }
 ///
 /// protocol->add_mover(new KicMover);
-/// protocol->add_mover(new PeriodicTask(new RepackingRefiner, repack_period));
+/// protocol->add_mover(new RepackingRefiner(repack_period));
 /// protocol->add_mover(new RotamerTrialsRefiner);
 /// protocol->add_mover(new FullatomMinimizationRefiner);
 ///
@@ -50,7 +53,6 @@
 /// protocol->set_loops(*loops);
 /// protocol->set_score_function(fa_scorefxn_);
 /// protocol->set_iterations(outer_cycles, inner_cycles, 2);
-/// protocol->add_logger(new ProgressBar);
 /// protocol->apply(pose);
 /// @endcode
 

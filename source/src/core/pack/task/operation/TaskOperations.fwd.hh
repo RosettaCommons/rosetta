@@ -22,35 +22,49 @@ namespace pack {
 namespace task {
 namespace operation {
 
-class RestrictToRepacking;
-class RestrictResidueToRepacking;
-class InitializeFromCommandline;
-class RestrictAbsentCanonicalAAS;
-class DisallowIfNonnative;
-class ReadResfile;
-class SetRotamerCouplings;
+class AppendResidueRotamerSet;
 class AppendRotamer;
 class AppendRotamerSet;
+class DisallowIfNonnative;
+class ExtraChiCutoff;
+class ExtraRotamers;
+class ExtraRotamersGeneric;
+class IncludeCurrent;
+class InitializeExtraRotsFromCommandline;
+class InitializeFromCommandline;
 class PreserveCBeta;
 class PreventRepacking;
-class IncludeCurrent;
+class ReadResfile;
+class ReadResfileAndObeyLengthEvents;
+class RestrictAbsentCanonicalAAS;
+class RestrictResidueToRepacking;
+class RestrictToRepacking;
+class RestrictYSDesign;
 class RotamerExplosion;
-class ExtraChiCutoff;
+class SetRotamerCouplings;
+class SetRotamerLinks;
 
-typedef utility::pointer::shared_ptr< RestrictToRepacking > RestrictToRepackingOP;
-typedef utility::pointer::shared_ptr< RestrictResidueToRepacking > RestrictResidueToRepackingOP;
-typedef utility::pointer::shared_ptr< RestrictAbsentCanonicalAAS > RestrictAbsentCanonicalAASOP;
-typedef utility::pointer::shared_ptr< DisallowIfNonnative > DisallowIfNonnativeOP;
-typedef utility::pointer::shared_ptr< InitializeFromCommandline > InitializeFromCommandlineOP;
-typedef utility::pointer::shared_ptr< ReadResfile > ReadResfileOP;
-typedef utility::pointer::shared_ptr< SetRotamerCouplings > SetRotamerCouplingsOP;
+typedef utility::pointer::shared_ptr< AppendResidueRotamerSet > AppendResidueRotamerSetOP;
 typedef utility::pointer::shared_ptr< AppendRotamer > AppendRotamerOP;
 typedef utility::pointer::shared_ptr< AppendRotamerSet > AppendRotamerSetOP;
+typedef utility::pointer::shared_ptr< DisallowIfNonnative > DisallowIfNonnativeOP;
+typedef utility::pointer::shared_ptr< ExtraChiCutoff > ExtraChiCutoffOP;
+typedef utility::pointer::shared_ptr< ExtraRotamers > ExtraRotamersOP;
+typedef utility::pointer::shared_ptr< ExtraRotamersGeneric > ExtraRotamersGenericOP;
+typedef utility::pointer::shared_ptr< IncludeCurrent > IncludeCurrentOP;
+typedef utility::pointer::shared_ptr< InitializeExtraRotsFromCommandline > InitializeExtraRotsFromCommandlineOP;
+typedef utility::pointer::shared_ptr< InitializeFromCommandline > InitializeFromCommandlineOP;
 typedef utility::pointer::shared_ptr< PreserveCBeta > PreserveCBetaOP;
 typedef utility::pointer::shared_ptr< PreventRepacking > PreventRepackingOP;
-typedef utility::pointer::shared_ptr< IncludeCurrent > IncludeCurrentOP;
+typedef utility::pointer::shared_ptr< ReadResfile > ReadResfileOP;
+typedef utility::pointer::shared_ptr< ReadResfileAndObeyLengthEvents > ReadResfileAndObeyLengthEventsOP;
+typedef utility::pointer::shared_ptr< RestrictAbsentCanonicalAAS > RestrictAbsentCanonicalAASOP;
+typedef utility::pointer::shared_ptr< RestrictResidueToRepacking > RestrictResidueToRepackingOP;
+typedef utility::pointer::shared_ptr< RestrictToRepacking > RestrictToRepackingOP;
+typedef utility::pointer::shared_ptr< RestrictYSDesign > RestrictYSDesignOP;
 typedef utility::pointer::shared_ptr< RotamerExplosion > RotamerExplosionOP;
-typedef utility::pointer::shared_ptr< ExtraChiCutoff > ExtraChiCutoffOP;
+typedef utility::pointer::shared_ptr< SetRotamerCouplings > SetRotamerCouplingsOP;
+typedef utility::pointer::shared_ptr< SetRotamerLinks > SetRotamerLinksOP;
 
 } //namespace operation
 } //namespace task

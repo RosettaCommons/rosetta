@@ -90,6 +90,7 @@ sources = {
 		"LoopMover_SlidingWindow",
 		"LoopMover_SlidingWindowCreator",
 		"LoopBuildMover",
+		"LoopmodelWrapper",
 	],
 	"protocols/noesy_assign": [
                 "CovalentCompliance",

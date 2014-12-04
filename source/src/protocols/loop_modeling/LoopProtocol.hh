@@ -14,7 +14,6 @@
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/LoopProtocol.fwd.hh>
-#include <protocols/loop_modeling/loggers/Logger.fwd.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.fwd.hh>
 
 // Core headers
@@ -39,17 +38,16 @@ namespace loop_modeling {
 /// @brief Monte Carlo search for low energy loop conformations.
 ///
 /// @details This class provides an easy way to run a Monte Carlo simulation 
-/// searching for the lowest energy conformations for a set of loops.  This is 
-/// most common way to use the classes in this namespace.  This simulation is 
-/// organized into three nested loops.  On each iteration of the outermost 
-/// loop, the lowest scoring pose is recovered and the repulsive terms in the 
-/// score function may be ramped (although this ramping is disabled by 
-/// default).  On each iteration of the intermediate loop, the temperature may 
-/// be ramped (this ramping is enabled by default).  And on each iteration of 
-/// the innermost loop, a new conformation is sampled and either accepted or 
-/// rejected according to the Metropolis criterion.  The intermediate loop 
-/// usually goes through more than 100 iterations, while the innermost and 
-/// outermost loops only go through less than 5.
+/// searching for the lowest energy conformations for a set of loops.  This 
+/// simulation is organized into three nested loops.  On each iteration of the 
+/// outermost loop, the lowest scoring pose is recovered and the repulsive 
+/// terms in the score function may be ramped (although this ramping is 
+/// disabled by default).  On each iteration of the intermediate loop, the 
+/// temperature may be ramped (this ramping is enabled by default).  And on 
+/// each iteration of the innermost loop, a new conformation is sampled and 
+/// either accepted or rejected according to the Metropolis criterion.  The 
+/// intermediate loop usually goes through more than 100 iterations, while the 
+/// innermost and outermost loops only go through less than 5.
 ///
 /// Like any mover, all the work is done by the apply() method.  The rest of 
 /// the methods of this class are just getters and setters that can be used to 
@@ -69,7 +67,7 @@ public:
 	/// @brief Default destructor.
 	~LoopProtocol();
 
-	/// @brief Return the class name of this mover.
+	/// @copydoc LoopMover::get_name
 	string get_name() const { return "LoopProtocol"; }
 
 protected:
@@ -80,6 +78,7 @@ protected:
 
 public:
 
+	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
 			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & data,
@@ -93,26 +92,28 @@ private:
 	/// score function, the fold tree, and the temperature.
 	void start_protocol(Pose & pose);
 
+	/// @brief Change the weights of the repulsive score function terms.  This is 
+	/// called once every level-2 cycle.
+	void ramp_score_function(Size iteration);
+
 	/// @brief Change the temperature of the simulation.  This is called once 
 	/// every level-1 cycle.
 	void ramp_temperature(Size iteration);
-
-	/// @brief Change the weights of the repulsive score function terms.  This 
-	/// is called once every level-2 cycle.
-	void ramp_score_function(Size iteration);
 
 	/// @brief Sample a new conformation by applying all the loop movers.  
 	/// Afterwards apply the Metropolis accept-or-reject criterion.  This is 
 	/// called once every level-3 cycle.
 	void attempt_loop_move(Pose & pose, Size i, Size j, Size k);
 
-	/// @brief Finalize any loggers and restore the original fold tree.
+	/// @brief No-op right now, but may be useful in the future.
 	void finish_protocol(Pose & pose);
 
 public:
 
 	/// @brief Add a LoopMover to the simulation.
 	/// @details Loop movers will be applied in the order they're added.
+	/// @see add_refiner()
+	/// @see mark_as_default()
 	void add_mover(LoopMoverOP mover);
 
 	/// @brief Add a LoopMover to the simulation as a refiner.
@@ -157,6 +158,8 @@ public:
 	/// with carefully tuned parameters.  Using add_mover(), mark_as_default(), 
 	/// and add_refiner() makes it easy to change the sampling algorithm without 
 	/// having to worry about the refinement algorithm.
+	/// @see add_mover()
+	/// @see mark_as_default()
 	void add_refiner(LoopMoverOP refiner);
 
 	/// @brief Add a Filter to the simulation.
@@ -169,32 +172,64 @@ public:
 	/// adding a loop mover that does nothing but make that check.
 	void add_acceptance_check(string name="loop_move");
 
-	/// @brief Add a logger to this simulation.
-	/// @details The Logger subclasses are only meant to be used with 
-	/// LoopProtocol.  These classes do not derive from LoopMover, and 
-	/// implement a number of methods specifically designed for expressive 
-	/// logging output.
-	void add_logger(loggers::LoggerOP logger);
-
+	/// @brief Remove all movers from the protocol.
+	/// @see add_mover()
+	/// @see add_refiner()
+	/// @see clear_refiners()
+	/// @see clear_movers_and_refiners()
 	void clear_movers();
 
+	/// @brief Remove all refiners from the protocol.
+	/// @see add_mover()
+	/// @see add_refiner()
+	/// @see clear_movers()
+	/// @see clear_movers_and_refiners()
 	void clear_refiners();
 
+	/// @brief Remove all movers and refiners from the protocol.
+	/// @see add_mover()
+	/// @see add_refiner()
+	/// @see clear_movers()
+	/// @see clear_refiners()
 	void clear_movers_and_refiners();
 
+	/// @brief Indicate that every mover that is currently part of the protocol 
+	/// should be removed the next time a mover is added.
+	/// @see add_mover()
+	/// @see add_refiner()
 	void mark_as_default();
 
-	/// @brief Specify how many times the loop that ramps the score function 
-	/// should iterate.
+	/// @brief Get the score function to be used on the next call to apply().
+	core::scoring::ScoreFunctionOP get_score_function();
+
+	/// @brief Set the score function to be used on the next call to apply().
+	void set_score_function(core::scoring::ScoreFunctionOP score_function);
+
+	/// @brief Set the number of iterations the loop that ramps the score 
+	/// function should make.
 	/// @details The score function loop is the outermost loop.  It contains the 
 	/// temperature loop and the mover loop.
 	void set_sfxn_cycles(Size x);
 
-	/// @brief Specify how many times the loop that ramps the temperature should 
-	/// iterate.
+	/// @brief Get the number of iterations the loop that ramps the score 
+	/// function will make.
+	Size get_sfxn_cycles();
+
+	/// @brief Set the number of iterations the loop that ramps the temperature 
+	/// should make.
 	/// @details The temperature loop is contained by the score function loop.  
-	/// It contains the mover loop.
+	/// It contains the mover loop.  If the second boolean argument is true, the 
+	/// number of iterations will be the first value times the combined length of 
+	/// all the loops being sampled.
 	void set_temp_cycles(Size x, bool times_loop_length=false);
+
+	/// @brief Get the number of iterations the loop that ramps the temperature 
+	/// should make.
+	/// @details This will throw an exception if the 'times_loop_length' argument 
+	/// was passed to set_temp_cycles() and no loop has been specified yet.  The 
+	/// value returned will always be the actual number of iterations that will 
+	/// be carried out.
+	Size get_temp_cycles();
 
 	/// @brief Specify how many times the loops movers should be invoked after 
 	/// the score function and temperature have been updated.
@@ -202,13 +237,15 @@ public:
 	/// score function loop and the temperature loop.
 	void set_mover_cycles(Size x);
 
-	/// @brief Set the initial and final temperatures for the simulation.
-	/// @details The temperature will be linearly interpolated between these 
-	/// values during the simulation.
-	void set_temperature_schedule(Real start, Real stop);
+	/// @brief Return how many times the loops movers will be invoked after the 
+	/// score function and temperature have been updated.
+	Size get_mover_cycles();
 
-	/// @brief Enable or disable temperature ramping in this simulation.
-	void set_temperature_ramping(bool value);
+	/// @brief Indicate that this protocol is being used for a test run.
+	/// @details This method simply limits the number of iterations that will be 
+	/// performed.  It can be "undone" by explicitly setting the score function, 
+	/// temperature, and mover cycles back to normal values.
+	void mark_as_test_run();
 
 	/// @brief Enable or disable ramping the repulsive term of the score 
 	/// function.
@@ -218,12 +255,18 @@ public:
 	/// function.
 	void set_rama_term_ramping(bool value);
 
+	/// @brief Enable or disable temperature ramping in this simulation.
+	void set_temperature_ramping(bool value);
+
+	/// @brief Set the initial and final temperatures for the simulation.
+	/// @details The temperature will be linearly interpolated between these 
+	/// values during the simulation.
+	void set_temperature_schedule(Real start, Real stop);
+
 private:
 	utilities::LoopMoverGroupOP protocol_;
 	utilities::LoopMoverGroupOP movers_, refiners_;
 	protocols::moves::MonteCarloOP monte_carlo_;
-	core::kinematics::FoldTree original_tree_;
-	loggers::LoggerList loggers_;
 
 	Size sfxn_cycles_;
 	Size temp_cycles_;
@@ -236,6 +279,11 @@ private:
 
 	Real initial_temp_;
 	Real final_temp_;
+	Real original_rama_weight_;
+	Real original_rama2b_weight_;
+	Real original_repulsive_weight_;
+
+	bool test_run_;
 };
 
 }

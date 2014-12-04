@@ -29,8 +29,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-
-// Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
@@ -67,6 +65,9 @@ public:
 	/// @brief Default constructor.
 	LoopBuilder();
 
+	/// @brief Default destructor.
+	~LoopBuilder();
+
 	/// @copydoc LoopMover::get_name
 	string get_name() const { return "LoopBuilder"; }
 
@@ -86,12 +87,18 @@ public:
 	void use_fragments(
 			utility::vector1<core::fragment::FragSetCOP> const & frag_libs);
 
-	/// @brief Specify how many time to invoke KIC before giving up.
-	void set_max_attempts(Size attempts);
-
 	/// @brief Return the number of times KIC will be invoked before the 
 	/// LoopBuilder gives up.
 	Size get_max_attempts() const;
+
+	/// @brief Specify how many time to invoke KIC before giving up.
+	void set_max_attempts(Size attempts);
+
+	/// @brief Get the score function to be used on the next call to apply().
+	core::scoring::ScoreFunctionOP get_score_function();
+
+	/// @brief Set the score function to be used on the next call to apply().
+	void set_score_function(core::scoring::ScoreFunctionOP score_function);
 
 protected:
 

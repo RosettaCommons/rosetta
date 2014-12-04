@@ -7,58 +7,99 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// Unit headers
+// Headers {{{1
 #include <protocols/loop_modeling/LoopMover.hh>
 
 // Core headers
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/util/kinematics_util.hh>
 
 // Protocol headers
 #include <protocols/loops/loops_main.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <basic/datacache/HierarchicalDataMap.hh>
 #include <boost/foreach.hpp>
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
+
+// RosettaScripts headers
+#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/moves/Mover.hh>
+
+#define foreach BOOST_FOREACH
+// }}}1
 
 namespace protocols {
 namespace loop_modeling {
 
+// Global Names {{{1
 using namespace std;
-using core::scoring::ScoreFunctionOP;
-using core::scoring::ScoreFunctionCOP;
 using core::kinematics::FoldTree;
 
 static thread_local basic::Tracer TR( "protocols.loop_modeling.LoopMover" );
+const string ToolboxKeys::LOOPS = "loops";
+const string ToolboxKeys::SCOREFXN = "scorefxn";
+const string ToolboxKeys::TASK_FACTORY = "task_factory";
+// }}}1
 
 LoopMover::LoopMover()  // {{{1
-	: trust_fold_tree_(false),
-		manage_score_function_(true),
-		was_successful_(false),
-		score_function_(/* NULL */)
-	{}
+	: children_(),
+		toolbox_(new basic::datacache::HierarchicalDataMap),
+		parent_name_(""),
+	  trust_fold_tree_(false),
+		was_successful_(false) {}
 
-LoopMover::~LoopMover() {}  // {{{1
-// }}}1
+void LoopMover::parse_my_tag( // {{{1
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &) {
+
+	using utility::tag::TagCOP;
+
+	// Parse the 'loops_file' option and any <Loop> subtags.
+
+	LoopsOP parsed_loops;
+
+	if (tag->hasOption("loops_file")) {
+		string loops_file = tag->getOption<string>("loops_file");
+		parsed_loops = LoopsOP( new Loops(loops_file) );
+	}
+
+	foreach (TagCOP subtag, tag->getTags("Loop")) {
+		Size start = subtag->getOption<Size>("start");
+		Size stop = subtag->getOption<Size>("stop");
+		Size cut = subtag->getOption<Size>("cut", 0);
+		Real skip_rate = subtag->getOption<Real>("skip_rate", 0.0);
+		bool extended = subtag->getOption<bool>("rebuild", false);
+
+		if (! parsed_loops) {
+			parsed_loops = LoopsOP( new Loops() );
+		}
+		parsed_loops->add_loop(start, stop, cut, skip_rate, extended);
+	}
+
+	// Don't override any loops that may be specified in parent movers unless 
+	// loops really were specified here.
+
+	if (parsed_loops) {
+		set_loops(parsed_loops);
+	}
+}
 
 void LoopMover::apply(Pose & pose) { // {{{1
 
-	// Make sure a loop was specified.
-
-	if (loops_.empty()) {
-		utility_exit_with_message("No loops specified.");
-	}
-
-	// Create a score function if necessary.
-	if (score_function_.get() == NULL) {
-		set_score_function(core::scoring::get_score_function());
-	}
-
-	// Sample the loops.  If the existing fold tree isn't trusted, replace it
-	// with a custom-built one first.
+	// If the existing fold tree is trusted, then just apply the loop mover.  
+	// Otherwise, construct an compatible fold tree, apply the loop mover, then 
+	// restore the existing fold tree.
 
 	if (trust_fold_tree_) {
 		was_successful_ = do_apply(pose);
@@ -66,19 +107,27 @@ void LoopMover::apply(Pose & pose) { // {{{1
 	else {
 		FoldTree original_tree = pose.fold_tree();
 		FoldTreeRequest request = request_fold_tree();
-		setup_fold_tree(pose, loops_, request);
+		setup_fold_tree(pose, get_loops(), request);
 		protocols::loops::add_cutpoint_variants(pose);
 
 		was_successful_ = do_apply(pose);
 
-		protocols::loops::remove_cutpoint_variants(pose);
+		// There is a protocols::loops::remove_cutpoint_variants() function, but it 
+		// clobbers the constraint weights in the pose (even though it seems 
+		// explicitly designed to not do that).  Because this leads to incorrect 
+		// scores being reported in the output pdb file, I chose to use the 
+		// core::util function instead, which doesn't have this weakness. 
+
+		core::util::remove_cutpoint_variants(pose);
 		pose.fold_tree(original_tree);
 	}
 }
 
 bool LoopMover::do_apply(Pose & pose) { // {{{1
+	LoopsCOP loops = get_loops();
 	Loops::const_iterator loop;
-	for (loop = loops_.begin(); loop != loops_.end(); loop++) {
+
+	for (loop = loops->begin(); loop != loops->end(); loop++) {
 		bool was_successful = do_apply(pose, *loop);
 		if (! was_successful) return false;
 	}
@@ -89,60 +138,50 @@ bool LoopMover::do_apply(Pose &, Loop const &) { // {{{1
 	utility_exit_with_message("LoopMover::do_apply was not reimplemented.");
 	return false;
 }
-// }}}1
+
+void LoopMover::get_children_names( // {{{1
+		utility::vector1<string> & names, string indent) const {
+
+	names.push_back(indent + get_name());
+	foreach (LoopMoverOP mover, get_children()) {
+		mover->get_children_names(names, indent + "  ");
+	}
+}
 
 bool LoopMover::was_successful() const { // {{{1
 	return was_successful_;
 }
 
-Loops LoopMover::get_loops() const { // {{{1
-	return loops_;
+LoopsOP LoopMover::get_loops() { // {{{1
+	return get_tool<LoopsOP>(ToolboxKeys::LOOPS);
 }
 
-ScoreFunctionCOP LoopMover::get_score_function() const { // {{{1
-	if (! manage_score_function_) {
-		TR.Warning << "get_score_function() being called on LoopMover which doesn't support it." << endl;
-		return NULL;
-	}
-	return score_function_;
+LoopsCOP LoopMover::get_loops() const { // {{{1
+	return get_tool<LoopsCOP>(ToolboxKeys::LOOPS);
 }
 
-ScoreFunctionOP LoopMover::get_score_function() { // {{{1
-	if (! manage_score_function_) {
-		TR.Warning << "get_score_function() being called on LoopMover which doesn't support it." << endl;
-		return NULL;
-	}
-	return score_function_;
+Loop const & LoopMover::get_loop(Size index) const { // {{{1
+	return (*get_loops())[index];
+}
+
+void LoopMover::set_loops(LoopsOP loops) { // {{{1
+	set_tool(ToolboxKeys::LOOPS, loops);
 }
 
 void LoopMover::set_loops(Loops const & loops) { // {{{1
-	loops_ = loops;
-	BOOST_FOREACH (LoopMoverOP mover, nested_movers_) {
-		mover->set_loops(loops);
-	}
+	LoopsOP loops_op( new Loops(loops) );
+	set_loops(loops_op);
 }
 
 void LoopMover::set_loop(Loop const & loop) { // {{{1
-	Loops wrapper;
-	wrapper.add_loop(loop);
+	LoopsOP wrapper( new Loops );
+	wrapper->add_loop(loop);
 	set_loops(wrapper);
-}
-
-void LoopMover::set_score_function(ScoreFunctionOP function) { // {{{1
-	if (! manage_score_function_) {
-		TR.Warning << "set_score_function() being called on LoopMover which doesn't support it." << endl;
-		return;
-	}
-
-	score_function_ = function;
-	BOOST_FOREACH (LoopMoverOP mover, nested_movers_) {
-		mover->set_score_function(function);
-	}
 }
 
 FoldTreeRequest LoopMover::request_fold_tree() const { // {{{1
 	FoldTreeRequest request = FTR_DONT_CARE;
-	BOOST_FOREACH (LoopMoverCOP mover, nested_movers_) {
+	foreach (LoopMoverCOP mover, get_children()) {
 		request = request & mover->request_fold_tree();
 	}
 	return request;
@@ -153,7 +192,7 @@ void LoopMover::trust_fold_tree() { // {{{1
 }
 
 void LoopMover::setup_fold_tree( // {{{1
-		Pose & pose, Loops const & loops, FoldTreeRequest request) {
+		Pose & pose, LoopsCOP loops, FoldTreeRequest request) {
 
 	if (request == FTR_DONT_CARE) {
 		return;
@@ -161,7 +200,7 @@ void LoopMover::setup_fold_tree( // {{{1
 
 	else if (request & FTR_LOOPS_WITH_CUTS) {
 		core::kinematics::FoldTree tree;
-		protocols::loops::fold_tree_from_loops(pose, loops, tree, true);
+		protocols::loops::fold_tree_from_loops(pose, *loops, tree, true);
 		pose.fold_tree(tree);
 	}
 
@@ -177,16 +216,26 @@ void LoopMover::setup_fold_tree( // {{{1
 	protocols::loops::add_cutpoint_variants(pose);
 }
 
-void LoopMover::dont_manage_score_function() { // {{{1
-	manage_score_function_ = false;
+void LoopMover::remove_child(LoopMoverOP child) { // {{{1
+	child->parent_name_ = "";
+	child->toolbox_->unset_parent();
+	children_.erase(std::find(children_.begin(), children_.end(), child));
 }
 
-void LoopMover::deregister_nested_loop_movers() { // {{{1
-	nested_movers_.clear();
+void LoopMover::clear_children() { // {{{1
+	foreach(LoopMoverOP child, children_) {
+		child->parent_name_ = "";
+		child->toolbox_->unset_parent();
+	}
+	children_.clear();
 }
 
-vector1<LoopMoverOP> const & LoopMover::get_nested_loop_movers() const { // {{{1
-	return nested_movers_;
+LoopMoverOPs LoopMover::get_children() const { // {{{1
+	return children_;
+}
+
+Size LoopMover::count_children() const { // {{{1
+	return children_.size();
 }
 // }}}1
 

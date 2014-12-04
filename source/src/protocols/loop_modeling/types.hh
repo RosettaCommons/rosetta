@@ -33,6 +33,8 @@ using core::Real;
 using core::pose::Pose;
 using protocols::loops::Loop;
 using protocols::loops::Loops;
+using protocols::loops::LoopsOP;
+using protocols::loops::LoopsCOP;
 using utility::vector1;
 
 typedef vector1<Size> IndexList;
