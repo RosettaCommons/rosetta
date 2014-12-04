@@ -133,6 +133,7 @@ sources = {
 	    "rna_extract",
 	    "rna_minimize",
 	    "rna_score",
+	    "cs_rosetta_rna"
 	],
 	"public/flexpep_docking": [
 		"BuildPeptide",

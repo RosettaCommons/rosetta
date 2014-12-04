@@ -47,16 +47,20 @@ class ChemicalShiftData : public utility::pointer::ReferenceCount{
 										 chemical::AA const in_res_aa,
 										 std::string const in_atom_name, 
 										 core::Size const in_realatomdata_index,
-										 core::Real const in_exp_shift, 
-										 std::string const in_data_line ):
+										 core::Real const in_exp_shift,
+										 core::Real const in_ref_shift, 
+										 std::string const in_data_line,
+										 core::Real const in_accuracy_weight):
 			seq_num( in_seq_num ),
 			res_aa( in_res_aa ),
 			atom_name( in_atom_name ),
 			realatomdata_index( in_realatomdata_index ),
-			exp_shift( in_exp_shift ), 
+			exp_shift( in_exp_shift ),
+			ref_shift( in_ref_shift ), 
 			//Feb 28, 2012: Warning exp_shift this might be switch due to ambiguity of geminal atoms (H5'/H5'' and etcs) or be a duplicate.
 			//Always use get_best_exp_to_calc_chem_shift_mapping() to get best mapping to specific calc_chem_shift to get actual exp_shift!
-			data_line( in_data_line )
+			data_line( in_data_line ),
+			accuracy_weight(  in_accuracy_weight )
 		{
 		}
 
@@ -68,9 +72,10 @@ class ChemicalShiftData : public utility::pointer::ReferenceCount{
 		chemical::AA res_aa;
 		std::string atom_name;
 		core::Size realatomdata_index; //For accessing 	realatomdata in RNA_CS_Parameters	
-		core::Real exp_shift;
+		core::Real exp_shift;	
+		core::Real ref_shift;		
 		std::string data_line;
-
+		core::Real accuracy_weight;
 };
 
 
@@ -106,7 +111,6 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 
 		utility::vector1< std::string > 
 		string_list( std::string const string_one, std::string const string_two ) const;
-
 		
 
 		void
@@ -121,13 +125,32 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 														 							utility::vector1 < bool > & do_include_CS_data ) const; 
 
 		core::Real
-		get_calc_chem_shift_value( ChemicalShiftData const & CS_data, pose::Pose const & pose ) const;
+		get_calc_chem_shift_value_nuchemics( ChemicalShiftData const & CS_data, pose::Pose const & pose) const;
+
+		core::Real
+		get_calc_chem_shift_value_larmord( ChemicalShiftData const & CS_data, pose::Pose const & pose) const;
+
+		core::Real
+		get_calc_chem_shift_value( ChemicalShiftData const & CS_data, pose::Pose const & pose) const;
 
 		void
 		update_calc_chem_shift_list( pose::Pose const & pose, utility::vector1 < utility::vector1 < Real > > & cal_chem_shift_list ) const;
 
 		core::Real
 		get_chemical_shift_energy( utility::vector1 < utility::vector1 < Real > > const & calc_chem_shift_list ) const;
+
+
+	void
+	get_deriv_for_chemical_shift( id::AtomID const & atom_id,
+																ChemicalShiftData const & CS_data,
+																pose::Pose const & pose,
+																Vector & f1,
+																Vector & f2,
+																utility::vector1 < std::string > atom_names,
+																std::string atom_name_in,
+																std::string atom_name_whitespace_in,
+																bool is_source_atom,
+																bool is_neighbor_atom) const;
 
 		void
 		get_deriv_for_chemical_shift_data_atom(	pose::Pose const & pose,
@@ -168,7 +191,31 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 
 		void
 		finalize_total_energy( pose::Pose const & pose, EnergyMap & totals ) const;
+				
+		void 
+		load_larmord_parameters( std::string  const filename );
+		
+		void 
+		load_larmord_weights ( std::string  const filename );
 
+		void 
+		load_larmord_reference_shifts ( std::string  const filename );
+
+		void 
+		load_larmord_neighbor_atoms ( std::string  const filename );
+
+    bool 
+    get_neighbor_atom( std::string const & key ) const;
+
+    Real 
+    get_accuracy_weight( std::string const & key ) const;
+
+    Real 
+    get_reference_shift( std::string const & key ) const;
+    
+    Real 
+    get_alpha ( std::string const & key ) const;		
+    
 		/////////////////////////////////
 		void
 		eval_atom_derivative(
@@ -178,6 +225,7 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 			EnergyMap const & weights,
 			Vector & F1,
 			Vector & F2 ) const;
+
 
 		void
 		indicate_required_context_graphs(
@@ -191,10 +239,17 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 		bool const verbose_;
 		bool const include_ring_current_effect_;
 		bool const include_magnetic_anisotropy_effect_;
+		bool nuchemics_mode_;
+		bool cs_verbose_mode_;
 		utility::vector1 < utility::vector1 < ChemicalShiftData > > EXP_chem_shift_data_list_;
 		core::Size total_exp_chemical_shift_data_points_;
-
-
+		std::map< std::string, Real > reference_shifts_;
+		std::map< std::string, Real > alphas_;	
+		std::map< std::string, Real > accuracy_weights_;
+		std::map< std::string, bool > neighbor_atoms_;
+		std::string path_to_parameter_files_;
+		Real larmord_distance_cutoff_;
+		Real larmord_beta_;
 };
 
 
