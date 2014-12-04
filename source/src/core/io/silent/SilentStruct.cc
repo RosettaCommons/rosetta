@@ -51,6 +51,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -1096,6 +1097,7 @@ SilentStruct::full_model_info_into_pose( pose::Pose & pose ) const {
 		full_model_info->set_res_list( res_list );
 	}
 	set_full_model_info( pose, full_model_info );
+	update_constraint_set_from_full_model_info( pose );
 }
 
 ///////////////////////////////////////////////////////////////////////////

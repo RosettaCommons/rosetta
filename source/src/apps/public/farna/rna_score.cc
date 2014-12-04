@@ -46,6 +46,18 @@
 #include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/etable/EtableEnergy.hh>
+#include <core/scoring/etable/EtableEnergyCreator.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/etable/BaseEtableEnergy.hh>
+#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairGeneric.hh>
+#include <core/scoring/etable/count_pair/CountPairFactory.hh>
+#include <core/scoring/etable/atom_pair_energy_inline.hh>
+
 // C++ headers
 #include <iostream>
 #include <string>
@@ -70,6 +82,140 @@ using utility::vector1;
 OPT_KEY( String,  params_file )
 OPT_KEY( StringVector, original_input )
 OPT_KEY( Boolean, virtualize_free )
+OPT_KEY( Boolean, color_by_score )
+OPT_KEY( Boolean, soft_rep )
+
+// Move this out to protocols/toolbox/ before checkin.
+//
+// Could pretty easily get this to read in an actual scorefunction, rather than some
+// hard wired combination of fa_atr/fa_rep. Problem is that most scorefunctions
+// do not provide functions that compute energies at atom level. Even ones that do
+// (geometric_solvation, etable energies, hbond) do not have functions with stereotyped
+// input/output. Can fill in by hand, one by one.
+//
+void
+do_color_by_score( core::pose::Pose & pose ) {
+
+	using namespace core::scoring;
+	using namespace core::scoring::methods;
+	using namespace core::scoring::etable;
+	using namespace core::scoring::etable::count_pair;
+	using namespace core::conformation;
+	using namespace core::id;
+
+	ScoreFunction scorefxn;
+	EnergyMethodOptions options( scorefxn.energy_method_options() );
+	options.etable_options().no_lk_polar_desolvation = true;
+	if ( option[ soft_rep ]() ) options.etable_type( "FA_STANDARD_SOFT" );
+	scorefxn.set_energy_method_options( options );
+	scorefxn.set_weight( fa_atr, 0.21 );
+	scorefxn.set_weight( fa_rep, 0.20 );
+	scorefxn.set_weight( fa_sol, 0.25 );
+	//scorefxn.set_weight( fa_rep, 1.0);
+
+	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ) );
+	core::scoring::etable::AnalyticEtableEvaluator eval( *etable );
+	eval.set_scoretypes( fa_atr, fa_rep, fa_sol );
+
+	EnergyMap emap, emap_total;
+
+	//////////////////////////////////////////////////////////////////
+	// stolen from core/scoring/etable/atom_pair_energy_inline.hh
+	//////////////////////////////////////////////////////////////////
+	DistanceSquared dsq;
+	Real weight;
+	Size path_dist;
+	typedef utility::vector1< Size > const & vect;
+
+	for ( Size m = 1; m <= pose.total_residue(); m++ ) {
+
+		Residue const & res1 = pose.residue( m );
+
+		// get hydrogen interaction cutoff
+		 Real const Hydrogen_interaction_cutoff2
+			  	( eval.hydrogen_interaction_cutoff2() );
+
+		for (Size i = 1; i <= res1.natoms(); i++ ){
+			pose.pdb_info()->temperature( m, i, 0.0 );
+		}
+
+		Size const res1_start( 1 ), res1_end( res1.nheavyatoms() );
+		vect r1hbegin( res1.attached_H_begin() );
+		vect r1hend(   res1.attached_H_end()   );
+
+		// Atom pairs
+		for ( int i = res1_start, i_end = res1_end; i <= i_end; ++i ) {
+			Atom const & atom1( res1.atom(i) );
+			//get virtual information
+			bool atom1_virtual(res1.atom_type(i).is_virtual());
+
+			emap.zero();
+
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+
+				if ( m == n ) continue; // later could be smart about holding info in fa_intra terms of emap
+				Residue const & res2 = pose.residue( n );
+
+				// costly, but I'm having problems with CountPairFactory output.
+				// std::cout << m << " " << n << std::endl;
+				CountPairGeneric count_pair( res1, res2 );
+				count_pair.set_crossover( 4 );
+				Size const res2_start( 1 ), res2_end( res2.nheavyatoms() );
+				vect r2hbegin( res2.attached_H_begin() );
+				vect r2hend(   res2.attached_H_end()   );
+
+				for ( int j=res2_start, j_end = res2_end; j <= j_end; ++j ) {
+
+					Atom const & atom2( res2.atom(j) );
+
+					//					if ( ! count_pair( i, j, weight, path_dist ) ) continue;
+					//					eval.atom_pair_energy( atom1, atom2, weight, emap, dsq );
+
+					//					if ( dsq < 16.0 ) std::cout << dsq << " " << weight << " " << emap[ fa_atr ] << std::endl;
+					//check if virtual
+					bool atom2_virtual(res2.atom_type(j).is_virtual());
+					weight = 1.0;
+					path_dist = 0;
+					if(atom1_virtual || atom2_virtual){
+					 	// NOOP! etable_energy.virtual_atom_pair_energy(emap);
+					}else{
+						if ( count_pair( i, j, weight, path_dist ) ) {
+					 		eval.atom_pair_energy( atom1, atom2, weight, emap, dsq );
+						} else {
+					 		dsq = atom1.xyz().distance_squared( atom2.xyz() );
+					 	}
+					 	if ( dsq < Hydrogen_interaction_cutoff2 ) {
+					 		residue_fast_pair_energy_attached_H(
+					 																				res1, i, res2, j,
+					 																				r1hbegin[ i ], r1hend[ i ],
+					 																				r2hbegin[ j ], r2hend[ j ],
+					 																				count_pair, eval , emap);
+
+					 	}
+					 } // virtual
+				} // j
+			} // n
+
+			emap *= 0.5; /* double counting */
+			emap_total += emap;
+
+			Real score = emap.dot(  scorefxn.weights() );
+			pose.pdb_info()->temperature( m, i, score );
+
+
+		} // i
+	} // m
+
+
+	( scorefxn )( pose );
+	for ( Size n = 1; n <= n_score_types; n++ ) {
+		ScoreType st( static_cast< ScoreType >( n ) );
+		if ( scorefxn.has_nonzero_weight( st ) ){
+			std::cout << st << ":   conventional score function " << pose.energies().total_energies()[ st ] << "   atomwise " << emap_total[ st ] << std::endl;
+		}
+	}
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -228,9 +374,13 @@ rna_score_test()
 			s.add_energy(  "rna_chem_map_lores", rna_chemical_mapping_energy->calculate_energy( pose , true /*use_low_res*/ ) );
 		}
 
-
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
+
+		if ( option[ color_by_score ]() ){
+			do_color_by_score( pose );
+			pose.dump_pdb( "COLOR_BY_SCORE.pdb" );
+		}
 
 	}
 
@@ -275,6 +425,8 @@ main( int argc, char * argv [] )
 				NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
 				NEW_OPT( virtualize_free, "virtualize no-contact bases (and attached no-contact sugars/phosphates)", false );
 				NEW_OPT( params_file, "Input file for pairings", "" );
+				NEW_OPT( color_by_score, "color PDB by score (currently handles fa_atr & fa_rep)", false );
+				NEW_OPT( soft_rep, "use soft_rep params for color_by_score", false ); // how about for actual scoring?
 
         ////////////////////////////////////////////////////////////////////////////
         // setup

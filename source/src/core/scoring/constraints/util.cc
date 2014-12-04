@@ -21,6 +21,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
@@ -682,6 +683,28 @@ void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
 	in = out;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+///@details example of how to go through a pose constraint set and print out stuff.
+void
+print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out /* = std::cout */ ){
+	ConstraintSetCOP cst_set = pose.constraint_set();
+	typedef ResidueConstraints::const_iterator ResiduePairConstraintsIterator;
+	// should probably do intra-residue too. Oh well.
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( ResiduePairConstraintsIterator
+						iter = cst_set->residue_pair_constraints_begin( n ),
+						iter_end = cst_set->residue_pair_constraints_end( n );
+					iter  != iter_end; ++iter ) {
+			ConstraintsOP csts = iter->second;
+			for ( ConstraintCOPs::const_iterator it=csts->begin(), ite = csts->end();
+						it != ite;
+						++it ) {
+				Constraint const & cst( **it );
+				if ( cst.type() == "AtomPair" ) cst.show_def( out, pose );
+			}
+		}
+	}
+}
 
 } // namespace constraints
 } // namespace scoring

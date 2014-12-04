@@ -1049,6 +1049,7 @@ void
 fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix ) {
 	fix_up_jump_atoms( pose_to_fix );
 	fix_up_residue_type_variants( pose_to_fix );
+	update_constraint_set_from_full_model_info( pose_to_fix ); //atom numbers may have shifted around with variant changes.
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

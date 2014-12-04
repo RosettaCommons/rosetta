@@ -19,7 +19,7 @@
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <protocols/stepwise/options/StepWiseBasicOptions.fwd.hh>
 #include <core/types.hh>
-
+#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
@@ -82,6 +82,9 @@ namespace options {
 		void set_atr_rep_screen( bool const & setting ){ atr_rep_screen_ = setting; }
 		bool atr_rep_screen() const{ return atr_rep_screen_; }
 
+		utility::vector1< std::string > const & VDW_rep_screen_info() const { return VDW_rep_screen_info_; }
+		void set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_ = setting; }
+
 		void set_rmsd_screen( core::Real const & setting ){ rmsd_screen_ = setting; }
 		core::Real rmsd_screen() const{ return rmsd_screen_; }
 
@@ -118,6 +121,7 @@ namespace options {
 		bool atr_rep_screen_;
 		core::Real rmsd_screen_;
 
+		utility::vector1< std::string > VDW_rep_screen_info_;
 		bool output_minimized_pose_list_;
 		std::string min_type_;
 		core::Real min_tolerance_;

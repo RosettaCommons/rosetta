@@ -50,8 +50,6 @@ namespace options {
 		add_delete_frequency_( 0.5 ),
 		intermolecular_frequency_( 0.2 ),
 		minimize_single_res_frequency_( 0.0 ),
-		minimizer_allow_variable_bond_geometry_( true ),
-		minimizer_vary_bond_geometry_frequency_( 0.1 ),
 		switch_focus_frequency_( 0.5 ),
 		just_min_after_mutation_frequency_( 0.5 ),
 		temperature_( 1.0 ),
@@ -115,8 +113,6 @@ namespace options {
 		add_delete_frequency_ = src.add_delete_frequency_;
 		intermolecular_frequency_ = src.intermolecular_frequency_;
 		minimize_single_res_frequency_ = src.minimize_single_res_frequency_;
-		minimizer_allow_variable_bond_geometry_ = src.minimizer_allow_variable_bond_geometry_;
-		minimizer_vary_bond_geometry_frequency_ = src.minimizer_vary_bond_geometry_frequency_;
 		switch_focus_frequency_ = src.switch_focus_frequency_;
 		just_min_after_mutation_frequency_ = src.just_min_after_mutation_frequency_;
 		temperature_ = src.temperature_;
@@ -175,7 +171,6 @@ namespace options {
 		force_centroid_interaction_ = true; // note default is different from stepwise enumeration
 		if ( option[ OptionKeys::stepwise::rna::force_centroid_interaction ].user() ) set_force_centroid_interaction( option[ OptionKeys::stepwise::rna::force_centroid_interaction ]() );
 		sampler_max_centroid_distance_ = option[ OptionKeys::stepwise::rna::sampler_max_centroid_distance ]();
-		set_minimizer_allow_variable_bond_geometry( option[ OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry ]() );
 		set_use_phenix_geo(  option[ OptionKeys::rna::corrected_geo ] );
 		set_make_movie(	option[ OptionKeys::stepwise::monte_carlo::make_movie ]() );
 		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
@@ -211,9 +206,6 @@ namespace options {
 		// general
 		options->set_choose_random( true );
 
-		// Might be smarter to inherit the following options from the same options parent class,
-		// instead of setting manually here, where we could forget something.
-
 		// protein-specific
 		options->set_skip_coord_constraints( skip_coord_constraints() );
 		options->set_filter_native_big_bins( filter_native_big_bins() );
@@ -229,8 +221,6 @@ namespace options {
 		options->set_sampler_max_centroid_distance( sampler_max_centroid_distance() );
 		options->set_use_phenix_geo( use_phenix_geo() );
 		options->set_kic_modeler_if_relevant( erraser() );
-		options->set_minimizer_allow_variable_bond_geometry( minimizer_allow_variable_bond_geometry() );
-		options->set_minimizer_vary_bond_geometry_frequency( minimizer_vary_bond_geometry_frequency() );
 		options->set_virtual_sugar_keep_base_fixed( virtual_sugar_keep_base_fixed() );
 		options->set_virtual_sugar_do_minimize( virtual_sugar_do_minimize() );
 		if ( rebuild_bulge_mode_ )	options->set_force_centroid_interaction( false );

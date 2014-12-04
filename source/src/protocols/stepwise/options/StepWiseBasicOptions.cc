@@ -74,7 +74,6 @@ namespace options {
 		return StepWiseBasicOptionsOP( new StepWiseBasicOptions( *this ) );
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseBasicOptions::initialize_from_command_line(){
 		sampler_silent_file_ = option[ basic::options::OptionKeys::stepwise::sampler_silent_file ]();
@@ -83,6 +82,7 @@ namespace options {
 		if ( option[ basic::options::OptionKeys::cluster::radius ].user() ) cluster_rmsd_ = option[ basic::options::OptionKeys::cluster::radius ]();
 		atr_rep_screen_ = option[ basic::options::OptionKeys::stepwise::atr_rep_screen ]();
 		rmsd_screen_ = option[ basic::options::OptionKeys::stepwise::rmsd_screen ]();
+		VDW_rep_screen_info_ = option[ OptionKeys::stepwise::rna::VDW_rep_screen_info ]();
 		if ( option[ basic::options::OptionKeys::stepwise::num_pose_minimize ].user() ) num_pose_minimize_ = option[ basic::options::OptionKeys::stepwise::num_pose_minimize ]();
 		min_type_ = option[ basic::options::OptionKeys::stepwise::min_type ]();
 		min_tolerance_ = option[ basic::options::OptionKeys::stepwise::min_tolerance ]();

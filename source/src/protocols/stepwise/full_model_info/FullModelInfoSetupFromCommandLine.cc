@@ -111,9 +111,10 @@ namespace full_model_info {
 		}
 		if ( native_pose == 0 && align_pose != 0 ) native_pose = align_pose;
 
-		if ( native_pose != 0 ) modeler::rna::virtualize_free_rna_moieties( *native_pose );
-		if ( align_pose != 0 )  modeler::rna::virtualize_free_rna_moieties( *align_pose );
-
+		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() ){ // could generalize to proteins
+			if ( native_pose != 0) modeler::rna::virtualize_free_rna_moieties( *native_pose );
+			if ( align_pose != 0 )  modeler::rna::virtualize_free_rna_moieties( *align_pose );
+		}
 	}
 
 
@@ -438,7 +439,7 @@ namespace full_model_info {
 		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
-		if ( option[ constraints::cst_file ].user() && pose_pointers.size() > 0 )	full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ], pose_pointers[ 1 ]->residue( 1 ).residue_type_set() );
+		if ( option[ constraints::cst_file ].user() && pose_pointers.size() > 0 )	full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ] );
 
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 			Pose & pose = *pose_pointers[n];

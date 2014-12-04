@@ -24,6 +24,7 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
+#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -116,6 +117,7 @@ namespace full_model_info {
 		full_sequence_( src.full_sequence_ ),
 		conventional_numbering_( src.conventional_numbering_ ),
 		conventional_chains_( src.conventional_chains_ ),
+		cst_string_( src.cst_string_ ),
 		cst_set_( src.cst_set_ ),
 		full_model_pose_for_constraints_( src.full_model_pose_for_constraints_ ),
 		parameter_values_at_res_( src.parameter_values_at_res_ ),
@@ -352,16 +354,17 @@ namespace full_model_info {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Size
 	FullModelParameters::conventional_to_full( int const res_num, char const chain ) const {
+		using namespace ObjexxFCL;
 		bool found_match( false );
 		Size res_num_in_full_numbering( 0 );
 		for ( Size n = 1; n <= conventional_numbering_.size() ; n++ ){
 			if ( res_num != conventional_numbering_[ n ] ) continue;
 			if ( chain != ' ' && conventional_chains_.size() > 0 && conventional_chains_[ n ] != ' ' && chain != conventional_chains_[ n ] ) continue;
-			if( found_match ) utility_exit_with_message( "ambiguous res_num & chain "+ObjexxFCL::string_of(res_num)+" "+ObjexxFCL::string_of(chain) );
+			if( found_match ) utility_exit_with_message( "ambiguous res_num & chain "+ string_of(res_num)+" "+string_of(chain) );
 			res_num_in_full_numbering = n;
 			found_match = true;
 		}
-		runtime_assert( found_match );
+		if ( !found_match ) utility_exit_with_message( "Could not match residue number  " + string_of( res_num ) + " and chain " + string_of(chain) );
 		return res_num_in_full_numbering;
 	}
 
@@ -406,6 +409,7 @@ namespace full_model_info {
 		} else {
 			os << "  CONVENTIONAL_RES_CHAIN "  << make_tag_with_dashes( t.conventional_numbering(), ',' );
 		}
+
 		for ( Size n = 1; n < LAST_TYPE; n++ ){
 			FullModelParameterType type = static_cast< FullModelParameterType >( n );
 			std::map< Size, utility::vector1< Size > > const & res_lists = t.get_parameter_as_res_lists( type );
@@ -429,6 +433,10 @@ namespace full_model_info {
 			if ( os_local.str().size() == 0 ) continue;
 			os << "  " << to_string( type ) << os_local.str();
 		}
+
+		// constraints are a special block -- they have atom_names and do not fit with above format.
+		using namespace core::scoring::constraints;
+		if ( t.cst_string_.size() > 0 ) os << "   CONSTRAINTS " << utility::replace_in( t.cst_string_, "\n", "; " );
 		return os;
 	}
 
@@ -462,7 +470,7 @@ namespace full_model_info {
 			}
 		}
 
-		while ( !is.fail() ){
+		while ( !is.fail() && tag != "CONSTRAINTS" /*special*/){
 			FullModelParameterType type = full_model_parameter_type_from_string( tag );
 			utility::vector1< Size > parameter_values_at_res( t.size(), 0 );
 
@@ -482,6 +490,10 @@ namespace full_model_info {
 			t.set_parameter( type, parameter_values_at_res );
 		}
 
+		if ( tag == "CONSTRAINTS" )	{
+			getline( is, t.cst_string_ ); // assume rest of line is taken up by constraints.
+			t.cst_string_ = utility::replace_in( t.cst_string_, "; ", "\n"); // convert separator
+		}
 		return is;
  }
 
@@ -507,26 +519,61 @@ namespace full_model_info {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
-	// this is pretty clumsy -- keeping the constraints with an associated pose -- but
-	// its what we have in Rosetta.
+	// this is pretty clumsy -- keeping the constraints in a string format.
+	//  however... otherwise we need to instantiate a pose, and we don't always
+	//  know what the residue type set is.
 	void
-	FullModelParameters::read_cst_file( std::string const cst_file, core::chemical::ResidueTypeSet const & rsd_type_set ) {
-
-		using namespace core::scoring::constraints;
-		PoseOP pose( new Pose );
-		make_pose_from_sequence( *pose, full_sequence_, rsd_type_set, false /*auto termini*/ );
-
-		PDBInfoOP pdb_info( new PDBInfo( *pose ) );
-		pdb_info->set_numbering( conventional_numbering_ );
-		pdb_info->set_chains( conventional_chains_ );
-		pose->pdb_info( pdb_info );
-		full_model_pose_for_constraints_ = pose;
-
-		ConstraintSetOP cst_set( new ConstraintSet );
-		ConstraintIO::get_instance()->read_constraints( cst_file, cst_set, *pose );
-		cst_set_ = cst_set;
+	FullModelParameters::read_cst_file( std::string const cst_file ) {
+		cst_string_ = "";
+		full_model_pose_for_constraints_ = 0;
+		cst_set_ = 0;
+		utility::io::izstream data( cst_file.c_str() );
+		while( data.good() ) {
+			std::string line;
+			getline( data, line );
+			if ( line[0] == '#' || line[0] == '\n' || line.size() == 0 ) continue;
+			if ( cst_string_.size() > 0 ) cst_string_ += '\n';
+			cst_string_ += line; //.substr( 0, line.size() - 1  ); // strip off endline.
+		}
 	}
 
+
+	/////////////////////////////////////////////////////////////////////
+	void
+	FullModelParameters::update_pose_and_cst_set_from_cst_string( chemical::ResidueTypeSet const & rsd_type_set ) const {
+		using namespace core::scoring::constraints;
+
+		if ( full_model_pose_for_constraints_ != 0 && cst_set_ != 0 ) return;
+
+		std::istringstream data( cst_string_ );
+
+		PoseOP full_model_pose( new Pose );
+		make_pose_from_sequence( *full_model_pose, full_sequence_, rsd_type_set, false /*auto termini*/ );
+
+		PDBInfoOP pdb_info( new PDBInfo( *full_model_pose ) );
+		pdb_info->set_numbering( conventional_numbering_ );
+		pdb_info->set_chains( conventional_chains_ );
+		full_model_pose->pdb_info( pdb_info );
+		full_model_pose_for_constraints_ = full_model_pose;
+
+		ConstraintSetOP full_model_cst_set( new ConstraintSet );
+		ConstraintIO::read_constraints_new( data, full_model_cst_set, *full_model_pose );
+		cst_set_ = full_model_cst_set;
+	}
+
+	////////////////////////////////////////////////////
+	scoring::constraints::ConstraintSetCOP
+	FullModelParameters::cst_set() const {
+		runtime_assert( cst_set_ != 0 ); // make sure that update_pose_and_cst_set_from_cst_string() has been called;
+		return cst_set_;
+	}
+
+	////////////////////////////////////////////////////
+	Pose const &
+	FullModelParameters::full_model_pose_for_constraints() const {
+		runtime_assert( full_model_pose_for_constraints_ != 0 ); // make sure that update_pose_and_cst_set_from_cst_string() has been called;
+		return *full_model_pose_for_constraints_;
+	}
 
 } //full_model_info
 } //pose

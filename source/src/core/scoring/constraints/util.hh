@@ -24,7 +24,7 @@
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 
 #include <utility/vector1.hh>
-
+#include <iostream>
 
 #ifdef WIN32
 #include <string>
@@ -193,7 +193,8 @@ void combine_constraints(
 void skip_redundant_constraints( ConstraintCOPs& in, core::Size total_residue, core::Size influence_width = 1 );
 void drop_constraints( ConstraintCOPs& in, core::Real drop_rate );
 
-
+///@brief example of how to go through a pose constraint set and print out stuff.
+void print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out = std::cout );
 
 
 } // namespace constraints

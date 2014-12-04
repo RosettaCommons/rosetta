@@ -88,7 +88,7 @@ namespace checker {
 //		max_distance_(50.0), //Oct 27, Change from 60.0 to 50.0 after one slave node on Biox crashed, probably due to memory limit (but 60.0 should use only 200 MB!)
 //		max_distance_(60.0), //Oct 26, Change from 40.0 to 60.0. In rare instances, minimization will move moving_res and reference res very far from initial pos of reference res.
 		atom_bin_size_( 0.1 ),
-		bin_min_( int(  - max_distance_/atom_bin_size_ ) ),
+		bin_min_( int(  -max_distance_/atom_bin_size_ ) ),
 		bin_max_( int( max_distance_/atom_bin_size_ ) ),  //used to be (max_distance_/atom_bin_size_)-1, change on Nov 7, 2010
 		bin_offset_( std::abs( bin_min_ ) + 1 ),
 		num_clash_atom_cutoff_( 3 ), //num of clash required to be considered a clash
@@ -561,7 +561,7 @@ namespace checker {
 		output_title_text( "Enter RNA_VDW_BinChecker::FARFAR_setup_using_user_input_VDW_pose", TR.Debug );
 
 		if ( ( All_VDW_rep_screen_pose_info.size() % 3 ) != 0 ){
-			utility_exit_with_message( "( All_VDW_rep_screen_pose_info.size() % 3 ) != 0. Example: VWC_rep_screen_pose.pdb 6 - 44( align_res of VWD_rep_screen_pose ) 1 - 33( align_res of working_pose )" );
+			utility_exit_with_message( "( All_VDW_rep_screen_pose_info.size() % 3 ) != 0. Example: VWC_rep_screen_pose.pdb 6-44( align_res of VWD_rep_screen_pose ) 1-33( align_res of working_pose )" );
 		}
 
 		VDW_rep_screen_info_list_.clear();
@@ -647,7 +647,7 @@ namespace checker {
 		output_title_text( "Enter RNA_VDW_BinChecker::setup_using_user_input_VDW_pose", TR.Debug );
 
 		if ( ( All_VDW_rep_screen_pose_info.size() % 3 ) != 0 ){
-			utility_exit_with_message( "All_VDW_rep_screen_pose_info.size() % 3 ) != 0. Example: VWC_rep_screen_pose.pdb 6 - 44( align_res of VWD_rep_screen_pose ) 1 - 33( align_res of working_pose )" );
+			utility_exit_with_message( "All_VDW_rep_screen_pose_info.size() % 3 ) != 0. Example: VWC_rep_screen_pose.pdb 6-44( align_res of VDW_rep_screen_pose ) 1-33( align_res of working_pose )" );
 		}
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -949,7 +949,7 @@ namespace checker {
 		utility::vector1< bool > list_of_is_prepend;
 
 		for ( Size n = 1; n <= VDW_rep_screen_info_list.size(); n++ ){
-			if ( VDW_rep_screen_info_list[n].in_root_partition == true ){
+			if ( VDW_rep_screen_info_list[n].in_root_partition ){
 				pose_list.push_back( VDW_rep_screen_info_list[n].VDW_pose );
 				list_of_ignore_res_list.push_back( VDW_rep_screen_info_list[n].VDW_ignore_res );
 				list_of_is_prepend.push_back( false ); /*Backward consistency with prior code that delete the matching res in VDW_rep_pose */
@@ -1012,23 +1012,27 @@ namespace checker {
 
 		if ( write_to_file_ ) outfile_act.close();
 		if ( write_to_file_ ) output_atom_bin( "atom_VDW_bin.txt" );
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//Check the size
-		Size occupied_bin_count = 0;
-		Size total_bin_count = 0;
-		for ( int x_bin = 1; x_bin <= bin_max_*2; x_bin++ ){
-			for ( int y_bin = 1; y_bin <= bin_max_*2; y_bin++ ){
-				for ( int z_bin = 1; z_bin <= bin_max_*2; z_bin++ ){
-					if ( VDW_screen_bin_[x_bin][y_bin][z_bin] == true ) occupied_bin_count++;
-					total_bin_count++;
+
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "In debug MODE -- going to waste a lot of time computing the number of grid points where there were atoms... " << std::endl;
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			//Check the size
+			Size occupied_bin_count = 0;
+			Size total_bin_count = 0;
+			for ( int x_bin = 1; x_bin <= bin_max_*2; x_bin++ ){
+				for ( int y_bin = 1; y_bin <= bin_max_*2; y_bin++ ){
+					for ( int z_bin = 1; z_bin <= bin_max_*2; z_bin++ ){
+						if ( VDW_screen_bin_[x_bin][y_bin][z_bin] == true ) occupied_bin_count++;
+						total_bin_count++;
+					}
 				}
 			}
+
+			if ( total_bin_count == 0 ) utility_exit_with_message( "total_bin_count of thre_dim_VDW_bin == 0!" );
+
+			TR.Debug << "VDW_screen_bin_: occupied_bin_count = " << occupied_bin_count << " out of total_bin_count = " << total_bin_count << std::endl;
+			TR.Debug << "------------------Exit create_pose_bin function------------------ " << std::endl;
 		}
-
-		if ( total_bin_count == 0 ) utility_exit_with_message( "total_bin_count of thre_dim_VDW_bin == 0!" );
-
-		TR.Debug << "VDW_screen_bin_: occupied_bin_count = " << occupied_bin_count << " out of total_bin_count = " << total_bin_count << std::endl;
-		TR.Debug << "------------------Exit create_pose_bin function------------------ " << std::endl;
 
 	}
 
@@ -1239,9 +1243,9 @@ namespace checker {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	core::Vector
-	RNA_VDW_BinChecker::get_reference_xyz( core::pose::Pose const & pose, core::Size const reference_res, bool const verbose /* = false */ ){
+	RNA_VDW_BinChecker::get_reference_xyz( core::pose::Pose const & pose, core::Size const reference_res, bool const  ){
 		if ( pose.residue_type( reference_res ).is_RNA() ){
-			return core::chemical::rna::get_rna_base_centroid( pose.residue( reference_res ), verbose );
+			return core::chemical::rna::get_rna_base_centroid( pose.residue( reference_res ) );
 		}
 		return pose.residue( reference_res ).xyz( 1 );
 	}

@@ -454,13 +454,16 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////
-	// VDW bin checker can take a while to set up... becomes rate-limiting in random.
-	// could in principle instantiate for proteins too.
+	// VDW bin checker can take a while to set up... becomes rate-limiting in random, i.e.
+	//  stepwise monte carlo runs.
+	// Could in principle instantiate for proteins too.
 	if ( !options_->choose_random() && !protein_connection_ && moving_res_ > 0 ){
+		TR << TR.Magenta << "Creating VDW Bin Checker " << TR.Reset << std::endl;
 		VDW_bin_checker_ = rna::checker::RNA_VDW_BinCheckerOP( new checker::RNA_VDW_BinChecker() );
 		VDW_bin_checker_->setup_using_working_pose( *screening_pose_, working_parameters_ );
 	}
 	if ( !user_input_VDW_bin_checker_ /* could be externally defined for speed */ && options_->VDW_rep_screen_info().size() > 0 ) {
+		TR << TR.Magenta << "Creating USER VDW Bin Checker " << TR.Reset << std::endl;
 		user_input_VDW_bin_checker_ = rna::checker::RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker() );
 		options_->setup_options_for_VDW_bin_checker( user_input_VDW_bin_checker_ );
 		user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( options_->VDW_rep_screen_info(),
@@ -548,7 +551,7 @@ Size
 StepWiseConnectionSampler::get_num_pose_kept(){
 	Size num_pose_kept( 108 );
 	if ( options_->sampler_num_pose_kept() > 0 ) num_pose_kept = options_->sampler_num_pose_kept();
-	if ( !rigid_body_modeler_ && working_parameters_ && working_parameters_->sample_both_sugar_base_rotamer() ) num_pose_kept *= 12;
+	if ( !rigid_body_modeler_ && working_parameters_ && working_parameters_->sample_both_sugar_base_rotamer() ) num_pose_kept *= 4; //12;
 	if ( rigid_body_modeler_ && base_centroid_checker_->allow_base_pair_only_screen() ) num_pose_kept *= 4;
 	return num_pose_kept;
 }

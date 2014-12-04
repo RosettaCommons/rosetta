@@ -98,21 +98,22 @@ FadeFunc::dfunc( Real const z ) const
 void
 FadeFunc::read_data( std::istream& in ) {
 
-	std::string line;
-	getline( in, line );
-	std::istringstream linestream( line ); // do not go to next line
-
-	runtime_assert( linestream.good() );
-	linestream >> cutoff_lower_;
-	runtime_assert( linestream.good() );
-	linestream >> cutoff_upper_;
-	runtime_assert( linestream.good() );
-	linestream >> fade_zone_;
-	runtime_assert( linestream.good() );
-	linestream >> well_depth_ ;
+	in >> cutoff_lower_;
+	in >> cutoff_upper_;
+	in >> fade_zone_;
+	in >> well_depth_ ;
 
 	well_offset_ = 0.0;
-	if( linestream.good() )  linestream >> well_offset_;
+
+	// there may be another number, which would be the well offset.
+	char dummy;
+	while ( in.good() && ( in.peek() == ' ' ) ) in.get( dummy );
+	if( in.good() ){
+		char c = in.peek();
+		if ( isdigit( c ) || c == '-' || c == '+' ){ // allow for negative well offsets...
+			in >> well_offset_;
+		}
+	}
 
 }
 

@@ -64,6 +64,9 @@ namespace align {
 		void
 		apply( core::pose::Pose const & pose );
 
+		core::Real
+		cluster_rmsd() const { return cluster_rmsd_; }
+
 	private:
 
 		void

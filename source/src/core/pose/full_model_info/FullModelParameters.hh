@@ -155,11 +155,16 @@ namespace full_model_info {
 		Size size() const { return full_sequence_.size(); }
 
 		void
-		read_cst_file( std::string const cst_file, core::chemical::ResidueTypeSet const & rsd_type_set );
+		read_cst_file( std::string const cst_file );
 
-		scoring::constraints::ConstraintSetCOP cst_set() const { return cst_set_; }
+		scoring::constraints::ConstraintSetCOP cst_set() const;
 
-		Pose const & full_model_pose_for_constraints() const { return *full_model_pose_for_constraints_; }
+		void
+		update_pose_and_cst_set_from_cst_string( chemical::ResidueTypeSet const & rsd_type_set ) const;
+
+		Pose const & full_model_pose_for_constraints() const;
+
+		std::string cst_string() const { return cst_string_; }
 
 	private:
 
@@ -188,6 +193,7 @@ namespace full_model_info {
 
 		void
 		keep_chain_and_cutpoint_open_matched( FullModelParameterType const & type );
+
 
 		/// @brief input operator
 		friend std::istream & operator >>(std::istream & is, FullModelParameters & t);
@@ -218,8 +224,9 @@ namespace full_model_info {
 		utility::vector1< char > conventional_chains_;    // permits user to use chains other than A, B, C, ..
 		std::map< Size, std::string > non_standard_residues_; // for DNA, non-natural protein/RNA, ligands, ions, etc.
 
-		core::scoring::constraints::ConstraintSetCOP cst_set_;
-		pose::PoseCOP full_model_pose_for_constraints_;
+		std::string cst_string_; // constraints in text format, with atom names.
+		mutable core::scoring::constraints::ConstraintSetCOP cst_set_;
+		mutable pose::PoseCOP full_model_pose_for_constraints_;
 
 		std::map< FullModelParameterType, utility::vector1< Size > > parameter_values_at_res_;
 		// this is set at the same time as above.

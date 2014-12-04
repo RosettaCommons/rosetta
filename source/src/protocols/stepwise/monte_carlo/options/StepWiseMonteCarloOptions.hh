@@ -125,12 +125,6 @@ namespace options {
 		core::Real const & minimize_single_res_frequency() const { return minimize_single_res_frequency_; }
 		void set_minimize_single_res_frequency(  core::Real const & setting ){ minimize_single_res_frequency_ = setting; }
 
-		bool const & minimizer_allow_variable_bond_geometry() const { return minimizer_allow_variable_bond_geometry_; }
-		void set_minimizer_allow_variable_bond_geometry( bool const & setting ){ minimizer_allow_variable_bond_geometry_ = setting; }
-
-		core::Real const & minimizer_vary_bond_geometry_frequency() const { return minimizer_vary_bond_geometry_frequency_; }
-		void set_minimizer_vary_bond_geometry_frequency( core::Real const & setting ){ minimizer_vary_bond_geometry_frequency_ = setting; }
-
 		core::Real const & switch_focus_frequency() const { return switch_focus_frequency_; }
 		void set_switch_focus_frequency( core::Real const & setting ){ switch_focus_frequency_ = setting; }
 
@@ -221,8 +215,6 @@ namespace options {
 		core::Real add_delete_frequency_;
 		core::Real intermolecular_frequency_;
 		core::Real minimize_single_res_frequency_;
-		bool minimizer_allow_variable_bond_geometry_;
-		core::Real minimizer_vary_bond_geometry_frequency_;
 		core::Real switch_focus_frequency_;
 		core::Real just_min_after_mutation_frequency_;
 		core::Real temperature_;

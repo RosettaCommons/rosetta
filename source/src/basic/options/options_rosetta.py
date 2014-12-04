@@ -5982,6 +5982,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'min_type', 'String', desc="Minimizer type",default="dfpmin_armijo_nonmonotone" ),
 		Option( 'min_tolerance', 'Real', desc="Minimizer tolerance",default="0.000025" ),
     Option( 'vary_polar_hydrogen_geometry', 'Boolean', desc='Optimize hydrogens that form hydrogen bonds', default='false' ),
+		Option( 'virtualize_free_moieties_in_native', 'Boolean', desc="Virtualize bulges, terminal phosphates, and 2' hydroxyls detected to be non-interacting ('free') in native pose. I.e., do not calculate RMSD over those atoms.", default='true' ),
 		Option_Group( 'monte_carlo',
 			Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),
 			Option( 'skip_deletions', 'Boolean', desc= "no delete moves -- just for testing", default='false' ),

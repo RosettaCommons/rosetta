@@ -122,9 +122,6 @@ namespace options {
 		bool const & rm_virt_phosphate() const { return rm_virt_phosphate_; }
 		void set_rm_virt_phosphate( bool const & setting ){ rm_virt_phosphate_ = setting; }
 
-		utility::vector1< std::string > const & VDW_rep_screen_info() const { return VDW_rep_screen_info_; }
-		void set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_ = setting; }
-
 		core::Real const & VDW_rep_alignment_RMSD_CUTOFF() const { return VDW_rep_alignment_RMSD_CUTOFF_; }
 		void set_VDW_rep_alignment_RMSD_CUTOFF( core::Real const & setting ){ VDW_rep_alignment_RMSD_CUTOFF_ = setting; }
 
@@ -179,12 +176,6 @@ namespace options {
 		bool const & minimizer_rename_tag() const { return minimizer_rename_tag_; }
 		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting; }
 
-		bool const & minimizer_allow_variable_bond_geometry() const { return minimizer_allow_variable_bond_geometry_; }
-		void set_minimizer_allow_variable_bond_geometry( bool const & setting ){ minimizer_allow_variable_bond_geometry_ = setting; }
-
-		core::Real const & minimizer_vary_bond_geometry_frequency() const { return minimizer_vary_bond_geometry_frequency_; }
-		void set_minimizer_vary_bond_geometry_frequency( core::Real const & setting ){ minimizer_vary_bond_geometry_frequency_ = setting; }
-
 		bool const & tether_jump() const { return tether_jump_; }
 		void set_tether_jump( bool const & setting ){ tether_jump_ = setting; }
 
@@ -216,7 +207,6 @@ namespace options {
 		bool minimize_and_score_sugar_;
 		bool minimize_and_score_native_pose_;
 		bool rm_virt_phosphate_;
-		utility::vector1< std::string > VDW_rep_screen_info_;
 		core::Real VDW_rep_alignment_RMSD_CUTOFF_;
 		core::Real sampler_max_centroid_distance_;
 		utility::vector1< std::string > VDW_rep_delete_matching_res_;
@@ -235,8 +225,6 @@ namespace options {
 		bool sampler_try_sugar_instantiation_;
 		bool allow_base_pair_only_centroid_screen_;
 		bool minimizer_rename_tag_;
-		bool minimizer_allow_variable_bond_geometry_;
-		core::Real minimizer_vary_bond_geometry_frequency_;
 		bool tether_jump_;
 		bool turn_off_rna_chem_map_during_optimize_;
 	};

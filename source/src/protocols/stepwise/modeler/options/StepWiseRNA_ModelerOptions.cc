@@ -100,8 +100,6 @@ namespace options {
 		sampler_try_sugar_instantiation_ = false;
 		allow_base_pair_only_centroid_screen_ = false;
 		minimizer_rename_tag_ = false;
-		minimizer_allow_variable_bond_geometry_ = false;
-		minimizer_vary_bond_geometry_frequency_ = 0.0;
 		tether_jump_ = true;
 		turn_off_rna_chem_map_during_optimize_ = true;
 	}
@@ -135,7 +133,6 @@ namespace options {
 		minimize_and_score_sugar_ = src.minimize_and_score_sugar_;
 		minimize_and_score_native_pose_ = src.minimize_and_score_native_pose_;
 		rm_virt_phosphate_ = src.rm_virt_phosphate_;
-		VDW_rep_screen_info_ = src.VDW_rep_screen_info_;
 		VDW_rep_alignment_RMSD_CUTOFF_ = src.VDW_rep_alignment_RMSD_CUTOFF_;
 		sampler_max_centroid_distance_ = src.sampler_max_centroid_distance_;
 		VDW_rep_screen_physical_pose_clash_dist_cutoff_ = src.VDW_rep_screen_physical_pose_clash_dist_cutoff_;
@@ -152,8 +149,6 @@ namespace options {
 		sampler_assert_no_virt_sugar_sampling_ = src.sampler_assert_no_virt_sugar_sampling_;
 		sampler_try_sugar_instantiation_ = src.sampler_try_sugar_instantiation_;
 		allow_base_pair_only_centroid_screen_ = src.allow_base_pair_only_centroid_screen_;
-		minimizer_vary_bond_geometry_frequency_ = src.minimizer_vary_bond_geometry_frequency_;
-		minimizer_allow_variable_bond_geometry_ = src.minimizer_allow_variable_bond_geometry_;
 		tether_jump_ = src.tether_jump_;
 		turn_off_rna_chem_map_during_optimize_ = src.turn_off_rna_chem_map_during_optimize_;
 
@@ -184,7 +179,6 @@ namespace options {
 		minimize_and_score_sugar_ = option[ basic::options::OptionKeys::stepwise::rna::minimize_and_score_sugar ]();
 		minimize_and_score_native_pose_ = option[ OptionKeys::stepwise::rna::minimize_and_score_native_pose ]();
 		rm_virt_phosphate_ = option[ OptionKeys::stepwise::rna::rm_virt_phosphate]();
-		VDW_rep_screen_info_ = option[ OptionKeys::stepwise::rna::VDW_rep_screen_info ]();
 		VDW_rep_alignment_RMSD_CUTOFF_ = option[ OptionKeys::stepwise::rna::VDW_rep_alignment_RMSD_CUTOFF ]();
 		sampler_max_centroid_distance_ = option[ OptionKeys::stepwise::rna::sampler_max_centroid_distance ]();
 		VDW_rep_screen_physical_pose_clash_dist_cutoff_ = option[ OptionKeys::stepwise::rna::VDW_rep_screen_physical_pose_clash_dist_cutoff ]();

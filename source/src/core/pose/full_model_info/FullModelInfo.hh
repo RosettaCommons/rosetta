@@ -85,8 +85,6 @@ public:
 	utility::vector1< Size > const & calc_rms_res() const;
 	utility::vector1< Size > const & rna_syn_chi_res() const;
 	utility::vector1< Size > const & rna_terminal_res() const;
-	scoring::constraints::ConstraintSetCOP cst_set() const;
- 	Pose const & full_model_pose_for_constraints() const;
 
 	void clear_res_list();
 

@@ -22,7 +22,9 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/stream_util.hh>
@@ -165,11 +167,15 @@ update_constraint_set_from_full_model_info( pose::Pose & pose ){
 	using namespace core::scoring::constraints;
 	using namespace core::id;
 
+	FullModelParametersCOP full_model_parameters = const_full_model_info( pose ).full_model_parameters();
 	ConstraintSetOP cst_set( new ConstraintSet );
+	std::string const cst_string = full_model_parameters->cst_string();
 
-	ConstraintSetCOP full_model_cst_set = const_full_model_info( pose ).cst_set();
-	if ( full_model_cst_set != 0 ){
-		pose::Pose const & full_model_pose = const_full_model_info( pose ).full_model_pose_for_constraints();
+	if ( cst_string.size() > 0 ) {
+		full_model_parameters->update_pose_and_cst_set_from_cst_string( pose.residue( 1 ).residue_type_set() );
+		Pose const & full_model_pose = full_model_parameters->full_model_pose_for_constraints();
+		ConstraintSetCOP full_model_cst_set = full_model_parameters->cst_set();
+
 		utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 		id::SequenceMappingOP sequence_map( new SequenceMapping );
 		for ( Size n = 1; n <= full_model_pose.total_residue(); n++ ){
@@ -181,6 +187,7 @@ update_constraint_set_from_full_model_info( pose::Pose & pose ){
 		}
 		cst_set = full_model_cst_set->remapped_clone( full_model_pose, pose, sequence_map );
 	}
+
 	pose.constraint_set( cst_set );
 }
 

@@ -125,7 +125,10 @@ namespace modeler {
 		clusterer.set_pose_list( pose_list_ );
 		clusterer.set_max_decoys( pose_list_.size() );
 		clusterer.set_calc_rms_res( working_moving_res_ );
+
+		if ( pose_list_.size() > 1 ) TR << "Will cluster "  << pose_list_.size() << " poses with cluster radius " << clusterer.cluster_rmsd() << std::endl;
 		clusterer.cluster();
+
 		pose_list_ = clusterer.pose_list();
 		pose = *pose_list_[ 1 ];
 	}
@@ -136,6 +139,7 @@ namespace modeler {
 
 		kinematics::MoveMap mm;
 		utility::vector1< pose::PoseOP > output_pose_list;
+		if ( pose_list_.size() > 0 && num_pose_minimize_ != 1) TR << "Will minimize "  << pose_list_.size() << " poses." << std::endl;
 
 		for ( Size n = 1; n <= pose_list_.size(); n++ ) {
 
@@ -198,6 +202,7 @@ namespace modeler {
 		core::scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
 		kinematics::MoveMap mm_save = mm;
 		setup_vary_bond_geometry( pose, mm ); // careful -- must only do once, or constraints will keep getting added...
+
 		if ( options_->cart_min() ) {
 			cartesian_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
 		} else {
