@@ -18,17 +18,13 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
 
 using namespace core;
 
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-
-bool
-get_out_tag( std::string & out_tag,
-						 Size const & n,
-						 std::string const & silent_file );
 
 void
 output_to_silent_file( std::string const & out_tag,
@@ -37,6 +33,14 @@ output_to_silent_file( std::string const & out_tag,
 											 pose::PoseCOP native_pose,
 											 bool const superimpose_over_all_instantiated = false,
 											 bool const do_rms_fill_calculation = false );
+
+core::io::silent::SilentStructOP
+prepare_silent_struct( std::string const & out_tag,
+											 pose::Pose & pose,
+											 pose::PoseCOP native_pose,
+											 bool const superimpose_over_all_instantiated = false,
+											 bool const do_rms_fill_calculation = false,
+											 core::pose::PoseOP full_model_pose  = 0 );
 
 void
 output_to_silent_file( std::string const & out_tag,

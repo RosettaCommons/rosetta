@@ -27,7 +27,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/util.hh>
@@ -231,7 +231,7 @@ rna_score_test()
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
-	using namespace protocols::stepwise::full_model_info;
+	using namespace protocols::stepwise::setup;
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
@@ -352,7 +352,7 @@ rna_score_test()
 			//Real const rmsd      = all_atom_rmsd( native_pose, pose );
 			Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
-			s.add_energy( "rms", rmsd );
+			s.add_energy( "new_rms", rmsd );
 
 			// Stem RMSD
 			if ( option[params_file].user() ) {

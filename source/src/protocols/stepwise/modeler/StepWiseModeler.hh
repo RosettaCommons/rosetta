@@ -23,6 +23,7 @@
 #include <protocols/stepwise/modeler/packer/StepWiseMasterPacker.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.fwd.hh>
+#include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.fwd.hh>
 #include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -76,6 +77,10 @@ namespace modeler {
 
 		options::StepWiseModelerOptionsCOP options(){ return options_; }
 
+		void set_precomputed_library_mover( precomputed::PrecomputedLibraryMoverCOP precomputed_library_mover ) { precomputed_library_mover_ = precomputed_library_mover; }
+
+		precomputed::PrecomputedLibraryMoverCOP precomputed_library_mover(){ return precomputed_library_mover_; }
+
 		Size
 		get_num_sampled(){ return pose_list_.size(); }
 
@@ -115,6 +120,9 @@ namespace modeler {
 		bool
 		sampling_successful();
 
+		void
+		look_for_precompute_move( pose::Pose & pose );
+
 	private:
 
 		Size moving_res_;
@@ -136,6 +144,7 @@ namespace modeler {
 		bool prepack_res_was_inputted_;
 		packer::StepWiseMasterPackerOP master_packer_;
 		scoring::constraints::ConstraintSetOP cst_set_;
+		precomputed::PrecomputedLibraryMoverCOP precomputed_library_mover_;
 
 	};
 

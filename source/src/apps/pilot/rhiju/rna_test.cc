@@ -3290,6 +3290,7 @@ print_hbonds_test()
 
 		hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 
+		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 		for (Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
 			hbonds::HBond const & hbond( hbond_set->hbond( i ) );
 
@@ -3300,9 +3301,9 @@ print_hbonds_test()
 			Size const acc_atm = hbond.acc_atm();
 
 
-			std::cout << "HBOND: " << pose.residue( don_res_num ).name1() << don_res_num <<
+			std::cout << "HBOND: " << pose.residue( don_res_num ).name1() << pdb_info->chain( don_res_num ) << ":" << pdb_info->number( don_res_num ) <<
 				" " << pose.residue( don_res_num ).atom_name( don_hatm ) << " --- " <<
-				pose.residue( acc_res_num).name1() << acc_res_num << " " << pose.residue( acc_res_num ).atom_name( acc_atm ) << " ==> " << hbond.energy()
+				pose.residue( acc_res_num).name1() << pdb_info->chain( acc_res_num ) << ":" << pdb_info->number( acc_res_num ) << " " << pose.residue( acc_res_num ).atom_name( acc_atm ) << " ==> " << hbond.energy()
 								<< std::endl;
 
 		}

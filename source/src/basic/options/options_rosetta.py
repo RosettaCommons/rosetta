@@ -6012,6 +6012,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'make_movie', 'Boolean', desc= "create silent files in movie/ with all steps and accepted steps", default='false' ),
 		  Option( 'recover_low', 'Boolean', desc="Output lowest energy model in monte carlo, not the last frame", default='true' ),
 		  Option( 'save_times', 'Boolean', desc="Save modeling time for each model", default='false' ),
+		  Option( 'use_precomputed_library', 'Boolean', desc="Do not sample dinucleotides explicit, but instead use library saved to disk.", default='false' ),
+		  Option( 'csa_bank_size', 'Integer', desc='Do conformational space annealing (population monte carlo) with this number of models in the bank',default='0' ),
+		  Option( 'csa_rmsd', 'Real', desc='RMSD cutoff for calling two poses different in conformational space annealing (population monte carlo)',default='1.0' ),
 		), # -stepwise:monte_carlo
 		Option_Group( 'rna',
 			Option( 'sampler_num_pose_kept', 'Integer', desc="set_num_pose_kept by ResidueSampler )", default='108' ),

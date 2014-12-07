@@ -22,7 +22,10 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
 #include <core/io/rna/RNA_DataReader.cc> // temporary, for scoring RNA chemical mapping data. Move into core?
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/StepWiseJobDistributor.hh>
+#include <protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh>
+#include <protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
@@ -64,7 +67,6 @@ using utility::vector1;
 
 static thread_local basic::Tracer TR( "apps.pilot.rhiju.stepwise_monte_carlo" );
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 stepwise_monte_carlo()
@@ -75,15 +77,12 @@ stepwise_monte_carlo()
   using namespace core::pose::full_model_info;
   using namespace protocols::stepwise;
   using namespace protocols::stepwise::modeler;
-	using namespace protocols::stepwise::full_model_info;
+	using namespace protocols::stepwise::setup;
   using namespace protocols::stepwise::monte_carlo;
   using namespace utility::file;
 
-	// Following could be generalized to fa_standard, after recent unification, but
-	// probably should wait for on-the-fly residue type generation.
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
@@ -104,33 +103,32 @@ stepwise_monte_carlo()
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
 
-	StepWiseMonteCarlo stepwise_monte_carlo( scorefxn );
+	StepWiseMonteCarloOP stepwise_monte_carlo( new StepWiseMonteCarlo( scorefxn ) );
 	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsOP options( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions );
 	bool const do_preminimize_move = option[ OptionKeys::stepwise::preminimize ]();
 	bool const test_move = option[ OptionKeys::stepwise::move ].user() || do_preminimize_move;
 	if ( test_move ) options->set_output_minimized_pose_list( true );
 	options->initialize_from_command_line();
-	stepwise_monte_carlo.set_options( options );
-	stepwise_monte_carlo.set_native_pose( align_pose ); //allows for alignment to be to non-native
-	stepwise_monte_carlo.set_move( SWA_Move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() ) );
-	stepwise_monte_carlo.set_enumerate( option[ OptionKeys::stepwise::enumerate ]());
-	stepwise_monte_carlo.set_do_preminimize_move( do_preminimize_move );
+	stepwise_monte_carlo->set_options( options );
+	stepwise_monte_carlo->set_native_pose( align_pose ); //allows for alignment to be to non-native
+	stepwise_monte_carlo->set_move( SWA_Move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() ) );
+	stepwise_monte_carlo->set_enumerate( option[ OptionKeys::stepwise::enumerate ]());
+	stepwise_monte_carlo->set_do_preminimize_move( do_preminimize_move );
 
 	std::string const silent_file = option[ out::file::silent ]();
 	if ( option[ out::overwrite ]() ) remove_silent_file_if_it_exists( silent_file );
-	stepwise_monte_carlo.set_out_path( FileName( silent_file ).path() );
-
-	std::string out_tag;
-	Pose start_pose = pose;
+	stepwise_monte_carlo->set_out_path( FileName( silent_file ).path() );
 
 	// main loop
-	for ( Size n = 1; n <= Size( option[ out::nstruct ]() ); n++ ) {
-		if ( !get_out_tag( out_tag, n, silent_file ) ) continue;
-		TR << std::endl << TR.Green << "Embarking on structure " << n << " of " << option[ out::nstruct ]() << TR.Reset << std::endl;
-		pose = start_pose;
-		stepwise_monte_carlo.set_model_tag( out_tag );
- 		stepwise_monte_carlo.apply( pose );
-		if (!options->output_minimized_pose_list()) output_to_silent_file( out_tag, silent_file, pose, native_pose, option[ OptionKeys::stepwise::superimpose_over_all ](), true /*rms_fill*/ );
+	StepWiseJobDistributorOP stepwise_job_distributor( new StepWiseMonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );
+	if ( option[ OptionKeys::stepwise::monte_carlo::csa_bank_size ].user() ) {
+		stepwise_job_distributor = StepWiseJobDistributorOP( new StepWiseCSA_JobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ](), option[ OptionKeys::stepwise::monte_carlo::csa_bank_size ](), option[ OptionKeys::stepwise::monte_carlo::csa_rmsd ]() ) );
+	}
+	stepwise_job_distributor->set_native_pose( native_pose );
+	stepwise_job_distributor->set_superimpose_over_all( option[ OptionKeys::stepwise::superimpose_over_all ]() );
+	stepwise_job_distributor->initialize( pose );
+	while ( stepwise_job_distributor->has_another_job() ) {
+		stepwise_job_distributor->apply( pose );
 	}
 
 	if ( do_preminimize_move ) pose.dump_pdb( "PREPACK.pdb" );
@@ -184,19 +182,21 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_skip_bulge );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::temperature );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa_bank_size );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa_rmsd );
 		option.add_relevant( OptionKeys::stepwise::move );
 		option.add_relevant( OptionKeys::stepwise::num_random_samples );
 		option.add_relevant( OptionKeys::stepwise::num_pose_minimize );
 		option.add_relevant( OptionKeys::stepwise::align_pdb );
 		option.add_relevant( OptionKeys::stepwise::enumerate );
 		option.add_relevant( OptionKeys::stepwise::preminimize );
+		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
 		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
 		option.add_relevant( OptionKeys::full_model::rna::bulge_res );
 		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
-		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 		option.add_relevant( OptionKeys::rna::data_file );

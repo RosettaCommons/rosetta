@@ -31,6 +31,7 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/align/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
+#include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -112,6 +113,7 @@ namespace modeler {
 		input_streams_ = src.input_streams_;
 		figure_out_prepack_res_ = src.figure_out_prepack_res_;
 		prepack_res_was_inputted_ = src.prepack_res_was_inputted_;
+		precomputed_library_mover_ = src.precomputed_library_mover_;
 
 		return *this;
 	}
@@ -209,6 +211,7 @@ namespace modeler {
 	void
 	StepWiseModeler::initialize_working_parameters_and_root( pose::Pose & pose ){
 		pose::full_model_info::make_sure_full_model_info_is_setup( pose );
+		look_for_precompute_move( pose );
 		figure_out_moving_res_list( pose );
 
 		if ( working_parameters_ != 0 ) return;
@@ -268,6 +271,24 @@ namespace modeler {
 	StepWiseModeler::initialize_scorefunctions( pose::Pose const & pose ){
 		sample_scorefxn_ = initialize_sample_scorefxn( scorefxn_, pose,	options_ );
 		pack_scorefxn_   = initialize_pack_scorefxn( sample_scorefxn_, pose );
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::look_for_precompute_move( pose::Pose & pose ) {
+		if ( moving_res_ == 0 ) return; // a deletion -- don't trigger any kind of structural change.
+		if ( precomputed_library_mover_ == 0 ) return;
+		if ( !precomputed_library_mover_->has_precomputed_move( pose ) ) return;
+
+		precomputed_library_mover_->apply( pose );
+
+		// taken from DeleteMover -- some code duplication...
+		// no further backbone resampling:
+		set_moving_res_and_reset( 0 );
+		// just pack and minimize:
+		set_working_prepack_res( const_full_model_info( pose ).res_list() );
+		set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 	}
 
 	/////////////////////////////////////////////////////////////////////

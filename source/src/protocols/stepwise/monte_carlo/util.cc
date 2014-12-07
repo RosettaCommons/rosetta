@@ -47,30 +47,6 @@ namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// perhaps could use job distributor.
-
-bool
-get_out_tag( std::string & out_tag,
-						 Size const & n,
-						 std::string const & silent_file ){
-
-  using namespace core::io::silent;
-	static std::map< std::string, bool > tag_is_done;
-
-	static bool init( false );
-	if ( !init ){
-		tag_is_done = initialize_tag_is_done( silent_file );
-		init = true;
-	}
-
-	out_tag = "S_"+lead_zero_string_of( n, 6 );
-	if ( tag_is_done[ out_tag ] ) {
-		TR << "Already done: " << out_tag << std::endl;
-		return false;
-	}
-	return true; //ok, not done, so do it.
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -82,10 +58,25 @@ output_to_silent_file( std::string const & out_tag,
 											 bool const do_rms_fill_calculation /* = false */ ){
 
   using namespace core::io::silent;
-  using namespace protocols::stepwise::modeler::align;
+	SilentStructOP s = prepare_silent_struct( out_tag, pose, native_pose, superimpose_over_all_instantiated, do_rms_fill_calculation );
 
 	// output silent file.
 	static SilentFileData const silent_file_data;
+	silent_file_data.write_silent_struct( *s, silent_file, false /*score_only*/ );
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+core::io::silent::SilentStructOP
+prepare_silent_struct( std::string const & out_tag,
+											 pose::Pose & pose,
+											 pose::PoseCOP native_pose,
+											 bool const superimpose_over_all_instantiated /* = false */,
+											 bool const do_rms_fill_calculation /* = false */,
+											 core::pose::PoseOP full_model_pose /* = 0*/ ){
+
+  using namespace core::io::silent;
+  using namespace protocols::stepwise::modeler::align;
 
 	Real rms( 0.0 ), rms_fill( 0.0 );
 	if ( native_pose != 0 ) {
@@ -95,20 +86,20 @@ output_to_silent_file( std::string const & out_tag,
 
 		if ( do_rms_fill_calculation ){
 			TR << TR.Blue << "Generating filled-in model for rms_fill... " << TR.Reset << std::endl;
-			PoseOP full_model_pose = build_full_model( pose );
+			if ( full_model_pose == 0 ) full_model_pose = build_full_model( pose );
 			rms_fill = superimpose_with_stepwise_aligner( *full_model_pose, *native_pose, superimpose_over_all_instantiated_ );
 		}
 	}
 
-	BinarySilentStruct s( pose, out_tag );
-	s.add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residues_and_connections( pose ) ) );
+	SilentStructOP s( new BinarySilentStruct( pose, out_tag ) );
+	s->add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residues_and_connections( pose ) ) );
 
 	if ( native_pose != 0 ) {
-		s.add_energy( "rms",      rms );
-		if ( do_rms_fill_calculation ) s.add_energy( "rms_fill", rms_fill );
+		s->add_energy( "rms",      rms );
+		if ( do_rms_fill_calculation ) s->add_energy( "rms_fill", rms_fill );
 	}
 
-	silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
+	return s;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

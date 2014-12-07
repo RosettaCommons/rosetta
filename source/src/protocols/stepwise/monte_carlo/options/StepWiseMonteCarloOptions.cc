@@ -71,7 +71,8 @@ namespace options {
 		protein_prepack_( false ),
 		o2prime_legacy_mode_( false ),
 		recover_low_( false ),
-		save_times_( false )
+		save_times_( false ),
+		use_precomputed_library_( false )
 	{
 		StepWiseBasicOptions::initialize_variables();
 		set_silent_file( "default.out" );
@@ -138,6 +139,7 @@ namespace options {
 		o2prime_legacy_mode_ = src.o2prime_legacy_mode_;
 		recover_low_ = src.recover_low_;
 		save_times_ = src.save_times_;
+		use_precomputed_library_ = src.use_precomputed_library_;
 		return *this;
 	}
 
@@ -179,6 +181,7 @@ namespace options {
 		o2prime_legacy_mode_ = option[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
 		recover_low_ = option[ OptionKeys::stepwise::monte_carlo::recover_low ]();
 		save_times_ = option[ OptionKeys::stepwise::monte_carlo::save_times ]();
+		use_precomputed_library_ = option[ OptionKeys::stepwise::monte_carlo::use_precomputed_library ]();
 		local_redock_only_ = option[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
 		skip_coord_constraints_ = option[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
 		filter_native_big_bins_ = option[ OptionKeys::stepwise::protein::filter_native_big_bins ]();

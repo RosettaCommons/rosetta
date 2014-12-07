@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 
 // Platform headers
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
@@ -74,6 +75,15 @@ sys_sleep( double const seconds )
 	//cout << "sleep end" << endl;
 }
 
+void
+rand_sleep()
+{
+	// Use the standard random number system instead of Rosetta's for two reasons.
+	// 1) As we're only calling this function if there's problems with filesystem access,
+	//    we don't want intermittant filesystem problems to influence the scientific trajectory.
+	// 2) The random number system lives in numeric, above utility, so we can't use it even if we wanted to.
+	utility::sys_sleep( (double)std::rand() / (double)RAND_MAX );
+}
 
 /// @brief Generate timestamp string
 std::string

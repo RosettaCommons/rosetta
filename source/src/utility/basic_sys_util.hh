@@ -30,6 +30,8 @@ namespace utility {
 void
 sys_sleep( double const seconds );
 
+void
+rand_sleep();
 
 /// @brief Generate timestamp string
 std::string

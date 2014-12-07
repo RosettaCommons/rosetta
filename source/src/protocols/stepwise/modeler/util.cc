@@ -17,7 +17,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/farna/util.hh>
 
 //////////////////////////////////
@@ -593,7 +593,7 @@ merge_two_poses( pose::Pose & pose,
 	jump_partners2 = map_to_local_numbering( jump_partners2, working_res );
 	cuts = map_to_local_numbering( cuts, working_res );
 
-	FoldTree f = full_model_info::get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
+	FoldTree f = setup::get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
 
 	Size root( 0 );
 	if ( fix_first_pose ) {

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.cc
+/// @file protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.cc
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/rna/util.hh> // for virtualize_free_rna_moieties
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -53,7 +53,7 @@ using utility::vector1;
 
 namespace protocols {
 namespace stepwise {
-namespace full_model_info {
+namespace setup {
 
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -734,6 +734,6 @@ namespace full_model_info {
 
 
 
-} //full_model_info
+} //setup
 } //stepwise
 } //protocols

@@ -31,7 +31,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
@@ -98,7 +98,7 @@ screen_phosphates()
   using namespace protocols::stepwise::modeler;
   using namespace protocols::stepwise::monte_carlo;
   using namespace protocols::stepwise::modeler::rna::phosphate;
-  using namespace protocols::stepwise::full_model_info;
+  using namespace protocols::stepwise::setup;
   using namespace utility::file;
 
 	// Following could be generalized to fa_standard, after recent unification, but

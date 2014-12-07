@@ -447,7 +447,6 @@ namespace full_model_info {
 	operator >>( std::istream & is, FullModelParameters & t )
 	{
 		using namespace utility;
-		initialize_parameters( t );
 		std::string tag;
 
 		is >> tag;
@@ -456,6 +455,8 @@ namespace full_model_info {
 		is >> tag;
 		runtime_assert ( !is.fail() && tag == "FULL_SEQUENCE" );
 		is >> t.full_sequence_;
+
+		initialize_parameters( t ); // depends on size of full_sequence
 
 		is >> tag;
 		std::pair< std::vector<int>, std::vector<char> > resnum_chain;

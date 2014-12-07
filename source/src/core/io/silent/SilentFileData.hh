@@ -347,6 +347,11 @@ public:
 		strict_column_mode_ = false;
 	}
 
+	/// @brief Clears all of the data associated with this object.
+	void clear_shared_silent_data() {
+		shared_silent_data_.clear();
+	}
+
 	/// @brief Destructor.
 	virtual ~SilentFileData();
 

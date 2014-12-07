@@ -200,6 +200,9 @@ namespace options {
 		bool const & save_times() const { return save_times_; }
 		void set_save_times( bool const & setting ){ save_times_ = setting; }
 
+		bool const & use_precomputed_library() const { return use_precomputed_library_; }
+		void set_use_precomputed_library( bool const & setting ){ use_precomputed_library_ = setting; }
+
 	private:
 
 		bool verbose_scores_;
@@ -240,6 +243,7 @@ namespace options {
 		bool o2prime_legacy_mode_;
 		bool recover_low_;
 		bool save_times_;
+		bool use_precomputed_library_;
 	};
 
 } //options

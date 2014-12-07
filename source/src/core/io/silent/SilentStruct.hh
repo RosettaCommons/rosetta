@@ -156,6 +156,7 @@ namespace silent {
 		/// @brief set the tag associate with this SilentStruct
 		void set_decoy_tag( std::string const & tag ) {
 			decoy_tag_ = tag;
+			for ( Size n = 1; n <= other_struct_list_.size(); n++ ) other_struct_list_[n]->set_decoy_tag( tag );
 		}
 
 		/// @brief returns the tag associated with this SilentStruct.

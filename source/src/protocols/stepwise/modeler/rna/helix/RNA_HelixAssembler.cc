@@ -13,7 +13,7 @@
 /// @author Rhiju Das
 
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/farna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -172,7 +172,7 @@ RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & full_seq
 
 	// handle weird non-naturals, including g[IGU] for isoguanosine, etc.
 	full_sequence_ = full_sequence_in;
-	non_standard_residues_ = full_model_info::parse_out_non_standard_residues( full_sequence_ );
+	non_standard_residues_ = setup::parse_out_non_standard_residues( full_sequence_ );
 
 	// figure out if there are dangling ends -- just extract helix portion.
 	figure_out_and_remove_dangling_ends();

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh
+/// @file protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_HH
 #define INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_HH
 
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.fwd.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -28,7 +28,7 @@ using core::kinematics::FoldTree;
 
 namespace protocols {
 namespace stepwise {
-namespace full_model_info {
+namespace setup {
 
 	core::pose::PoseOP
 	get_pdb_with_full_model_info( std::string const input_file,
@@ -148,7 +148,7 @@ namespace full_model_info {
 	filter_out_bulge_res(  utility::vector1< core::Size > & sample_res,
 												 utility::vector1< core::Size > const & bulge_res );
 
-} //full_model_info
+} //setup
 } //stepwise
 } //protocols
 

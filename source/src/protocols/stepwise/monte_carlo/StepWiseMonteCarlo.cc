@@ -22,6 +22,7 @@
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/util.hh>
@@ -230,6 +231,7 @@ StepWiseMonteCarlo::setup_unified_stepwise_modeler(){
  	using namespace modeler;
 	using namespace modeler::rna;
  	using namespace modeler::protein;
+ 	using namespace modeler::precomputed;
 
  	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( scorefxn_ ) );
 	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options = options_->setup_modeler_options();
@@ -237,6 +239,10 @@ StepWiseMonteCarlo::setup_unified_stepwise_modeler(){
 	if ( do_preminimize_move_ ) options->set_use_packer_instead_of_rotamer_trials( true ); // for proteins.
 	stepwise_modeler->set_options( options );
 
+	if ( options_->use_precomputed_library() ){
+		PrecomputedLibraryMoverOP precomputed_library_mover( new PrecomputedLibraryMover );
+		stepwise_modeler->set_precomputed_library_mover( precomputed_library_mover );
+	}
  	return stepwise_modeler;
  }
 

@@ -70,6 +70,9 @@ namespace monte_carlo {
 		void
 		set_options( options::StepWiseMonteCarloOptionsCOP options );
 
+		options::StepWiseMonteCarloOptionsCOP
+		options() const { return options_; }
+
 		void set_model_tag( std::string const & setting ){ model_tag_ = setting; }
 		std::string model_tag() const{ return model_tag_; }
 

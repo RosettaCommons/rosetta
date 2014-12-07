@@ -16,7 +16,7 @@
 #include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/stepwise/modeler/polar_hydrogens/util.hh>
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/viewer/viewers.hh>
@@ -53,7 +53,7 @@ pack_polar_hydrogens()
   using namespace core::pose;
   using namespace core::scoring;
   using namespace core::chemical;
-  using namespace protocols::stepwise::full_model_info;
+  using namespace protocols::stepwise::setup;
   using namespace utility::file;
 
 	// Following could be generalized to fa_standard, after recent unification, but

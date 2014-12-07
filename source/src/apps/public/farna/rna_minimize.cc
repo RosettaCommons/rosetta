@@ -29,7 +29,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/init/init.hh>
 
@@ -95,7 +95,7 @@ rna_fullatom_minimize_test()
 	using namespace protocols::toolbox;
 	using namespace protocols::farna;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::full_model_info;
+	using namespace protocols::stepwise::setup;
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );

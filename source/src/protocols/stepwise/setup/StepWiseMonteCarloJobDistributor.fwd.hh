@@ -7,27 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.fwd.hh
+/// @file protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.fwd.hh
 /// @brief 
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_FWD_HH
-#define INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_setup_StepWiseMonteCarloJobDistributor_FWD_HH
+#define INCLUDED_protocols_stepwise_setup_StepWiseMonteCarloJobDistributor_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace stepwise {
-namespace full_model_info {
+namespace setup {
 	
-	class FullModelInfoSetupFromCommandLine;
-	typedef utility::pointer::shared_ptr< FullModelInfoSetupFromCommandLine > FullModelInfoSetupFromCommandLineOP;
-	typedef utility::pointer::shared_ptr< FullModelInfoSetupFromCommandLine const > FullModelInfoSetupFromCommandLineCOP;
+	class StepWiseMonteCarloJobDistributor;
+	typedef utility::pointer::shared_ptr< StepWiseMonteCarloJobDistributor > StepWiseMonteCarloJobDistributorOP;
+	typedef utility::pointer::shared_ptr< StepWiseMonteCarloJobDistributor const > StepWiseMonteCarloJobDistributorCOP;
 	
-} //full_model_info
-} //stepwise
-} //protocols
+} //setup 
+} //stepwise 
+} //protocols 
 
 #endif

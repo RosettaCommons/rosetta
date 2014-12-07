@@ -88,8 +88,10 @@ sources = {
     "protocols/stepwise": [
 	"StepWiseSampleAndScreen",
     ],
-    "protocols/stepwise/full_model_info/": [
+    "protocols/stepwise/setup/": [
 	"FullModelInfoSetupFromCommandLine",
+	"StepWiseCSA_JobDistributor",
+	"StepWiseMonteCarloJobDistributor",
     ],
     "protocols/stepwise/legacy/modeler": [
 	#"StepWiseLegacyMinimizer",
@@ -173,14 +175,14 @@ sources = {
 	"StepWisePoseAligner",
 	"util",
     ],
+    "protocols/stepwise/modeler/movemap": [
+	"util",
+    ],
     "protocols/stepwise/modeler/options": [
 	"StepWiseBasicModelerOptions",
 	"StepWiseModelerOptions",
 	"StepWiseRNA_ModelerOptions",
 	"StepWiseProteinModelerOptions",
-    ],
-    "protocols/stepwise/modeler/movemap": [
-	"util",
     ],
     "protocols/stepwise/modeler/packer": [
 	"StepWiseMasterPacker",
@@ -191,6 +193,9 @@ sources = {
     "protocols/stepwise/modeler/polar_hydrogens": [
 	"PolarHydrogenPacker",
 	"util",
+    ],
+    "protocols/stepwise/modeler/precomputed": [
+	"PrecomputedLibraryMover",
     ],
     "protocols/stepwise/modeler/protein": [
 	"InputStreamWithResidueInfo",

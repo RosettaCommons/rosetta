@@ -595,7 +595,11 @@ replace_in( std::string const name_in, std::string const find_string, std::strin
 	size_t pos = name.find( find_string );
 	while ( pos != std::string::npos ){
 		name = name.replace( pos, find_string.size(), replace_string );
-		pos = name.find( find_string );
+
+		//pos = name.find( find_string );
+
+		// No, need to look for LATER instances of the replacement string.
+		pos = name.find( find_string, pos + replace_string.size() );
 	}
 	return name;
 }
