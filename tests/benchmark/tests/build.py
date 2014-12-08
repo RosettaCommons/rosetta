@@ -32,7 +32,7 @@ tests = dict(
 
     PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
 
-    header    = NT(command='cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
+    header    = NT(command='./scons.py unit_test_platform_only ; cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
     levels    = NT(command='./update_options.sh && python version.py && cd src && python ./../../../tools/python_cc_reader/library_levels.py', incremental=False),
 )
 
