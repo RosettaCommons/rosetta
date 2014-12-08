@@ -12,12 +12,15 @@
 ## @brief  Performace benchmark test
 ## @author Sergey Lyskov
 
-import os, os.path, json, commands, shutil
+import os, os.path, json, commands, shutil, stat
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 _api_version_ = '1.0'  # api version
+
+
+_failure_threshold_pct_ = 5  # specify how much execution time could deviate (percent) from previous value without raising the alarm
 
 
 def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
@@ -34,29 +37,43 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
 
     build_command_line = './scons.py bin cxx={compiler} extras={extras} mode={mode} -j{jobs}'.format( **vars() )
 
-    if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
+    if debug: res, output = 0, 'run_performance_tests: debug is enabled, skippig build phase...\n'
     else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, build_command_line), return_='tuple')
-
-    if res:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, build_command_line), return_='tuple')
 
     file(working_dir+'/build-log.txt', 'w').write( 'Running: {}\n{}\n'.format(build_command_line, output) )
 
-    ext = calculate_extension(platform, mode)
-
-    json_results_file = '{rosetta_dir}/source/_performance_'.format(**vars())
-    command_line = '{rosetta_dir}/source/bin/performance_benchmark.{ext} -database {rosetta_dir}/database -mute core protocols -in:file:extra_res_path extra_params'.format(**vars())
-
-    if not debug:
-        if os.path.isfile(json_results_file): os.remove(json_results_file)
-        hpc_driver.execute(command_line, '{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), 'performance_benchmark')
-
-    json_results = json.load( file(json_results_file) )
-
     results = {}
-    results[_StateKey_] = _S_queued_for_comparison_
-    results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + test_output
 
-    return results
+    if res:
+        results[_StateKey_] = _S_build_failed_
+        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + output
+        return results
+
+    else:
+        ext = calculate_extension(platform, mode)
+
+        json_results_file = '{rosetta_dir}/source/_performance_'.format(**vars())
+        output_log_file = '{working_dir}/_performance_.log'.format(**vars())
+        command_line = '{rosetta_dir}/source/bin/performance_benchmark.{ext} -database {rosetta_dir}/database -mute core protocols -in:file:extra_res_path extra_params 2>&1 >{output_log_file}'.format(**vars())
+
+        #performance_benchmark_sh = os.path.abspath(working_dir + '/performance_benchmark.sh')
+        #with file(performance_benchmark_sh, 'w') as f: f.write('#!/bin/bash\n{}\n'.format(command_line));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+
+        if debug and False: res, output = 0, 'run_performance_tests: debug is enabled, skippig actual run...\n'
+        else:
+            if os.path.isfile(json_results_file): os.remove(json_results_file)
+            hpc_driver.execute(command_line, '{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), 'performance_benchmark')
+
+        json_results = json.load( file(json_results_file) )
+        output = file(output_log_file).read()
+
+        results[_ResultsKey_] = { _TestsKey_:{} }
+        for t in json_results: results[_ResultsKey_][_TestsKey_][t] = {_StateKey_: _S_queued_for_comparison_, _LogKey_: '', 'run_time': json_results[t] }
+
+        results[_StateKey_] = _S_queued_for_comparison_
+        results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output
+
+        return results
 
 
 
@@ -64,5 +81,38 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose=Fa
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
-    if   test =='': return run_performance_tests(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test =='': return run_performance_tests(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknow performance test: {}!'.format(test))
+
+
+
+# compare results of two tests run (new vs. previous)
+# take two dict and two paths
+# must return standard dict with results
+def compare(test, results, files_path, previous_results, previous_files_path):
+    cr = {_TestsKey_:{}, _SummaryKey_:{_TotalKey_:0, _FailedKey_:0, _FailedTestsKey_:[]} }
+
+    if previous_results  and  _TestsKey_ in previous_results:
+        for test in results[_TestsKey_]:
+            run_time = results[_TestsKey_][test]['run_time']
+
+            if test in previous_results[_TestsKey_]  and  'run_time' in previous_results[_TestsKey_][test]: previous_run_time = previous_results[_TestsKey_][test]['run_time']
+            else: previous_run_time = None
+
+            cr[_SummaryKey_][_TotalKey_] += 1
+            cr[_TestsKey_][test] = {_StateKey_: _S_finished_, 'run_time':run_time, 'previous_run_time':previous_run_time, _LogKey_: '' if previous_run_time else 'First run, no previous results for this test is available. Skipping comparison...\n'}
+
+            if previous_run_time  and  2.0 * abs(previous_run_time - run_time) / abs(previous_run_time + run_time + 1.0e-200) > _failure_threshold_pct_/100.0:  # mark test as failed if there is more then 5% difference in run time
+                cr[_TestsKey_][test][_StateKey_] = _S_failed_
+                cr[_SummaryKey_][_FailedKey_] += 1
+                cr[_SummaryKey_][_FailedTestsKey_].append(test)
+
+    else: # no previous tests case, returning 'finished' for all sub_tests
+        for test in results[_TestsKey_]:
+            cr[_TestsKey_][test] = {_StateKey_: _S_finished_, 'run_time':results[_TestsKey_][test]['run_time'], 'previous_run_time':None, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'}
+            cr[_SummaryKey_][_TotalKey_] += 1
+
+
+    state = _S_failed_ if cr[_SummaryKey_][_FailedKey_] else _S_finished_
+
+    return {_StateKey_: state, _LogKey_: '', _ResultsKey_: cr}

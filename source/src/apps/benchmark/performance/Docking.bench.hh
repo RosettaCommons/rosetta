@@ -66,5 +66,5 @@ public:
 	virtual void tearDown() {};
 };
 
-typedef DockingBenchmark<Low,  10> DockingBenchmark_low;
-typedef DockingBenchmark<High, 3> DockingBenchmark_high;
+typedef DockingBenchmark<Low,  2> DockingBenchmark_low;
+typedef DockingBenchmark<High, 1> DockingBenchmark_high;

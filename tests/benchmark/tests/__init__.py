@@ -35,6 +35,11 @@ _IgnoreKey_   = 'ignore'
 _StateKey_    = 'state'
 _ResultsKey_  = 'results'
 _LogKey_      = 'log'
+_TestsKey_    = 'tests'
+_SummaryKey_  = 'summary'
+_FailedKey_   = 'failed'
+_TotalKey_    = 'total'
+_FailedTestsKey_ = 'failed_tests'
 
 PyRosetta_unix_memory_requirement_per_cpu = 2.5  # Memory per sub-process in Gb's
 
@@ -60,7 +65,7 @@ def Tracer(verbose=False):
     return print_ if verbose else lambda x: None
 
 
-def execute(message, commandline, return_=False, untilSuccesses=False):
+def execute(message, commandline, return_=False, untilSuccesses=False, terminate_on_failure=True):
     TR = Tracer()
     TR(message);  TR(commandline)
     while True:
@@ -76,7 +81,7 @@ def execute(message, commandline, return_=False, untilSuccesses=False):
 
     if return_ == 'tuple': return(res, output)
 
-    if res:
+    if res and terminate_on_failure:
         TR("\nEncounter error while executing: " + commandline)
         if return_==True: return True
         else: raise BenchmarkError("\nEncounter error while executing: " + commandline + '\n' + output)

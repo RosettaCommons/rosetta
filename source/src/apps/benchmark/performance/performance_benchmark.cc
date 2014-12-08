@@ -53,8 +53,8 @@ OptionCollectionBenchmark OptionCollection_("basic.options.OptionCollection");
 #include <apps/benchmark/performance/score.bench.hh>
 ScoreBenchmark Score_("core.scoring.Score");
 
-#include <apps/benchmark/performance/ScoreEach.bench.hh>
-#include <apps/benchmark/performance/ScoreAnalyticEtable.bench.hh>
+//#include <apps/benchmark/performance/ScoreEach.bench.hh>
+//#include <apps/benchmark/performance/ScoreAnalyticEtable.bench.hh>
 
 #include <apps/benchmark/performance/SmallMover.bench.hh>
 SmallMoverBenchmark SmallMover_("protocols.moves.SmallMover");
@@ -91,9 +91,11 @@ PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
 #include <apps/benchmark/performance/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
+
 #include <apps/benchmark/performance/FastRelax.bench.hh>
 
 #include <apps/benchmark/performance/InteractionGraph.bench.hh>
+
 
 // option key includes
 

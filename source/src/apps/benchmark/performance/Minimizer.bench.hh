@@ -75,9 +75,9 @@ public:
 	virtual void tearDown() {};
 };
 
-typedef MinimizerBenchmark<SFT_dfpmin, 38> MinimizerBenchmark_dfpmin;
-typedef MinimizerBenchmark<SFT_dfpmin_armijo, 4> MinimizerBenchmark_dfpmin_armijo;
-typedef MinimizerBenchmark<SFT_dfpmin_armijo_nonmonotone, 4> MinimizerBenchmark_dfpmin_armijo_nonmonotone;
+typedef MinimizerBenchmark<SFT_dfpmin, 12> MinimizerBenchmark_dfpmin;
+typedef MinimizerBenchmark<SFT_dfpmin_armijo, 1> MinimizerBenchmark_dfpmin_armijo;
+typedef MinimizerBenchmark<SFT_dfpmin_armijo_nonmonotone, 1> MinimizerBenchmark_dfpmin_armijo_nonmonotone;
 
 
 //class MinimizerBenchmark_dfpmin : public MinimizerBenchmark

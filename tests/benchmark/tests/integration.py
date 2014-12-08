@@ -136,7 +136,7 @@ def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbo
 def compare(test, results, files_path, previous_results, previous_files_path):
     #if test: raise BenchmarkError('Integration Test script does not support compare function for {} test!'.format(test))
 
-    results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]), config={})
+    results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]))  # , config={}
     has_failed_scripts = False
 
     if previous_files_path:
@@ -154,7 +154,7 @@ def compare(test, results, files_path, previous_results, previous_files_path):
                 results['summary']['total'] += 1
                 if res: results['summary']['failed'] += 1; results['summary']['failed_tests'].append(test)
 
-    else: # no previous test failed, returning finished for all sub_tests
+    else: # no previous tests case, returning 'finished' for all sub_tests
         for test in os.listdir(files_path):
             if os.path.isdir(files_path + '/' + test):
                 results['tests'][test] = {_StateKey_: _S_finished_, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'}
