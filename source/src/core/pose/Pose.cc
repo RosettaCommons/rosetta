@@ -1658,6 +1658,10 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 	os << "Total residues:" << pose.total_residue() << std::endl;
 	os << "Sequence: " << pose.sequence() << std::endl;
 	os << "Fold tree:" << std::endl << pose.fold_tree();
+    
+    if ( pose.conformation().is_membrane() ) {
+        os << pose.conformation().membrane_info() << std::endl;
+    }
 	return os;
 }
 

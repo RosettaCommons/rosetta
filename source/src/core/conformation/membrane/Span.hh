@@ -63,15 +63,15 @@ public: // getters
 
     /// @brief Get start position
 	/// @details Get the Starting Position of a transmembrane span
-    Size start();
+    Size start() const;
 
     /// @brief Get end position
 	/// @details Get the end position of a transmembrane span
-    Size end();
+    Size end() const;
 
 	
 	/// @brief Get residue closest to center
-	Size center();
+	Size center() const;
 	
 	/// @brief Shift by offset
 	/// @details Shift the transmembrane span by a user-provided offset

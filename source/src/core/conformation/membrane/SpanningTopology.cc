@@ -186,7 +186,7 @@ void SpanningTopology::write_spanfile( std::string output_filename ){
 /// @brief Return Spanning Topology
 /// @details return spanning topology as a vector1 of transmembrane spans
 utility::vector1< SpanOP >
-SpanningTopology::get() { return topology_; } // get topology
+SpanningTopology::get_spans() const { return topology_; } // get topology
 
 // add span to end of SpanningTopology object, doesn't reorder
 void SpanningTopology::add_span( SpanOP span, Size offset ){
@@ -216,7 +216,7 @@ SpanningTopology::span( Size span_number ){ return topology_[ span_number ]; } /
 /// @brief Get total number of spans
 /// @details Return the number of transmembrane spanning regions in this object
 Size
-SpanningTopology::nspans() { return topology_.size(); } // total_spans
+SpanningTopology::nspans() const { return topology_.size(); } // total_spans
 
 /// @brief Is the residue in the membrane region?
 /// @details Return true if this residue is in a transmembrane span
@@ -454,6 +454,21 @@ SpanningTopology::create_from_structure(
 	return *this;
 	
 } // create from structure
+
+/// @brief Show Spanning topology
+/// @details For PyRosetta!
+std::ostream & operator << ( std::ostream & os, SpanningTopology const & spans ) {
+    
+    // Print Total number of transmembrane Spans
+    os << "Total # of TM spans: " << spans.nspans() << std::endl;
+    
+    // print individual spans
+    for ( Size i = 1; i <= spans.nspans(); ++i ){
+        os << "Span " << i << ": start: " << spans.get_spans()[ i ]->start();
+        os << ", end: " << spans.get_spans()[ i ]->end() << std::endl;
+    }
+    return os; 
+}
 
 } // membrane
 } // conformation

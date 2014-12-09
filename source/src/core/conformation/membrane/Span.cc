@@ -92,19 +92,19 @@ Span::~Span(){}
 /// @brief Get start position
 /// @details Get the Starting Position of a transmembrane span
 Size
-Span::start() {
+Span::start() const {
     return start_;
 }
 
 /// @brief Get end position
 /// @details Get the end position of a transmembrane span
 Size
-Span::end() {
+Span::end() const {
     return end_;
 }
 
 /// @brief get residue closest to center
-Size Span::center(){
+Size Span::center() const {
 	return ( ( start_ + end_ ) / 2 );
 }
 	

@@ -286,6 +286,10 @@ sources = {
 		"AtomCoordinateCstMover",
 	],
 
+    "relax/membrane" : [
+        "MPFastRelaxFoldTree",
+    ],
+
 	"rigid" : [
 		"RigidBodyMover",
 		"RotateJumpAxisMover",
@@ -541,6 +545,8 @@ testinputfiles = [
 	"relax/AtomCoordinateCstMover_input_harmonic_sidechain.cst",
 	"relax/AtomCoordinateCstMover_native_harmonic_sidechain.cst",
 	"relax/AtomCoordinateCstMover_integration_native.cst",
+        "relax/membrane/2mpn_tr.span",
+        "relax/membrane/2mpn_tr_native.pdb",
 	"rigid/RigidBodyMover.pdb",
 	"rigid/RigidBodyPerturbMover_no_int.pdb",
 	"rigid/RigidBodyPerturbMover_int.pdb",

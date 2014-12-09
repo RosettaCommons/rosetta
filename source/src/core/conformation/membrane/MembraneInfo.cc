@@ -270,10 +270,23 @@ MembraneInfo::membrane_steepness() const {
 /// @details Return a vector1 of spanning topology objects defining
 /// the starting and ending position of membrane spans per chain.
 SpanningTopologyOP
-MembraneInfo::spanning_topology(){
+MembraneInfo::spanning_topology() const {
 	return spanning_topology_;
 }
 
+/// @brief Check that lipid accessibility data was or was not included
+/// @details Checks that the lips info object was initialized
+bool
+MembraneInfo::include_lips() const {
+    
+    // If lips initialized, return true
+    if ( lipid_acc_data_ != 0 ) {
+        return true;
+    }
+    
+    return false;
+}
+    
 /// @brief Return a list of lipid accessibility objects
 /// @details Return a vector1 of lipid accessibility info objects
 /// describing lipid exposre of individual residues in the pose
@@ -281,6 +294,8 @@ LipidAccInfoOP
 MembraneInfo::lipid_acc_data() const {
 	return lipid_acc_data_;
 }
+    
+
 
 ////////////////////////////////////
 /// Membrane Base Fold Tree Info ///
@@ -291,6 +306,16 @@ MembraneInfo::lipid_acc_data() const {
 /// relating the membrane residue to the rest of the pose
 core::SSize
 MembraneInfo::membrane_jump() const { return membrane_jump_; }
+    
+/// @brief Allow a protocol to set a new jump number for the membrane jump
+/// @details Set the membrane jump number (core::SSize)
+void
+MembraneInfo::set_membrane_jump( core::SSize jumpnum ) {
+
+    TR << "Setting a new membrane jump number in MembraneInfo to " << jumpnum << "." << std::endl;
+    TR << "Use with caution!" << std::endl;
+    membrane_jump_ = jumpnum;
+}
 
 /// @brief	 Check membrane fold tree
 /// @details Check that the membrane jump num is a jump point and checking
@@ -310,6 +335,24 @@ MembraneInfo::check_membrane_fold_tree( FoldTree const & ft_in ) const {
 	
 	// Otherwise, looks reasonable!
 	return true;
+}
+    
+/// @brief Show Membrane Protein
+std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
+{
+    
+    // Grab membrane position from the pose
+    Vector center( mem_info.membrane_center() );
+    Vector normal( mem_info.membrane_normal() );
+    
+    // Grab a const version of spanning topology
+    
+
+    os << "Membrane residue located at posiiton " << mem_info.membrane_rsd_num();
+    os << "Membrane Posiiton: " << "center=(" << center.x() << "," << center.y() << "," << center.z() << "); normal=(" << normal.x() << "," << normal.y() << "," << center.z() << ")" << std::endl;
+    os << "Number of transmembrane spans: " << mem_info.spanning_topology()->nspans() << std::endl;
+    
+    return os;
 }
 	
 } // membrane

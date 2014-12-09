@@ -90,10 +90,10 @@ public:
 	/// center at emb_center and normal at emb_normal and from a
 	/// topology object
 	AddMembraneMover(
-					 Vector mem_center,
-					 Vector mem_normal,
-					 SpanningTopologyOP topology,
-					 core::SSize membrane_rsd=0
+        Vector mem_center,
+        Vector mem_normal,
+        SpanningTopologyOP topology,
+        core::SSize membrane_rsd=0
 	);
 				
 	/// @brief Custorm Constructur with lips info - mainly for PyRosetta

@@ -166,7 +166,12 @@ public:
 	/// @details Return a vector1 of spanning topology objects defining
 	/// the starting and ending position of membrane spans per chain.
 	// TODO: should be const reference?
-	SpanningTopologyOP spanning_topology();
+	SpanningTopologyOP spanning_topology() const;
+    
+    /// @brief Check that lipid accessibility data was or was not included
+    /// @details Checks that the lips info object was initialized
+    bool
+    include_lips() const;
 	
 	/// @brief Return a list of lipid accessibility objects
 	/// @details Return a vector1 of lipid accessibility info objects
@@ -181,6 +186,11 @@ public:
 	/// @details Get a core::SSize (int) denoting the number of the fold tree jump
 	/// relating the membrane residue to the rest of the pose
 	core::SSize membrane_jump() const;
+    
+    /// @brief Allow a protocol to set a new jump number for the membrane jump
+    /// @details Set the membrane jump number (core::SSize)
+    void
+    set_membrane_jump( core::SSize jumpnum );
 		
 	/// @brief	 Check membrane fold tree
 	/// @details Check that the membrane jump num is a jump point and checking
@@ -207,6 +217,10 @@ private: // data
 	SpanningTopologyOP spanning_topology_;
 	
 }; // MembraneInfo
+    
+/// @brief Show Membrane Protein
+/// @details For PyRosetta!
+std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info );
 	
 } // membrane
 } // conformation

@@ -4,8 +4,6 @@
 -membrane_new:setup:spanfiles inputs/1afo_tr.span
 -membrane_new:scoring:hbond
 -relax:fast
--relax:jump_move true
--score:weights mpframework_smooth_fa_2014
 -out:pdb
 -out:file:scorefile 2bs2_scored.sc
 -packing:pack_missing_sidechains false 

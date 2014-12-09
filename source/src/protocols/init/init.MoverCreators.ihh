@@ -377,3 +377,5 @@
 #include <protocols/membrane/symmetry/SetupForMembraneSymmetryCreator.hh>
 
 #include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh>
+
+#include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh> 

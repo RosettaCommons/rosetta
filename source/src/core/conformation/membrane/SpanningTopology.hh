@@ -100,10 +100,10 @@ public: // methods
 	/////////////////////////
 	
     // get topology
-    utility::vector1< SpanOP > get();
+    utility::vector1< SpanOP > get_spans() const;
     
 	// get number of spans
-    Size nspans();
+    Size nspans() const;
 
     // get span by number
     SpanOP span( Size span_number );
@@ -157,6 +157,11 @@ private: // data
 	Size nres_topo_;
 
 }; // class SpanningTopology
+    
+/// @brief Show Spanning topology
+/// @details For PyRosetta!
+std::ostream & operator << ( std::ostream & os, SpanningTopology const & spans );
+
 
 } // membrane
 } // conformation

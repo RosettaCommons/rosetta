@@ -395,4 +395,6 @@ static MoverRegistrator< membrane::symmetry::SetupForMembraneSymmetryCreator > r
 
 static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
 
+static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreatorr;
+
 } //namespace protocols

@@ -364,6 +364,9 @@ sources = {
 		"util",
 		"WorkUnit_BatchRelax",
 	],
+    "protocols/relax/membrane": [
+        "MPFastRelaxMover",
+    ],
 	"protocols/pb_potential": [
 		"SetupPoissonBoltzmannPotential",
 	],

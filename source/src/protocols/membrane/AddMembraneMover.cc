@@ -481,13 +481,10 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	ResidueType const & membrane( *rsd_type_list[1] );
 	ResidueOP rsd( ResidueFactory::create_residue( membrane ) );
 	
-	// Compute residue COM of the subunit
-	core::SSize rsd_com = residue_center_of_mass( pose, 1, pose.total_residue() );
-	
 	// Append residue by jump, creating a new chain
-	pose.append_residue_by_jump( *rsd, rsd_com, "", "", true );
+	pose.append_residue_by_jump( *rsd, 1, "", "", true );
 	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
-	ft->reorder( rsd_com );
+	ft->reorder( pose.total_residue() ); // Reorder to be the membrane root
 	pose.fold_tree( *ft );
 	
 	pose.fold_tree().show( std::cout );

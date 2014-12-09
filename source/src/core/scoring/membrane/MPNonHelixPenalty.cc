@@ -125,13 +125,11 @@ MPNonHelixPenalty::residue_energy(
 //	if ( rsd.chain() == topology.size() ) return; // WHAT IS THIS???
 	
 	// Grab appropriate resnum and chain num for topology
-	
 	core::Size chain = rsd.chain();
 	core::Size resnum = rsd.seqpos() - ( pose.conformation().chain_begin(chain) - 1);
 	
 	// Compute Info for Penalty
 	core::Real z_position = pose.conformation().membrane_info()->residue_z_position( rsd.seqpos() );
-//    core::Real z_position = pose.residue(resnum).xyz(2).z();
 	bool tmregion = topology->in_span(resnum);
 	char secstruc = pose.conformation().secstruct( rsd.seqpos() );
 
@@ -156,7 +154,7 @@ MPNonHelixPenalty::compute_nonhelix_penalty( bool tmregion, char secstruc, core:
 
 	// Evaluate the penalty
 	if( tmregion && (secstruc != 'H') ) {
-		if( z_position > 18 && z_position < 42 ) {
+		if( z_position > -12.0 && z_position < 12.0 ) {
 			return 1;
 		}
 	}
