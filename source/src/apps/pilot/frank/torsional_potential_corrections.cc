@@ -9,11 +9,17 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/packer_neighbors.hh>
@@ -209,12 +215,18 @@ mutate_to_ala(core::pose::Pose &pose, int center) {
 	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	conformation::Residue const replace_res( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("ALA"), true );
 
+	// remove disulfides
+	for (int i=1; i<=(int)pose.total_residue(); ++i ) {
+		if ( pose.residue(i).aa() == chemical::aa_cys && pose.residue(i).has_variant_type( chemical::DISULFIDE ) ) {
+  		TR << "Reverting disulfide CYD to CYS at resid " << i << std::endl;
+			conformation::change_cys_state( i, "CYS", pose.conformation() );
+		}
+	}
+
 	for (int i=1; i<=(int)pose.total_residue(); ++i ) {
 		if (i==center) continue;
 		chemical::ResidueType const * cur_restype = & pose.residue_type( i );
 		if ( cur_restype->aa() == chemical::aa_pro || cur_restype->aa() == chemical::aa_gly ) continue;
-
-		utility::vector1< std::string > current_variants;
 		pose.replace_residue( i, replace_res, true);
 	}
 }
@@ -371,11 +383,24 @@ correct_dunbrack() {
 	for (std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it) {
 		std::pair< int, int > rottag = it->first;
 		ObjexxFCL::FArray2D<core::Real> &data = it->second;
+		//ObjexxFCL::FArray2D<core::Real> data_to_dump = it->second; //copy
 
 		for (int i=1; i<=36; ++i)
 		for (int j=1; j<=36; ++j) {
-			core::Size count = rotcount[rottag.first](i,j) + MEST;
-			data(i,j) /= count;
+			//core::Size count = rotcount[rottag.first](i,j) + MEST;
+			//data(i,j) /= count;
+
+			core::Size count = rotcount[rottag.first](i,j);
+			if (count > 20) {
+				data(i,j) /= count;
+				//data_to_dump(i,j) /= count;
+			} else {
+				data(i,j) = 0.0;
+				//data_to_dump(i,j) = 0.0;
+			}
+
+			// smooth in probability space
+			data(i,j) = std::exp( -scale*data(i,j) );
 		}
 		numeric::fourier::fft2(data, Frot);
 
@@ -385,7 +410,11 @@ correct_dunbrack() {
 		}
 		numeric::fourier::ifft2(Frot, data);
 
-		dump_table ( data, "data.m", "data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
+		//dump_table ( data_to_dump, "data.m",
+		//	"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
+		dump_table ( data, "data_smooth.m",
+			"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
+
 	}
 
 	/////
@@ -396,8 +425,15 @@ correct_dunbrack() {
 			ObjexxFCL::FArray2D<core::Real> &data = it->second[k];
 			for (int i=1; i<=36; ++i)
 			for (int j=1; j<=36; ++j) {
-				core::Size count = rotcount[rottag.first](i,j) + MEST;
-				data(i,j) /= count;
+				//core::Size count = rotcount[rottag.first](i,j) + MEST;
+				//data(i,j) /= count;
+
+				core::Size count = rotcount[rottag.first](i,j);
+				if (count > 20) {
+					data(i,j) /= count;
+				} else {
+					data(i,j) = 0.0;
+				}
 			}
 			numeric::fourier::fft2(data, Frot);
 
@@ -446,7 +482,8 @@ correct_dunbrack() {
 
 				std::pair< int, int > rottag(aa,myrotidx);
 				ObjexxFCL::FArray2D<core::Real> &data = rotEsum[rottag];
-				core::Real newP = allrots[ii].probability() / std::exp( -scale*data(x,y) );
+				//core::Real newP = allrots[ii].probability() / std::exp( -scale*data(x,y) );
+				core::Real newP = allrots[ii].probability() / data(x,y);
 				data(x,y) = newP;
 				probsum += newP;
 			}
@@ -513,7 +550,8 @@ correct_dunbrack() {
 					working_res->set_chi( (int)allrots[ii].nchi(), start + (jj-1.0)*step );
 					core::Real dunE = rotlib->rotamer_energy( *working_res, scratch );
 
-					core::Real newP = std::exp( -dunE ) / std::exp( -scale*data(x,y) );
+					//core::Real newP = std::exp( -dunE ) / std::exp( -scale*data(x,y) );
+					core::Real newP = std::exp( -dunE ) / data(x,y);
 
 					data(x,y) = newP;
 					probSum += newP;
@@ -738,7 +776,9 @@ calc_scores() {
 		std::string tag = iter->decoy_tag();
 		utility::vector1< std::string > fields = utility::string_split( tag, '_' );
 
-		// NOTE: order must match!
+		TR.Debug << "Processing " << tag << std::endl;
+
+		// NOTE: order must match what is written!
 		std::string fragtag = fields[1];
 		core::Size phibin = atoi( fields[2].c_str() );
 		core::Size psibin = atoi( fields[3].c_str() );
@@ -759,8 +799,6 @@ calc_scores() {
 
 		if (!rotlib) continue;
 
-		//if (aa != aa_val && aa != aa_ser) continue;
-
 		utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > allrots=
 			rotlib->get_all_rotamer_samples(frag.phi(center), frag.psi(center));
 
@@ -774,6 +812,15 @@ calc_scores() {
 
 			core::pack::optimizeH( frag, *scorefxn );
 			core::Real score_ii = (*scorefxn)(frag);
+			if ( option[ tors::rotmin ]() ) {
+				kinematics::MoveMap mm;
+				mm.set_bb  ( false ); mm.set_chi ( false ); mm.set_jump( false );
+				mm.set_chi ( center, true );
+				core::optimization::MinimizerOptions options( "dfpmin", 0.1, true, false, false );
+				core::optimization::AtomTreeMinimizer minimizer;
+				minimizer.run( frag, mm, *scorefxn, options );
+				score_ii = (*scorefxn)(frag);
+			}
 
 			// use our own rotamer index since get_all_rotamer_samples changes indices based on phi/psi
 			core::Size r1=0, r2=0, r3=0, r4=0;
@@ -818,7 +865,17 @@ calc_scores() {
 				frag.set_chi( (int)allrots[ii].nchi(), center, start + (jj-1.0)*step );
 
 				core::pack::optimizeH( frag, *scorefxn );
+
 				core::Real score_ii = (*scorefxn)(frag);
+				if ( option[ tors::rotmin ]() ) {
+					kinematics::MoveMap mm;
+					mm.set_bb  ( false ); mm.set_chi ( false ); mm.set_jump( false );
+					mm.set_chi ( center, true );
+					core::optimization::MinimizerOptions options( "dfpmin", 0.1, true, false, false );
+					core::optimization::AtomTreeMinimizer minimizer;
+					minimizer.run( frag, mm, *scorefxn, options );
+					score_ii = (*scorefxn)(frag);
+				}
 
 				outscore << "S " << fragtag << " " << (int)aa << " " << myrotidx << " ";
 				for (int kk=1; kk<=4; ++kk) {
