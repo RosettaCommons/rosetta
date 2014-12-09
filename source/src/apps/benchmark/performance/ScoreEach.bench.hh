@@ -377,7 +377,7 @@ ScoreEachBenchmark Score_lk_nonpolar_("core.scoring.Score_1000x_lk_nonpolar",lk_
 //h2o_hbond currently gives zero energies, though it takes a while to do so
 ScoreEachBenchmark Score_h2o_hbond_("core.scoring.Score_1000x_h2o_hbond",h2o_hbond,1000);
 ScoreEachBenchmark Score_gauss_("core.scoring.Score_1000x_gauss",gauss,1000);
-ScoreEachBenchmark Score_geom_sol_("core.scoring.Score_1000x_geom_sol",geom_sol,1000);
+// Seg-faulting in debug mode ScoreEachBenchmark Score_geom_sol_("core.scoring.Score_1000x_geom_sol",geom_sol,1000);
 ScoreEachBenchmark Score_occ_sol_fitted_("core.scoring.Score_1000x_occ_sol_fitted",occ_sol_fitted,1000);
 ScoreEachBenchmark Score_occ_sol_fitted_onebody_("core.scoring.Score_1000x_occ_sol_fitted_onebody",occ_sol_fitted_onebody,1000);
 ScoreEachBenchmark Score_fa_elec_("core.scoring.Score_1000x_fa_elec",fa_elec,1000);

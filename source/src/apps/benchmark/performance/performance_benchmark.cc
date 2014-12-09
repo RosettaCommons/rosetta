@@ -53,8 +53,8 @@ OptionCollectionBenchmark OptionCollection_("basic.options.OptionCollection");
 #include <apps/benchmark/performance/score.bench.hh>
 ScoreBenchmark Score_("core.scoring.Score");
 
-//#include <apps/benchmark/performance/ScoreEach.bench.hh>
-//#include <apps/benchmark/performance/ScoreAnalyticEtable.bench.hh>
+#include <apps/benchmark/performance/ScoreEach.bench.hh>
+#include <apps/benchmark/performance/ScoreAnalyticEtable.bench.hh>
 
 #include <apps/benchmark/performance/SmallMover.bench.hh>
 SmallMoverBenchmark SmallMover_("protocols.moves.SmallMover");

@@ -100,7 +100,8 @@ def compare(test, results, files_path, previous_results, previous_files_path):
             else: previous_run_time = None
 
             cr[_SummaryKey_][_TotalKey_] += 1
-            cr[_TestsKey_][test] = {_StateKey_: _S_finished_, 'run_time':run_time, 'previous_run_time':previous_run_time, _LogKey_: '' if previous_run_time else 'First run, no previous results for this test is available. Skipping comparison...\n'}
+            cr[_TestsKey_][test] = {_StateKey_: _S_finished_, 'run_time':run_time, 'previous_run_time':previous_run_time,
+                                    _LogKey_: 'previous_run_time={}\nrun_time={}\n'.format(previous_run_time, run_time) }
 
             if previous_run_time  and  2.0 * abs(previous_run_time - run_time) / abs(previous_run_time + run_time + 1.0e-200) > _failure_threshold_pct_/100.0:  # mark test as failed if there is more then 5% difference in run time
                 cr[_TestsKey_][test][_StateKey_] = _S_failed_
