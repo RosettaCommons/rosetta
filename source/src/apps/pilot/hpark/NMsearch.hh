@@ -84,7 +84,7 @@ void
 run_NM( pose::Pose &pose, std::string const mode );
 
 void
-run_NM_evalmodes( pose::Pose &pose, 
+run_NM_evalmodes( pose::Pose &pose,
 									Size const maxmode );
 
 void set_maxiter( Size const value ){ maxiter_ = value; }
@@ -99,27 +99,27 @@ void run_md( pose::Pose &pose );
 
 private:
 
-void 
+void
 set_default_parameters();
 
 void
 set_pertscale( Real const scale );
 
 pose::Pose
-NM_linesearch( pose::Pose const &pose, 
+NM_linesearch( pose::Pose const &pose,
 							 Real &gdtmin, Real &pert_best,
 							 std::vector< io::silent::SilentStructOP > &ss
 							 );
 
-void 
+void
 control_schedule( pose::Pose const &pose,
-									pose::Pose &pose_ref, 
+									pose::Pose &pose_ref,
 									Real const gdt_to_ref );
 
 void
 setup_LHsampler( pose::Pose const &pose,
 								 Size const max_struct = 20 );
- 
+
 pose::Pose
 loophash_search( pose::Pose const &pose,
 								 Real &gdt, Size const ires,
@@ -134,7 +134,7 @@ pick_hashing_res( pose::Pose const &pose,
 void
 put_coordinate_constraints( pose::Pose & pose );
 
-void 
+void
 accept_and_report( pose::Pose &pose_tmp,
 									 pose::Pose &pose,
 									 Size const iter,
@@ -162,7 +162,7 @@ private:
   Real min_scale_;
 	Size loopcut_;
   Real gdt_refresh_cut_;
-  
+
   // LH options
   Size looplen_;
 

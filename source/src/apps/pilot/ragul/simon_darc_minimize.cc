@@ -1,10 +1,12 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet;
+// vi: set ts=2 noet:
+//
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 /// @brief
 /// @author jk
 
@@ -230,7 +232,7 @@ interface_rmsd(
 		}
   }
   assert( p1_coords.size() == p2_coords.size() );
-	
+
   int const natoms = p1_coords.size();
   ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
   ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
@@ -242,7 +244,7 @@ interface_rmsd(
   }
 
   return numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
-	
+
 }
 
 
@@ -254,16 +256,16 @@ get_lig_rmsd(
 {
   std::vector< core::Vector > p1_coords;
   std::vector< core::Vector > p2_coords;
-	
+
   Size num_atoms ( ref_pose.residue(lig_res_num ).natoms() );
   for ( core::Size i = 1; i <= num_atoms; ++i ) {
 		assert(ref_pose.residue(lig_res_num).atom_name(i) == mod_pose.residue(lig_res_num).atom_name(i));
   	p1_coords.push_back(mod_pose.residue(lig_res_num).xyz(i));
     p2_coords.push_back(ref_pose.residue(lig_res_num).xyz(i));
   }
-  
+
   assert( p1_coords.size() == p2_coords.size() );
-	
+
   int const natoms = p1_coords.size();
   ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
   ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
@@ -275,7 +277,7 @@ get_lig_rmsd(
   }
 
   return numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
-	
+
 }
 
 
@@ -352,7 +354,7 @@ int main( int argc, char * argv [] ){
 				std::string init_pdb = "init_" + tag + ".pdb";
 				std::string mini_pdb = "mini_" + tag + ".pdb";
 				std::string unbo_pdb = "unbo_" + tag + ".pdb";
-				
+
 				//Apply constraint
 				/* This might have been incorrectly copied
 					 if ( bound_pose.residue( bound_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
@@ -374,13 +376,13 @@ int main( int argc, char * argv [] ){
 																																new HarmonicFunc( 0.0, coord_sdev ) ) );
 					}
 				}
-				
+
 				scorefxn->set_weight( coordinate_constraint, 0.5 );
 				(*scorefxn)(bound_pose);
 				if (option [ print_init ]){
 					bound_pose.dump_scored_pdb( init_pdb, *scorefxn );
 				}
-				
+
 				if (!option[ score_only ]){
 					// setting degrees of freedom which can move during minimization - everything
 					kinematics::MoveMap mm_all;
@@ -452,46 +454,46 @@ int main( int argc, char * argv [] ){
 				if (option[ print_unbound ]){
 					unbound_pose.dump_pdb( unbo_pdb );
 				}
-				
+
 				// define containers for metrics for total complex
 				basic::MetricValue<Real> tot_sasa_mval;
 				basic::MetricValue<Size> tot_hb_mval;
 				basic::MetricValue<Real> tot_packstat_mval;
 				basic::MetricValue<Size> tot_unsat_mval;
-				
+
 				// calculate and store total metrics for bound and unbound poses
 				core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
 				core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
 				core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
 				core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
 				core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
-				
+
 				//calculate interface Energy
 				bound_energy = bound_pose.energies().total_energy();
 				unbound_energy = unbound_pose.energies().total_energy();
 				Interface_Energy = bound_energy - unbound_energy;
-				
+
 				//delta sasa calculation
 				bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
 				bound_sasa = tot_sasa_mval.value();
 				unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
 				unbound_sasa = tot_sasa_mval.value();
 				Total_BSA = unbound_sasa - bound_sasa;
-				
+
 				//interface hb calculation
 				bound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
 				bound_hb = tot_hb_mval.value();
 				unbound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
 				unbound_hb = tot_hb_mval.value();
 				Interface_HB = bound_hb - unbound_hb;
-				
+
 				//packstat calculation
 				bound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
 				bound_packstat = tot_packstat_mval.value();
 				unbound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
 				unbound_packstat = tot_packstat_mval.value();
 				Total_packstats = bound_packstat - unbound_packstat;
-				
+
 				//unsat polar calculation
 				bound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
 				bound_unsat = tot_unsat_mval.value();
@@ -517,12 +519,12 @@ int main( int argc, char * argv [] ){
 				}
 
 			}//end for loop of all decoys
-			
+
 			outstream.close();
 			outstream.clear();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 	return 0;
-	
+
 }

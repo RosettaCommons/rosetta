@@ -1,9 +1,13 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
-//  CVS information:
-//  $Revision: 18214 $
-//  $Date: 2007-11-05 18:32:40 +0200 (Mon, 05 Nov 2007) $
-//  $Author: ora $
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+///@author ora
 
 
 // Rosetta Headers

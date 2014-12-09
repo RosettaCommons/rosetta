@@ -10,11 +10,9 @@
 /// @file   core/scoring/methods/MembraneTopology.hh
 /// @brief  MembraneTopology
 /// @author Bjorn Wallner
-/*
-This code reads in the spanfile and lipo file that is provided by the user.
-Residues in the membrane are stored in private data which is accessed by
-cacheable data from the pose.
-*/
+/// @details This code reads in the spanfile and lipo file that is provided by the user.
+/// Residues in the membrane are stored in private data which is accessed by
+/// cacheable data from the pose.
 
 #ifndef INCLUDED_core_scoring_MembraneTopology_hh
 #define INCLUDED_core_scoring_MembraneTopology_hh

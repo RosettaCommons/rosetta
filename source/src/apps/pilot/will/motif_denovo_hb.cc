@@ -1,5 +1,11 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 // headers
 
@@ -186,8 +192,8 @@ typedef utility::vector1<std::string> Strings;
 
 OPT_1GRP_KEY( StringVector, mdhb, donres )
 	OPT_1GRP_KEY( StringVector, mdhb, accres )
-	OPT_1GRP_KEY( Real        , mdhb, tip_tol_deg )	
-	OPT_1GRP_KEY( Real        , mdhb, rot_samp_resl )		
+	OPT_1GRP_KEY( Real        , mdhb, tip_tol_deg )
+	OPT_1GRP_KEY( Real        , mdhb, rot_samp_resl )
 
 
 	void register_options() {
@@ -234,7 +240,7 @@ get_rot_score(
 	Size ir,
 	core::pack::dunbrack::RotamerLibraryScratchSpace & scratch
 ){
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib = 
+	core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib =
 		core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(ir).type() );
 	return rotlib->rotamer_energy( pose.residue(ir), scratch );
 
@@ -280,7 +286,7 @@ utility::vector1<numeric::xyzMatrix<double> >
 get_hbond_rotation_samples( double tolang, double reslang ){
 	using namespace Eigen;
 	typedef Map<Matrix3d> MMap;
-	
+
 	tolang = numeric::conversions::radians(tolang);
 	reslang = numeric::conversions::radians(reslang);
 
@@ -309,7 +315,7 @@ get_hbond_rotation_samples( double tolang, double reslang ){
 		Quaterniond q(w,x,y,z);
 		// printf("%4d %4d %4d %8.3f %8.3f %8.3f %8.3f\n",i,j,k,wx,y,z,q.norm());
 		q.normalize();
-		// dump_pdb_atom(out,wx*50.0,y*50.0,z*50.0);		
+		// dump_pdb_atom(out,wx*50.0,y*50.0,z*50.0);
 		numeric::xyzMatrix<double> rot;
 		MMap mm((double*)&rot);
 		mm = q.matrix();
@@ -327,8 +333,8 @@ get_hbond_rotation_samples( double tolang, double reslang ){
 }
 
 class HBondedPairIterator
-    : public boost::iterator_facade< HBondedPairIterator, 
-                                     Pose, 
+    : public boost::iterator_facade< HBondedPairIterator,
+                                     Pose,
                                      boost::forward_traversal_tag,
                                      Pose const &
              						>
@@ -341,7 +347,7 @@ public:
 	Size nrots1_,nrots2_;
 	utility::vector1<Size> donor_atoms_;
 	utility::vector1<Size> donor_bases_;
-	utility::vector1<Size> acceptor_atoms_;	
+	utility::vector1<Size> acceptor_atoms_;
 	utility::vector1<utility::vector1<Size> > acceptor_orbitals_;
 	utility::vector1<numeric::xyzMatrix<double> > rot_samples_;
 	HBondedPairIterator(){ irot1_=0; irot2_=0; idon_=0; iacc_=0; iorb_=0; ihbr_=0; }
@@ -354,18 +360,18 @@ public:
 		core::conformation::ResidueOP res1op = core::conformation::ResidueFactory::create_residue(rtype1);
 		core::conformation::ResidueOP res2op = core::conformation::ResidueFactory::create_residue(rtype2);
 		pose_.append_residue_by_jump(*res1op,1);
-		pose_.append_residue_by_jump(*res2op,1);			
+		pose_.append_residue_by_jump(*res2op,1);
 		rotset1_ = get_rot_set(pose_,1);
 		rotset2_ = get_rot_set(pose_,2);
 		nrots1_ = rotset1_->num_rotamers();
-		nrots2_ = rotset2_->num_rotamers();		
+		nrots2_ = rotset2_->num_rotamers();
 		donor_atoms_ = rtype1.Hpos_polar_sc();
 		BOOST_FOREACH(Size i,donor_atoms_) donor_bases_.push_back( rtype1.atom_base(i) );
 		acceptor_atoms_ = rtype2.accpt_pos_sc();
 		acceptor_orbitals_.resize(acceptor_atoms_.size());
 		for(Size iacc = 1; iacc <= acceptor_atoms_.size(); ++iacc){
 			BOOST_FOREACH(Size j,rtype2.bonded_orbitals(acceptor_atoms_[iacc])){
-				if( 
+				if(
 					// rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::C_pi_sp2    ||
 				    // rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::N_pi_sp2    ||
 				    rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::N_p_sp2     ||
@@ -374,7 +380,7 @@ public:
 				    // rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::S_p_sp3     ||
 				    // rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::O_pi_sp2_bb ||
 				    // rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::O_p_sp2_bb  ||
-				    rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::O_p_sp3     
+				    rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::O_p_sp3
 				){
 					acceptor_orbitals_[iacc].push_back(j);
 				}
@@ -382,7 +388,7 @@ public:
 			if( acceptor_orbitals_[iacc].size()==0 ) utility_exit_with_message("no acceptor orbitals "+resn2);
 		}
 		if( donor_atoms_.size()==0 ) utility_exit_with_message("no donor atoms");
-		if( acceptor_atoms_.size()==0 ) utility_exit_with_message("no acceptor atoms");		
+		if( acceptor_atoms_.size()==0 ) utility_exit_with_message("no acceptor atoms");
 #ifdef DEBUG
 		for(Size iacc=1; iacc<=acceptor_atoms_.size(); ++iacc)
 			cout << "acceptor orbitals: " << iacc << " " << acceptor_atoms_[iacc] << " " << acceptor_orbitals_[iacc] << endl;
@@ -394,16 +400,16 @@ public:
 			if( pose_.residue(1).nchi()==3 ) printf("donor chi %7.2f %7.2f %7.2f \n",
 				rotset1_->rotamer(i)->chi(1),rotset1_->rotamer(i)->chi(2),rotset1_->rotamer(i)->chi(3));
 			if( pose_.residue(1).nchi()==4 ) printf("donor chi %7.2f %7.2f %7.2f %7.2f \n",
-				rotset1_->rotamer(i)->chi(1),rotset1_->rotamer(i)->chi(2),rotset1_->rotamer(i)->chi(3),rotset1_->rotamer(i)->chi(4));									
+				rotset1_->rotamer(i)->chi(1),rotset1_->rotamer(i)->chi(2),rotset1_->rotamer(i)->chi(3),rotset1_->rotamer(i)->chi(4));
 		}
-		cout << "acceptor nchi: " << pose_.residue(2).nchi() << endl;		
+		cout << "acceptor nchi: " << pose_.residue(2).nchi() << endl;
 		for(Size i = 1; i <= rotset2_->num_rotamers(); ++i){
 			if( pose_.residue(2).nchi()==1 ) printf("acceptor chi %7.2f \n",rotset2_->rotamer(i)->chi(1));
 			if( pose_.residue(2).nchi()==2 ) printf("acceptor chi %7.2f %7.2f \n",rotset2_->rotamer(i)->chi(1),rotset2_->rotamer(i)->chi(2));
 			if( pose_.residue(2).nchi()==3 ) printf("acceptor chi %7.2f %7.2f %7.2f \n",
 				rotset2_->rotamer(i)->chi(1),rotset2_->rotamer(i)->chi(2),rotset2_->rotamer(i)->chi(3));
 			if( pose_.residue(2).nchi()==4 ) printf("acceptor chi %7.2f %7.2f %7.2f %7.2f \n",
-				rotset2_->rotamer(i)->chi(1),rotset2_->rotamer(i)->chi(2),rotset2_->rotamer(i)->chi(3),rotset2_->rotamer(i)->chi(4));									
+				rotset2_->rotamer(i)->chi(1),rotset2_->rotamer(i)->chi(2),rotset2_->rotamer(i)->chi(3),rotset2_->rotamer(i)->chi(4));
 		}
 #endif
 		irot1_=1; irot2_=1; idon_=1; iacc_=1; iorb_=1; ihbr_=1;
@@ -515,7 +521,7 @@ int main(int argc, char *argv[]) {
 
 				// Size irot1(iter.irot1_), irot2(iter.irot2_), iorb(iter.iorb_), iacc(iter.iacc_), idon(iter.idon_), ihbr(iter.ihbr_);
 				// if( irot1==1 && irot2==1 && iacc==1 && idon==1 && count < 300 ){
-				// if( numeric::random::uniform() < 0.001 && count < 100 ){				
+				// if( numeric::random::uniform() < 0.001 && count < 100 ){
 				// 	++count;
 				// 	std::string tag = "test_"+resn1+"_"+resn2+"_"+str(irot1)+"_"+str(idon)+"_"+str(irot2)+"_"+str(irot2)+"_"+str(iacc)+"_"+str(iorb)+"_"+str(ihbr,2);
 				// 	cout << tag << endl;
@@ -525,7 +531,7 @@ int main(int argc, char *argv[]) {
 				if(totcount%10000==9999) cout << "Samples: " << totcount+1 << endl;
 				// if(totcount > 10000) break;
 				Xform frm1 = core::pose::motif::get_backbone_reference_frame(pose,1);
-				Xform frm2 = core::pose::motif::get_backbone_reference_frame(pose,2);	
+				Xform frm2 = core::pose::motif::get_backbone_reference_frame(pose,2);
 				Real6 rt = (~frm1*frm2).rt6();
 				ResPairMotif motif(
 					"DNOHB", // string tag,

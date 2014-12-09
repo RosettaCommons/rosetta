@@ -1,9 +1,4 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-/bin/bash: //: is a directory
-/bin/bash: tab-width:2: command not found
-/bin/bash: indent-tabs-mode:t: command not found
-/bin/bash: show-trailing-whitespace:t: command not found
-/bin/bash: rm-trailing-spaces:t: command not found
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.

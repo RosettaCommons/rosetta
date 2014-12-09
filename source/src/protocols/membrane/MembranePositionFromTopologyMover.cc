@@ -1,3 +1,4 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -57,7 +58,7 @@ namespace membrane {
 
 using namespace core;
 using namespace core::pose;
-		
+
 /// @brief Defualt Constructor
 /// @details Compute the embedding of the pose based on xyz coordinates
 /// and spanning topology provided in MembraneInfo
@@ -110,11 +111,11 @@ MembranePositionFromTopologyMover::parse_my_tag(
    protocols::moves::Movers_map const &,
    core::pose::Pose const &
    ) {
-	
+
 	if ( tag->hasOption( "structure_based" ) ) {
 		structure_based_ = tag->getOption< bool >("structure_based");
 	}
-	
+
 }
 
 /// @brief Create a new copy of this mover
@@ -138,34 +139,34 @@ MembranePositionFromTopologyMoverCreator::mover_name() {
 /////////////////////
 /// Mover Methods ///
 /////////////////////
-	
+
 /// @brief Update Membrane position in pose
 /// @details Compute membrane posiiton based on sequence or structure
 /// and then call pose.update_membrane_position() to update the membrane position
 void
 MembranePositionFromTopologyMover::apply( Pose & pose ) {
-	
+
 	// Check pose is a membrane pose
 	if (! pose.conformation().is_membrane() ) {
 		utility_exit_with_message("Warning! Pose is not a membrane pose. Cannot perform mpframework operation on a non membrane pose~" );
 	}
-	
+
 	TR << "Computing initial membrane position from structure..." << std::endl;
-	
+
 	using namespace core;
 	using namespace protocols::membrane;
 	using namespace protocols::membrane::geometry;
-	
+
 	// Initialize starting vectors
 	Vector normal( 0, 0, 0 );
 	Vector center( 0, 0, 0 );
-	
+
 	// Compute position from pose
 	compute_structure_based_membrane_position( pose, center, normal );
 
 	// Update membrane position - shift normal along center
 	pose.conformation().update_membrane_position( center, center + normal );
-	
+
 	TR << "Done" << std::endl;
 
 }

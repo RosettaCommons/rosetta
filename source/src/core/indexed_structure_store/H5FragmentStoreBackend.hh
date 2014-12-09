@@ -11,11 +11,10 @@
 /// @brief
 /// @author Alex Ford <fordas@uw.edu>
 
-#ifdef USEHDF5
-
 #ifndef INCLUDED_core_indexed_structure_store_H5FragmentStoreBackend_hh
 #define INCLUDED_core_indexed_structure_store_H5FragmentStoreBackend_hh
 
+#ifdef USEHDF5
 
 // Utility Headers
 #include <vector>

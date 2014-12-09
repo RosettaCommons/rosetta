@@ -1,6 +1,5 @@
-// Project Headers
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 sw=2 noet:
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -16,8 +15,8 @@
 
 #include <basic/Tracer.hh>
 
-#include <boost/algorithm/string.hpp>   
-#include <boost/lexical_cast.hpp>   
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
@@ -70,7 +69,7 @@ PlaceProbeMover::PlaceProbeMover() :
     total_search_partition_(1),
     initialized_pattern_(false),
     search_points_()
-{} 
+{}
 
 PlaceProbeMover::PlaceProbeMover(
 		std::string residue_name,
@@ -129,7 +128,7 @@ void PlaceProbeMover::execute_one_search(core::pose::Pose & pose, core::Size sea
 		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
 				"placeprobe_prerefine_centroid_stub", sstream.str());
 	}
-	
+
 	perform_local_refinement(pose, residueindex);
 
 	core::conformation::ResidueCOP post_refinement_residue(pose.residue(residueindex).get_self_ptr());
@@ -198,7 +197,7 @@ SearchPatternOP PlaceProbeMover::create_partitioned_search_pattern(core::pose::P
 
 SearchPatternOP PlaceProbeMover::create_refinement_pattern(core::pose::Pose const & /*target_pose*/, core::Size /*target_residue*/)
 {
-	return SearchPatternOP( new ConstPattern() ); 
+	return SearchPatternOP( new ConstPattern() );
 }
 
 void PlaceProbeMover::perform_local_refinement(core::pose::Pose & target_pose, core::Size target_residue)
@@ -215,7 +214,7 @@ core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(c
 	TR.Debug << "Creating refinement packing task." << std::endl;
 	core::pack::task::TaskFactory taskfactory;
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
   taskfactory.push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
 	taskfactory.push_back( TaskOperationCOP( new AddSearchPatternRotSetOp(
 																target_residue,
@@ -285,7 +284,7 @@ PlaceProbeMover::parse_place_probe_tag( utility::tag::TagCOP tag,
 	target_residue_ = core::pose::add_variant_type_to_residue( *target_residue_, core::chemical::SC_FRAGMENT, target_pose );
 }
 
-	
+
 PlaceProbeMover::StructureOutputMode PlaceProbeMover::parse_output_mode(std::string name)
 {
 	boost::algorithm::to_lower(name);

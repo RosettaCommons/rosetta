@@ -1,3 +1,5 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -45,7 +47,7 @@
 // starting includes for initialize_scorefxns()
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh> 
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 //ending
@@ -129,7 +131,7 @@ void BaseRole::lua_init(){
       }
     }
 
-		// load lua script 
+		// load lua script
     if( ! option[OptionKeys::els::script].user() ){
       TR << "Must specify a elscript to run" << std::endl;
       std::exit(9);
@@ -197,7 +199,7 @@ void BaseRole::instantiate_scorefxns() {
 	TR << "----------Instantiating Score Functions----------" << std::endl;
 	// i might move this somewhere else, it is quite involved
 	// ported straight from mini/src/protocols/jd2/parser/ScoreFunctionLoader.cc
-	
+
   luabind::globals(lstate_)["els"]["scorefxns"] = luabind::newtable( lstate_ );
   scorefxns_.raw( luabind::globals(lstate_)["els"]["scorefxns"] );
 
@@ -261,19 +263,19 @@ void BaseRole::instantiate_scorefxns() {
 
 		//symmetry
 		bool const scorefxn_symm = (*i)["symmetric"] ? (*i)["symmetric"].to<bool>() : 0 ;
-		if (scorefxn_symm) { 
-			scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( scorefxn ) ); 
-		} 
+		if (scorefxn_symm) {
+			scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( scorefxn ) );
+		}
 
     // owning ptrs suck
-    ScoreFunctionSP tmpsp( scorefxn.get() ); 
+    ScoreFunctionSP tmpsp( scorefxn.get() );
     scorefxn.relinquish_ownership();
     luabind::globals(lstate_)["els"]["scorefxns"][ i.skey() ] = tmpsp;
 	}
 	// add default score12 if score12 isn't yet taken
   if( luabind::type( scorefxns_["score12"].raw() ) == 0 ) {
     ScoreFunctionOP scorefxn = get_score_function();
-    ScoreFunctionSP tmpsp( scorefxn.get() ); 
+    ScoreFunctionSP tmpsp( scorefxn.get() );
     scorefxn.relinquish_ownership();
     luabind::globals(lstate_)["els"]["scorefxns"]["score12"] = tmpsp;
   }
@@ -294,9 +296,9 @@ void BaseRole::instantiate_tasks() {
 	for (LuaIterator i=dtasks.begin(), end; i != end; ++i) {
 		TR << "Instantiating task operation " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
 		TaskOperationOP task( TaskOperationFactory::get_instance()->newTaskOperation( (*i)["class"].to<std::string>(), NULL) );
-		//MMoverSP mmover ( mmoverfactory->from_string( (*i)["class"].to<std::string>() ) ); 
+		//MMoverSP mmover ( mmoverfactory->from_string( (*i)["class"].to<std::string>() ) );
 		task->parse_def( (*i) );
-    TaskOperationSP tmpsp( task.get() ); 
+    TaskOperationSP tmpsp( task.get() );
     task.relinquish_ownership();
 		tasks_.raw()[ i.skey() ] = tmpsp;
 	}
@@ -318,13 +320,13 @@ void BaseRole::instantiate_movers() {
 	for (LuaIterator i=dmovers.begin(), end; i != end; ++i) {
     TR << "Instantiating mover " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
     if( moverfactory->has_string( (*i)["class"].to<std::string>() ) ) {
-      MoverSP mover = moverfactory->from_string( (*i)["class"].to<std::string>() ); 
+      MoverSP mover = moverfactory->from_string( (*i)["class"].to<std::string>() );
       mover->parse_def( (*i), scorefxns_, tasks_, mover_cache_ );
       luabind::globals(lstate_)["els"]["movers"][ i.skey() ] = mover;
     } else {
       MoverOP mover( MoverFactory::get_instance()->newMover( (*i)["class"].to<std::string>() ) );
       mover->parse_def( (*i), scorefxns_, tasks_, mover_cache_ );
-      MoverSP tmpsp( mover.get() ); 
+      MoverSP tmpsp( mover.get() );
       mover.relinquish_ownership();
       luabind::globals(lstate_)["els"]["movers"][ i.skey() ] = tmpsp;
     }
@@ -346,7 +348,7 @@ void BaseRole::instantiate_filters() {
 		TR << "Instantiating filter " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
 		FilterOP filter( FilterFactory::get_instance()->newFilter( (*i)["class"].to<std::string>() ) );
 		filter->parse_def( (*i), scorefxns_, tasks_);
-    FilterSP tmpsp( filter.get() ); 
+    FilterSP tmpsp( filter.get() );
     filter.relinquish_ownership();
     luabind::globals(lstate_)["els"]["filters"][ i.skey() ] = tmpsp;
 	}
@@ -365,7 +367,7 @@ void BaseRole::instantiate_output() {
   utility::Factory<Outputter> * outputterfactory = utility::Factory<Outputter>::get_instance();
 	for (LuaIterator i=doutputters.begin(), end; i != end; ++i) {
 		TR << "Instantiating outputter " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
-		OutputterSP outputter ( outputterfactory->from_string( (*i)["class"].to<std::string>() ) ); 
+		OutputterSP outputter ( outputterfactory->from_string( (*i)["class"].to<std::string>() ) );
     outputter->lregister( lstate_ );
 		outputter->parse_def( (*i), tasks_ );
     luabind::globals(lstate_)["els"]["outputters"][ i.skey() ] = outputter;
@@ -385,7 +387,7 @@ void BaseRole::instantiate_inputters() {
   utility::Factory<Inputter> * inputterfactory = utility::Factory<Inputter>::get_instance();
 	for (LuaIterator i=dinputters.begin(), end; i != end; ++i) {
 		TR << "Instantiating inputter " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
-		InputterSP inputter ( inputterfactory->from_string( (*i)["class"].to<std::string>() ) ); 
+		InputterSP inputter ( inputterfactory->from_string( (*i)["class"].to<std::string>() ) );
     inputter->lregister( lstate_ );
 		inputter->parse_def( (*i), tasks_, inputters_ );
     luabind::globals(lstate_)["els"]["inputters"][ i.skey() ] = inputter;

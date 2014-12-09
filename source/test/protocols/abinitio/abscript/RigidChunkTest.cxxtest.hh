@@ -1,5 +1,11 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -379,7 +385,7 @@ public:
     sim_vect = ppose.residue( BEGIN_CHUNK_1 ).xyz( 2 ) - ppose.residue( BEGIN_CHUNK_2 ).xyz( 2 );
     templ_vect = rigid_chunk->templ().residue( templ_pos_1 ).xyz( 2 ) - rigid_chunk->templ().residue( templ_pos_2 ).xyz( 2 );
     TS_ASSERT_DELTA( sim_vect.length(), templ_vect.length(), TOLERANCE );
-    
+
     core::pose::Pose end_pose;
     TS_ASSERT_THROWS_NOTHING( end_pose = env->end( ppose ) );
   }

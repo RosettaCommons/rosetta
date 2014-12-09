@@ -1,12 +1,11 @@
-// _*_ mode:c++,tab_width:2,indent_tabs_mode:t,show_trailing_whitespace:t,rm_trailing_spaces:t _*_
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available
-// (c) under license. The Rosetta software is developed by the contributing
-// (c) members of the Rosetta Commons. For more information, see
-// (c) http://www.rosettacommons.org. Questions about this can be addressed to
-// (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody/clusters/CDRClusterEnum.hh
 /// @brief Enumerators for antibody clusters
@@ -19,7 +18,7 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	
+
 
 /// Identified antibody CDR Clusters
 /// See North, Lehmann, Dunbrack. (2011). JMB 406(2): 228-256.

@@ -1,16 +1,11 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;
-//     rm-trailing-spaces:t -*-
-//     vi: set ts=2 noet:
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available
-//     under license.
-// (c) The Rosetta software is developed by the contributing members of the
-//     Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about
-//     this can be
-// (c) addressed to University of Washington UW TechTransfer,
-//     email: license@u.washington.edu.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file CentroidRelaxMover.cc
 /// @author Robin A Thottungal  (rathottungal@gmail.com)
@@ -56,31 +51,31 @@ CentroidRelaxMover::CentroidRelaxMover() : Mover()
 	{
 		init();
 	}
-	
+
 CentroidRelaxMover::CentroidRelaxMover(CentroidRelaxMover const & src) : Mover(src)
 	{
 		copy_data(*this, src);
 	}
-	
+
 //destructor
 CentroidRelaxMover::~CentroidRelaxMover() {}
-	
+
 protocols::moves::MoverOP
 CentroidRelaxMover::clone() const
 	{
 		return protocols::moves::MoverOP( new CentroidRelaxMover(*this) );
 	}
-	
+
 protocols::moves::MoverOP
 CentroidRelaxMover::fresh_instance() const
 	{
 		return protocols::moves::MoverOP( new CentroidRelaxMover() );
 	}
-	
+
 void CentroidRelaxMover::show(std::ostream & output) const
 	{
 		using namespace std;
-		
+
 		Mover::show(output);  // name, type, tag
 	}
 
@@ -128,7 +123,7 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	//Default Values copied from  MinMover.cc
 	simple_moves::MinMoverOP shear_min_mover( new simple_moves::MinMover(move_map ,score_low_res_,
 	                 shear_min_type_,tolerance,true,false,false) );
-	
+
 	moves::SequenceMoverOP shear_sequence_mover( new moves::SequenceMover() );
 	shear_sequence_mover->add_mover(shear_mover);
 	shear_sequence_mover->add_mover(shear_min_mover);
@@ -149,7 +144,7 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 void CentroidRelaxMover::apply(pose::Pose & pose)
 	{
 	setup_movers(pose);
-	
+
 	for ( Size outer_loop = 1; outer_loop <= outer_loop_cycles_; ++outer_loop )
 	{
 			TR << "CentroidRelax OuterLoop Execution Number:"<< outer_loop << std::endl;
@@ -169,7 +164,7 @@ void CentroidRelaxMover::set_nmoves( core::Size const nmoves_in )
 	{
 		nmoves_ = nmoves_in;
 	}
-	
+
 void CentroidRelaxMover::set_inner_loop_cycles(const core::Size setting)
 	{
 		inner_loop_cycles_ = setting;
@@ -183,7 +178,7 @@ std::string CentroidRelaxMover::get_name() const
 	{
 	return "CentroidRelaxMover";
 	}
-	
+
 void CentroidRelaxMover::init()
 	{
 		nmoves_=2;

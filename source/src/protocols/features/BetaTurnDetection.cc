@@ -1,6 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
-// :noTabs=false:tabSize=4:indentSize=4:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -51,39 +50,39 @@ map< string, string > const & BetaTurnDetection::get_conformation_to_turn_type_m
 {
 	// It pisses me off that C++ works this way, but it does. Sergey promises this line will only ever be executed once.
 	static map< string, string > * conformation_to_turn_type = 0;
-	
+
 	if ( conformation_to_turn_type == 0 )
 	{
 		conformation_to_turn_type = new map< string, string >;
-		
+
 		// Turn types will be notated thusly: TurnXX[_NUMERAL], where XX is the Ramachandran hash of residues 2 and 3,
 		// _NUMERAL will be present if the turn is a classically recognized turn type, a trailing "p" stands for prime.
 		// (e.g. a Type I turn will be annotated "TurnAA_I")
-		
+
 		( *conformation_to_turn_type )[ "AA" ] = "TurnAA_I";
 		( *conformation_to_turn_type )[ "AB" ] = "TurnAB_VIII";
 		( *conformation_to_turn_type )[ "AL" ] = "TurnAL_IX";
 		( *conformation_to_turn_type )[ "AE" ] = "TurnAE";
-		
+
 		( *conformation_to_turn_type )[ "BA" ] = "TurnBA";
 		( *conformation_to_turn_type )[ "BB" ] = "TurnBB";
 		( *conformation_to_turn_type )[ "BL" ] = "TurnBL_II";
 		( *conformation_to_turn_type )[ "BE" ] = "TurnBE";
-		
+
 		( *conformation_to_turn_type )[ "LA" ] = "TurnLA_IXp";
 		( *conformation_to_turn_type )[ "LB" ] = "TurnLB";
 		( *conformation_to_turn_type )[ "LL" ] = "TurnLL_Ip";
 		( *conformation_to_turn_type )[ "LE" ] = "TurnLE_VIIIp";
-		
+
 		( *conformation_to_turn_type )[ "EA" ] = "TurnEA_IIp";
 		( *conformation_to_turn_type )[ "EB" ] = "TurnEB";
 		( *conformation_to_turn_type )[ "EL" ] = "TurnEL";
 		( *conformation_to_turn_type )[ "EE" ] = "TurnEE";
-		
+
 		// Well characterized turn types with Cis residues
 		( *conformation_to_turn_type )[ "Ba" ] = "TurnCis3_VIa";
 		( *conformation_to_turn_type )[ "Bb" ] = "TurnCis3_VIb";
-		
+
 		// Other possible Cis conformations
 		( *conformation_to_turn_type )[ "xX" ] = "TurnCis2";
 		( *conformation_to_turn_type )[ "xx" ] = "TurnCis2Cis3";
@@ -96,7 +95,7 @@ vector1< string > const & BetaTurnDetection::get_valid_ramachandran_hashes()
 {
 	// It pisses me off that C++ works this way, but it does. Sergey promises this line will only ever be executed once.
 	static vector1< string > * valid_ramachandran_hashes = 0;
-	
+
 	if ( valid_ramachandran_hashes == 0 )
 	{
 		valid_ramachandran_hashes = new vector1< string >;
@@ -105,9 +104,9 @@ vector1< string > const & BetaTurnDetection::get_valid_ramachandran_hashes()
 		( *valid_ramachandran_hashes )[ A ] = "A";
 		( *valid_ramachandran_hashes )[ B ] = "B";
 		( *valid_ramachandran_hashes )[ L ] = "L";
-		( *valid_ramachandran_hashes )[ E ] = "E";		
+		( *valid_ramachandran_hashes )[ E ] = "E";
 	}
-	
+
 	return *valid_ramachandran_hashes;
 }
 
@@ -170,7 +169,7 @@ string BetaTurnDetection::determine_ramachandran_hash( Pose const & pose, Size f
 /// B: phi <= 0, psi > 50 OR psi <= -100
 /// L: phi > 0, -50 < psi <= 100
 /// E: phi > 0, psi > 100 OR psi <= -50
-/// 
+///
 /// Note: In the case of a Cis peptide plane, the lowercase letter for the hash will be returned.
 ///
 /// Pictoral representation of Ramachandran hashing used for beta-turn classification:
@@ -192,7 +191,7 @@ string BetaTurnDetection::determine_ramachandran_hash( Pose const & pose, Size f
 ///                 phi
 /// </pre>
 string BetaTurnDetection::determine_ramachandran_hash_for_residue_with_dihedrals( Real phi, Real psi, Real omega ) const
-{	
+{
 	string rama_hash;
 	if ( phi <= 0. )
 	{
@@ -216,7 +215,7 @@ string BetaTurnDetection::determine_ramachandran_hash_for_residue_with_dihedrals
 			rama_hash = get_valid_ramachandran_hashes()[ E ];
 		}
 	}
-	
+
 	// Return the lower case letter for the hash for Cis peptide planes
 	if ( omega > -90 && omega <= 90 )
 	{
@@ -230,12 +229,12 @@ void BetaTurnDetection::validate_ramachandran_hash( std::string & rama_hash ) co
 	if ( ! get_conformation_to_turn_type_map().count(  rama_hash ) )
 	{
 		string cis_trans_hash = "";
-		
+
 		for ( string::const_iterator it = rama_hash.begin(); it != rama_hash.end(); ++it )
 		{
 			bool cis_peptide_bond = islower( * it );
 			string single_residue_rama_hash( 1, toupper( * it ) );
-			
+
 			if ( ! get_valid_ramachandran_hashes().contains( single_residue_rama_hash ) )
 			{
 				throw EXCN_Msg_Exception( "The Ramachandran hash '" + rama_hash + "' contains '" + string( 1, * it ) + ",' which is not valid. " +
@@ -244,7 +243,7 @@ void BetaTurnDetection::validate_ramachandran_hash( std::string & rama_hash ) co
 			}
 			cis_trans_hash += cis_peptide_bond ? "x" : "X";
 		}
-		
+
 		if ( ! get_conformation_to_turn_type_map().count(  cis_trans_hash ) )
 		{
 			throw EXCN_Msg_Exception( "The Ramachandran hash '" + rama_hash +
@@ -253,7 +252,7 @@ void BetaTurnDetection::validate_ramachandran_hash( std::string & rama_hash ) co
 				cis_trans_hash + ",' which is also not recognized as a valid beta-turn type."
 			);
 		}
-				
+
 		rama_hash = cis_trans_hash;
 	}
 }

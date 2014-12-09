@@ -1,3 +1,12 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 /// @file
 /// @brief Partly greedy pack rotamers mover. given a set of target residues, choose their neighbors greedily and then
 /// @brief pack with usual simulated annealing maintaining these neighbor choices
@@ -79,7 +88,7 @@ PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy(
 	target_residues_ (target_residues)
 {}
 
-PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy() : 
+PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy() :
 	protocols::moves::Mover("PackRotamersMoverPartGreedy"),
 	scorefxn_repack_(/* 0 */),
 	scorefxn_minimize_(/* 0 */),
@@ -128,7 +137,7 @@ PackRotamersMoverPartGreedy::parse_my_tag(
 	//if choose targets based on N-best residues
 	if( tag->hasOption("choose_best_n") ) {
 		n_best_ = tag->getOption<core::Size>("choose_best_n", 0 );
-	} 
+	}
 }
 
 std::string
@@ -214,7 +223,7 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
   //Next hand over these to regular PackRotamers mover and we're done!
   protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( scorefxn_repack_ , task ) );
   pack->apply( pose );
-  
+
 }
 
 void
@@ -224,15 +233,15 @@ PackRotamersMoverPartGreedy::greedy_around(
 	core::pack::task::PackerTaskOP task,
 	core::scoring::ScoreFunctionCOP scorefxn
 )
-{	
+{
 	using namespace core::pack;
 	using namespace core::pack::task;
 
 	core::pose::Pose cur_pose = pose;
-	
-	
+
+
 	for( utility::vector1< core::Size >::const_iterator pos_it = target_residues.begin(); pos_it != target_residues.end(); ++pos_it ){
-		TR<<"Considering target residue "<< cur_pose.residue( *pos_it ).name3() << *pos_it <<": "<<std::endl;	
+		TR<<"Considering target residue "<< cur_pose.residue( *pos_it ).name3() << *pos_it <<": "<<std::endl;
 		utility::vector1< core::Size > neighbors  = compute_designable_neighbors( *pos_it, task, cur_pose );
 		utility::vector1< core::Size > cur_neighbors = neighbors;
 		utility::vector1< bool > allow_minimization (pose.total_residue(), false);
@@ -243,14 +252,14 @@ PackRotamersMoverPartGreedy::greedy_around(
 		// Iterate neighbors.size() times
 		TR << "Total number of neighbors are "<<neighbors.size()<<std::endl;
 		for (core::Size ii=1;ii<=neighbors.size();++ii){
-	 		protocols::toolbox::pose_manipulation::construct_poly_ala_pose( cur_pose, cur_neighbors, false, false, true );	
+	 		protocols::toolbox::pose_manipulation::construct_poly_ala_pose( cur_pose, cur_neighbors, false, false, true );
 		//	cur_pose.dump_pdb("polyA_"+utility::to_string(ii)+".pdb");
-			TR << "At iteration "<< ii << ", current neighbor size is "<< cur_neighbors.size()<<std::endl;	
+			TR << "At iteration "<< ii << ", current neighbor size is "<< cur_neighbors.size()<<std::endl;
 			core::Size best_neigh (0);
 			//calculate energy in polyAla state before choosing
 			core::Real best_energy (cur_pose.energies().total_energies()[core::scoring::total_score]);
 			TR <<" Poly Ala energy is :"<< best_energy<<std::endl;
-			core::pose::Pose inner_pose = cur_pose; 
+			core::pose::Pose inner_pose = cur_pose;
 			// Iterate over all neighbors at which no choice has been made so far and choose best in the context of current state
 		 	for( utility::vector1< core::Size >::const_iterator neigh_it = cur_neighbors.begin(); neigh_it != cur_neighbors.end(); ++neigh_it ){
 				core::pose::Pose working_pose = inner_pose;
@@ -268,7 +277,7 @@ PackRotamersMoverPartGreedy::greedy_around(
 				mutate_residue->set_IGEdgeReweights()->add_reweighter( ig_up );
 				// fix everything else except this position
 				utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, true );
-				
+
 				for (core::Size i=1; i<=pose.total_residue(); ++i){
 				if (i== *neigh_it) mutate_residue->nonconst_residue_task( i ).restrict_absent_canonical_aas( keep_aas );
 				else mutate_residue->nonconst_residue_task( i ).prevent_repacking();
@@ -287,29 +296,29 @@ PackRotamersMoverPartGreedy::greedy_around(
 				//Check energy
 				core::Real this_energy = working_pose.energies().total_energies()[core::scoring::total_score];
 				//TR << "Energy for best residue at position "<< *neigh_it << "is "<< this_energy << std::endl;
-				// see if this energy is best so far. if so replace this neighbor in cur_pose 
-				if ( (this_energy<best_energy) || (best_neigh==0) ) { 
+				// see if this energy is best so far. if so replace this neighbor in cur_pose
+				if ( (this_energy<best_energy) || (best_neigh==0) ) {
 					//TR<< "Best neighbor at position "<<*neigh_it <<" is "<< working_pose.residue( *neigh_it ).name3() << " with energy "<< this_energy<<std::endl;
 					cur_pose = working_pose;
 					best_neigh = *neigh_it;
 					best_energy = this_energy;
 				}
 			} // all currently unchosen neighbors so far
-			//Now that a choice has been made at the position best_neigh, inform cur_neighbors and task to take this position out from future design 
+			//Now that a choice has been made at the position best_neigh, inform cur_neighbors and task to take this position out from future design
 			update_task_and_neighbors( best_neigh, task, cur_neighbors );
 		} //iterate neighbors.size() times around each target residue
 	} //all target residues
 	pose = cur_pose;
 } // greedy around
 
-utility::vector1< core::Size > 
+utility::vector1< core::Size >
 PackRotamersMoverPartGreedy::compute_designable_neighbors(
 core::Size const & position,
 core::pack::task::PackerTaskCOP task,
 core::pose::Pose const & pose
 )
 {
-	utility::vector1< core::Size > neighbors;	
+	utility::vector1< core::Size > neighbors;
 	TR << "neighbors of position "<< position << " are: ";
 	core::conformation::Residue const res_pos (pose.residue( position ));
 	for (core::Size ii=1;ii<=pose.total_residue();++ii){
@@ -318,7 +327,7 @@ core::pose::Pose const & pose
 			core::Real distance = res_ii.xyz( res_ii.nbr_atom() ).distance( res_pos.xyz(res_pos.nbr_atom()) );
 			if (distance<=threshold_)  {
 				neighbors.push_back( ii );
-				TR <<ii<<" + "; 
+				TR <<ii<<" + ";
 			}
 		}
 	}
@@ -339,7 +348,7 @@ utility::vector1< core::Size > & current_neighbors
 	utility::vector1< core::Size > temp_neighbors;
 	for( utility::vector1< core::Size >::const_iterator neigh_it = current_neighbors.begin(); neigh_it != current_neighbors.end(); ++neigh_it ){
 		if (*neigh_it != best_neigh) temp_neighbors.push_back(*neigh_it);
-		else TR<<" Updated current neighbors by removing "<<*neigh_it << " from it."<<std::endl; 
+		else TR<<" Updated current neighbors by removing "<<*neigh_it << " from it."<<std::endl;
 	}
 	current_neighbors = temp_neighbors;
 
@@ -351,17 +360,17 @@ PackRotamersMoverPartGreedy::task_factory( core::pack::task::TaskFactoryOP p ) {
   task_factory_ = p;
 }
 
-void 
+void
 PackRotamersMoverPartGreedy::task( core::pack::task::PackerTaskOP task ){
 	task_ = task;
 }
 
-void 
+void
 PackRotamersMoverPartGreedy::target_residues( utility::vector1< core::Size > & trg_res ){
 	target_residues_ = trg_res;
 }
 
-utility::vector1<core::Size>  
+utility::vector1<core::Size>
 PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core::Size const & n_best ){
 
 	using namespace core::graph;
@@ -380,7 +389,7 @@ PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core
 		core::Size const int_resi = (*egraph_it)->get_other_ind( res );
 		EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 		core::Real intE = Eedge->dot( curr_weights );
-		residue_energies.push_back( std::make_pair( int_resi, intE));	
+		residue_energies.push_back( std::make_pair( int_resi, intE));
   	}//for each egraph_it
 
 	//Sort and return n_best
@@ -388,7 +397,7 @@ PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core
 	core::Size counter(1);
 	for( std::list< std::pair<core::Size, core::Real> >::iterator it = residue_energies.begin();counter<=n_best; ++it){
 		chosen_residues.push_back( it->first );
-		TR << "Chose residue "<<it->first<<" with interface energy "<<it->second <<std::endl; 
+		TR << "Chose residue "<<it->first<<" with interface energy "<<it->second <<std::endl;
 		counter++;
 	}
 	return chosen_residues;

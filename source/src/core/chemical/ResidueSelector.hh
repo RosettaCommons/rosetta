@@ -10,28 +10,28 @@
 /// @file
 /// @author Phil Bradley
 /// @details
-/**
-	The ResidueSelector is an object the picks out a subset of ResidueTypes, via a
-	bool operator[](ResidueType const &) method.  It is implemented as a logical AND of individual constraints,
-	each of which typically has an OR structure.  The system allows NOT at the beginning.
-
-	AA aa1 aa2 aa3
-	VARIANT_TYPE type1 type2 type3
-	PROPERTY property1 property2
-
-	So, e.g., the lines
-
-	PROPERTY PROTEIN
-	AA PRO GLY
-	NAME3 HPR
-	NOT VARIANT_TYPE PHOSPHO TERMINUS
-
-	would define a selector that matched residues with property PROTEIN, with aa types
-	pro or gly, with a three-letter code of HPR and not of variant type PHOSPHO or TERMINUS
-
-	The individual constraints that make up the ResidueSelector object are subclasses of
-	ResidueSelectorSingle; ResidueSelector has a vector1 of ResidueSelectorSingleOP's
-**/
+///
+///     The ResidueSelector is an object the picks out a subset of ResidueTypes, via a
+///     bool operator[](ResidueType const &) method.  It is implemented as a logical AND of individual constraints,
+///     each of which typically has an OR structure.  The system allows NOT at the beginning.
+///
+///     AA aa1 aa2 aa3
+///     VARIANT_TYPE type1 type2 type3
+///     PROPERTY property1 property2
+///
+///     So, e.g., the lines
+///
+///     PROPERTY PROTEIN
+///     AA PRO GLY
+///     NAME3 HPR
+///     NOT VARIANT_TYPE PHOSPHO TERMINUS
+///
+///     would define a selector that matched residues with property PROTEIN, with aa types
+///     pro or gly, with a three-letter code of HPR and not of variant type PHOSPHO or TERMINUS
+///
+///     The individual constraints that make up the ResidueSelector object are subclasses of
+///     ResidueSelectorSingle; ResidueSelector has a vector1 of ResidueSelectorSingleOP's
+///
 
 #ifndef INCLUDED_core_chemical_ResidueSelector_hh
 #define INCLUDED_core_chemical_ResidueSelector_hh

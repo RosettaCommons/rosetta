@@ -1,13 +1,12 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet;
-//
-// (C) 199x-2008 Hebrew University, Jerusalem
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 /// @file   FlexPepDockingFlags.cc
 ///
 /// @brief flags structure for FlexPepDocking protocols
@@ -83,7 +82,7 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 	// the next section should be removed after we get rid of obsolee rmMCM and torsionsMCM completely
 	if(pep_refine || lowres_preoptimize || lowres_abinitio)
 		{ // overrides old rbMCM and torsionsMCM
-			bool explicitFalseMCMs = 
+			bool explicitFalseMCMs =
 				( option[ OptionKeys::flexPepDocking::rbMCM ].user() && !rbMCM) ||
 				( option[ OptionKeys::flexPepDocking::torsionsMCM ].user() && !torsionsMCM);
 			runtime_assert_msg(!explicitFalseMCMs,
@@ -288,7 +287,7 @@ FlexPepDockingFlags::updateChains
 			if(pep_fold_only)
 				{
 					this->set_peptide_chain(pdbinfo->chain(resi));
-				} 
+				}
 			else // docking mode
 				{
 					// skip receptor chain

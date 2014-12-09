@@ -1,3 +1,12 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 #include <protocols/moves/CanonicalSamplingMover.hh>
 #include <protocols/moves/SidechainMover.hh>
 #include <protocols/moves/SidechainMover.fwd.hh>
@@ -71,7 +80,7 @@ OPT_1GRP_KEY(Integer, sampling, interval_increment_temp)
 OPT_1GRP_KEY(Real, sampling, starting_temp)
 OPT_1GRP_KEY(Boolean, sampling, add_constraints)
 
-//dump or save part of the structure? 
+//dump or save part of the structure?
 OPT_1GRP_KEY(Boolean, sampling, save_loops_only )
 OPT_1GRP_KEY(Boolean, sampling, dump_loops_only )
 
@@ -176,7 +185,7 @@ void CanonicalSamplingMover::set_defaults_from_cmdline() {
   ramp_temperature_ = option[ sampling::ramp_temperature ]();
   save_loops_only_ =  option[ sampling::save_loops_only ]();
   dump_loops_only_ =  option[ sampling::dump_loops_only ]();
-		    
+
 }
 
 void
@@ -202,7 +211,7 @@ CanonicalSamplingMover::periodic_range(
 
 
   std::string CanonicalSamplingMover::get_ABGEO_string( core::pose::Pose & pose, protocols::loops::Loops & loop ) {
- 
+
   std::string ABGEO_assignment = "";
   for( protocols::loops::Loops::const_iterator itr = loop.begin(); itr != loop.end(); itr++ ) {
     for( core::Size ii = itr->start(); ii <= itr->stop(); ii++ ){
@@ -352,7 +361,7 @@ void CanonicalSamplingMover::dump_decoy_or_score(
     + lead_zero_string_of( rest100_rest10, 1)
     + score_dump_str;
 
-  if( dump_loops_only_ /* save only loop conformations */ 
+  if( dump_loops_only_ /* save only loop conformations */
       && loop_to_dump.num_loop() > 0 ) {
     // make pose with just loop coordinates
 
@@ -394,7 +403,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 
   runtime_assert( pool_rms_ );
 
-  // set up loop definition if we're only sampling loop conformations. 
+  // set up loop definition if we're only sampling loop conformations.
   // even if we're not sampling loop defs, make empty loop definition
   loops::Loops loops;
   if( option[basic::options::OptionKeys::loops::loop_file].user() ) {
@@ -617,7 +626,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	      }
 	      tr << std::endl;
 	      std::string newtag = "new-structure-tag";
-	      if( save_loops_only_ && loops.num_loop() > 0 ){ 
+	      if( save_loops_only_ && loops.num_loop() > 0 ){
 		hpool_ptr->add_new( looponly, newtag, address, true, new_level_start );
 	      } else {
 		hpool_ptr->add_new( pose, newtag, address, true, new_level_start );
@@ -646,7 +655,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	  if( save_loops_only_ && loops.num_loop() > 0 ){
 	    for( loops::Loops::const_iterator itr = loops.begin(); itr != loops.end(); itr++ ) {
 	      looponly = core::pose::Pose( pose, itr->start(), itr->stop() );
-	      tr << "looponly pose has " << looponly.total_residue() << " should be containing segment: " << itr->start() << " " << itr->stop() << " " << " from ref: " << pose.total_residue() <<  std::endl;	      
+	      tr << "looponly pose has " << looponly.total_residue() << " should be containing segment: " << itr->start() << " " << itr->stop() << " " << " from ref: " << pose.total_residue() <<  std::endl;
 	    }
 	    tr << "check: looponly pose has " << looponly.total_residue() << std::endl;
 	    pool_rms_->evaluate_and_add( looponly, cluster_center, rms_to_cluster, transition_threshold_ );

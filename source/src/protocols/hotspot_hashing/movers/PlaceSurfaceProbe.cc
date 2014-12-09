@@ -1,6 +1,5 @@
-// Project Headers
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 sw=2 noet:
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -131,7 +130,7 @@ SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const 
 		expected_course_search_bound / 2,
 		-(expected_course_search_bound / 2),
 		expected_course_search_bound / 2) );
-		
+
 	SearchPatternOP residue_sampling_pattern( new ComposeSearchPatterns(spherical_rotation_pattern, cartesian_pattern) );
 	core::pose::Pose residue_pose;
 
@@ -194,7 +193,7 @@ SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 		0, coarse_angle_sampling_,
 		0, coarse_angle_sampling_,
 		0, coarse_angle_sampling_) );
-		
+
 	SearchPatternOP cartesian_pattern( new CartesianSearchPattern(
 		refinement_sampling_,
 		refinement_sampling_,
@@ -204,7 +203,7 @@ SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 		coarse_sampling_ / 2,
 		-(coarse_sampling_ / 2),
 		coarse_sampling_ / 2) );
-		
+
 	return SearchPatternOP( new ComposeSearchPatterns(spherical_rotation_pattern, cartesian_pattern) );
 }
 

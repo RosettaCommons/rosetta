@@ -1,16 +1,11 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;
-//     rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available
-//      under license.
-// (c) The Rosetta software is developed by the contributing members of the
-//      Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org.
-//      Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer,
-//                                             email: license@u.washington.edu.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file FullatomRelaxMover.cc
 /// @author Robin A Thottungal  (rathottungal@gmail.com)
@@ -74,7 +69,7 @@ FullatomRelaxMover::FullatomRelaxMover() : Mover()
 	{
 		setup_defaults();
 	}
-	
+
 FullatomRelaxMover::FullatomRelaxMover( FullatomRelaxMover const & src) : Mover(src)
 	{
 		copy_data(*this, src);
@@ -82,13 +77,13 @@ FullatomRelaxMover::FullatomRelaxMover( FullatomRelaxMover const & src) : Mover(
 
 //destructor
 FullatomRelaxMover::~FullatomRelaxMover() {}
-	
+
 protocols::moves::MoverOP
 FullatomRelaxMover::clone() const
 	{
 		return protocols::moves::MoverOP( new FullatomRelaxMover(*this) );
 	}
-	
+
 protocols::moves::MoverOP
 FullatomRelaxMover::fresh_instance() const
 	{
@@ -113,7 +108,7 @@ void FullatomRelaxMover::setup_defaults()
 	{
 		encounter_cycle_= numeric::random::rg().random_range(1,5);
 	}
-	
+
 	if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] )
 	{
 		outer_loop_cycles_ = 1;
@@ -132,12 +127,12 @@ void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 	{
 	// Setting Common Parameters for movers
 	Size const first_protein_residue = pose.num_jump() + 1;
-		
+
 	move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 	move_map_->set_bb_true_range(first_protein_residue , pose.total_residue());
 	move_map_->set_chi_true_range( first_protein_residue , pose.total_residue() );
 	move_map_->set_jump(pose.num_jump(),false);
-		
+
 	Real tolerance=0.001;
 	small_mover_ = simple_moves::SmallMoverOP( new simple_moves::SmallMover(move_map_,kT_,nmoves_) );
 	small_min_mover_ = simple_moves::MinMoverOP( new simple_moves::MinMover(move_map_,
@@ -152,7 +147,7 @@ void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 
 	shear_min_mover_ = simple_moves::MinMoverOP( new simple_moves::MinMover(move_map_,score_high_res_,
 		shear_min_type_,tolerance,true,false,false) );
-	
+
 	shear_sequence_mover_ = moves::SequenceMoverOP( new moves::SequenceMover() );
 	shear_sequence_mover_->add_mover(shear_mover_);
 	shear_sequence_mover_->add_mover(shear_min_mover_);
@@ -178,17 +173,17 @@ void FullatomRelaxMover::set_ljrepulsion_weight(Real weight_scale){
 void FullatomRelaxMover::set_ecounter(Size ecount){
 	encounter_=ecount;
 }
-	
+
 void FullatomRelaxMover::set_surface_contact_mover(protocols::docking::FaDockingSlideIntoContactOP surface_contact_mover)
 	{
 		surface_contact_mover_ = surface_contact_mover;
 	}
-	
+
 void FullatomRelaxMover::set_surface_orient_mover( SurfaceOrientMoverOP surface_orient )
 	{
 		surface_orient_ = surface_orient;
 	}
-	
+
 void FullatomRelaxMover::inner_loop_refinement( core::pose::Pose & pose )
 	{
 		//k<=5 original value;k=2 test
@@ -200,7 +195,7 @@ void FullatomRelaxMover::inner_loop_refinement( core::pose::Pose & pose )
 		shear_trial_min_mover_->apply(pose);  //linmin
 		//crank mover is missing
 	}
-	
+
 void FullatomRelaxMover::output_solution_state( core::pose::Pose & pose )
 	{
 		TR<<"Solution State Structure Found"<<std::endl;
@@ -223,7 +218,7 @@ void FullatomRelaxMover::output_solution_state( core::pose::Pose & pose )
 		sol_sec_struct_ = sec_struct_;
 
 	}
-	
+
 void FullatomRelaxMover::reorient_and_slide_into_surface( core::pose::Pose & pose )
 	{
 		// Random Orient the Partner (make sure this is the peptide)
@@ -246,12 +241,12 @@ void FullatomRelaxMover::reorient_and_slide_into_surface( core::pose::Pose & pos
 		TR<<"Protein adsorbed onto the Surface..."<<std::endl;
 
 	}
-	
+
 void FullatomRelaxMover::dock_mcm_on_surface(core::pose::Pose & pose)
 	{
 		TR<<"Starting high-resolution docking on surface..."<<std::endl;
 		//move_map_->set_chi(true);
-		
+
 		if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] )
 		{
 			dock_mcm_->set_first_cycle( 1 );
@@ -274,7 +269,7 @@ void FullatomRelaxMover::outer_loop_refinement_solution(core::pose::Pose & pose)
 		}
 
 	}
-	
+
 void FullatomRelaxMover::outer_loop_refinement_adsorbed(core::pose::Pose & pose)
 	{
 		surface_orient_->apply(pose);
@@ -283,7 +278,7 @@ void FullatomRelaxMover::outer_loop_refinement_adsorbed(core::pose::Pose & pose)
 		//reposition_above_surface( pose );
 		outer_loop_refinement_solution(pose);
 	}
-	
+
 void FullatomRelaxMover::reposition_above_surface(core::pose::Pose & pose)
 	{
 		Vector protein_centroid, surf_centroid;
@@ -292,7 +287,7 @@ void FullatomRelaxMover::reposition_above_surface(core::pose::Pose & pose)
 		protocols::geometry::centroids_by_jump (pose, rb_jump, surf_centroid, protein_centroid);
 
 		slide_away = surface_parameters_->slide_axis().negated();
-		
+
 		//getting a point 30 angstroms above surface centroid
 		Vector point_above = surf_centroid+slide_away.normalized()*80;
 		//vector needed to move protein centroid to point above
@@ -301,16 +296,16 @@ void FullatomRelaxMover::reposition_above_surface(core::pose::Pose & pose)
 			position_above_surface.step_size(position_above.magnitude());
 			position_above_surface.apply(pose);
 		}
-	
+
 void FullatomRelaxMover::refinement_cycle(pose::Pose & pose)
-{	
+{
 	monte_carlo_->reset(pose);
 	calc_secondary_struct(pose);
 	TR<<"Fullatom refinement cycle: "<<encounter_<<std::endl;
 	TR<<"Adsoprtion occuring after: "<<encounter_cycle_<<" cycles"<<std::endl;
 	// object for slide into contact
 	for ( Size j = 1; j <=outer_loop_cycles_; ++j )
-	{ 
+	{
 		if ( encounter_ <= encounter_cycle_ )
 		{
 			outer_loop_refinement_solution(pose);
@@ -331,7 +326,7 @@ void FullatomRelaxMover::refinement_cycle(pose::Pose & pose)
 			dock_mcm_on_surface(pose);
 		}
 }
-	
+
 void FullatomRelaxMover::apply(core::pose::Pose & pose)
 	{
 		setup_movers(pose);
@@ -362,7 +357,7 @@ void FullatomRelaxMover::apply(core::pose::Pose & pose)
 void FullatomRelaxMover::set_nmoves( core::Size const nmoves_in ){
 	nmoves_ = nmoves_in;
     }
-	
+
 void FullatomRelaxMover::set_surface_parameters(protocols::surface_docking::SurfaceParametersOP surface_parameters)
 	{
 		surface_parameters_ = surface_parameters;
@@ -385,7 +380,7 @@ void FullatomRelaxMover::calc_secondary_struct(core::pose::Pose & pose){
 		if (dssp.get_dssp_secstruct(ii) == ' ')
 		{
 			pose.set_secstruct(last_surface_residue + ii, 'L');
-			
+
 		}
 		else
 		{
@@ -394,7 +389,7 @@ void FullatomRelaxMover::calc_secondary_struct(core::pose::Pose & pose){
 		sec_struct_+=dssp.get_dssp_secstruct(ii);
 	}
 }
-	
+
 void FullatomRelaxMover::set_secondary_struct(core::pose::Pose & pose)
 	{
 		Size const last_surface_residue( pose.num_jump());
@@ -403,7 +398,7 @@ void FullatomRelaxMover::set_secondary_struct(core::pose::Pose & pose)
 			if (sec_struct_[ii] == ' ')
 			{
 				pose.set_secstruct(last_surface_residue + ii, 'L');
-				
+
 			}
 			else
 			{
@@ -415,11 +410,11 @@ void FullatomRelaxMover::set_secondary_struct(core::pose::Pose & pose)
 std::string FullatomRelaxMover::get_sol_secondary_struct(){
 	return sol_sec_struct_;
 }
-	
+
 std::string FullatomRelaxMover::get_ads_secondary_struct(){
 	return ads_sec_struct_;
 }
-	
+
 void FullatomRelaxMover::copy_data(FullatomRelaxMover object_to_copy_to, FullatomRelaxMover object_to_copy_from)
 	{
 		object_to_copy_to.kT_ = object_to_copy_from.kT_;
@@ -450,7 +445,7 @@ void FullatomRelaxMover::copy_data(FullatomRelaxMover object_to_copy_to, Fullato
 		object_to_copy_to.inner_loop_cycles_ = object_to_copy_from.inner_loop_cycles_;
 		object_to_copy_to.surface_parameters_ = object_to_copy_from.surface_parameters_;
 	}
-	
+
 
 
 

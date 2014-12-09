@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/* This file is contains all the same functions as `bridgeObjects.cc', but 
- * radians are assumed for all angles.  Although this is easier to use in most 
- * cases, it is not backwards compatible.  That's why a new file was created.  
- */
+// This file is contains all the same functions as `bridgeObjects.cc', but 
+// radians are assumed for all angles.  Although this is easier to use in most 
+// cases, it is not backwards compatible.  That's why a new file was created.  
+
 
 /// @file   bridgeObjects.hh
 /// @brief  Header file for bridgeObjects code for ALC

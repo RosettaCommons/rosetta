@@ -1,11 +1,11 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:f;rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
- // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 // @file:   core/scoring/facts/FACTSPotential.cc
 // @brief:  The definitions of 3 classes of the FACTS algorithm resides here (see devel/khorvash/FACTSPotential.hh
@@ -67,11 +67,11 @@ FACTSPoseInfo::FACTSPoseInfo() :
 FACTSPoseInfo::FACTSPoseInfo( FACTSPoseInfo const & src ) : CacheableData()
 {
   Size const src_size( src.size() );
-  
+
   residue_info_.resize( src_size );
   placeholder_residue_.resize( src_size );
   placeholder_info_.resize( src_size );
-  
+
   for ( Size i=1; i<= src_size; ++i ) {
     residue_info_[i] = src.residue_info_[i]->clone();
     if ( src.placeholder_residue_[i] ) {
@@ -85,21 +85,21 @@ FACTSPoseInfo::FACTSPoseInfo( FACTSPoseInfo const & src ) : CacheableData()
   being_packed_ = src.being_packed_;
   context_derivative_empty_ = src.context_derivative_empty_;
 }
-  
+
 void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtypemap )
 {
   Size const nres( pose.total_residue() ); // maybe faster for symm if it is made symm-aware
-  
+
   residue_info_.resize( nres, 0 );
   placeholder_residue_.resize( nres, 0 );
   placeholder_info_.resize( nres, 0 );
-  
+
   for ( Size i=1; i<= nres; ++i ) {
     if ( !residue_info_[i] ) {
       residue_info_[i] = FACTSResidueInfoOP( new FACTSResidueInfo() );
       residue_info_[i]->set_enumeration_shell( true );
     }
-    
+
     // Initialize only if the residue is in enumeration_shell
     // otherwise keep information stored previously
     if( residue_info_[i]->enumeration_shell() ){
@@ -118,7 +118,7 @@ void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtyp
     }
   }
 }
-  
+
 void FACTSPoseInfo::set_placeholder( Size const i, ResidueOP rsd, FACTSResidueInfoOP info )
 {
   placeholder_residue_[ i ] = rsd;
@@ -135,19 +135,19 @@ void FACTSPoseInfo::set_repack_list( utility::vector1< bool > const & repacking_
 
 bool FACTSPoseInfo::is_changed( pose::Pose const &pose ){
   for( Size ires = 1; ires <= pose.total_residue(); ++ ires ){
-    
+
     Size const natom( pose.residue(ires).natoms() );
     utility::vector1<Vector> const facts_xyz = residue_info( ires ).xyz();
-    
+
     if( natom != facts_xyz.size() )
       return true;
-    
+
     for( Size iatm = 1; iatm <= natom; ++ iatm ){
       Vector const dxyz = facts_xyz[iatm] - pose.residue(ires).xyz(iatm);
       Real const d2 = dxyz.dot(dxyz);
       if( d2 > 1.0e-6 ) return true;
     }
-    
+
   }
   return false;
 }
@@ -159,28 +159,28 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 
 	Energies const & energies( pose.energies() );
 	EnergyGraph const & energy_graph( energies.energy_graph() );
-	
+
 	// use minimization graph instead!
-	
+
 
 	// Old way - use coordinate
 	/*
 	// First check change in coordinate in residue level
 	for( Size ires = 1; ires <= pose.total_residue(); ++ ires ){
-		
+
 		FACTSResidueInfo & facts1( residue_info( ires ) );
 		facts1.set_changed( false );
 		facts1.set_enumeration_shell( false );
-		
+
 		Size const natom( pose.residue(ires).natoms() );
 		utility::vector1<Vector> const facts_xyz = residue_info( ires ).xyz();
-		
+
 		// Check residue conformation change by looking at coordinate
 		// Is there better way than this?
 		if( natom != facts_xyz.size() ){
 			facts1.set_changed( true );
 			facts1.set_enumeration_shell( true );
-			
+
 		} else {
 			for( Size iatm = 1; iatm <= natom; ++ iatm ){
 				Vector const dxyz = facts_xyz[iatm] - pose.residue(ires).xyz(iatm);
@@ -198,7 +198,7 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 	// Decide whether to expand enumeration to the second shell:
 	// say A-B-C where A,B,C are residues and A-B < 10 A, B-C < 10 A, A-C > 10 A
 	// if A's conformation changes, it will affect B's context, which will again change B-C interaction energy
-	// In order to calculate energy induced by A's change, 
+	// In order to calculate energy induced by A's change,
 	// one should enumerate over second shell also otherwise B-C interaction would have error
 
 	if( !enumerate_second_shell ) return;

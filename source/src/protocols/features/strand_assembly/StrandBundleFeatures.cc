@@ -1,12 +1,11 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
-// :notabs=false:tabSize=4:indentsize=4:
 //
-// (c) copyright rosetta commons member institutions.
-// (c) this file is part of the rosetta software suite and is made available under license.
-// (c) the rosetta software is developed by the contributing members of the rosetta commons.
-// (c) for more information, see http://www.rosettacommons.org. questions about this can be
-// (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/features/strand_assembly/StrandBundleFeatures.cc
 /// @brief extract beta strand, strand pairs, sandwiches in pdb file, see wiki.rosettacommons.org/index.php/MultiBodyFeaturesReporters#StrandBundleFeatures for detail

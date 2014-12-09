@@ -11,7 +11,8 @@
 /// @brief
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-
+#ifndef INCLUDED_utility_sql_database_util_hh
+#define INCLUDED_utility_sql_database_util_hh
 
 #ifdef USEMYSQL // for variables that are only used with mysql
 	#define MYSQL_ONLY(x) x
@@ -25,3 +26,6 @@
 #else
 	#define POSTGRES_ONLY(x)
 #endif
+
+#endif // INCLUDED_utility_sql_database_util_hh
+

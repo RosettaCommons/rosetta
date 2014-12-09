@@ -1,3 +1,12 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/topology_broker/RigidBodyRandomTMHMover.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
@@ -48,7 +57,7 @@ using basic::Warning;
 
 namespace protocols {
 namespace topology_broker {
-	
+
 
 static thread_local basic::Tracer TR( "protocols.moves.RigidBodyMover" );
 static thread_local basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
@@ -79,13 +88,13 @@ RigidBodyRandomTMHMover::apply(core::pose::Pose& pose)
 	core::Size random_jump_num = static_cast<core::Size>(numeric::random::rg().random_range(1,num_jump_));
 	if(TR.Trace.visible()){TR.Trace << "random_jump chosen:  " << random_jump_num << " " << pose.fold_tree().jump_edge(random_jump_num).start() << " " <<
 		pose.fold_tree().jump_edge(random_jump_num).stop() << std::endl;}
-	
+
 	//Get the vector for this helix CoM (it is the second residue of the jump, the first is the virt res)
 	core::Size current_span_CoM(pose.fold_tree().jump_edge(random_jump_num).stop());
 	core::Vector current_rb_centroid(pose.residue(current_span_CoM).xyz("CA"));
 	core::Vector original_centroid(0.0,0.0,0.0);
 	core::pose::PoseOP claimer_pose;
-	
+
 	//If the claimer does have a PoseOP, get it
 	if(TR.Trace.visible()){
 		TR.Trace << "Claimer is:  " << claimer_->type() << std::endl;
@@ -97,28 +106,28 @@ RigidBodyRandomTMHMover::apply(core::pose::Pose& pose)
 	}else{
 		utility_exit_with_message("At least one TopologyClaimer needs to have get_pose_from_claimer() implemented for this mover to work");
 	}
-	
+
 	//assert if claimer_pose doesn't point to anything at this point
 	assert(claimer_pose);
-	
+
 	//Get the claimer_pose's CoM for this helix.  This is the position to which we want to move to if we need to
 	core::Size claimer_pose_current_span_CoM = claimer_pose->fold_tree().jump_edge(random_jump_num).stop();
-	
+
 	//The current pose and the claimer pose CoM for this helix should be the same!
 	assert(claimer_pose_current_span_CoM == current_span_CoM);
-	
+
 	//How far away are we now from the original starting position?
 	original_centroid = claimer_pose->residue(claimer_pose_current_span_CoM).xyz("CA");
 	if(TR.Trace.visible()){
 		TR.Trace << "original_centroid_xyz:  " << original_centroid.x() << " " << original_centroid.y() << " " << original_centroid.z() << std::endl;
 	}
-	
+
 	core::Vector trans_vec = original_centroid - current_rb_centroid;
 	core::Real trans_len = trans_vec.length();
 	if(TR.Trace.visible()){
 		TR.Trace << "distance between current helix CoM and original position:  " << trans_len << std::endl;
 	}
-	
+
 	//if we're too far away, just move back to original position from this claimer pose
 	if(trans_len>=max_trans_)
 	{
@@ -148,7 +157,7 @@ RigidBodyRandomTMHMover::get_name() const
 {
 	return "RigidBodyRandomTMHMover";
 }
-	
+
 }
 }
 

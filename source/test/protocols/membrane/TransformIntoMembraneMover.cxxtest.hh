@@ -1,3 +1,4 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -45,9 +46,9 @@ using namespace core;
 
 /// @brief Test Suite for transformin a pose into membrane coordinates
 class TransformIntoMembraneMoverTest : public CxxTest::TestSuite {
-    
+
 public:
-    
+
     /// @brief Setup
     void setUp()
     {
@@ -55,21 +56,21 @@ public:
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane::geometry;
 		using namespace protocols::membrane;
-		
+
 		// Initialize Rosetta
         protocols_init();
-		
+
 		// load pose
 		std::string pdbfile = "protocols/membrane/1AFO_AB_before_out.pdb";
 		pose_ = core::import_pose::pose_from_pdb( pdbfile );
-		
+
 		// Load span object from spanfile
 		spanfile_ = "protocols/membrane/1AFO_AB.span";
-		
+
 		// center and normal
 		Vector center (0, 0, 0);
 		Vector normal (0, 0, 1);
-		
+
 		// Add Membrane to pose
 		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile_, 0 ) );
 		add_memb->apply( *pose_ );
@@ -78,16 +79,16 @@ public:
 		reorder_membrane_foldtree( *pose_ );
 
     }
-    
+
     /// @brief teardown
     void tearDown()
     {}
 
 	/// @brief test transform into default membrane
 	void test_transform_into_default_membrane() {
-		
+
 		TS_TRACE( "TESTING TRANSFORM INTO DEFAULT MEMBRANE" );
-		
+
 		using namespace protocols::membrane;
 
 		// set new membrane to transform pose into
@@ -114,7 +115,7 @@ public:
 		TS_ASSERT( position_equal_within_delta( res40_after, pose_->residue(40).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res41_after, pose_->residue(41).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
-		
+
 			// check positions of center and normal
 		TS_ASSERT( position_equal_within_delta( mem_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( mem_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
@@ -124,11 +125,11 @@ public:
 
 	/// @brief test transform into user-defined membrane
 	void test_transform_into_userdefined_membrane() {
-		
+
 		TS_TRACE( "TESTING TRANSFORM INTO USER-DEFINED MEMBRANE" );
-		
+
 		using namespace protocols::membrane;
-		
+
 		// set new membrane to transform pose into
 		Vector new_center (20, 20, 20);
 		Vector new_normal (1, 0, 0);
@@ -141,7 +142,7 @@ public:
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( new_center, new_normal, spanfile_ ) );
 		transform->apply( *pose_ );
-		
+
 		// check positions of CA atoms of first and last residue after rotation
 		Vector res1_after (15.965, 37.845, 23.962);
 		Vector res40_after (44.464, 21.842, 35.302);
@@ -153,29 +154,29 @@ public:
 		TS_ASSERT( position_equal_within_delta( res40_after, pose_->residue(40).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res41_after, pose_->residue(41).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
-		
+
 		// check positions of center and normal
 		TS_ASSERT( position_equal_within_delta( mem_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( mem_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( mem_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
 	}
-	
+
 	/// @brief Position equal within delta (helper method)
 	bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
-		
+
 		TS_ASSERT_DELTA( a.x(), b.x(), delta );
 		TS_ASSERT_DELTA( a.y(), b.y(), delta );
 		TS_ASSERT_DELTA( a.z(), b.z(), delta );
-		
+
 		return true;
 	}
-	
-    
+
+
 private: // data
-    
+
     // store data
     core::pose::PoseOP pose_;
 	std::string spanfile_;
-    
+
 }; // class TransformIntoMembraneMoverTest
 

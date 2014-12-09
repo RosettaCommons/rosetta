@@ -1,3 +1,4 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -26,7 +27,7 @@
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh> 
+#include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 
 #include <numeric/xyzVector.hh>
@@ -49,76 +50,76 @@ using namespace core;
 
 /// @brief Test Suite for Membrane Embedding factory
 class MembranePositionFromTopologyMoverTest : public CxxTest::TestSuite {
-    
+
 public:
-    
+
     /// @brief Setup
     void setUp()
     {
-		
+
 		using namespace basic::options;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
-		
+
 		// Initialize Rosetta
         protocols_init();
-		
+
 		// Load Pose from pdb
 		std::string input_pose = "protocols/membrane/1C3W_TR_A.pdb";
 		pose_ = core::import_pose::pose_from_pdb( input_pose );
-		
+
 		// Load span object from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
-		
+
 		// Define a starting membrane position
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 10 );
-		
+
 		// Add Membrane to pose!
 		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, 1 ) );
 		add_memb->apply( *pose_ );
-		
+
     }
-    
+
     /// @brief teardown
     void tearDown()
     {}
-	
+
 	/// @brief Testing initial membrane position move
 	void test_initial_membrane_position_move() {
-		
+
 		TS_TRACE( "Testing rotation & translation move" );
-		
+
 		using namespace protocols::membrane;
-		
+
 		// Pick a new center/normal position
 		Vector new_center( 16.8406, 3.32664, -0.6575);
 		Vector new_normal( -0.044515, -0.0319111, 0.998499 );
-		
+
 		// Apply Rotation and translation move
 		MembranePositionFromTopologyMoverOP rt( new MembranePositionFromTopologyMover() );
 		rt->apply( *pose_ );
-		
+
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_info()->membrane_center(), 0.0001 ) );
 		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.0001 ) );
 	}
-	
+
 	/// @brief Position equal within delta (helper method)
 	bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
-		
+
 		TS_ASSERT_DELTA( a.x(), b.x(), delta );
 		TS_ASSERT_DELTA( a.y(), b.y(), delta );
 		TS_ASSERT_DELTA( a.z(), b.z(), delta );
-		
+
 		return true;
 	}
-	
-    
+
+
 private: // data
-    
+
     // Resulting Membrane Protein
     core::pose::PoseOP pose_;
-    
+
 }; // class MembranePositionFromTopologyMoverTest
 

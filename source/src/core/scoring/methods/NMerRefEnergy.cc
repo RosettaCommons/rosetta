@@ -1,5 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-//// vi: set ts=2 noet:
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -71,7 +71,7 @@ NMerRefEnergy::nmer_length( Size const nmer_length ){
 
 void
 NMerRefEnergy::initialize_from_options()
-{ 
+{
   using namespace basic::options;
   NMerRefEnergy::nmer_length( option[ OptionKeys::score::nmer_ref_seq_length ]() );
 }
@@ -161,7 +161,7 @@ void NMerRefEnergy::read_nmer_table( std::string ref_fname ) {
 		//everything is cool! nothing is fucked!
 		Real const energy( atof( tokens[ 2 ].c_str() ) );
 		//Hmmmm... if we have duplicate entries, say in multiple tables, what should we do? error, replace, or sum?
-		//I think we should sum them; that is, all lists are correct, even if they say diff things about diff nmers	
+		//I think we should sum them; that is, all lists are correct, even if they say diff things about diff nmers
 //		if( nmer_ref_energies_.count( sequence ) ) utility_exit_with_message( "[ERROR] NMer ref energy database file "
 //				+ ref_fname + " has double entry for sequence " + sequence );
 		if( nmer_ref_energies_.count( sequence ) ){
@@ -194,7 +194,7 @@ NMerRefEnergy::residue_energy(
 
 	if( nmer_ref_energies_.empty() ) return;
 	Size const seqpos( rsd.seqpos() );
-	//skip if not a NMer center 
+	//skip if not a NMer center
 	if( seqpos < 1 || seqpos > pose.total_residue() - nmer_cterm_ ) return;
 	//get the NMer centered on seqpos
 	std::string sequence;

@@ -1,3 +1,4 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -28,7 +29,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-#include <core/conformation/Conformation.hh> 
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <core/conformation/Residue.hh>
@@ -100,15 +101,15 @@ VisualizeMembraneMover::VisualizeMembraneMover( VisualizeMembraneMover const & s
 /// @details Overloads "=" assignemnt for deep copying
 VisualizeMembraneMover &
 VisualizeMembraneMover::operator=( VisualizeMembraneMover const & src ) {
-	
+
 	// Abort self-assignment.
 	if (this == &src) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new VisualizeMembraneMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -139,22 +140,22 @@ VisualizeMembraneMover::parse_my_tag(
   protocols::moves::Movers_map const &,
   core::pose::Pose const &
   ) {
-  
+
 	// Read in spacing option
 	if ( tag->hasOption( "spacing" ) ) {
 		spacing_ = tag->getOption< Real >( "spacing" );
 	}
-	
+
 	// Read in Width Option
 	if ( tag->hasOption( "width" ) ) {
 		width_ = tag->getOption< Real >( "width" );
 	}
-  
+
 	// Read in thickness option
 	if ( tag->hasOption( "thickness" ) ) {
 		thickness_ = tag->getOption< Real >( "thickness" );
 	}
-	
+
 }
 
 /// @brief Create a new copy of this mover
@@ -162,7 +163,7 @@ protocols::moves::MoverOP
 VisualizeMembraneMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new VisualizeMembraneMover );
 }
-	
+
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
 VisualizeMembraneMoverCreator::keyname() const {
@@ -183,22 +184,22 @@ void
 VisualizeMembraneMover::apply( Pose & pose ) {
 
 	using namespace core::kinematics;
-	
+
 	TR << "Adding membrane planes represented as virtual residues to pose" << std::endl;
 
 	// Check that I am a membrane pose
 	if (! pose.conformation().is_membrane() ) {
 		utility_exit_with_message("Cannot visualize a non-membrane pose!");
 	}
-	
+
 	// Determine if the pose is fullatom (needed for residue typesets)
 	bool fullatom = pose.is_fullatom();
-	
+
 	utility::vector1< ResidueOP > membrane_residues;
-	
+
 	// IF first residue, create new chain
 	bool is_first( true );
-	
+
 	// Compute residues in the top plane
 	for ( Real i = -width_; i <= width_; i += spacing_ ) {
 		for ( Real j = -width_; j <= width_; j += spacing_ ) {
@@ -206,18 +207,18 @@ VisualizeMembraneMover::apply( Pose & pose ) {
 			// Create initial position, apply rotation
 			Vector pt_upper( i, j, thickness_ );
 			Vector pt_lower( i, j, -thickness_ );
-	
+
 			// Create a new residue, append to list
 			ResidueOP membrane_upper = create_membrane_virtual( pt_upper, fullatom );
 			ResidueOP membrane_lower = create_membrane_virtual( pt_lower, fullatom );
-			
+
 			// Append residue to list
 			membrane_residues.push_back( membrane_upper );
 			membrane_residues.push_back( membrane_lower );
-			
+
 		}
 	}
-	
+
 	// Append Residues to the pose
 	for ( Size i = 1; i <= membrane_residues.size(); ++i ) {
 		if ( is_first ) {
@@ -241,57 +242,57 @@ VisualizeMembraneMover::get_name() const {
 /// @brief Register Options with JD2
 void
 VisualizeMembraneMover::register_options() {
-	
+
 	using namespace basic::options;
-	
+
 	option.add_relevant( OptionKeys::membrane_new::visualize::spacing );
 	option.add_relevant( OptionKeys::membrane_new::visualize::width );
-	
+
 }
-	
+
 /// @brief Initialize Options from the Command Line
 /// @details Options allowed are vrt spacing and plane width
 void
 VisualizeMembraneMover::init_from_cmd() {
-	
+
 	using namespace basic::options;
-	
+
 	// Specify spacing option
 	if ( option[ OptionKeys::membrane_new::visualize::spacing ].user() ) {
 		spacing_ = option[ OptionKeys::membrane_new::visualize::spacing ]();
 	}
-	
+
 	// Specify width option
 	if ( option[ OptionKeys::membrane_new::visualize::width ].user() ) {
 		width_ = option[ OptionKeys::membrane_new::visualize::width ]();
 	}
-	
+
 	// Specify Thickness Option
 	if ( option[ OptionKeys::membrane_new::visualize::thickness ].user() ) {
 		thickness_ = option[ OptionKeys::membrane_new::visualize::thickness ]();
 	}
-	
+
 }
 
 ResidueOP
 VisualizeMembraneMover::create_membrane_virtual( Vector pos, bool fullatom ) {
-	
+
 	using namespace core::conformation;
 	using namespace core::chemical;
-	
+
 	// Grab the current residue typeset and create a new residue
 	ResidueTypeSetCOP const & residue_set(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 		);
-	
+
 	// Create a new Residue from rsd typeset of type MEM
 	ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("MEM") );
 	ResidueType const & membrane( *rsd_type_list[1] );
 	ResidueOP rsd( ResidueFactory::create_residue( membrane ) );
-	
+
 	// setup membrane thicnkess
 	Vector tk(0, 1.0, 30.0);
-	
+
 	// Fill the Residue with normal/center info
 	rsd->set_xyz(1, pos);
 	rsd->set_xyz(3, tk);

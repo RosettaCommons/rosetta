@@ -1,4 +1,4 @@
-// -*- made:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -125,9 +125,9 @@ void LoopProtocol::parse_my_tag( // {{{1
 
 	// Parse the 'temp_cycles' tag.
 
-	// The temp_cycles tag is complicated because it's a number optionally 
-	// followed by an 'x'.  If the 'x' is present, it means the number of cycles 
-	// should be the specified number multiplied by the loop length.  Otherwise 
+	// The temp_cycles tag is complicated because it's a number optionally
+	// followed by an 'x'.  If the 'x' is present, it means the number of cycles
+	// should be the specified number multiplied by the loop length.  Otherwise
 	// the number of cycles will just be the specified number.
 
 	if (tag->hasOption("temp_cycles")) {
@@ -150,22 +150,22 @@ void LoopProtocol::parse_my_tag( // {{{1
 
 	// Parse the 'auto_refine' tag.
 
-	// By default, the standard set of refiners will be applied after any 
-	// manually specified movers.  This makes it easy to experiment with 
-	// different movers without messing up the core protocol.  However, if you 
-	// want to specify your own refinement algorithm, you need to disable this 
+	// By default, the standard set of refiners will be applied after any
+	// manually specified movers.  This makes it easy to experiment with
+	// different movers without messing up the core protocol.  However, if you
+	// want to specify your own refinement algorithm, you need to disable this
 	// behavior via the auto_refine flag.
-	
+
 	if (! tag->getOption<bool>("auto_refine", true)) {
 		clear_refiners();
 	}
 
 	// Parse the 'fast' tag.
-	
+
 	if (tag->getOption<bool>("fast", false)) {
 		mark_as_test_run();
 	}
-	
+
 	// Add loop movers to this protocol by parsing the subtags.
 
 	foreach (TagCOP subtag, tag->getTags()) {
@@ -204,8 +204,8 @@ bool LoopProtocol::do_apply(Pose & pose) { // {{{1
 				attempt_loop_move(pose, i, j, k);
 			}
 		}
-		// The legacy code repacks and minimizes here.  This doesn't really 
-		// translate to the new framework, because the "kic" loop mover isn't 
+		// The legacy code repacks and minimizes here.  This doesn't really
+		// translate to the new framework, because the "kic" loop mover isn't
 		// distinct from the "repack" and "minimize" loop movers.
 	}
 
@@ -294,9 +294,9 @@ void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
 				rama2b, original_rama2b_weight_ * ramp_factor);
 	}
 
-	// The MonteCarlo object has to be explicitly updated with the new score 
-	// function.  You might think that since everything is sharing the same 
-	// pointer that this step would be unnecessary, but it seems that the 
+	// The MonteCarlo object has to be explicitly updated with the new score
+	// function.  You might think that since everything is sharing the same
+	// pointer that this step would be unnecessary, but it seems that the
 	// MonteCarlo object makes a copy or something.
 
 	monte_carlo_->score_function(*score_function);
@@ -376,7 +376,7 @@ Size LoopProtocol::get_sfxn_cycles() { // {{{1
 
 Size LoopProtocol::get_temp_cycles() { // {{{1
 	if (test_run_) { return 3; }
-	return scale_temp_cycles_ ? 
+	return scale_temp_cycles_ ?
 		temp_cycles_ * get_loops()->loop_size() :
 		temp_cycles_;
 }

@@ -1,11 +1,11 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:f;rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
- // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 // @file:   core/scoring/facts/FACTSPotential.cc
 // @brief:  The definitions of 3 classes of the FACTS algorithm resides here (see devel/khorvash/FACTSPotential.hh
@@ -84,10 +84,10 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  
+
   // First define natoms
   natoms_ = rsd.natoms();
-  
+
   //grab data from "database/chemical/atom_type_sets/fa_standard/extras/facts_params.txt
   Size const FACTS_RADIUS_INDEX( rsd.atom_type_set().extra_parameter_index( "FACTS_RADIUS" ) );
   Size const FACTS_CUT_INDEX   ( rsd.atom_type_set().extra_parameter_index( "FACTS_CUT"    ) );
@@ -113,7 +113,7 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
   } else {
     FACTS_ALPHA_INDEX = rsd.atom_type_set().extra_parameter_index( "FACTS_ALPHA"  );
   }
-  
+
   // Initialize array sizes & put in parameters
   q_.resize( natoms() );
   COradius2_.resize( natoms() );
@@ -139,11 +139,11 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 	// Read new charge set specified by "score::facts_charge_dir"
 	std::string filename;
 	if( option[ score::facts_eq_type ]().compare("apprx") == 0 ){ // Call neutral aliphatic charge set
-		filename = option[ in::path::database ](1).name() + "/" 
+		filename = option[ in::path::database ](1).name() + "/"
 			+ option[ score::facts_eff_charge_dir ]() + "/"
 			+ rsd.name() + ".params";
 	} else {
-		filename = option[ in::path::database ](1).name() + "/" 
+		filename = option[ in::path::database ](1).name() + "/"
 			+ option[ score::facts_charge_dir ]() + "/"
 			+ rsd.name() + ".params";
 	}
@@ -182,10 +182,10 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 		      (	rsd.aa() == core::chemical::aa_arg ||
 			rsd.aa() == core::chemical::aa_lys ||
 			rsd.aa() == core::chemical::aa_his ) );
-    
+
     is_chargedH_[i] = is_chargedH;
     Real vdw_radius = 0.0;
-    
+
     //Corrections for atomic parameters
     // 1. HIS aromatic carbons to be consistent with CHARMM definition
     if( rsd.aa() == core::chemical::aa_his && atmname == "aroC" ){
@@ -196,7 +196,7 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
       d1_[i] = -0.227929e+5; d2_[i] = -0.825630e+1;
       a0_[i] = -0.123827e+3; a1_[i] =  0.123827e+3; a2_[i] = 0.185613e-2; a3_[i] =  0.347902e+3;
       c0_[i] =  0.315402e+2; c1_[i] = -0.313502e+2; c2_[i] = 0.567384e-3; c3_[i] = -0.142830e+5;
-      
+
       // 2. ARG aromatic carbons to be consistent with CHARMM definition
       // copied from backbone carbon
     } else if( rsd.aa() == core::chemical::aa_arg && atmname == "aroC" ){
@@ -208,7 +208,7 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
       a0_[i] = -0.858924e+2; a1_[i] = 0.858904e+2; a2_[i] = 0.196363e-2; a3_[i] = 0.900140e+3;
       c0_[i] = 0.168481e+3; c1_[i] = -0.168287e+3; c2_[i] = 0.113765e-2; c3_[i] = -0.672543e+4;
 
- 			// 3. weaken OOC solvation energy - this is useful for binding affinity calculation 
+ 			// 3. weaken OOC solvation energy - this is useful for binding affinity calculation
  			// if there is uncertainty of interacting explicit water
 		} else if( binding_affinity && atmname == "OOC" ){
  			a0_[i] = -0.095500e+3; a1_[i] = 0.095000e+3; a2_[i] = 0.180000e-2; a3_[i] = 0.850000e+3;
@@ -221,14 +221,14 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
       } else {
 				not_using_[i] = false;
       }
-      
+
       alpha_[i] = type.extra_parameter( FACTS_ALPHA_INDEX );
       COradius2_[i] = type.extra_parameter( FACTS_CUT_INDEX )*type.extra_parameter( FACTS_CUT_INDEX );
       if( COradius2_[i] <= 1.0e-3 && !not_using_[i] ){ // Don't do this for Virtual atoms
 	TR << "Unrealistic cutoff radii: set to new cut " << 100.0 << std::endl;
 	COradius2_[i] = 10.0*10.0;
       }
-      
+
       b1_[i] = type.extra_parameter( FACTS_B1_INDEX );
       b2_[i] = type.extra_parameter( FACTS_B2_INDEX );
       d1_[i] = type.extra_parameter( FACTS_D1_INDEX );
@@ -276,7 +276,7 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
     }
     }
   */
-  
+
 }
 
 void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd )
@@ -327,7 +327,7 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 	assert( intbs_elec_scale.size() == 5 );
 	assert( intbs_solv_scale.size() == 5 );
 
-	bool const intrascale_by_level = 
+	bool const intrascale_by_level =
 		basic::options::option[ basic::options::OptionKeys::score::facts_intrascale_by_level ]();
 
   // 1-4 is important for solvation free energy of ASN/GLN/SER/THR
@@ -367,7 +367,7 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 					intra_elec_scale_[atm1][atm2] = 1.0;
 
 				// aa_specific rules
-				} else 
+				} else
 				*/
 				if(( rsd.aa() == core::chemical::aa_ser || rsd.aa() == core::chemical::aa_thr )
 					 && path_dist == 3 ){
@@ -415,7 +415,7 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 	} // atm1
 
 
-  // Plane rule overrides 
+  // Plane rule overrides
   for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
     for( Size atm2 = 1; atm2 <= rsd.natoms(); ++atm2 ){
       if( plane_to_self && rsd.aa() == core::chemical::aa_arg ) {
@@ -431,7 +431,7 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 
       if( plane_to_self && rsd.aa() == core::chemical::aa_his && plane_aa.has_value( "his" ) ) {
 				// Add all pairs in G or D or E position
-				if( 
+				if(
 					 (( rsd.atom_name(atm1).compare( 2, 1, "G" ) == 0 || rsd.atom_name(atm1).compare( 2, 1, "D" ) == 0)&&
 						rsd.atom_name(atm1).compare( 2, 1, "E" ) == 0 ) &&
 					 (( rsd.atom_name(atm2).compare( 2, 1, "G" ) == 0 || rsd.atom_name(atm2).compare( 2, 1, "D" ) == 0)&&
@@ -450,7 +450,7 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
       if( plane_to_self && rsd.aa() == core::chemical::aa_tyr && plane_aa.has_value( "tyr" ) ) {
 				// Add OH-aromatic ring pairs
 				if( ( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 ) ||
-						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "aroC" ) == 0 ) || 
+						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "aroC" ) == 0 ) ||
 						( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) ||
 						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "Haro" ) == 0 )
 						){
@@ -517,7 +517,7 @@ void FACTSResidueInfo::initialize(
   // This variable is used in res_res_burial and evaluate_polar(nonpolar)_energy
   // 06/27/13: Just fully turn on for fast evaluation...
   flag_for_calculation_ = utility::vector1< bool >( natoms(), true );
-  
+
   // Initialize Arrays
   Vector i( 0.0 );
   nmtr_ = utility::vector1< Vector >( natoms(), i ); // dnmtr of Ai (equation 4 on page 704 of FACTS paper)
@@ -526,7 +526,7 @@ void FACTSResidueInfo::initialize(
   Bi_ = utility::vector1< Real >( natoms(), 0.0 );// Bi (equation 4 on page 704 of FACTS paper)
   Ci_ = utility::vector1< Real >( natoms(), 0.0 );// Ci (equation 6 on page 704 of FACTS paper)
   Di_ = utility::vector1< Real >( natoms(), 0.0 );// Di (equation 10 on page 704 of FACTS paper)
-  
+
   esolvE_ = utility::vector1< Real >( natoms(), 0.0 ); // DeltaGi (equation 7 on page 704 of FACTS paper)
   sasa_ = utility::vector1< Real >( natoms(), 0.0 ); // atomic SASA (equation 11 on page 706 of FACTS paper)
   BR_ = utility::vector1< Real >( natoms(), 0.0 ); // BornRadius
@@ -545,7 +545,7 @@ void FACTSResidueInfo::initialize(
     sasaF2_ = utility::vector1< Vector >( natoms(), i );
   }
   restypeinfo_ = restypeinfo;
-} 
+}
 
 void FACTSResidueInfo::refresh_energy_cache( Size const nres ){
   E_elec_ = utility::vector1< Real >( nres, 0.0 );
@@ -553,7 +553,7 @@ void FACTSResidueInfo::refresh_energy_cache( Size const nres ){
   E_solv_pair_ = utility::vector1< Real >( nres, 0.0 );
   E_solv_self_ = utility::vector1< Real >( nres, 0.0 );
 }
-  
+
 void FACTSResidueInfo::store_xyz( Residue const &rsd ){
   xyz_.resize( 0 );
   for( Size iatm = 1; iatm <= rsd.natoms(); ++iatm ){
@@ -581,7 +581,7 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
       rsdtypemap[ &rsdtype ] = rsdtypeinfo;
       it = rsdtypemap.find( &rsdtype );
     }
-    
+
     residue_info_[i] = FACTSResidueInfoOP( new FACTSResidueInfo( *rotamer_set.rotamer(i), it->second, true ) );
   }
 } // FACTSRotamerSetInfo

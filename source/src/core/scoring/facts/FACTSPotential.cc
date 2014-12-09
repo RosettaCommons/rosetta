@@ -1,11 +1,11 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:f;rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
- // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 // @file:	 core/scoring/facts/FACTSPotential.cc
 // @brief:	The definitions of 3 classes of the FACTS algorithm resides here (see devel/khorvash/FACTSPotential.hh
@@ -396,16 +396,16 @@ void FACTSPotential::res_res_burial_for_scoring(
 
 			// Consideration for the first atom
 			if( facts1.enumeration_shell() && dis2 <= CutOff_sqr1 ){
-	
+
 				// Equation 5 on page 704 of FACTS paper
 				theta_sqrt = 1.0 - (dis2 / CutOff_sqr1);
 				thetaij = theta_sqrt*theta_sqrt;
 				// The term within the sigma of equation 3 on page 704 of FACTS'
 				Real Vi = factstype2->volume(atm2) * thetaij;
-				
+
 				// 1. Ai in equation 3 of page 704 of FACTS paper
 				facts1.Ai_[atm1] += Vi;
-				
+
 				// 2. Bi: the xyz coordinate of the nmtr of equation 4 on page 704 of FACTS paper
 				facts1.nmtr_[atm1] += (Vi/dis2)*dxyz;
 				facts1.dnmtr_[atm1] += Vi/dis;
@@ -413,17 +413,17 @@ void FACTSPotential::res_res_burial_for_scoring(
 
 			// Consideration for the second atom
 			if( facts2.enumeration_shell() &&	dis2 <= CutOff_sqr2 ){
-				
+
 				// Equation 5 on page 704 of FACTS paper
 				theta_sqrt = 1.0 - (dis2 / CutOff_sqr2);
 				thetaij = theta_sqrt*theta_sqrt;
-				
+
 				// The term within the sigma of equation 3 on page 704 of FACTS'
 				Real const Vi = V1*thetaij;
-				
+
 				// 1. Ai in equation 3 of page 704 of FACTS paper
 				facts2.Ai_[atm2] += Vi;
-				
+
 				// 2. Bi: the xyz coordinate of the nmtr of equation 4 on page 704 of FACTS paper
 				facts2.nmtr_[atm2]	-= (Vi/dis2)*dxyz;
 				facts2.dnmtr_[atm2] +=	Vi/dis; // the dnmtr of equation 4 on page 704 of FACTS paper
@@ -494,7 +494,7 @@ void FACTSPotential::get_self_terms(
 }
 
 // Collect the relationship information to correct the scales
-void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1, 
+void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 		FACTSRsdTypeInfoCOP , //factstype2,
 		scoring::etable::count_pair::CountPairFunctionCOP cpfxn14,
 		conformation::Residue const & rsd1,
@@ -553,7 +553,7 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 				scale_solv = adjbb_solv_scale( 5 );
 				scale_elec = adjbb_elec_scale( 5 );
 			}
-	
+
 		// BB-SC
 		} else if (( !rsd1.atom_is_backbone(atm1) && rsd2.atom_is_backbone(atm2)) ||
 				( rsd1.atom_is_backbone(atm1) && !rsd2.atom_is_backbone(atm2)) ){
@@ -644,8 +644,8 @@ void FACTSPotential::calculate_GBpair_exact(
 
 			if( same_res || adjacent ||
 					rsd2.seqpos() - rsd1.seqpos() == 2 ){
-				atompair_scale( factstype1, factstype2, cpfxn14, 
-												rsd1, rsd2, atm1, atm2, 
+				atompair_scale( factstype1, factstype2, cpfxn14,
+												rsd1, rsd2, atm1, atm2,
 												scale_solv, scale_elec, self_pair, same_res, adjacent );
 			}
 
@@ -829,8 +829,8 @@ void FACTSPotential::calculate_GBpair_fast(
 			Real scale_solv( 1.0 ), scale_elec( 1.0 );
 			bool self_pair( false );
 			if( same_res || adjacent )
-				atompair_scale( factstype1, factstype2, cpfxn14, 
-												rsd1, rsd2, atm1, atm2, 
+				atompair_scale( factstype1, factstype2, cpfxn14,
+												rsd1, rsd2, atm1, atm2,
 												scale_solv, scale_elec, self_pair, same_res, adjacent );
 
 			/// 0. Start evaluation: Common for elec and solv
@@ -1046,12 +1046,12 @@ void FACTSPotential::calculate_GBpair_v1trunk(
 				} else {
 					dxyz = xyz1 - xyz2;
 				}
-				
+
 				dshift2 = std::min( 2.25, dis2 );
 				if( factstype1->is_chargedH(atm1) ) BRi *= saltbridge_correction;
 				if( factstype2->is_chargedH(atm2) ) BRj *= saltbridge_correction;
 			}
-			
+
 			// Main run
 			Real BRij = BRi*BRj;
 			Real tmp1 = dis2/Kappa();
@@ -1096,7 +1096,7 @@ void FACTSPotential::calculate_GBpair_v1trunk(
 				} else {
 					Esolv_pair -= 0.5*fsolv*sf2;
 				}
-				
+
 				facts1.solvF2d_[atm1] += dsolvsf_drij*dxyz;
 				facts1.dsolv_dBR_[atm1] -= 0.5*sf2*g1*tmp2*(BRj + tmp1/BRi);
 				facts2.dsolv_dBR_[atm2] -= 0.5*sf2*g1*tmp2*(BRi + tmp1/BRj);
@@ -1108,10 +1108,10 @@ void FACTSPotential::calculate_GBpair_v1trunk(
 				} else {
 					Esolv_pair -= fsolv*sf2;
 				}
-				
+
 				facts1.elecF2_[atm1] += delecsf_drij*dxyz;
 				facts2.elecF2_[atm2] -= delecsf_drij*dxyz;
-				
+
 				facts1.solvF2d_[atm1] += dsolvsf_drij*dxyz;
 				facts2.solvF2d_[atm2] -= dsolvsf_drij*dxyz;
 				facts1.dsolv_dBR_[atm1] -= sf2*g1*tmp2*(BRj + tmp1/BRi);
@@ -1184,11 +1184,11 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 
 			// intra-res
 			for ( Size atm2 = atm1+1; atm2 <= facts1.natoms(); ++atm2){
-	if( atm1 == atm2 || facts1.restypeinfo()->not_using(atm2) ) continue; 
-	
+	if( atm1 == atm2 || facts1.restypeinfo()->not_using(atm2) ) continue;
+
 	Vector const &crd2 = rsd1.xyz(atm2);
 	Vector const dxyz( crd1 - crd2 );
-	
+
 	atom_atom_context_derivative( facts1, facts1, atm1, atm2, dxyz,
 							full_update );
 			}
@@ -1199,11 +1199,11 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 				irue = energy_graph.get_node( res1 )->const_upper_edge_list_end();
 			iru != irue; ++iru ) {
 	Size res2( (*iru)->get_other_ind( res1 ) );
-	
+
 	FACTSResidueInfo & facts2( facts_info->residue_info( res2 ) );
 	FACTSRsdTypeInfoCOP factstype2 = facts2.restypeinfo();
 	core::conformation::Residue const &rsd2 = pose.residue(res2);
-	
+
 	for ( Size atm2 = 1; atm2 <= facts2.natoms(); ++atm2){
 		Vector const &crd2 = rsd2.xyz(atm2);
 
@@ -1623,10 +1623,10 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 			cpfxn14->count( atm1, atm2, cpweight4, path_dist );
 			Real scale_solv( cpweight4 ); Real scale_elec( cpweight4 );
 			bool self_pair( false );
-			
+
 			if( same_res || adjacent )
-				atompair_scale( factstype1, factstype2, cpfxn14, 
-												rsd1, rsd2, atm1, atm2, 
+				atompair_scale( factstype1, factstype2, cpfxn14,
+												rsd1, rsd2, atm1, atm2,
 												scale_solv, scale_elec, self_pair, same_res, adjacent );
 
 			// 0. Start evaluation: Common for elec and solv

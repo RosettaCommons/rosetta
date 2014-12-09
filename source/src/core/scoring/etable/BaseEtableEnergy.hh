@@ -13,16 +13,16 @@
 /// @author Andrew Leaver-Fay
 /// @author Oliver Lange
 
-/***********************************************************************
-++++++++++++++++++++++++++++ WARNING +++++++++++++++++++++++++++++++++++
-
-the CoarseEtable is currently not threadsafe, since it has the
-"mutable" element seq_dist...
-
-could move seq_dist into CoarseEtableEnergy --> then at least the
-CoarseEtable can be shared between threads
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-************************************************************************/
+///***********************************************************************
+//++++++++++++++++++++++++++++ WARNING +++++++++++++++++++++++++++++++++++
+//
+//the CoarseEtable is currently not threadsafe, since it has the
+//"mutable" element seq_dist...
+//
+//could move seq_dist into CoarseEtableEnergy --> then at least the
+//CoarseEtable can be shared between threads
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//************************************************************************/
 
 
 #ifndef INCLUDED_core_scoring_etable_BaseEtableEnergy_hh
