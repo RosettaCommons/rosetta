@@ -255,7 +255,7 @@ correct_dunbrack() {
 	using namespace core::chemical;
 
 	// smooth things by assuming this many isoenergetic rotamers in each bin
-	core::Real MEST = 5.0;
+	//core::Real MEST = 5.0;
 
 	//params
 	core::Real cap = option[ tors::cap ]();
