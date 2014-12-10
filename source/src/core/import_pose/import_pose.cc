@@ -33,7 +33,6 @@
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 
 #include <core/util/metalloproteins_util.hh>
 
@@ -664,7 +663,6 @@ void build_pose_as_is2(
 	}
 
 	pose.pdb_info( pdb_info );
-	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
 }
 
 /// @details

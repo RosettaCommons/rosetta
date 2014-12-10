@@ -362,8 +362,18 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	// mapping from working pose to full pose.
 	utility::vector1< Size > const &
 	get_res_list_from_full_model_info_const( pose::Pose const & pose ) {
+		runtime_assert( full_model_info_defined( pose ) );
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		return full_model_info.res_list();
+	}
+
+	// this function works even if full_model_info is not defined.
+	utility::vector1< Size >
+	get_res_list_const( pose::Pose const & pose ) {
+		if ( full_model_info_defined( pose ) ) return get_res_list_from_full_model_info_const( pose );
+		utility::vector1< Size > res_list;
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) res_list.push_back( n );
+		return res_list;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////

@@ -213,7 +213,7 @@ namespace align {
 	StepWisePoseAligner::get_res_list_in_reference( pose::Pose const & pose ) const {
 
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-		utility::vector1< Size > const & reference_pose_res_list = get_res_list_from_full_model_info_const( reference_pose_ );
+		utility::vector1< Size > const & reference_pose_res_list = get_res_list_const( reference_pose_ );
 
 		utility::vector1< Size > res_list_in_reference;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){

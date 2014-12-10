@@ -70,6 +70,9 @@ namespace full_model_info {
 	utility::vector1< Size > const &
 	get_res_list_from_full_model_info_const( pose::Pose const & pose );
 
+	utility::vector1< Size >
+	get_res_list_const( pose::Pose const & pose );
+
 	utility::vector1< utility::vector1< Size > >
 	get_move_elements_from_full_model_info( pose::Pose & pose );
 
