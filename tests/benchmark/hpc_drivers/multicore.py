@@ -8,7 +8,7 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) + '/base.py')  # A 
 
 
 class MultiCore_HPC_Driver(HPC_Driver):
-    def execute(self, command_line, initial_dir, target, memory=256, time=1):
+    def execute(self, command_line, initial_dir, target, memory=256, run_time=24):
         self.cpu_usage -= time.time()/60./60.
         log = execute('Executing {}'.format(target), 'cd {} && {}'.format(initial_dir, command_line), tracer=self.tracer, return_='output')
         with file(self.working_dir+'/.hpc.{target}.log'.format(target=target), 'w') as f: f.write(log)

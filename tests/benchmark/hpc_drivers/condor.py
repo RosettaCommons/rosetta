@@ -70,7 +70,7 @@ class Condor_HPC_Driver(HPC_Driver):
             #with file(execute_sh, 'w') as f: f.write('#!/bin/bash\n{executable} {arguments}\n'.format(**j));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
             condor_file = self.working_dir + '/.hpc.{}.condor'.format(j['target'])
-            condor_spec = T_condor_job_template.format(process='$(Process)', log_dir=self.working_dir, run_time=int(j['time']*60*60),
+            condor_spec = T_condor_job_template.format(process='$(Process)', log_dir=self.working_dir, run_time=int(j['run_time']*60*60),
                                                        #requirements=self.config.get('condor', 'requirements'),
                                                        execute_sh=execute_sh, **j)
 

@@ -55,7 +55,7 @@ class HPC_Driver:
         self.jobs = []  # list of all jobs currently running by this driver, Job class is driver depended, could be just int or something more complex
 
 
-    def execute(self, command_line, initial_dir, target, memory=256, time=24, shell_wrapper=True):
+    def execute(self, command_line, initial_dir, target, memory=256, run_time=24, shell_wrapper=True):
         ''' Execute given command line on HPC cluster, must accumulate cpu hours in self.cpu_usage '''
 
         if shell_wrapper:
@@ -63,7 +63,7 @@ class HPC_Driver:
             with file(shell_wrapper_sh, 'w') as f: f.write('#!/bin/bash\n{}\n'.format(command_line));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
             command_line = shell_wrapper_sh
 
-        job = dict(target=target, executable=command_line, arguments='', queue=1, memory=memory, initial_dir=initial_dir, time=time)
+        job = dict(target=target, executable=command_line, arguments='', queue=1, memory=memory, initial_dir=initial_dir, run_time=run_time)
         self.execute_hpc_jobs([job])
 
 
@@ -76,7 +76,7 @@ class HPC_Driver:
                 initial_dir : path to starting dir from which command should be executed
                 queue : int number of jobs to submit.
                 memory : Megabytes required to be present on node for job to run,
-                time (float) : number of hours which job allowed to run
+                run_time (float) : number of hours which job allowed to run
 
             must accumulate cpu hours in self.cpu_usage
         '''

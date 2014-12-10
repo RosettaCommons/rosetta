@@ -64,14 +64,18 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
             if os.path.isfile(json_results_file): os.remove(json_results_file)
             hpc_driver.execute(command_line, '{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), 'performance_benchmark')
 
-        json_results = json.load( file(json_results_file) )
         output = file(output_log_file).read()
-
-        results[_ResultsKey_] = { _TestsKey_:{} }
-        for t in json_results: results[_ResultsKey_][_TestsKey_][t] = {_StateKey_: _S_queued_for_comparison_, _LogKey_: '', 'run_time': json_results[t] }
-
-        results[_StateKey_] = _S_queued_for_comparison_
         results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output
+
+        try:
+            json_results = json.load( file(json_results_file) )
+            results[_ResultsKey_] = { _TestsKey_:{} }
+            for t in json_results: results[_ResultsKey_][_TestsKey_][t] = {_StateKey_: _S_queued_for_comparison_, _LogKey_: '', 'run_time': json_results[t] }
+            results[_StateKey_] = _S_queued_for_comparison_
+
+        except IOError:
+            results[_ResultsKey_] = { _TestsKey_:{} }
+            results[_StateKey_] = _S_script_failed_
 
         return results
 

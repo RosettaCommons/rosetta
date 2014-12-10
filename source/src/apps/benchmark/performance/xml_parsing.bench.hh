@@ -30,7 +30,7 @@ public:
 	XMLParseBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
-
+		rosetta_script_.str( std::string() );
 
 		rosetta_script_
 			 << "This protocol will simply do low-resolution followed by high-resolution docking.\n"
