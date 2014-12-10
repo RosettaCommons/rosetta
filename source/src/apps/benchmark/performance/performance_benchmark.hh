@@ -26,7 +26,7 @@ static thread_local basic::Tracer TR( "benchmark" );
 class PerformanceBenchmark
 {
 public:
-	PerformanceBenchmark(std::string name) : result_(0.), name_(name) {
+	PerformanceBenchmark(std::string name) : result_(0.0), name_(name) {
 		allBenchmarks().push_back(this);
 		for(unsigned int i=0; i<name_.size(); i++) {
 			if( name_[i]=='.' || name_[i]==' ' ) name_[i]='_';

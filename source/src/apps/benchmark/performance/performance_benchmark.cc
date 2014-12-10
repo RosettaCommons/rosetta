@@ -155,7 +155,7 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 	tearDown();
 	TR << "Tear down "<< name() << "... Done." << std::endl << std::endl;
 
-	result_ = t;
+	result_ += t;
 	return t;
 }
 
@@ -169,8 +169,8 @@ void PerformanceBenchmark::executeOneBenchmark(
 	bool found_benchmark(false);
 	for(Size i=0; i<all.size(); i++){
 		PerformanceBenchmark * B = all[i];
-		if(B->name() == name){
-			B->execute(scaleFactor);
+		if(B->name() == name) {
+   		    for(int s=0; s<scaleFactor; ++s) B->execute(1);
 			found_benchmark = true;
 			break;
 		}
@@ -193,9 +193,11 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 
 	std::vector<PerformanceBenchmark *> & all( allBenchmarks() );
 
-	for(Size i=0; i<all.size(); i++) {
-		PerformanceBenchmark * B = all[i];
-		B->execute(scaleFactor);
+	for(int s=0; s<scaleFactor; ++s) {
+		for(Size i=0; i<all.size(); ++i) {
+			PerformanceBenchmark * B = all[i];
+			B->execute(1);
+		}
 	}
 	TR << std::endl << "Executing all benchmarks... Done." << std::endl;
 }

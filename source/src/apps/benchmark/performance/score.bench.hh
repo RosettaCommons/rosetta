@@ -239,7 +239,7 @@ public:
 
 	virtual void run(core::Real scaleFactor) {
 		scoring::ScoreFunction scorefxn;
-		for(int i=0; i<45000*scaleFactor; i++) {
+		for(int i=0; i<15000*scaleFactor; i++) {
 			scorefxn(pose);
 			pose.energies().clear();
 		}

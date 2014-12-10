@@ -31,7 +31,7 @@ public:
 		using namespace utility::keys;
 		using namespace basic::options;
 
-		core::Size reps( (core::Size)(70000*scaleFactor) );
+		core::Size reps( (core::Size)(40000*scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor.
 		for(core::Size i=0; i<reps; i++) {
 			for( KeyLookup< OptionKey >::ConstIterator

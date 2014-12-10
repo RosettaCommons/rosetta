@@ -54,7 +54,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
 
         json_results_file = '{rosetta_dir}/source/_performance_'.format(**vars())
         output_log_file = '{working_dir}/_performance_.log'.format(**vars())
-        command_line = '{rosetta_dir}/source/bin/performance_benchmark.{ext} -database {rosetta_dir}/database -mute core protocols -in:file:extra_res_path extra_params 2>&1 >{output_log_file}'.format(**vars())
+        command_line = '{rosetta_dir}/source/bin/performance_benchmark.{ext} -database {rosetta_dir}/database -benchmark_scale 2 -mute core protocols -in:file:extra_res_path extra_params 2>&1 >{output_log_file}'.format(**vars())
 
         #performance_benchmark_sh = os.path.abspath(working_dir + '/performance_benchmark.sh')
         #with file(performance_benchmark_sh, 'w') as f: f.write('#!/bin/bash\n{}\n'.format(command_line));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)

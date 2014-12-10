@@ -70,7 +70,7 @@ make_scorefxn(std::string weights_tag){
 
 using namespace protocols::ligand_docking;
 
-class LigandDockBench : public protocols::moves::Mover{
+class LigandDockBench : public protocols::moves::Mover {
 private:
 	StartFrom start_from_;
 	Translate_info translate_info_;
@@ -171,22 +171,25 @@ class LigandDockScriptBenchmark : public PerformanceBenchmark
 public:
 	LigandDockScriptBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	core::pose::Pose ligand_dock_pose;
-	LigandDockBench ligand_dock_protocol_;
+	core::pose::PoseOP ligand_dock_pose_;
+	LigandDockBenchOP ligand_dock_protocol_;
 
 	virtual void setUp() {
 		basic::options::option.load_options_from_file("ligand_dock/ligand_dock_script_flags.txt");
-		ligand_dock_protocol_.setup(); // Can't call this from the constructor because flags are needed by score function
-		std::string pdb_file_name= basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
-		core::import_pose::pose_from_pdb(ligand_dock_pose, pdb_file_name);
 
+		ligand_dock_protocol_ = LigandDockBenchOP( new LigandDockBench);
+		ligand_dock_protocol_->setup(); // Can't call this from the constructor because flags are needed by score function
+
+		std::string pdb_file_name= basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
+		ligand_dock_pose_ = core::pose::PoseOP( new core::pose::Pose );
+		core::import_pose::pose_from_pdb(*ligand_dock_pose_, pdb_file_name);
 	};
 
 	virtual void run(core::Real scaleFactor) {
 		core::Size reps( (core::Size)(1 * scaleFactor) );
 		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
 		for(core::Size i=0; i< reps; i++) {
-			ligand_dock_protocol_.apply(ligand_dock_pose);
+			ligand_dock_protocol_->apply(*ligand_dock_pose_);
 		}
 
 	};
