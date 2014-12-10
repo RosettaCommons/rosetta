@@ -383,7 +383,8 @@ main( int argc, char* argv [] )
 		}else{
 			core::import_pose::pose_from_pdb(pose, files[f]);
 			std::string output = pose.pdb_info()->name();
-			optimize_pose(pose,scorefxn,(output.erase(output.find(".pdb",0))));
+			std::string pdb_prefix( utility::string_split( utility::string_split( output, '/' ).back(), '.' ).front() );
+			optimize_pose(pose, scorefxn, pdb_prefix);
 			//create constraints for all residues
 			//type: HARMONIC
 			//then minimize
