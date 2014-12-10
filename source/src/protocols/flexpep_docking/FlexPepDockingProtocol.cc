@@ -1205,7 +1205,7 @@ FlexPepDockingProtocol::addLowResStatistics
     cur_job->add_string_real_pair( "rmsBB_intrf_lowres",
 		rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, native_interface_residues, is_protein_backbone ) );
   }
-  else if(!flags_.pep_fold_only){
+  else if(flags_.pep_fold_only){
     cur_job->add_string_real_pair( "rmsCA_lowres",
 		rmsd_with_super( native_CEN, pose_after_lowres_CEN, is_protein_CA ) );
 	  cur_job->add_string_real_pair( "rmsBB_lowres",
