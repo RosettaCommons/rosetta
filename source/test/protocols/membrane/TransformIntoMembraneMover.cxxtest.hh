@@ -69,7 +69,7 @@ public:
 
 		// center and normal
 		Vector center (0, 0, 0);
-		Vector normal (0, 0, 1);
+		Vector normal (0, 0, 15);
 
 		// Add Membrane to pose
 		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile_, 0 ) );
@@ -93,7 +93,7 @@ public:
 
 		// set new membrane to transform pose into
 		Vector new_center (0, 0, 0);
-		Vector new_normal (0, 0, 1);
+		Vector new_normal (0, 0, 15);
 
 		// membrane default that are not moved, output in PDB
 		Vector mem_center (0, 0, 0);
@@ -105,10 +105,10 @@ public:
 		transform->apply( *pose_ );
 
 		// check positions of CA atoms of first and last residue after rotation
-		Vector res1_after (-11.395, 14.293, -4.035);
-		Vector res40_after (-14.556, -5.064, 24.464);
-		Vector res41_after (9.270, 1.735, -5.512);
-		Vector res80_after (10.928, -7.104, 23.646);
+		Vector res1_after ( -11.5162, 14.2177, -3.9571 );
+		Vector res40_after (  -14.1853, -4.9844, 24.6974 );
+		Vector res41_after ( 9.1834, 1.7434, -5.6530 );
+		Vector res80_after ( 11.2935, -6.9151, 23.5296 );
 
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
@@ -132,7 +132,7 @@ public:
 
 		// set new membrane to transform pose into
 		Vector new_center (20, 20, 20);
-		Vector new_normal (1, 0, 0);
+		Vector new_normal (15, 0, 0);
 
 		// membrane default that are not moved, output in PDB
 		Vector mem_center (0, 0, 0);
@@ -144,10 +144,10 @@ public:
 		transform->apply( *pose_ );
 
 		// check positions of CA atoms of first and last residue after rotation
-		Vector res1_after (15.965, 37.845, 23.962);
-		Vector res40_after (44.464, 21.842, 35.302);
-		Vector res41_after (14.488, 17.488, 10.909);
-		Vector res80_after (43.646, 8.819, 13.302);
+		Vector res1_after ( 16.0428, 37.8056, 24.2101 );
+		Vector res40_after ( 44.6974, 21.6612, 34.9435 );
+		Vector res41_after ( 14.3469, 17.5878, 10.9690 );
+		Vector res80_after ( 43.5296, 8.8708, 12.8232 );
 
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );

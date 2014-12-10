@@ -18,8 +18,11 @@
 #include <protocols/membrane/AddMembraneMover.hh> 
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
+#include <protocols/membrane/visualize/VisualizeEmbeddingMover.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/util.hh>
+#include <core/conformation/membrane/SpanningTopology.fwd.hh>
+#include <core/conformation/membrane/Span.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/Mover.hh>
@@ -52,12 +55,15 @@
 
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
 
+using namespace core;
 using namespace numeric;
 using namespace protocols::moves;
 using namespace core::kinematics;
+using namespace core::conformation::membrane;
 using namespace protocols::membrane;
 using namespace protocols::simple_moves;
 using namespace protocols::membrane::geometry;
+using namespace protocols::membrane::visualize;
 
 /// @brief Load Membrane Mover: Load and Initialize a Membrane Protein
 /// using Rosetta's new Membrane Framework
@@ -86,25 +92,47 @@ public:
 		AddMembraneMoverOP add_memb( new AddMembraneMover() );
 		add_memb->apply( pose );
 
+		// get topology
+		SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+
+		// get embedding object from pose and topology
+//		PoseOP pose1( new Pose( pose ) );
+		EmbeddingOP embedding( new Embedding( topo, pose ) );
+		embedding->show();
+		
+//		Vector new_center (0, 0, 0);
+//		Vector new_normal (0, 0, 15);
+//		std::string spanfile("protocols/membrane/1AFO_AB.span");
+
+		// reorder foldtree
+//		pose.fold_tree().show(std::cout);
+//		core::kinematics::FoldTree foldtree = pose.fold_tree();
+//		foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
+//		pose.fold_tree( foldtree );
+//		TR << "foldtree reordered" << std::endl;
+//		pose.fold_tree().show(std::cout);
+		
+//		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile ) );
+//		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover() );
+//		rt->apply( pose );
+		
+		// Visualize embedding
+//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
+		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
+		vis_emb->apply( pose );
+
 		// before move
 		pose.dump_pdb("before.pdb");
 
-		// reorder foldtree
-		pose.fold_tree().show(std::cout);
-		core::kinematics::FoldTree foldtree = pose.fold_tree();
-		foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
-		pose.fold_tree( foldtree );
-		TR << "foldtree reordered" << std::endl;
-		pose.fold_tree().show(std::cout);
-
-		// define vectors
-		Vector new_center(20, 20, 20);
-		Vector new_normal(1, 0, 0);
-//		Vector new_center(0, 0, 0);
-//		Vector new_normal(0, 0, 1);
-				
-		Size jumpnum = pose.conformation().membrane_info()->membrane_jump();
-		TR << "jump: " << jumpnum << std::endl;
+//
+//		// define vectors
+//		Vector new_center(20, 20, 20);
+//		Vector new_normal(1, 0, 0);
+////		Vector new_center(0, 0, 0);
+////		Vector new_normal(0, 0, 1);
+//				
+//		Size jumpnum = pose.conformation().membrane_info()->membrane_jump();
+//		TR << "jump: " << jumpnum << std::endl;
 		
 		// mover
 //		TranslationMoverOP trans = new TranslationMover( translation, jumpnum );
@@ -116,11 +144,11 @@ public:
 //		TranslationRotationMoverOP rt = new TranslationRotationMover( old_center, old_normal, new_center, new_normal, jumpnum );
 //		rt->apply( pose );
 
-		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile_name() ) );
-		rt->apply( pose );
-
-		// after move
-		pose.dump_pdb("after.pdb");
+//		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile_name() ) );
+//		rt->apply( pose );
+//
+//		// after move
+//		pose.dump_pdb("after.pdb");
 
 
 ////////////////////////////////////////////////////

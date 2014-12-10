@@ -98,7 +98,8 @@ public: // test functions
 		TS_TRACE("Test from_span function");
 		
 		// read in pose
-		core::pose::PoseOP pose = core::import_pose::pose_from_pdb("protocols/membrane/geometry/1AFO_AB.pdb");
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_AB.pdb" );
 		
 		// create object
 		Size res1(15);
@@ -109,11 +110,11 @@ public: // test functions
 		Vector start(-0.97, -1.864, -12.281);
 		Vector end(-1.246, -7.692, 13.217);
 		Vector center(-1.108, -4.778, 0.468);
-		Vector normal(-0.0105517, -0.222808, 0.974805);
+		Vector normal(-0.1582, -3.3421, 14.6220);
 		
 		// check positions
-		TS_ASSERT( position_equal_within_delta( pose->residue( res1 ).atom( 2 ).xyz(), start, 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( pose->residue( res2 ).atom( 2 ).xyz(), end, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( pose.residue( res1 ).atom( 2 ).xyz(), start, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( pose.residue( res2 ).atom( 2 ).xyz(), end, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed->center(), center, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed->normal(), normal, 0.001 ) );
 		

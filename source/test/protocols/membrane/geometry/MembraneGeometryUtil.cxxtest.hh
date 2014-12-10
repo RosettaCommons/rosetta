@@ -20,6 +20,7 @@
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
 #include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -63,7 +64,121 @@ public: // test functions
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	// TODO: compute_structure_based_membrane_position: replace it!
+	// compute_structure_based_membrane_position
+	void test_compute_structure_based_membrane_position() {
+		
+		TS_TRACE("Test compute_structure_based_membrane_position");
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
+		// 1AFO
+		// read in pose and create topology object
+		TS_TRACE("1AFO");
+		Pose pose1;
+		core::import_pose::pose_from_pdb( pose1, "protocols/membrane/geometry/1AFO_.pdb" );
+
+		// create membrane pose
+		Vector center(0,0,0);
+		Vector normal(0,0,1);
+		AddMembraneMoverOP addmem1( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
+		addmem1->apply( pose1 );
+
+		// define vectors and object
+		Vector center1(0.53225, 0.361, 0.095);
+		Vector normal1(12.7367, 7.68036, -1.94611);
+		
+		// compute embedding
+		EmbeddingDefOP embed1( compute_structure_based_membrane_position( pose1 ) );
+		
+		// compare
+		TS_ASSERT( position_equal_within_delta( embed1->center(), center1, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( embed1->normal(), normal1, 0.001 ) );
+		
+		// 1BL8
+		TS_TRACE("1BL8");
+		Pose pose2;
+		core::import_pose::pose_from_pdb( pose2, "protocols/membrane/geometry/1BL8_.pdb" );
+		AddMembraneMoverOP addmem2( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1BL8__tr.span" ) );
+		addmem2->apply(pose2);
+		Vector center2(73.9421, 26.7549, 24.4493);
+		Vector normal2(-5.7604, 0.605734, -13.8366);
+		EmbeddingDefOP embed2( compute_structure_based_membrane_position( pose2 ) );
+		TS_ASSERT( position_equal_within_delta( embed2->center(), center2, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( embed2->normal(), normal2, 0.001 ) );
+
+		// 1QJP - beta-barrel
+		TS_TRACE("1QJP");
+		Pose pose3;
+		core::import_pose::pose_from_pdb( pose3, "protocols/membrane/geometry/1QJP_.pdb" );
+		AddMembraneMoverOP addmem3( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1QJP__tr.span" ) );
+		addmem3->apply(pose3);
+		Vector center3(31.2161, 16.9685, 37.6119);
+		Vector normal3(-13.1689, 7.07507, -1.23442);
+		EmbeddingDefOP embed3( compute_structure_based_membrane_position( pose3 ) );
+		TS_ASSERT( position_equal_within_delta( embed3->center(), center3, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( embed3->normal(), normal3, 0.001 ) );
+
+		// 2BS2
+		TS_TRACE("2BS2");
+		Pose pose4;
+		core::import_pose::pose_from_pdb( pose4, "protocols/membrane/geometry/2BS2_CF.pdb" );
+		AddMembraneMoverOP addmem4( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
+		addmem4->apply(pose4);
+		Vector center4(21.4326, 6.0464, -41.0573);
+		Vector normal4(-0.0900585, -0.176022, -14.9987);
+		EmbeddingDefOP embed4( compute_structure_based_membrane_position( pose4 ) );
+		TS_ASSERT( position_equal_within_delta( embed4->center(), center4, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( embed4->normal(), normal4, 0.001 ) );
+
+		// 2MPN
+		TS_TRACE("2MPN");
+		Pose pose5;
+		core::import_pose::pose_from_pdb( pose5, "protocols/membrane/geometry/2MPN_.pdb" );
+		AddMembraneMoverOP addmem5( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2MPN__tr.span" ) );
+		addmem5->apply(pose5);
+		Vector center5(0.3645, 3.66025, 41.345);
+		Vector normal5(0.104341, 14.9499, 1.221);
+		EmbeddingDefOP embed5( compute_structure_based_membrane_position( pose5 ) );
+		TS_ASSERT( position_equal_within_delta( embed5->center(), center5, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( embed5->normal(), normal5, 0.001 ) );
+
+		// 2OAR
+		TS_TRACE("2OAR");
+		Pose pose6;
+		core::import_pose::pose_from_pdb( pose6, "protocols/membrane/geometry/2OAR_.pdb" );
+		AddMembraneMoverOP addmem6( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2OAR__tr.span" ) );
+		addmem6->apply(pose6);
+		Vector center6(18.8453, 122.117, 1.079);
+		Vector normal6(-11.3264, -9.83365, 0.106647);
+		EmbeddingDefOP embed6( compute_structure_based_membrane_position( pose6 ) );
+		TS_ASSERT( position_equal_within_delta( embed6->center(), center6, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( embed6->normal(), normal6, 0.001 ) );
+
+		// 2UUH
+		TS_TRACE("2UUH");
+		Pose pose7;
+		core::import_pose::pose_from_pdb( pose7, "protocols/membrane/geometry/2UUH__tr.pdb" );
+		AddMembraneMoverOP addmem7( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2UUH__tr.span" ) );
+		addmem7->apply(pose7);
+		Vector center7(-0.000166667, -0.000125, 0.295625);
+		Vector normal7(-1.19923e-05, -2.70232e-05, -15);
+		EmbeddingDefOP embed7( compute_structure_based_membrane_position( pose7 ) );
+		TS_ASSERT( position_equal_within_delta( embed7->center(), center7, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( embed7->normal(), normal7, 0.001 ) );
+
+		// 3PXO
+		TS_TRACE("3PXO");
+		Pose pose8;
+		core::import_pose::pose_from_pdb( pose8, "protocols/membrane/geometry/3PXO_.pdb" );
+		AddMembraneMoverOP addmem8( new AddMembraneMover( center, normal, "protocols/membrane/geometry/3PXO__tr.span" ) );
+		addmem8->apply(pose8);
+		Vector center8(-36.1201, -7.59636, 37.6713);
+		Vector normal8(14.793, 2.47196, -0.237567);
+		EmbeddingDefOP embed8( compute_structure_based_membrane_position( pose8 ) );
+		TS_ASSERT( position_equal_within_delta( embed8->center(), center8, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( embed8->normal(), normal8, 0.001 ) );
+		
+	}
 
 	// check vector for reasonable size
 	void test_check_vector() {
@@ -94,8 +209,7 @@ public: // test functions
 		Vector v3(7, 8, 9);
 		Vector v4(7, 5, 3);
 		Vector avg_center(4, 5, 6);
-//		Vector avg_normal(1.333, 0.666, 0);
-		Vector avg_normal(6, 6, 6);
+		Vector avg_normal(8.66, 8.66, 8.66);
 		
 		// create embedding objects
 		EmbeddingDefOP emb1( new EmbeddingDef( v1, v2 ) );

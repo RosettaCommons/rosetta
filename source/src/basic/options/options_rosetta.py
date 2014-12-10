@@ -2504,6 +2504,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		# Visualization Options (Visualize Membrane Mover)
 		Option_Group( 'visualize',
+			Option( 'embedding', 'Boolean', desc='Visualize embedding centers and normals for each TMspan' ),
 			Option( 'spacing', 'Real', desc="Spacing of virtual membrane residues representing the membrane planes", default='5' ),
 			Option( 'width', 'Real', desc='Width of membrane planes for n by n plane', default='100' ),
 			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),

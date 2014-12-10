@@ -63,7 +63,7 @@ using namespace protocols::simple_moves;
 SetMembranePositionMover::SetMembranePositionMover() :
 	Mover(),
 	center_( 0.0, 0.0, 0.0 ),
-	normal_( 0.0, 0.0, 1.0 )
+	normal_( 0.0, 0.0, 15.0 )
 {}
 
 /// @brief Custom Constructor
@@ -193,7 +193,7 @@ SetMembranePositionMoverCreator::mover_name() {
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneNormalMover::SetMembraneNormalMover() :
 	Mover(),
-	normal_( 0.0, 0.0, 1.0 )
+	normal_( 0.0, 0.0, 15.0 )
 {}
 
 /// @brief Custom Constructor
@@ -299,20 +299,20 @@ SetMembraneNormalMover::parse_my_tag(
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
-SetMembraneNomalMoverCreator::create_mover() const {
+SetMembraneNormalMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new SetMembraneNormalMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
-SetMembraneNomalMoverCreator::keyname() const {
-	return SetMembraneNomalMoverCreator::mover_name();
+SetMembraneNormalMoverCreator::keyname() const {
+	return SetMembraneNormalMoverCreator::mover_name();
 }
 
 /// @brief Mover name for Rosetta Scripts
 std::string
-SetMembraneNomalMoverCreator::mover_name() {
-	return "SetMembraneNomalMoverr";
+SetMembraneNormalMoverCreator::mover_name() {
+	return "SetMembraneNormalMover";
 }
 
 // Membrane Position Rotation Mover /////////////////////////////////////////////////////////////////

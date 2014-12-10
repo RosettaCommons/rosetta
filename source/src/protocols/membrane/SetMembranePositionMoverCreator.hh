@@ -37,7 +37,7 @@ public:
 };
 
 /// @brief Mover creator for membrane rotation mover
-class SetMembraneNomalMoverCreator : public protocols::moves::MoverCreator {
+class SetMembraneNormalMoverCreator : public protocols::moves::MoverCreator {
 	
 public:
 	

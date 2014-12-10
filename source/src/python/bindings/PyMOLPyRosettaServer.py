@@ -859,10 +859,11 @@ def compute_plane_positions( center, normal, thickness, rg, npoints=4 ):
         p.z = -normal.x - normal.y
 
     # Scale point by radius of gyration
-    p = XYZCoord( 2*rg*p.x, 2*rg*p.y, 2*rg*p.z )
+#    p = XYZCoord( 2*rg*p.x, 2*rg*p.y, 2*rg*p.z )
+    p = XYZCoord( 5*p.x, 5*p.y, 5*p.z )
 
     # Project center onto the normal by thickness to compute upper and lower
-    t = thickness
+    t = thickness / 15
     upper = add_vectors( center, XYZCoord( normal.x*t, normal.y*t, normal.z*t ) )
     lower = add_vectors( center, XYZCoord( -normal.x*t, -normal.y*t, -normal.z*t ) )
 

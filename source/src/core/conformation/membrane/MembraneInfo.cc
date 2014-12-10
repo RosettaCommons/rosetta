@@ -212,7 +212,7 @@ MembraneInfo::membrane_normal() const {
 	Vector normal_tracked = conformation_.residue( membrane_rsd_num() ).xyz( membrane::normal );
 	Vector normal = normal_tracked - membrane_center();
 	
-	return normal.normalize();
+	return normal.normalize(15);
 	
 }
 
@@ -224,7 +224,11 @@ MembraneInfo::residue_z_position( core::Size resnum ) const {
 	
 	// Compute z_position
 	Vector const & xyz( conformation_.residue( resnum ).atom( "CA" ).xyz() );
-	core::Real result = dot( xyz - membrane_center(), membrane_normal() );
+
+	// membrane normal is normalized to 15, that's why dividing it here by 15
+	core::Vector normalized_to_1( membrane_normal() );
+	normalized_to_1.normalize();
+	core::Real result = dot( xyz - membrane_center(), normalized_to_1 );
 	return result;
 }
 
@@ -236,7 +240,11 @@ MembraneInfo::atom_z_position( core::Size resnum, core::Size atomnum ) const {
 	
 	// Compute z_position
 	Vector const & xyz( conformation_.residue( resnum ).atom( atomnum ).xyz() );
-	core::Real result = dot( xyz - membrane_center(), membrane_normal() );
+	
+	// membrane normal is normalized to 15, that's why dividing it here by 15
+	core::Vector normalized_to_1( membrane_normal() );
+	normalized_to_1.normalize();
+	core::Real result = dot( xyz - membrane_center(), normalized_to_1 );
 	return result;
 }
 

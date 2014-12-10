@@ -51,10 +51,16 @@ public:
 	
 	/// @brief Constructor from pose and two residue numbers
 	EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end );
+
+	/// @brief Constructor from pose and two residue numbers
+	EmbeddingDef( core::pose::Pose & pose, core::Size start, core::Size end );
 	
 	/// @brief Copy Constructor
 	EmbeddingDef( EmbeddingDef const & EmbeddingDef );
 	
+	/// @brief Assignment Operator
+	EmbeddingDef & operator = ( EmbeddingDef const & src );
+
 	/// @brief Destructor
 	~EmbeddingDef();
 	
@@ -84,6 +90,16 @@ public:
 	
 	/// @brief From span
 	void from_span( core::pose::PoseOP pose, core::Size start, core::Size end );
+
+	/// @brief From span
+	void from_span( core::pose::Pose & pose, core::Size start, core::Size end );
+	
+	/// @brief From span
+	void from_span_positive_z( core::pose::PoseOP pose, core::Size start, core::Size end );
+
+	/// @brief From span
+	void from_span_positive_z( core::pose::Pose & pose, core::Size start, core::Size end );
+	
 	
 private: // data
 	

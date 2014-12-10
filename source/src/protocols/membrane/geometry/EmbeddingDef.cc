@@ -58,9 +58,16 @@ EmbeddingDef::EmbeddingDef( core::Vector const center, core::Vector const normal
 EmbeddingDef::EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end ) :
     utility::pointer::ReferenceCount()
 {
-    normal_.assign( 0, 0, 0 );
-    center_.assign( 0, 0, 0 );
+	EmbeddingDef( *pose, start, end );
+}
 
+/// @brief Constructor from pose and two residue numbers
+EmbeddingDef::EmbeddingDef( core::pose::Pose & pose, core::Size start, core::Size end ) :
+utility::pointer::ReferenceCount()
+{
+	normal_.assign( 0, 0, 0 );
+	center_.assign( 0, 0, 0 );
+	
 	from_span( pose, start, end );
 }
 
@@ -70,6 +77,19 @@ EmbeddingDef::EmbeddingDef( EmbeddingDef const & config ) :
     normal_( config.normal_ ),
     center_( config.center_ )
 {}
+
+/// @brief Assignment Operator
+EmbeddingDef & EmbeddingDef::operator = ( EmbeddingDef const & src ) {
+
+	// Abort self-assignment.
+	if ( this == &src ) { return *this; }
+
+	// Deep Copy of the data
+	this->center_ = src.center_;
+	this->normal_ = src.normal_;
+
+	return *this;
+}
 
 /// @brief Destructor
 EmbeddingDef::~EmbeddingDef() {}
@@ -106,10 +126,14 @@ void EmbeddingDef::set_center( core::Vector center ) {
 }
 
 /// @brief Access Normal Param
-core::Vector EmbeddingDef::normal() const { return normal_; }
+core::Vector EmbeddingDef::normal() const {
+	return normal_;
+}
 
 /// @brief Access center param
-core::Vector EmbeddingDef::center() const { return center_; }
+core::Vector EmbeddingDef::center() const {
+	return center_;
+}
 
 /// @brief Check Object Equality
 bool EmbeddingDef::equals( EmbeddingDef & other ) {
@@ -121,26 +145,70 @@ bool EmbeddingDef::equals( EmbeddingDef & other ) {
 }
 
 /// @brief Embedding object from span
-/// @details Takes the coords of two residues and calculates center and normal
-///				from this. Normal always shows in positive z-direction!
-void EmbeddingDef::from_span( core::pose::PoseOP pose, core::Size start, core::Size end ) {
+/// @details Takes the CA coords of two residues and calculates center and normal
+///				from this.
+void EmbeddingDef::from_span( core::pose::Pose & pose, core::Size start, core::Size end ) {
 
     TR << "Computing membrane embedding from TMspan " << start << " to " << end << std::endl;
     
 	// get CA atom positions of anchor residues
-	core::Vector pos1 = pose->residue( start ).atom( 2 ).xyz();
-	core::Vector pos2 = pose->residue( end ).atom( 2 ).xyz();
+	core::Vector pos1 = pose.residue( start ).atom( 2 ).xyz();
+	core::Vector pos2 = pose.residue( end ).atom( 2 ).xyz();
 	
 	// check TMspan
 	// the reason this is not an exception is that we need this functionality
 	// when transforming a protein into the membrane
 	if ( pos1.z() < 0 && pos2.z() < 0 ){
-		TR << "WARNING: Your TMspan does not span the membrane!" << std::endl;
+		TR << "WARNING: If your starting PDB is already translated into the " << std::endl;
+		TR << "membrane, then your TMspan does not span the membrane!" << std::endl;
 	}
 	else if ( pos1.z() > 0 && pos2.z() > 0 ){
-		TR << "WARNING: Your TMspan does not span the membrane!" << std::endl;
+		TR << "WARNING: If your starting PDB is already translated into the " << std::endl;
+		TR << "membrane, then your TMspan does not span the membrane!" << std::endl;
 	}
 	
+	// compute center
+	core::Vector center = 0.5 * ( pos1 + pos2 );
+
+	// compute normal
+	core::Vector normal = pos2 - pos1;
+	normal.normalize(15);
+
+	center_.assign( center.x(), center.y(), center.z() );
+	normal_.assign( normal.x(), normal.y(), normal.z() );
+	
+}// from span
+
+/// @brief Embedding object from span
+/// @details Takes the CA coords of two residues and calculates center and normal
+///				from this.
+void EmbeddingDef::from_span( core::pose::PoseOP pose, core::Size start, core::Size end ) {
+	from_span( *pose, start, end );
+}
+
+/// @brief Embedding object from span
+/// @details Takes the CA coords of two residues and calculates center and normal
+///				from this. Normal always shows in positive z-direction!
+void EmbeddingDef::from_span_positive_z( core::pose::Pose & pose, core::Size start, core::Size end ) {
+
+	TR << "Computing membrane embedding from TMspan " << start << " to " << end << std::endl;
+
+	// get CA atom positions of anchor residues
+	core::Vector pos1 = pose.residue( start ).atom( 2 ).xyz();
+	core::Vector pos2 = pose.residue( end ).atom( 2 ).xyz();
+
+	// check TMspan
+	// the reason this is not an exception is that we need this functionality
+	// when transforming a protein into the membrane
+	if ( pos1.z() < 0 && pos2.z() < 0 ){
+	TR << "WARNING: If your starting PDB is already translated into the " << std::endl;
+	TR << "membrane, then your TMspan does not span the membrane!" << std::endl;
+	}
+	else if ( pos1.z() > 0 && pos2.z() > 0 ){
+	TR << "WARNING: If your starting PDB is already translated into the " << std::endl;
+	TR << "membrane, then your TMspan does not span the membrane!" << std::endl;
+	}
+
 	// compute center
 	core::Vector center = 0.5 * ( pos1 + pos2 );
 
@@ -152,13 +220,19 @@ void EmbeddingDef::from_span( core::pose::PoseOP pose, core::Size start, core::S
 	else {
 		normal = pos2 - pos1;
 	}
-	normal.normalize();
+	normal.normalize(15);
 
 	center_.assign( center.x(), center.y(), center.z() );
 	normal_.assign( normal.x(), normal.y(), normal.z() );
-	
-}// from span
 
+}// from span, positive z direction
+
+/// @brief Embedding object from span
+/// @details Takes the CA coords of two residues and calculates center and normal
+///				from this. Normal always shows in positive z-direction!
+void EmbeddingDef::from_span_positive_z( core::pose::PoseOP pose, core::Size start, core::Size end ) {
+	from_span_positive_z( *pose, start, end);
+}
 
 } // geometry
 } // membrane

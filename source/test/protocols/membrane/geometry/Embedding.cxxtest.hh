@@ -82,7 +82,8 @@ public: // test functions
 
 		// create object using constructor
 		EmbeddingOP embed( new Embedding( topology, radius ) );
-		
+		embed->show();
+
 		// create vectors for centers and normal
 		Vector center1( 0, 10, 0);	// for spans
 		Vector center2(-10, 0, 0);
@@ -90,8 +91,8 @@ public: // test functions
 		Vector center4( 10, 0, 0);
 
 		Vector center(0, 0, 0);		// for overall embedding
-		Vector normal(0, 0, 1);
-
+		Vector normal(0, 0, 15);
+		
 		// check centers on y, -x, -y, x axis and normals at 0, 0, 1
 		TS_ASSERT( position_equal_within_delta( embed->embedding(1)->center(), center1, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed->embedding(1)->normal(), normal, 0.001 ) );
@@ -116,23 +117,24 @@ public: // test functions
 		TS_TRACE("Test constructor from topology and pose");
 
 		// read in pose
-		PoseOP pose = core::import_pose::pose_from_pdb("protocols/membrane/geometry/1AFO_AB.pdb");
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_AB.pdb" );
 		
 		// create topology object
 		SpanningTopologyOP topology( new SpanningTopology("protocols/membrane/geometry/1AFO_AB.span") );
 
 		// create object using constructor
 		EmbeddingOP embed( new Embedding( topology, pose ) );
-		
+		embed->show();
+
 		// create vectors for centers and normals
 		Vector center1(-1.9835, -3.184, -0.108);		// for spans
-		Vector normal1(-0.0824907, -0.107437, 0.990784);
+		Vector normal1(-1.23736, -1.61156, 14.8618);
 		Vector center2(1.9495, 2.977, -0.6515);
-		Vector normal2(-0.0330526, 0.506584, 0.861557);
+		Vector normal2(-0.495789, 7.59876, 12.9234);
 
 		Vector center(-0.017, -0.1035, -0.37975);		// for overall embedding
-		Vector normal(-0.0577717, 0.199573, 0.92617);
-//		Vector normal(-0.0247, -0.3070, 0.0646);
+		Vector normal(-0.912964, 3.15385, 14.6362);
 		
 		// check positions of vectors
 		// also tests getter embedding(span) and total_embed()

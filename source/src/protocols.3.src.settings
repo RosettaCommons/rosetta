@@ -314,10 +314,11 @@ sources = {
 		"Embedding",	
     ],
     "protocols/membrane/symmetry" : [
-    	"SetupForMembraneSymmetry",
+    		"SetupForMembraneSymmetry",
     ],
     "protocols/membrane/visualize": [
-    	"VisualizeMembraneMover",
+    		"VisualizeMembraneMover",
+    		"VisualizeEmbeddingMover",
     ],
 	"protocols/normalmode": [
 		"NormalMode",

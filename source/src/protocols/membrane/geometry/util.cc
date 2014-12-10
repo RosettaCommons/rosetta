@@ -26,6 +26,7 @@
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
+#include <protocols/membrane/geometry/Embedding.hh>
 
 // Package Headers
 #include <core/chemical/ResidueTypeSet.hh>
@@ -201,63 +202,18 @@ void compute_structure_based_membrane_position(
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
 EmbeddingDefOP compute_structure_based_membrane_position( pose::Pose & pose ){
-		
-	using namespace core;
-	using namespace numeric;
-	using namespace core::conformation;
+
+	using namespace protocols::membrane::geometry;
 	using namespace core::conformation::membrane;
 	
-	TR << "compute_structure_based_membrane_position" << std::endl;
-	TR << "center: " << pose.conformation().membrane_info()->membrane_center().to_string() << std::endl;
-	TR << "normal: " << pose.conformation().membrane_info()->membrane_normal().to_string() << std::endl;
+	// get SpanningTopology
+	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
 	
-	// utility
-	core::Size const CA( 2 );
+	// get create Embedding object
+	EmbeddingOP embeddings( new Embedding( topo, pose ) );
 	
-	// initalize vectors
-	Vector center (0, 0, 0);
-	Vector normal (0, 0, 0);
-	
-	// Count TMhelices
-	core::Size nspans = pose.conformation().membrane_info()->spanning_topology()->nspans();
-	
-	// iterate over spans
-	for ( core::Size j = 1; j <= nspans; ++j ) {
-		
-		// get coords where spans enter the membrane on either side
-		Vector const & start = pose.residue( pose.conformation().membrane_info()->spanning_topology()->span( j )->start() ).atom( CA ).xyz();
-		Vector const & end = pose.residue( pose.conformation().membrane_info()->spanning_topology()->span( j )->end() ).atom( CA ).xyz();
-		
-		// add vectors according to span orientation
-		// this also works for multiple chains
-		if ( start.z() < end.z() ){ // inside out
-			normal += ( end - start );
-		}
-		else {						// outside in
-			normal -= ( end - start );
-		}
-		center += ( start + end ) / 2;
-		
-		// TODO: better checking of out/in or in/out orientation, especially
-		// for odd and even spans and for multiple chains
-		
-		// TODO: more highres: don't just take a single CA atom for start and end
-		// but the COM of the residues i, i-1, i+1
-	}
-	
-	// divide by number of spans
-	center /= nspans;
-	normal /= nspans;
-	normal.normalize();
-	
-	// create EmbeddingDef to return
-	EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
-	
-	TR << "after transformation" << std::endl;
-	TR << "center: " << embedding->center().to_string() << std::endl;
-	TR << "normal: " << embedding->normal().to_string() << std::endl;
-	
-	return embedding;
+	// return total embedding
+	return embeddings->total_embed();
 			
 }// compute structure based membrane position
 
@@ -280,7 +236,7 @@ void check_vector( core::Vector const vector ) {
 	}
 }// check_vector
 
-/// @brief Average EmbeddingDefs
+/// @brief Average EmbeddingDefs as they are without vector inversion accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
 EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts ) {
 
@@ -291,22 +247,64 @@ EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts ) {
 	// Compute resulting center and normal
     for ( Size i = 1 ; i <= parts.size(); ++i ) {
         center += parts[i]->center();
-		if ( parts[i]->normal().z() > 0 ){
-			normal += parts[i]->normal(); // normals in positive z are added
-		}
-		else {
-			normal += (-1) * ( parts[i]->normal() ); // normals in negative z are subtracted
-		}
+		normal += parts[i]->normal();
     }
 	
     center /= parts.size();
-    normal /= parts.size();
+	normal.normalize( 15 );
     
 	// Create new embedding setup and return it
     EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
     return embedding;
 
-}
+}// average embeddings
+
+/// @brief Average EmbeddingDefs after first inverting some vectors accounting for topology
+/// @details Get average center and normal from a vector of EmbeddingDefs
+EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP > parts ) {
+
+	// Initialize vars
+	core::Vector center(0, 0, 0);
+	core::Vector normal(0, 0, 0);
+
+	// embedding of first span
+	Vector const center1 = parts[1]->center();
+	Vector const normal1 = parts[1]->normal();
+
+	// Compute resulting center and normal
+	for ( Size i = 1 ; i <= parts.size(); ++i ) {
+
+		TR << "center: " << parts[i]->center().to_string() << "normal: " << parts[i]->normal().to_string() << std::endl;
+
+		// calculate new center
+		center += parts[i]->center();
+		
+		// calculate points for angle calculation
+		Vector p1 = center1 + normal1;
+		Vector p  = center1 + parts[i]->normal();
+		
+		// calculate  angle between normals of first object and this one
+		Real angle( numeric::angle_degrees( p1, center1, p ) );
+		TR << "angle: " << angle << std::endl;
+		
+		// check if angle of normal is < 100 degrees to first normal
+		// if yes, then add to normal, if no add inverted vector
+		if ( angle > -100 and angle < 100 ) {
+			normal += parts[i]->normal();
+		}
+		else {
+			normal -= parts[i]->normal();
+		}
+	}
+
+	center /= parts.size();
+	normal.normalize( 15 );
+	
+	// Create new embedding setup and return it
+	EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
+	return embedding;
+	
+}// average antiparallel embeddings
 
 /// @brief Normalize normal vector to length 15 for visualization
 void membrane_normal_to_length_15( pose::Pose & pose ){

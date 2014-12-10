@@ -57,12 +57,25 @@ public: // constructors
 	/// @details Construct an empty embedding object
 	Embedding();
 
+	/// @brief	Construction from single EmbeddingDef object
+	Embedding( EmbeddingDefOP embedding );
+
 	/// @brief	Constructs bogus object from topology
 	Embedding( SpanningTopologyOP topology, Real radius );
 
 	/// @brief Custom Constructor - from topology & structure
 	/// @details Construct Embedding from Structure & Topology
+	Embedding( SpanningTopologyOP topology, Pose & pose );
+
+	/// @brief Custom Constructor - from topology & structure
+	/// @details Construct Embedding from Structure & Topology
 	Embedding( SpanningTopologyOP topology, PoseOP pose );
+
+	/// @brief Copy Constructor
+	Embedding( Embedding const & Embedding );
+
+	/// @brief Assignment Operator
+	Embedding & operator = ( Embedding const & src );
 
 	/// @brief	Destructor
 	~Embedding();
@@ -90,6 +103,9 @@ public: // methods
 
 	// from TMspans
 	utility::vector1< EmbeddingDefOP > from_spans( SpanningTopologyOP topology, PoseOP pose );
+
+	// from TMspans
+	utility::vector1< EmbeddingDefOP > from_spans( SpanningTopologyOP topology, Pose & pose );
 
 private: // data
 

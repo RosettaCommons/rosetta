@@ -958,7 +958,7 @@ void get_direction( Vector & direction, const int & next_res, const int & prior_
 void get_normal( Vector & normal, const int n, utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 	normal = cross( (residues[ n ]->xyz( "CA" )-residues[ n-1 ]->xyz( "CA" )),
 			(residues[ n+1 ]->xyz( "CA" )-residues[ n ]->xyz( "CA" )) );
-	if (normal.length_squared() > 0.00001) normal.normalize();
+	if (normal.length_squared() > 0.00001) normal.normalize(15);
 }
 
 

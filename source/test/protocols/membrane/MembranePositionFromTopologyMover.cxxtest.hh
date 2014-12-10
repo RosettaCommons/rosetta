@@ -94,7 +94,7 @@ public:
 
 		// Pick a new center/normal position
 		Vector new_center( 16.8406, 3.32664, -0.6575);
-		Vector new_normal( -0.044515, -0.0319111, 0.998499 );
+		Vector new_normal( -0.683266, -0.486108, 14.9765 );
 
 		// Apply Rotation and translation move
 		MembranePositionFromTopologyMoverOP rt( new MembranePositionFromTopologyMover() );

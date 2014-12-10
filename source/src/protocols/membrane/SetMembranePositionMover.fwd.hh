@@ -32,8 +32,8 @@ typedef utility::pointer::shared_ptr< SetMembranePositionMover const > SetMembra
 
 /// @brief Membrane Position Rotation Mover (by jump)
 class SetMembraneNormalMover;
-typedef utility::pointer::shared_ptr< SetMembraneNormalMover > SetMembraneNomalMoverOP;
-typedef utility::pointer::shared_ptr< SetMembraneNormalMover const > SetMembraneNomalMoverCOP;
+typedef utility::pointer::shared_ptr< SetMembraneNormalMover > SetMembraneNormalMoverOP;
+typedef utility::pointer::shared_ptr< SetMembraneNormalMover const > SetMembraneNormalMoverCOP;
 
 /// @brief Memrbane Position Translaiton Mover (by stub)
 class SetMembraneCenterMover;

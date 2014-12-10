@@ -13,6 +13,8 @@
 ///				information. This can be done by calling AddMembraneMover
 ///				beforehand. pose.conformation().is_membrane() should always
 ///				return true.
+///				CAUTION: THIS MOVER ONLY WORKS FOR A FIXED MEMBRANE WHERE THE
+///				MEMBRANE VIRTUAL RESIDUE IS AT THE ROOT OF THE FOLDTREE!!!
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_TransformIntoMembraneMover_cc
@@ -76,12 +78,12 @@ using namespace protocols::moves;
 /////////////////////
 
 /// @brief Default Constructor
-/// @details uses default membrane coords: center(0,0,0), normal(0,0,1)
+/// @details uses default membrane coords: center(0,0,0), normal(0,0,15)
 TransformIntoMembraneMover::TransformIntoMembraneMover() :
 	protocols::moves::Mover(),
 	fullatom_( true ), 
 	mem_center_(0, 0, 0),
-	mem_normal_(0, 0, 1)
+	mem_normal_(0, 0, 15)
 {
 	register_options();
 	init_from_cmd();
@@ -221,21 +223,16 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 	using namespace protocols::membrane;
 	
 	TR << "Transforming pose into membrane coordinates" << std::endl;
+
+	// reorder foldtree
+	core::kinematics::FoldTree foldtree = pose.fold_tree();
+	foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
+	pose.fold_tree( foldtree );
+	TR << "foldtree reordered" << std::endl;
+	pose.fold_tree().show(std::cout);
 	
-	// create empty object
-	SpanningTopologyOP topo( new SpanningTopology() );
-
-	// fill topology object from spanfile or MembraneInfo
-	if ( spanfile_.size() > 0 ){
-		topo->fill_from_spanfile( spanfile_, pose.total_residue() );
-	}
-	else{
-		topo = pose.conformation().membrane_info()->spanning_topology();
-	}
-
 	// get current protein embedding from pose
-	// uses however many spans are in the topology object
-	// held in MembraneInfo
+	// uses however many spans are in the topology object held in MembraneInfo
 	EmbeddingDefOP embedding ( compute_structure_based_membrane_position( pose ) );
 	Vector old_center = embedding->center();
 	Vector old_normal = embedding->normal();

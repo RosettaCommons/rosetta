@@ -112,9 +112,13 @@ compute_structure_based_membrane_position( pose::Pose & pose );
 /// @brief Check reasonable range of vector
 void check_vector( core::Vector const vector );
 
-/// @brief Average EmbeddingDefs
+/// @brief Average EmbeddingDefs as they are (without vector inversion accounting for topology)
 /// @details Get average center and normal from a vector of EmbeddingDefs
 EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts );
+
+/// @brief Average EmbeddingDefs after first inverting some vectors accounting for topology
+/// @details Get average center and normal from a vector of EmbeddingDefs
+EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP > parts );
 
 /// @brief Normalize normal vector to length 15 for visualization
 void membrane_normal_to_length_15( pose::Pose & pose );
