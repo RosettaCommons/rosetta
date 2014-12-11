@@ -44,6 +44,9 @@ namespace options {
 
 		StepWiseRNA_ModelerOptionsOP clone() const;
 
+		StepWiseRNA_ModelerOptions &
+		operator = ( StepWiseRNA_ModelerOptions const & src );
+
 		/// @brief Describe this instance to a given output stream
 		virtual
 		void

@@ -49,6 +49,7 @@ namespace options {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
+	// If you add a variable, initialize it here, and include in operator = definition below!
 	void
 	StepWiseBasicOptions::initialize_variables(){
 		silent_file_ = "";
@@ -73,7 +74,6 @@ namespace options {
 		return StepWiseBasicOptionsOP( new StepWiseBasicOptions( *this ) );
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseBasicOptions::initialize_from_command_line(){
 		sampler_silent_file_ = option[ basic::options::OptionKeys::stepwise::sampler_silent_file ]();

@@ -58,6 +58,7 @@ namespace options {
 
 
 	/////////////////////////////////////////////////////////////////////////////////////
+	// If you add a variable, initialize it here, and include in operator = definition below!
 	void
 	StepWiseProteinModelerOptions::initialize_variables(){
 
@@ -90,6 +91,37 @@ namespace options {
 	StepWiseProteinModelerOptions::clone() const
 	{
 		return StepWiseProteinModelerOptionsOP( new StepWiseProteinModelerOptions( *this ) );
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////
+	StepWiseProteinModelerOptions &
+	StepWiseProteinModelerOptions::operator = ( StepWiseProteinModelerOptions const & src )
+	{
+		global_optimize_ = src.global_optimize_;
+		mapfile_activated_ = src.mapfile_activated_;
+		sample_beta_ = src.sample_beta_;
+		move_jumps_between_chains_ = src.move_jumps_between_chains_;
+		disable_sampling_of_loop_takeoff_ = src.disable_sampling_of_loop_takeoff_;
+		cart_min_ = src.cart_min_;
+		n_sample_ = src.n_sample_;
+		filter_native_big_bins_ = src.filter_native_big_bins_;
+		allow_virtual_side_chains_ = src.allow_virtual_side_chains_;
+		prepack_ = src.prepack_;
+		centroid_output_ = src.centroid_output_;
+		centroid_screen_ = src.centroid_screen_;
+		centroid_score_diff_cut_ = src.centroid_score_diff_cut_;
+		centroid_weights_ = src.centroid_weights_;
+		nstruct_centroid_ = src.nstruct_centroid_;
+		ghost_loops_ = src.ghost_loops_;
+		ccd_close_ = src.ccd_close_;
+		cluster_by_all_atom_rmsd_ = src.cluster_by_all_atom_rmsd_;
+		pack_weights_ = src.pack_weights_;
+		use_packer_instead_of_rotamer_trials_ = src.use_packer_instead_of_rotamer_trials_;
+		expand_loop_takeoff_ = src.expand_loop_takeoff_;
+		skip_coord_constraints_ = src.skip_coord_constraints_;
+		frag_files_ = src.frag_files_;
+		bridge_res_ = src.bridge_res_;
+		return *this;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////

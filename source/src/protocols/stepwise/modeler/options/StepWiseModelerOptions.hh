@@ -57,6 +57,9 @@ namespace options {
 
 		StepWiseModelerOptionsOP clone() const;
 
+		StepWiseModelerOptions &
+		operator = ( StepWiseModelerOptions const & src );
+
 		/// @brief Describe this instance to a given output stream
 		virtual
 		void

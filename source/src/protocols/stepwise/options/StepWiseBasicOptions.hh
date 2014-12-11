@@ -46,6 +46,10 @@ namespace options {
 
 		StepWiseBasicOptionsOP clone() const;
 
+		// better to *not* define equality and use C++ in-built -- copies over everything. No need to clone().
+		// StepWiseBasicOptions &
+		// operator = ( StepWiseBasicOptions const & src );
+
 		/// @brief Initialize from the recursive "tag" structure.
 		virtual
 		void

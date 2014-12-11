@@ -97,6 +97,52 @@ namespace options {
 		return StepWiseMonteCarloOptionsOP( new StepWiseMonteCarloOptions( *this ) );
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////
+	StepWiseMonteCarloOptions &
+	StepWiseMonteCarloOptions::operator = ( StepWiseMonteCarloOptions const & src )
+	{
+		verbose_scores_ = src.verbose_scores_;
+		integration_test_mode_ = src.integration_test_mode_;
+		force_centroid_interaction_ = src.force_centroid_interaction_;
+		sampler_max_centroid_distance_ = src.sampler_max_centroid_distance_;
+		use_phenix_geo_ = src.use_phenix_geo_;
+		skip_deletions_ = src.skip_deletions_;
+		erraser_ = src.erraser_;
+		allow_internal_hinge_moves_ = src.allow_internal_hinge_moves_;
+		allow_internal_local_moves_ = src.allow_internal_local_moves_;
+		cycles_ = src.cycles_;
+		add_delete_frequency_ = src.add_delete_frequency_;
+		intermolecular_frequency_ = src.intermolecular_frequency_;
+		minimize_single_res_frequency_ = src.minimize_single_res_frequency_;
+		switch_focus_frequency_ = src.switch_focus_frequency_;
+		just_min_after_mutation_frequency_ = src.just_min_after_mutation_frequency_;
+		temperature_ = src.temperature_;
+		bulge_res_= src.bulge_res_;
+		max_missing_weight_ = src.max_missing_weight_;
+		chainbreak_weight_ = src.chainbreak_weight_;
+		allow_skip_bulge_ = src.allow_skip_bulge_;
+		from_scratch_frequency_ = src.from_scratch_frequency_;
+		allow_split_off_ = src.allow_split_off_;
+		virtual_sugar_keep_base_fixed_ = src.virtual_sugar_keep_base_fixed_;
+		virtual_sugar_do_minimize_ = src.virtual_sugar_do_minimize_;
+		make_movie_ = src.make_movie_;
+		sampler_perform_phosphate_pack_ = src.sampler_perform_phosphate_pack_;
+		rebuild_bulge_mode_ = src.rebuild_bulge_mode_;
+		tether_jump_ = src.tether_jump_;
+		local_redock_only_ = src.local_redock_only_;
+		skip_coord_constraints_ = src.skip_coord_constraints_;
+		filter_native_big_bins_ = src.filter_native_big_bins_;
+		allow_virtual_o2prime_hydrogens_ = src.allow_virtual_o2prime_hydrogens_;
+		allow_virtual_side_chains_ = src.allow_virtual_side_chains_;
+		n_sample_ = src.n_sample_;
+		protein_prepack_ = src.protein_prepack_;
+		o2prime_legacy_mode_ = src.o2prime_legacy_mode_;
+		recover_low_ = src.recover_low_;
+		save_times_ = src.save_times_;
+		use_precomputed_library_ = src.use_precomputed_library_;
+		return *this;
+	}
+
 	///////////////////////////////////////////////////////////////////
 	void
 	StepWiseMonteCarloOptions::initialize_from_command_line() {
