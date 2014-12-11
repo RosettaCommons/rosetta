@@ -78,9 +78,6 @@ namespace options {
 
 		StepWiseMonteCarloOptionsOP clone() const;
 
-		StepWiseMonteCarloOptions &
-		operator = ( StepWiseMonteCarloOptions const & src );
-
 		void
 		initialize_from_command_line();
 

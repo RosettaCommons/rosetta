@@ -59,7 +59,6 @@ namespace options {
 
 
 	/////////////////////////////////////////////////////////////////////////////////////
-	// If you add a variable, initialize it here, and include in operator = definition below!
 	void
 	StepWiseModelerOptions::initialize_variables(){
 		StepWiseBasicModelerOptions::initialize_variables();
@@ -72,13 +71,6 @@ namespace options {
 	StepWiseModelerOptions::clone() const
 	{
 		return StepWiseModelerOptionsOP( new StepWiseModelerOptions( *this ) );
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	StepWiseModelerOptions &
-	StepWiseModelerOptions::operator = ( StepWiseModelerOptions const &  )
-	{
-		return *this;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
