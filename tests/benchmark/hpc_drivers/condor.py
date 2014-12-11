@@ -64,15 +64,15 @@ class Condor_HPC_Driver(HPC_Driver):
 
         jobs = []
         for j in hpc_jobs:
-            j['arguments'] = j['arguments'].format(process='$(Process)')
+            p = dict(j, run_time=int(j['run_time']*60*60), arguments=j['arguments'].format(process='$(Process)') )
 
             #execute_sh = os.path.abspath(self.working_dir + '/.hpc.execute.{}.sh'.format(j['target']))
             #with file(execute_sh, 'w') as f: f.write('#!/bin/bash\n{executable} {arguments}\n'.format(**j));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
-            condor_file = self.working_dir + '/.hpc.{}.condor'.format(j['target'])
-            condor_spec = T_condor_job_template.format(process='$(Process)', log_dir=self.working_dir, run_time=int(j['run_time']*60*60),
+            condor_file = self.working_dir + '/.hpc.{}.condor'.format(p['target'])
+            condor_spec = T_condor_job_template.format(process='$(Process)', log_dir=self.working_dir,
                                                        #requirements=self.config.get('condor', 'requirements'),
-                                                       execute_sh=execute_sh, **j)
+                                                       execute_sh=execute_sh, **p)
 
 
             with file(condor_file, 'w') as f: f.write(condor_spec)
