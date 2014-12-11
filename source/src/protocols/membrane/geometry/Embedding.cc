@@ -243,7 +243,7 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopologyOP top
 
 		// check if angle of normal is < 100 degrees to first normal
 		// if yes, then add to embedding object, if no add inverted vector
-		if ( dih > -100 and dih < 100 ) {
+		if ( dih > -100 && dih < 100 ) {
 			// add embedding to vector
 			embeddings_.push_back( embedding );
 		}

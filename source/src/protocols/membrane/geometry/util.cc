@@ -289,7 +289,7 @@ EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP
 		
 		// check if angle of normal is < 100 degrees to first normal
 		// if yes, then add to normal, if no add inverted vector
-		if ( angle > -100 and angle < 100 ) {
+		if ( angle > -100 && angle < 100 ) {
 			normal += parts[i]->normal();
 		}
 		else {
