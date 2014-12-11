@@ -61,7 +61,6 @@ namespace options {
 
 
 	/////////////////////////////////////////////////////////////////////////////////////
-	// If you add a variable, initialize it here, and include in operator = definition below!
 	void
 	StepWiseRNA_ModelerOptions::initialize_variables(){
 
@@ -109,50 +108,6 @@ namespace options {
 	StepWiseRNA_ModelerOptions::clone() const
 	{
 		return StepWiseRNA_ModelerOptionsOP( new StepWiseRNA_ModelerOptions( *this ) );
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_ModelerOptions &
-	StepWiseRNA_ModelerOptions::operator = ( StepWiseRNA_ModelerOptions const & src )
-	{
-		native_edensity_score_cutoff_ = src.native_edensity_score_cutoff_;
-		o2prime_legacy_mode_ = src.o2prime_legacy_mode_;
-		allow_virtual_o2prime_hydrogens_ = src.allow_virtual_o2prime_hydrogens_;
-		sampler_perform_phosphate_pack_ = src.sampler_perform_phosphate_pack_;
-		distinguish_pucker_ = src.distinguish_pucker_;
-		finer_sampling_at_chain_closure_ = src.finer_sampling_at_chain_closure_;
-		PBP_clustering_at_chain_closure_ = src.PBP_clustering_at_chain_closure_;
-		allow_syn_pyrimidine_ = src.allow_syn_pyrimidine_;
-		extra_chi_ = src.extra_chi_;
-		use_phenix_geo_ = src.use_phenix_geo_;
-		virtual_sugar_legacy_mode_ = src.virtual_sugar_legacy_mode_;
-		virtual_sugar_keep_base_fixed_ = src.virtual_sugar_keep_base_fixed_;
-		virtual_sugar_do_minimize_ = src.virtual_sugar_do_minimize_;
-		kic_modeler_if_relevant_ = src.kic_modeler_if_relevant_;
-		force_centroid_interaction_ = src.force_centroid_interaction_;
-		minimize_and_score_sugar_ = src.minimize_and_score_sugar_;
-		minimize_and_score_native_pose_ = src.minimize_and_score_native_pose_;
-		rm_virt_phosphate_ = src.rm_virt_phosphate_;
-		VDW_rep_alignment_RMSD_CUTOFF_ = src.VDW_rep_alignment_RMSD_CUTOFF_;
-		sampler_max_centroid_distance_ = src.sampler_max_centroid_distance_;
-		VDW_rep_screen_physical_pose_clash_dist_cutoff_ = src.VDW_rep_screen_physical_pose_clash_dist_cutoff_;
-		integration_test_mode_ = src.integration_test_mode_;
-		allow_bulge_at_chainbreak_ = src.allow_bulge_at_chainbreak_;
-		parin_favorite_output_ = src.parin_favorite_output_;
-		reinitialize_CCD_torsions_ = src.reinitialize_CCD_torsions_;
-		sampler_extra_epsilon_rotamer_ = src.sampler_extra_epsilon_rotamer_;
-		sampler_extra_beta_rotamer_ = src.sampler_extra_beta_rotamer_;
-		sampler_include_torsion_value_in_tag_ = src.sampler_include_torsion_value_in_tag_;
-		combine_long_loop_mode_ = src.combine_long_loop_mode_;
-		do_not_sample_multiple_virtual_sugar_ = src.do_not_sample_multiple_virtual_sugar_;
-		sample_ONLY_multiple_virtual_sugar_ = src.sample_ONLY_multiple_virtual_sugar_;
-		sampler_assert_no_virt_sugar_sampling_ = src.sampler_assert_no_virt_sugar_sampling_;
-		sampler_try_sugar_instantiation_ = src.sampler_try_sugar_instantiation_;
-		allow_base_pair_only_centroid_screen_ = src.allow_base_pair_only_centroid_screen_;
-		tether_jump_ = src.tether_jump_;
-		turn_off_rna_chem_map_during_optimize_ = src.turn_off_rna_chem_map_during_optimize_;
-
-		return *this;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////

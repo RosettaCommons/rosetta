@@ -41,9 +41,6 @@ namespace options {
 
 		StepWiseBasicModelerOptionsOP clone() const;
 
-		// StepWiseBasicModelerOptions &
-		// operator = ( StepWiseBasicModelerOptions const & src );
-
 		/// @brief Initialize from the recursive "tag" structure.
 		virtual
 		void

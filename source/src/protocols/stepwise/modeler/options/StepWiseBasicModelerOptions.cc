@@ -54,7 +54,6 @@ namespace options {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
-	// If you add a variable, initialize it here, and include in operator = definition below!
 	void
 	StepWiseBasicModelerOptions::initialize_variables(){
 		StepWiseBasicOptions::initialize_variables();
@@ -72,20 +71,6 @@ namespace options {
 	{
 		return StepWiseBasicModelerOptionsOP( new StepWiseBasicModelerOptions( *this ) );
 	}
-
-	// /////////////////////////////////////////////////////////////////////////////////////
-	// StepWiseBasicModelerOptions &
-	// StepWiseBasicModelerOptions::operator = ( StepWiseBasicModelerOptions const & src )
-	// {
-	// 	use_green_packer_ = src.use_green_packer_;
-	// 	verbose_ = src.verbose_;
-	// 	choose_random_ = src.choose_random_;
-	// 	dump_ = src.dump_;
-	// 	skip_minimize_ = src.skip_minimize_;
-	// 	disallow_realign_ = src.disallow_realign_;
-	// 	choose_random_ = src.choose_random_;
-	// 	return *this;
-	// }
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	void
