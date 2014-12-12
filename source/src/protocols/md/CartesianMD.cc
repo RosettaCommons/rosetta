@@ -403,6 +403,8 @@ void CartesianMD::VelocityVerlet_Integrator( pose::Pose &pose,
 	for( Size i_dof = 1; i_dof <= n_dof(); ++i_dof ){
 		xyz_[i_dof] += vel_[i_dof]*dt() + acc_[i_dof]*dt2_2;
 		vel_[i_dof] += 0.5*acc_[i_dof]*dt();
+		if( vel_[i_dof] > MaxVel ) vel_[i_dof] = MaxVel;
+		if( vel_[i_dof] < -MaxVel ) vel_[i_dof] = -MaxVel;
 	}
 
 	if (use_rattle_){
@@ -426,7 +428,13 @@ void CartesianMD::VelocityVerlet_Integrator( pose::Pose &pose,
 		if ( mass_[i_atm] < 1e-3 ) continue;
 
 		acc_[i_dof] = -MDForceFactor*force[i_dof]/mass_[i_atm];
+		// safe boundary
+		if( acc_[i_dof] > MaxAccel ) acc_[i_dof] = MaxAccel;
+		if( acc_[i_dof] < -MaxAccel ) acc_[i_dof] = -MaxAccel;
+
 		vel_[i_dof] += 0.5*acc_[i_dof]*dt();
+		if( vel_[i_dof] > MaxVel ) vel_[i_dof] = MaxVel;
+		if( vel_[i_dof] < -MaxVel ) vel_[i_dof] = -MaxVel;
 	}
 
 	if (use_rattle_){

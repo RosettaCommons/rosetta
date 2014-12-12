@@ -21,7 +21,9 @@ namespace md{
 
   const static core::Real Boltzmann( 0.83143435 );
   const static core::Real GasConst( 1.9872065e-3 );
-  const static core::Real MDForceFactor( 418.4 );
+  const static core::Real MDForceFactor( 418.4 ); // kcal/mole -> gAng^2/ps^2
+  const static core::Real MaxAccel( 3e4 ); // ~0.1Ang/fs^2
+  const static core::Real MaxVel( 10.0 ); // ~0.01Ang/fs
 
 }
 }
