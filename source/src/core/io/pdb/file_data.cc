@@ -1768,7 +1768,7 @@ is_residue_type_recognized(
 			options.remember_unrecognized_res() ||
 			(pdb_name == "HOH" && options.ignore_waters())) ) {
 		// We should fail fast on unrecognized input rather than produce bad results!
-		utility_exit_with_message(" unrecognized aa " + pdb_name );
+		utility_exit_with_message(" unrecognized residue " + pdb_name );
 	}
 
 	if( !options.remember_unrecognized_water() ) {

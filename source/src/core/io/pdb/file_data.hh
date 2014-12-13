@@ -129,7 +129,6 @@ public:
 	bool operator!=(ResidueInformation const & that) const;
 
 	/// For now, all member names have the same names as fields in PDB standard.
-	//String resid;  // 6-character (partial) identifier used by reader
 	String resName;
 	char chainID;
 	int resSeq;

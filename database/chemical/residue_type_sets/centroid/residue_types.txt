@@ -60,10 +60,13 @@ residue_types/carbohydrates/to4-alpha-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Glcp.params
 residue_types/carbohydrates/to6-alpha-D-Glcp.params
 #### Galactoses
+residue_types/carbohydrates/to2-beta-D-Galp.params
 residue_types/carbohydrates/to3-beta-D-Galp.params
+residue_types/carbohydrates/to4-alpha-D-Galp.params
 residue_types/carbohydrates/to4-beta-D-Galp.params
 residue_types/carbohydrates/to6-beta-D-Galp.params
 residue_types/carbohydrates/to4-alpha-L-Fucp.params
+residue_types/carbohydrates/to4-alpha-D-Abep.params
 #### Mannoses
 residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params
@@ -85,3 +88,5 @@ residue_types/membrane/MEM.params
 residue_types/lipids/sphingosine.params
 ### Fatty Acids
 residue_types/lipids/linoleate.params
+### Synthetic Adducts
+residue_types/lipids/ONonOMe.params

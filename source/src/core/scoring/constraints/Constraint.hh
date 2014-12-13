@@ -60,7 +60,7 @@ namespace constraints {
 /// @details All Constraints are expected to be immutable once created,
 /// meaning their internal data (state) should not change over their lifetime.
 /// This allows Constraints to be shared between copies of Poses (e.g. in Monte Carlo),
-/// and is important for both speed (with thousands of contraints) and correctness.
+/// and is important for both speed (with thousands of constraints) and correctness.
 ///
 /// To "change" a constraint, remove the old one and add a new and different one.
 /// The steal() methods have been removed because it is
@@ -242,16 +242,15 @@ public:
 		unimplemented_method_error( std::string( "show_def" ) );
 	}
 
-	// @brief Reads the definition of a Constraint from the given std::istream,
-	// using the given Pose, and the given func::FuncFactory. This method is intended
-	// to be overridden by derived classes if they'd like to use the
-	// ConstraintIO machinery.
+	/// @brief Reads the definition of a Constraint from the given std::istream,
+	/// using the given Pose, and the given func::FuncFactory. This method is intended
+	/// to be overridden by derived classes if they'd like to use the
+	/// ConstraintIO machinery.
 	virtual void read_def( std::istream &, pose::Pose const &, core::scoring::func::FuncFactory const & ) {
 		unimplemented_method_error( std::string( "read_def" ) );
 	}
 
-	// @brief take coordinates, distances, angles, etc from given pose
-	///
+	/// @brief take coordinates, distances, angles, etc from given pose
 	virtual void steal_def( pose::Pose const& ) {
 		unimplemented_method_error( std::string( "steal_def" ) );
 	}

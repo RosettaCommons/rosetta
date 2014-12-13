@@ -9,7 +9,7 @@
 
 /// @file    test_RingConformationMover.cc
 /// @brief   Pilot application source code for testing RingConformationMover.
-/// @author  labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 // Unit headers
 #include <protocols/simple_moves/RingConformationMover.hh>
@@ -22,7 +22,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-int main(int argc, char *argv[])
+int main( int argc, char *argv[] )
 {
 	using namespace std;
 	using namespace protocols::simple_moves;
@@ -30,14 +30,14 @@ int main(int argc, char *argv[])
 
 	try {
 		// Initialize core.
-		devel::init(argc, argv);
+		devel::init( argc, argv );
 
 		// Construct the mover.
 		RingConformationMoverOP my_mover( new RingConformationMover() );
 
 		// Distribute the mover.
-		JobDistributor::get_instance()->go(my_mover);
-	} catch (utility::excn::EXCN_Base const & e) {
+		JobDistributor::get_instance()->go( my_mover );
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return -1;
 	}

@@ -9,7 +9,7 @@
 
 /// @file    core/chemical/carbohydrates/CarbohydrateInfo.hh
 /// @brief   Declarations and simple accessor/mutator definitions for CarbohydrateInfo.
-/// @author  Labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 #ifndef INCLUDED_core_chemical_carbohydrates_CarbohydrateInfo_HH
 #define INCLUDED_core_chemical_carbohydrates_CarbohydrateInfo_HH
@@ -39,35 +39,37 @@ namespace chemical {
 namespace carbohydrates {
 
 class CarbohydrateInfo : public utility::pointer::ReferenceCount {
-public:
-	// Standard methods ////////////////////////////////////////////////////////
+public: // Standard methods ///////////////////////////////////////////////////
 	/// @brief  Standard constructor
-	CarbohydrateInfo(core::chemical::ResidueTypeCAP residue_type);
+	CarbohydrateInfo( core::chemical::ResidueTypeCAP residue_type );
 
+	// FIXME: Make copy constructor private as I did with ResidueProperties.
 	/// @brief  Copy constructor
-	CarbohydrateInfo(CarbohydrateInfo const & object_to_copy);
+	CarbohydrateInfo( CarbohydrateInfo const & object_to_copy );
 
+	// FIXME: Make assignment operator private as I did with ResidueProperties.
 	// Assignment operator
-	CarbohydrateInfo & operator=(CarbohydrateInfo const & object_to_copy);
+	CarbohydrateInfo & operator=( CarbohydrateInfo const & object_to_copy );
 
 	// Destructor
 	~CarbohydrateInfo();
 
 
-	// Standard Rosetta methods ////////////////////////////////////////////////
+public: // Standard Rosetta methods ///////////////////////////////////////////
 	/// @brief  Generate string representation of CarbohydrateInfo for debugging purposes.
-	virtual void show(std::ostream & output=std::cout) const;
+	virtual void show( std::ostream & output=std::cout ) const;
 
 
 	// Static constant data access
+	// TODO: Create a singleton to handle these functions.
 	/// @brief A list of allowed properties in carbohydrate .params and patch files.
-	static utility::vector1<std::string> const & sugar_properties();
+	static utility::vector1< std::string > const & sugar_properties();
 
 	/// @brief A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root.
-	static std::map<std::string, std::string> const & code_to_root_map();
+	static std::map< std::string, std::string > const & code_to_root_map();
 
 
-	// Accessors/Mutators //////////////////////////////////////////////////////
+public: // Accessors/Mutators /////////////////////////////////////////////////
 	// Nomenclature
 	/// @brief  Return the full IUPAC name of the monosaccharide.
 	std::string
@@ -97,7 +99,7 @@ public:
 	bool
 	is_aldose() const
 	{
-		return (anomeric_carbon_ == 1);
+		return ( anomeric_carbon_ == 1 );
 	}
 
 	/// @brief    Return true if the monosaccharide is a ketose.
@@ -111,7 +113,7 @@ public:
 	bool
 	is_ketose() const
 	{
-		return (anomeric_carbon_ != 1);
+		return ( anomeric_carbon_ != 1 );
 	}
 
 	/// @brief    Return true if the monosaccharide is an n-ketose.
@@ -121,9 +123,9 @@ public:
 	///  CarbohydrateInfo.is_ulose()
 	///  CarbohydrateInfo.anomeric_carbon()
 	bool
-	is_ketose(core::uint const n) const
+	is_ketose( core::uint const n ) const
 	{
-		return (anomeric_carbon_ == n);
+		return ( anomeric_carbon_ == n );
 	}
 
 	/// @brief    Return true if the monosaccharide is a 2-ketose.
@@ -134,7 +136,7 @@ public:
 	bool
 	is_ulose() const
 	{
-		return is_ketose(2);
+		return is_ketose( 2 );
 	}
 
 	/// @brief    Return the anomeric carbon number.
@@ -243,49 +245,49 @@ public:
 	bool
 	is_triose() const
 	{
-		return (n_carbons_ == 3);
+		return ( n_carbons_ == 3 );
 	}
 
 	/// @brief  Return true if the monosaccharide is a tetrose.
 	bool
 	is_tetrose() const
 	{
-		return (n_carbons_ == 4);
+		return ( n_carbons_ == 4 );
 	}
 
 	/// @brief  Return true if the monosaccharide is a pentose.
 	bool
 	is_pentose() const
 	{
-		return (n_carbons_ == 5);
+		return ( n_carbons_ == 5 );
 	}
 
 	/// @brief  Return true if the monosaccharide is a hexose.
 	bool
 	is_hexose() const
 	{
-		return (n_carbons_ == 6);
+		return ( n_carbons_ == 6 );
 	}
 
 	/// @brief  Return true if the monosaccharide is a heptose.
 	bool
 	is_heptose() const
 	{
-		return (n_carbons_ == 7);
+		return ( n_carbons_ == 7 );
 	}
 
 	/// @brief    Return true if the monosaccharide is an octose.
 	bool
 	is_octose() const
 	{
-		return (n_carbons_ == 8);
+		return ( n_carbons_ == 8 );
 	}
 
 	/// @brief    Return true if the monosaccharide is a nonose.
 	bool
 	is_nonose() const
 	{
-		return (n_carbons_ == 9);
+		return ( n_carbons_ == 9 );
 	}
 
 
@@ -302,14 +304,14 @@ public:
 	bool
 	is_L_sugar() const
 	{
-		return (stereochem_ == 'L');
+		return ( stereochem_ == 'L' );
 	}
 
 	/// @brief  Return true if the monosaccharide is a D-sugar.
 	bool
 	is_D_sugar() const
 	{
-		return (stereochem_ == 'D');
+		return ( stereochem_ == 'D' );
 	}
 
 
@@ -326,14 +328,14 @@ public:
 	bool
 	is_acyclic() const
 	{
-		return (ring_size_ == 0);
+		return ( ring_size_ == 0 );
 	}
 
 	/// @brief  Return true if the monosaccharide is a ring.
 	bool
 	is_cyclic() const
 	{
-		return !is_acyclic();
+		return ! is_acyclic();
 	}
 
 	/// @brief    Return true if the monosaccharide is a furanose.
@@ -341,7 +343,7 @@ public:
 	bool
 	is_furanose() const
 	{
-		return (ring_size_ == 5);
+		return ( ring_size_ == 5 );
 	}
 
 	/// @brief    Return true if the monosaccharide is a pyranose.
@@ -349,7 +351,7 @@ public:
 	bool
 	is_pyranose() const
 	{
-		return (ring_size_ == 6);
+		return ( ring_size_ == 6 );
 	}
 
 	/// @brief    Return true if the monosaccharide is a septanose.
@@ -357,7 +359,7 @@ public:
 	bool
 	is_septanose() const
 	{
-		return (ring_size_ == 7);
+		return ( ring_size_ == 7 );
 	}
 
 
@@ -376,7 +378,7 @@ public:
 	bool
 	is_alpha_sugar() const
 	{
-		return (anomer_ == "alpha");
+		return ( anomer_ == "alpha" );
 	}
 
 	/// @brief    Return true if the cyclic monosaccharide is a beta sugar.
@@ -384,13 +386,12 @@ public:
 	bool
 	is_beta_sugar() const
 	{
-		return (anomer_ == "beta");
+		return ( anomer_ == "beta" );
 	}
 
 
 	// Polymer info
 	/// @brief    Return true if the monosaccharide is attached to something at the anomeric carbon.
-	/// @remarks  not yet fully implemented
 	bool
 	is_glycoside() const
 	{
@@ -431,7 +432,8 @@ public:
 
 	/// @brief  Return the attachment point of the downstream saccharide residue attached to ith branch off of this
 	/// residue.
-	core::uint branch_point(core::uint i) const;
+	core::uint branch_point( core::uint const i ) const;
+
 
 	/// @brief  Return true if the attachment point of the downstream saccharide is on an exocyclic carbon.
 	bool
@@ -446,13 +448,13 @@ public:
 	/// @brief  Return true if any hydroxyl group has been modified to an acetylated amino group.
 	bool
 	is_N_acetylated() const {
-		return modifications_.contains("acetylamino sugar");
+		return modifications_.contains( "acetylamino sugar" );
 	}
 
 	/// @brief  Return true if any hydroxyl group has been modified by acetylation.
 	bool
 	is_O_acetylated() const {
-		return modifications_.contains("acetyl sugar");
+		return modifications_.contains( "acetyl sugar" );
 	}
 
 	/// @brief  Return true if the sugar has been acetylated at any position.
@@ -464,25 +466,24 @@ public:
 	/// @brief  Return true if any hydroxyl group has been modified to an amino group or an acetylated amino group.
 	bool
 	is_amino_sugar() const {
-		return modifications_.contains("amino sugar") || modifications_.contains("acetylamino sugar");
+		return modifications_.contains( "amino sugar" ) || modifications_.contains( "acetylamino sugar" );
 	}
 
 	/// @brief  Return true if the primary hydroxyl group is oxidized to the acid.
 	bool
 	is_uronic_acid() const {
-		return modifications_.contains("uronic acid");
+		return modifications_.contains( "uronic acid" );
 	}
 
-private:
-	// Private methods /////////////////////////////////////////////////////////
+private: // Private methods ///////////////////////////////////////////////////
 	// Empty constructor
 	CarbohydrateInfo();
 
 	// Initialize data members from properties.
-	void init(core::chemical::ResidueTypeCAP residue_type);
+	void init( core::chemical::ResidueTypeCAP residue_type );
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-	void copy_data(CarbohydrateInfo & object_to_copy_to, CarbohydrateInfo const & object_to_copy_from);
+	void copy_data( CarbohydrateInfo & object_to_copy_to, CarbohydrateInfo const & object_to_copy_from );
 
 	// Return the number of carbon atoms (not counting R groups) in the ResidueType.
 	core::Size get_n_carbons() const;
@@ -499,13 +500,13 @@ private:
 
 	// Get monosaccharide root name from the 3-letter code.
 	std::string
-	root_from_code(std::string code) const
+	root_from_code( std::string const & code ) const
 	{
-		return code_to_root_map().find(code)->second;  // operator[] is not overloaded for const maps.
+		return code_to_root_map().find( code )->second;  // operator[] is not overloaded for const maps.
 	}
 
 
-	// Private data //////////////////////////////////////////////////////////////////////////////////////////////////
+private: // Private data //////////////////////////////////////////////////////
 	core::chemical::ResidueTypeCAP residue_type_;
 	std::string full_name_;
 	std::string short_name_;
@@ -521,11 +522,12 @@ private:
 	core::Size ring_size_;  // 0 indicates linear
 	std::string anomer_;  // alpha, beta, or null
 	bool is_glycoside_;
-	utility::vector1<std::string> modifications_;  // indexed by position
+	utility::vector1< std::string > modifications_;  // indexed by position
+
 
 	// Glycosidic bond attachment points, i.e., the second integer in (1->n) notations.
 	core::uint mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
-	utility::vector1<core::uint> branch_points_;
+	utility::vector1< core::uint > branch_points_;
 	bool has_exocyclic_linkage_;
 
 	// Constants.
@@ -533,8 +535,9 @@ private:
 	static core::Size const MIN_C_SIZE_LIMIT;
 };  // class CarbohydrateInfo
 
+
 // Insertion operator (overloaded so that CarbohydrateInfo can be "printed" in PyRosetta).
-std::ostream & operator<<(std::ostream & output, CarbohydrateInfo const & object_to_output);
+std::ostream & operator<<( std::ostream & output, CarbohydrateInfo const & object_to_output );
 
 }  // namespace carbohydrates
 }  // namespace chemical

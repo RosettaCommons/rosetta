@@ -35,8 +35,8 @@ namespace pose {
 namespace carbohydrates {
 
 // Helper Functions
-/// @brief  Scan through a saccharide residue's connections to find the residue from which it follows or branches.
-core::uint find_seqpos_of_parent_residue(conformation::Residue const & residue);
+/// @brief  Use a saccharide residue's connections to find the residue from which it follows or branches.
+core::uint find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue );
 
 /// @brief  Return pointers to the two residues of the glycosidic bond.
 std::pair<conformation::ResidueCOP, conformation::ResidueCOP> get_glycosidic_bond_residues(Pose const & pose,

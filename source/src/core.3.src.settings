@@ -10,6 +10,9 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"core/io/carbohydrates": [
+		"pose_io",
+	],
 	"core/io/pdb": [
 		"Field",
 		"file_data",

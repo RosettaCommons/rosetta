@@ -1,0 +1,40 @@
+REMARK   Gala2(Abea3)ManaOMe
+HETNAM     Man X   1  ->2)-alpha-D-Manp
+HETNAM     Gal X   2  ->4)-alpha-D-Galp
+HETNAM     Abe Y   1  ->4)-alpha-D-Abep
+LINK         O3  Man X   1                 C1  Abe Y   1     1555   1555  1.5
+HETATM    1  C1  Man X   1      10.194 -11.642  63.138  1.00 21.51           C
+HETATM    2  C2  Man X   1      11.077 -10.446  62.891  1.00 25.05           C
+HETATM    3  C3  Man X   1      12.294 -10.807  62.050  1.00 22.53           C
+HETATM    4  C4  Man X   1      13.042 -12.017  62.633  1.00 22.38           C
+HETATM    5  C5  Man X   1      12.061 -13.180  62.867  1.00 22.09           C
+HETATM    6  C6  Man X   1      12.643 -14.411  63.574  1.00 23.51           C
+HETATM    7  CO1 Man X   1       8.488 -12.895  61.917  1.00 28.29           C
+HETATM    8  O1  Man X   1       9.611 -12.002  61.899  1.00 25.92           O
+HETATM    9  O2  Man X   1      11.517  -9.966  64.146  1.00 26.46           O
+HETATM   10  O3  Man X   1      13.177  -9.668  62.031  1.00 20.57           O
+HETATM   11  O4  Man X   1      14.083 -12.422  61.760  1.00 21.00           O
+HETATM   12  O5  Man X   1      10.985 -12.709  63.670  1.00 24.80           O
+HETATM   13  O6  Man X   1      13.176 -14.025  64.843  1.00 35.35           O
+HETATM   14  C1  Gal X   2      10.706  -8.905  64.676  1.00 37.47           C
+HETATM   15  C2  Gal X   2      11.550  -8.139  65.661  1.00 32.60           C
+HETATM   16  C3  Gal X   2      11.675  -8.803  67.006  1.00 45.11           C
+HETATM   17  C4  Gal X   2      10.294  -9.245  67.484  1.00 48.59           C
+HETATM   18  C5  Gal X   2       9.671 -10.203  66.440  1.00 50.54           C
+HETATM   19  C6  Gal X   2       8.320 -10.798  66.899  1.00 51.88           C
+HETATM   20  O2  Gal X   2      12.848  -8.060  65.163  1.00 35.07           O
+HETATM   21  O3  Gal X   2      12.240  -7.849  67.882  1.00 51.03           O
+HETATM   22  O4  Gal X   2       9.494  -8.075  67.635  1.00 54.49           O
+HETATM   23  O5  Gal X   2       9.496  -9.446  65.223  1.00 40.69           O
+HETATM   24  O6  Gal X   2       8.007 -11.968  66.150  1.00 58.48           O
+HETATM   25  C1  Abe Y   1      13.727  -9.324  60.732  1.00 19.96           C
+HETATM   26  C2  Abe Y   1      14.894  -8.388  60.961  1.00 18.02           C
+HETATM   27  C3  Abe Y   1      14.386  -7.023  61.420  1.00 15.25           C
+HETATM   28  C4  Abe Y   1      13.388  -6.513  60.376  1.00 20.26           C
+HETATM   29  C5  Abe Y   1      12.217  -7.492  60.277  1.00 19.03           C
+HETATM   30  C6  Abe Y   1      11.194  -7.030  59.224  1.00 20.45           C
+HETATM   31  O2  Abe Y   1      15.716  -8.973  61.951  1.00 17.40           O
+HETATM   32  O4  Abe Y   1      14.026  -6.378  59.100  1.00 19.83           O
+HETATM   33  O5  Abe Y   1      12.736  -8.770  59.890  1.00 18.60           O
+TER      34      Abe Y   1
+END

@@ -110,6 +110,8 @@ C7_MODIFIED_SUGAR  # for any saccharide residue modified at the 7 position
 C8_MODIFIED_SUGAR  # for any saccharide residue modified at the 8 position
 C9_MODIFIED_SUGAR  # for any saccharide residue modified at the 9 position
 
+METHYL_GLYCOSIDE  # for methylated saccharide lower termini
+
 SIDECHAIN_CONJUGATION  # used for chemically conjugable residues and side-chain conjugation (like ubiquitination)
 
 SC_FRAGMENT  # used by PlaceProbeMover.cc and hotspot hashing

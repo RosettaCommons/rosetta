@@ -2,12 +2,12 @@
 # corresponding root.
 
 # A map is created from this data in which each key is a 3-letter code and the
-# map value is the IUPAC root for that sugar.  For example, the (Rosetta) 3-
-# letter code for any glucose residue is Glc, and the corresponding root is
-# "gluc", to which suffixes such as "-ose" or "-osamine" are added, as ap-
-# propriate to the specific ResidueType.
+# map value is the IUPAC root for that sugar.  For example, the 3-letter code
+# for any glucose residue is Glc, and the corresponding root is "gluc", to
+# which suffixes such as "-ose" or "-osamine" are added, as appropriate to the
+# specific ResidueType.
 
-# The data in this file serves a dual purpose:
+# The data in this file serve a dual purpose:
 # 1. The map is used by internal CarbohydrateInfo code for nomenclature pur-
 #    poses, as noted above.
 # 2. The map keys are used as a list of "Rosetta-allowed" carbohydrate 3-letter
@@ -42,6 +42,14 @@ Gal galact
 Tal tal
 
 Fuc fuc  # trivial name for 6-deoxygalactose
+Abe abequ  # trivial name for 3,6-dideoxygalactose
+Rha rhamn  # trivial name for 6-deoxymannose
+Mur muram  # trivial name for a lactic acid derivative of glucosamine
+Qui quinov  # trivial name for 6-deoxygalactose
+
+# Branched-chain
+Api api
+
 
 # KETOSES
 # Ketotriose
@@ -59,6 +67,9 @@ Psi psic
 Fru fruct
 Sor sorb
 Tag tagat
+
+# Ketooctose
+Kdo 3-deoxy-D-manno-oct-2-uloson
 
 # Ketononoses (e.g., Sialic Acids)
 Neu neuramin

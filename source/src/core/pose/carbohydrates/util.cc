@@ -52,24 +52,23 @@ using namespace std;
 using namespace core;
 
 // Helper Functions ///////////////////////////////////////////////////////////
-// TODO: Replace this with code using ResidueType::residue_connection_id_for_atom().
-// Scan through a saccharide residue's connections to find the residue from which it follows or branches.
+// Use a saccharide residue's connections to find the residue from which it follows or branches.
 /// @return  The sequence position of the residue before this one (n-1) or the residue in the parent chain from which
 /// the branch occurs or zero if N/A, i.e., if this is the lower terminus.
 core::uint
-find_seqpos_of_parent_residue(conformation::Residue const & residue) {
-	uint seqpos = residue.seqpos();
-	Size n_connections = residue.n_residue_connections();
+find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue ) {
+	assert( residue.is_carbohydrate() );
 
-	// Search backwards for speed, since "non-polymeric" connections come after polymeric ones.
-	for (uint i = n_connections; i >= 1; --i) {
-		uint connection_partner_position = residue.residue_connection_partner(i);
-		if (connection_partner_position < seqpos) {  // assumes PDB places branches after main chains
-			return connection_partner_position;
+	if ( ! residue.is_lower_terminus() ) {
+		uint const id_of_connection_to_parent(
+				residue.type().residue_connection_id_for_atom( residue.carbohydrate_info()->anomeric_carbon_index() ) );
+		return residue.residue_connection_partner( id_of_connection_to_parent );
+	} else /* residue is lower terminus */ {
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "This residue is a lower terminus! Returning 0." << endl;
 		}
+		return 0;
 	}
-	TR.Warning << "This residue is a lower terminus! Returning 0." << endl;
-	return 0;
 }
 
 
@@ -91,7 +90,7 @@ get_glycosidic_bond_residues(Pose const & pose, uint const sequence_position)
 
 	// Get the 2nd residue of interest.
 	// (res_n_minus_1 is a misnomer for the lower termini of branches.)
-	ResidueCOP res_n_minus_1 = pose.residue(find_seqpos_of_parent_residue(*res_n)).get_self_ptr();
+	ResidueCOP res_n_minus_1 = pose.residue(find_seqpos_of_saccharides_parent_residue(*res_n)).get_self_ptr();
 
 	return make_pair(res_n, res_n_minus_1);
 }
@@ -337,7 +336,7 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 		uint OY = res->atom_index("O" + string(1, y + '0'));
 		uint HOY = res->atom_index("HO" + string(1, y + '0'));
 
-		uint parent_res_seqpos = find_seqpos_of_parent_residue(*res);
+		uint parent_res_seqpos = find_seqpos_of_saccharides_parent_residue(*res);
 		ResidueCOP parent_res = conf.residue(parent_res_seqpos).get_self_ptr();
 		uint OY_ref = parent_res->connect_atom(*res);
 		uint HOY_ref = atom_next_to_connect_atom(*parent_res, OY_ref);

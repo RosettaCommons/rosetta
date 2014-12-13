@@ -24,8 +24,8 @@ namespace carbohydrates {
 /// @brief  A class containing carbohydrate-specific information.
 class CarbohydrateInfo;
 
-typedef utility::pointer::shared_ptr<CarbohydrateInfo> CarbohydrateInfoOP;
-typedef utility::pointer::shared_ptr<CarbohydrateInfo const> CarbohydrateInfoCOP;
+typedef utility::pointer::shared_ptr< CarbohydrateInfo > CarbohydrateInfoOP;
+typedef utility::pointer::shared_ptr< CarbohydrateInfo const > CarbohydrateInfoCOP;
 
 }  // namespace carbohydrates
 }  // namespace chemical

@@ -1,6 +1,7 @@
 # -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
 #
-# Project settings for rosetta sources
+# Project settings for Rosetta sources
+
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
@@ -57,6 +58,7 @@ sources = {
 	],
 
 	# B ######################################################################
+
 	"pilot/barak" : [
 		#"BuildFloppyTail",
 		#"print_phipsi",
@@ -70,25 +72,35 @@ sources = {
 		#"avital_stabilize_driver",
 		#"compare_rms_byres"
 	],
+	"pilot/bazzoli" : [
+		"constel",
+		"nrg_res_set",
+		"lig_low_sasa",
+		"sel_hbonds",
+		"list_cnl_ngbs",
+		"lig_polar_sat",
+		"cnl_env_lost_hbs",
+		"bou-min-ubo-nrg-jump",
+	],
 	"pilot/bcorreia" : [
 		#"iterative_design", # /* Correia,Documentation Location,Demo Location */
 		#"fold_from_loops", # /* Correia,Documentation Location,Demo Location */
 		#"fold_from_loops_devel", # /* Correia,Documentation Location,Demo Location */
 	],
 	"pilot/bder" : [
-                #"supercharge",          #integration test: supercharge.  Application moved to public/design
+		#"supercharge",          #integration test: supercharge.  Application moved to public/design
 		#"Zinc2_HomodimerSetup",  #integration test: zinc_homodimer_setup.  Application moved to public/design
 		#"Zinc2_HomodimerDesign", #integration test: zinc_homodimer_design.  Application moved to public/design
 	],
 	"pilot/ben" : [
 		"VIP_app",
 	],
- 	#"pilot/biokhar" : [
-		#"karen_compare_different_proteins",
-		#"karen_pocket_compare",
-		#"karen_pocket_save",
-		#"karen_compare_pocket_rmsd",
- 	#],
+ 	"pilot/biokhar" : [
+		"karen_compare_different_proteins",
+		"karen_pocket_compare",
+		"karen_pocket_save",
+		"karen_compare_pocket_rmsd",
+ 	],
 	"pilot/blivens" : [
 		#"convert", # /* Spencer Bliven,Documentation Location,Demo Location */
 		#"disulfide_scorer", # /* Spencer Bliven,Documentation Location,Demo Location */
@@ -99,20 +111,20 @@ sources = {
 	],
 	"pilot/brunette" : [
 		#"abego_predict",
-        "aln_to_disulf",
-        #"armEval",
-        #"calcFractionFolded",
-        #"dumpPhiPsiStats",
-        #"evalRepeats",
-        "evalFullLength",
-        #"hle_predict",
+		"aln_to_disulf",
+		#"armEval",
+		#"calcFractionFolded",
+		#"dumpPhiPsiStats",
+		#"evalRepeats",
+		"evalFullLength",
+		#"hle_predict",
 		#"minimalCstRelax",
 		#"minimalCstHomology",
-        #"outputLayerDesignBurial",
+		#"outputLayerDesignBurial",
 		"outputAbego",
-        "outputSasa",
-        #"outputRama",
-        #"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
+		"outputSasa",
+		#"outputRama",
+		#"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
 		#"identify_homolog_inaccuracies",
 		#"contact_map_from_homologs",
 	],
@@ -208,22 +220,22 @@ sources = {
 		#"saxs/call_saxs_score",
 	],
 	"pilot/doug" : [
-                #"peptoid_rotlibs/peptoid_rotlib_test1",
-                #"peptoid_rotlibs/peptoid_rotlib_test2",
-                #"peptoid_rotlibs/peptoid_rotlib_test3",
-                #"peptoid_movie",
-                #"peptoid_rotamer_prediction_benchmark",
-                #"make_peptoid",
-                #"make_peptoid_sequence",
-                #"get_dihedral_peptoid",
-                #"get_dihedral_peptide",
-                #"betacat_movie",
-                #"cyclic_peptoid_peptide/cyclic_peptoid_peptide_test1",
-                "Cyclize",
-                #"cu_binder/make_peptoid",
-                #"cu_binder/Cu_binder_model",
-                #"cyclic_pack",
-                #"pymolmovertest",
+		#"peptoid_rotlibs/peptoid_rotlib_test1",
+		#"peptoid_rotlibs/peptoid_rotlib_test2",
+		#"peptoid_rotlibs/peptoid_rotlib_test3",
+		#"peptoid_movie",
+		#"peptoid_rotamer_prediction_benchmark",
+		#"make_peptoid",
+		#"make_peptoid_sequence",
+		#"get_dihedral_peptoid",
+		#"get_dihedral_peptide",
+		#"betacat_movie",
+		#"cyclic_peptoid_peptide/cyclic_peptoid_peptide_test1",
+		"Cyclize",
+		#"cu_binder/make_peptoid",
+		#"cu_binder/Cu_binder_model",
+		#"cyclic_pack",
+		#"pymolmovertest",
 		#"noah_score_interface",
 		"number_of_residuetypes",
 		#"make_peptoid",
@@ -266,70 +278,13 @@ sources = {
 		"CutOutDomain", # /* Grant,Documentation Location,Demo Location */
 
 	],
-
 	"pilot/grant" : [
 		#"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
 		#"AbInitio_MPI",
-         ],
- 	"pilot/johnk" : [
-                #"chet_trp_to_gly",
-                #"chet_report_rmsd",
-                "constellation_list",
-                "johnk_docking_protocol",
-                #"johnk_recompute_score_and_rmsd",
-                #"johnk_interface_recompute_score_and_rmsd",
-                #"johnk_interface_geosol_minimization",
-                #"johnk_gapless_threading",
-                #"johnk_parametrize_geometric_solvation",
-                #"johnk_exact_geometric_solvation",
-                "justin_identify_holes",
-                #"justin_local_backrub",
-                #"phosphoArg_build_rotamers",
-                #"phosphoArg_minimize",
-		#"srirupa_two_loops",
-		#"ragul_backbone_diversity",
-		#"nadeem_find_destabilizing_mutation",
-		#"nadeem_compensatory_mutation",
 	],
-	"pilot/jstev" : [
-		#"collect_features",
- 	],
- 	"pilot/biokhar" : [
-		"karen_compare_different_proteins",
-		"karen_pocket_compare",
-		"karen_pocket_save",
-                "karen_compare_pocket_rmsd",
- 	],
-		"pilot/bazzoli" : [
-		"constel",
-		"nrg_res_set",
-		"lig_low_sasa",
-		"sel_hbonds",
-		"list_cnl_ngbs",
-		"lig_polar_sat",
-		"cnl_env_lost_hbs",
-		"bou-min-ubo-nrg-jump",
-	],
-	#"pilot/skelow" : [
-		#"simon_minimize",
-		#"simon_pure_minimimize",
-		#"minimize_complex",
-		#"dummy2",
-		#"simon_superimpose",
-		#"hbonds",
-	#],
-
- 	"pilot/whitney" : [
-		#"whitney_identify_epitope",
-		#"whitney_prepare_native",
-		#"whitney_local_backrub",
-		#"whitney_specificity_switch",
-		#"whitney_repack_input",
-	],
-
 
 	# H ######################################################################
-	"pilot/habib" : [
+		"pilot/habib" : [
 		"david_find_contacts",
 		"david_find_surface_residues",
 		"david_find_complex_contacts",
@@ -347,7 +302,7 @@ sources = {
 		"david_find_pocket_exemplar",
 		"david_find_best_contact_pocket",
 		"david_rotation_experiment",
-    #"david_darc_multirun",
+		#"david_darc_multirun",
 	],
 
 	# I ######################################################################
@@ -530,8 +485,9 @@ sources = {
 	# L ######################################################################
 	"pilot/labonte" : [
 		"debug_labontes_current_work",
+		"dock_glycans",
+		"test_ResidueProperties",
 		"test_sugar_torsion_getters_and_setters",
-		"test_ResidueProperties"
 	],
 	"pilot/lemmon" : [
 		#"undirected_graph"
@@ -616,9 +572,9 @@ sources = {
 		#"r_segment_rdc",
 		#"r_SymDock_viewer",
 	],
-	    "pilot/nir" : [
-             "PeptideDeriver",
-    ],
+	"pilot/nir" : [
+		"PeptideDeriver",
+	],
 	"pilot/nmarze" : [
 		#"packing_angle",
 	],
@@ -634,7 +590,7 @@ sources = {
 	# O ######################################################################
 	"pilot/olli" : [
 		"cloud_app",
-                "FragsToAtomDist",
+		"FragsToAtomDist",
 		"r_play_with_etables",
 		#"r_build_hotspot_loops",
 		#"r_abrelax",
@@ -658,7 +614,7 @@ sources = {
 		"r_tempered_sidechains",
 	],
 	"pilot/olungu" : [
-                "sasa_interface",
+		"sasa_interface",
 		"multidomain_switch", # /* ????,Documentation Location,Demo Location */
 		#"Superimpose_Pdbs", # /* ????,Documentation Location,Demo Location */
 	],
@@ -697,15 +653,14 @@ sources = {
 		"get_rna_pharmacophore",
 		"get_rna_pharmacophore_with_water",
 		"get_rna_ring_sasa",
-    "ragul_get_ligand_hbonds",
+		"ragul_get_ligand_hbonds",
 		"get_pharmacophore_without_bound_rna",
 		"gen_rna_pharmacophore",
-#		"ragul_test_darc",
-    "ragul_get_molecular_surface",
-    "ragul_get_connolly_surface",
-    "cstmin",
+		#"ragul_test_darc",
+		"ragul_get_molecular_surface",
+		"ragul_get_connolly_surface",
+		"cstmin",
 	],
-
 	"pilot/ralford" : [
 		"version_mpscorefxn",
 		"mp_rsd_energies",
@@ -752,7 +707,7 @@ sources = {
 		#"report_cavities_for_plugin",
 	],
 	"pilot/rpache" : [
-                "generate_matcher_constraints",
+		"generate_matcher_constraints",
 		"calibrate_pdb_via_sidechain_optimization",
 		"score_protein_ligand_interactions",
 		"create_clash-based_repack_shell",
@@ -830,9 +785,9 @@ sources = {
 		"test_bbmc",
 		#"test_cen_rot",
 		#"fa_to_cenrot_score",
-        "cenrot_jd2",
- 		#"general_pair_counting",
-        #"pairwise_fa_energy",
+		"cenrot_jd2",
+		#"general_pair_counting",
+		#"pairwise_fa_energy",
 		#"params_opt",
 		#"cenrot_bbsc_demo",
 	],
@@ -999,27 +954,27 @@ include_path = [ ]
 library_path = [ ]
 libraries	 = [ ]
 subprojects  = [
-        "devel",
-        "protocols.7",
-        "protocols.6",
-        "protocols_f.5",
-        "protocols_e.5",
-        "protocols_d.5",
-        "protocols_c.5",
-        "protocols_b.5",
-        "protocols_a.5",
-        "protocols_h.4",
-        "protocols_g.4",
-        "protocols_f.4",
-        "protocols_e.4",
-        "protocols_d.4",
-        "protocols_c.4",
-        "protocols_b.4",
-        "protocols_a.4",
-        "protocols.3",
-        "protocols_b.2",
-        "protocols_a.2",
-        "protocols.1",
+	"devel",
+	"protocols.7",
+	"protocols.6",
+	"protocols_f.5",
+	"protocols_e.5",
+	"protocols_d.5",
+	"protocols_c.5",
+	"protocols_b.5",
+	"protocols_a.5",
+	"protocols_h.4",
+	"protocols_g.4",
+	"protocols_f.4",
+	"protocols_e.4",
+	"protocols_d.4",
+	"protocols_c.4",
+	"protocols_b.4",
+	"protocols_a.4",
+	"protocols.3",
+	"protocols_b.2",
+	"protocols_a.2",
+	"protocols.1",
 	"core.5",
 	"core.4",
 	"core.3",

@@ -106,7 +106,7 @@ BondedAtom::update_xyz_coords()
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details starting from the input stub, calculate xyz position of this atom from
-/// its internal coordinates d_, theta_ and phi_. If recusrvie is true,
+/// its internal coordinates d_, theta_ and phi_. If recursive is true,
 /// obtain the new stub centered at this atom and pass the new stub to
 /// all its children atoms to update their xyz positions recursively.
 /// @note stub passed in is modified by rotating phi_ around x in the stub frame
@@ -119,6 +119,7 @@ BondedAtom::update_xyz_coords(
 	using numeric::z_rotation_matrix_radians;
 	using numeric::constants::d::pi;
 
+	// TODO: Add PyAssert?
 	assert( stub.is_orthogonal( 1e-3 ) );
 
 	stub.M *= x_rotation_matrix_radians( phi_ ); // this gets passed out

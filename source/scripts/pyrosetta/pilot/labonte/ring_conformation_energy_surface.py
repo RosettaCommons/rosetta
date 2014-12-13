@@ -20,8 +20,9 @@ from argparse import ArgumentParser
 
 from rosetta import init, pose_from_pdb, get_fa_scorefxn, \
                     create_score_function, standard_packer_task, Pose, \
-                    MoveMap, RotamerTrialsMover, Vector1
-from rosetta.core.chemical.carbohydrates import RingConformer, RingConformerSet
+                    MoveMap, MinMover, RotamerTrialsMover, Vector1, fa_intra_rep
+from rosetta.core.chemical import RingConformer, RingConformerSet
+from rosetta.core.chemical.carbohydrates import CarbohydrateInfo
 
 # Parse arguments.
 parser = ArgumentParser(description=__doc__)
@@ -35,7 +36,7 @@ parser.add_argument('--mm', action='store_true',
 args = parser.parse_args()
 
 # Initialize Rosetta.
-init(extra_options='-include_sugars -override_rsd_type_limit -mute all')
+init(extra_options='-include_sugars -override_rsd_type_limit -mute all ')
 
 # Load pdb file.
 initial_pose = pose_from_pdb(args.pdb_filename)
@@ -46,7 +47,8 @@ if initial_pose.total_residue() != 1:
 if not initial_pose.residue(1).is_carbohydrate():
     exit('The pdb file must contain a single saccharide residue.')
 
-info = initial_pose.residue(1).carbohydrate_info()
+res = initial_pose.residue(1)
+info = res.carbohydrate_info()
 
 print 'Generating energy surface for', info.anomer() + "-" + \
                                                        info.full_name() + '...'
@@ -56,6 +58,7 @@ if args.mm:
     sf = create_score_function('mm_std')
 else:
     sf = get_fa_scorefxn()
+sf.set_weight(fa_intra_rep, 0.440)
 
 print ' Initial Score:', sf(initial_pose)
 
@@ -65,6 +68,7 @@ pt.restrict_to_repacking()
 pt.or_include_current(True)
 
 packer = RotamerTrialsMover(sf, pt)
+
 
 # Prepare data storage.
 surface = []
@@ -108,7 +112,7 @@ elif ring_size == 6:
 
             # Get and set conformer.
             params = Vector1([0.5, phi, theta])  # q can be any positive real.
-            set_ = info.ring_conformer_set()
+            set_ = res.type().ring_conformer_set()
             conformer = set_.get_ideal_conformer_by_CP_parameters(params)
             pose.set_ring_conformation(1, conformer)
 

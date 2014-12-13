@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 # :noTabs=true:
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available
@@ -12,8 +12,12 @@
 """Brief:   This PyRosetta script performs a bound-bound dock between an
          oligosaccharide and a carbohydrate-binding protein.
 
+Note: The ligand must be the final chain (or chains, if it has branches).
+
 Example: ./dock_glycans.py MBP.pdb G4.pdb --local --overwrite --prepack 
         --ref MBP-G4_ref.pdb --output_folder output/docking/ --mute --n_decoys 100
+
+Example: ./dock_glycans.py MBP_pre-packed.pdb G4_pre-packed.pdb --output_folder output/docking/local/MBP/ --local --ref MBP-G4_ref.pdb --n_decoys 250
 
 Author:  Jason W. Labonte
 
@@ -21,10 +25,11 @@ Author:  Jason W. Labonte
 
 # Imports
 from argparse import ArgumentParser
-from os import remove, listdir
+from os import remove, listdir, mkdir
 from os.path import isfile
 from math import exp
 from random import random
+from signal import alarm, signal, SIGALRM
 
 from rosetta import init, Pose, pose_from_pdb, PyMOL_Mover, setup_foldtree, \
                     Vector1, get_fa_scorefxn, PyJobDistributor, MoveMap, \
@@ -33,8 +38,9 @@ from rosetta import init, Pose, pose_from_pdb, PyMOL_Mover, setup_foldtree, \
                     hbond_sr_bb, hbond_lr_bb, hbond_bb_sc, hbond_sc, fa_elec, \
                     fa_sol, fa_atr, fa_rep, standard_packer_task, \
                     TaskFactory, InitializeFromCommandline, IncludeCurrent, \
-                    RestrictToRepacking, PackRotamersMover, calc_Irmsd, \
-                    calc_interaction_energy, calc_Fnat
+                    RestrictToRepacking, PackRotamersMover, \
+                    calc_interaction_energy, calc_Fnat, \
+                    PyRosettaException, create_score_function
 from rosetta.core.scoring import non_peptide_heavy_atom_RMSD
 from rosetta.protocols.rigid import RigidBodyPerturbMover, \
                                     RigidBodyRandomizeMover, \
@@ -46,6 +52,58 @@ from rosetta.core.scoring import non_peptide_heavy_atom_RMSD
 JUMP_NUM = 1
 STARTING_RAMP_DOWN_FACTOR = 3.25  # values used by Krishna
 STARTING_RAMP_UP_FACTOR = 0.45455  # values used by Krishna
+
+
+# Global data
+frame = 0  # for naming movie frame files
+
+# Define classes.
+class TimeOutError(Exception):
+    """
+    Exception class for errors when a C++ method gets stuck in an infinite
+    loop.
+
+    Arguments are the name of the failing function and the time in seconds.
+    
+    """
+    def __str__(self):
+        return 'Force-exiting function after ' + str(self.args[0]) + "."
+
+
+class TimeLimit:
+    """A class for use with the with statement for establishing time limits on
+    Rosetta function calls.
+
+    """
+    def __init__(self, limit):
+        """Construct a TimeLimit.
+
+        Arguments: <limit>: time limit (in seconds)
+
+        Example: with TimeLimit(3): mover.apply(pose)
+
+        The above will raise an exception if the function takes longer than 3
+        seconds to return.
+
+        """
+        self.limit = limit
+
+    def __str__(self):
+        return str(self.limit) + ' second limit'
+
+    def __enter__(self):
+        signal(SIGALRM, self._raise_timeout)
+        alarm(self.limit)
+
+    def __exit__(self, *args):
+        alarm(0)  # Disable the alarm on exit.
+        #self.timer.cancel()
+
+    def _raise_timeout(self, signal_id, stack_frame):
+        raise TimeOutError(self)
+
+    def info(self):
+        return self.__doc__
 
 
 # Add custom MonteCarlo method.
@@ -109,14 +167,14 @@ def parse_arguments():
                         help='flag to observe the protocol in PyMOL')
     parser.add_argument('--mm', action='store_true',
                         help='flag to use the molecular mechanics' +
-                        ' score function')
+                             ' score function')
     parser.add_argument('--n_cycles', type=int, default=100,
                         help='the number of Monte Carlo refinement cycles')
     parser.add_argument('--kt', type=float, default=0.8,
-                    help='the "temperature" to use for the MC cycles')
+                        help='the "temperature" to use for the MC cycles')
     parser.add_argument('--n_decoys', type=int, default=10,
                         help='the number of docking decoys ' +
-                        '(Setting to 0 simply pre-packs the structure.)')
+                             '(Setting to 0 simply pre-packs the structure.)')
     parser.add_argument('--rot', type=float, default=2.0,
                         help='the mean rotation (in degrees) for rigid-body ' +
                              'moves')
@@ -165,10 +223,58 @@ def visualize(pose):
     if args.pm:
         pm.apply(pose)
     if args.make_movie:
-        pass  # need a global frame count
+        global frame
+        path = args.output_folder + 'movie_frames/'
+        if frame == 0:
+            try:
+                mkdir(path)
+            except OSError:
+                print 'Warning:',
+                print 'Directory already exists;',
+                print 'movie frame files will be overwritten.'
+        frame += 1
+        path += 'frame' + str(frame) + '.pdb'
+        pose.dump_pdb(path)
+
+
+def determine_docking_partners(pose):
+    """Return strings designating the upstream and downstream docking partners
+    for this pose. The strings returned are of the pdb file chain designations.
+    Currently, this assumes that the ligand is the final chain(s).
+
+    """
+    pdb_info = pose.pdb_info()
+    chain_endings = pose.conformation().chain_endings()
+    print chain_endings  # DEBUG
+    chain_num_of_last_cut_point = len(chain_endings)
+    print chain_num_of_last_cut_point  # DEBUG
+    last_cut_point = chain_endings[chain_num_of_last_cut_point]
+    print last_cut_point  # DEBUG
+
+    # Check the last chain to see if it is a branch.
+    while pose.residue(last_cut_point + 1).is_branch_lower_terminus():
+        chain_num_of_last_cut_point -= 1
+        last_cut_point = chain_endings[chain_num_of_last_cut_point]
+        print last_cut_point  # DEBUG
+    upstream_chains = ''
+    downstream_chains = ''
+    for cut_point in chain_endings:
+        print cut_point  # DEBUG
+        if cut_point < last_cut_point:
+            upstream_chains += pdb_info.chain(cut_point)
+        elif cut_point == last_cut_point:
+            upstream_chains += pdb_info.chain(cut_point)
+            downstream_chains += pdb_info.chain(cut_point + 1)
+        else:  # cut_point > last_cut_point
+            downstream_chains += pdb_info.chain(cut_point + 1)
+    return upstream_chains, downstream_chains
 
 
 def ramp_score_weight(score_function, method, target, fraction_completion):
+    """Set the weight for the given method within a ScoreFunction using the
+    appropriate ramping factor and the fraction complete.
+
+    """
     #print 'fraction completion:', fraction_completion, ":",  # DEBUG
     current_weight = score_function.get_weight(method)
     #print 'current:', current_weight,
@@ -189,22 +295,19 @@ def ramp_score_weight(score_function, method, target, fraction_completion):
 
 
 def get_pose_metrics(pose, ref, sf, jump):
+    """Return a string containing a collection of decoy metrics."""
     ligand_rmsd = str(round(non_peptide_heavy_atom_RMSD(pose, ref), 2))
-    #interface_rmsd = str(round(calc_Irmsd(pose, ref, sf, Vector1([jump])), 2))
     interaction_energy = \
               str(round(calc_interaction_energy(pose, sf, Vector1([jump])), 2))
     fraction_native_contacts = \
                        str(round(calc_Fnat(pose, ref, sf, Vector1([jump])), 2))
 
-    if not args.mute:
-        print '  Metrics for this decoy:'
-        print '   Ligand RMSD:                ', ligand_rmsd
-        #print '   Interface RMSD:             ', interface_rmsd
-        print '   Interaction Energy:         ', interaction_energy
-        print '   Fraction of native contacts:', fraction_native_contacts
+    print '  Metrics for this decoy:'
+    print '   Ligand RMSD:                ', ligand_rmsd
+    print '   Interaction Energy:         ', interaction_energy
+    print '   Fraction of native contacts:', fraction_native_contacts
 
     metrics = 'ligand_rmsd: ' + ligand_rmsd
-    #metrics += ' I_rmsd: ' + interface_rmsd
     metrics += ' interaction_energy: ' + interaction_energy
     metrics += ' Fnat: ' + fraction_native_contacts
     return metrics
@@ -228,11 +331,22 @@ if __name__ == '__main__':
 
     # Initialize Rosetta.
     print '\nInitializing Rosetta...'
-    init(extra_options='-include_sugars -include_lipids ' +
-                       '-read_pdb_link_records -write_pdb_link_records ' +
-                       '-override_rsd_type_limit -mute basic -mute numeric ' +
-                       #'-mute utility -mute core -run:constant_seed -out:levels protocols.simple_moves.MinMover:500')
-                       '-mute utility -mute core -mute protocols')
+    init(extra_options='-include_sugars -include_lipids '
+                       '-read_pdb_link_records -write_pdb_link_records '
+                       '-override_rsd_type_limit '
+                       '-mute basic -mute numeric -mute utility '
+                       '-mute core -mute protocols '
+                       #'-run:constant_seed '
+                       #'-run:jran 618450550 '
+                       #'-out:levels protocols.simple_moves.MinMover:500 '
+                       #'-out:levels core.optimization.AtomTreeMinimizer:500 '
+                       #'-out:levels core.optimization.Minimizer:500 '
+                       #'-out:levels protocols.moves.RigidBodyMover:200 '
+                       #'-out:levels core.optimize:500 '
+                       #'-out:levels core.optimization.LineMinimizer:500 '
+                       #'-out:levels protocols.simple_moves.PackRotamersMover:500 '
+                       #'-out:levels core.pose:500 -out:levels core.io.pdb.file_data:500 -out:levels core.import_pose.import_pose:500'
+                       )
 
     # Create pose.
     print '\nGenerating starting pose...'
@@ -245,32 +359,31 @@ if __name__ == '__main__':
         pm = PyMOL_Mover()
     visualize(starting_pose)
 
-    # Prepare foldtree
-    # Currently, this assumes that the ligand is the final chain.
-    chain_endings = starting_pose.conformation().chain_endings()
-    last_cut_point = chain_endings[len(chain_endings)]
-    upstream_chains = ''
-    for cut_point in chain_endings:
-        upstream_chains += starting_pose.pdb_info().chain(cut_point)
-    downstream_chain = starting_pose.pdb_info().chain(last_cut_point + 1)
-    partners = upstream_chains + "_" + downstream_chain
-
+    # Prepare the foldtree.
+    upstream_chains, downstream_chains = \
+                                      determine_docking_partners(starting_pose)
+    partners = upstream_chains + "_" + downstream_chains
+    # TODO: Modify C++ so that chemical edges are not removed.
     setup_foldtree(starting_pose, partners, Vector1([JUMP_NUM]))
 
     # Print some information about the starting pose.
     print "", starting_pose.fold_tree(),
-    print 'Ligand (chain ' + downstream_chain + ') center is',
+    print ' Ligand [chain(s) ' + downstream_chains + '] center is',
     print starting_pose.jump(JUMP_NUM).get_translation().length,
-    print 'Angstroms from protein center (chain(s) ' + upstream_chains + ').'
+    print 'angstroms from protein center [chain(s) ' + upstream_chains + '].'
 
     # Prepare scoring function.
-    #sf = get_fa_scorefxn()
-    sf = create_score_function_ws_patch("talaris2013", "docking")
+    if args.mm:
+        sf = create_score_function('mm_std')
+    else:
+        #sf = get_fa_scorefxn()
+        sf = create_score_function_ws_patch('talaris2013', 'docking')
     sf.set_weight(hbond_sr_bb, sf.get_weight(hbond_sr_bb) * args.Hbond_mult)
     sf.set_weight(hbond_lr_bb, sf.get_weight(hbond_lr_bb) * args.Hbond_mult)
     sf.set_weight(hbond_bb_sc, sf.get_weight(hbond_bb_sc) * args.Hbond_mult)
     sf.set_weight(hbond_sc, sf.get_weight(hbond_sc) * args.Hbond_mult)
-    sf.set_weight(fa_elec, sf.get_weight(fa_elec) * args.elec_mult)
+    if not args.mm:
+        sf.set_weight(fa_elec, sf.get_weight(fa_elec) * args.elec_mult)
     sf.set_weight(fa_sol, sf.get_weight(fa_sol) * args.sol_mult)
     target_atr = sf.get_weight(fa_atr) * args.atr_mult
     target_rep = sf.get_weight(fa_rep) * args.rep_mult
@@ -278,6 +391,9 @@ if __name__ == '__main__':
     sf.set_weight(fa_rep, target_rep)
     print ' Starting Score:'
     sf.show(starting_pose)
+    print ' Interface score:                         ',
+    print round(
+            calc_interaction_energy(starting_pose, sf, Vector1([JUMP_NUM])), 2)
 
     if args.prepack:
         # Prepare PackerTask
@@ -292,8 +408,11 @@ if __name__ == '__main__':
         print '\nPre-packing the pose (slow)...'
         pre_packer.apply(starting_pose)
         print ' Success!'
-        print ' Pre-packed score:',
+        print ' Pre-packed score:'
         sf.show(starting_pose)
+        print ' Interface score:                         ',
+        print round(
+            calc_interaction_energy(starting_pose, sf, Vector1([JUMP_NUM])), 2)
         starting_pose.dump_pdb(new_filename[:-4] + 'pre-packed.pdb')
         visualize(starting_pose)
 
@@ -304,15 +423,15 @@ if __name__ == '__main__':
     slider = FaDockingSlideIntoContact(JUMP_NUM)
     perturber = RigidBodyPerturbMover(JUMP_NUM, args.rot, args.trans)
     randomizerA = RigidBodyRandomizeMover(starting_pose, JUMP_NUM,
-                                          partner_upstream)
+                                          partner_upstream, 360, 360,
+                                          False)  # Don't change rot. center!
     randomizerB = RigidBodyRandomizeMover(starting_pose, JUMP_NUM,
-                                          partner_downstream)
+                                          partner_downstream, 360, 360,
+                                          False)  # Don't change rot. center!
     mm = MoveMap()
     mm.set_jump(JUMP_NUM, True)
-    jump_minimizer = MinMover()
-    jump_minimizer.movemap(mm)
-    jump_minimizer.score_function(sf)
-    #dock_hires = DockMCMProtocol()
+    jump_minimizer = MinMover(mm, sf, 'dfpmin', 0.01, True)
+    #dock_hires = DockMCMProtocol()  # is not rigid-body
     #dock_hires.set_scorefxn(sf)
     #dock_hires.set_partners(partners)
 
@@ -323,17 +442,15 @@ if __name__ == '__main__':
         if not args.ref.endswith('.pdb'):
             exit('Reference file must have the ".pdb" file extension.')
         ref_pose = pose_from_pdb(args.ref)
-        #jd.native_pose = ref_pose
 
     # Begin docking protocol.
-    print "\nDocking..."
+    print '\nDocking...'
     pose = Pose()  # working pose
     last_pose = Pose()  # needed because I have not modified C++ code
     while not jd.job_complete:
         print ' Decoy', jd.current_num
         print '  Randomizing positions...'
         pose.assign(starting_pose)
-        print 'JUMP LENGTH:', pose.jump(JUMP_NUM).get_translation().length  # DEBUG
         if not args.local:
             randomizerA.apply(pose)
         randomizerB.apply(pose)
@@ -355,29 +472,36 @@ if __name__ == '__main__':
                 ramp_score_weight(sf, fa_atr, target_atr, fraction)
                 ramp_score_weight(sf, fa_rep, target_rep, fraction)
                 mc.reset(pose)
+
             # Save information needed for distance criterion
-            #old_score = sf(pose)
             distance = pose.jump(JUMP_NUM).get_translation().length
             last_pose.assign(pose)
-            perturber.apply(pose)
-            slider.apply(pose)
+
+            while True:
+                # Apply moves.
+                perturber.apply(pose)
+                #slider.apply(pose)
+                visualize(pose)
+                #print 'SCORE BEFORE MIN:', sf(pose), 'DISTANCE:', pose.jump(JUMP_NUM).get_translation().length  # DEBUG
+                try:
+                    with TimeLimit(3):
+                        jump_minimizer.apply(pose)  # Often doesn't finish; why?
+                    break
+                except TimeOutError as e:
+                    print '   ' + str(e)
+                    pose.dump_pdb('time-out_decoy.pdb')  # DEBUG
+                    pose.assign(last_pose)
+                except PyRosettaException as e:
+                    print '   NaN error during minimization; reattempting...'
+                    pose.dump_pdb('NaN_decoy.pdb')  # DEBUG
+                    pose.assign(last_pose)
+                #print 'SCORE AFTER MIN: ', sf(pose), 'DISTANCE:', pose.jump(JUMP_NUM).get_translation().length  # DEBUG
             visualize(pose)
-            #print 'SCORE BEFORE MIN:', sf(pose), 'DISTANCE:', pose.jump(JUMP_NUM).get_translation().length
-            #print 'SF ATR WEIGHT:', sf.get_weight(fa_atr)
-            #jump_minimizer.score_function(sf)
-            #print 'MIN SF ATR WEIGHT:', jump_minimizer.score_function().get_weight(fa_atr)
-            #jump_minimizer.apply(pose)  # Never finishes; why?
-            #print 'FINISHED MIN'
-            visualize(pose)
-            #print '    Score changed from', old_score, 'to', sf(pose), ':',
-            #mc.boltzmann(pose)
+
+            # Move-Acceptance Criteria
             if mc.boltzmann(pose):
-                # Only perform a distance acceptance check if the new pose is
-                # accepted.
-                #print 'accepting pending distance check:'
                 mc.distance_criterion(pose, distance, last_pose)
-            #else:
-                #print 'rejecting'
+
             if not args.mute and cycle % 5 == 0:
                 print '   Cycle', cycle, '  Current Score:', sf(pose)
             visualize(pose)
@@ -388,3 +512,4 @@ if __name__ == '__main__':
             jd.additional_decoy_info = \
                                  get_pose_metrics(pose, ref_pose, sf, JUMP_NUM)
         jd.output_decoy(pose)
+        args.make_movie = False  # Make no more than one movie.

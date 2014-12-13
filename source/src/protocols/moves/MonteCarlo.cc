@@ -338,7 +338,7 @@ MonteCarlo::boltzmann(
 
 	// score the pose:
 	Real const score( (*score_function_)( pose ) );
-	//now delegate deciscion making...
+	//now delegate decision making...
 	bool const accept( boltzmann( score, move_type, proposal_density_ratio, inner_score_temperature_delta ) );
 
 	//rejected ?

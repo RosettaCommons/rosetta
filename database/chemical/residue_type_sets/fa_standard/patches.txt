@@ -124,10 +124,11 @@ patches/AcetylatedPeptoidNterm.txt
 ### termini
 patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
+#patches/carbohydrates/Me_glycoside.txt
 ### cutpoints
 patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt
-### glycosylation/branching (requires -read_pdb_link_records and -enable_branching flags to patch)
+### glycosylation/branching (requires -read_pdb_link_records flag to patch)
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/O-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt

@@ -683,8 +683,8 @@ Pose::chain_sequence(core::Size const chain_in) const
 
 	stringstream seq(stringstream::out);
 
-	Size begin = conformation_->chain_begin(chain_in);
-	Size end = conformation_->chain_end(chain_in);
+	Size const begin = conformation_->chain_begin(chain_in);
+	Size const end = conformation_->chain_end(chain_in);
 
 	if (!residue(begin).is_carbohydrate()) {
 		for (Size i = begin; i <= end; ++i) {

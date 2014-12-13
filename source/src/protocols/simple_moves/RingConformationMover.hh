@@ -38,31 +38,30 @@ namespace simple_moves {
 /// idealized ring conformer.
 /// @remarks  This class is a work in progress....
 class RingConformationMover: public moves::Mover {
-public:
-	// Standard methods ////////////////////////////////////////////////////////
+public:  // Standard methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
 	RingConformationMover();
 
 	/// @brief  Copy constructor
-	RingConformationMover(RingConformationMover const & object_to_copy);
+	RingConformationMover( RingConformationMover const & object_to_copy );
 
 	/// @brief  Constructor with MoveMap input option
-	RingConformationMover(core::kinematics::MoveMapOP input_movemap);
+	RingConformationMover( core::kinematics::MoveMapOP input_movemap );
 
 	// Assignment operator
-	RingConformationMover & operator=(RingConformationMover const & object_to_copy);
+	RingConformationMover & operator=( RingConformationMover const & object_to_copy );
 
 	// Destructor
 	virtual ~RingConformationMover();
 
 
-	// Standard Rosetta methods ////////////////////////////////////////////////
+public: // Standard Rosetta methods ///////////////////////////////////////////
 	// General methods
 	/// @brief  Register options with the option system.
 	static void register_options();
 
 	/// @brief  Generate string representation of RingConformationMover for debugging purposes.
-	virtual void show(std::ostream & output=std::cout) const;
+	virtual void show( std::ostream & output=std::cout ) const;
 
 
 	// Mover methods
@@ -74,36 +73,35 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	/// @brief  Apply the corresponding move to <input_pose>.
-	virtual void apply(core::pose::Pose & input_pose);
+	virtual void apply( core::pose::Pose & input_pose );
 
 
-	// Accessors/Mutators
+public: // Accessors/Mutators /////////////////////////////////////////////////
 	/// @brief  Get the current MoveMap.
 	core::kinematics::MoveMapCOP movemap() const;
 
 	/// @brief  Set the MoveMap.
-	void movemap(core::kinematics::MoveMapOP new_movemap);
+	void movemap( core::kinematics::MoveMapOP new_movemap );
 
-private:
-	// Private methods /////////////////////////////////////////////////////////
+private:  // Private methods //////////////////////////////////////////////////
 	// Initialize data members from arguments.
-	void init(core::kinematics::MoveMapOP movemap);
+	void init( core::kinematics::MoveMapOP movemap );
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-	void copy_data(RingConformationMover object_to_copy_to, RingConformationMover object_to_copy_from);
+	void copy_data( RingConformationMover & object_to_copy_to, RingConformationMover const & object_to_copy_from);
 
 	// Setup list of movable cyclic residues from MoveMap.
-	void setup_residue_list(core::pose::Pose & pose);
+	void setup_residue_list( core::pose::Pose & pose );
 
 
-	// Private data ////////////////////////////////////////////////////////////
+private:  // Private data /////////////////////////////////////////////////////
 	core::kinematics::MoveMapOP movemap_;
 	utility::vector1<core::Size> residue_list_;  // list of movable cyclic residues by residue number
 
 };  // class RingConformationMover
 
 // Insertion operator (overloaded so that RingConformationMover can be "printed" in PyRosetta).
-std::ostream & operator<<(std::ostream & output, RingConformationMover const & object_to_output);
+std::ostream & operator<<( std::ostream & output, RingConformationMover const & object_to_output );
 
 }  // namespace simple_moves
 }  // namespace protocols

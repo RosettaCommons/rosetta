@@ -522,7 +522,7 @@ RigidBodyRandomizeMover::apply( core::pose::Pose & pose )
 		TRBM << "Randomize: " << "Jump (before): " << flexible_jump << std::endl;
 	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
 	core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
-		TRBM << "Randomize: " << "Rot (before): "
+		TRBM << "Randomize: " << "Rot. Center (before): "
 		     << rot_center_.x() << " "
 			 << rot_center_.y() << " "
 			 << rot_center_.z() << std::endl;
@@ -539,7 +539,7 @@ RigidBodyRandomizeMover::apply( core::pose::Pose & pose )
 		rot_center_ = ( partner_ == 2 ) ? dummy_down : dummy_up;
 	}
 
-	TRBM << "Randomize: " << "Rot  (after): "
+	TRBM << "Randomize: " << "Rot. Center (after):  "
 	     << rot_center_.x() << " "
 		 << rot_center_.y() << " "
 		 << rot_center_.z() << std::endl;

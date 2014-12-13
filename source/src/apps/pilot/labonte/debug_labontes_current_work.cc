@@ -12,12 +12,12 @@
 /// @author Labonte
 
 
-
 // Package headers
 #include <devel/init.hh>
 
 // Project headers
 #include <core/types.hh>
+#include <core/io/carbohydrates/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 //#include <core/pose/annotated_sequence.hh>
@@ -36,6 +36,7 @@
 //#include <protocols/simple_moves/BackboneMover.hh>
 //#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/util.hh>
 
 // Utility headers
@@ -48,10 +49,9 @@
 #include <iostream>
 //#include <algorithm>
 
-// Construct random-number generator.
 
-
-int main(int argc, char *argv[])
+int
+main( int argc, char *argv[] )
 {
     try {
 		using namespace std;
@@ -65,13 +65,19 @@ int main(int argc, char *argv[])
 		using namespace simple_moves;
 
 		// initialize core
-		devel::init(argc, argv);
+		devel::init( argc, argv );
 
 		// declare variables
 		Pose pose, ref;
 
 		// Make a test pose.
 		//make_pose_from_sequence( pose, "AAAAAAAAAA", "fa_standard" );
+
+		pose_from_pdb( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.pdb" );
+		io::carbohydrates::dump_gws( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.gws" );
+		cout << "GWS file generated." << endl;
+
+		/*
 		pose_from_pdb( pose, "/home/labonte/Workspace/Carbohydrates/MBP-G4_ref.pdb" );
 
 		vector1< int > movable_jumps( 1, 1 );
@@ -79,9 +85,11 @@ int main(int argc, char *argv[])
 
 		cout << pose << endl << endl;
 
-		ScoreFunctionOP sf( get_score_function() );
+		//ScoreFunctionOP sf( get_score_function() );
+		vector1< string > const patches( 1, "docking" );
+		ScoreFunctionOP sf( ScoreFunctionFactory::create_score_function( "talaris2013", patches ) );
 
-		cout << "Initial Score: " << (*sf)( pose ) << endl;
+		cout << "Initial Score: " << ( *sf )( pose ) << endl;
 
 		MoveMapOP mm( MoveMapOP( new MoveMap() ) );
 		mm->set_jump( 1, true );
@@ -90,18 +98,30 @@ int main(int argc, char *argv[])
 		jump_minimizer.movemap( mm );
 		jump_minimizer.score_function( sf );
 
+		docking::FaDockingSlideIntoContact slider( 1 );
 		rigid::RigidBodyPerturbMover perturber( 1, 2.0, 0.5 );
+		rigid::RigidBodyRandomizeMover randomizer( pose, 1, rigid::partner_downstream, 360, 360, false );
 
-		jump_minimizer.apply( pose );
+		cout << "Score Before Any Moves: " << ( *sf )( pose ) << endl;
 
-		cout << "Minimization Score Before Any Moves: " << (*sf)( pose ) << endl;
+		cout << "Randomizing..." << endl;
+		randomizer.apply( pose );
+		cout << "Randomized" << endl;
+		cout << "Sliding..." << endl;
+		slider.apply( pose );
+		cout << "Slid" << endl;
 
-		for ( core::uint i = 1; i <= 100; ++i ) {
+		cout << "Score After Initial Randomization: " << ( *sf )( pose ) << endl;
+
+		for ( core::uint i = 1; i <= 1000; ++i ) {
+			cout << "Perturbing..." << endl;
 			perturber.apply( pose );
+			cout << "Perturbed" << endl;
+			cout << "Minimizing..." << endl;
 			jump_minimizer.apply( pose );
 
-			cout << "Minimization Score After Rigid Move " << i << ": " << (*sf)( pose ) << endl;
-		}
+			cout << "Minimization Score After Rigid Move " << i << ": " << ( *sf )( pose ) << endl;
+		}*/
 
 		//pose.dump_pdb( "" );
    } catch ( utility::excn::EXCN_Base const & e ) {

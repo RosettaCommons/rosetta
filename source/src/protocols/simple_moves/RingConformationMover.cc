@@ -39,8 +39,6 @@
 // Construct tracers.
 static thread_local basic::Tracer TR( "protocols.simple_moves.RingConformationMover" );
 
-// Construct random-number generator.
-
 
 namespace protocols {
 namespace simple_moves {
@@ -58,15 +56,15 @@ RingConformationMover::RingConformationMover(): Mover()
 
 	// Set default MoveMap.
 	MoveMapOP default_movemap( new MoveMap() );
-	default_movemap->set_nu(true);
+	default_movemap->set_nu( true );
 
-	init(default_movemap);
+	init( default_movemap );
 }
 
 // Copy constructor
-RingConformationMover::RingConformationMover(RingConformationMover const & object_to_copy): Mover(object_to_copy)
+RingConformationMover::RingConformationMover( RingConformationMover const & object_to_copy ) : Mover( object_to_copy )
 {
-	copy_data(*this, object_to_copy);
+	copy_data( *this, object_to_copy );
 }
 
 // Constructor with MoveMap input option
@@ -83,12 +81,12 @@ RingConformationMover &
 RingConformationMover::operator=(RingConformationMover const & object_to_copy)
 {
 	// Abort self-assignment.
-	if (this == &object_to_copy) {
+	if ( this == &object_to_copy ) {
 		return *this;
 	}
 
-	Mover::operator=(object_to_copy);
-	copy_data(*this, object_to_copy);
+	Mover::operator=( object_to_copy );
+	copy_data( *this, object_to_copy );
 	return *this;
 }
 
@@ -109,7 +107,7 @@ RingConformationMover::show(std::ostream & output) const
 {
 	using namespace std;
 
-	Mover::show(output);  // name, type, tag
+	Mover::show( output );  // name, type, tag
 
 	output << "Current MoveMap:" << endl << *movemap_ << endl;
 }
@@ -125,7 +123,7 @@ RingConformationMover::get_name() const
 protocols::moves::MoverOP
 RingConformationMover::clone() const
 {
-	return protocols::moves::MoverOP( new RingConformationMover(*this) );
+	return protocols::moves::MoverOP( new RingConformationMover( *this ) );
 }
 
 protocols::moves::MoverOP
@@ -148,22 +146,22 @@ RingConformationMover::apply(Pose & input_pose)
 	using namespace conformation;
 	using namespace chemical;
 
-	show(TR);
+	show( TR );
 
 	TR << "Getting movable residues...." << endl;
 
-	setup_residue_list(input_pose);
+	setup_residue_list( input_pose );
 
-	if (residue_list_.empty()) {
+	if ( residue_list_.empty() ) {
 		TR.Warning << "There are no movable cyclic residues available in the given pose." << endl;
 		return;
 	}
 
 	TR << "Applying " << get_name() << " to pose...." << endl;
 
-	core::uint const i = core::uint(numeric::random::rg().uniform() * residue_list_.size() + 1);
-	core::uint const res_num = residue_list_[i];
-	Residue const & res = input_pose.residue(res_num);
+	core::uint const i( core::uint( numeric::random::rg().uniform() * residue_list_.size() + 1 ) );
+	core::uint const res_num( residue_list_[ i ] );
+	Residue const & res( input_pose.residue( res_num ) );
 
 	TR << "Selected residue " << res_num << ": " << res.name() << endl;
 
@@ -174,7 +172,7 @@ RingConformationMover::apply(Pose & input_pose)
 
 	TR << "Making move...." << endl;
 
-	input_pose.set_ring_conformation(res_num, conformer);
+	input_pose.set_ring_conformation( res_num, conformer );
 
 	TR << "Move complete." << endl;
 }
@@ -197,9 +195,9 @@ RingConformationMover::movemap(kinematics::MoveMapOP new_movemap)
 // Private methods /////////////////////////////////////////////////////////////
 // Initialize data members from arguments.
 void
-RingConformationMover::init(core::kinematics::MoveMapOP movemap)
+RingConformationMover::init( core::kinematics::MoveMapOP movemap )
 {
-	type("RingConformationMover");
+	type( "RingConformationMover" );
 
 	movemap_ = movemap;
 }
@@ -207,8 +205,8 @@ RingConformationMover::init(core::kinematics::MoveMapOP movemap)
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 void
 RingConformationMover::copy_data(
-		RingConformationMover object_to_copy_to,
-		RingConformationMover object_to_copy_from)
+		RingConformationMover & object_to_copy_to,
+		RingConformationMover const & object_to_copy_from)
 {
 	object_to_copy_to.movemap_ = object_to_copy_from.movemap_;
 	object_to_copy_to.residue_list_ = object_to_copy_from.residue_list_;
