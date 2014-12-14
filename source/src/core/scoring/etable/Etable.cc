@@ -1471,7 +1471,9 @@ Etable::precalc_etable_coefficients(
 				if ( ( atom_type(i).is_acceptor() && atom_type(j).is_donor() ) ||
 						 ( atom_type(i).is_donor() && atom_type(j).is_acceptor() ) ) {
           if ( ( atom_type(j).is_donor() && atom_type(j).name() == "OH" ) ||
-               ( atom_type(i).is_donor() && atom_type(i).name() == "OH" ) ) {
+               ( atom_type(i).is_donor() && atom_type(i).name() == "OH" ) ||
+							 ( atom_type(j).is_donor() && atom_type(j).name() == "Oes3" ) || // "Oes3" is ester atom (used for nucleic acid O4', used to be "OH")
+               ( atom_type(i).is_donor() && atom_type(i).name() == "Oes3" ) ) {
 						sigma = lj_hbond_OH_donor_dis;
 					} else {
 						sigma = lj_hbond_dis;

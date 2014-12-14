@@ -43,6 +43,8 @@
 #include <basic/options/option.hh>
 
 
+using namespace basic::options;
+
 namespace core {
 namespace chemical {
 
@@ -67,9 +69,9 @@ AtomTypeSet::AtomTypeSet( std::string const & directory )
 	}
 	data.close();
 
-	if ( basic::options::option[ basic::options::OptionKeys::chemical::enlarge_H_lj ] ) {
-		core::chemical::enlarge_h_lj_wdepth( *this );
-	}
+	// post processing from command-line
+	if ( option[ OptionKeys::chemical::enlarge_H_lj ] ) enlarge_h_lj_wdepth( *this );
+	if ( option[ OptionKeys::chemical::no_hbonds_to_ester_oxygens ] ) turn_off_hbonds_to_ester_oxygens( *this );
 
 	clone_atom_types_from_commandline();
 }

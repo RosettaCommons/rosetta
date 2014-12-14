@@ -36,6 +36,8 @@ OH        1.4
 ONH2      1.4
 OOC       1.4
 Oaro      1.4
+Oes2      1.4
+Oes3      1.4
 S         1.8
 Nbb       1.55
 CAbb      1.75
