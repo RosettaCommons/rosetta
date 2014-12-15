@@ -205,9 +205,7 @@ void EnzConstraintParameters::init() {
 EnzConstraintParameters::EnzConstraintParameters( EnzConstraintParameters const & other )
 :
 	utility::pointer::ReferenceCount(),
-#ifdef PTR_MODERN
 	utility::pointer::enable_shared_from_this< EnzConstraintParameters >(),
-#endif
 	mcfi_(other.mcfi_),
 	disAB_(other.disAB_), angleA_(other.angleA_), angleB_(other.angleB_),
 	torsionA_(other.torsionA_), torsionB_(other.torsionB_), torsionAB_(other.torsionAB_),

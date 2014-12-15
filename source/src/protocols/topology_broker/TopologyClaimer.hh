@@ -64,18 +64,8 @@ namespace topology_broker {
 
 // 		 initialize_dofs( init_claims [ subset of your claims ] ) ///only act on internal dofs -- no structure building
 
-class TopologyClaimer : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< TopologyClaimer >
+class TopologyClaimer : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< TopologyClaimer >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline TopologyClaimerCOP shared_from_this() const { return TopologyClaimerCOP( this ); }
-	inline TopologyClaimerOP shared_from_this() { return TopologyClaimerOP( this ); }
-#endif
-
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~TopologyClaimer(){}

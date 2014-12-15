@@ -82,18 +82,8 @@ void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, c
 		knowledge-based full-atom pair term ("actcoord_").  Maybe this will also
 		hold the centroid position for centroid-mode scoring??
  **/
-class Residue : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New C++11 version
-	, public utility::pointer::enable_shared_from_this< Residue >
+class Residue : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Residue >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline ResidueCOP shared_from_this() const { return ResidueCOP( this ); }
-	inline ResidueOP shared_from_this() { return ResidueOP( this ); }
-#endif
-
 public:
 	typedef chemical::AtomType AtomType;
 	typedef chemical::ResidueType ResidueType;

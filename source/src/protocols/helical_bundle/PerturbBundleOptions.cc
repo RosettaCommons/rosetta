@@ -53,9 +53,7 @@ namespace protocols {
 
 		PerturbBundleOptions::PerturbBundleOptions( PerturbBundleOptions const & src ) :
 			utility::pointer::ReferenceCount(),
-		#ifdef PTR_MODERN
 			utility::pointer::enable_shared_from_this< PerturbBundleOptions >() ,
-		#endif
 			helix_index_(src.helix_index_),
 			perturbation_magnitude_(src.perturbation_magnitude_),
 			perturbation_type_(src.perturbation_type_),

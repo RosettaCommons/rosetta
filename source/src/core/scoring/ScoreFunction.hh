@@ -88,18 +88,8 @@ void lregister_ScoreFunction( lua_State * lstate );
 /// calculating the various scoring components (called ScoreType's) used in
 /// Rosetta. It also contains weights that are applied to each of those
 /// components. Only scoring components with non-zero weights are calculated.
-class ScoreFunction : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< ScoreFunction >
+class ScoreFunction : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ScoreFunction >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline ScoreFunctionCOP shared_from_this() const { return ScoreFunctionCOP( this ); }
-	inline ScoreFunctionOP shared_from_this() { return ScoreFunctionOP( this ); }
-#endif
-
 	/////////////////////////////////////////////////////////////////////////////
 	// typedefs
 	/////////////////////////////////////////////////////////////////////////////

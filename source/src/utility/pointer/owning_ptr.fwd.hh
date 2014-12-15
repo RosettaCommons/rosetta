@@ -11,10 +11,6 @@
 /// @brief  Non-owning owning smart pointer -- dispatch class
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
-#ifdef PTR_REFCOUNT
-#include <utility/pointer/refcount/owning_ptr.fwd.hh>
-#endif
-
 #ifdef PTR_STD
 #include <utility/pointer/std/owning_ptr.hh>
 #endif

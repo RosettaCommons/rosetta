@@ -182,9 +182,7 @@ Residue::Residue(
 
 Residue::Residue( Residue const & src ) :
 	utility::pointer::ReferenceCount(),
-#ifdef PTR_MODERN
 	utility::pointer::enable_shared_from_this< Residue >(),
-#endif
 	rsd_type_(src.rsd_type_),
 	atoms_(src.atoms_),
 	orbitals_(src.orbitals_),

@@ -777,25 +777,10 @@ ConstraintSet::detach_from_conformation() {
 
 	if( conformation_pt_.expired() ) return;
 
-#ifdef PTR_MODERN
 	core::conformation::ConformationCOP conformation_pt( conformation_pt_ );
 	conformation_pt->detach_length_obs( &ConstraintSet::on_length_change, this );
 	conformation_pt->detach_connection_obs( &ConstraintSet::on_connection_change, this );
 	conformation_pt_.reset();
-#else
-	// With ReferenceCount, this gets interesting:
-	// This function is called from Conformation::~Conformation via
-	// notify_connection_obs() and then on_connection_change().
-	// The conformation_pt_->count_ is 0 at this point.
-	// Putting conformation_pt_ into an OP (as above) increments the
-	// counter again, which is decremented at the end of this function
-	// when conformation_pt expires and Conformation::~Conformation
-	// is called again, resulting in a call loop and stack overflow.
-	conformation_pt_->detach_length_obs( &ConstraintSet::on_length_change, this );
-	conformation_pt_->detach_connection_obs( &ConstraintSet::on_connection_change, this );
-	conformation_pt_ = NULL;
-#endif
-
 }
 
 

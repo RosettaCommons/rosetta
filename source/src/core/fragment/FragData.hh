@@ -43,19 +43,9 @@ namespace fragment {
 
 typedef utility::vector1 < Size > PositionList;
 
-class FragData : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< FragData >
+class FragData : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< FragData >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline FragDataCOP shared_from_this() const { return FragDataCOP( this ); }
-	inline FragDataOP shared_from_this() { return FragDataOP( this ); }
-#endif
-
-typedef	utility::vector1 < SingleResidueFragDataOP > SRFD_List;
+	typedef	utility::vector1 < SingleResidueFragDataOP > SRFD_List;
 
 public:
 	FragData () : valid_( false ), score_( 0.0 ) {};

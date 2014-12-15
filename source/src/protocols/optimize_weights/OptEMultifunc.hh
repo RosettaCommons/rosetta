@@ -286,18 +286,8 @@ private: // data
 /// (with "new") on the heap.  This class hands an owning-pointer to itself to another
 /// class to create a call-back mechanism; this owning pointer will be invalid and
 /// result in stack corruption if this class is allocated on the stack.
-class WrapperOptEMultifunc : public core::optimization::Multifunc
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< WrapperOptEMultifunc >
+class WrapperOptEMultifunc : public core::optimization::Multifunc, public utility::pointer::enable_shared_from_this< WrapperOptEMultifunc >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline WrapperOptEMultifuncCOP shared_from_this() const { return WrapperOptEMultifuncCOP( this ); }
-	inline WrapperOptEMultifuncOP shared_from_this() { return WrapperOptEMultifuncOP( this ); }
-#endif
-
 public:
 	typedef core::scoring::ScoreTypes ScoreTypes;
 	typedef core::scoring::EnergyMap EnergyMap;

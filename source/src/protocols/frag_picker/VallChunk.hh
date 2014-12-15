@@ -34,18 +34,8 @@ namespace frag_picker {
 
 /// @brief  represents a chunk of residues extracted from a vall.
 /// @detailed VallChunk contains a vector of VallResidue objects and provides a basic ways to access them
-class VallChunk: public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< VallChunk >
+class VallChunk: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< VallChunk >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline VallChunkCOP shared_from_this() const { return VallChunkCOP( this ); }
-	inline VallChunkOP shared_from_this() { return VallChunkOP( this ); }
-#endif
-
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~VallChunk();

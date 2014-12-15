@@ -51,10 +51,8 @@ namespace core {
 			/// @brief Copy constructor.
 			///
 			ParametersSet::ParametersSet( ParametersSet const & src ) :
-				utility::pointer::ReferenceCount()
-			#ifdef PTR_MODERN
-				, utility::pointer::enable_shared_from_this< ParametersSet >()
-			#endif
+				utility::pointer::ReferenceCount(),
+				utility::pointer::enable_shared_from_this< ParametersSet >()
 			{
 				parameters_.clear();
 				//Make copies of the Parameters objects:

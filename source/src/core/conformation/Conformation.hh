@@ -72,18 +72,8 @@ namespace core {
 namespace conformation {
 
 /// @brief A container of Residues and the kinematics to manage them
-class Conformation : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New C++11 version
-	, public utility::pointer::enable_shared_from_this< Conformation >
+class Conformation : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Conformation >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline ConformationCOP shared_from_this() const { return ConformationCOP( this ); }
-	inline ConformationOP shared_from_this() { return ConformationOP( this ); }
-#endif
-
 public:  // typedefs
 
 	typedef kinematics::Jump Jump;

@@ -53,17 +53,8 @@ namespace kinematics {
 namespace tree {
 
 /// Kinematics Atom interface class
-class Atom : public utility::pointer::ReferenceCount // So we can hold it in owning_ptr
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< Atom >
+class Atom : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Atom >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline AtomCOP shared_from_this() const { return AtomCOP( this ); }
-	inline AtomOP shared_from_this() { return AtomOP( this ); }
-#endif
 
 public: // Types
 
@@ -100,10 +91,8 @@ protected: // Creation
 	/// @brief Copy constructor
 	inline
 	Atom( Atom const & /*atom*/ ) : // PBHACK!!!
-		ReferenceCount()
-#ifdef PTR_MODERN
-		, utility::pointer::enable_shared_from_this< Atom >()
-#endif
+		ReferenceCount(),
+		utility::pointer::enable_shared_from_this< Atom >()
 	{}
 
 public: // Creation

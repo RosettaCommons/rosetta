@@ -44,18 +44,8 @@
 namespace protocols {
 namespace match {
 
-class MatcherTask : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< MatcherTask >
+class MatcherTask : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< MatcherTask >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline MatcherTaskCOP shared_from_this() const { return MatcherTaskCOP( this ); }
-	inline MatcherTaskOP shared_from_this() { return MatcherTaskOP( this ); }
-#endif
-
 public:
 	typedef core::Real                               Real;
 	typedef core::Size                               Size;

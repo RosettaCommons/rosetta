@@ -215,11 +215,7 @@ private:
 	core::Size start_time_;  // seconds
 	std::string timestamp_;
 
-#ifndef PTR_MODERN
-	typedef std::set< JobOutputterObserverAP > JobOutputterObservers;
-#else
 	typedef std::set< JobOutputterObserverAP, utility::pointer::owner_less< JobOutputterObserverAP > > JobOutputterObservers;
-#endif
 	JobOutputterObservers output_observers_;
 
 }; // Job

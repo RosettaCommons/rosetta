@@ -102,10 +102,8 @@ MatcherTask::MatcherTask() :
 {}
 
 MatcherTask::MatcherTask( MatcherTask const & other ) :
-	ReferenceCount()
-#ifdef PTR_MODERN
-	, utility::pointer::enable_shared_from_this< MatcherTask >()
-#endif
+	ReferenceCount(),
+	utility::pointer::enable_shared_from_this< MatcherTask >()
 {
 	(*this) = other;
 }

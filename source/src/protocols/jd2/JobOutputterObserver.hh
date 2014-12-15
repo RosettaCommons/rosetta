@@ -32,10 +32,8 @@ public:
 #include <utility/pointer/access_ptr.hh>
 typedef utility::pointer::weak_ptr< JobOutputterObserver const > JobOutputterObserverAP;
 
-#ifdef PTR_MODERN
 #include <utility/pointer/owning_ptr.hh>
 typedef utility::pointer::shared_ptr< JobOutputterObserver const > JobOutputterObserverOP;
-#endif
 
 } // namespace jd2
 } // namespace protocols

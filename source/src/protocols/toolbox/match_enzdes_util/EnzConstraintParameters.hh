@@ -92,18 +92,8 @@ private:
 
 
 /// @brief class that holds all the parameters for one specific constraint
-class EnzConstraintParameters : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< EnzConstraintParameters >
+class EnzConstraintParameters : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< EnzConstraintParameters >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline EnzConstraintParametersCOP shared_from_this() const { return EnzConstraintParametersCOP( this ); }
-	inline EnzConstraintParametersOP shared_from_this() { return EnzConstraintParametersOP( this ); }
-#endif
-
 public:
 
 	void

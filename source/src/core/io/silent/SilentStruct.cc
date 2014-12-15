@@ -94,10 +94,8 @@ SilentStruct::SilentStruct()
 SilentStruct::~SilentStruct() {}
 
 SilentStruct::SilentStruct( SilentStruct const& src ) :
-	ReferenceCount()
-#ifdef PTR_MODERN
-	, utility::pointer::enable_shared_from_this< SilentStruct >()
-#endif
+	ReferenceCount(),
+	utility::pointer::enable_shared_from_this< SilentStruct >()
 {
 	*this = src;
 }

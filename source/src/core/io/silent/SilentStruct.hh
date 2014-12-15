@@ -50,18 +50,8 @@ namespace silent {
 
 	//////////////////////////////////////////////////////////////////////
 	// holds all the data for a silent-structure
-	class SilentStruct : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-		// New version
-		, public utility::pointer::enable_shared_from_this< SilentStruct >
-{
-#else
-{
-		// Old intrusive ref-counter version
-		inline SilentStructCOP shared_from_this() const { return SilentStructCOP( this ); }
-		inline SilentStructOP shared_from_this() { return SilentStructOP( this ); }
-#endif
-
+	class SilentStruct : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< SilentStruct >
+	{
 		typedef std::string string;
 
 	public:

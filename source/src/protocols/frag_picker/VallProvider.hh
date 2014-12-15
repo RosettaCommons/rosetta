@@ -35,18 +35,8 @@ namespace protocols {
 namespace frag_picker {
 
 /// @brief  a vector of vall chunks
-class VallProvider: public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< VallProvider >
+class VallProvider: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< VallProvider >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline VallProviderCOP shared_from_this() const { return VallProviderCOP( this ); }
-	inline VallProviderOP shared_from_this() { return VallProviderOP( this ); }
-#endif
-
 public:
 
 	/// @brief

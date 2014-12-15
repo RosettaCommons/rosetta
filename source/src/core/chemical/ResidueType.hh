@@ -136,18 +136,8 @@ typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
 /// haven't figured out how to get the reverse to work because of the separate indices.)  Orbital xyz coordinates are
 /// not updated when atom coordinates are.  This is to keep speed consistent with just having atoms.  To output the
 /// orbitals, use the flag -output_orbitals.
-class ResidueType : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< ResidueType >
+class ResidueType : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ResidueType >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline ResidueTypeCOP shared_from_this() const { return ResidueTypeCOP( this ); }
-	inline ResidueTypeOP shared_from_this() { return ResidueTypeOP( this ); }
-#endif
-
 public:
 	/// @brief destructor
 	virtual ~ResidueType();

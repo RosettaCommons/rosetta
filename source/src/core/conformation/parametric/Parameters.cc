@@ -47,10 +47,8 @@ namespace core {
 			}
 
 			Parameters::Parameters( Parameters const & src ) :
-				utility::pointer::ReferenceCount()
-			#ifdef PTR_MODERN
-				, utility::pointer::enable_shared_from_this< Parameters >()
-			#endif
+				utility::pointer::ReferenceCount(),
+				utility::pointer::enable_shared_from_this< Parameters >()
 			{
 				residue_list_.clear();
 				if(src.residue_list_.size()>0) {

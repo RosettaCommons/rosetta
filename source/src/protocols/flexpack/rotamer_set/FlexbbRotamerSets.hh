@@ -49,17 +49,8 @@ namespace protocols {
 namespace flexpack {
 namespace rotamer_set {
 
-class FlexbbRotamerSets : public core::pack::rotamer_set::RotamerSetsBase
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< FlexbbRotamerSets >
+class FlexbbRotamerSets : public core::pack::rotamer_set::RotamerSetsBase, public utility::pointer::enable_shared_from_this< FlexbbRotamerSets >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline FlexbbRotamerSetsCOP shared_from_this() const { return FlexbbRotamerSetsCOP( this ); }
-	inline FlexbbRotamerSetsOP shared_from_this() { return FlexbbRotamerSetsOP( this ); }
-#endif
 public:
 	typedef core::Size Size;
 	typedef core::PackerEnergy PackerEnergy;

@@ -115,9 +115,7 @@ TopologyBroker::~TopologyBroker() {}
 
 TopologyBroker::TopologyBroker( const TopologyBroker& tp ) :
 	ReferenceCount(),
-#ifdef PTR_MODERN
 	utility::pointer::enable_shared_from_this< TopologyBroker >(),
-#endif
 	claimers_( tp.claimers_ )
 {
 	current_claims_ = tp.current_claims_;

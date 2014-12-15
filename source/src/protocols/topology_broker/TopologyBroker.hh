@@ -102,18 +102,8 @@ add_constraints
 namespace protocols {
 namespace topology_broker {
 
-class TopologyBroker : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< TopologyBroker >
+class TopologyBroker : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< TopologyBroker >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline TopologyBrokerCOP shared_from_this() const { return TopologyBrokerCOP( this ); }
-	inline TopologyBrokerOP shared_from_this() { return TopologyBrokerOP( this ); }
-#endif
-
 	typedef core::Size StageID;
 	typedef utility::vector1< TopologyClaimerOP > TopologyClaimers;
 public:

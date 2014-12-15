@@ -100,13 +100,8 @@ class GraphTests : public CxxTest::TestSuite {
 		platform::Size const mem(g->getTotalMemoryUsage());
 		//this code attempts to account for the memory variability of platform::Size across platforms
 		platform::Size const num_var(74);
-#ifdef PTR_MODERN
 		platform::Size const oldsize_64(2296);
 		platform::Size const oldsize_32(1296);
-#else
-		platform::Size const oldsize_64(2288);
-		platform::Size const oldsize_32(1292);
-#endif
 		platform::Size const newsize_64(oldsize_64 + num_var*(sizeof(platform::Size)-4));
 
 		platform::Size const newsize_32(oldsize_32 + num_var*(sizeof(platform::Size)-4));
@@ -141,13 +136,8 @@ class GraphTests : public CxxTest::TestSuite {
 		platform::Size const mem(g->getTotalMemoryUsage());
 		//this code attempts to account for the memory variability of platform::Size across platforms
 		platform::Size const num_var(30);
-#ifdef PTR_MODERN
 		platform::Size const oldsize_64(656);
 		platform::Size const oldsize_32(388);
-#else
-		platform::Size const oldsize_64(648);
-		platform::Size const oldsize_32(384);
-#endif
 		platform::Size const newsize_64(oldsize_64 + num_var*(sizeof(platform::Size)-4));
 
 		platform::Size const newsize_32(oldsize_32 + num_var*(sizeof(platform::Size)-4));

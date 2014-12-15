@@ -11,10 +11,6 @@
 /// @brief  ReferenceCount base class -- dispatch class
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
-#ifdef PTR_REFCOUNT
-#include <utility/pointer/refcount/ReferenceCount.hh>
-#endif
-
 #ifdef PTR_STD
 #include <utility/pointer/std/ReferenceCount.hh>
 #endif

@@ -254,18 +254,8 @@ public:
 };
 
 /// @brief  Task class that gives instructions to the packer
-class PackerTask : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< PackerTask >
+class PackerTask : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< PackerTask >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline PackerTaskCOP shared_from_this() const { return PackerTaskCOP( this ); }
-	inline PackerTaskOP shared_from_this() { return PackerTaskOP( this ); }
-#endif
-
 public:
 	typedef chemical::AA AA;
 	typedef rotamer_set::RotamerCouplingsCOP RotamerCouplingsCOP;

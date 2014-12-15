@@ -55,18 +55,8 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-class HBond : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< HBond >
+class HBond : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< HBond >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline HBondCOP shared_from_this() const { return HBondCOP( this ); }
-	inline HBondOP shared_from_this() { return HBondOP( this ); }
-#endif
-
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~HBond();

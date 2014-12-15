@@ -121,10 +121,8 @@ Conformation::Conformation() :
 
 // copy constructor
 Conformation::Conformation( Conformation const & src ) :
-	utility::pointer::ReferenceCount()
-#ifdef PTR_MODERN
-	, utility::pointer::enable_shared_from_this< Conformation >()
-#endif
+	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< Conformation >()
 {
 	basic::ProfileThis doit( basic::CONFORMATION_COPY );
 	// residues

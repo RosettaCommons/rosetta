@@ -91,8 +91,7 @@ settings = {
             "defines" : [
                 "BOOST_ERROR_CODE_HEADER_ONLY",
                 "BOOST_SYSTEM_NO_DEPRECATED",
-                "PTR_BOOST",
-                "PTR_MODERN",
+                "PTR_BOOST"
             ],
         },
     },

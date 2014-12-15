@@ -37,18 +37,8 @@
 namespace utility {
 namespace tag {
 
-class Tag : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< Tag >
+class Tag : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Tag >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline TagCOP shared_from_this() const { return TagCOP( this ); }
-	inline TagOP shared_from_this() { return TagOP( this ); }
-#endif
-
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Tag();

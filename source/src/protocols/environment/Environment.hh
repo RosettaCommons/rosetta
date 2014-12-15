@@ -48,18 +48,8 @@
 namespace protocols {
 namespace environment {
 
-class Environment : public core::environment::EnvCore
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< Environment >
+class Environment : public core::environment::EnvCore, public utility::pointer::enable_shared_from_this< Environment >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline EnvironmentCOP shared_from_this() const { return EnvironmentCOP( this ); }
-	inline EnvironmentOP shared_from_this() { return EnvironmentOP( this ); }
-#endif
-
   typedef core::environment::EnvCore Parent;
   typedef core::environment::SequenceAnnotationCOP SequenceAnnotationCOP;
   typedef core::environment::SequenceAnnotationOP SequenceAnnotationOP;

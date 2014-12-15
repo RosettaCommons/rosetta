@@ -203,14 +203,7 @@ PDBInfo::attach_to( core::conformation::Conformation & conf ) {
 ///  Conformation at a time
 void
 PDBInfo::detach_from() {
-#ifdef PTR_REFCOUNT
-	// This is called from Conformation::~Conformation and which point the
-	// reference count is 0; it gets incremented here and results
-	// in duplicate calls to Conformation::~Conformation.
-	core::conformation::ConformationCAP & conf = conf_;
-#else
 	core::conformation::ConformationCOP conf = conf_.lock();
-#endif
 	if ( conf ) {
 		conf->detach_connection_obs( &PDBInfo::on_connection_change, this );
 		conf->detach_identity_obs( &PDBInfo::on_identity_change, this );

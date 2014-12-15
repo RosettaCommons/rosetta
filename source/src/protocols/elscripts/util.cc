@@ -71,11 +71,7 @@ sp_parse_taskdef( LuaObject const & taskdef,
 	using namespace core::pack::task::operation;
 	TaskFactoryOP tmpop = parse_taskdef( taskdef, tasks );
 	TaskFactorySP tmpsp( tmpop.get() );
-#ifdef PTR_MODERN
 	tmpop.reset(); // No relinquish_ownership in std::shared_ptr
-#else
-	tmpop.relinquish_ownership();
-#endif
 	return tmpsp;
 }
 

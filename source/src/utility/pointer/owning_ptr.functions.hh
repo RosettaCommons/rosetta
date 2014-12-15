@@ -11,6 +11,3 @@
 /// @brief  owning pointer functions -- dispatch class
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
-#ifdef PTR_REFCOUNT
-#include <utility/pointer/refcount/owning_ptr.functions.hh>
-#endif

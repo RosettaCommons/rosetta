@@ -44,18 +44,8 @@ namespace core {
 
 			///@brief  ParametersSet class, used to store sets of parameters for parametric backbone generation.
 			///
-			class ParametersSet : public utility::pointer::ReferenceCount
-			#ifdef PTR_MODERN
-				// New C++11 version
-				, public utility::pointer::enable_shared_from_this< ParametersSet >
+			class ParametersSet : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ParametersSet >
 			{
-			#else
-			{
-				// Old intrusive ref-counter version
-				inline ParametersSetCOP shared_from_this() const { return ParametersSetCOP( this ); }
-				inline ParametersSetOP shared_from_this() { return ParametersSetOP( this ); }
-			#endif
-
 				public:
 
 					/// @brief constructors

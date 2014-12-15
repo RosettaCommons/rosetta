@@ -633,7 +633,7 @@ _SC_ = SubCall()
 
 
 def get_compiler_defines():
-    d = 'PTR_MODERN PTR_BOOST BOOST_PYTHON_MAX_ARITY=32 PYROSETTA UNUSUAL_ALLOCATOR_DECLARATION'.split()  # PTR_STD
+    d = 'PTR_BOOST BOOST_PYTHON_MAX_ARITY=32 PYROSETTA UNUSUAL_ALLOCATOR_DECLARATION'.split()  # PTR_STD
     if Options.numpy_support: d.append('PYROSETTA_NUMPY')  # PYROSETTA_NO_NUMPY ← defines/variables with no negation in the name produce much more readable code
     d.append( 'DEBUG' if Options.debug else 'NDEBUG')
 

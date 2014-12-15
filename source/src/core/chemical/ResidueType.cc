@@ -149,9 +149,7 @@ ResidueType::~ResidueType()
 
 ResidueType::ResidueType(ResidueType const & residue_type):
 		utility::pointer::ReferenceCount(),
-#ifdef PTR_MODERN
 		utility::pointer::enable_shared_from_this< ResidueType >(),
-#endif
 		atom_types_( residue_type.atom_types_ ),
 		elements_( residue_type.elements_ ),
 		mm_atom_types_( residue_type.mm_atom_types_ ),

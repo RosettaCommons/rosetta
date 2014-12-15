@@ -108,9 +108,7 @@ Mover::Mover( std::string const & type_name ) :
 
 Mover::Mover( Mover const & other ) :
 	utility::pointer::ReferenceCount(),
-#ifdef PTR_MODERN
 	utility::pointer::enable_shared_from_this< Mover >(),
-#endif
 	type_( other.type_ ),
 	current_tag_( other.current_tag_ ),
 	input_pose_(other.input_pose_),
@@ -149,11 +147,7 @@ Mover::set_native_pose( PoseCOP pose ) { native_pose_ = pose; }
 MoverSP Mover::create() {
 	MoverOP a = fresh_instance();
 	MoverSP tmpsp (a.get());
-#ifdef PTR_REFCOUNT	
-	a.relinquish_ownership();
-#else
 	a.reset();
-#endif
 	return tmpsp;
 }
 // elscripts functions

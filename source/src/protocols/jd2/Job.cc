@@ -198,13 +198,9 @@ void Job::call_output_observers( core::pose::Pose const & pose )
 			it     = output_observers_.begin(),
 			it_end = output_observers_.end();
 			it != it_end; ++it ) {
-#ifdef PTR_MODERN
 		JobOutputterObserverOP observer = (*it).lock();
 		if(observer)
 			observer->add_values_to_job( pose, *this );
-#else
-		(*it)->add_values_to_job( pose, *this );
-#endif
 	}
 }
 

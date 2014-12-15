@@ -62,19 +62,8 @@ namespace match_enzdes_util {
 // This class had previously been a singleton, but it is terribly thread unsafe to have
 // it behave that way; it looks like no one is using it as a singleton, fortunately, so
 // as of 9/2014 it is no longer a singleton.
-class EnzConstraintIO : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< EnzConstraintIO >
+class EnzConstraintIO : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< EnzConstraintIO >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline EnzConstraintIOCOP shared_from_this() const { return EnzConstraintIOCOP( this ); }
-	inline EnzConstraintIOOP shared_from_this() { return EnzConstraintIOOP( this ); }
-#endif
-
-
 public:
 
 	EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_set);

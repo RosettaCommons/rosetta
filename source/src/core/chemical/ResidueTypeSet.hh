@@ -54,18 +54,8 @@ namespace chemical {
 **/
 
 
-class ResidueTypeSet : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New C++11 version
-	, public utility::pointer::enable_shared_from_this< ResidueTypeSet >
+class ResidueTypeSet : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ResidueTypeSet >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline ResidueTypeSetCOP shared_from_this() const { return ResidueTypeSetCOP( this ); }
-	inline ResidueTypeSetOP shared_from_this() { return ResidueTypeSetOP( this ); }
-#endif
-
 public:
 	typedef std::list< AA >::const_iterator AAsIter;
 	typedef	std::map< std::string, ResidueTypeCOP >::const_iterator const_residue_iterator;

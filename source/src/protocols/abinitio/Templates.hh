@@ -57,18 +57,8 @@
 namespace protocols {
 namespace abinitio {
 
-class Templates : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< Templates >
+class Templates : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Templates >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline TemplatesCOP shared_from_this() const { return TemplatesCOP( this ); }
-	inline TemplatesOP shared_from_this() { return TemplatesOP( this ); }
-#endif
-
 public:
   typedef std::map< std::string, TemplateOP > TemplateMap;
 

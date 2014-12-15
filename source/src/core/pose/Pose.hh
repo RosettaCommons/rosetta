@@ -161,18 +161,8 @@ Common Methods:
     Pose.sequence
     Pose.total_residue
 **/
-class Pose : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< Pose >
+class Pose : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Pose >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline PoseCOP shared_from_this() const { return PoseCOP( this ); }
-	inline PoseOP shared_from_this() { return PoseOP( this ); }
-#endif
-
 public:
 	typedef id::AtomID AtomID;
 	typedef id::NamedAtomID NamedAtomID;

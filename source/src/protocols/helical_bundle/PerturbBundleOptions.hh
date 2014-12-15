@@ -49,18 +49,8 @@ namespace protocols {
 
 		///@brief  PerturbBundleOptions class, which stores options for the PerturbBundle mover.
 		///
-		class PerturbBundleOptions : public utility::pointer::ReferenceCount
-		#ifdef PTR_MODERN
-			// New C++11 version
-			, public utility::pointer::enable_shared_from_this< PerturbBundleOptions >
+		class PerturbBundleOptions : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< PerturbBundleOptions >
 		{
-		#else
-		{
-			// Old intrusive ref-counter version
-			inline PerturbBundleOptionsCOP shared_from_this() const { return PerturbBundleOptionsCOP( this ); }
-			inline PerturbBundleOptionsOP shared_from_this() { return PerturbBundleOptionsOP( this ); }
-		#endif
-
 			public:
 
 				/// @brief constructors

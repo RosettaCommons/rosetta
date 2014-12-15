@@ -79,18 +79,8 @@ std::string SerializableState_get( SerializableStateSP state, std::string key );
 #endif
 
 
-class Mover : public utility::pointer::ReferenceCount
-#ifdef PTR_MODERN
-	// New version
-	, public utility::pointer::enable_shared_from_this< Mover >
+class Mover : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Mover >
 {
-#else
-{
-	// Old intrusive ref-counter version
-	inline MoverCOP shared_from_this() const { return MoverCOP( this ); }
-	inline MoverOP shared_from_this() { return MoverOP( this ); }
-#endif
-
 public:
 	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;

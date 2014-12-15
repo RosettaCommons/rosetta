@@ -11,10 +11,6 @@
 /// @brief  Non-owning access smart pointer -- dispatch class
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
-#ifdef PTR_REFCOUNT
-#include <utility/pointer/refcount/access_ptr.hh>
-#endif
-
 #ifdef PTR_STD
 #include <utility/pointer/std/access_ptr.hh>
 #endif
