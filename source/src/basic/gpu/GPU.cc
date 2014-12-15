@@ -434,8 +434,17 @@ int GPU::RegisterProgram(std::vector<std::string> & files)
 		sources.push_back(srcStdStr);
 	}
 
-	const char **psources = (const char**) &(*sources.begin());
-	program = clCreateProgramWithSource(context_, sources.size(), psources, NULL, &errNum_);
+	//This piece of code is crashing in OpenCL driver (AMD), hence rewritten differently
+	//const char **psources = (const char**) &(*sources.begin());
+	//program = clCreateProgramWithSource(context_, sources.size(), psources, NULL, &errNum_);
+
+	unsigned int s;
+	const char *psources[16];
+	for( s = 0; s < sources.size() && s < (sizeof(psources)/sizeof(*psources)-1); ++s)
+		psources[s] = sources[s].c_str();
+	psources[s] = NULL;
+	program = clCreateProgramWithSource(context_, s, psources, NULL, &errNum_);
+
 	if(!program) {
 		TR.Error << "Failed to create CL program from " << filename << ": " << errstr(errNum_) << endl;
 		return 0;
