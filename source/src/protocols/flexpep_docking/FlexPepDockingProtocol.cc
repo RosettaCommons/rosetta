@@ -11,64 +11,58 @@
 /// @brief protocol for docking flexible peptides onto globular proteins
 /// @date August 5, 2008
 /// @author Barak Raveh / Nir London
+/// @author Modified by Nawsad Alam
 
-
-#include <protocols/flexpep_docking/FlexPepDockingFlags.hh>
-#include <protocols/flexpep_docking/FlexPepDockingLowRes.hh>
-#include <protocols/flexpep_docking/FlexPepDockingAbInitio.hh>
-#include <protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh>
-#include <protocols/flexpep_docking/FlexPepDockingProtocol.hh>
-#include <protocols/flexpep_docking/FlexPepDockingProtocolCreator.hh>
-#include <core/conformation/Conformation.hh>
-#include <protocols/scoring/Interface.hh>
+// Project headers
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-// note constraints are relevant for currently commented out code
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
-#include <basic/prof.hh>
-#include <basic/Tracer.hh>
+#include <core/scoring/Energies.hh>
 #include <core/types.hh>
-#include <numeric/angle.functions.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
+#include <core/scoring/constraints/SiteConstraint.hh>
+
+// Unit Headers
+#include <protocols/flexpep_docking/FlexPepDockingFlags.hh>
+#include <protocols/flexpep_docking/FlexPepDockingLowRes.hh>
+#include <protocols/flexpep_docking/FlexPepDockingAbInitio.hh>
+#include <protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh>
+#include <protocols/flexpep_docking/FlexPepDockingProtocol.hh>
+#include <protocols/flexpep_docking/FlexPepDockingProtocolCreator.hh>
+#include <protocols/scoring/Interface.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
-#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -80,23 +74,46 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/rigid/RB_geometry.hh>
+
+// Basic Headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/prof.hh>
+#include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+
+// Numeric Headers
+#include <numeric/random/random.hh>
+#include <numeric/angle.functions.hh>
+#include <numeric/PCA.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.io.hh>
+
+// Utility Headers
 #include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
-#include <numeric/random/random.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <string>
-#include <set>
-#include <sstream>
-#include <cstdio>
-#include <algorithm>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/keys/Key3Vector.hh>
 
+// ObjexxFCL Headers
+#include <ObjexxFCL/FArray1D.hh>
+
+// C++ headers
+#include <string>
+#include <set>
+#include <sstream>
+#include <cstdio>
+#include <algorithm>
+#include <cmath>
 
 using basic::T;
 using basic::Error;
@@ -107,9 +124,9 @@ using namespace core;
 using namespace ObjexxFCL;
 
 namespace protocols {
-		namespace flexpep_docking {
+namespace flexpep_docking {
 
-/// constructor
+// constructor
 FlexPepDockingProtocol::FlexPepDockingProtocol(Size const rb_jump_in)
 		:	Mover(),
 			rb_jump_(rb_jump_in),
@@ -138,7 +155,7 @@ FlexPepDockingProtocol::FlexPepDockingProtocol(
 	view_ = view;
 }
 
-	// empty destructor - for good includiong of OP clasesses
+// empty destructor - for good includiong of OP clasesses
 FlexPepDockingProtocol::~FlexPepDockingProtocol()
 {
 }
@@ -148,14 +165,11 @@ protocols::moves::MoverOP FlexPepDockingProtocol::clone() const
 {
 	FlexPepDockingProtocolOP clonedObj( new FlexPepDockingProtocol( rb_jump_, fullatom_, view_ ) );
 	clonedObj->scorefxn_ = scorefxn_->clone();
-	clonedObj->flags_ = flags_; // TODO: is this really needed?
-	// TODO: do we need anything else?
+	clonedObj->flags_ = flags_; 
 	return clonedObj;
 }
 
-
-
-/// @brief setup that is called from constructor
+// @brief setup that is called from constructor
 void FlexPepDockingProtocol::set_default()
 {
 	using namespace basic::options;
@@ -166,8 +180,7 @@ void FlexPepDockingProtocol::set_default()
 	fullatom_ = option[ OptionKeys::out::file::fullatom ](); // TODO: use flags_
 	view_ = option[ OptionKeys::docking::view ](); // TODO: use flags_, and don't use docking:: options
 	scorefxn_ = core::scoring::get_score_function(); // from cmd-line (-score:weights -score:patch)
-	scorefxn_lowres_ = ScoreFunctionFactory::create_score_function
-		( CENTROID_WTS, "score4L") ; // centroid score in between chains
+	scorefxn_lowres_ = ScoreFunctionFactory::create_score_function ( CENTROID_WTS, "score4L") ; // centroid score in between chains
 
 	//reset interface measures:
   if_metrics_["I_sc"] = 0.0;
@@ -177,7 +190,6 @@ void FlexPepDockingProtocol::set_default()
   if_metrics_["I_unsat"] = 0.0;
 
 	// prepare unbound rotamer task-operation (reading from cmd-line -unboundrot)
-	// (NOTE: if -unboundrot is not active - nothing happens)
 	rotamer_set::UnboundRotamersOperationOP unboundrot_oper( new rotamer_set::UnboundRotamersOperation() );
 	unboundrot_oper->initialize_from_command_line();
 	operation::AppendRotamerSetOP append_ubrot_taskoper( new operation::AppendRotamerSet( unboundrot_oper ) );
@@ -225,19 +237,21 @@ void FlexPepDockingProtocol::set_default()
 }
 
 
-
+///////////////////////////////////////////
 ///@brief setup the peptide docking fold tree
 // jumps are created from the receptor, and then
 // between consecutive peptide anchors:
+///////////////////////////////////////////
 void
 FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 {
 		using namespace std;
-		//This assert does not hold if we add ligand residues other than the protein and the peptide
-		//runtime_assert( flags_.receptor_nres() + flags_.peptide_nres()
-		//								== (int)pose.total_residue());
-		ObjexxFCL::FArray1D_int cuts(1000,0); // dim1 = serial # of cut
-		ObjexxFCL::FArray2D_int jumps(2,1000,0); // dim1 = from/to  ;  dim2 = serial # of jump
+		
+    // This assert does not hold if we add ligand residues other than the protein and the peptide
+		// runtime_assert( flags_.receptor_nres() + flags_.peptide_nres() == (int)pose.total_residue());
+
+		ObjexxFCL::FArray1D_int cuts(1000,0); // dim1 = serial numbers of cut
+		ObjexxFCL::FArray2D_int jumps(2,1000,0); // dim1 = from/to; dim2 = serial numbers of jump
 		std::map<int,int> const& peptide_cuts = flags_.peptide_cuts;
 		std::map<int,int> const& peptide_anchors = flags_.peptide_anchors;
 		const int JUMP_FROM = 1;
@@ -272,6 +286,7 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 				max_jump = std::max( max_jump, cur_jump );
 			#endif
 		}
+
 		runtime_assert_msg(max_jump == num_jumps,
 			"invalid anchor indexing in FlexPepDock parameter file (or in default FlexPepDock parameters)");
 
@@ -319,9 +334,9 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 		f.clear();
 		f.tree_from_jumps_and_cuts
 			( pose.total_residue(), num_jumps, jumps, cuts );
-		TR << "old fold tree: " << pose.fold_tree() << std::endl;
+		TR << "Old FoldTree : " << pose.fold_tree() << std::endl;
 		pose.fold_tree(f);
-		TR << "new fold tree: " << pose.fold_tree() << std::endl;
+		TR << "New FoldTree : " << pose.fold_tree() << std::endl;
 }
 
 
@@ -344,7 +359,7 @@ FlexPepDockingProtocol::set_receptor_constraints( core::pose::Pose & pose )
 	for (int i=flags_.receptor_first_res();
 			 i <= flags_.receptor_last_res(); i++)
 		{
-			//			Residue const  & reside = pose.residue( i );
+			// Residue const  & reside = pose.residue( i );
 			AtomID CAi ( pose.residue(i).atom_index( " CA " ), i );
 			cst_set->add_constraint
 				(  ConstraintCOP( ConstraintOP( new CoordinateConstraint
@@ -493,6 +508,225 @@ FlexPepDockingProtocol::prepack_only(
 	min_mover->apply(pose); // only s.c.
 	if(! flags_.pep_fold_only)
 		translate_back->apply(pose);
+}
+
+//////////////////////////////////////////////////
+// Performs PCA of the binding site CA coordinates and peptide CA 
+// coordinates and placing peptide first principle component 
+// along the binding site first principle component with center 
+// of masses aligned
+//////////////////////////////////////////////////
+void
+FlexPepDockingProtocol::place_peptide_on_binding_site(
+	  core::pose::Pose & pose
+){
+  using namespace core;
+	using namespace numeric;
+  using namespace utility;
+  using namespace basic::options;
+  using namespace protocols;
+
+  // reading siteconstraints and storing receptor binding site residues to a vector1 object
+  if ( option[ OptionKeys::constraints::cst_file ].user() ) {
+			core::scoring::constraints::ConstraintSetOP site_cstset( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_file_option(), core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), pose  ) );
+      TR << "Read Site Constraints: " << ( site_cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
+      utility::vector1< core::scoring::constraints::ConstraintCOP > site_cstset_list( site_cstset->get_all_constraints() );;
+
+      utility::vector1< Size > site_cst_residues;
+      utility::vector1< Size > binding_site_residues;
+
+      for( utility::vector1< core::scoring::constraints::ConstraintCOP >::const_iterator i = site_cstset_list.begin(); i != site_cstset_list.end(); i++ ){
+         site_cst_residues = (*i)->residues();
+         binding_site_residues.push_back(site_cst_residues[1]);
+      }
+      for( utility::vector1< Size >::const_iterator i = binding_site_residues.begin(); i != binding_site_residues.end(); i++ ){
+          TR << "Binding site residues : " << *i << std::endl;
+      }
+
+      // calculating peptide COM and principle components
+    	utility::vector1< Vector > peptide_c_alpha_coords;
+    	for ( int i = flags_.peptide_first_res(); i <= flags_.peptide_last_res(); ++i ) {
+    		peptide_c_alpha_coords.push_back( pose.residue( i ).xyz( "CA" ) );
+    	}
+      Vector peptide_c_alpha_centroid(0, 0, 0);
+      Size peptide_n_res = peptide_c_alpha_coords.size();
+    
+    	for ( Size i = 1; i <= peptide_n_res; ++i ) {
+    		peptide_c_alpha_centroid += peptide_c_alpha_coords[i];
+    	}
+      peptide_c_alpha_centroid /= peptide_n_res;
+    	
+      TR << "Peptide CAs Center of Mass : " << peptide_c_alpha_centroid[0] << " " << peptide_c_alpha_centroid[1] << " " << peptide_c_alpha_centroid[2] << std::endl;
+    
+      numeric::xyzMatrix< Real > peptide_eigenvectors = numeric::principal_components( peptide_c_alpha_coords );
+      numeric::xyzVector< Real > peptide_first_pc = numeric::first_principal_component( peptide_c_alpha_coords );
+    	Vector peptide_eigenvalues = numeric::principal_component_eigenvalues( peptide_c_alpha_coords );
+    
+      TR << "Peptide CAs First Principle Component : " << peptide_first_pc.x() << " " << peptide_first_pc.y() << " " << peptide_first_pc.z() << std::endl;
+      TR << "Peptide CAs Eigenvalues : " << peptide_eigenvalues.x() << " " << peptide_eigenvalues.y() << " " << peptide_eigenvalues.z() << std::endl;
+
+      // calculating binding site COM and principle components
+    	utility::vector1< Vector > binding_site_c_alpha_coords;
+    	for ( utility::vector1< Size >::const_iterator i = binding_site_residues.begin(); i != binding_site_residues.end(); i++ ) {
+    		binding_site_c_alpha_coords.push_back( pose.residue( *i ).xyz( "CA" ) );
+    	}
+      Vector binding_site_c_alpha_centroid(0, 0, 0);
+      Size binding_site_n_res = binding_site_c_alpha_coords.size();
+    
+    	for (Size i = 1; i <= binding_site_n_res; ++i) {
+    		binding_site_c_alpha_centroid += binding_site_c_alpha_coords[i];
+    	}
+      binding_site_c_alpha_centroid /= binding_site_n_res;
+    	
+      TR << "Binding Site CAs Center of Mass : " << binding_site_c_alpha_centroid[0] << " " << binding_site_c_alpha_centroid[1] << " " << binding_site_c_alpha_centroid[2] << std::endl;
+    
+      numeric::xyzMatrix< Real > binding_site_eigenvectors = numeric::principal_components( binding_site_c_alpha_coords );
+      numeric::xyzVector< Real > binding_site_first_pc = numeric::first_principal_component( binding_site_c_alpha_coords );
+    	Vector binding_site_eigenvalues = numeric::principal_component_eigenvalues( binding_site_c_alpha_coords );
+    
+      TR << "Binding Site CAs First Principle Component : " << binding_site_first_pc.x() << " " << binding_site_first_pc.y() << " " << binding_site_first_pc.z() << std::endl;
+      TR << "Binding Site CAs Eigenvalues : " << binding_site_eigenvalues.x() << " " << binding_site_eigenvalues.y() << " " << binding_site_eigenvalues.z() << std::endl;
+
+      // caculating translation vector to align center of masses
+      Vector com_align_axis = (peptide_c_alpha_centroid - binding_site_c_alpha_centroid);
+      Real com_distance = std::sqrt((peptide_c_alpha_centroid[0] - binding_site_c_alpha_centroid[0])*(peptide_c_alpha_centroid[0] - binding_site_c_alpha_centroid[0]) + (peptide_c_alpha_centroid[1] - binding_site_c_alpha_centroid[1])*(peptide_c_alpha_centroid[1] - binding_site_c_alpha_centroid[1]) + (peptide_c_alpha_centroid[2] - binding_site_c_alpha_centroid[2])*(peptide_c_alpha_centroid[2] - binding_site_c_alpha_centroid[2]));
+      TR << "COM distance : " << com_distance << std::endl;
+    
+      // performing translation to align center of masses
+      rigid::RigidBodyTransMoverOP translate_com( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
+      translate_com->trans_axis(com_align_axis);
+      translate_com->trans_axis().negate();
+    	translate_com->step_size( com_distance );
+      translate_com->apply(pose);
+
+      // calculating rotation matrix and performing rotation to align principle components
+      binding_site_first_pc.x( binding_site_first_pc.x() );
+      binding_site_first_pc.y( binding_site_first_pc.y() );
+      binding_site_first_pc.z( binding_site_first_pc.z() );
+      binding_site_first_pc.normalize_any();
+
+      peptide_first_pc.x( peptide_first_pc.x() );
+      peptide_first_pc.y( peptide_first_pc.y() );
+      peptide_first_pc.z( peptide_first_pc.z() );
+      peptide_first_pc.normalize_any();
+      
+      Real rotation_angle = numeric::arccos( peptide_first_pc.dot( binding_site_first_pc ) );
+      Vector rotation_axis = peptide_first_pc.cross( binding_site_first_pc );
+
+      numeric::xyzMatrix< Real > rotation_matrix = numeric::rotation_matrix( rotation_axis, rotation_angle );
+      
+      TR << "Performing rotation " << std::endl;
+
+      core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
+      core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
+      flexible_jump.rotation_by_matrix( upstream_stub, binding_site_c_alpha_centroid, rotation_matrix );
+      pose.set_jump( rb_jump_, flexible_jump );
+
+      //applying SlideIntoContact to remove inter-chain clashes
+      TR << "Performinh slide into contact " << std::endl;
+      SlideIntoContact(pose, com_align_axis);
+      }
+}
+
+
+////////////////////////////////////////////
+// allow sampling in different pcas and different peptide
+// orientations based of binding site eigen values
+////////////////////////////////////////////
+void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
+{
+  using namespace core;
+	using namespace numeric;
+  using namespace utility;
+  using namespace basic::options;
+  using namespace protocols;
+
+  Size pcs_num = flags_.sample_pc;
+  utility::vector1< Vector > peptide_c_alpha_coords;
+	
+  for ( int i = flags_.peptide_first_res(); i <= flags_.peptide_last_res(); ++i ) {
+		peptide_c_alpha_coords.push_back( pose.residue( i ).xyz( "CA" ) );
+	}
+  
+  Vector peptide_c_alpha_centroid(0, 0, 0);
+  Size peptide_n_res = peptide_c_alpha_coords.size();
+
+	for ( Size i = 1; i <= peptide_n_res; ++i ) {
+		peptide_c_alpha_centroid += peptide_c_alpha_coords[i];
+	}
+  peptide_c_alpha_centroid /= peptide_n_res;
+	
+  TR << "Peptide CAs Center of Mass : " << peptide_c_alpha_centroid[0] << " " << peptide_c_alpha_centroid[1] << " " << peptide_c_alpha_centroid[2] << std::endl;
+
+  numeric::xyzMatrix< Real > peptide_eigenvectors = numeric::principal_components( peptide_c_alpha_coords );
+
+  Vector first_pc_axis(peptide_eigenvectors.col_x()[0], peptide_eigenvectors.col_x()[1], peptide_eigenvectors.col_x()[2] );
+  Vector second_pc_axis(peptide_eigenvectors.col_y()[0], peptide_eigenvectors.col_y()[1], peptide_eigenvectors.col_y()[2] );
+  Vector third_pc_axis(peptide_eigenvectors.col_z()[0], peptide_eigenvectors.col_z()[1], peptide_eigenvectors.col_z()[2] );
+
+  if ( pcs_num == 1 ){
+    Size rand_num = round(numeric::random::uniform());
+    float rot_angle = 180.0*(rand_num);;
+    TR << "Flipping the peptide " << std::endl;
+    rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
+    spin_mover.apply(pose);
+  }
+
+  if ( pcs_num == 2 ){
+    Size rand_num = round (numeric::random::random_range(1,4));
+    float rot_angle = 90.0*(rand_num);
+    TR << "Flipping the peptide " << std::endl;
+    rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
+    spin_mover.apply(pose);
+  }
+
+}
+
+
+///////////////////////////////////////////////////
+// SlideIntoContact - moving the partners toward or away from
+// from each other to remove interchain clashes
+////////////////////////////////////////////////////
+
+void FlexPepDockingProtocol::SlideIntoContact( core::pose::Pose & pose, core::Vector translate_axis )
+{
+	using namespace moves;
+  using namespace core::scoring;
+
+	core::scoring::ScoreFunctionOP scorefxn_slide_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
+
+	rigid::RigidBodyTransMoverOP translate_mover( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
+  translate_mover->step_size(1.0);
+  translate_mover->trans_axis(translate_axis);
+
+  core::Size counter( 0 );
+  core::Size const counter_breakpoint( 500 );
+
+  ( *scorefxn_slide_ )( pose );
+
+  TR << "Moving away from each other" << std::endl;
+  while ( pose.energies().total_energies()[ interchain_vdw ] > 0.1 && counter <= counter_breakpoint ) {
+		translate_mover->apply( pose );
+		( *scorefxn_slide_ )( pose );
+		++counter;
+	}
+	if( counter > counter_breakpoint ){
+		TR << "failed moving away with original vector. Aborting SlideIntoContact." << std::endl;
+	}
+  
+	TR << "Moving partners towards each other" << std::endl;
+  counter = 0;
+	TR << "Moving together" << std::endl;
+	translate_mover->trans_axis().negate();
+	while ( pose.energies().total_energies()[ interchain_vdw ] < 0.1 && counter <= counter_breakpoint  ) {
+		translate_mover->apply( pose );
+		( *scorefxn_slide_ )( pose );
+		++counter;
+	}
+	if( counter > counter_breakpoint ){
+		TR<<"moving together failed. Aborting DockingSlideIntoContact."<<std::endl;
+	}
+
 }
 
 
@@ -964,30 +1198,32 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-/// @begin FlexPepDocking apply
-///
-/// @brief main flexible peptide docking protocol
-///
-/// @detailed
-/// Main function for peptide docking. Includes the following steps:
-///      1) Optional centroid mode docking, with alternating MCM
-///         cycles of rigid-body movement and peptide torsion relaxation
-///      2) High-resolution peptide docking, with alternating MCM
-///         cycles of rigid-body movement and peptide torsion relaxation
-///         with side-chain repacking on-the-fly
+//////////////////////////////////////////////////////////////////////////////
+// @begin FlexPepDocking apply
+//
+// @brief main flexible peptide docking protocol
+//
+// @detailed
+// Main function for peptide docking. Includes the following steps:
+//      1) Optional centroid mode docking, with alternating MCM
+//         cycles of rigid-body movement and peptide torsion relaxation
+//      2) High-resolution peptide docking, with alternating MCM
+//         cycles of rigid-body movement and peptide torsion relaxation
+//         with side-chain repacking on-the-fly
 //    OR:
-///      Prepack mode: prepare a starting structure for later runs
-///   OR:
-///      Score only mode
+//      Prepack mode: prepare a starting structure for later runs
+//   OR:
+//      Score only mode
 //    OR:
-///      Minimize only mode
-///
-/// IMPORTANT NOTE:
-/// Apply should not change the internal state of this object
-/// in a way that will affect the behaviour of subsequent apply() invocations
-/// (because, e.g., the job distributor may invoke apply()
-///  for multiple decoys, using the same mover object)
+//      Minimize only mode
+//
+// IMPORTANT NOTE:
+// Apply should not change the internal state of this object
+// in a way that will affect the behaviour of subsequent apply() invocations
+// (because, e.g., the job distributor may invoke apply()
+//  for multiple decoys, using the same mover object)
+//
+//////////////////////////////////////////////////////////////////////////////
 void
 FlexPepDockingProtocol::apply( pose::Pose & pose )
 {
@@ -995,7 +1231,8 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	using namespace viewer;
 	using namespace std;
 
-	TR <<"apply" << std::endl;
+	TR << "apply" << std::endl;
+
 	// if no native provided, use pose as pseudo-native reference
 	if( get_native_pose().get() == NULL ){
 		set_native_pose( PoseCOP( PoseOP( new pose::Pose(pose) ) ) ); // TODO: debug this - will it work for PoseCOP;
@@ -1027,24 +1264,49 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	set_allowed_moves(); //set the allowed dofs in the system
 	core::scoring::constraints::add_fa_constraints_from_cmdline(pose, *scorefxn_);
 	core::scoring::constraints::add_constraints_from_cmdline(pose, *scorefxn_lowres_);
-	if(flags_.min_receptor_bb) {
+
+  if(flags_.min_receptor_bb) {
 		set_receptor_constraints(pose);
 	}
 
 	// initial peptide manipulations
-	if (flags_.random_phi_psi_pert) {
-		random_peptide_phi_psi_perturbation(pose);
+
+  if (flags_.place_peptide) {
+    place_peptide_on_binding_site(pose);
 	}
+
+  if (flags_.sample_pc){
+  flip_in_pcs(pose);
+  }
+
 	if (flags_.extend) {
 		extend_peptide(pose);
 	}
+	if (flags_.random_phi_psi_pert) {
+		random_peptide_phi_psi_perturbation(pose);
+	}
+
 	if (flags_.randomRBstart) {
 		random_rb_pert(pose);
-		}
+  }
+
 	if (flags_.backrub_opt) {
 		TR << "doing backrub! " << std::endl;
 		backrub_move(pose);
 	}
+
+  if ( ( flags_.recal_foldtree && flags_.randomRBstart ) || ( flags_.recal_foldtree && flags_.sample_pc ) || 
+          ( flags_.recal_foldtree && flags_.random_phi_psi_pert ) ){
+	flags_.setDefaultAnchors(pose);
+  this->setup_foldtree( pose );
+  std::cout  << "Receptor anchor : " << flags_.receptor_anchor_pos << std::endl;
+  std::cout  << "Peptide anchor : " << flags_.peptide_anchors[1] << std::endl;
+  }
+
+  if (flags_.slideintocontact) {
+    Vector anchors_axis_ = pose.residue( flags_.peptide_anchors[1] ).xyz( "CA" ) - pose.residue( flags_.receptor_anchor_pos ).xyz( "CA" );
+    SlideIntoContact(pose, anchors_axis_);
+  }
 
 	// Mutually exclusive protocols:
 	if (flags_.ppk_only) {
@@ -1052,7 +1314,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	}
 	else if(flags_.min_only){
 		minimize_only(pose,"dfpmin_armijo_atol", 0.01/*tolerance*/);
-		//		core::io::pdb::traced_dump_pdb(TR, pose, "./output/minimized.pdb"); // DEBUG
+		// core::io::pdb::traced_dump_pdb(TR, pose, "./output/minimized.pdb"); // DEBUG
 	}
 	// Main protocol:
 	else if(flags_.torsionsMCM || flags_.rbMCM || flags_.lowres_preoptimize || flags_.lowres_abinitio) {
@@ -1416,8 +1678,12 @@ void FlexPepDockingProtocol::parse_my_tag(
 	flags_.min_only = tag->getOption<bool>( "min_only", flags_.min_only ) ;
 	flags_.random_phi_psi_pert = tag->getOption<bool>( "random_phi_psi_pert", flags_.random_phi_psi_pert ) ;
 	flags_.random_phi_psi_pert_size  = tag->getOption<core::Size>( "random_phi_psi_pert_size", (Size)(flags_.random_phi_psi_pert_size) ) ;
-	flags_.extend = tag->getOption<bool>( "random_phi_psi_pert", flags_.random_phi_psi_pert ) ;
+	flags_.extend = tag->getOption<bool>( "extend", flags_.extend ) ;
+  flags_.place_peptide = tag->getOption<bool>( "place_peptide", flags_.place_peptide ) ;
+  flags_.sample_pc = tag->getOption<core::Size>( "sample_pc", flags_.sample_pc ) ;
+  flags_.slideintocontact = tag->getOption<bool>( "slidentocontact", flags_.slideintocontact ) ;
 	flags_.rb_trans_size = tag->getOption<float>( "rb_trans_size", flags_.rb_trans_size) ;
+  flags_.recal_foldtree = tag->getOption<bool>( "recal_foldtree", flags_.recal_foldtree ) ;
 	flags_.rb_rot_size = tag->getOption<float>( "rb_rot_size", flags_.rb_rot_size) ;
 	if(tag->hasOption( "rb_trans_size" ) || tag->hasOption( "rb_rot_size" ))
 		{

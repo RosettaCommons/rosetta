@@ -145,7 +145,11 @@ public:
 	bool random_phi_psi_pert;
 	double random_phi_psi_pert_size;
   bool extend;
+  bool place_peptide;
+  int sample_pc;
+  bool slideintocontact;
 	bool randomRBstart;
+  bool recal_foldtree;
 	bool rbMCM;
 	double rb_trans_size;
 	double rb_rot_size;

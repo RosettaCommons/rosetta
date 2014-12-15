@@ -120,6 +120,12 @@ private:
 
 	void extend_peptide( core::pose::Pose & pose );
 
+  void place_peptide_on_binding_site ( core::pose::Pose & pose );
+
+  void flip_in_pcs( core::pose::Pose & pose );
+
+  void SlideIntoContact( core::pose::Pose & pose, core::Vector translate_axis );
+
   void random_rb_pert( core::pose::Pose & pose );
 
   void small_moves(	core::pose::Pose & pose );

@@ -64,22 +64,44 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 		valid_ref_start_struct_ = true;
 	}
 	min_only = option[ OptionKeys::flexPepDocking::flexPepDockingMinimizeOnly ]();
-	random_phi_psi_pert = false;
+	
+  random_phi_psi_pert = false;
 	if (option[ OptionKeys::flexPepDocking::random_phi_psi_preturbation ]())
 		random_phi_psi_pert = true;// TODO: redundant, default value is enough
 	random_phi_psi_pert_size =
 		option[ OptionKeys::flexPepDocking::random_phi_psi_preturbation ]();
-	extend = option[ OptionKeys::flexPepDocking::extend_peptide ]();
-	randomRBstart = false; // TODO: redundant, default value is enough
+	
+  extend = option[ OptionKeys::flexPepDocking::extend_peptide ]();
+  
+  place_peptide = false;
+  if ( option[ OptionKeys::flexPepDocking::place_peptide_on_binding_site ]())
+  place_peptide = true;
+ 
+	sample_pc = option[ OptionKeys::flexPepDocking::sample_pcs ]();
+
+  slideintocontact = false;
+  if ( option[ OptionKeys::flexPepDocking::SlideIntoContact ]())
+  slideintocontact = true;
+	
+  randomRBstart = false; // TODO: redundant, default value is enough
 	if (option[ OptionKeys::flexPepDocking::random_trans_start ]() ||
 		option[ OptionKeys::flexPepDocking::random_rot_start ]())
-		randomRBstart = true;
-	lowres_abinitio = option[ OptionKeys::flexPepDocking::lowres_abinitio ]();
-	lowres_preoptimize = option[ OptionKeys::flexPepDocking::lowres_preoptimize ]();
+	randomRBstart = true;
+  
+  recal_foldtree = false;
+	if ( option[ OptionKeys::flexPepDocking::recalculate_foldtree ]())
+  recal_foldtree = true;
+
+  lowres_abinitio = option[ OptionKeys::flexPepDocking::lowres_abinitio ]();
+	
+  lowres_preoptimize = option[ OptionKeys::flexPepDocking::lowres_preoptimize ]();
+  
   pep_refine = option[ OptionKeys::flexPepDocking::pep_refine ]();
-	rbMCM = option[ OptionKeys::flexPepDocking::rbMCM ](); // obsolete
+	
+  rbMCM = option[ OptionKeys::flexPepDocking::rbMCM ](); // obsolete
 	torsionsMCM = option[ OptionKeys::flexPepDocking::torsionsMCM ]();  // obsolete
-	// the next section should be removed after we get rid of obsolee rmMCM and torsionsMCM completely
+	
+  // the next section should be removed after we get rid of obsolee rmMCM and torsionsMCM completely
 	if(pep_refine || lowres_preoptimize || lowres_abinitio)
 		{ // overrides old rbMCM and torsionsMCM
 			bool explicitFalseMCMs =
