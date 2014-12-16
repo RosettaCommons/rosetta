@@ -16,6 +16,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/CoupledMover.hh>
+#include <protocols/simple_moves/MinPackMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/jd2/util.hh>
@@ -29,6 +30,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/constraints/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -50,6 +52,7 @@
 
 // option key includes
 #include <basic/options/option_macros.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
@@ -69,6 +72,7 @@ OPT_1GRP_KEY(String, coupled_moves, output_fasta)
 OPT_1GRP_KEY(String, coupled_moves, output_stats)
 OPT_1GRP_KEY(Boolean, coupled_moves, ligand_mode)
 OPT_1GRP_KEY(Boolean, coupled_moves, initial_repack)
+OPT_1GRP_KEY(Boolean, coupled_moves, min_pack)
 OPT_1GRP_KEY(Boolean, coupled_moves, save_sequences)
 OPT_1GRP_KEY(Real, coupled_moves, ligand_prob)
 OPT_1GRP_KEY(Boolean, coupled_moves, fix_backbone)
@@ -91,6 +95,9 @@ main( int argc, char * argv [] )
 	OPT(out::nstruct);
 	OPT(packing::resfile);
 	OPT(in::file::native);
+	OPT(constraints::cst_fa_weight);
+	OPT(constraints::cst_fa_file);
+	OPT(out::pdb_gz);
 	NEW_OPT(coupled_moves::ntrials, "number of Monte Carlo trials to run", 1000);
 	NEW_OPT(coupled_moves::mc_kt, "value of kT for Monte Carlo", 0.6);
 	NEW_OPT(coupled_moves::boltzmann_kt, "value of kT for Boltzmann weighted moves", 0.6);
@@ -103,6 +110,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(coupled_moves::output_stats, "name of stats output file", "sequences.stats");
 	NEW_OPT(coupled_moves::ligand_mode, "if true, model protein ligand interaction", false);
 	NEW_OPT(coupled_moves::initial_repack, "start simulation with repack and design step", true);
+	NEW_OPT(coupled_moves::min_pack, "use min_pack for initial repack and design step", false);
 	NEW_OPT(coupled_moves::save_sequences, "save all unique sequences", true);
 	NEW_OPT(coupled_moves::ligand_prob, "probability of making a ligand move", 0.1);
 	NEW_OPT(coupled_moves::fix_backbone, "do not make any backbone moves", false);
@@ -177,6 +185,7 @@ CoupledMovesProtocol::CoupledMovesProtocol(): Mover(),
 	// set up the score function and add the bond angle energy term
 	score_fxn_ = core::scoring::get_score_function();
 	score_fxn_->set_weight(core::scoring::mm_bend, option[ coupled_moves::mm_bend_weight ]);
+	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 	core::scoring::methods::EnergyMethodOptions energymethodoptions(score_fxn_->energy_method_options());
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 	energymethodoptions.bond_angle_central_atoms_to_score(option[ backrub::pivot_atoms ]);
@@ -236,6 +245,9 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	// start with a fresh copy of the optimized pose
 	core::pose::PoseOP pose_copy( new core::pose::Pose(pose) );
 
+	// add constraints if supplied by via constraints::cst_file option
+	core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(*pose_copy);
+
 	core::pack::task::PackerTaskOP task( main_task_factory_->create_task_and_apply_taskoperations( *pose_copy ) );
 	
 	utility::vector1<core::Size> move_positions;
@@ -265,10 +277,6 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		}
 	}
 	
-	TR << "Design positions ";
-	for(core::Size i = 1; i <= design_positions.size(); i++) {
-		TR << design_positions[i] << " ";
-	}
 	TR << std::endl;
 	
 	// ASSUMPTION: the ligand is the last residue in the given PDB
@@ -292,10 +300,15 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	coupled_mover->set_bump_check( option[coupled_moves::bump_check] );
 	coupled_mover->set_uniform_backrub( option[coupled_moves::uniform_backrub] );
 	
-	protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( score_fxn_, task, 1 ) );		
+	protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( score_fxn_, task, 1 ) );
+	protocols::simple_moves::MinPackMoverOP minpack(new protocols::simple_moves::MinPackMover( score_fxn_, task ));
 
 	if ( option[coupled_moves::initial_repack] ) {
-		pack->apply(*pose_copy);
+		if ( option[coupled_moves::min_pack] ) {
+			minpack->apply(*pose_copy);
+		} else {
+			pack->apply(*pose_copy);
+		}
 	}
 	
 	// reset the Monte Carlo object
@@ -308,11 +321,16 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		trajectory.reset(mc);
 	}
 
+	TR << "Design Positions: ";
+	for(core::Size i = 1; i <= design_positions.size(); i++) {
+		TR << pose_copy->pdb_info()->number(design_positions[i]) << " ";
+	}
+	
 	std::string initial_sequence = "";
 	for(core::Size index = 1; index <= design_positions.size(); index++) {
 		initial_sequence += pose_copy->residue(design_positions[index]).name1();
 	}
-	TR << "Starting Sequence " << initial_sequence << std::endl;
+	TR << "Starting Sequence: " << initial_sequence << std::endl;
 	
 	TR << "Starting Score:" << std::endl;
 	score_fxn_->show(TR, pose);
@@ -399,7 +417,11 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	score_fxn_->show(TR, *pose_copy);
 	TR.flush();
 	
-	pose_copy->dump_scored_pdb(output_tag + "_last.pdb", *score_fxn_);
+	if (option[out::pdb_gz]) {
+		pose_copy->dump_pdb(output_tag + "_last.pdb.gz");
+	} else {
+		pose_copy->dump_scored_pdb(output_tag + "_last.pdb", *score_fxn_);
+	}
 	
 	*pose_copy = mc.lowest_score_pose();
 
@@ -407,7 +429,11 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	score_fxn_->show(TR, *pose_copy);
 	TR.flush();
 
-	pose_copy->dump_scored_pdb(output_tag + "_low.pdb", *score_fxn_);
+	if (option[out::pdb_gz]) {
+		pose_copy->dump_pdb(output_tag + "_low.pdb.gz");
+	} else {
+		pose_copy->dump_scored_pdb(output_tag + "_low.pdb", *score_fxn_);
+	}
 	
 	pose = mc.lowest_score_pose();
 

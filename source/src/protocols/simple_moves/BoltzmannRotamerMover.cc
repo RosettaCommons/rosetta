@@ -194,6 +194,10 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	utility::vector1< core::Size > packable_neighbors;
 	scorefxn_->prepare_rotamers_for_packing( pose, *rotset );
 	
+	if (rotset->num_rotamers() <= 1) {
+		return;
+	}
+	
 	rotset->compute_one_and_two_body_energies(
 		pose, *scorefxn_, *unedited_task, packer_graph, 
 		one_body_energies, two_body_energies, packable_neighbors);
