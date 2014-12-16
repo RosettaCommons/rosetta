@@ -42,6 +42,8 @@ public:
 
 	Coulomb( Coulomb const & src );
 
+	CoulombOP clone() const;
+
   /// @brief Initilize constants.
 	void
 	initialize();
@@ -83,6 +85,8 @@ public:
 	inline Real min_dis( ) const { return min_dis_;}
 	inline Real min_dis2( ) const { return min_dis2_;}
 	inline bool smooth_fa_elec( ) const { return smooth_fa_elec_;}
+	inline Real die( ) const { return die_; }
+	inline bool no_dis_dep_die( ) const { return no_dis_dep_die_; }
 
 private:
 

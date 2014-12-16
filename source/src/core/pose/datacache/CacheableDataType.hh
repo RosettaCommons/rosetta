@@ -86,6 +86,7 @@ enum Enum {
 	MULTIPLE_POSE_INFO, // pose/multiple_pose_info/MultiplePoseInfo.cc [info on sister poses, for stepwise buildup]
 	NCS_RESIDUE_MAPPING,
 	FLOATING_POINT_CLOUD_INFO,
+	FAELEC_CONTEXT_DATA,
   WRITEABLE_DATA,
 	CDR_CLUSTER_INFO, // antibody/clusters/CDRClusterSet.cc ( Cacheable Antibody CDR Cluster Information)
 

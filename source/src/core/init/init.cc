@@ -101,6 +101,7 @@
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergy_onebodyCreator.hh>
 #include <core/scoring/elec/FA_ElecEnergyCreator.hh>
+#include <core/scoring/elec/FA_GrpElecEnergyCreator.hh>
 #include <core/scoring/elec/FA_ElecEnergyAroAroCreator.hh>
 #include <core/scoring/elec/FA_ElecEnergyAroAllCreator.hh>
 #include <core/scoring/elec/RNA_FA_ElecEnergyCreator.hh>
@@ -385,6 +386,7 @@ static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyCreator > FA_ElecEne
 static EnergyMethodRegistrator< scoring::elec::RNA_FA_ElecEnergyCreator > RNA_FA_ElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyAroAroCreator > FA_ElecEnergyAroAroCreator_registrator;
 static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyAroAllCreator > FA_ElecEnergyAroAllCreator_registrator;
+static EnergyMethodRegistrator< scoring::elec::FA_GrpElecEnergyCreator > FA_GrpElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hackaro::HackAroEnergyCreator > HackAroEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNAChiEnergyCreator > DNAChiEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNATorsionEnergyCreator > DNATorsionEnergyCreator_registrator;

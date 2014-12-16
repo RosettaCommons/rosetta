@@ -159,6 +159,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hbond_lr_bb_sc" ] = hbond_lr_bb_sc;
 	name2score_type_[ "hbond_sc"    ] = hbond_sc;
 	name2score_type_[ "hbond"    ] = hbond;
+	name2score_type_[ "fa_grpelec" ] = fa_grpelec;
 	name2score_type_[ "interchain_pair" ] = interchain_pair;
 	name2score_type_[ "interchain_vdw" ] = interchain_vdw;
 	name2score_type_[ "interface_dd_pair" ] = interface_dd_pair;

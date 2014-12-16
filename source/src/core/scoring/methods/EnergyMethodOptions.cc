@@ -59,6 +59,12 @@ EnergyMethodOptions::EnergyMethodOptions():
 	elec_die_(10.0),
 	elec_no_dis_dep_die_(false),
 	smooth_fa_elec_( false ),
+	grpelec_fade_type_( "false" ),
+	grpelec_fade_param1_( 1.0 ),
+	grpelec_fade_param2_( 1.0 ),
+	grpelec_fade_hbond_( true ),
+	grp_cpfxn_( true ),
+	elec_group_file_( "" ),
 	exclude_DNA_DNA_(true), // rosetta++ default
 	exclude_intra_res_protein_(true), // rosetta++ default
 	put_intra_into_total_(false ),
@@ -92,6 +98,12 @@ void EnergyMethodOptions::initialize_from_options() {
 	elec_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_die ]();
 	elec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_r_option ]();
 	smooth_fa_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_fa_elec ]();
+	grpelec_fade_type_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_type ]();
+	grpelec_fade_param1_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_param1 ]();
+	grpelec_fade_param2_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_param2 ]();
+	grpelec_fade_hbond_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_hbond ]();
+	grp_cpfxn_ = basic::options::option[ basic::options::OptionKeys::score::grp_cpfxn ]();
+	elec_group_file_ = basic::options::option[ basic::options::OptionKeys::score::elec_group_file ]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	exclude_intra_res_protein_ = !basic::options::option[basic::options::OptionKeys::score::include_intra_res_protein]();
 	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
@@ -127,6 +139,12 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		elec_die_ = src.elec_die_;
 		elec_no_dis_dep_die_ = src.elec_no_dis_dep_die_;
 		smooth_fa_elec_ = src.smooth_fa_elec_;
+		grpelec_fade_type_ = src.grpelec_fade_type_;
+		grpelec_fade_param1_ = src.grpelec_fade_param1_;
+		grpelec_fade_param2_ = src.grpelec_fade_param2_;
+		grpelec_fade_hbond_  = src.grpelec_fade_hbond_;
+		grp_cpfxn_  = src.grp_cpfxn_;
+		elec_group_file_ = src.elec_group_file_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
 		put_intra_into_total_ = src.put_intra_into_total_;
@@ -244,6 +262,71 @@ EnergyMethodOptions::smooth_fa_elec( bool setting )
 	smooth_fa_elec_ = setting;
 }
 
+std::string
+EnergyMethodOptions::grpelec_fade_type() const {
+	return grpelec_fade_type_;
+}
+
+void
+EnergyMethodOptions::grpelec_fade_type( std::string setting )
+{
+	grpelec_fade_type_ = setting;
+}
+
+core::Real
+EnergyMethodOptions::grpelec_fade_param1() const {
+	return grpelec_fade_param1_;
+}
+
+void
+EnergyMethodOptions::grpelec_fade_param1( core::Real setting )
+{
+	grpelec_fade_param1_ = setting;
+}
+
+core::Real
+EnergyMethodOptions::grpelec_fade_param2() const {
+	return grpelec_fade_param2_;
+}
+
+void
+EnergyMethodOptions::grpelec_fade_param2( core::Real setting )
+{
+	grpelec_fade_param2_ = setting;
+}
+
+bool
+EnergyMethodOptions::grpelec_fade_hbond() const {
+	return grpelec_fade_hbond_;
+}
+
+void
+EnergyMethodOptions::grpelec_fade_hbond( bool setting )
+{
+	grpelec_fade_hbond_ = setting;
+}
+
+bool
+EnergyMethodOptions::grp_cpfxn() const {
+	return grp_cpfxn_;
+}
+
+void
+EnergyMethodOptions::grp_cpfxn( bool setting )
+{
+	grp_cpfxn_ = setting;
+}
+
+std::string
+EnergyMethodOptions::elec_group_file() const {
+	return elec_group_file_;
+}
+
+void
+EnergyMethodOptions::elec_group_file( std::string setting )
+{
+	elec_group_file_ = setting;
+}
 
 bool
 EnergyMethodOptions::exclude_DNA_DNA() const {
@@ -521,6 +604,12 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.elec_die_ == b.elec_die_ ) &&
 		( a.elec_no_dis_dep_die_ == b.elec_no_dis_dep_die_ ) &&
 		( a.smooth_fa_elec_ == b.smooth_fa_elec_ ) &&
+		( a.grpelec_fade_type_ == b.grpelec_fade_type_ ) &&
+		( a.grpelec_fade_param1_ == b.grpelec_fade_param1_ ) &&
+		( a.grpelec_fade_param2_ == b.grpelec_fade_param2_ ) &&
+		( a.grpelec_fade_hbond_ == b.grpelec_fade_hbond_ ) &&
+		( a.grp_cpfxn_ == b.grp_cpfxn_ ) &&
+		( a.elec_group_file_ == b.elec_group_file_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_ ) &&
 		( a.put_intra_into_total_ == b.put_intra_into_total_ ) &&
@@ -575,6 +664,12 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: elec_no_dis_dep_die: "
 			<< (elec_no_dis_dep_die_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: smooth_fa_elec: " << ( smooth_fa_elec_ ? "true" : "false" ) << std::endl;
+	out << "EnergyMethodOptions::show: grpelec_fade_type: " << grpelec_fade_type_ << std::endl;
+	out << "EnergyMethodOptions::show: grpelec_fade_param1: " << grpelec_fade_param1_ << std::endl;
+	out << "EnergyMethodOptions::show: grpelec_fade_param2: " << grpelec_fade_param2_ << std::endl;
+	out << "EnergyMethodOptions::show: grpelec_fade_hbond: " << grpelec_fade_hbond_ << std::endl;
+	out << "EnergyMethodOptions::show: grp_cpfxn: " << grp_cpfxn_ << std::endl;
+	out << "EnergyMethodOptions::show: elec_group_file: " << elec_group_file_ << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_intra_res_protein: "

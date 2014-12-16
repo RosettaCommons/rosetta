@@ -147,6 +147,42 @@ public:
 	void
 	smooth_fa_elec( bool setting );
 
+	std::string
+	grpelec_fade_type() const;
+	
+	void 
+	grpelec_fade_type( std::string setting );
+
+	core::Real 
+	grpelec_fade_param1() const;
+
+	void
+	grpelec_fade_param1( core::Real setting );
+
+	core::Real 
+	grpelec_fade_param2() const;
+
+	void
+	grpelec_fade_param2( core::Real setting );
+
+	bool
+	grpelec_fade_hbond() const;
+
+	void
+	grpelec_fade_hbond( bool setting );
+	
+	bool 
+	grp_cpfxn() const;
+
+	void
+	grp_cpfxn( bool setting );
+
+	std::string
+	elec_group_file() const;
+	
+	void 
+	elec_group_file( std::string setting );
+
 	///
 	bool
 	exclude_DNA_DNA() const;
@@ -395,6 +431,12 @@ private:
 	core::Real elec_die_;
 	bool elec_no_dis_dep_die_;
 	bool smooth_fa_elec_;
+	std::string grpelec_fade_type_;
+	core::Real grpelec_fade_param1_;
+	core::Real grpelec_fade_param2_;
+	bool grpelec_fade_hbond_;
+	bool grp_cpfxn_;
+	std::string elec_group_file_;
 	bool exclude_DNA_DNA_;
 	bool exclude_intra_res_protein_;
 	bool put_intra_into_total_;

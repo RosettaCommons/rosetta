@@ -51,6 +51,13 @@ Coulomb::Coulomb( Coulomb const & src ): ReferenceCount(),
 	initialize();
 }
 
+CoulombOP 
+Coulomb::clone() const
+{
+	CoulombOP coulomb_ptr = CoulombOP( new Coulomb( *this ) );
+	return coulomb_ptr;
+}
+
 void
 Coulomb::initialize() {
 	// Must have already initialized max_dis_, min_dis_, die_, and no_dis_dep_die_
