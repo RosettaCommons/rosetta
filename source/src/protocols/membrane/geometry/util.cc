@@ -209,6 +209,10 @@ EmbeddingDefOP compute_structure_based_membrane_position( pose::Pose & pose ){
 	// get SpanningTopology
 	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
 	
+	if ( topo->nspans() == 0 ) {
+		utility_exit_with_message("The SpanningTopology object in MembraneInfo is empty!" );
+	}
+	
 	// get create Embedding object
 	EmbeddingOP embeddings( new Embedding( topo, pose ) );
 	

@@ -44,6 +44,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -137,8 +138,7 @@ void MPDockingMover::apply( Pose & pose ) {
 	pose.fold_tree().show(std::cout);
 	
 	// attach Pymol observer
-	TR << "test print" << std::endl;
-	TR << "attach Pymol observer" << std::endl;
+//	TR << "attach Pymol observer" << std::endl;
 	//	protocols::moves::AddPyMolObserver( pose );
 	
 	// run docking protocol (low-res and high-res)
@@ -151,6 +151,8 @@ void MPDockingMover::apply( Pose & pose ) {
 // setup docking protocol
 void MPDockingMover::setup(){
 
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace protocols::membrane;
 	using namespace protocols::docking;
 	using namespace core::scoring;
@@ -165,6 +167,13 @@ void MPDockingMover::setup(){
 
 	// create new docking protocol; both low-res and high-res
 	docking_protocol_ = DockingProtocolOP( new DockingProtocol( 1, false, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
+	
+	// if local_refine flag on, only do high-res
+	if ( option[OptionKeys::docking::docking_local_refine].user() ){
+	
+		TR << "MPDocking: doing highres only using flag -docking_local_refine" << std::endl;
+		docking_protocol_ = DockingProtocolOP( new DockingProtocol( 1, false, true, false, lowres_scorefxn_, highres_scorefxn_ ) );
+	}
 
 	// get movable jump
 	TR.Debug << "movable jumps: " << to_string(docking_protocol_->movable_jumps()) << std::endl;

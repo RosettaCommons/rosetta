@@ -465,7 +465,7 @@ AddMembraneMover::init_from_cmd() {
 core::Size
 AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	
-	TR << "Adding a membrane residue representing the position of the membrane at " << pose.total_residue() << std::endl;
+	TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.total_residue() << std::endl;
 	
 	using namespace protocols::membrane::geometry;
 	using namespace core::conformation;

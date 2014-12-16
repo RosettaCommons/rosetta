@@ -64,9 +64,6 @@ public:
 	void score_and_output(std::string filename,core::pose::Pose &);
 	void set_dock_ppk(bool dock_ppk);
 
-	// gets translation axis (= projection of COM axis into the membrane plane)
-	core::Vector const membrane_axis( core::pose::Pose &, int jumpnum );
-
 private:
 	// add @brief for members
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_away_vec_;

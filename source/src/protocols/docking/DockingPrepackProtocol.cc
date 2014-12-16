@@ -17,6 +17,7 @@
 
 // Package headers
 #include <protocols/docking/util.hh>
+#include <protocols/docking/metrics.hh>
 #include <protocols/docking/DockTaskFactory.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
@@ -25,6 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
@@ -35,7 +37,6 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
@@ -176,34 +177,6 @@ void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	setup_pack_operation_movers();
 }
 
-// gets translation axis (= projection of COM axis into the membrane plane)
-core::Vector const DockingPrepackProtocol::membrane_axis( core::pose::Pose & pose, int jumpnum )
-{
-	using namespace rigid;
-	using namespace core::pose;
-	using namespace numeric;
-		
-	// get translation axis from mover that takes pose and jump
-	// axis is between COMs
-	RigidBodyTransMoverOP com_trans( new RigidBodyTransMover( pose, jumpnum ) );
-	core::Vector const com_axis( com_trans->trans_axis() );
-	TR.Debug << "com axis: " << com_axis.to_string() << std::endl;
-
-	// get membrane normal
-	core::Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
-
-	// get cross-product between axis and membrane normal
-	// gives vector in membrane but perpendicular to the axis we want
-	core::Vector const in_membrane_axis = cross( com_axis, normal );
-
-	// get cross-product between this axis and the membrane normal
-	// should be axis that is the projection of the COM axis into the membrane plane
-	core::Vector const trans_axis = cross( in_membrane_axis, normal );
-	TR.Debug << "trans_axis: " << trans_axis.to_string() << std::endl;
-	
-	return trans_axis;
-}// membrane axis
-
 void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 {
 	// create a membrane protein from the pose
@@ -227,7 +200,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		if ( membrane_ ) {
 
 			// get membrane axis
-			core::Vector trans_axis( membrane_axis( pose, *jump ) );
+			core::Vector trans_axis( protocols::docking::membrane_axis( pose, *jump ) );
 
 			// create new translation mover
 			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(trans_axis, *jump) );
@@ -256,7 +229,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		// for membrane protein, translate in membrane plane
 		if ( membrane_ ) {
 
-			core::Vector trans_axis( membrane_axis( pose, *jump ) );
+			core::Vector trans_axis( protocols::docking::membrane_axis( pose, *jump ) );
 			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(trans_axis, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 

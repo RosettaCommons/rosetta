@@ -18,6 +18,7 @@
 
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingInitialPerturbationCreator.hh> // zhe
+#include <protocols/docking/metrics.hh>
 
 // Rosetta Headers
 #include <protocols/moves/Mover.hh>
@@ -28,6 +29,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Conformation.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/Energies.hh>
 
@@ -267,7 +269,7 @@ void
 DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_number )
 {
 	using namespace moves;
-
+	
 	if ( randomize1_ ) {
 		TR << "randomize1: true" << std::endl;
 		if ( use_ellipsoidal_randomization_ ) {
@@ -343,10 +345,12 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 	}
 	// DO NOT do this for e.g. ligand docking
 	if ( slide_ && !pose.is_fullatom() ) {
+		TR << "sliding into contact for centroid mode" << std::endl;
 		DockingSlideIntoContact slide( jump_number, slide_axis_ );
 		slide.apply( pose );
 		TR.Debug << "centroid mode, DockingSlideIntoContact applied" << std::endl;
 	} else if ( slide_ ) {
+		TR << "sliding into contact for full-atom mode" << std::endl;
 		FaDockingSlideIntoContact slide( jump_number, slide_axis_ );
 		slide.apply( pose );
 		TR.Debug << "fa-standard mode, FaDockingSlideIntoContact applied" << std::endl;
@@ -455,6 +459,21 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	using namespace moves;
 
 	rigid::RigidBodyTransMoverOP mover;
+	
+	// for a membrane pose the translation axis should be in the membrane
+	if ( pose.conformation().is_membrane() ) {
+	
+		TR << "Adjusting slide axis for membrane proteins" << std::endl;
+		TR << "     slide axis before: " << slide_axis_.to_string() << std::endl;
+
+		// get membrane axis from docking metrics function
+		slide_axis_ = membrane_axis( pose, rb_jump_ );
+		
+		// I have no idea why this needs to be negated, but is required to work
+		slide_axis_.negate();
+		slide_axis_.normalize();
+		TR << "     slide axis after: " << slide_axis_.to_string() << std::endl;
+	}
 	
 	if (slide_axis_.length() != 0){
 		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( slide_axis_, rb_jump_ ) );

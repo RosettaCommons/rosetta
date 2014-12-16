@@ -69,6 +69,14 @@ public:
 	///		will occur
 	DockingProtocol();
 
+	// the logic for "low_res_protocol_only" and "docking_local_refine" is
+	// counterintuitive: what it means:
+	// "low-res-only" "local-refine" => lowres / highres will be run
+	//  false          false            true     true   (counterintuitive)
+	//  true           false            true     false  (good)
+	//  false          true             false    true   (good)
+	//  true           true             false    false  (counterintuitive)
+
 	DockingProtocol(
 		Size const rb_jump_in,
 		bool const low_res_protocol_only = false, // if true: skip high resolution docking

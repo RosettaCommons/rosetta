@@ -30,12 +30,15 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
+#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
 
 #include <protocols/docking/metrics.hh>
 #include <utility/io/ozstream.hh>
@@ -52,9 +55,38 @@ using namespace core;
 namespace protocols {
 namespace docking {
 
+/// @brief Calculates translation axis lying in the membrane (= projection of COM axis into the membrane plane)
+core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
+{
+	using namespace rigid;
+	using namespace core::pose;
+	using namespace numeric;
+
+	// get translation axis from mover that takes pose and jump
+	// axis is between COMs
+	RigidBodyTransMoverOP com_trans( new RigidBodyTransMover( pose, jumpnum ) );
+	core::Vector const com_axis( com_trans->trans_axis() );
+	TR.Debug << "com axis: " << com_axis.to_string() << std::endl;
+
+	// get membrane normal
+	core::Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
+
+	// get cross-product between axis and membrane normal
+	// gives vector in membrane but perpendicular to the axis we want
+	core::Vector const in_membrane_axis = cross( com_axis, normal );
+
+	// get cross-product between this axis and the membrane normal
+	// should be axis that is the projection of the COM axis into the membrane plane
+	core::Vector const trans_axis = cross( in_membrane_axis, normal );
+	TR.Debug << "trans_axis: " << trans_axis.to_string() << std::endl;
+
+	return trans_axis;
+}// membrane axis
+
 core::Real
 calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps){
 	using namespace scoring;
+	using namespace basic::options;
 
 	Real interaction_energy(0);
 
@@ -63,6 +95,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 
 	docking_scorefxn = dock_scorefxn->clone() ;
     docking_scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.0 );
+//	docking_scorefxn->set_weight( core::scoring::dslf_ss_dst, 0.0 );
 	/*
 	if ( pose.is_fullatom() ){
 		docking_scorefxn = new core::scoring::ScoreFunction( *docking_score_high_ ) ;
@@ -87,13 +120,46 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		 */
 		core::pose::Pose unbound_pose = complex_pose;
 		Real trans_magnitude = 1000;
-		rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
+		
+		// create new translation mover
+		rigid::RigidBodyTransMoverOP translate_away;
+		
+		// for membrane proteins
+		if ( option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
+
+			// get membrane axis
+			core::Vector trans_axis( protocols::docking::membrane_axis( unbound_pose, rb_jump ) );
+			TR << "trans_axis: " << trans_axis.to_string() << std::endl;
+		
+			// create new translation mover
+			translate_away = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover(trans_axis, rb_jump) );
+		}
+		// for non-membrane proteins
+		else {
+			translate_away = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
+		}
+		
+		// set translation magnitude and translate away
 		translate_away->step_size( trans_magnitude );
 		translate_away->apply( unbound_pose );
 
+		// calculate unbound energy
 		Real const unbound_energy = (*docking_scorefxn)( unbound_pose );
 
+		// add score from this jump to total interaction energy
 		interaction_energy += (bound_energy - unbound_energy);
+
+		TR << "unbound pose: " << std::endl;
+		docking_scorefxn->show(unbound_pose);
+		TR << "bound pose: " << std::endl;
+		docking_scorefxn->show(complex_pose);
+		TR << "unbound energy: " << unbound_energy << std::endl;
+		TR << "bound energy: " << bound_energy << std::endl;
+		TR << "interaction energy: " << interaction_energy << std::endl;
+		TR << "rb_jump: " << rb_jump << std::endl;
+//		TR << "" <<  << std::endl;
+//		TR << "" <<  << std::endl;
+//		TR << "" <<  << std::endl;
 	}
 
 	return interaction_energy;
