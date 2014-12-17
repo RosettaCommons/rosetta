@@ -373,10 +373,10 @@ GroupElec::eval_respair_group_coulomb(
 			bool is_hbond_pair = (grp1.n_donor*grp2.n_acceptor + grp2.n_donor*grp1.n_acceptor > 0);
 			//bool is_hbond_pair_from_HBscore = check_hbond_pairing_from_HBscore( grp1, grp2, hbond_set );
 			Real dw_dE( 0.0 );
-			Real group_score_exp( group_score );
-			bool do_fade( false );
+			//Real group_score_exp( group_score );
+			//bool do_fade( false );
 			if( is_hbond_pair && fade_hbond_ ) 
-				do_fade = fade_hbonding_group_score( grp1, grp2, group_score, dw_dE );
+				fade_hbonding_group_score( grp1, grp2, group_score, dw_dE );
 
 			/*
 			TR.Debug << "Score,groupscore: "  << rsd1.seqpos() << " " << rsd2.seqpos() 

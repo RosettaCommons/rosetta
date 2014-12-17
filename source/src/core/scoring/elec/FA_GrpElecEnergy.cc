@@ -243,8 +243,8 @@ FA_GrpElecEnergy::setup_for_packing(
 // in the rotamer set.
 void
 FA_GrpElecEnergy::prepare_rotamers_for_packing(
-	pose::Pose const & pose,
-	conformation::RotamerSetBase & set
+	pose::Pose const &,
+	conformation::RotamerSetBase &
 ) const
 {}
 
@@ -252,8 +252,8 @@ FA_GrpElecEnergy::prepare_rotamers_for_packing(
 // a repacking
 void
 FA_GrpElecEnergy::update_residue_for_packing(
-	pose::Pose & pose,
-	Size resid
+	pose::Pose &,
+	Size
 ) const
 {}
 
@@ -347,7 +347,7 @@ void
 FA_GrpElecEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResPairMinimizationData const & min_data,
+	ResPairMinimizationData const &,
 	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
@@ -360,7 +360,7 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
 	bool intrares( rsd1.seqpos() == rsd2.seqpos() );
-	Real dsq, score( 0.0 );
+	Real score( 0.0 );
 
 	// use to avoid double counting with hbond_set
 	/*
@@ -401,7 +401,7 @@ FA_GrpElecEnergy::setup_for_minimizing_for_residue_pair(
 	kinematics::MinimizerMapBase const &,
 	ResSingleMinimizationData const &,
 	ResSingleMinimizationData const &,
-	ResPairMinimizationData & pair_data
+	ResPairMinimizationData &
 ) const
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
@@ -431,7 +431,7 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd2,
 	ResSingleMinimizationData const &,
 	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & min_data,
+	ResPairMinimizationData const &,
 	pose::Pose const & pose, // provides context
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
@@ -573,21 +573,21 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 /// @details for use only with the nblist auto-update algorithm
 void
 FA_GrpElecEnergy::eval_atom_derivative(
-	id::AtomID const & atom_id,
-	pose::Pose const & pose,
+	id::AtomID const &,
+	pose::Pose const &,
 	kinematics::DomainMap const &,// domain_map,
 	ScoreFunction const &,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
+	EnergyMap const &,
+	Vector &,
+	Vector &
 ) const
 {}
 
 void
 FA_GrpElecEnergy::finalize_total_energy(
-	pose::Pose & pose,
+	pose::Pose & ,
 	ScoreFunction const &,
-	EnergyMap & totals
+	EnergyMap & 
 ) const
 {}
 
@@ -596,7 +596,7 @@ FA_GrpElecEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
+	ScoreFunction const &,
 	EnergyMap const & /*weights*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
@@ -605,7 +605,8 @@ FA_GrpElecEnergy::evaluate_rotamer_pair_energies(
 
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.
-	if ( ! defines_score_for_residue_pair(pose.residue(set1.resid()), pose.residue(set2.resid()), true) ) return;
+	if ( !defines_score_for_residue_pair( pose.residue(set1.resid()), 
+																				pose.residue(set2.resid()), true) ) return;
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
 	( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
@@ -637,7 +638,7 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
+	ScoreFunction const &,
 	EnergyMap const & /*weights*/,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
@@ -846,7 +847,7 @@ void
 FA_GrpElecEnergy::eval_context_derivatives(
 	conformation::Residue const & rsd1,
 	FAElecContextDataCOP data,
-	EnergyMap const & weights,
+	EnergyMap const &,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs
 ) const
 {

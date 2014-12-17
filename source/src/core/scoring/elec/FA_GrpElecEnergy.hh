@@ -44,13 +44,6 @@ namespace core {
 namespace scoring {
 namespace elec {
 
-struct weight_triple
-{
-	Real wbb_bb_;
-	Real wbb_sc_;
-	Real wsc_sc_;
-};
-
 class FAElecContextData : public basic::datacache::CacheableData {
 
 public:
@@ -60,7 +53,7 @@ public:
 	void initialize( Size const nres );
 
 	basic::datacache::CacheableDataOP clone() const {
-		return new FAElecContextData( *this );
+		return FAElecContextDataOP( new FAElecContextData( *this ) );
 	}
 
 	Real &n( core::Size i ){ return n_[i]; };
@@ -369,11 +362,6 @@ private:
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
 	Real intrares_scale_;
-
-	//mutable Real elec_weight_; // used during trie-vs-trie algorithm
-	mutable Real wbb_bb_;
-	mutable Real wbb_sc_;
-	mutable Real wsc_sc_;
 
 	mutable Size nres_monomer_;
 
