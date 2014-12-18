@@ -52,6 +52,7 @@ struct ElecGroup
 };
 
 typedef utility::vector1< ElecGroup > ResElecGroup;
+	//typedef utility::pointer::shared_ptr< ResElecGroup const > ResElecGroupCOP;
 
 class GroupElec : public utility::pointer::ReferenceCount
 {
@@ -87,7 +88,7 @@ private:
   build_groupinfo( std::string const group_file,
 		   bool const extra = false );
 
-  ResElecGroup
+  ResElecGroup const &
   get_group( core::chemical::ResidueType const &rsdtype ) const;
 
 
@@ -116,17 +117,17 @@ private:
 
 	inline
 	Real
-	eval_standard_coulomb( Real const q1, Real const q2,
-												 Real const dis2, 
-												 bool const eval_deriv,
+	eval_standard_coulomb( Real const &q1, Real const &q2,
+												 Real const &dis2, 
+												 bool const &eval_deriv,
 												 Real &dE_dr
 												 ) const;
 
 	inline
 	Real
-	eval_grp_trunc( bool const use_switch,
-									Real grpdis2,
-									bool const eval_deriv,
+	eval_grp_trunc( bool const &use_switch,
+									Real const &grpdis2,
+									bool const &eval_deriv,
 									Real &dsw_dr
 									) const;
 
@@ -159,9 +160,9 @@ private:
 
 inline
 Real
-GroupElec::eval_grp_trunc( bool const use_switch,
-													 Real grpdis2,
-													 bool const eval_deriv,
+GroupElec::eval_grp_trunc( bool const &use_switch,
+													 Real const &grpdis2,
+													 bool const &eval_deriv,
 													 Real &dsw_dr
 													 ) const 
 {
@@ -223,9 +224,9 @@ GroupElec::eval_grp_trunc( bool const use_switch,
 // looks not too different when using distance-dependent dielectric though
 inline
 Real
-GroupElec::eval_standard_coulomb( Real const q1, Real const q2,
-																	Real const dis2, 
-																	bool const eval_deriv,
+GroupElec::eval_standard_coulomb( Real const &q1, Real const &q2,
+																	Real const &dis2, 
+																	bool const &eval_deriv,
 																	Real &dE_dr
 																	) const {
 	dE_dr = 0.0;
@@ -275,8 +276,6 @@ GroupElec::eval_standard_coulomb( Real const q1, Real const q2,
 			de_dr = -e/d;
 			dE_dr = ( de_dr/fdie - e*ddie_dr/(fdie*fdie) )/d;
 		}
-
-		// deriv including fdie
 	}
 
 	//std::cout << e << " " << d << " " << fdie << std::endl;

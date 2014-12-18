@@ -172,6 +172,7 @@ FA_GrpElecEnergy::setup_for_minimizing(
 	}
 
 	TR.Debug << "done setup_for_minimization" << std::endl;
+
 }
 
 //
@@ -205,8 +206,6 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 	precalc_context( pose, data );
 
   pose.data().set( pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA, data );
-
-	TR.Debug << "done: setup_for_scoring" << std::endl;
 }
 
 void
@@ -474,7 +473,6 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 	Eres_[ rsd1.seqpos() ] += 0.5*Erespair;
 	Eres_[ rsd2.seqpos() ] += 0.5*Erespair;
 
-	TR.Debug << "done eval residue pair deriv" << std::endl;
 }
 
 void
