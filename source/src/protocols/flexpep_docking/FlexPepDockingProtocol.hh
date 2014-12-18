@@ -253,9 +253,9 @@ private:
 	protocols::simple_moves::PackRotamersMoverOP interface_packer_;
 
 	// for designing the peptide;
-	core::pack::task::operation::RestrictResidueToRepackingOP receptor_protector_oper_; // operation to prevent the receptor from being redesigned
-	core::pack::task::PackerTaskOP design_task_;
-	protocols::simple_moves::PackRotamersMoverOP design_mover_;
+	//core::pack::task::operation::RestrictResidueToRepackingOP receptor_protector_oper_; // operation to prevent the receptor from being redesigned
+	//core::pack::task::PackerTaskOP design_task_;
+	//protocols::simple_moves::PackRotamersMoverOP design_mover_;
 
   // the flexpepdock protocol movemap // may change throughout the run
 	core::kinematics::MoveMapOP movemap_;

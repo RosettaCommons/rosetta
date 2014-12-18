@@ -113,7 +113,6 @@
 #include <sstream>
 #include <cstdio>
 #include <algorithm>
-#include <cmath>
 
 using basic::T;
 using basic::Error;
@@ -199,13 +198,26 @@ void FlexPepDockingProtocol::set_default()
 	allprotein_tf_ = core::pack::task::TaskFactoryOP( new task::TaskFactory );
 	allprotein_tf_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) ); // -ex1,ex2,use_input_sc,etc.
 	allprotein_tf_->push_back( TaskOperationCOP( new operation::IncludeCurrent ) ); // TODO: since our input is a prepacked structure, I always included its side-chains (these are NOT necessarily the native side-chains). But, maybe this should be left to the user (Barak)
-	allprotein_tf_->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) ); // prevents design
-	allprotein_tf_->push_back(append_ubrot_taskoper); // add support to -unboundrot
+	//allprotein_tf_->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) ); // prevents design
+	allprotein_tf_->push_back( append_ubrot_taskoper ); // add support to -unboundrot
 	if( option[OptionKeys::packing::resfile].user() )
 		allprotein_tf_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 
+  /*core::pack::task::operation::RestrictResidueToRepackingOP receptor_protector_oper_;
+  receptor_protector_oper_ = core::pack::task::operation::RestrictResidueToRepackingOP( new operation::RestrictResidueToRepacking() );
+  receptor_protector_oper_->clear();
+  for ( int i = flags_.receptor_first_res(); i <= receptor_last_res(); ++i ){
+      receptor_protector_oper_->include_residue(i);
+  }*/
+
+  if ( ! flags_.design_peptide )
+      allprotein_tf_->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+  
+  /*if ( flags_.design_peptide )
+      allprotein_tf_->push_back( receptor_protector_oper_ );*/
+
 	// interface packer settings:
-	interface_tf_ = core::pack::task::TaskFactoryOP( new task::TaskFactory(*allprotein_tf_) ); // base on settings for allprotein_tf_
+	interface_tf_ = core::pack::task::TaskFactoryOP( new task::TaskFactory(*allprotein_tf_) ); // based on settings for allprotein_tf_
 	if(! flags_.pep_fold_only)
 		interface_tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump_ ) ));
 
@@ -216,7 +228,32 @@ void FlexPepDockingProtocol::set_default()
 	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 	movemap_minimizer_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 
-	// Loop modeling options
+
+  //design packer setting
+  /*design_tf_ = core::pack::task::TaskFactoryOP( new tast::TaskFactory );
+  design_tf_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+  design_tf_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+  design_tf_->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
+  design_tf_->push_back( TaskOperationCOP( append_ubrot_taskoper );
+  design_tf_->push_back( TaskOperationCOP( new operation::ReadResfile );
+  design_tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump_ ) ));
+  
+  receptor_protector_oper_ = options::RestrictResidueToRepackingOP( new options::restrict_to_repacking() );
+  receptor_protector_oper_->clear();
+  for ( int i = flags_.receptor_first_res(); i <= receptor_last_res(); ++i ){
+    receptor_protector_oper_->include_residue(i);
+  }
+
+  if ( flags_.prevent_receptor_design )
+  design_tf_->push_back( receptor_protector_oper_ );
+
+  design_packer_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+  design_packer_->score_function( scorefxn_ );
+  design_packer_->task_factory( design_tf_ );
+  */
+	
+
+  // Loop modeling options
 	// NOTE: most LoopRelax options are initiated automatically from cmd-line
 	// TODO: should refine be set to default? we want to guarantee a full-atom output
 	loop_relax_mover_ = protocols::comparative_modeling::LoopRelaxMoverOP( new protocols::comparative_modeling::LoopRelaxMover() );
@@ -558,8 +595,8 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
     	
       TR << "Peptide CAs Center of Mass : " << peptide_c_alpha_centroid[0] << " " << peptide_c_alpha_centroid[1] << " " << peptide_c_alpha_centroid[2] << std::endl;
     
-      numeric::xyzMatrix< Real > peptide_eigenvectors = numeric::principal_components( peptide_c_alpha_coords );
-      numeric::xyzVector< Real > peptide_first_pc = numeric::first_principal_component( peptide_c_alpha_coords );
+      numeric::xyzMatrix< core::Real > peptide_eigenvectors = numeric::principal_components( peptide_c_alpha_coords );
+      numeric::xyzVector< core::Real > peptide_first_pc = numeric::first_principal_component( peptide_c_alpha_coords );
     	Vector peptide_eigenvalues = numeric::principal_component_eigenvalues( peptide_c_alpha_coords );
     
       TR << "Peptide CAs First Principle Component : " << peptide_first_pc.x() << " " << peptide_first_pc.y() << " " << peptide_first_pc.z() << std::endl;
@@ -580,8 +617,8 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
     	
       TR << "Binding Site CAs Center of Mass : " << binding_site_c_alpha_centroid[0] << " " << binding_site_c_alpha_centroid[1] << " " << binding_site_c_alpha_centroid[2] << std::endl;
     
-      numeric::xyzMatrix< Real > binding_site_eigenvectors = numeric::principal_components( binding_site_c_alpha_coords );
-      numeric::xyzVector< Real > binding_site_first_pc = numeric::first_principal_component( binding_site_c_alpha_coords );
+      numeric::xyzMatrix< core::Real > binding_site_eigenvectors = numeric::principal_components( binding_site_c_alpha_coords );
+      numeric::xyzVector< core::Real > binding_site_first_pc = numeric::first_principal_component( binding_site_c_alpha_coords );
     	Vector binding_site_eigenvalues = numeric::principal_component_eigenvalues( binding_site_c_alpha_coords );
     
       TR << "Binding Site CAs First Principle Component : " << binding_site_first_pc.x() << " " << binding_site_first_pc.y() << " " << binding_site_first_pc.z() << std::endl;
@@ -589,7 +626,7 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
 
       // caculating translation vector to align center of masses
       Vector com_align_axis = (peptide_c_alpha_centroid - binding_site_c_alpha_centroid);
-      Real com_distance = std::sqrt((peptide_c_alpha_centroid[0] - binding_site_c_alpha_centroid[0])*(peptide_c_alpha_centroid[0] - binding_site_c_alpha_centroid[0]) + (peptide_c_alpha_centroid[1] - binding_site_c_alpha_centroid[1])*(peptide_c_alpha_centroid[1] - binding_site_c_alpha_centroid[1]) + (peptide_c_alpha_centroid[2] - binding_site_c_alpha_centroid[2])*(peptide_c_alpha_centroid[2] - binding_site_c_alpha_centroid[2]));
+      core::Real com_distance = std::sqrt((peptide_c_alpha_centroid[0] - binding_site_c_alpha_centroid[0])*(peptide_c_alpha_centroid[0] - binding_site_c_alpha_centroid[0]) + (peptide_c_alpha_centroid[1] - binding_site_c_alpha_centroid[1])*(peptide_c_alpha_centroid[1] - binding_site_c_alpha_centroid[1]) + (peptide_c_alpha_centroid[2] - binding_site_c_alpha_centroid[2])*(peptide_c_alpha_centroid[2] - binding_site_c_alpha_centroid[2]));
       TR << "COM distance : " << com_distance << std::endl;
     
       // performing translation to align center of masses
@@ -610,10 +647,10 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
       peptide_first_pc.z( peptide_first_pc.z() );
       peptide_first_pc.normalize_any();
       
-      Real rotation_angle = numeric::arccos( peptide_first_pc.dot( binding_site_first_pc ) );
+      core::Real rotation_angle = numeric::arccos( peptide_first_pc.dot( binding_site_first_pc ) );
       Vector rotation_axis = peptide_first_pc.cross( binding_site_first_pc );
 
-      numeric::xyzMatrix< Real > rotation_matrix = numeric::rotation_matrix( rotation_axis, rotation_angle );
+      numeric::xyzMatrix< core::Real > rotation_matrix = numeric::rotation_matrix( rotation_axis, rotation_angle );
       
       TR << "Performing rotation " << std::endl;
 
@@ -635,11 +672,13 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
 ////////////////////////////////////////////
 void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 {
+  using namespace std;
   using namespace core;
 	using namespace numeric;
   using namespace utility;
   using namespace basic::options;
   using namespace protocols;
+  using namespace std;
 
   Size pcs_num = flags_.sample_pc;
   utility::vector1< Vector > peptide_c_alpha_coords;
@@ -658,14 +697,14 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 	
   TR << "Peptide CAs Center of Mass : " << peptide_c_alpha_centroid[0] << " " << peptide_c_alpha_centroid[1] << " " << peptide_c_alpha_centroid[2] << std::endl;
 
-  numeric::xyzMatrix< Real > peptide_eigenvectors = numeric::principal_components( peptide_c_alpha_coords );
+  numeric::xyzMatrix< core::Real > peptide_eigenvectors = numeric::principal_components( peptide_c_alpha_coords );
 
   Vector first_pc_axis(peptide_eigenvectors.col_x()[0], peptide_eigenvectors.col_x()[1], peptide_eigenvectors.col_x()[2] );
   Vector second_pc_axis(peptide_eigenvectors.col_y()[0], peptide_eigenvectors.col_y()[1], peptide_eigenvectors.col_y()[2] );
   Vector third_pc_axis(peptide_eigenvectors.col_z()[0], peptide_eigenvectors.col_z()[1], peptide_eigenvectors.col_z()[2] );
 
   if ( pcs_num == 1 ){
-    Size rand_num = round(numeric::random::uniform());
+    Size rand_num = (Size)(numeric::random::uniform() + 0.5);
     float rot_angle = 180.0*(rand_num);;
     TR << "Flipping the peptide " << std::endl;
     rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
@@ -673,7 +712,7 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
   }
 
   if ( pcs_num == 2 ){
-    Size rand_num = round (numeric::random::random_range(1,4));
+    Size rand_num = (Size)(numeric::random::random_range(1,4) + 0.5);
     float rot_angle = 90.0*(rand_num);
     TR << "Flipping the peptide " << std::endl;
     rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
@@ -1039,10 +1078,10 @@ FlexPepDockingProtocol::rigidbody_monte_carlo_minimize(
 
 	rigid::RigidBodyPerturbMover rb_mover(
 		rb_jump_, rot_magnitude, trans_magnitude );
-	protocols::simple_moves::RotamerTrialsMover interface_rottrial(scorefxn_, interface_tf_);
-	protocols::simple_moves::EnergyCutRotamerTrialsMover rottrial_ecut(scorefxn_, allprotein_tf_, mc, rt_energycut);
-	protocols::simple_moves::RotamerTrialsMinMover interface_rtmin(scorefxn_, interface_tf_);
-	protocols::simple_moves::MinMover minimizer(
+  protocols::simple_moves::RotamerTrialsMover interface_rottrial(scorefxn_, interface_tf_);
+  protocols::simple_moves::EnergyCutRotamerTrialsMover rottrial_ecut(scorefxn_, allprotein_tf_, mc, rt_energycut);
+  protocols::simple_moves::RotamerTrialsMinMover interface_rtmin(scorefxn_, interface_tf_);
+  protocols::simple_moves::MinMover minimizer(
 		movemap_minimizer_, scorefxn_, min_type, min_func_tol, true /*nb_list*/ );
 
 	// start the minimization
@@ -1126,7 +1165,7 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 	float rama_ramp_step = (origw_rama - 0.01) / float(rep_ramp_cycles-1) ;
 
 	// design operation settings:
-	if(flags_.design_peptide){
+	/*if(flags_.design_peptide){
 		pack::task::TaskFactoryOP design_tf( new pack::task::TaskFactory );
 		if(! flags_.pep_fold_only)
 			{
@@ -1140,7 +1179,7 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 				design_mover_->task_factory(design_tf);
 				TR << "Disabling receptor design" << endl;
 			}
-	}
+	}*/
 
 	// start protocol:
 	interface_packer_->apply( pose ); // initial sidechains repack
@@ -1160,7 +1199,7 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 				float rama_weight = (0.01 + rama_ramp_step * float(i-1));
 				scorefxn_->set_weight( rama, rama_weight );
 			}
-			if (flags_.design_peptide) {
+	/*		if (flags_.design_peptide) {
 				TR.Debug << "Sequence - Before design: " << pose.sequence() << endl;
 				TR.Debug << "Peptide sequence: " << pose.chain_sequence(2) << endl;
 				TR.Debug << "Designing " << i << endl;
@@ -1168,6 +1207,7 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 				TR.Debug << "Sequence - After design: " << pose.sequence() << endl;
 				TR.Debug << "Peptide sequence: " << pose.chain_sequence(2) << endl;
 			}
+      */
 			if ( flags_.rbMCM  && ! flags_.pep_fold_only ) {
 				rigidbody_monte_carlo_minimize(
 					pose, flags_.mcm_cycles , "dfpmin_armijo_atol", /* TODO: switch to dfpmin_armijo_nonmonotone_atol, or by flag*/
