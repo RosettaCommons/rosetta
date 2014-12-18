@@ -18,6 +18,7 @@
 // Unit headers
 #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
+#include <utility/backtrace.hh>
 // C++ headers
 #include <cassert>
 #include <cstdlib>
@@ -119,6 +120,7 @@ exit(
 	if ( ! message.empty() ) std::cerr << std::endl << "ERROR: " << message << std::endl;
 	std::cerr << "ERROR:: Exit from: " << file << " line: " << line << std::endl;
 	if( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m";
+	print_backtrace();
 	std::cerr.flush();
 
 	throw EXCN_utility_exit( message, file, line );
