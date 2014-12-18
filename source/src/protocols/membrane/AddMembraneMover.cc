@@ -346,7 +346,7 @@ AddMembraneMover::apply( Pose & pose ) {
 	// Otherwise, setup a new membrane virtual
 	core::SSize membrane_pos(0);
 	if ( membrane_rsd_ != 0 &&
-		 (core::SSize) pose.total_residue() > membrane_rsd_ &&
+		 //(core::SSize) pose.total_residue() > membrane_rsd_ && Fails for symmetry
 		 pose.residue( membrane_rsd_ ).has_property( "MEMBRANE" ) ) {
 		TR << "Adding membrane residue from user specified position" << std::endl;
 		membrane_pos = membrane_rsd_;

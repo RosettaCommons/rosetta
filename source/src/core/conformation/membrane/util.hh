@@ -12,9 +12,14 @@
 /// @file		core/conformation/membrane/util.fwd.hh
 /// @brief		utility functions for membrane things
 /// @author		JKLeman (julia.koehler1982@gmail.com)
+/// @author     Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_util_hh
 #define INCLUDED_core_conformation_membrane_util_hh
+
+// Project Headers
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -30,7 +35,9 @@ namespace conformation {
 namespace membrane {
 
 using namespace core;
-
+using namespace core::conformation;
+using namespace core::conformation::membrane;
+    
 // read multiple spanfiles from options
 utility::vector1< std::string > spanfile_names();
 

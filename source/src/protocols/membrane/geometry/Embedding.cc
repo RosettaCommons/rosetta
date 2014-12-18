@@ -107,11 +107,11 @@ Embedding::Embedding( SpanningTopologyOP topology, Real radius ) :
 		// create object and push back into vector
 		EmbeddingDefOP span_embedding( new EmbeddingDef( center, normal ) );
 		embeddings_.push_back( span_embedding );
-
 	}
 
 	// chain embedding is sum of span embeddings
 	total_embed_ = average_antiparallel_embeddings( embeddings_ );
+    
 }// object from topology
 
 /// @brief	Constructs from topology and pose

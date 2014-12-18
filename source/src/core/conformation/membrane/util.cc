@@ -16,6 +16,13 @@
 // Unit headers
 #include <core/conformation/membrane/util.hh>
 
+// Project Headers
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/Conformation.hh>
+
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Span.hh>
+
 // Package Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>

@@ -315,6 +315,7 @@ sources = {
     ],
     "protocols/membrane/symmetry" : [
     		"SetupForMembraneSymmetry",
+		"util",
     ],
     "protocols/membrane/visualize": [
     		"VisualizeMembraneMover",
