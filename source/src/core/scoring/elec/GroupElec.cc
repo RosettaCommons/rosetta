@@ -592,11 +592,7 @@ GroupElec::eval_respair_group_derivatives(
 
 				for ( Size kk = 1; kk <= ncom1; ++kk ){
 					core::Size const atm1( grp1.comatms[kk] );
-					Vector const & atom1xyz( rsd1.xyz( atm1 ) );
-
 					Vector f2 = c_grp1_heavy*group_score*dsw_dr*dcom*elec_weight;
-					//Vector f1 = atom1xyz.cross( -f2 );
-					//r1_atom_derivs[ atm1 ].f1() += f1;
 					r1_atom_derivs[ atm1 ].f2() += f2;
 				}
 			}
@@ -606,11 +602,7 @@ GroupElec::eval_respair_group_derivatives(
 
 				for ( Size kk = 1; kk <= ncom2; ++kk ){
 					core::Size const atm2( grp2.comatms[kk] );
-					Vector const & atom2xyz( rsd2.xyz( atm2 ) );
-
 					Vector f2 = -c_grp2_heavy*group_score*dsw_dr*dcom*elec_weight;
-					//Vector f1 = atom2xyz.cross( -f2 );
-					//r2_atom_derivs[ atm2 ].f1() += f1;
 					r2_atom_derivs[ atm2 ].f2() += f2;
 				}
 			}
