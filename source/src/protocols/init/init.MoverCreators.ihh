@@ -371,11 +371,13 @@
 #include <protocols/abinitio/abscript/RigidChunkCMCreator.hh>
 
 #include <protocols/membrane/AddMembraneMoverCreator.hh> 
+#include <protocols/membrane/FlipMoverCreator.hh> 
 #include <protocols/membrane/MembranePositionFromTopologyMoverCreator.hh>
 #include <protocols/membrane/SetMembranePositionMoverCreator.hh>
 #include <protocols/membrane/TransformIntoMembraneMoverCreator.hh>
 #include <protocols/membrane/symmetry/SetupForMembraneSymmetryCreator.hh>
 
 #include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh>
+#include <protocols/membrane/visualize/VisualizeEmbeddingMoverCreator.hh>
 
 #include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh> 

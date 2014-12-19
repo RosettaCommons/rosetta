@@ -28,6 +28,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/conformation/membrane/Exceptions.hh>
+#include <core/conformation/membrane/types.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
@@ -68,8 +69,8 @@ public: // test functions
 		TS_TRACE("Test default constructor");
 				
 		// define vectors and object
-		Vector center(0, 0, 0);
-		Vector normal(0, 0, 1);
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		EmbeddingDefOP embed( new EmbeddingDef() );
 
 		// check positions

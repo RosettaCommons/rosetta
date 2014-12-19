@@ -39,6 +39,7 @@
 #include <core/types.hh>
 
 // Utility Headers
+#include <core/conformation/membrane/types.hh>
 #include <utility/vector1.hh>
 
 using namespace core;
@@ -70,8 +71,8 @@ public: // test functions
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
 		
 		// Center/normal
-		Vector center(0, 0, 0);
-		Vector normal(0, 0, 1);
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		
 		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile ) );
 		add_memb->apply( *pose_ );

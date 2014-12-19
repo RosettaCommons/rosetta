@@ -117,14 +117,17 @@ void MPDockingMover::apply( Pose & pose ) {
 	// calling setup
 	setup();
 	
-	// read in native pose
+	// set native pose, either from native flag or from given pose
 	read_native( pose );
 	
 	// assuming that protein 1 is fixed in the membrane!!!
 	// add membrane VRT, call AddMembraneMover
 	TR << "adding MEM" << std::endl;
 	add_membrane_mover_->apply( pose );
-	
+
+	TR << "docking pose nres: " << pose.total_residue() << std::endl;
+	TR << "native pose nres: " << docking_protocol_->get_native_pose()->total_residue() << std::endl;
+
 	// creating foldtree from pose
 	pose.fold_tree().show(std::cout);
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
@@ -136,11 +139,7 @@ void MPDockingMover::apply( Pose & pose ) {
 	// show foldtree
 	TR << "foldtree reordered" << std::endl;
 	pose.fold_tree().show(std::cout);
-	
-	// attach Pymol observer
-//	TR << "attach Pymol observer" << std::endl;
-	//	protocols::moves::AddPyMolObserver( pose );
-	
+		
 	// run docking protocol (low-res and high-res)
 	TR << "calling docking protocol" << std::endl;
 	docking_protocol_->apply( pose );

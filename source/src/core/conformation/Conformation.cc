@@ -50,6 +50,7 @@
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/MembraneParams.hh>
+#include <core/conformation/membrane/types.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
 #include <core/conformation/parametric/Parameters.hh>
 
@@ -555,11 +556,16 @@ Conformation::membrane_info() const {
 void
 Conformation::update_membrane_position( Vector center, Vector normal ) {
 
+	using namespace core::conformation::membrane;
+
+	// normalize normal vector
+	normal.normalize( mem_thickness );
+
 	// Set membrane center
 	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::center, center );
 
 	// Set membrane normal
-	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::normal, normal );
+	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::normal, center + normal );
 
 	// Check coordinate frame is valid
 	check_valid_membrane();

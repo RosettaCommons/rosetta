@@ -22,6 +22,7 @@
 
 // Rosetta Headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/membrane/geometry/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/RigidBodyInfo.hh> // zhe
 #include <protocols/docking/EllipsoidalRandomizationMover.hh> // NM
@@ -457,6 +458,7 @@ DockingSlideIntoContact::~DockingSlideIntoContact() {}
 void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
 	using namespace moves;
+	using namespace protocols::membrane::geometry;
 
 	rigid::RigidBodyTransMoverOP mover;
 	

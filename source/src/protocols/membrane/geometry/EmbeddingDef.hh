@@ -49,11 +49,11 @@ public:
 	/// @brief Standard Constructor
 	EmbeddingDef( core::Vector const center, core::Vector const normal );
 	
-	/// @brief Constructor from pose and two residue numbers
-	EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end );
+	/// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
+	EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end, bool pos_z=false );
 
-	/// @brief Constructor from pose and two residue numbers
-	EmbeddingDef( core::pose::Pose & pose, core::Size start, core::Size end );
+	/// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
+	EmbeddingDef( core::pose::Pose & pose, core::Size start, core::Size end, bool pos_z=false );
 	
 	/// @brief Copy Constructor
 	EmbeddingDef( EmbeddingDef const & EmbeddingDef );
@@ -75,6 +75,9 @@ public:
 	
 	/// @brief Access center param
 	core::Vector center() const;
+	
+	/// @brief Invert normal
+	void invert();
 	
 	/// @brief Translate by center and normal
 	void translate_by( EmbeddingDefOP translation );
@@ -103,9 +106,9 @@ public:
 	
 private: // data
 	
-	core::Vector normal_;
 	core::Vector center_;
-		
+	core::Vector normal_;
+	
 };
     
 } // geometry

@@ -39,6 +39,8 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility headers
+#include <core/conformation/membrane/types.hh>
+
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
@@ -54,6 +56,7 @@ namespace membrane {
 using namespace core;
 using namespace protocols::membrane;
 using namespace protocols::simple_moves;
+using namespace core::conformation::membrane;
 
 ////////////////////
 /// Constructors ///
@@ -62,8 +65,8 @@ using namespace protocols::simple_moves;
 /// @brief Construct a Default Membrane Position Mover
 SetMembranePositionMover::SetMembranePositionMover() :
 	Mover(),
-	center_( 0.0, 0.0, 0.0 ),
-	normal_( 0.0, 0.0, 15.0 )
+	center_( mem_center ),
+	normal_( mem_normal )
 {}
 
 /// @brief Custom Constructor
@@ -122,6 +125,8 @@ SetMembranePositionMover::apply( Pose & pose ) {
 	using namespace core::kinematics;
 	using namespace protocols::membrane;
 	
+	TR << "Calling SetMembranePositionMover" << std::endl;
+
 	// Check the pose is ==a membrane protein
 	if (! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
@@ -133,8 +138,8 @@ SetMembranePositionMover::apply( Pose & pose ) {
 	}
 	
 	// Update coordinates
-	pose.conformation().update_membrane_position( center_, normal_ + center_ );
-
+	pose.conformation().update_membrane_position( center_, normal_ );
+	
 }
 
 ///////////////////////////////
@@ -193,7 +198,7 @@ SetMembranePositionMoverCreator::mover_name() {
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneNormalMover::SetMembraneNormalMover() :
 	Mover(),
-	normal_( 0.0, 0.0, 15.0 )
+	normal_( mem_normal )
 {}
 
 /// @brief Custom Constructor
@@ -263,7 +268,7 @@ SetMembraneNormalMover::apply( Pose & pose ) {
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
 	
-	pose.conformation().update_membrane_position( current_center, current_center + normal_ );
+	pose.conformation().update_membrane_position( current_center, normal_ );
 
 }
 
@@ -324,7 +329,7 @@ SetMembraneNormalMoverCreator::mover_name() {
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneCenterMover::SetMembraneCenterMover() :
 	Mover(),
-	center_( 0.0, 0.0, 0.0 )
+	center_( mem_center )
 {}
 
 /// @brief Custom Constructor
@@ -394,7 +399,7 @@ SetMembraneCenterMover::apply( Pose & pose ) {
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	
 	// Apply translation
-	pose.conformation().update_membrane_position( center_, current_normal + center_ );
+	pose.conformation().update_membrane_position( center_, current_normal );
 
 }
 

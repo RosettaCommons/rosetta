@@ -177,7 +177,7 @@ private:
 	/// @details If there is an MEM residue in the PDB at the end of the pose
 	/// with property MEMBRANE, return it's residue number. In the control flow of the
 	/// apply method, if this returns non-zero, a new membrane residue will not be added.
-	bool check_pdb_for_mem( Pose & pose );
+	core::SSize check_pdb_for_mem( Pose & pose );
 	
 private:
 
@@ -198,8 +198,6 @@ private:
 	
 	// Symm membrane residue number (when applicable)
 	core::SSize membrane_rsd_;
-
-	
 };
 
 } // membrane

@@ -27,6 +27,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/geometry/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
@@ -200,7 +201,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		if ( membrane_ ) {
 
 			// get membrane axis
-			core::Vector trans_axis( protocols::docking::membrane_axis( pose, *jump ) );
+			core::Vector trans_axis( protocols::membrane::geometry::membrane_axis( pose, *jump ) );
 
 			// create new translation mover
 			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(trans_axis, *jump) );
@@ -229,7 +230,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		// for membrane protein, translate in membrane plane
 		if ( membrane_ ) {
 
-			core::Vector trans_axis( protocols::docking::membrane_axis( pose, *jump ) );
+			core::Vector trans_axis( protocols::membrane::geometry::membrane_axis( pose, *jump ) );
 			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(trans_axis, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 

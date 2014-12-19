@@ -39,6 +39,8 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID_Map.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -255,7 +257,7 @@ EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts ) {
     }
 	
     center /= parts.size();
-	normal.normalize( 15 );
+	normal.normalize( mem_thickness );
     
 	// Create new embedding setup and return it
     EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
@@ -302,7 +304,7 @@ EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP
 	}
 
 	center /= parts.size();
-	normal.normalize( 15 );
+	normal.normalize( mem_thickness );
 	
 	// Create new embedding setup and return it
 	EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
@@ -338,6 +340,36 @@ void reorder_membrane_foldtree( pose::Pose & pose ) {
 	// set foldtree in pose
 	pose.fold_tree( foldtree );
 }
+
+/// @brief Calculates translation axis lying in the membrane (= projection of COM axis into the membrane plane)
+core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
+{
+	using namespace rigid;
+	using namespace core::pose;
+	using namespace numeric;
+
+	// get translation axis from mover that takes pose and jump
+	// axis is between COMs
+	RigidBodyTransMoverOP com_trans( new RigidBodyTransMover( pose, jumpnum ) );
+	core::Vector const com_axis( com_trans->trans_axis() );
+	TR.Debug << "com axis: " << com_axis.to_string() << std::endl;
+
+	// get membrane normal
+	core::Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
+
+	// get cross-product between axis and membrane normal
+	// gives vector in membrane but perpendicular to the axis we want
+	core::Vector const in_membrane_axis = cross( com_axis, normal );
+
+	// get cross-product between this axis and the membrane normal
+	// should be axis that is the projection of the COM axis into the membrane plane
+	core::Vector const trans_axis = cross( in_membrane_axis, normal );
+	TR.Debug << "trans_axis: " << trans_axis.to_string() << std::endl;
+
+	return trans_axis;
+}// membrane axis
+
+
 
 } // geometry
 } // membrane

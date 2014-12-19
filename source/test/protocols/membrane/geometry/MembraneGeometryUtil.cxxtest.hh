@@ -30,6 +30,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/conformation/membrane/Exceptions.hh>
+#include <core/conformation/membrane/types.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
@@ -78,14 +79,14 @@ public: // test functions
 		core::import_pose::pose_from_pdb( pose1, "protocols/membrane/geometry/1AFO_.pdb" );
 
 		// create membrane pose
-		Vector center(0,0,0);
-		Vector normal(0,0,1);
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		AddMembraneMoverOP addmem1( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
 		addmem1->apply( pose1 );
 
 		// define vectors and object
 		Vector center1(0.53225, 0.361, 0.095);
-		Vector normal1(12.7367, 7.68036, -1.94611);
+		Vector normal1(-12.7367, -7.68036, 1.94611);
 		
 		// compute embedding
 		EmbeddingDefOP embed1( compute_structure_based_membrane_position( pose1 ) );
@@ -101,7 +102,7 @@ public: // test functions
 		AddMembraneMoverOP addmem2( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1BL8__tr.span" ) );
 		addmem2->apply(pose2);
 		Vector center2(73.9421, 26.7549, 24.4493);
-		Vector normal2(-5.7604, 0.605734, -13.8366);
+		Vector normal2(5.7604, -0.605734, 13.8366);
 		EmbeddingDefOP embed2( compute_structure_based_membrane_position( pose2 ) );
 		TS_ASSERT( position_equal_within_delta( embed2->center(), center2, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed2->normal(), normal2, 0.001 ) );
@@ -113,7 +114,7 @@ public: // test functions
 		AddMembraneMoverOP addmem3( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1QJP__tr.span" ) );
 		addmem3->apply(pose3);
 		Vector center3(31.2161, 16.9685, 37.6119);
-		Vector normal3(-13.1689, 7.07507, -1.23442);
+		Vector normal3(13.1689, -7.07507, 1.23442);
 		EmbeddingDefOP embed3( compute_structure_based_membrane_position( pose3 ) );
 		TS_ASSERT( position_equal_within_delta( embed3->center(), center3, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed3->normal(), normal3, 0.001 ) );
@@ -125,7 +126,7 @@ public: // test functions
 		AddMembraneMoverOP addmem4( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
 		addmem4->apply(pose4);
 		Vector center4(21.4326, 6.0464, -41.0573);
-		Vector normal4(-0.0900585, -0.176022, -14.9987);
+		Vector normal4(0.0900585, 0.176022, 14.9987);
 		EmbeddingDefOP embed4( compute_structure_based_membrane_position( pose4 ) );
 		TS_ASSERT( position_equal_within_delta( embed4->center(), center4, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed4->normal(), normal4, 0.001 ) );
@@ -161,7 +162,7 @@ public: // test functions
 		AddMembraneMoverOP addmem7( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2UUH__tr.span" ) );
 		addmem7->apply(pose7);
 		Vector center7(-0.000166667, -0.000125, 0.295625);
-		Vector normal7(-1.19923e-05, -2.70232e-05, -15);
+		Vector normal7(1.19923e-05, 2.70232e-05, 15);
 		EmbeddingDefOP embed7( compute_structure_based_membrane_position( pose7 ) );
 		TS_ASSERT( position_equal_within_delta( embed7->center(), center7, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed7->normal(), normal7, 0.001 ) );
@@ -173,11 +174,53 @@ public: // test functions
 		AddMembraneMoverOP addmem8( new AddMembraneMover( center, normal, "protocols/membrane/geometry/3PXO__tr.span" ) );
 		addmem8->apply(pose8);
 		Vector center8(-36.1201, -7.59636, 37.6713);
-		Vector normal8(14.793, 2.47196, -0.237567);
+		Vector normal8(-14.793, -2.47196, 0.237567);
 		EmbeddingDefOP embed8( compute_structure_based_membrane_position( pose8 ) );
 		TS_ASSERT( position_equal_within_delta( embed8->center(), center8, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed8->normal(), normal8, 0.001 ) );
 		
+		//////////////////////////////////////////////////////////////////////////////
+		
+		// make sure that the embedding normal is always in positive z direction
+		// independent of the orientation of the protein
+
+//		Embedding: center: (-0.017, -0.1035, -0.37975), normal: (-0.912964, 3.15385, 14.6362)
+
+		// 1afo up
+//		TS_TRACE("1AFO up");
+//		Pose pose9;
+//		core::import_pose::pose_from_pdb( pose9, "protocols/membrane/geometry/1AFO_up.pdb" );
+//		AddMembraneMoverOP addmem9( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
+//		addmem9->apply(pose9);
+//		Vector center9(0.53225, 0.361, 0.095);
+//		Vector normal9(12.7367, 7.68036, -1.94611);
+//		EmbeddingDefOP embed9( compute_structure_based_membrane_position( pose9 ) );
+//		TS_ASSERT( position_equal_within_delta( embed9->center(), center9, 0.001 ) );
+//		TS_ASSERT( position_equal_within_delta( embed9->normal(), normal9, 0.001 ) );
+//		
+//		// 1afo down
+//		TS_TRACE("1AFO down");
+//		Pose pose10;
+//		core::import_pose::pose_from_pdb( pose10, "protocols/membrane/geometry/1AFO_down.pdb" );
+//		AddMembraneMoverOP addmem10( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
+//		addmem10->apply(pose10);
+//		Vector center10(0.53225, 0.361, 0.095);
+//		Vector normal10(12.7367, 7.68036, -1.94611);
+//		EmbeddingDefOP embed10( compute_structure_based_membrane_position( pose10 ) );
+//		TS_ASSERT( position_equal_within_delta( embed10->center(), center10, 0.001 ) );
+//		TS_ASSERT( position_equal_within_delta( embed10->normal(), normal10, 0.001 ) );
+//		
+//		// 1afo parallel to the membrane
+//		TS_TRACE("1AFO parallel");
+//		Pose pose11;
+//		core::import_pose::pose_from_pdb( pose11, "protocols/membrane/geometry/1AFO_parallel.pdb" );
+//		AddMembraneMoverOP addmem11( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
+//		addmem11->apply(pose11);
+//		Vector center11(0.53225, 0.361, 0.095);
+//		Vector normal11(12.7367, 7.68036, -1.94611);
+//		EmbeddingDefOP embed11( compute_structure_based_membrane_position( pose11 ) );
+//		TS_ASSERT( position_equal_within_delta( embed11->center(), center11, 0.001 ) );
+//		TS_ASSERT( position_equal_within_delta( embed11->normal(), normal11, 0.001 ) );
 	}
 
 	// check vector for reasonable size

@@ -28,6 +28,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/types.hh>
+#include <core/conformation/membrane/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -44,8 +45,9 @@ public: // test functions
         
         using namespace core::import_pose;
         using namespace core::pose;
+		using namespace core::conformation::membrane;
         using namespace protocols::membrane;
-        
+		
         // Initialize core & options system
         core_init();
         
@@ -61,8 +63,8 @@ public: // test functions
         std::string spanfile = "protocols/membrane/1afo_tr.span";
         
         // Setup membrane info object from add membrane mover
-        Vector center( 0, 0, 0 );
-        Vector normal( 0, 0, 1 );
+        Vector center( mem_center );
+        Vector normal( mem_normal );
         
         AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, 1 ) );
         add_memb->apply( *native_pose_ );

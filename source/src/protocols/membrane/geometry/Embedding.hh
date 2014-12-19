@@ -85,6 +85,9 @@ public: // methods
 	// show object
 	virtual void show( std::ostream & out=std::cout );
 	
+	// invert all normals in Embedding object
+	void invert();
+	
 	// number of span embeddings in object
 	Size nspans();
 

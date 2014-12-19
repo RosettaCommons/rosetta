@@ -43,6 +43,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
+#include <core/conformation/membrane/types.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
@@ -219,7 +220,7 @@ TranslationMover::apply( Pose & pose ) {
 		jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
 	}
 	else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ){
-		jumpnum_ = 1;
+		jumpnum_ = mem_jump;
 	}
 
 	// get upstream stub ( =MEM for fixed membrane or pose for fixed pose )
@@ -285,9 +286,9 @@ TranslationMover::init_from_cmd() {
 RotationMover::RotationMover() :
 	protocols::moves::Mover(),
 	fullatom_( true ),
-	old_normal_(0, 0, 1),
-	new_normal_(0, 1, 0),
-	rot_center_(0, 0, 0),
+	old_normal_( mem_normal ),
+	new_normal_( 0, 15, 0 ),
+	rot_center_( mem_center ),
 	jumpnum_(0)
 {
 	register_options();
@@ -454,7 +455,7 @@ RotationMover::apply( Pose & pose ) {
 		jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
 	}
 	else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ){
-		jumpnum_ = 1;
+		jumpnum_ = mem_jump;
 	}
 
 	// get upstream stub ( =MEM )
@@ -528,11 +529,11 @@ RotationMover::init_from_cmd() {
 TranslationRotationMover::TranslationRotationMover() :
 	protocols::moves::Mover(),
 	fullatom_( true ),
-	old_center_(0, 0, 0),
-	old_normal_(0, 0, 1),
-	new_center_(1, 0, 0),
-	new_normal_(0, 1, 0),
-	jumpnum_( 1 )
+	old_center_( mem_center ),
+	old_normal_( mem_normal ),
+	new_center_( 15,  0, 0 ),
+	new_normal_(  0, 15, 0 ),
+	jumpnum_( mem_jump )
 {
 	register_options();
 	init_from_cmd();
@@ -552,7 +553,7 @@ TranslationRotationMover::TranslationRotationMover(
 	old_normal_( old_normal ),
 	new_center_( new_center ),
 	new_normal_( new_normal ),
-	jumpnum_( 1 )
+	jumpnum_( mem_jump )
 {
 	register_options();
 	init_from_cmd();
@@ -699,7 +700,7 @@ TranslationRotationMover::apply( Pose & pose ) {
 		jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
 	}
 	else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ){
-		jumpnum_ = 1;
+		jumpnum_ = mem_jump;
 	}
 
 	// translate pose

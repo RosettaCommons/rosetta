@@ -62,6 +62,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
+#include <core/conformation/membrane/types.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh> 
 
@@ -102,8 +103,8 @@ AddMembraneMover::AddMembraneMover() :
 	protocols::moves::Mover(),
 	fullatom_( true ), 
 	include_lips_( false ),
-	center_(0.0, 0.0, 0.0),
-	normal_(0.0, 0.0, 10.0),
+	center_( mem_center ),
+	normal_( mem_normal ),
 	spanfile_(),
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
@@ -120,8 +121,8 @@ AddMembraneMover::AddMembraneMover( core::SSize membrane_rsd ) :
 	protocols::moves::Mover(),
 	fullatom_( true ),
 	include_lips_( false ),
-	center_(0.0, 0.0, 0.0),
-	normal_(0.0, 0.0, 10.0),
+	center_( mem_center ),
+	normal_( mem_normal ),
 	spanfile_(),
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
@@ -136,16 +137,16 @@ AddMembraneMover::AddMembraneMover( core::SSize membrane_rsd ) :
 /// center at emb_center and normal at emb_normal and will load
 /// in spanning regions from list of spanfile provided
 AddMembraneMover::AddMembraneMover(
-	 Vector mem_center,
-	 Vector mem_normal,
+	 Vector center,
+	 Vector normal,
 	 std::string spanfile,
 	 core::SSize membrane_rsd
 	 ) :
 	 protocols::moves::Mover(),
 	fullatom_( true ),
 	include_lips_( false ),
-	center_( mem_center ),
-	normal_( mem_normal ),
+	center_( center ),
+	normal_( normal ),
 	spanfile_( spanfile ),
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
@@ -160,16 +161,16 @@ AddMembraneMover::AddMembraneMover(
 /// center at emb_center and normal at emb_normal and will load
 /// in spanning regions from topology object
 AddMembraneMover::AddMembraneMover(
-	Vector mem_center,
-	Vector mem_normal,
+	Vector center,
+	Vector normal,
 	SpanningTopologyOP topology,
 	core::SSize membrane_rsd
 	) :
 	protocols::moves::Mover(),
 	fullatom_( true ),
 	include_lips_( false ),
-	center_( mem_center ),
-	normal_( mem_normal ),
+	center_( center ),
+	normal_( normal ),
 	spanfile_(),
 	topology_( topology ),
 	lipsfile_(),
@@ -185,8 +186,8 @@ AddMembraneMover::AddMembraneMover(
 /// in spanning regions from list of spanfile provided. Will also
 /// load in lips info from lips_acc info provided
 AddMembraneMover::AddMembraneMover(
-	Vector mem_center,
-	Vector mem_normal,
+	Vector center,
+	Vector normal,
 	std::string spanfile,
 	std::string lips_acc,
 	core::SSize membrane_rsd
@@ -194,8 +195,8 @@ AddMembraneMover::AddMembraneMover(
 	protocols::moves::Mover(),
 	fullatom_( true ),
 	include_lips_( true ),
-	center_( mem_center ),
-	normal_( mem_normal ),
+	center_( center ),
+	normal_( normal ),
 	spanfile_( spanfile ),
 	topology_( new SpanningTopology() ),
 	lipsfile_( lips_acc ),
@@ -345,16 +346,20 @@ AddMembraneMover::apply( Pose & pose ) {
 	// If there is a membrane residue in the PDB, take total resnum as the membrane_pos
 	// Otherwise, setup a new membrane virtual
 	core::SSize membrane_pos(0);
+	
+	core::SSize mem_rsd_in_pdb = check_pdb_for_mem( pose );
+	
 	if ( membrane_rsd_ != 0 &&
 		 //(core::SSize) pose.total_residue() > membrane_rsd_ && Fails for symmetry
 		 pose.residue( membrane_rsd_ ).has_property( "MEMBRANE" ) ) {
+
 		TR << "Adding membrane residue from user specified position" << std::endl;
 		membrane_pos = membrane_rsd_;
 		
-	} else if ( check_pdb_for_mem( pose ) ) {
-		// TODO: Strenghten MEM search criteria in check pdb for mem
-		TR << "Adding membrane from PDB to the pose" << std::endl;
-		membrane_pos = pose.conformation().chain_end(1);
+	} else if ( mem_rsd_in_pdb > 0 ) {
+
+		TR << "Adding membrane from PDB to the pose at residue number " << mem_rsd_in_pdb << std::endl;
+		membrane_pos = mem_rsd_in_pdb;
 		
 	} else {
 		TR << "Adding a new membrane residue to the pose" << std::endl;
@@ -482,11 +487,12 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	ResidueOP rsd( ResidueFactory::create_residue( membrane ) );
 	
 	// Append residue by jump, creating a new chain
-	pose.append_residue_by_jump( *rsd, 1, "", "", true );
+	pose.append_residue_by_jump( *rsd, mem_anchor , "", "", true );
 	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
-	ft->reorder( pose.total_residue() ); // Reorder to be the membrane root
-	pose.fold_tree( *ft );
-	
+
+	// Reorder to be the membrane root
+	ft->reorder( pose.total_residue() );
+	pose.fold_tree( *ft );	
 	pose.fold_tree().show( std::cout );
 
 	// Updating Chain Record in PDB Info
@@ -503,19 +509,74 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 /// @details If there is an MEM residue in the PDB at the end of the pose
 /// with property MEMBRANE, return it's residue number. In the control flow of the
 /// apply method, if this returns non-zero, a new membrane residue will not be added.
-bool
+core::SSize
 AddMembraneMover::check_pdb_for_mem( Pose & pose ) {
 
-	// Uses the invarant that the membrane residue is always located in the n+1 chain
-	// when initialized (not always true...?)
-	core::Size rsdnum = pose.conformation().chain_end( 1 );
-	if ( pose.residue( rsdnum ).name3() == "MEM" &&
-		pose.residue( rsdnum ).has_property( "MEMBRANE" ) ) {
-		return true;
+	// initialize vector for membrane residues found in PDB
+	utility::vector1< core::SSize > mem_rsd;
+
+	// go through every residue in the pose to check for the membrane residue
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
+		
+		// if residue is MEM, remember it
+		if ( pose.residue( i ).name3() == "MEM" &&
+			pose.residue( i ).has_property( "MEMBRANE" ) ) {
+			
+			TR << "Found membrane residue " << i << " in PDB." << std::endl;
+			mem_rsd.push_back( static_cast< SSize >( i ) );
+		}
 	}
-	return false;
 	
-}
+	// if no membrane residue
+	if ( mem_rsd.size() == 0 ) {
+		return 0;
+	}
+	// if exactly one
+	else if ( mem_rsd.size() == 1 ) {
+		
+		// if they agree, return
+		if ( mem_rsd[1] == membrane_rsd_ ){
+			TR << "User defined membrane residue " << membrane_rsd_ << " agrees with found one." << std::endl;
+			return membrane_rsd_;
+		}
+		// if they don't agree
+		else {
+			utility_exit_with_message("User provided membrane residue doesn't agree with found one!");
+		}
+	}
+	// if more than one
+	else if ( mem_rsd.size() > 1 ) {
+		
+		bool found(0);
+		// go through ones found in PDB
+		for ( core::Size i = 1; i <= mem_rsd.size(); ++i ) {
+
+			// if they agree, return the first one only
+			// TODO: if for symmetry there are more, this should be smarter, ie
+			// return a vector; not sure if this is needed and whether there isn't
+			// an even smarter way, ie EMB residues instead of MEM residues???
+			if ( mem_rsd[i] == membrane_rsd_ ){
+				TR << "User defined membrane residue agrees with found one." << std::endl;
+				return membrane_rsd_;
+			}
+		}
+		// if none found, return 0
+		if ( found == 0 ) {
+			return 0;
+		}
+	}
+	return 0;
+	
+//	// Uses the invarant that the membrane residue is always located in the n+1 chain
+//	// when initialized (not always true...?)
+//	core::Size rsdnum = pose.conformation().chain_end( 1 );
+//	if ( pose.residue( rsdnum ).name3() == "MEM" &&
+//		pose.residue( rsdnum ).has_property( "MEMBRANE" ) ) {
+//		return true;
+//	}
+//	return false;
+	
+} // check pdb for mem
 
 } // membrane
 } // protocols

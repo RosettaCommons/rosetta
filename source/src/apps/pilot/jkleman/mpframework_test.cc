@@ -37,6 +37,7 @@
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
 #include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/FlipMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 // Utility Headers
@@ -52,6 +53,10 @@
 // C++ headers
 #include <iostream>
 #include <cstdlib> 
+
+
+
+#include <core/conformation/membrane/types.hh>
 
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
 
@@ -80,6 +85,11 @@ public:
 	/// @brief Apply Membrane Relax
 	void apply( Pose & pose ) {
 
+		TR << "center: " << mem_center.to_string() << std::endl;
+		TR << "normal: " << mem_normal.to_string() << std::endl;
+		TR << "thickness: " << mem_thickness << std::endl;
+		TR << "anchor: " << mem_anchor << std::endl;
+
 		// show foldtree
 		pose.fold_tree().show(std::cout);
 
@@ -91,14 +101,48 @@ public:
 		// Add Membrane, appends MEM as jump1
 		AddMembraneMoverOP add_memb( new AddMembraneMover() );
 		add_memb->apply( pose );
+		
+		// before move
+		pose.dump_pdb("after.pdb");
 
 		// get topology
-		SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+//		SpanningTopologyOP topo( pose.conformation().membrane_info()->spanning_topology() );
+//		pose.conformation().membrane_info()->show();
+
+		// set new center and normal
+		Vector new_center( 0, 5, 10 );
+		Vector new_normal( 0, 15, 0 );
+		
+		// Apply Rotation and translation move
+		SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );
+		rt->apply( pose );
+
+
+		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
+		vis_emb->apply( pose );
+		
+		// before move
+		pose.dump_pdb("after1.pdb");
+
+//		// get EmbeddingDef
+//		EmbeddingOP embedding( new Embedding( topo, pose ) );
+//		embedding->show();
+//		embedding->invert();
+//		embedding->show();
+
+//		FlipMoverOP flip( new FlipMover() );
+//		flip->apply( pose );
+//		vis_emb->apply( pose );
+//		pose.dump_pdb("after2.pdb");
 
 		// get embedding object from pose and topology
-//		PoseOP pose1( new Pose( pose ) );
-		EmbeddingOP embedding( new Embedding( topo, pose ) );
-		embedding->show();
+////		PoseOP pose1( new Pose( pose ) );
+//		EmbeddingOP embedding( new Embedding( topo, pose ) );
+//		embedding->show();
+
+//		EmbeddingDefOP embedding( compute_structure_based_membrane_position(pose) );
+//		embedding->show();
+
 		
 //		Vector new_center (0, 0, 0);
 //		Vector new_normal (0, 0, 15);
@@ -118,11 +162,11 @@ public:
 		
 		// Visualize embedding
 //		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
-		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
-		vis_emb->apply( pose );
-
-		// before move
-		pose.dump_pdb("before.pdb");
+//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
+//		vis_emb->apply( pose );
+//
+//		// before move
+//		pose.dump_pdb("before.pdb");
 
 //
 //		// define vectors

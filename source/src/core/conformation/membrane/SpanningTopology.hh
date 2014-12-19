@@ -35,6 +35,7 @@
 #include <core/types.hh>
 
 // Utility headers
+#include <core/conformation/membrane/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
@@ -47,6 +48,8 @@
 namespace core {
 namespace conformation {
 namespace membrane {
+
+using namespace core::conformation::membrane;
 
 class SpanningTopology : public utility::pointer::ReferenceCount {
 
@@ -146,14 +149,14 @@ private: // methods
 	SpanningTopology create_from_spanfile( std::string spanfile, Size nres);
 
 	/// @brief Create Transmembrane SPan OBject from structure
-	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, Real thickness );
+	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, Real thickness = mem_thickness );
 
 private: // data
 
     // vector of spans
     utility::vector1< SpanOP > topology_;
 
-	// keep track of nres for checks
+	// nres from the spanfile; keep track for checks
 	Size nres_topo_;
 
 }; // class SpanningTopology

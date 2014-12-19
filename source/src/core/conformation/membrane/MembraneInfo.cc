@@ -51,6 +51,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
+#include <core/conformation/membrane/types.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -78,10 +79,10 @@ using namespace core::kinematics;
 /// lips info defined
 MembraneInfo::MembraneInfo() :
 	conformation_( *(new Conformation()) ),
-	thickness_( 15.0 ),
-	steepness_( 10.0 ),
+	thickness_( mem_thickness ),
+	steepness_( mem_steepness ),
 	membrane_rsd_num_( 1 ),
-	membrane_jump_( 2 )
+	membrane_jump_( mem_jump )
 {}
 
 /// @brief Custom Constructor - Membrane pos & topology
@@ -96,8 +97,8 @@ MembraneInfo::MembraneInfo(
 	core::SSize membrane_jump
 	) :
 	conformation_( conformation ),
-	thickness_( 15.0 ),
-	steepness_( 10.0 ),
+	thickness_( mem_thickness ),
+	steepness_( mem_steepness ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	spanning_topology_( topology )
@@ -117,8 +118,8 @@ MembraneInfo::MembraneInfo(
 	core::SSize membrane_jump
 	) :
 	conformation_( conformation ),
-	thickness_( 15.0 ),
-	steepness_( 10.0 ),
+	thickness_( mem_thickness ),
+	steepness_( mem_steepness ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	lipid_acc_data_( lips ),
@@ -186,6 +187,7 @@ MembraneInfo::show(std::ostream & output ) const {
 	// SHow spanning topology object
 	spanning_topology_->show();
 	
+	// TODO
 	// Skipping lips for now, will go back to it
 	
 }
@@ -212,8 +214,7 @@ MembraneInfo::membrane_normal() const {
 	Vector normal_tracked = conformation_.residue( membrane_rsd_num() ).xyz( membrane::normal );
 	Vector normal = normal_tracked - membrane_center();
 	
-	return normal.normalize(15);
-	
+	return normal.normalize( mem_thickness );
 }
 
 /// @brief Compute Residue Z Position relative to mem
@@ -354,10 +355,8 @@ std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
     Vector normal( mem_info.membrane_normal() );
     
     // Grab a const version of spanning topology
-    
-
-    os << "Membrane residue located at posiiton " << mem_info.membrane_rsd_num();
-    os << "Membrane Posiiton: " << "center=(" << center.x() << "," << center.y() << "," << center.z() << "); normal=(" << normal.x() << "," << normal.y() << "," << center.z() << ")" << std::endl;
+    os << "Membrane residue located at position " << mem_info.membrane_rsd_num();
+    os << "Membrane Position: " << "center = " << center.to_string() << "; normal = " << normal.to_string() << std::endl;
     os << "Number of transmembrane spans: " << mem_info.spanning_topology()->nspans() << std::endl;
     
     return os;

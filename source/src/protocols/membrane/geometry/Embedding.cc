@@ -33,6 +33,7 @@
 #include <core/types.hh>
 
 // Utility Headers
+#include <core/conformation/membrane/types.hh>
 #include <basic/Tracer.hh>
 
 #include <numeric/conversions.hh>
@@ -72,6 +73,8 @@ Embedding::Embedding( EmbeddingDefOP embedding ) {
 	total_embed_ = embedding;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// @brief	Constructs bogus object from topology
 Embedding::Embedding( SpanningTopologyOP topology, Real radius ) :
 	embeddings_()
@@ -98,10 +101,10 @@ Embedding::Embedding( SpanningTopologyOP topology, Real radius ) :
 		
 		// get normal for each span, respects protein topology
 		if ( i % 2 == 1 ){
-			normal.assign(0, 0, 15); // odd spans in positive z
+			normal = mem_normal; // odd spans in positive z
 		}
 		else {
-			normal.assign(0, 0, -15); // even spans in negative z
+			normal = mem_normal.negated(); // even spans in negative z
 		}
 
 		// create object and push back into vector
@@ -113,6 +116,8 @@ Embedding::Embedding( SpanningTopologyOP topology, Real radius ) :
 	total_embed_ = average_antiparallel_embeddings( embeddings_ );
     
 }// object from topology
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// @brief	Constructs from topology and pose
 Embedding::Embedding( SpanningTopologyOP topology, PoseOP pose ){
@@ -130,7 +135,16 @@ Embedding::Embedding( SpanningTopologyOP topology, Pose & pose ){
     // calculate chain embedding, push back
     total_embed_ = average_embeddings( embeddings_ );
 	
+	// make sure the normal of the total embedding shows into positive z direction
+	if ( total_embed_->normal().z() < 0 ) {
+		this->invert();
+	}
+	
+	this->show();
+	
 }// from topology and pose
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Copy Constructor
 Embedding::Embedding( Embedding const & src ) :
@@ -155,6 +169,8 @@ Embedding & Embedding::operator = ( Embedding const & src ) {
 /// @brief	Destructor
 Embedding::~Embedding(){}
 
+////////////////////////////////////////////////////////////////////////////////
+
 ///////////////
 /// Methods ///
 ///////////////
@@ -172,6 +188,22 @@ void Embedding::show( std::ostream & out ){
     total_embed_->show();
 
 }// show
+
+// invert all normals in Embedding object
+void Embedding::invert() {
+	
+	// go through vector of EmbeddingDefs and invert the normals
+	for ( Size i = 1; i <= embeddings_.size(); ++i ) {
+		if ( embeddings_[i]->normal().length() > 0 ) {
+			embeddings_[i]->invert();
+		}
+	}
+
+	// invert total embedding
+	if ( total_embed_->normal().length() > 0 ) {
+		total_embed_->invert();
+	}
+}
 
 // number of span embeddings in object
 Size Embedding::nspans() {
@@ -210,11 +242,15 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopologyOP top
 
     TR << "Computing membrane embedding from TMspans: " << std::endl;
 
+	if ( topology->nspans() == 0 ){
+		utility_exit_with_message("The topology object is empty!");
+	}
+
 	// get first embedding for comparison of inside/out orientation
 	Size const start1( topology->span( 1 )->start() );
 	Size const end1( topology->span( 1 )->end() );
 	
-	// create embedding object and fill it from span for first embedding object
+	// create embedding object and fill it from span for first embedding object in positive z direction
 	EmbeddingDefOP embedding1( new EmbeddingDef( pose, start1, end1 ) );
 	Vector const center1 = embedding1->center();
 	Vector const normal1 = embedding1->normal();
@@ -244,11 +280,11 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopologyOP top
 		// check if angle of normal is < 100 degrees to first normal
 		// if yes, then add to embedding object, if no add inverted vector
 		if ( dih > -100 && dih < 100 ) {
-			// add embedding to vector
+			// add embedding to overall embedding
 			embeddings_.push_back( embedding );
 		}
 		else {
-			// add inverted vector to embedding object
+			// add inverted embedding to embedding object
 			Vector new_normal( normal.negated() );
 			EmbeddingDefOP new_embed( new EmbeddingDef( center, new_normal ) );
 			embeddings_.push_back( new_embed );

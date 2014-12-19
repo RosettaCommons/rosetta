@@ -295,6 +295,7 @@ sources = {
 	],
 	"protocols/membrane": [
 		"AddMembraneMover",
+		"FlipMover",
 		"SetMembranePositionMover",
 		"MembranePositionFromTopologyMover",
 		"RandomMembranePositionMover",

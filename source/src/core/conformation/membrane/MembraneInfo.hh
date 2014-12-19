@@ -43,6 +43,7 @@
 #include <core/kinematics/FoldTree.hh> 
 
 // Utility Headers
+#include <core/conformation/membrane/types.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -85,7 +86,7 @@ public:
 		Conformation & conformation,
 		core::Size membrane_pos,
 		SpanningTopologyOP topology,
-		core::SSize membrane_jump = 2
+		core::SSize membrane_jump = mem_jump
 	);
 	
 	/// @brief Custom Constructor - Membrane pos, topology & lips
@@ -99,7 +100,7 @@ public:
 		core::Size membrane_pos,
 		SpanningTopologyOP topology,
 		LipidAccInfoOP lips,
-		core::SSize membrane_jump = 2	);
+		core::SSize membrane_jump = mem_jump	);
 		
 	/// @brief Copy Constructor
 	/// @details Create a deep copy of this object

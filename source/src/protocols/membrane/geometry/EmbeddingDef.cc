@@ -26,10 +26,12 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <core/conformation/membrane/types.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
 #include <cstdlib>
+#include <iostream>
 
 static thread_local basic::Tracer TR( "protocols.membrane.geometry.EmbeddingDef" );
 
@@ -37,45 +39,51 @@ namespace protocols {
 namespace membrane {
 namespace geometry {
 
-using namespace core; 
+using namespace core;
+using namespace core::conformation::membrane;
 
 /// @brief Default Constructor
 EmbeddingDef::EmbeddingDef() :
 	utility::pointer::ReferenceCount()
 {
-	center_.assign( 0, 0, 0 );
-	normal_.assign( 0, 0, 1 );
+	center_ = mem_center;
+	normal_ = mem_normal;
 }
 
 /// @brief Standard Constructor
 EmbeddingDef::EmbeddingDef( core::Vector const center, core::Vector const normal ) :
     utility::pointer::ReferenceCount(),
-	normal_( normal ),
-    center_( center )
+    center_( center ),
+	normal_( normal )
 {}
 
-/// @brief Constructor from pose and two residue numbers
-EmbeddingDef::EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end ) :
+/// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
+EmbeddingDef::EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end, bool pos_z ) :
     utility::pointer::ReferenceCount()
 {
-	EmbeddingDef( *pose, start, end );
+	EmbeddingDef( *pose, start, end, pos_z );
 }
 
-/// @brief Constructor from pose and two residue numbers
-EmbeddingDef::EmbeddingDef( core::pose::Pose & pose, core::Size start, core::Size end ) :
+/// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
+EmbeddingDef::EmbeddingDef( core::pose::Pose & pose, core::Size start, core::Size end, bool pos_z ) :
 utility::pointer::ReferenceCount()
 {
-	normal_.assign( 0, 0, 0 );
-	center_.assign( 0, 0, 0 );
+	center_ = mem_center;
+	normal_ = mem_normal;
 	
-	from_span( pose, start, end );
+	if ( pos_z == false ) {
+		from_span( pose, start, end );
+	}
+	else {
+		from_span_positive_z(pose, start, end);
+	}
 }
 
 /// @brief Copy Constructor
 EmbeddingDef::EmbeddingDef( EmbeddingDef const & config ) :
     utility::pointer::ReferenceCount(),
-    normal_( config.normal_ ),
-    center_( config.center_ )
+    center_( config.center_ ),
+	normal_( config.normal_ )
 {}
 
 /// @brief Assignment Operator
@@ -125,6 +133,13 @@ void EmbeddingDef::set_center( core::Vector center ) {
     check_range();
 }
 
+/// @brief Invert normal
+void EmbeddingDef::invert() {
+	if ( normal_.length() > 0 ) {
+		normal_.negate();
+	}
+}
+
 /// @brief Access Normal Param
 core::Vector EmbeddingDef::normal() const {
 	return normal_;
@@ -172,8 +187,8 @@ void EmbeddingDef::from_span( core::pose::Pose & pose, core::Size start, core::S
 
 	// compute normal
 	core::Vector normal = pos2 - pos1;
-	normal.normalize(15);
-
+	normal.normalize( mem_thickness );
+	
 	center_.assign( center.x(), center.y(), center.z() );
 	normal_.assign( normal.x(), normal.y(), normal.z() );
 	
@@ -196,7 +211,7 @@ void EmbeddingDef::from_span_positive_z( core::pose::Pose & pose, core::Size sta
 	// get CA atom positions of anchor residues
 	core::Vector pos1 = pose.residue( start ).atom( 2 ).xyz();
 	core::Vector pos2 = pose.residue( end ).atom( 2 ).xyz();
-
+	
 	// check TMspan
 	// the reason this is not an exception is that we need this functionality
 	// when transforming a protein into the membrane
@@ -220,7 +235,8 @@ void EmbeddingDef::from_span_positive_z( core::pose::Pose & pose, core::Size sta
 	else {
 		normal = pos2 - pos1;
 	}
-	normal.normalize(15);
+
+	normal.normalize( mem_thickness );
 
 	center_.assign( center.x(), center.y(), center.z() );
 	normal_.assign( normal.x(), normal.y(), normal.z() );

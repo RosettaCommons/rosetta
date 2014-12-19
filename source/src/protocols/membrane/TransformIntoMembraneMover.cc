@@ -46,6 +46,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
+#include <core/conformation/membrane/types.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
@@ -82,8 +83,8 @@ using namespace protocols::moves;
 TransformIntoMembraneMover::TransformIntoMembraneMover() :
 	protocols::moves::Mover(),
 	fullatom_( true ), 
-	mem_center_(0, 0, 0),
-	mem_normal_(0, 0, 15)
+	mem_center_( mem_center ),
+	mem_normal_( mem_normal )
 {
 	register_options();
 	init_from_cmd();
@@ -94,14 +95,14 @@ TransformIntoMembraneMover::TransformIntoMembraneMover() :
 ///		requires center and normal of the membrane into which the protein should be
 ///		moved to (NOT the coordinates of the protein relative to the membrane!!!)
 TransformIntoMembraneMover::TransformIntoMembraneMover(
-	 Vector mem_center,
-	 Vector mem_normal,
+	 Vector center,
+	 Vector normal,
 	 std::string spanfile
 	 ) :
 	 protocols::moves::Mover(),
 	 fullatom_( true ), 
-	 mem_center_( mem_center ),
-	 mem_normal_( mem_normal ),
+	 mem_center_( center ),
+	 mem_normal_( normal ),
 	 spanfile_( spanfile )
 {
 	register_options();

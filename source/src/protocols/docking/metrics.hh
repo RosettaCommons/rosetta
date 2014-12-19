@@ -22,7 +22,6 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
 #include <core/conformation/Residue.fwd.hh>
@@ -36,9 +35,6 @@
 
 namespace protocols {
 namespace docking {
-
-/// @brief Calculates translation axis lying in the membrane (= projection of COM axis into the membrane plane)
-core::Vector const membrane_axis( core::pose::Pose &, int jumpnum );
 
 /// @brief Calculates the difference in energy between the inputted complex, and the complex with the two partners at 500A from each other
 core::Real calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );  //@TODO These poses should be PoseCAPs!

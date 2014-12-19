@@ -35,6 +35,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
+#include <core/conformation/membrane/types.hh>
 
 #include <basic/Tracer.hh>
 
@@ -71,8 +72,8 @@ public:
 		std::string spanfile = "protocols/membrane/1AFO_AB.span";
 
 		// initialize variables for AddMembraneMover
-		Vector center(0, 0, 0);
-		Vector normal(0, 0, 1);
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 
 		// Add Membrane to pose
 		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, 1 ) );
@@ -118,9 +119,9 @@ public:
 		Vector res80_after (19.846, 21.712, 31.804);
 
 		// check positions of new center and normal
-		Vector new_center (0, 0, 0);
-		Vector new_normal (0, 0, 10);
-		Vector new_thickness (15, 0, 0);
+		Vector new_center ( mem_center );
+		Vector new_normal ( mem_normal );
+		Vector new_thickness ( mem_thickness, 0, 0);
 
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
@@ -161,9 +162,9 @@ public:
 		Vector res80_after (21.804, 11.712, -9.846);
 
 		// check that membrane didn't move
-		Vector mem_center (0, 0, 0);
-		Vector mem_normal (0, 0, 10);
-		Vector mem_thickness (15, 0, 0);
+		Vector m_center ( mem_center );
+		Vector m_normal ( mem_normal );
+		Vector m_thickness ( mem_thickness, 0, 0);
 
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
@@ -172,9 +173,9 @@ public:
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
 
 		// check positions of center and normal
-		TS_ASSERT( position_equal_within_delta( mem_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( mem_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( mem_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
 	}
 
 		/// @brief test rotation and translation of membrane pose
@@ -205,9 +206,9 @@ public:
 		Vector res80_after (41.804, 31.712, 10.154);
 
 		// check that membrane didn't move
-		Vector mem_center (0, 0, 0);
-		Vector mem_normal (0, 0, 10);
-		Vector mem_thickness (15, 0, 0);
+		Vector m_center ( mem_center );
+		Vector m_normal ( mem_normal );
+		Vector m_thickness ( mem_thickness, 0, 0);
 
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
@@ -216,9 +217,9 @@ public:
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
 
 		// check positions of center and normal
-		TS_ASSERT( position_equal_within_delta( mem_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( mem_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( mem_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
 	}
 
 	/// @brief Position equal within delta (helper method)

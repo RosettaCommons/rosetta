@@ -29,9 +29,6 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <protocols/membrane/AddMembraneMover.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <basic/Tracer.hh>
@@ -39,7 +36,8 @@
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
-
+#include <protocols/membrane/geometry/util.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/metrics.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
@@ -54,34 +52,6 @@ using namespace core;
 
 namespace protocols {
 namespace docking {
-
-/// @brief Calculates translation axis lying in the membrane (= projection of COM axis into the membrane plane)
-core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
-{
-	using namespace rigid;
-	using namespace core::pose;
-	using namespace numeric;
-
-	// get translation axis from mover that takes pose and jump
-	// axis is between COMs
-	RigidBodyTransMoverOP com_trans( new RigidBodyTransMover( pose, jumpnum ) );
-	core::Vector const com_axis( com_trans->trans_axis() );
-	TR.Debug << "com axis: " << com_axis.to_string() << std::endl;
-
-	// get membrane normal
-	core::Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
-
-	// get cross-product between axis and membrane normal
-	// gives vector in membrane but perpendicular to the axis we want
-	core::Vector const in_membrane_axis = cross( com_axis, normal );
-
-	// get cross-product between this axis and the membrane normal
-	// should be axis that is the projection of the COM axis into the membrane plane
-	core::Vector const trans_axis = cross( in_membrane_axis, normal );
-	TR.Debug << "trans_axis: " << trans_axis.to_string() << std::endl;
-
-	return trans_axis;
-}// membrane axis
 
 core::Real
 calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps){
@@ -128,7 +98,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		if ( option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
 
 			// get membrane axis
-			core::Vector trans_axis( protocols::docking::membrane_axis( unbound_pose, rb_jump ) );
+			core::Vector trans_axis( protocols::membrane::geometry::membrane_axis( unbound_pose, rb_jump ) );
 			TR << "trans_axis: " << trans_axis.to_string() << std::endl;
 		
 			// create new translation mover

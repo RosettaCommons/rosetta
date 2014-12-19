@@ -91,7 +91,8 @@ MPFastRelaxMover::show_protocol( Pose & pose ) {
     TR << "Membrane Relax protocol + MEM Optimization" << std::endl;
     TR << "Relax Type: " << relax_protocol_->get_name() << std::endl;
     TR << "Sfxn type: mpframework_fa_smooth_2014" << std::endl;
-    TR << "Movemap: " << relax_protocol_->get_movemap() << std::endl;
+    TR << "Movemap: " << std::endl;
+	relax_protocol_->get_movemap()->show();
     TR << "FoldTree: " << pose.fold_tree() << std::endl;
     TR << "Initial membrane position: " << std::endl;
     TR << "Membrane Posiiton: " << "center=(" << center.x() << "," << center.y() << "," << center.z() << "); normal=(" << normal.x() << "," << normal.y() << "," << center.z() << ")" << std::endl;

@@ -2532,7 +2532,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'lipsfile', 'String', desc="List of lips files by chain", default='mypdb.lips4' ),
 			Option( 'center', 'RealVector', desc="membrane center x,y,z" ),
 			Option( 'normal', 'RealVector', desc="membrane normal x,y,z" ),
-			Option( 'membrane_rsd', 'Real', desc="membrane residue position" ),
+			Option( 'membrane_rsd', 'Real', desc="membrane residue number" ),
 		),
 
 	),

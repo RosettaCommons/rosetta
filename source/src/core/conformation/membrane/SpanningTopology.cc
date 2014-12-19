@@ -129,11 +129,16 @@ void SpanningTopology::fill_from_spanfile( std::string spanfile, Size total_resi
 }// fill from spanfile
 
 /// @brief Generating a String Representation of Spanning Topology Object for debugging purposes
-void SpanningTopology::show( std::ostream & output ) const {
-    
+void SpanningTopology::show( std::ostream & ) const {
+
+	if ( nres_topo_ == 0 || topology_.size() == 0 ) {
+		utility_exit_with_message("Can't print SpanningTopology. It's empty!");
+	}
+
 	// Print Total number of transmembrane Spans
-    output << "Total # of TM spans: " << topology_.size() << std::endl;
-    
+	TR << "Total # of TM spans: " << topology_.size() << std::endl;
+	TR << "Number of residues in spanfile: " << nres_topo_ << std::endl;
+
 	// print individual spans
     for ( Size i = 1; i <= topology_.size(); ++i ){
         TR << "Span " << i << ": start: " << topology_[ i ]->start();

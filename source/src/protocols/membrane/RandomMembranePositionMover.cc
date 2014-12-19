@@ -32,6 +32,7 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
+#include <core/conformation/membrane/types.hh>
 
 // Utility Headers
 #include <numeric/random/random.hh>
@@ -108,6 +109,7 @@ void
 RandomPositionRotationMover::apply( Pose & pose ) {
 
 	using namespace protocols::simple_moves;
+	using namespace core::conformation::membrane;
 
 	// Check the pose is a membrane protein
 	if (! pose.conformation().is_membrane() ) {
@@ -121,7 +123,7 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 
 	// Compute random rotation
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
-	current_normal.normalize(15);
+	current_normal.normalize( mem_thickness );
 	Real theta = 2*numeric::random::rg().uniform() * rot_mag_;
 
 	// Apply Uniform Rotation
@@ -208,7 +210,7 @@ RandomPositionTranslationMover::apply( Pose & pose ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 
-	// Compute new posiiton based on random translation
+	// Compute new position based on random translation
 	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	Vector delta_trans = 2*numeric::random::rg().uniform()-1 * trans_mag_ * current_normal;

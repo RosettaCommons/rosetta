@@ -34,6 +34,7 @@
 #include <numeric/xyz.functions.hh>
 
 // Package Headers
+#include <core/conformation/membrane/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
@@ -72,8 +73,8 @@ public:
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
 
 		// Define a starting membrane position
-		Vector center( 0, 0, 0 );
-		Vector normal( 0, 0, 15 );
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 
 		// Add Membrane to pose!
 		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, 1 ) );

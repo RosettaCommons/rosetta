@@ -128,6 +128,10 @@ void membrane_normal_to_length_15( pose::Pose & pose );
 ///			 use AddMembraneMover to do that
 void reorder_membrane_foldtree( pose::Pose & pose );
 
+/// @brief Calculates translation axis lying in the membrane (= projection of COM axis into the membrane plane)
+core::Vector const membrane_axis( core::pose::Pose &, int jumpnum );
+
+
 } // geometry
 } // membrane
 } // protocols

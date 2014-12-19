@@ -168,7 +168,7 @@ MembranePositionFromTopologyMover::apply( Pose & pose ) {
 	compute_structure_based_membrane_position( pose, center, normal );
 
 	// Update membrane position - shift normal along center
-	pose.conformation().update_membrane_position( center, center + normal );
+	pose.conformation().update_membrane_position( center, normal );
 
 	TR << "Done" << std::endl;
 
