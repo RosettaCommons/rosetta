@@ -183,6 +183,12 @@ public:
 	void 
 	elec_group_file( std::string setting );
 
+	bool 
+	grpelec_context_dependent() const;
+
+	void
+	grpelec_context_dependent( bool setting );
+
 	///
 	bool
 	exclude_DNA_DNA() const;
@@ -437,6 +443,7 @@ private:
 	bool grpelec_fade_hbond_;
 	bool grp_cpfxn_;
 	std::string elec_group_file_;
+	bool grpelec_context_dependent_;
 	bool exclude_DNA_DNA_;
 	bool exclude_intra_res_protein_;
 	bool put_intra_into_total_;

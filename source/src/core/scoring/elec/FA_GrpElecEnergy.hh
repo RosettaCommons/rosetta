@@ -362,6 +362,7 @@ private:
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
 	Real intrares_scale_;
+	bool context_dependent_;
 
 	mutable Size nres_monomer_;
 

@@ -65,6 +65,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	grpelec_fade_hbond_( true ),
 	grp_cpfxn_( true ),
 	elec_group_file_( "" ),
+	grpelec_context_dependent_( false ),
 	exclude_DNA_DNA_(true), // rosetta++ default
 	exclude_intra_res_protein_(true), // rosetta++ default
 	put_intra_into_total_(false ),
@@ -104,6 +105,7 @@ void EnergyMethodOptions::initialize_from_options() {
 	grpelec_fade_hbond_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_hbond ]();
 	grp_cpfxn_ = basic::options::option[ basic::options::OptionKeys::score::grp_cpfxn ]();
 	elec_group_file_ = basic::options::option[ basic::options::OptionKeys::score::elec_group_file ]();
+	grpelec_context_dependent_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_context_dependent ]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	exclude_intra_res_protein_ = !basic::options::option[basic::options::OptionKeys::score::include_intra_res_protein]();
 	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
@@ -145,6 +147,7 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		grpelec_fade_hbond_  = src.grpelec_fade_hbond_;
 		grp_cpfxn_  = src.grp_cpfxn_;
 		elec_group_file_ = src.elec_group_file_;
+		grpelec_context_dependent_ = src.grpelec_context_dependent_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
 		put_intra_into_total_ = src.put_intra_into_total_;
@@ -326,6 +329,17 @@ void
 EnergyMethodOptions::elec_group_file( std::string setting )
 {
 	elec_group_file_ = setting;
+}
+
+bool
+EnergyMethodOptions::grpelec_context_dependent() const {
+	return grpelec_context_dependent_;
+}
+
+void
+EnergyMethodOptions::grpelec_context_dependent( bool setting )
+{
+	grpelec_context_dependent_ = setting;
 }
 
 bool
@@ -610,6 +624,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.grpelec_fade_hbond_ == b.grpelec_fade_hbond_ ) &&
 		( a.grp_cpfxn_ == b.grp_cpfxn_ ) &&
 		( a.elec_group_file_ == b.elec_group_file_ ) &&
+		( a.grpelec_context_dependent_ == b.grpelec_context_dependent_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_ ) &&
 		( a.put_intra_into_total_ == b.put_intra_into_total_ ) &&
@@ -670,6 +685,7 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: grpelec_fade_hbond: " << grpelec_fade_hbond_ << std::endl;
 	out << "EnergyMethodOptions::show: grp_cpfxn: " << grp_cpfxn_ << std::endl;
 	out << "EnergyMethodOptions::show: elec_group_file: " << elec_group_file_ << std::endl;
+	out << "EnergyMethodOptions::show: grpelec_context_dependent: " << grpelec_context_dependent_ << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_intra_res_protein: "

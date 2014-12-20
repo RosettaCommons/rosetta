@@ -104,7 +104,8 @@ FA_GrpElecEnergy::FA_GrpElecEnergy( methods::EnergyMethodOptions const & options
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
 	exclude_monomer_( options.exclude_monomer_fa_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
-	intrares_scale_( options.intrares_elec_correction_scale() )
+	intrares_scale_( options.intrares_elec_correction_scale() ),
+	context_dependent_( options.grpelec_context_dependent() )
 {
 	coulomb_.initialize();
 	groupelec_.initialize( coulomb() );
@@ -119,7 +120,8 @@ FA_GrpElecEnergy::FA_GrpElecEnergy( FA_GrpElecEnergy const & src ):
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
-	intrares_scale_( src.intrares_scale_ )
+	intrares_scale_( src.intrares_scale_ ),
+	context_dependent_( src.context_dependent_ )
 {
 	coulomb_.initialize();
 	groupelec_.initialize( coulomb() );
@@ -150,7 +152,7 @@ FA_GrpElecEnergy::setup_for_minimizing(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	TR.Debug << "setup_for_minimization" << std::endl;
+	//TR.Debug << "setup_for_minimization" << std::endl;
 
 	set_nres_mono(pose);
 
@@ -171,7 +173,7 @@ FA_GrpElecEnergy::setup_for_minimizing(
 		energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
 	}
 
-	TR.Debug << "done setup_for_minimization" << std::endl;
+	//TR.Debug << "done setup_for_minimization" << std::endl;
 
 }
 
@@ -181,7 +183,7 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 {
 	using namespace core::pose::datacache;
 
-	TR.Debug << "setup_for_scoring" << std::endl;
+	//TR.Debug << "setup_for_scoring" << std::endl;
 
   Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
 
@@ -213,7 +215,7 @@ FA_GrpElecEnergy::setup_for_derivatives( pose::Pose & pose,
 																			 ScoreFunction const &scfxn
 																			 ) const
 {
-	TR.Debug << "setup_for_deriv" << std::endl;
+	//TR.Debug << "setup_for_deriv" << std::endl;
 
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
@@ -221,7 +223,7 @@ FA_GrpElecEnergy::setup_for_derivatives( pose::Pose & pose,
   //Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
 	setup_for_scoring( pose, scfxn );
 
-	TR.Debug << "done: setup_for_deriv" << std::endl;
+	//TR.Debug << "done: setup_for_deriv" << std::endl;
 }
 
 
@@ -272,7 +274,7 @@ FA_GrpElecEnergy::residue_pair_energy(
 {
 	if ( pose.energies().use_nblist() ) return;
 
-	TR.Debug << "res pair energy: " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
+	//TR.Debug << "res pair energy: " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
 
 	using namespace etable::count_pair;
 
@@ -295,8 +297,10 @@ FA_GrpElecEnergy::residue_pair_energy(
   Real const nb2 = data->get_n( res2 );
 
 	score = groupelec().eval_respair_group_coulomb( rsd1, rsd2 );
-	Real w( burial_weight( nb1 ) +  burial_weight( nb2 ) );
-	score *= w;
+	if( context_dependent_ ){
+		Real w( burial_weight( nb1 ) +  burial_weight( nb2 ) );
+		score *= w;
+	}
 
 	/*
 	TR << rsd1.seqpos() << " " << rsd2.seqpos() << " "
@@ -305,7 +309,7 @@ FA_GrpElecEnergy::residue_pair_energy(
 
 	emap[ fa_grpelec ] += score;
 
-	TR.Debug << "done res pair energy: " << score << std::endl;
+	//TR.Debug << "done res pair energy: " << score << std::endl;
 }
 
 bool
@@ -353,7 +357,7 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 ) const
 {
 
-	TR.Debug << "residue_pair_energy_ext" << std::endl;
+	//TR.Debug << "residue_pair_energy_ext" << std::endl;
 
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
@@ -376,10 +380,13 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
   Real const &nb1 = data->get_n( res1 );
   Real const &nb2 = data->get_n( res2 );
 
-  Real w = burial_weight( nb1 ) + burial_weight( nb2 );
+	Real w( 1.0 );
+	if( context_dependent_ )
+		w = burial_weight( nb1 ) + burial_weight( nb2 );
+
 	if( intrares ) w *= intrares_scale_;
 
-	score = groupelec().eval_respair_group_coulomb( rsd1, rsd2 );
+	score = w*groupelec().eval_respair_group_coulomb( rsd1, rsd2 );
 
 	/*
 	TR << rsd1.seqpos() << " " << rsd2.seqpos() << " "
@@ -388,7 +395,7 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 
 	emap[ fa_grpelec ] += w*score;
 
-	TR.Debug << "done residue_pair_energy_ext" << std::endl;
+	//TR.Debug << "done residue_pair_energy_ext" << std::endl;
 }
 
 void
@@ -440,7 +447,7 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 	bool intrares( rsd1.seqpos() == rsd2.seqpos() );
 
-	TR.Debug << "eval residue pair deriv" << std::endl;
+	//TR.Debug << "eval residue pair deriv" << std::endl;
 
 	assert( utility::pointer::static_pointer_cast< FAElecContextData const > 
 					( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
@@ -460,7 +467,10 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 
 	Real elec_weight = weights[ fa_grpelec ];
 	Real Erespair( 0.0 );
-	Real w = burial_weight( data->get_n( res1 ) ) + burial_weight( data->get_n( res2 ) );
+
+	Real w( 1.0 );
+	if( context_dependent_ )
+		w = burial_weight( data->get_n( res1 ) ) + burial_weight( data->get_n( res2 ) );
 	if( intrares ) w *= intrares_scale_;
 
 	Real total_weight = elec_weight*w;
@@ -485,7 +495,7 @@ FA_GrpElecEnergy::eval_intrares_energy(
 {
 	if ( pose.energies().use_nblist() ) return;
 
-	TR.Debug << "intrares energy: " << rsd.seqpos() << std::endl;
+	//TR.Debug << "intrares energy: " << rsd.seqpos() << std::endl;
 
 	using namespace etable::count_pair;
 
@@ -506,7 +516,8 @@ FA_GrpElecEnergy::eval_intrares_energy(
   Real const nb = data->get_n( res );
 
 	score = groupelec().eval_respair_group_coulomb( rsd, rsd );
-	Real w( 2.0*burial_weight( nb ) );
+	Real w( 1.0 );
+	if( context_dependent_ ) w = 2.0*burial_weight( nb );
 	w *= intrares_scale_;
 	score *= w;
 
@@ -517,7 +528,7 @@ FA_GrpElecEnergy::eval_intrares_energy(
 
 	emap[ fa_grpelec ] += score;
 
-	TR.Debug << "done intrares energy: " << score << std::endl;
+	//TR.Debug << "done intrares energy: " << score << std::endl;
 }
 
 void
@@ -531,7 +542,7 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	TR.Debug << "eval residue pair deriv" << std::endl;
+	//TR.Debug << "eval residue pair deriv" << std::endl;
 
 	assert( utility::pointer::static_pointer_cast< FAElecContextData const > 
 					( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
@@ -553,7 +564,8 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 
 	Real elec_weight = weights[ fa_grpelec ];
 	Real Erespair( 0.0 );
-	Real w = 2.0*burial_weight( data->get_n( res ) );
+	Real w( 1.0 );
+	if( context_dependent_ ) w = 2.0*burial_weight( data->get_n( res ) );
 	w *= intrares_scale_;
 	Real total_weight = elec_weight*w;
 
@@ -565,7 +577,7 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 	// mutable
 	Eres_[ rsd.seqpos() ] += Erespair;
 
-	TR.Debug << "done eval residue pair deriv" << std::endl;
+	//TR.Debug << "done eval residue pair deriv" << std::endl;
 }
 
 /// @details for use only with the nblist auto-update algorithm
@@ -620,10 +632,11 @@ FA_GrpElecEnergy::evaluate_rotamer_pair_energies(
 		for( Size jj = 1; jj <= set2.num_rotamers(); ++jj ){
 			conformation::Residue const &rot2 = *set2.rotamer(jj);
 
-			Real w = burial_weight( data->get_n( rot1.seqpos() ) ) 
-				+ burial_weight( data->get_n( rot2.seqpos() ) );
-
 			Real res_energy = groupelec().eval_respair_group_coulomb( rot1, rot2 );
+			Real w( 1.0 );
+			if( context_dependent_ )
+				w = burial_weight( data->get_n( rot1.seqpos() ) ) 
+					+ burial_weight( data->get_n( rot2.seqpos() ) );
 
 			energy_table( jj, ii ) += w*res_energy;
 		}
@@ -675,13 +688,14 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 				Size const kk_rot_id = ii_offset + kk - 1;
 
 				Size res2 = set.rotamer( kk_rot_id)->seqpos();
-				Real w = burial_weight( data->get_n( residue.seqpos() ) ) 
-					+ burial_weight( data->get_n( res2 ) );
-				//if( intrares ) w *= intrares_scale_;
 
 				Real const res_energy = 
 					groupelec().eval_respair_group_coulomb( *set.rotamer( kk_rot_id ),
 																									residue );
+				Real w( 1.0 );
+				if( context_dependent_ )
+					w = burial_weight( data->get_n( residue.seqpos() ) ) 
+						+ burial_weight( data->get_n( res2 ) );
 				energy_vector[ kk_rot_id ] += w*res_energy;
 			}
 		}
@@ -756,7 +770,7 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 																	) const
 {
 
-	TR.Debug << "precalc_context" << std::endl;
+	//TR.Debug << "precalc_context" << std::endl;
 
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
@@ -811,11 +825,12 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 	}
 
   for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ){
-		Real dw_dn = burial_deriv( data->get_n( res1 ) );
+		Real dw_dn( 0.0 );
+		if( context_dependent_ ) dw_dn = burial_deriv( data->get_n( res1 ) );
 		data->dw_dr( res1 ) = dw_dn*dn_dr[ res1 ];
 	}
 
-	TR.Debug << "done: precalc_context" << std::endl;
+	//TR.Debug << "done: precalc_context" << std::endl;
 }
 
 Real
@@ -830,7 +845,8 @@ FA_GrpElecEnergy::eval_n( Real const cendist,
 	}	else if( cendist > 10.0 ){
 		interp = 0;
 	} else {
-		interp = 0.5 + cos( M_PI*(cendist-9.0) );
+		//interp = 0.5 + cos( M_PI*(cendist-9.0) ); // "pi" that works on all flatform?
+		interp = 0.5 + cos( 3.14159265358979323846*(cendist-9.0) );
 
 		if( eval_deriv ){
 			dn_drij = 0.5*std::sqrt(1.0 - interp*interp ); // just sin
@@ -849,7 +865,7 @@ FA_GrpElecEnergy::eval_context_derivatives(
 	utility::vector1< DerivVectorPair > & r1_atom_derivs
 ) const
 {
-	TR.Debug << "eval context deriv" << std::endl;
+	//TR.Debug << "eval context deriv" << std::endl;
 
 	Vector f1( 0.0 ), f2( 0.0 );
 	Size const atm1 = rsd1.nbr_atom();
@@ -864,7 +880,7 @@ FA_GrpElecEnergy::eval_context_derivatives(
 	f2 = rsd1.xyz( atm1 ).cross( f1 );
 	r1_atom_derivs[ atm1 ].f2() += f2;
 
-	TR.Debug << "done eval context deriv" << std::endl;
+	//TR.Debug << "done eval context deriv" << std::endl;
 
 }
 

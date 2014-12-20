@@ -239,7 +239,7 @@ GroupElec::eval_standard_coulomb( Real const &q1, Real const &q2,
 	Real fdie, ddie_dr( 0.0 );
 	//std::string const &diefunc( coulomb().dielectric_function() );
 	if( dis2 < 1.0 ){
-		fdie = 1.0;
+		fdie = die;
 		ddie_dr = 0.0;
 	} else if( !coulomb().no_dis_dep_die() ){  // ddd
 		/*
@@ -269,7 +269,7 @@ GroupElec::eval_standard_coulomb( Real const &q1, Real const &q2,
 	if( eval_deriv ){
 		core::Real de_dr( 0.0 ); // on Coulomb part without fdie
 		if( dis2 < 1.0 ){ //use linear softening at short-distance
-			de_dr = -q1*q2*C0;
+			de_dr = -q1*q2*C0/fdie;
 			//dE_dr = de_dr/(d+0.000001); // to prevent from being infinity
 			dE_dr = de_dr/d; // to prevent from being infinity
 		} else { // regular 

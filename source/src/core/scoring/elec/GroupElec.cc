@@ -401,8 +401,6 @@ GroupElec::eval_respair_group_coulomb(
 		} // grp2
 	} // grp1
 
-	return 0.0;
-
   return score;
 }
 
@@ -466,6 +464,8 @@ GroupElec::eval_respair_group_derivatives(
 
 	// dummy array
 	Vector Iv( 0.0 );
+	utility::vector1< Vector > f2r1( r1_atom_derivs.size(), Iv );
+	utility::vector1< Vector > f2r2( r2_atom_derivs.size(), Iv );
 
 	for ( Size ii = 1; ii <= resgrp1.size(); ++ii ) {
 		ElecGroup const &grp1 = resgrp1[ii];
@@ -503,9 +503,8 @@ GroupElec::eval_respair_group_derivatives(
 			// 1. derivative on Coulomb part: dE*sw
 			core::Real group_score( 0.0 );
 
-			// this memory allocation is slowing down...
-			utility::vector1< Vector > f2r1( n1, Iv );
-			utility::vector1< Vector > f2r2( n2, Iv );
+			utility::vector1< Vector > v1( n1, Iv );
+			utility::vector1< Vector > v2( n2, Iv );
 
 			for ( Size kk = 1; kk <= n1; ++kk ){
 				core::Size const &atm1( grp1.atms[kk] );
@@ -538,11 +537,8 @@ GroupElec::eval_respair_group_derivatives(
 					Real sfxn_weight = atom_cpweight*elec_weight;
 
 					f2 *= dE_dr*sw*sfxn_weight;
-					//Vector f1 = atom1xyz.cross( -f2 );
-					f2r1[kk] += f2;
-					f2r2[ll] -= f2;
-					//f1r1[kk] += f1;
-					//f1r2[ll] -= f1;
+					v1[kk] += f2;
+					v2[ll] -= f2;
 				}
 			}
 
@@ -565,23 +561,24 @@ GroupElec::eval_respair_group_derivatives(
 				 << " " << group_score << " " << group_score_exp << std::endl;
 			*/
 
-			//f1r1 *= grp_cpweight; f1r2 *= grp_cpweight; f2r1 *= grp_cpweight; f2r2 *= grp_cpweight;
 			if( dw_dE > 0.0 ){
-				for ( Size kk = 1; kk <= n1; ++kk ){ f2r1[kk] *= dw_dE; }
- 				for ( Size kk = 1; kk <= n2; ++kk ){ f2r2[kk] *= dw_dE; }
+				for ( Size kk = 1; kk <= n1; ++kk ){ v1[kk] *= dw_dE; }
+ 				for ( Size kk = 1; kk <= n2; ++kk ){ v2[kk] *= dw_dE; }
 			}
 
 			if( !do_fade ){ // long enough
 				// E = E
 				for ( Size kk = 1; kk <= n1; ++kk ){
-					core::Size const atm1( grp1.atms[kk] );
+					core::Size const &atm1( grp1.atms[kk] );
 					//r1_atom_derivs[ atm1 ].f1() += f1r1[kk]*grp_cpweight;
-					r1_atom_derivs[ atm1 ].f2() += f2r1[kk]*grp_cpweight;
+					//r1_atom_derivs[ atm1 ].f2() += f2r1[atm1]*grp_cpweight;
+					f2r1[ atm1 ] += v1[kk]*grp_cpweight;
 				}
 				for ( Size ll = 1; ll <= n2; ++ll ){
-					core::Size const atm2( grp2.atms[ll] );
+					core::Size const &atm2( grp2.atms[ll] );
 					//r2_atom_derivs[ atm2 ].f1() += f1r2[ll]*grp_cpweight;
-					r2_atom_derivs[ atm2 ].f2() += f2r2[ll]*grp_cpweight;
+					//r2_atom_derivs[ atm2 ].f2() += f2r2[atm2]*grp_cpweight;
+					f2r2[ atm2 ] += v2[ll]*grp_cpweight;
 				}
 			}
 			// 2. derivative on truncation part: E*dsw
@@ -591,9 +588,10 @@ GroupElec::eval_respair_group_derivatives(
 				core::Real const c_grp1_heavy = 1.0/((core::Real)(ncom1));
 
 				for ( Size kk = 1; kk <= ncom1; ++kk ){
-					core::Size const atm1( grp1.comatms[kk] );
+					core::Size const &atm1( grp1.comatms[kk] );
 					Vector f2 = c_grp1_heavy*group_score*dsw_dr*dcom*elec_weight;
-					r1_atom_derivs[ atm1 ].f2() += f2;
+					//r1_atom_derivs[ atm1 ].f2() += f2;
+					f2r1[ atm1 ] += f2;
 				}
 			}
 
@@ -601,9 +599,10 @@ GroupElec::eval_respair_group_derivatives(
 				core::Real const c_grp2_heavy = 1.0/((core::Real)(ncom2));
 
 				for ( Size kk = 1; kk <= ncom2; ++kk ){
-					core::Size const atm2( grp2.comatms[kk] );
+					core::Size const &atm2( grp2.comatms[kk] );
 					Vector f2 = -c_grp2_heavy*group_score*dsw_dr*dcom*elec_weight;
-					r2_atom_derivs[ atm2 ].f2() += f2;
+					//r2_atom_derivs[ atm2 ].f2() += f2;
+					f2r2[ atm2 ] += f2;
 				}
 			}
 
@@ -614,12 +613,14 @@ GroupElec::eval_respair_group_derivatives(
 	// finally get f1
 	for( Size ii = 1; ii <= rsd1.natoms(); ++ii ){
 		Vector const & atom1xyz( rsd1.xyz( ii ) );
-		Vector const & f2 =	r1_atom_derivs[ ii ].f1();
+		Vector const & f2 =	f2r1[ii];
+		r1_atom_derivs[ ii ].f2() += f2;
 		r1_atom_derivs[ ii ].f1() += atom1xyz.cross( -f2 );
 	}
 	for( Size ii = 1; ii <= rsd2.natoms(); ++ii ){
 		Vector const & atom1xyz( rsd2.xyz( ii ) );
-		Vector const & f2 =	r2_atom_derivs[ ii ].f1();
+		Vector const & f2 =	f2r2[ii];
+		r2_atom_derivs[ ii ].f2() += f2;
 		r2_atom_derivs[ ii ].f1() += atom1xyz.cross( -f2 );
 	}
 
