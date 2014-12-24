@@ -29,7 +29,7 @@
 //////////////////////////////////////////////////////////////////
 
 // C++ headers
-#ifdef __GNUC__
+#if defined(__GNUC__)  &&  !defined(WIN32)  &&  !defined(__CYGWIN__)
 
 #include <execinfo.h>
 #include <cxxabi.h>

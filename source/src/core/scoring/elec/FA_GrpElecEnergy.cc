@@ -59,6 +59,11 @@
 // C++ headers
 #include <iostream>
 
+#ifdef WIN32
+  #define _USE_MATH_DEFINES
+  #include <math.h>
+#endif
+
 static basic::Tracer TR("core.scoring.elec.FA_GrpElecEnergy");
 
 namespace core {
@@ -85,7 +90,7 @@ FA_GrpElecEnergyCreator::score_types_for_method() const {
 FAElecContextData::FAElecContextData(){}
 FAElecContextData::~FAElecContextData(){}
 
-void 
+void
 FAElecContextData::initialize( Size const nres )
 {
 	n_.resize( nres );
@@ -449,7 +454,7 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 
 	//TR.Debug << "eval residue pair deriv" << std::endl;
 
-	assert( utility::pointer::static_pointer_cast< FAElecContextData const > 
+	assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 					( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
@@ -479,7 +484,7 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 																							r1_atom_derivs, r2_atom_derivs,
 																							total_weight, Erespair );
 
-	// mutable 
+	// mutable
 	Eres_[ rsd1.seqpos() ] += 0.5*Erespair;
 	Eres_[ rsd2.seqpos() ] += 0.5*Erespair;
 
@@ -544,7 +549,7 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 
 	//TR.Debug << "eval residue pair deriv" << std::endl;
 
-	assert( utility::pointer::static_pointer_cast< FAElecContextData const > 
+	assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 					( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
@@ -552,7 +557,7 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 
 	Size res( rsd.seqpos() );
 
-  // get deriv on context 
+  // get deriv on context
 	eval_context_derivatives( rsd, data, weights, r1_atom_derivs );
 
 	// use to avoid double counting with hbond_set
@@ -597,7 +602,7 @@ void
 FA_GrpElecEnergy::finalize_total_energy(
 	pose::Pose & ,
 	ScoreFunction const &,
-	EnergyMap & 
+	EnergyMap &
 ) const
 {}
 
@@ -615,7 +620,7 @@ FA_GrpElecEnergy::evaluate_rotamer_pair_energies(
 
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.
-	if ( !defines_score_for_residue_pair( pose.residue(set1.resid()), 
+	if ( !defines_score_for_residue_pair( pose.residue(set1.resid()),
 																				pose.residue(set2.resid()), true) ) return;
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
@@ -635,7 +640,7 @@ FA_GrpElecEnergy::evaluate_rotamer_pair_energies(
 			Real res_energy = groupelec().eval_respair_group_coulomb( rot1, rot2 );
 			Real w( 1.0 );
 			if( context_dependent_ )
-				w = burial_weight( data->get_n( rot1.seqpos() ) ) 
+				w = burial_weight( data->get_n( rot1.seqpos() ) )
 					+ burial_weight( data->get_n( rot2.seqpos() ) );
 
 			energy_table( jj, ii ) += w*res_energy;
@@ -689,12 +694,12 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 
 				Size res2 = set.rotamer( kk_rot_id)->seqpos();
 
-				Real const res_energy = 
+				Real const res_energy =
 					groupelec().eval_respair_group_coulomb( *set.rotamer( kk_rot_id ),
 																									residue );
 				Real w( 1.0 );
 				if( context_dependent_ )
-					w = burial_weight( data->get_n( residue.seqpos() ) ) 
+					w = burial_weight( data->get_n( residue.seqpos() ) )
 						+ burial_weight( data->get_n( res2 ) );
 				energy_vector[ kk_rot_id ] += w*res_energy;
 			}
@@ -784,7 +789,7 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
   // First get boundary neighs feeling context-dependent derivatives
 	utility::vector1< Vector > dn_dr( pose.total_residue() );
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) dn_dr[i] = Vector( 0.0 );
-	
+
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
 		if ( !rsd1.is_protein() ) continue;
@@ -836,7 +841,7 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 Real
 FA_GrpElecEnergy::eval_n( Real const cendist,
 												 Real &dn_drij,
-												 bool const eval_deriv ) const 
+												 bool const eval_deriv ) const
 {
 	Real interp( 0.0 );
 	dn_drij = 0.0;
@@ -884,7 +889,7 @@ FA_GrpElecEnergy::eval_context_derivatives(
 
 }
 
-// same as in hbond; 
+// same as in hbond;
 inline core::Real
 FA_GrpElecEnergy::burial_weight( core::Real const nb ) const
 {
@@ -893,7 +898,7 @@ FA_GrpElecEnergy::burial_weight( core::Real const nb ) const
 	return (nb-2.75)*(0.5/21.25);
 }
 
-// same as in hbond; 
+// same as in hbond;
 inline core::Real
 FA_GrpElecEnergy::burial_deriv( core::Real const nb ) const
 {
