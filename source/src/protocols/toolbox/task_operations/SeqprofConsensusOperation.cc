@@ -126,10 +126,20 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		seqprof = SequenceProfileOP( new core::sequence::SequenceProfile );
 		tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
 
-		 core::pose::PoseOP chain = pose.split_by_chain(chain_num_);
-		 ConstraintCOPs constraints( chain->constraint_set()->get_all_constraints() );
-		 tr<<"total number of residues in chain:"<<chain->total_residue()<<std::endl;
-		 tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
+		 core::pose::PoseOP chain;
+		 ConstraintCOPs constraints;
+		 if( chain_num_ ){
+			 chain = pose.split_by_chain( chain_num_ );
+			 constraints = chain->constraint_set()->get_all_constraints();
+			 tr<<"total number of residues in chain:"<<chain->total_residue()<<std::endl;
+			 tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
+		 }
+		 else{
+			 constraints = pose.constraint_set()->get_all_constraints();
+			 tr<<"total number of residues in pose:"<<pose.total_residue()<<std::endl;
+			 tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
+		 }
+
 		 core::Size cst_num( 0 );
 		 BOOST_FOREACH( ConstraintCOP const c, constraints ){
 		   if( c->type() == "SequenceProfile" ){

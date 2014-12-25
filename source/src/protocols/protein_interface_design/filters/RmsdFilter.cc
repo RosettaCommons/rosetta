@@ -206,7 +206,7 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	FArray1D_bool selection_array( pose.total_residue(), false ); // on which residues to check rmsd
 	FArray1D_bool superimpose_array( pose.total_residue(), false ); // which residues to superimpose
 
-	if( selection_from_segment_cache_ ) 
+	if( selection_from_segment_cache_ )
 		core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
 	else {
 		if( selection_.size() && superimpose_on_all() ){
@@ -240,7 +240,7 @@ RmsdFilter::apply( core::pose::Pose const & pose ) const {
 	if( rmsd <= threshold_ ) {
 		TR<<" passing."<<std::endl;
 		return( true );
-	} else { 
+	} else {
 	TR<<" failing." << std::endl;
 	return( false );
 	}
@@ -266,6 +266,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	///against the ref pose
 	if( tag->hasOption("reference_name") ){
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
+		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<reference_pose_->total_residue()<<" residues"<<std::endl;
 	}
 	else{
 		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );

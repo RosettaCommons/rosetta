@@ -246,6 +246,7 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 	if( in_tag->hasOption(tag_name) ){
 		core::pose::PoseOP refpose(NULL);
 		std::string refpose_name(in_tag->getOption<std::string>( tag_name) );
+		TR<<"Loading PDB: "<<refpose_name<<std::endl;
 
 		if( !data_map.has("spm_ref_poses",refpose_name) ){
 			refpose = core::pose::PoseOP( new core::pose::Pose() );
