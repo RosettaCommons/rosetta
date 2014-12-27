@@ -75,6 +75,8 @@ public:
 
   bool has_jump_access( int jump_num ) const;
 
+  std::set< core::id::DOF_ID > const& active_dofs() const;
+
   utility::vector1< int > active_jumps() const;
 
   //@brief Check access in this passport for an id

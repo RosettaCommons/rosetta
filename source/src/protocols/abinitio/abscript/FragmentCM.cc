@@ -110,8 +110,11 @@ void FragmentCM::set_selector( core::pack::task::residue_selector::ResidueSelect
 
 void FragmentCM::set_mover( simple_moves::FragmentMoverOP mover ){
 
+  // commented out because it doesn't play nice with subclasses making settings during
+  // claiming. It would be nice to think of a way to automatically check for accidental
+  // post-claming changes to the mover, but I'm not sure how to do that.
+
  // if( Parent::state_check( __FUNCTION__, ( mover().get() == mover_.get() ) ) ){
-  if( Parent::state_check( __FUNCTION__, ( mover.get() == mover_.get() ) ) ) //{
     mover_ = mover;
     type( get_name() );
   //}

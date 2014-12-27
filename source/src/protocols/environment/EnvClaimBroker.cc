@@ -211,7 +211,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
   process_elements( cb_elems, bias );
 
   //Render FoldTree ----------------------------------------------------------------------------
-  tr.Info << "Broking complete. Constructing consensus FoldTree." << std::endl;
+  tr.Info << "Claim collection complete. Constructing consensus FoldTree." << std::endl;
   core::kinematics::FoldTreeOP ft = render_fold_tree( fts, bias, datacache, conf );
 
   annotate_fold_tree( ft, new_jumps, ann_ );
@@ -225,6 +225,8 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
   BOOST_FOREACH( Size cut , result().auto_cuts ){
     add_chainbreak_variants( cut, conf );
   }
+
+  tr.Info << "Broking finished. Consensus fold tree: " << *ft << std::endl;
 }
 
 core::Size find_implied_cut( utility::vector1< core::Size > const& cycle,
@@ -380,8 +382,14 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
       // cut doesn't get placed at the end of the cycle.
       core::Real bias_sum = 0.0;
       for( Size k = 1; k < cycle.size(); ++k ){
-        masked_bias[cycle[k]] = bias[cycle[k]];
-        bias_sum += bias[cycle[k]];
+        if( fts.has_jump( cycle[k], cycle[k+1] ) ){
+          // if a jump originating at residue k is part of the cycle, do not cut here because
+          // a cut at this residue is actually *outside* of the loop, since cuts are placed after k.
+          masked_bias[cycle[k]] = 0.0;
+        } else {
+          masked_bias[cycle[k]] = bias[cycle[k]];
+          bias_sum += bias[cycle[k]];
+        }
       }
 
       try {
@@ -507,6 +515,8 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 
   //Notify movers that passes have been updated.
   BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes_ ){
+    tr.Debug << "Passport for " << pair.first->get_name() << " has " << pair.second->active_jumps().size()
+             << " allowed jumps and " << pair.second->active_dofs().size() << " dofs." << std::endl;
     pair.first->passport_updated();
   }
 }

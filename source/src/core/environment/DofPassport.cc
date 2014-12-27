@@ -137,6 +137,10 @@ utility::vector1< int > DofPassport::active_jumps() const {
   return active_jumps;
 }
 
+std::set< core::id::DOF_ID > const& DofPassport::active_dofs() const {
+  return accessible_dofs_;
+}
+
 void DofPassport::add_dof_access( id::DOF_ID const& dof_id ){
   accessible_dofs_.insert( dof_id );
 }
@@ -160,6 +164,7 @@ bool DofPassport::access_check( EnvCore const& env, bool type_specific_check ) c
     return false;
   }
 }
+
 bool DofPassport::dof_access( id::DOF_ID const& id ) const {
   return ( accessible_dofs_.find( id ) != accessible_dofs_.end() );
 }

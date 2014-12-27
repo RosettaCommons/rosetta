@@ -173,6 +173,7 @@ sources = {
 		"OrResidueSelector",
 		"ResidueSelector",
 		"ResidueSelectorFactory",
+		"TrueResidueSelector",
 	],
 	"core/util": [
 		"ABEGOManager",
