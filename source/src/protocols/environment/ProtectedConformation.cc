@@ -325,6 +325,12 @@ ResidueOP rm_variant(
   core::chemical::VariantType variant,
   core::conformation::Conformation const& conf )
 {
+  if( variant == core::chemical::DISULFIDE ){
+    // if it's a cys_d, the variant matching thing doesn't work. Fortunately, they have
+    // the same number of DoFs, so our check's won't choke on it.
+    return new_rsd->clone();
+  }
+
   core::chemical::ResidueType const& new_type( rsd_set.get_residue_type_with_variant_removed( new_rsd->type(), variant ) );
   new_rsd = ResidueOP( ResidueFactory::create_residue( new_type, *new_rsd, conf ) ) ;
   tr.Warning << "[WARNING] to replace " << old_rsd.name3() << old_rsd.seqpos() << " with "

@@ -54,7 +54,8 @@ Environment::Environment( std::string name ):
   Parent( name ),
   broker_( /* NULL */ ),
   bAutoCut_( false ),
-  bInheritCuts_( true )
+  bInheritCuts_( true ),
+  bAllowPureMovers_( false )
 {}
 
 Environment::~Environment() {
@@ -88,10 +89,12 @@ void Environment::register_mover( moves::MoverOP mover ){
     }
   } else if ( mover_applier ) {
     register_mover( mover_applier->mover() );
-  } else {
+  } else if( !allow_pure_movers() ){
     std::ostringstream err;
-    err << "The mover '" << mover->name()
-        << "' is not a ClaimingMover or a MoverContainer, and thus cannot be used inside an BrokeredEnvironment.";
+    err << "The mover '" << mover->get_name()
+        << "' is not a ClaimingMover or a MoverContainer, and thus cannot be used inside an BrokeredEnvironment. "
+        << "If you're sure you want to include this mover, set the option 'allow_pure_movers' to true. "
+        << "This will cause the Environment to ignore Environment-incompatible movers during registration.";
     throw utility::excn::EXCN_BadInput( err.str() );
   }
 }
@@ -274,6 +277,17 @@ void Environment::inherit_cuts( bool setting ) {
     throw utility::excn::EXCN_Msg_Exception( ss.str() );
   }
   bInheritCuts_ = setting;
+}
+
+
+void Environment::allow_pure_movers( bool setting ) {
+  if( broker() ){
+    std::ostringstream ss;
+    ss << "The Environment '" << name() << "' was asked to set allow_pure_movers to "
+    << setting << ", but broking was already completed." << std::endl;
+    throw utility::excn::EXCN_Msg_Exception( ss.str() );
+  }
+  bAllowPureMovers_ = setting;
 }
 
 core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){

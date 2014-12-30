@@ -90,9 +90,11 @@ public:
 
   bool auto_cut() const { return bAutoCut_; }
   bool inherit_cuts() const { return bInheritCuts_; }
+  bool allow_pure_movers() const { return bAllowPureMovers_; }
 
   void auto_cut( bool );
   void inherit_cuts( bool );
+  void allow_pure_movers( bool );
 
   void pconf_destruction( Conformation * ptr ) const {
     pconfs_.erase( ptr );
@@ -130,6 +132,7 @@ private:
 
   bool bAutoCut_;
   bool bInheritCuts_;
+  bool bAllowPureMovers_;
 
   mutable std::set< Conformation * > pconfs_;
 

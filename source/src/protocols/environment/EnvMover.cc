@@ -87,6 +87,7 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 
   env_->auto_cut( tag->getOption< bool >( "auto_cut", env_->auto_cut() ) );
   env_->inherit_cuts( tag->getOption< bool >( "inherit_cuts", env_->inherit_cuts() ) );
+  env_->allow_pure_movers( tag->getOption< bool >( "allow_pure_movers", env_->allow_pure_movers() ) );
 
   TagCOPs const& subtags = tag->getTags();
   for( TagCOPs::const_iterator it = subtags.begin(); it != subtags.end(); ++it ){
