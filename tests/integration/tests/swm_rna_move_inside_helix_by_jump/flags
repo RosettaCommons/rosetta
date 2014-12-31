@@ -3,6 +3,7 @@
 -fasta full_helix.fasta
 -cutpoint_open 4
 -move ADD 2 JUMP_TO_PREV_IN_CHAIN 1
+-output_minimized_pose_list
 -silent swm_rebuild.out
 -out:overwrite
 #-integration_test # leads to coarse sampling of bond & no solutions found.

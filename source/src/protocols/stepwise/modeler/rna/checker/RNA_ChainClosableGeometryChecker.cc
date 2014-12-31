@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
-#include <protocols/stepwise/sampler/rigid_body/util.hh>
+#include <protocols/toolbox/rigid_body/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Stub.hh>
@@ -180,7 +180,7 @@ namespace checker {
 			std::string const reference_atom_name = ( is_prepend ) ? " C5'" : " O3'";
 
 			numeric::xyzVector< core::Real > atom_coordinate;
-			sampler::rigid_body::get_specific_atom_coordinate( moving_atom_name, atom_coordinate, rsd_at_origin, moving_res_base_stub );
+			toolbox::rigid_body::get_specific_atom_coordinate( moving_atom_name, atom_coordinate, rsd_at_origin, moving_res_base_stub );
 
 			if ( check_chain_closable_geometry( atom_coordinate, pose.residue( reference_res ).xyz( reference_atom_name ) ) ) {
 				return true;

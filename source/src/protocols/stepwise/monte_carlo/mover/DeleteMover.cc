@@ -17,6 +17,7 @@
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/packer/util.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/MultiPhosphateSampler.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/util.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/util.hh>
 
@@ -202,7 +203,9 @@ namespace mover {
 		// normally happens with modeler -- this is important for seeing if terminal phosphates that
 		// previously instantiated due to contact with deleted residues need to *disappear* now.
 		if ( options_->sampler_perform_phosphate_pack() ){
-			protocols::stepwise::modeler::rna::phosphate::MultiPhosphateSampler phosphate_sampler( pose );
+			using namespace protocols::stepwise::modeler::rna::phosphate;
+			MultiPhosphateSampler phosphate_sampler( pose );
+			phosphate_sampler.set_scorefxn( get_phosphate_scorefxn( stepwise_modeler_->scorefxn()->energy_method_options() ) );
 			phosphate_sampler.sample_phosphates(); // samples on internal clone of pose.
 			phosphate_sampler.copy_phosphates( pose );
 		}

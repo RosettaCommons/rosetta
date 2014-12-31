@@ -186,6 +186,7 @@ sources = {
 		"make_exemplar",
 	],
     "public/rna_util": [
+            "nucleobase_sample_around",
 	    "rna_features",
 	    "rna_graft",
 	    "rna_helix",

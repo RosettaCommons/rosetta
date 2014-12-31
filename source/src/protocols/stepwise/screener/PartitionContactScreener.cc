@@ -51,7 +51,8 @@ namespace screener {
 	//Constructor
 	PartitionContactScreener::PartitionContactScreener( pose::Pose const & pose,
 																											modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
-																											bool const use_loose_rep_cutoff ):
+																											bool const use_loose_rep_cutoff,
+																											core::scoring::methods::EnergyMethodOptions const & options /* how to setup etable */ ):
 		pose_( pose ),
 		moving_res_list_( working_parameters->working_moving_res_list() ),
 		fa_atr_weight_( 0.23 ), // historical -- used to use Rosetta scoring
@@ -64,7 +65,7 @@ namespace screener {
 	{
 		runtime_assert( moving_res_list_.size() > 0 );
 		initialize_actual_rep_cutoff();
-		initialize_evaluator();
+		initialize_evaluator( options );
 	}
 
 	//Destructor
@@ -84,9 +85,8 @@ namespace screener {
 
 	//////////////////////////////////////////////////////////////////////////////
 	void
-	PartitionContactScreener::initialize_evaluator(){
-		core::scoring::methods::EnergyMethodOptions options;
-		core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
+	PartitionContactScreener::initialize_evaluator( core::scoring::methods::EnergyMethodOptions const & options ){
+		core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ) );
 		eval_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator( *etable ) );
 	}
 

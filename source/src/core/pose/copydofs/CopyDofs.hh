@@ -58,8 +58,6 @@ namespace copydofs {
 
 	private:
 
-		void figure_out_atom_id_domain_map( pose::Pose & pose );
-
 		bool
 		get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
 												 std::map< core::id::AtomID, core::id::AtomID> const & atom_id_map,
@@ -78,8 +76,7 @@ namespace copydofs {
 
 		pose::MiniPose const & scratch_pose_; // template_pose
 		std::map < id::AtomID , id::AtomID > const & atom_id_map_;
-		std::map< id::AtomID, Size > atom_id_domain_map_;
-		bool const atom_id_domain_map_inputted_;
+		std::map< id::AtomID, Size > atom_id_domain_map_; // blank by default.
 		CopyDofsInfo copy_dofs_info_;
 	};
 

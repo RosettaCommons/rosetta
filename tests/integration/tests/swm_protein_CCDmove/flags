@@ -4,6 +4,7 @@
 -score:weights stepwise/protein/protein_res_level_energy.wts
 -out:file:silent swm_rebuild.out
 -out:overwrite
+-output_minimized_pose_list
 -move ADD 12 BOND_TO_PREVIOUS 11
 -sample_res 12-14
 -choose_random

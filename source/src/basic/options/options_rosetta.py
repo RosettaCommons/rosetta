@@ -1220,6 +1220,7 @@ Options = Option_Group( '',
 		Option( 'free_side_chain_bonus', 'Real', desc="Amount to reward virtualization of a protein side chain, per free chi", default='-0.5'),
 		Option( 'bond_angle_sd_polar_hydrogen', 'Real', desc="Standard deviation for bond_geometry angle term with -vary_polar_hydrogen_geometry flag, in degrees", default='60.0'),
 		Option( 'bond_torsion_sd_polar_hydrogen', 'Real', desc="Standard deviation for bond_geometry torsion term with -vary_polar_hydrogen_geometry flag, in degrees", default='30.0'),
+    Option( 'rna_bulge_bonus_once_per_loop', 'Boolean', desc='For legacy stepwise term rna_bulge in SWM runs, compute bulge bonus on a per-loop basis, rather than a bonus for each virtual residue.', default='true' ),
 		Option( 'rg_local_span', 'IntegerVector', desc="First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20",default ="0"),
 		Option( 'unmodifypot', 'Boolean', desc="Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms"),
 		Option( 'conc', 'Real', desc="intermolecular concentration to use in intermol term (give in M)", default="1.0"),
@@ -5939,6 +5940,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('annealer','Boolean',default='false',desc="Run the annealer and output the rotamers it chose"),
 	), # -rotamerdump
 
+	Option_Group( 'sample_around',
+		Option( 'alpha_increment', 'Real', desc= "if sampling jump, rotation increment, in degrees", default='40.0' ),
+		Option( 'cosbeta_increment', 'Real', desc= "if sampling jump, cosbeta increment, no units", default='0.25' ),
+		Option( 'gamma_increment', 'Real', desc= "if sampling jump, rotation increment, in degrees", default='40.0' ),
+		), #sample_around
+
 	###############################################################################
 	## peptide specificity / flexible backbone design options (chrisk)
 	Option_Group( 'sicdock',
@@ -5997,6 +6004,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'test_encapsulation', 'Boolean', desc="Test ability StepWiseRNA Modeler to figure out what it needs from just the pose - no JobParameters", default="false" ),
 		Option( 'choose_random', 'Boolean', desc="ask swa residue sampler for a random solution", default="false" ),
 		Option( 'num_random_samples', 'Integer', desc="In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best", default="20" ),
+		Option( 'max_tries_multiplier_for_ccd', 'Integer', desc="In choose_random/monte-carlo mode, when CCD closure needs to occur, multiple # tries by this factor", default="10" ),
 		Option( 'num_pose_minimize','Integer', desc='optional: set_num_pose_minimize by Minimizer', default='0' ),
 		Option( 'atr_rep_screen', 'Boolean', desc='In packing, screen for contacts (but no clash) between partitions before packing',default='true' ),
 		Option( 'align_pdb', 'String', desc='PDB to align to. Default will be -native, or no alignment', default='' ),
@@ -6007,12 +6015,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'use_green_packer', 'Boolean', desc= "use packer instead of rotamer trials for side-chain packing and O2' optimization", default='false' ),
 		Option( 'rmsd_screen', 'Real', desc="keep sampled residues within this rmsd from the native pose",default="0.0" ),
 		Option( 'skip_minimize', 'Boolean', desc="Skip minimize, e.g. in prepack step",default="false" ),
+		Option( 'virtualize_packable_moieties_in_screening_pose', 'Boolean', desc="Virtualize 2'-OH, terminal phosphates in stepwise contact screening, before actual packing ",default="false" ),
 		Option( 'sampler_silent_file', 'String', desc='In StepWiseConnectionSampler, where to output all poses that pass filters', default='' ),
     Option( 'superimpose_over_all', 'Boolean', desc='In final superimposition, do not keep any domains fixed, superimpose over everything',default="false" ),
 		Option( 'move', 'StringVector', desc="For SWM. Format: 'ADD 5 BOND_TO_PREVIOUS 4'", default=[] ),
 		Option( 'min_type', 'String', desc="Minimizer type",default="dfpmin_armijo_nonmonotone" ),
 		Option( 'min_tolerance', 'Real', desc="Minimizer tolerance",default="0.000025" ),
     Option( 'vary_polar_hydrogen_geometry', 'Boolean', desc='Optimize hydrogens that form hydrogen bonds', default='false' ),
+    Option( 'output_minimized_pose_list', 'Boolean', desc='Use legacy output that puts out all minimized poses; set to true in legacy SWA', default='false' ),
 		Option( 'virtualize_free_moieties_in_native', 'Boolean', desc="Virtualize bulges, terminal phosphates, and 2' hydroxyls detected to be non-interacting ('free') in native pose. I.e., do not calculate RMSD over those atoms.", default='true' ),
 		Option_Group( 'monte_carlo',
 			Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),
@@ -6035,7 +6045,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'make_movie', 'Boolean', desc= "create silent files in movie/ with all steps and accepted steps", default='false' ),
 		  Option( 'recover_low', 'Boolean', desc="Output lowest energy model in monte carlo, not the last frame", default='true' ),
 		  Option( 'save_times', 'Boolean', desc="Save modeling time for each model", default='false' ),
-		  Option( 'use_precomputed_library', 'Boolean', desc="Do not sample dinucleotides explicit, but instead use library saved to disk.", default='false' ),
+		  Option( 'use_precomputed_library', 'Boolean', desc="In from_scratch moves, do not sample dinucleotides explicitly, but instead use library saved to disk.", default='true' ),
 		  Option( 'csa_bank_size', 'Integer', desc='Do conformational space annealing (population monte carlo) with this number of models in the bank',default='0' ),
 		  Option( 'csa_rmsd', 'Real', desc='RMSD cutoff for calling two poses different in conformational space annealing (population monte carlo)',default='1.0' ),
 		), # -stepwise:monte_carlo
@@ -6045,6 +6055,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'o2prime_legacy_mode', 'Boolean', desc="complete virtualization of O2' hydrogen during sampling, and then complete restoration and packing", default='false' ),
 			Option( 'allow_virtual_o2prime_hydrogens', 'Boolean', desc= "allow O2' hydrogen to be virtualized during packing.", default='false' ),
 			Option( 'sampler_perform_phosphate_pack', 'Boolean', desc= "perform terminal phosphate packing inside StepWiseRNA_ResidueSampler", default='false' ),
+			Option( 'force_phosphate_instantiation', 'Boolean', desc= "Require terminal phosphates to be instantiated.", default='false' ),
 			Option( 'distinguish_pucker', 'Boolean', desc= "distinguish pucker when cluster:both in sampler and clusterer", default='true' ),
 			Option( 'finer_sampling_at_chain_closure', 'Boolean', desc= "Sampler: finer_sampling_at_chain_closure", default='false' ), #Jun 9, 201,
 			Option( 'PBP_clustering_at_chain_closure', 'Boolean', desc= "Sampler: PBP_clustering_at_chain_closure", default='false' ),
@@ -6104,7 +6115,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'sampler_max_centroid_distance', 'Real', desc="max centroid distance of moving base to reference in floating base sampler", default='0.0' ), #Nov 12, 2010
 			Option( 'filter_user_alignment_res', 'Boolean', desc=" filter_user_alignment_res ", default="true" ),
 			Option( 'tether_jump', 'Boolean', desc="In rigid body moves, keep moving residue close to (jump-connected) reference residue  (8.0 A) and force centroid interaction between them", default="true" ),
-			Option( 'turn_off_rna_chem_map_during_optimize', 'Boolean', desc="When using rna_chem_map, only score with this after minimizing (takes too long to compute during optimizing).", default="true" ),
+			Option( 'turn_off_rna_chem_map_during_optimize', 'Boolean', desc="When using rna_chem_map, only score with this after minimizing (takes too long to compute during optimizing).", default="true" )
 		), # -stepwise:rna
 		Option_Group( 'protein',
 			Option( 'global_optimize', 'Boolean', desc="In clustering, packing, minimizing, use all residues.",default="false" ),
@@ -6129,6 +6140,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'skip_coord_constraints', 'Boolean', desc='Skip first stage of minimize with coordinate constraints',default='false' ),
 			Option( 'allow_virtual_side_chains', 'Boolean', desc='In packing, allow virtual side chains',default='true' ),
 			Option( 'protein_prepack', 'Boolean', desc='In packing, prepack separate partitions',default='true' ),
+      Option( 'disulfide_file', 'String', desc='File with pairs of numbers for desired disulfides.', default=''),
 		), # -stepwise:protein
 	), # -stepwise
 
@@ -6146,6 +6158,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'sample_res', 'ResidueChainVector', desc="residues to build (for SWA, the first element is the actual sample res while the other are the bulge residues)", default=[] ),
 		Option( 'calc_rms_res', 'ResidueChainVector', desc="residues over which to calculate rms for SWA. Not in wide use anymore.", default=[] ),
 		Option( 'working_res', 'ResidueChainVector', desc="residues that are being built [by default will be set from sample_res and any input pdbs]", default=[] ),
+    Option( 'motif_mode','Boolean',desc='in fixed PDB parts, minimize residues right next to loops & disallow pair/stacking in most distal residues',default='false'),
 		Option_Group( 'rna',
 			Option( 'terminal_res', 'ResidueChainVector', desc="optional: residues that are not allowed to stack during sampling", default=[] ),
 			Option( 'force_syn_chi_res_list', 'ResidueChainVector', desc="optional: sample only syn chi for the res in sampler.", default=[] ),

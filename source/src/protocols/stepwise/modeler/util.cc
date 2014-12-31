@@ -43,6 +43,7 @@
 #include <core/pose/util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/Energies.hh>
 
@@ -1727,6 +1728,16 @@ get_unique_connection_res( pose::Pose const & pose,
 	if ( moving_res2 > 0 ) return moving_res2;
 	return pose.fold_tree().root();
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+map_constraints_from_original_pose( pose::Pose const & original_pose, pose::Pose & pose ) {
+	runtime_assert( original_pose.total_residue() == pose.total_residue() );
+	id::SequenceMappingOP sequence_map( new id::SequenceMapping );
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) sequence_map->push_back( n );
+	pose.constraint_set( original_pose.constraint_set()->remapped_clone( original_pose, pose, sequence_map ) );
+}
+
 
 } //modeler
 } //stepwise

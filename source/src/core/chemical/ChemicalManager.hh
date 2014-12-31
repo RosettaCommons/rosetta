@@ -129,6 +129,9 @@ public:
 	ResidueTypeSetOP
 	nonconst_residue_type_set_op( std::string const & tag );
 
+	/// @brief Check if residue_type_set is instantiated...
+	bool has_residue_type_set( std::string const & tag ) const;
+
 private:
 	typedef std::map< std::string, AtomTypeSetOP > AtomTypeSets;
 	typedef std::map< std::string, ElementSetOP > ElementSets;

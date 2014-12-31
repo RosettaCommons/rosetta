@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
-#include <protocols/stepwise/sampler/rigid_body/util.hh>
+#include <protocols/toolbox/rigid_body/util.hh>
 #include <protocols/stepwise/sampler/rigid_body/EulerAngles.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerOneValue.hh>
 #include <protocols/stepwise/modeler/util.hh>
@@ -49,6 +49,8 @@ static thread_local basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodySte
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 static Real const RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;
+
+using namespace protocols::toolbox::rigid_body;
 
 namespace protocols {
 namespace stepwise {

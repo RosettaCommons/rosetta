@@ -42,12 +42,12 @@ namespace align {
 
 	void
 	align_pose_and_add_rmsd_constraints( core::pose::Pose & pose,
-																			 core::pose::PoseCOP native_pose,
+																			 core::pose::PoseCOP align_pose,
 																			 utility::vector1< core::Size > const & moving_res_list,
 																			 core::Real const rmsd_screen );
 
 	core::Real
-	superimpose_with_stepwise_aligner( core::pose::Pose & pose, core::pose::Pose const & native_pose,
+	superimpose_with_stepwise_aligner( core::pose::Pose & pose, core::pose::Pose const & align_pose,
 																		 bool superimpose_over_all_instantiated = false );
 
 	///////////////////////////////////////////////////////////////////////////////////////////

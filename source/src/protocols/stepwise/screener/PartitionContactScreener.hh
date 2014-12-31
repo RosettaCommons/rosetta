@@ -21,7 +21,9 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/types.hh>
+
 namespace protocols {
 namespace stepwise {
 namespace screener {
@@ -33,7 +35,8 @@ namespace screener {
 		//constructor
 		PartitionContactScreener( core::pose::Pose const & pose,
 															modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
-															bool const use_loose_rep_cutoff );
+															bool const use_loose_rep_cutoff,
+															core::scoring::methods::EnergyMethodOptions const & options /* how to setup etable */ );
 
 		//destructor
 		~PartitionContactScreener();
@@ -55,7 +58,7 @@ namespace screener {
 		initialize_actual_rep_cutoff();
 
 		void
-		initialize_evaluator();
+		initialize_evaluator( core::scoring::methods::EnergyMethodOptions const & options );
 
 		void
 		check_screen( Size const moving_res, bool & atr_ok, bool & rep_ok ) const;
@@ -68,7 +71,6 @@ namespace screener {
 		bool const use_loose_rep_cutoff_, close_chain_;
 		core::Real actual_rep_cutoff_;
 		core::scoring::etable::AnalyticEtableEvaluatorOP eval_;
-
 	};
 
 } //screener

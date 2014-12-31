@@ -135,6 +135,9 @@ remove_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num
 bool
 has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num );
 
+void
+apply_Aform_torsions( pose::Pose & pose, Size const n );
+
 
 } //ns rna
 } //ns pose

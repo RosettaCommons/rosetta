@@ -166,6 +166,9 @@ namespace full_model_info {
 
 		std::string cst_string() const { return cst_string_; }
 
+		void
+		read_disulfides( std::string const disulfide_file );
+
 	private:
 
 		void

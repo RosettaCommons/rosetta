@@ -52,6 +52,11 @@ namespace raw_data {
 /// All lines not matching these criteria are silently ignored. This implies
 /// that whole pdb files can usually be used unaltered as disulfide files, since
 /// the SSBOND entries are extracted and all else is ignored.
+///
+/// Question from rhiju, 2014 -- I don't see handling of '12A' or SSBOND cases in
+///  DisulfideFile.cc -- is someone going to check that in?
+///
+
 class DisulfideFile {
 private:
 	/// @brief distinguish between PDB numbering and internal Rosetta numbering
@@ -89,7 +94,7 @@ public:
 	void disulfides(
 		utility::vector1< std::pair<core::Size,core::Size> > & disulfides,
 		core::pose::Pose const& pose ) const;
-    
+
 	/// @brief Get a list of disulfide bonds declared in the file
 	///        (renumbered to rosetta numbering if necessary)
     /// also manually set the disulfides in the conformation of the provided pose

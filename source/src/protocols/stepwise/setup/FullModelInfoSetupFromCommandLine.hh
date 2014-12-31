@@ -148,6 +148,18 @@ namespace setup {
 	filter_out_bulge_res(  utility::vector1< core::Size > & sample_res,
 												 utility::vector1< core::Size > const & bulge_res );
 
+	void
+	figure_out_motif_mode( utility::vector1< core::Size > & extra_min_res,
+												 utility::vector1< core::Size > & terminal_res,
+												 utility::vector1< core::Size > const & domain_map,
+												 utility::vector1< core::Size > const & cutpoint_open_in_full_model );
+
+	bool
+	looks_like_reference_pose( utility::vector1< core::Size > const & domain_map );
+
+	bool
+	just_modeling_RNA( utility::vector1< std::string > const & fasta_files );
+
 } //setup
 } //stepwise
 } //protocols

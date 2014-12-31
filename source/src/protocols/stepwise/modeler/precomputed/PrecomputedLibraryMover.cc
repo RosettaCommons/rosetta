@@ -87,6 +87,7 @@ namespace precomputed {
 			TR.Debug << TR.Magenta << "Reading in file: " << full_filename << TR.Reset << std::endl;
 
 			SilentFileDataOP silent_file_data( new SilentFileData );
+			silent_file_data->set_verbose( false );
 			silent_file_data->read_file( full_filename );
 			TR.Debug << TR.Magenta << "Number of models: " << silent_file_data->size() << TR.Reset << std::endl;
 			std::string const sequence = silent_file_data->begin()->one_letter_sequence();

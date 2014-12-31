@@ -70,6 +70,7 @@ namespace full_model_info {
 		RNA_BULGE, // nucleotides that should not be instantiated.
 
 		// next-section: anything protein-specific
+		DISULFIDES,
 
 		// done.
 		LAST_TYPE

@@ -76,31 +76,36 @@ namespace align {
 	////////////////////////////////////////////////////////////////////////////////
 	void
 	align_pose_and_add_rmsd_constraints( pose::Pose & pose,
-																			 pose::PoseCOP native_pose,
+																			 pose::PoseCOP align_pose,
 																			 utility::vector1< Size > const & moving_res_list,
 																			 Real const rmsd_screen ) {
 
-		if ( native_pose == 0 ) return;
+		if ( align_pose == 0 ) return;
 
 		utility::vector1< Size > root_partition_res = figure_out_root_partition_res( pose, moving_res_list );
 		if ( root_partition_res.size() == 0 ) root_partition_res.push_back( pose.fold_tree().root() );
 
-		// can later generalize to use 'reference_pose', not necessarily native_pose.
-		modeler::align::StepWisePoseAligner pose_aligner( *native_pose );
+		// can later generalize to use 'reference_pose', not necessarily align_pose.
+		modeler::align::StepWisePoseAligner pose_aligner( *align_pose );
 		pose_aligner.set_root_partition_res( root_partition_res );
 		Pose pose_save = pose;
 		pose_aligner.apply( pose );
-		TR.Debug << "SUPERIMPOSE RMSD: " <<  pose_aligner.rmsd_over_alignment_atoms() << std::endl;
-		if ( pose_aligner.rmsd_over_alignment_atoms() < 1.0e-5 ) pose = pose_save; // to avoid floating point deviations.
+
+		Real const rms_in_superimpose_atoms = core::scoring::rms_at_corresponding_atoms_no_super( pose_save, *align_pose, pose_aligner.superimpose_atom_id_map() );
+		TR.Debug << "SUPERIMPOSE RMSD: " << rms_in_superimpose_atoms  << std::endl;
+		if ( rms_in_superimpose_atoms < 1.0e-5 ){
+			TR.Debug << "Not reorienting because rmsd_over_alignment_atoms is very small." << std::endl;
+			pose = pose_save; // to avoid floating point deviations.
+		}
 		if ( rmsd_screen > 0.0 ) pose_aligner.create_coordinate_constraints( pose, rmsd_screen );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// calculate rmsd for pose and any 'other poses', and add up in quadrature.
 	Real
-	superimpose_with_stepwise_aligner( pose::Pose & pose, pose::Pose const & native_pose,
+	superimpose_with_stepwise_aligner( pose::Pose & pose, pose::Pose const & align_pose,
 																		 bool const superimpose_over_all_instantiated /* = false */ ){
-		modeler::align::StepWisePoseAligner pose_aligner( native_pose );
+		modeler::align::StepWisePoseAligner pose_aligner( align_pose );
 		pose_aligner.set_superimpose_over_all_instantiated( superimpose_over_all_instantiated );
 		return pose_aligner.get_rmsd_over_all_poses( pose ); // will include "other_poses"
 	}

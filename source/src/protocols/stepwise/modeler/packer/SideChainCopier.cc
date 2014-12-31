@@ -83,7 +83,7 @@ using namespace core::conformation;
 				// before putting into new pose, need to move backbone atoms back, so that only side chain atoms are changed.
 				for ( Size k = 1; k <= rsd->type().last_backbone_atom(); k++ ){
 					rsd->set_xyz( k, pose.residue( n ).xyz( rsd->atom_name( k ) ) );
-				}
+			}
 				for ( Size k = rsd->type().nheavyatoms() + 1; k < rsd->type().first_sidechain_hydrogen(); k++ ){
 					rsd->set_xyz( k, pose.residue( n ).xyz( rsd->atom_name( k ) ) );
 				}
@@ -93,6 +93,7 @@ using namespace core::conformation;
 
 		}
 
+		map_constraints_from_original_pose( viewer_pose, pose );
 		viewer_pose = pose;
 	}
 

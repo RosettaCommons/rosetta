@@ -134,6 +134,8 @@ ConstraintOP CoordinateConstraint::remapped_clone( pose::Pose const& src, pose::
 	id::AtomID id1( named_atom_id_to_atom_id( atom1, dest, false /*raise exception*/ ) );
 	id::AtomID id2( named_atom_id_to_atom_id( atom2, dest, false /*raise exception*/ ) );
 
+	//	if ( atom(1) != id1 ) tr << "REMAPPING: " << atom(1) << " to " << id1 << std::endl;
+
 	if ( id1.valid() && id2.valid() ) {
 		return ConstraintOP( new CoordinateConstraint( id1, id2, xyz_target_, func_, score_type() ) );
 	} else {

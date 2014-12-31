@@ -55,6 +55,17 @@ namespace loop_graph {
 
 		Real total_energy() const{ return total_energy_; }
 
+		// helper functions for computing loop properties, missing residues, etc.
+		void update_loops( core::pose::Pose const & pose );
+
+		Size nmissing( pose::Pose const & pose ) const;
+
+		utility::vector1< char >
+		missing_residues( pose::Pose const & pose ) const;
+
+		utility::vector1< utility::vector1< Size > >
+		loop_suites() const;
+
 	private:
 
 		void

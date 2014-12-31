@@ -81,7 +81,7 @@ ScoreJumpFileSilentStruct::print_header( std::ostream & out ) const {
 
 void ScoreJumpFileSilentStruct::print_conformation( std::ostream & output  ) const {
   output << "REMARK SOCREJUMP SILENTFILE\n";
-if ( fold_tree().size() > 1 || fold_tree().num_jump() > 1 ) {
+if ( fold_tree().size() > 1 || fold_tree().num_jump() > 0 ) {
     output << "FOLD_TREE ";
     for ( kinematics::FoldTree::const_iterator
         it = fold_tree().begin(), it_end = fold_tree().end();
@@ -167,7 +167,7 @@ bool ScoreJumpFileSilentStruct::init_from_lines(
         continue;
       } else {
         tr.Error << "bad format in score_jump silent format and contains " << *iter << std::endl;
-			} 
+			}
 		}//end of reading jump and RT
 	}
 

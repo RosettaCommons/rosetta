@@ -60,6 +60,8 @@ namespace options {
 		virtual_sugar_do_minimize_( true ),
 		make_movie_( false ),
 		sampler_perform_phosphate_pack_( true ),
+		force_phosphate_instantiation_( true ),
+		virtualize_packable_moieties_in_screening_pose_( true ),
 		rebuild_bulge_mode_( false ),
 		tether_jump_( true ),
 		local_redock_only_( true ),
@@ -130,6 +132,7 @@ namespace options {
 		set_use_phenix_geo(  option[ OptionKeys::rna::corrected_geo ] );
 		set_make_movie(	option[ OptionKeys::stepwise::monte_carlo::make_movie ]() );
 		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
+		force_phosphate_instantiation_ = option[ OptionKeys::stepwise::rna::force_phosphate_instantiation ]();
 		rebuild_bulge_mode_ = option[ OptionKeys::stepwise::rna::rebuild_bulge_mode ]();
 		tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
 		o2prime_legacy_mode_ = option[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
@@ -143,6 +146,7 @@ namespace options {
 		allow_virtual_side_chains_ = option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]();
 		n_sample_ = option[ OptionKeys::stepwise::protein::n_sample ]();
 		protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
+		virtualize_packable_moieties_in_screening_pose_ = option[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
 	}
 
 
@@ -162,6 +166,7 @@ namespace options {
 
 		// general
 		options->set_choose_random( true );
+		options->set_virtualize_packable_moieties_in_screening_pose( virtualize_packable_moieties_in_screening_pose() );
 
 		// protein-specific
 		options->set_skip_coord_constraints( skip_coord_constraints() );
@@ -184,6 +189,7 @@ namespace options {
 		options->set_tether_jump( tether_jump() );
 		options->set_o2prime_legacy_mode( o2prime_legacy_mode() );
 		options->set_sampler_perform_phosphate_pack( sampler_perform_phosphate_pack() );
+		options->set_force_phosphate_instantiation( force_phosphate_instantiation() );
 
 		return options;
 	}

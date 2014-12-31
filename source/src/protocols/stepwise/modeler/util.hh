@@ -284,6 +284,9 @@ namespace modeler {
 	Size
 	get_unique_connection_res( pose::Pose const & pose, utility::vector1< Size > const & moving_partition_res );
 
+	void
+	map_constraints_from_original_pose( pose::Pose const & original_pose, pose::Pose & pose );
+
 } //modeler
 } //stepwise
 } //protocols

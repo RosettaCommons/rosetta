@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/sampler/rigid_body/FloatingBaseUtil.cc
+/// @file protocols/toolbox/rigid_body/FloatingBaseUtil.cc
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <protocols/stepwise/sampler/rigid_body/util.hh>
+#include <protocols/toolbox/rigid_body/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/id/AtomID.hh>
@@ -26,19 +26,32 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
-static thread_local basic::Tracer TR( "protocols.sampler.rigid_body.FloatingBaseUtil" );
+static thread_local basic::Tracer TR( "protocols.toolbox.rigid_body.FloatingBaseUtil" );
 
 using namespace core;
 using namespace core::pose;
 using numeric::conversions::degrees;
 using numeric::conversions::radians;
 
+
+//////////////////////////////////////////////////////////////////
+//
+//  Euler rotation utils developed in 2011-2012 for enumerative
+//    rigid body sampling for, e.g., RNA nearest-neighbor rules.
+//
+//  Now mostly deprecated in favor of
+//      stepwise/sampler/RigidBodyStepWiseSampler.hh
+//
+//  Just in use in nucleobase_sample_around.
+//
+//                               -- rhiju, 2014
+//
+//////////////////////////////////////////////////////////////////
+
 namespace protocols {
-namespace stepwise {
-namespace sampler {
+namespace toolbox {
 namespace rigid_body {
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	get_atom_coordinates( utility::vector1< std::pair < id::AtomID, numeric::xyzVector< Real > > > & xyz_list, Size const & seq_num,
 												conformation::Residue const & rsd_at_origin, kinematics::Stub const & moving_res_base_stub ){
@@ -356,6 +369,5 @@ rotate( pose::Pose & pose, Matrix const M,
 
 
 } //rigid_body
-} //sampler
-} //stepwise
+} //toolbox
 } //protocols

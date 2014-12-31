@@ -312,7 +312,7 @@ sources = {
     "protocols/membrane/geometry" :[
 		"util",
 		"EmbeddingDef",
-		"Embedding",	
+		"Embedding",
     ],
     "protocols/membrane/symmetry" : [
     		"SetupForMembraneSymmetry",
@@ -757,10 +757,16 @@ sources = {
 		"SequenceComparison",
 		"SurfaceCalculator",
 	],
+        "protocols/toolbox/rigid_body": [
+	    "util",
+	],
 	"protocols/toolbox/rotamer_set_operations": [
 		"RigidBodyMoveRotSetOps",
 		"SpecialRotamerRotSetOps",
 		"AddGood2BPairEnergyRotamers",
+	],
+        "protocols/toolbox/sample_around": [
+	    "util",
 	],
 	"protocols/toolbox/task_operations": [
 	        "AlignedThreadOperation",

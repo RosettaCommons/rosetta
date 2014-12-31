@@ -22,7 +22,7 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/modeler/rna/rigid_body/util.hh>
-#include <protocols/stepwise/sampler/rigid_body/util.hh>
+#include <protocols/toolbox/rigid_body/util.hh>
 #include <core/chemical/rna/util.hh>
 
 #include <protocols/farna/util.hh>
@@ -1051,7 +1051,7 @@ namespace checker {
 		core::conformation::Residue const & moving_rsd = screening_pose.residue( moving_res );
 
 		utility::vector1< std::pair < id::AtomID, numeric::xyzVector< core::Real > > > xyz_list;
-		sampler::rigid_body::get_atom_coordinates( xyz_list, moving_res, rsd_at_origin, moving_res_base_stub );
+		toolbox::rigid_body::get_atom_coordinates( xyz_list, moving_res, rsd_at_origin, moving_res_base_stub );
 
 		Size num_clash_atom = 0;
 		for ( Size n = 1; n <= xyz_list.size(); n++ ){

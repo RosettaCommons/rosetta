@@ -201,7 +201,7 @@ namespace mover {
 		Size const offset = res_to_build_off_in_full_model_numbering_ - res_to_add_in_full_model_numbering_;
 		Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering_ );
 
-		TR << "About to add onto " << res_to_build_off_in_full_model_numbering_ << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering_ << " which may be part of other pose " << other_pose_idx << std::endl;
+		//		TR << "About to add onto " << res_to_build_off_in_full_model_numbering_ << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering_ << " which may be part of other pose " << other_pose_idx << std::endl;
 
 		if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
 			prepend_other_pose( pose, offset, other_pose_idx );
@@ -333,9 +333,6 @@ namespace mover {
 
 		char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
 		choose_random_if_unspecified_nucleotide( newrestype );
-
-		TR << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
-
 		chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
 
 		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();

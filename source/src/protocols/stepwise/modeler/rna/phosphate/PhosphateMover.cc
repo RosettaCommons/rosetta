@@ -65,7 +65,7 @@ namespace phosphate {
 		do_screening_ = true;
 		screen_for_donor_contact_ = true;
 		instantiated_phosphate_ = false;
-		force_phosphate_instantiation_ = false; // do not check in as true, just for testing
+		force_phosphate_instantiation_ = false;
 		number_score_calls_ = 0;
 	}
 
@@ -147,6 +147,7 @@ namespace phosphate {
 			remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE,    sample_res );
 			add_variant_type_to_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, sample_res );
 			correctly_position_five_prime_phosphate( pose, sample_res );
+			apply_Aform_torsions_to_five_prime_phosphate( pose, sample_res );
 		}
 	}
 
@@ -164,6 +165,7 @@ namespace phosphate {
 			remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, sample_res );
 			remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, sample_res );
 			add_variant_type_to_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, sample_res );
+			apply_Aform_torsions_to_three_prime_phosphate( pose, sample_res );
 		}
 	}
 
@@ -318,6 +320,28 @@ namespace phosphate {
 		return protocols::stepwise::modeler::rna::phosphate::check_phosphate_contacts_donor( op_xyz_list,
 																																												 donor_atom_xyz_list_,
 																																												 donor_base_atom_xyz_list_ );
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	PhosphateMover::apply_Aform_torsions_to_five_prime_phosphate( pose::Pose & pose, Size const sample_res ) const {
+		using namespace core::id;
+		using namespace core::chemical::rna;
+		runtime_assert( pose.residue_type( sample_res ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) );
+		pose.set_torsion( TorsionID( sample_res, BB, ALPHA), torsion_info_.alpha_aform());
+		pose.set_torsion( TorsionID( sample_res, BB, BETA), torsion_info_.beta_aform());
+		pose.set_torsion( TorsionID( sample_res, BB, GAMMA), torsion_info_.gamma_aform());
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	PhosphateMover::apply_Aform_torsions_to_three_prime_phosphate( pose::Pose & pose, Size const sample_res ) const {
+		using namespace core::id;
+		using namespace core::chemical::rna;
+		runtime_assert( pose.residue_type( sample_res ).has_variant_type( core::chemical::THREE_PRIME_PHOSPHATE ) );
+		pose.set_torsion( TorsionID( sample_res, BB, EPSILON), torsion_info_.epsilon_aform());
+		pose.set_torsion( TorsionID( sample_res, BB, ZETA), torsion_info_.zeta_aform());
 	}
 
 } //phosphate

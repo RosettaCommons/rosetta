@@ -79,6 +79,8 @@ namespace align {
 		Real superimpose_rmsd() const { return superimpose_rmsd_;}
 		Size natoms_superimpose_rmsd() const { return superimpose_atom_id_map_.size();}
 
+		std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map(){ return superimpose_atom_id_map_; }
+
 		Real rmsd_over_alignment_atoms() const { return superimpose_rmsd_;}
 
 		bool check_matching_atom_names( pose::Pose const & pose1, pose::Pose const & pose2,

@@ -361,9 +361,10 @@ namespace setup {
 
 		if ( option[ full_model::cutpoint_open ].user() ) cutpoint_open_in_full_model = full_model_parameters->conventional_to_full( option[ full_model::cutpoint_open ].resnum_and_chain() );
 		vector1< Size > extra_minimize_res = full_model_parameters->conventional_to_full( option[ full_model::extra_min_res ].resnum_and_chain() );
-		vector1< Size > sample_res  = full_model_parameters->conventional_to_full( option[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
-		vector1< Size > working_res = full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
-		vector1< Size > bulge_res   = full_model_parameters->conventional_to_full( option[ full_model::rna::bulge_res ].resnum_and_chain() ); //not to be sampled.
+		vector1< Size > sample_res         = full_model_parameters->conventional_to_full( option[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
+		vector1< Size > working_res        = full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
+		vector1< Size > bulge_res          = full_model_parameters->conventional_to_full( option[ full_model::rna::bulge_res ].resnum_and_chain() ); //not to be sampled.
+		vector1< Size > terminal_res       = full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() );
 		vector1< Size > input_res_list; // will be filled in below.
 		bool const get_res_list_from_pdb = true; //!option[ in::file::input_res ].user();
 
@@ -392,6 +393,8 @@ namespace setup {
 		}
 		if ( input_res_count != input_res_list.size() ) utility_exit_with_message( "input_res size does not match pose size" );
 		runtime_assert( input_res_count == input_res_list.size() );
+
+		if ( option[ full_model::motif_mode ]() ) figure_out_motif_mode( extra_minimize_res, terminal_res, domain_map, cutpoint_open_in_full_model );
 
 		// check for extra cutpoint open.
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
@@ -437,8 +440,9 @@ namespace setup {
 		full_model_parameters->set_parameter_as_res_list( WORKING, working_res );
 		full_model_parameters->set_parameter_as_res_list( CALC_RMS, full_model_parameters->conventional_to_full( option[ full_model::calc_rms_res ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
-		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() ) );
+		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, terminal_res );
 		full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
+		full_model_parameters->read_disulfides( option[ OptionKeys::stepwise::protein::disulfide_file]() );
 		if ( option[ constraints::cst_file ].user() && pose_pointers.size() > 0 )	full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ] );
 
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
@@ -714,14 +718,18 @@ namespace setup {
 		for ( Size i = 1; i <= sample_res.size(); i++ ){
 			runtime_assert( working_res.has_value( sample_res[ i ] ) );
 		}
+		bool const reference_pose = looks_like_reference_pose( domain_map );
 		for ( Size n = 1; n <= domain_map.size(); n++ ){
 			if ( domain_map[ n ] > 0 ) {
-				runtime_assert( working_res.has_value( n ) );
-				runtime_assert( !sample_res.has_value( n ) );
+				if ( !working_res.has_value( n ) && !reference_pose ) {
+					utility_exit_with_message( "Working res does not have domain_map residue "+ObjexxFCL::string_of(n) );
+				}
+				if ( sample_res.has_value( n ) ) utility_exit_with_message( "Sample res should not have "+ObjexxFCL::string_of(n) );
 			}
 		}
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	filter_out_bulge_res(  utility::vector1< Size > & sample_res,
 												 utility::vector1< Size > const & bulge_res ) {
@@ -732,7 +740,77 @@ namespace setup {
 		sample_res = sample_res_new;
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	// motif_mode:
+	//
+	//  extra_min_res -- minimize residues in input PDBs immediately neighboring loops to be built.
+	//  terminal_res  -- don't stack/pair loops on any cutpoint residues in input PDBS (except right next to loops)
+	//
+	// originally worked out in python (setup_stepwise_benchmark.py) by rhiju, 2014.
+	//
+	void
+	figure_out_motif_mode( utility::vector1< Size > & extra_min_res,
+												 utility::vector1< Size > & terminal_res,
+												 utility::vector1< Size > const & domain_map,
+												 utility::vector1< Size > const & cutpoint_open_in_full_model ) {
+		// for double-checking work against any user-inputted extra_min_res & terminal_res
+		utility::vector1< Size > const extra_min_res_save = extra_min_res;
+		utility::vector1< Size > const terminal_res_save = terminal_res;
+		extra_min_res.clear();
+		terminal_res.clear();
 
+
+		for ( Size m = 1; m <= domain_map.size(); m++ ) {
+			if ( domain_map[ m ] == 0 ) continue;
+			bool const prev_moving = ( m > 1 && domain_map[ m - 1 ] == 0 );
+			bool const next_moving = ( m < domain_map.size() && domain_map[ m + 1 ] == 0 );
+			bool const right_before_chainbreak = ( m == domain_map.size() || cutpoint_open_in_full_model.has_value( m ) );
+			bool const right_after_chainbreak  = ( m == 1                 || cutpoint_open_in_full_model.has_value( m - 1 ) );
+			if ( ( right_after_chainbreak && !next_moving ) ||
+					 ( right_before_chainbreak && !prev_moving ) ){
+				terminal_res.push_back( m );
+			}
+			if ( ( prev_moving && !next_moving && !right_before_chainbreak ) ||
+					 ( next_moving && !prev_moving && !right_after_chainbreak ) ) {
+				extra_min_res.push_back( m );
+			}
+		}
+
+
+		if ( looks_like_reference_pose( domain_map ) ) return;
+		if ( extra_min_res_save.size() > 0 || terminal_res_save.size() > 0 ) {
+			runtime_assert( extra_min_res == extra_min_res_save );
+			runtime_assert( terminal_res == terminal_res_save );
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////
+	bool
+	looks_like_reference_pose( utility::vector1< Size > const & domain_map ) {
+		for ( Size m = 1; m <= domain_map.size(); m++ ) {
+			if ( domain_map[ m ] != 1 ) return false;
+		}
+		return true;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////
+	// helper function to see if this is just an RNA modeling problem, as defined
+	// in fasta file.
+	bool
+	just_modeling_RNA( utility::vector1< std::string > const & fasta_files ) {
+		if ( fasta_files.size() == 0 ) return false; // unknown
+		std::string const fasta_file = fasta_files[ 1 ]; // currently just reading in one fasta file.
+		vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
+		std::string const rna_letters( "acgunZ" );
+		for ( Size n = 1; n <= fasta_sequences.size(); n++ ){
+			std::string sequence = fasta_sequences[n]->sequence();
+			parse_out_non_standard_residues( sequence );
+			for ( Size k = 1; k <= sequence.size(); k++ ){
+				if ( rna_letters.find( sequence[k-1] ) == std::string::npos ) return false;
+			}
+		}
+		return true;
+	}
 
 } //setup
 } //stepwise

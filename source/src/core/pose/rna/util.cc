@@ -946,6 +946,19 @@ apply_pucker(
 
 	}
 
+void
+apply_Aform_torsions( pose::Pose & pose, Size const n ){
+	using namespace core::id;
+	// following does not really matter, since sugar & phosphate will be erased anyway.
+	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
+	pose.set_torsion( TorsionID( n, BB, 1), torsion_info_.alpha_aform() );
+	pose.set_torsion( TorsionID( n, BB, 2), torsion_info_.beta_aform() );
+	pose.set_torsion( TorsionID( n, BB, 3), torsion_info_.gamma_aform() );
+	pose.set_torsion( TorsionID( n, BB, 4), torsion_info_.delta_north() );
+	pose.set_torsion( TorsionID( n, BB, 5), torsion_info_.epsilon_aform() );
+	pose.set_torsion( TorsionID( n, BB, 6), torsion_info_.zeta_aform() );
+	apply_pucker(pose, n, NORTH, false /*skip_same_state*/, true /*use_phenix_geo_*/);
+}
 
 } //ns rna
 } //ns pose

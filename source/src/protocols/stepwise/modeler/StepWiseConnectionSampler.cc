@@ -68,7 +68,7 @@
 #include <protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/util.hh>
 #include <protocols/stepwise/sampler/rna/util.hh>
-#include <protocols/stepwise/sampler/rigid_body/util.hh>
+#include <protocols/toolbox/rigid_body/util.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -198,9 +198,10 @@ StepWiseConnectionSampler::apply( core::pose::Pose & pose ){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseConnectionSampler::initialize_useful_info( pose::Pose const & pose ){
-	rigid_body_modeler_ = ( sampler::rigid_body::figure_out_reference_res_for_jump( pose, moving_res_ ) > 0 );
+	rigid_body_modeler_ = ( toolbox::rigid_body::figure_out_reference_res_for_jump( pose, moving_res_ ) > 0 );
 	figure_out_reference_res( pose );
 	protein_connection_ = is_protein( pose, moving_res_list_ ); // argh.
+	// sets up rna_cutpoints_closed_, five_prime_chain_break_res_, three_prime_chain_break_res_ and chainbreak_gaps_
 	rna::figure_out_moving_rna_chain_breaks( pose, moving_partition_res_,
 																					 rna_cutpoints_closed_,
 																					 rna_five_prime_chain_breaks_, rna_three_prime_chain_breaks_, rna_chain_break_gap_sizes_ );
@@ -296,7 +297,8 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	//  just apply rigid_body transformation.
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( *screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
 	NativeRMSD_ScreenerOP native_rmsd_screener;
-	if ( ( get_native_pose() != 0 ) && (moving_res_ != 0) ){
+	if ( ( get_native_pose() != 0 ) && (moving_res_ != 0) &&
+			 ( options_->rmsd_screen() > 0.0 || options_->integration_test_mode() ) ){
 		bool do_screen = ( ( options_->rmsd_screen() > 0.0 ) && !options_->integration_test_mode() ); // gets toggled to true in integration tests.
 		native_rmsd_screener = NativeRMSD_ScreenerOP( new NativeRMSD_Screener( *get_native_pose(), *screening_pose_,
 																										working_parameters_->working_moving_res_list(), options_->rmsd_screen(),
@@ -333,7 +335,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	if ( rigid_body_modeler_ && virt_sugar_atr_rep_screen_ &&
 			 moving_res_list_.size() > 0 && options_->atr_rep_screen() ) {
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( *virt_sugar_screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
-		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new PartitionContactScreener( *virt_sugar_screening_pose_, working_parameters_, use_loose_rep_cutoff ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new PartitionContactScreener( *virt_sugar_screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options() ) ) );
 		//		screeners_.push_back( new RNA_AtrRepScreener( virt_sugar_atr_rep_checker_, *virt_sugar_screening_pose_ ) );
 	}
 
@@ -342,6 +344,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
 		bool strict = rigid_body_modeler_ && rna_cutpoints_closed_.has_value( rna_five_prime_chain_breaks_[n] ) && (rna_cutpoints_closed_.size() < 3);
+	// if strict == false, no need to create a redundant screener, and its confusing. Remove?
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosableGeometryScreener( rna_chain_closable_geometry_checkers_[ n ], screening_pose_, strict  /*strict*/ ) ) );
 	}
 
@@ -353,7 +356,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	PartitionContactScreenerOP atr_rep_screener;
 	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 ) {
-		atr_rep_screener = PartitionContactScreenerOP( new PartitionContactScreener( *screening_pose_, working_parameters_, use_loose_rep_cutoff ) );
+		atr_rep_screener = PartitionContactScreenerOP( new PartitionContactScreener( *screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options() ) );
 		screeners_.push_back( atr_rep_screener );
 	}
 
@@ -368,6 +371,18 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	// phosphate screener, o2prime screener, should be here.
 	master_packer_->add_packer_screeners( screeners_, pose, screening_pose_ );
+
+	//  Want this legacy BulgeApplier to run in very specific SWA RNA cases.
+	// the atr_rep_checker has been replaced with a more general and efficient PartitionContactScreener, but
+	//  still in use by BulgeApplier.
+	if ( !rigid_body_modeler_ && !working_parameters_->rebuild_bulge_mode() &&
+	 		 options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 &&
+	 		 ( rna_cutpoints_closed_.size() > 0 )  && !protein_connection_ && !kic_modeler_ ) {
+		runtime_assert( rna_atr_rep_checker_ != 0 );
+		legacy::screener::RNA_AtrRepScreenerOP rna_atr_rep_screener( new legacy::screener::RNA_AtrRepScreener( rna_atr_rep_checker_, *screening_pose_ ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( rna_atr_rep_screener ) );  // will actually carry out the legacy RNA atr/rep check.
+	 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new BulgeApplier( rna_atr_rep_checker_ /* it turns out that this is not even used*/ , base_centroid_checker_, moving_res_ ) ) ); // apply bulge at the last minute.
+	}
 
 	/////////////////////////////////////////////////////
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( pose ) ) );
@@ -386,11 +401,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 		screeners_.push_back( tag_definition_ );
 	}
 
-	if ( !rigid_body_modeler_ && !working_parameters_->rebuild_bulge_mode() &&
-			 options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 &&
-			 ( rna_cutpoints_closed_.size() > 0 )  ) {
-		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new BulgeApplier( atr_rep_checker_, base_centroid_checker_, moving_res_ ) ) ); // apply bulge at the last minute.
-	}
+	// BulgeApplier used to be here, but I think its supposed to happen before the SampleApplier.
 
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new PoseSelectionScreener( pose, scorefxn_, clusterer_ ) ) );
 
@@ -429,9 +440,11 @@ StepWiseConnectionSampler::initialize_pose( pose::Pose & pose  ){
 void
 StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 
+	using namespace rna::checker;
+
 	// RNA Base Centroid stuff -- could soon generalize to find protein partners too. That would be cool.
 	if ( working_parameters_->working_moving_partition_res().size() > 0 ){
-		base_centroid_checker_ = rna::checker::RNA_BaseCentroidCheckerOP( new RNA_BaseCentroidChecker ( pose, working_parameters_,
+		base_centroid_checker_ = RNA_BaseCentroidCheckerOP(new RNA_BaseCentroidChecker ( pose, working_parameters_,
 																																																	 ( working_parameters_->floating_base() /*rigid body*/ && options_->tether_jump() ) ) );
 		base_centroid_checker_->set_floating_base( working_parameters_->floating_base() &&
 																							 working_parameters_->working_moving_partition_res().size() == 1  );
@@ -444,13 +457,14 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	// The idea is that if the screening pose fails basic stereochemistry checks, then we don't
 	// have to carry out expensive CCD closure or packing.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// sets up rna_cutpoints_closed_, five_prime_chain_break_res_, three_prime_chain_break_res_ and chainbreak_gaps_
 	screening_pose_ = pose.clone();
-	if ( options_->o2prime_legacy_mode() ) add_virtual_O2Prime_hydrogen( *screening_pose_ );
-	//	phosphate::remove_terminal_phosphates( *screening_pose_ ); // to be deprecated with new atr/rep check.
+	if ( options_->o2prime_legacy_mode() || options_->virtualize_packable_moieties_in_screening_pose() ) {
+		add_virtual_O2Prime_hydrogen( *screening_pose_ );
+	}
+	if ( options_->virtualize_packable_moieties_in_screening_pose() )	phosphate::remove_terminal_phosphates( *screening_pose_ );
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
 		add_variant_type_to_pose_residue( *screening_pose_, core::chemical::VIRTUAL_PHOSPHATE,
-				rna_cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014 // to be deprecated with new atr/rep check.
+				rna_cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -459,12 +473,12 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	// Could in principle instantiate for proteins too.
 	if ( !options_->choose_random() && !protein_connection_ && moving_res_ > 0 ){
 		TR << TR.Magenta << "Creating VDW Bin Checker " << TR.Reset << std::endl;
-		VDW_bin_checker_ = rna::checker::RNA_VDW_BinCheckerOP( new checker::RNA_VDW_BinChecker() );
+		VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker() );
 		VDW_bin_checker_->setup_using_working_pose( *screening_pose_, working_parameters_ );
 	}
 	if ( !user_input_VDW_bin_checker_ /* could be externally defined for speed */ && options_->VDW_rep_screen_info().size() > 0 ) {
 		TR << TR.Magenta << "Creating USER VDW Bin Checker " << TR.Reset << std::endl;
-		user_input_VDW_bin_checker_ = rna::checker::RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker() );
+		user_input_VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker() );
 		options_->setup_options_for_VDW_bin_checker( user_input_VDW_bin_checker_ );
 		user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( options_->VDW_rep_screen_info(),
 																																	pose, working_parameters_ );
@@ -478,11 +492,14 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 				core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
 	}
 	// following is to check atr/rep even on sugars that will remain virtualized.
+	//  may now be deprecated due to development of PartitionContactScreener, which handles both protein & RNA.
 	bool const use_loose_rep_cutoff = ( kic_modeler_ || moving_partition_res_.size() > 1 /* is_internal */ );
-	if ( !protein_connection_ && moving_res_ > 0 ){ // hack. will unify soon.
-		atr_rep_checker_ = rna::checker::RNA_AtrRepCheckerOP( new checker::RNA_AtrRepChecker( *screening_pose_, working_parameters_, use_loose_rep_cutoff ) );
-		virt_sugar_atr_rep_checker_ = rna::checker::RNA_AtrRepCheckerOP( new checker::RNA_AtrRepChecker( *virt_sugar_screening_pose_, working_parameters_, use_loose_rep_cutoff ) );
-	}
+	if ( !rigid_body_modeler_ && options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 && !protein_connection_ ) {  // need this for legacy bulge application code.
+		rna_atr_rep_checker_ = RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *screening_pose_, working_parameters_, use_loose_rep_cutoff ) );
+		// not in use anymore -- delete after MAR 2015 if SWA looks OK:
+		//	 	rna_virt_sugar_atr_rep_checker_ = RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *virt_sugar_screening_pose_, working_parameters_, use_loose_rep_cutoff ) );
+	 }
+
 	// we will be checking clashes of even virtual sugars compared to no-sugar baseline.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
 		pose::remove_variant_type_from_pose_residue( *screening_pose_,
@@ -490,13 +507,13 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	}
 
 	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
-		rna_chain_closable_geometry_checkers_.push_back( rna::checker::RNA_ChainClosableGeometryCheckerOP( new checker::RNA_ChainClosableGeometryChecker(
+		rna_chain_closable_geometry_checkers_.push_back( RNA_ChainClosableGeometryCheckerOP( new RNA_ChainClosableGeometryChecker(
 				rna_five_prime_chain_breaks_[n], rna_three_prime_chain_breaks_[n], rna_chain_break_gap_sizes_[n] ) ) );
 	}
 
 	screening_pose_->remove_constraints(); // chain closure actually assumes no constraints in pose -- it sets up its own constraints.
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
-		rna_chain_closure_checkers_.push_back( rna::checker::RNA_ChainClosureCheckerOP( new checker::RNA_ChainClosureChecker( *screening_pose_, rna_cutpoints_closed_[n] ) ) );
+		rna_chain_closure_checkers_.push_back( RNA_ChainClosureCheckerOP( new RNA_ChainClosureChecker( *screening_pose_, rna_cutpoints_closed_[n] ) ) );
 		rna_chain_closure_checkers_[n]->set_reinitialize_CCD_torsions( options_->reinitialize_CCD_torsions() );
 	}
 
@@ -539,7 +556,9 @@ StepWiseConnectionSampler::get_max_ntries() {
 		if ( options_->rmsd_screen() && !options_->integration_test_mode() ) max_ntries *= 10;
 	} else {
 		max_ntries = std::max( 10000, 100 * int( options_->num_random_samples() ) );
-		if ( rna_chain_closure_checkers_.size() > 0 ) max_ntries *= 10;
+		if ( rna_chain_closure_checkers_.size() > 0 ) {
+			max_ntries *= options_->max_tries_multiplier_for_ccd() /* default 10 */;
+		}
 		if ( kic_modeler_ ) max_ntries = 5 * options_->num_random_samples(); // some chains just aren't closable.
 		if ( protein_connection_ ) max_ntries = 500;
 	}

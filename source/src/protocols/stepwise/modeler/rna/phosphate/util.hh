@@ -19,6 +19,7 @@
 #include <protocols/stepwise/modeler/rna/phosphate/PhosphateMove.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {
@@ -49,7 +50,7 @@ namespace phosphate {
 	get_phosphate_scorefxn();
 
 	core::scoring::ScoreFunctionCOP
-	get_phosphate_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
+	get_phosphate_scorefxn( core::scoring::methods::EnergyMethodOptions const & options );
 
 	bool
 	check_phosphate_contacts_donor(	utility::vector1< Vector > const & op_xyz_list,

@@ -40,15 +40,13 @@ namespace copydofs {
 											std::map< id::AtomID, Size > const & atom_id_domain_map ):
 		scratch_pose_( template_pose ),
 		atom_id_map_( atom_id_map ),
-		atom_id_domain_map_( atom_id_domain_map ),
-		atom_id_domain_map_inputted_( true )
+		atom_id_domain_map_( atom_id_domain_map )
 	{}
 
 	CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
 											std::map < id::AtomID , id::AtomID > const & atom_id_map ):
 		scratch_pose_( template_pose ),
-		atom_id_map_( atom_id_map ),
-		atom_id_domain_map_inputted_( false )
+		atom_id_map_( atom_id_map )
 	{}
 
 	//Destructor
@@ -59,17 +57,9 @@ namespace copydofs {
 	void
 	CopyDofs::apply( pose::Pose & pose ){
 
-		figure_out_atom_id_domain_map( pose );
 		figure_out_dofs( pose );
 		apply_dofs( pose, copy_dofs_info_ );
 
-	}
-
-	////////////////////////////////////////////////////////
-	void
-	CopyDofs::figure_out_atom_id_domain_map( pose::Pose & pose ){
-		if ( atom_id_domain_map_inputted_ ) return;
-		atom_id_domain_map_ = blank_atom_id_domain_map( pose );
 	}
 
 	////////////////////////////////////////////////////////
@@ -466,6 +456,8 @@ namespace copydofs {
 										id::AtomID const & atom_id1,
 										id::AtomID const & atom_id2 ){
 
+		if ( atom_id_domain_map.size() == 0 ) return true; //blank atom id domain map
+
 		std::map< id::AtomID, Size >::const_iterator it1 = atom_id_domain_map.find( atom_id1 );
 		std::map< id::AtomID, Size >::const_iterator it2 = atom_id_domain_map.find( atom_id2 );
 
@@ -492,6 +484,8 @@ namespace copydofs {
 	CopyDofs::check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
 										utility::vector1< id::AtomID > const & atom_ids1,
 										utility::vector1< id::AtomID > const & atom_ids2 ){
+
+		if ( atom_id_domain_map.size() == 0 ) return true;
 
 		for ( Size i = 1; i <= atom_ids1.size(); i++ ) {
 			for ( Size j = 1; j <= atom_ids2.size(); j++ ) {

@@ -63,6 +63,7 @@ namespace options {
 		dump_ = false;
 		skip_minimize_ = false;
 		disallow_realign_ = false;
+		virtualize_packable_moieties_in_screening_pose_ = false;
 	}
 
 	/// @brief clone the options
@@ -85,6 +86,7 @@ namespace options {
 		choose_random_ = option[ basic::options::OptionKeys::stepwise::choose_random ]() ;
 		dump_ = option[ basic::options::OptionKeys::stepwise::dump ]();
 		skip_minimize_ = option[ basic::options::OptionKeys::stepwise::skip_minimize ]();
+		virtualize_packable_moieties_in_screening_pose_ = option[ basic::options::OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
 	}
 
 } //options

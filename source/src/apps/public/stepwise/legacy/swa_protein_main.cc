@@ -167,7 +167,6 @@ OPT_KEY( Integer, sample_residue )
 OPT_KEY( Integer, start_res )
 OPT_KEY( Integer, end_res )
 OPT_KEY( String, cst_file )
-OPT_KEY( String, disulfide_file )
 OPT_KEY( String, centroid_weights )
 OPT_KEY( String, start_pdb )
 OPT_KEY( String, secstruct )
@@ -253,7 +252,7 @@ rebuild_test(){
 	stepwise_pose_setup->set_rsd_set( rsd_set );
 	stepwise_pose_setup->set_secstruct( option[ secstruct ] );
 	stepwise_pose_setup->set_cst_file( option[ cst_file ]() );
-	stepwise_pose_setup->set_disulfide_file( option[ disulfide_file ]() );
+	stepwise_pose_setup->set_disulfide_file( option[ OptionKeys::stepwise::protein::disulfide_file ]() );
 	stepwise_pose_setup->set_add_virt_res( option[ add_virt_res ]() || option[ edensity::mapfile ].user() );
 
 	stepwise_pose_setup->apply( pose );
@@ -311,7 +310,7 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 	import_pose::pose_from_pdb( *native_pose, *rsd_set.lock(), native_pdb_file );
 
 	native_pose->conformation().detect_disulfides();
-	if (!option[ disulfide_file ].user() ){
+	if (!option[ OptionKeys::stepwise::protein::disulfide_file ].user() ){
 		for (Size n = 1; n <= native_pose->total_residue(); n++){
 			if ( native_pose->residue_type( n ).has_variant_type( core::chemical::DISULFIDE ) ) utility_exit_with_message( "native pose has disulfides -- you should probable specify disulfides with -disulfide_file" );
 		}
@@ -450,17 +449,23 @@ main( int argc, char * argv [] )
 	option.add_relevant( OptionKeys::full_model::cutpoint_closed );
 	option.add_relevant( OptionKeys::full_model::virtual_res );
 	option.add_relevant( OptionKeys::full_model::jump_res );
+	option.add_relevant( OptionKeys::full_model::working_res );
+	option.add_relevant( OptionKeys::stepwise::skip_minimize );
+	option.add_relevant( OptionKeys::stepwise::min_type );
+	option.add_relevant( OptionKeys::stepwise::min_tolerance );
+	option.add_relevant( OptionKeys::stepwise::dump );
+	option.add_relevant( OptionKeys::stepwise::rmsd_screen );
+	option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
+	option.add_relevant( OptionKeys::stepwise::use_green_packer );
+	option.add_relevant( OptionKeys::stepwise::fixed_res );
+	option.add_relevant( OptionKeys::stepwise::align_pdb );
 	option.add_relevant( OptionKeys::stepwise::protein::centroid_output );
 	option.add_relevant( OptionKeys::stepwise::protein::n_sample );
 	option.add_relevant( OptionKeys::stepwise::protein::score_diff_cut );
 	option.add_relevant( OptionKeys::stepwise::protein::filter_native_big_bins );
 	option.add_relevant( OptionKeys::stepwise::protein::centroid_screen );
-	option.add_relevant( OptionKeys::stepwise::skip_minimize );
 	option.add_relevant( OptionKeys::stepwise::protein::centroid_weights );
-	option.add_relevant( OptionKeys::stepwise::min_type );
-	option.add_relevant( OptionKeys::stepwise::min_tolerance );
 	option.add_relevant( OptionKeys::stepwise::protein::ghost_loops );
-	option.add_relevant( OptionKeys::stepwise::dump );
 	option.add_relevant( OptionKeys::stepwise::protein::sample_beta );
 	option.add_relevant( OptionKeys::stepwise::protein::nstruct_centroid );
 	option.add_relevant( OptionKeys::stepwise::protein::global_optimize );
@@ -469,16 +474,11 @@ main( int argc, char * argv [] )
 	option.add_relevant( OptionKeys::stepwise::protein::ccd_close );
 	option.add_relevant( OptionKeys::stepwise::protein::move_jumps_between_chains );
 	option.add_relevant( OptionKeys::stepwise::protein::bridge_res );
-	option.add_relevant( OptionKeys::stepwise::rmsd_screen );
 	option.add_relevant( OptionKeys::stepwise::protein::cart_min );
 	option.add_relevant( OptionKeys::stepwise::protein::cluster_by_all_atom_rmsd );
 	option.add_relevant( OptionKeys::stepwise::protein::protein_prepack );
-	option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 	option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
-	option.add_relevant( OptionKeys::stepwise::use_green_packer );
-	option.add_relevant( OptionKeys::stepwise::fixed_res );
-	option.add_relevant( OptionKeys::full_model::working_res );
-	option.add_relevant( OptionKeys::stepwise::align_pdb );
+	option.add_relevant( OptionKeys::stepwise::protein::disulfide_file );
 	NEW_OPT( rebuild, "rebuild", false );
 	NEW_OPT( cluster_test, "cluster", false );
 	NEW_OPT( calc_rms, "calculate rms for input silent file", false );
@@ -486,7 +486,6 @@ main( int argc, char * argv [] )
 	NEW_OPT( n_terminus, "build N terminus", false );
 	NEW_OPT( c_terminus, "build C terminus", false );
 	NEW_OPT( cst_file, "Input file for constraints", "" );
-	NEW_OPT( disulfide_file, "Input file for disulfides", "" );
 	NEW_OPT( start_pdb, "For combine_loops, parent pdb", "" );
 	NEW_OPT( no_sample_junction, "disable modeler of residue at junction inherited from start pose", false );
 	NEW_OPT( add_peptide_plane, "Include N-acetylation and C-methylamidation caps at termini", false );

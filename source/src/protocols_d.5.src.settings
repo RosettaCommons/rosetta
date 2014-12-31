@@ -68,7 +68,6 @@ sources = {
 	"RigidBodyStepWiseSamplerValueRange",
 	"RigidBodyStepWiseSamplerWithResidueList",
 	"RigidBodyStepWiseSamplerWithResidueAlternatives",
-	"util",
     ],
     "protocols/stepwise/sampler/rna": [
         "RNA_ChiStepWiseSampler",
@@ -231,9 +230,6 @@ sources = {
     "protocols/stepwise/modeler/rna/helix": [
 	"RNA_HelixAssembler",
     ],
-    "protocols/stepwise/modeler/rna/rigid_body/": [
-	"util",
-    ],
     "protocols/stepwise/modeler/rna/o2prime/": [
 	"O2PrimePacker",
     ],
@@ -241,6 +237,9 @@ sources = {
 	"MultiPhosphateSampler",
 	"PhosphateMove",
 	"PhosphateMover",
+	"util",
+    ],
+    "protocols/stepwise/modeler/rna/rigid_body/": [
 	"util",
     ],
     "protocols/stepwise/modeler/rna/checker": [
@@ -281,7 +280,6 @@ sources = {
 	"RNA_O2PrimeMover",
 	"RNA_TorsionMover",
     ],
-
 }
 include_path = [
 ]

@@ -326,9 +326,8 @@ namespace align {
 
 		// everything that can move.
 		get_calc_rms_atom_id_map( complete_moving_atom_id_map_, pose, rmsd_res_in_pose_ );
-
 		superimpose_atom_id_map_.clear();
-		for ( Size n = 1; n < pose.total_residue(); n++ ){
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( !superimpose_res_in_pose_.has_value( n ) ) continue;
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
 				if ( complete_moving_atom_id_map_.find( AtomID( q, n ) ) != complete_moving_atom_id_map_.end() ) continue;
@@ -366,6 +365,7 @@ namespace align {
 				rmsd_ = rms_at_corresponding_atoms_no_super( pose, *reference_pose_local_, calc_rms_atom_id_map_ );
 			}
 		}
+
 
 		TR << "RMSD " << F(5,3,rmsd_) <<
 			" (" << natoms_rmsd() << " atoms in " << make_tag_with_dashes( sub_to_full(rmsd_res_in_pose_,pose) ) << "), superimposed on " << superimpose_atom_id_map_.size() << " atoms in " <<

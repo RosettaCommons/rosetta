@@ -112,7 +112,6 @@ namespace modeler {
 		core::optimization::CartesianMinimizerOP cartesian_minimizer_;
 		core::optimization::AtomTreeMinimizerOP atom_tree_minimizer_;
 		core::optimization::MinimizerOptionsOP minimizer_options_;
-		bool vary_bond_geometry_;
 		bool const allow_virtual_o2prime_hydrogens_;
 
 		protein::loop_close::StepWiseProteinCCD_CloserOP protein_ccd_closer_;

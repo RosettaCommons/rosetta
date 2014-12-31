@@ -29,6 +29,7 @@
 #include <protocols/stepwise/screener/PackScreener.hh>
 #include <protocols/stepwise/screener/SugarInstantiator.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <basic/Tracer.hh>
 
@@ -80,7 +81,8 @@ namespace packer {
 		if ( options_->sampler_perform_phosphate_pack() ){
 			phosphate_sampler_ = rna::phosphate::MultiPhosphateSamplerOP( new rna::phosphate::MultiPhosphateSampler( pose ) );
 			phosphate_sampler_->set_moving_partition_res( working_parameters_->working_moving_partition_res() );
-			phosphate_sampler_->set_scorefxn( rna::phosphate::get_phosphate_scorefxn( scorefxn_ ) );
+			phosphate_sampler_->set_scorefxn( rna::phosphate::get_phosphate_scorefxn( scorefxn_->energy_method_options() ) );
+			phosphate_sampler_->set_force_phosphate_instantiation( options_->force_phosphate_instantiation() );
 		}
 
 		if ( options_->o2prime_legacy_mode() ) { // this is the only action that is non-const for the pose... deprecate?
@@ -102,7 +104,9 @@ namespace packer {
  	void
 	StepWiseMasterPacker::initialize_packer() {
 		packer_ = packer::get_packer( scorefxn_, get_all_working_moving_res( working_parameters_ ), options_ );
-		if ( options_->o2prime_legacy_mode() )	packer_->set_pack_o2prime_hydrogens( false ); // currently handled by separate packer -- will unify soon.
+		if ( options_->o2prime_legacy_mode() )	{
+			packer_->set_pack_o2prime_hydrogens( false ); // in legacy mode, HO2' was handled by separate packer
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -119,10 +123,14 @@ namespace packer {
 																							pose::PoseOP sugar_instantiation_pose ){
 
 		// testing -- OK to move down here? No won't be inherited by the actual pose, right?
-		if ( options_->sampler_perform_phosphate_pack() ) screeners.push_back( screener::StepWiseScreenerOP( new PhosphateScreener( phosphate_sampler_ ) ) );
+		if ( options_->sampler_perform_phosphate_pack() ) {
+			screeners.push_back( screener::StepWiseScreenerOP( new PhosphateScreener( phosphate_sampler_ ) ) );
+		}
 
 		if ( options_->sampler_try_sugar_instantiation() &&
-				 working_parameters_->floating_base() )	screeners.push_back( stepwise::screener::StepWiseScreenerOP( new SugarInstantiator( *sugar_instantiation_pose, working_parameters_->working_moving_res() ) ) );
+				 working_parameters_->floating_base() )	{
+			screeners.push_back( stepwise::screener::StepWiseScreenerOP( new SugarInstantiator( *sugar_instantiation_pose, working_parameters_->working_moving_res() ) ) );
+		}
 
 		if ( options_->o2prime_legacy_mode() ){
 			screeners.push_back( screener::StepWiseScreenerOP( new O2PrimeScreener( o2prime_packer_ ) ) );
@@ -130,7 +138,7 @@ namespace packer {
 		}
 
 		packer_pose_ = pose.clone();
-		screeners.push_back( screener::StepWiseScreenerOP( new PackScreener( *packer_pose_, packer_ ) ) );
+		screeners.push_back( screener::StepWiseScreenerOP( new PackScreener( *packer_pose_, packer_ ) ) ); // includes HO2' for RNA.
 	}
 
 	///////////////////////////////////////////////////////////////////////////

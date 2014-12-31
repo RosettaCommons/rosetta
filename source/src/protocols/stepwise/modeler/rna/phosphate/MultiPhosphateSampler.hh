@@ -81,9 +81,13 @@ namespace phosphate {
 		void set_five_prime_phosphate_res( utility::vector1< Size > const & setting ){ five_prime_phosphate_res_input_ = setting; }
 		void set_three_prime_phosphate_res( utility::vector1< Size > const & setting ){ three_prime_phosphate_res_input_ = setting; }
 
+		void set_force_phosphate_instantiation( bool const & setting ){ force_phosphate_instantiation_ = setting; }
+		bool force_phosphate_instantiation() const { return force_phosphate_instantiation_; }
+
 		pose::Pose & pose();
 
 		void set_scorefxn( scoring::ScoreFunctionCOP scorefxn );
+		scoring::ScoreFunctionCOP get_scorefxn() { return scorefxn_; }
 
 		utility::vector1< PhosphateMove> phosphate_move_list() const { return phosphate_move_list_; }
 		void set_phosphate_move_list( utility::vector1< PhosphateMove> const & setting ) { phosphate_move_list_ = setting; }
@@ -104,6 +108,7 @@ namespace phosphate {
 		do_prepack( pose::Pose & pose,
 								utility::vector1< Size > const & moving_res_list );
 
+
 	private:
 
 		void initialize_parameters();
@@ -114,6 +119,11 @@ namespace phosphate {
 		utility::vector1< PhosphateMove >
 		check_moved( utility::vector1< PhosphateMove > phosphate_move_list,
 								 pose::Pose const & pose ) const;
+
+		void
+		find_uninstantiated_phosphates( pose::Pose const & pose,
+																		utility::vector1< PhosphateMove > const & phosphate_move_list,
+																		utility::vector1< PhosphateMove > & actual_phosphate_move_list ) const;
 
 		void
 		find_phosphate_contacts_other_partition( utility::vector1< Size > const & partition_res1,
@@ -134,6 +144,7 @@ namespace phosphate {
 		scoring::ScoreFunctionCOP scorefxn_;
 		Real phosphate_takeoff_donor_distance_cutoff2_;
 		bool screen_all_;
+		bool force_phosphate_instantiation_;
 
 		utility::vector1< Size > moving_partition_res_;
 		utility::vector1 < Size > five_prime_phosphate_res_input_;

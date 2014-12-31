@@ -66,6 +66,7 @@ namespace setup {
 	StepWiseMonteCarloJobDistributor::move_forward_to_next_model() {
 		while ( count_ <= nstruct_ && !get_out_tag() ){
 			count_++;
+			if ( !get_out_tag() ) TR << "Already done: " << out_tag_ << std::endl;
 		}
 	}
 
@@ -107,7 +108,6 @@ namespace setup {
 
 		out_tag_ = "S_" + ObjexxFCL::lead_zero_string_of( count_, 6 );
 		if ( tag_is_done_[ out_tag_ ] ) {
-			TR << "Already done: " << out_tag_ << std::endl;
 			return false;
 		}
 		return true; //ok, not done, so do it.

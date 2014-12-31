@@ -458,7 +458,7 @@ RNA_SilentStruct::print_header( std::ostream& out ) const
 
 void RNA_SilentStruct::print_conformation( std::ostream & output ) const {
 
-	if ( fold_tree().size() > 1 ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
+	if ( fold_tree().size() > 1 || fold_tree().num_jump() > 0 ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 		output << fold_tree();
 	}
 	for ( Size i = 1; i <= fold_tree().num_jump(); i++ ) {

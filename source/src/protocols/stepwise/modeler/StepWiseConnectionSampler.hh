@@ -204,8 +204,8 @@ namespace modeler {
 
 		// atr/rep checks
 		core::pose::PoseOP protein_atr_rep_screening_pose_;
-		rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_;
-		rna::checker::RNA_AtrRepCheckerOP virt_sugar_atr_rep_checker_;
+		rna::checker::RNA_AtrRepCheckerOP rna_atr_rep_checker_;
+		rna::checker::RNA_AtrRepCheckerOP rna_virt_sugar_atr_rep_checker_;
 		rna::checker::RNA_VDW_BinCheckerOP VDW_bin_checker_;
 		rna::checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker_;
 

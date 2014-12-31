@@ -186,6 +186,7 @@ SilentFileData::setup_extra_patches( utility::vector1< std::string > & all_patch
 	cmdline_selector_tag[ "3PrimePhos" ] = "TERMINAL_PHOSPHATE";
 	cmdline_selector_tag[ "Virtual_Ribose" ] = "VIRTUAL_RIBOSE";
 	cmdline_selector_tag[ "Virtual_RNA_Residue" ] = "VIRTUAL_RNA_RESIDUE";
+	cmdline_selector_tag[ "Virtual_RNA_Residue_Upper" ] = "VIRTUAL_RNA_RESIDUE_UPPER";
 
 	StringVectorOption & patch_selectors = option[ OptionKeys::chemical::patch_selectors ];
 	for ( Size n = 1; n <= all_patches.size(); n++ ) {
@@ -739,10 +740,12 @@ SilentFileData::read_stream(
 	mylines.push_back( sequence_line );
 	mylines.push_back( score_line    );
 
-	if ( tagset.size() )  tr.Info << "Reading " << tagset.size()
-		<< " structures from " << filename
-		<< std::endl;
-	else  tr.Info << "Reading all structures from " << filename << std::endl;
+	if ( verbose_ ) {
+		if ( tagset.size() )  tr.Info << "Reading " << tagset.size()
+																	<< " structures from " << filename
+																	<< std::endl;
+		else  tr.Info << "Reading all structures from " << filename << std::endl;
+	}
 	bool all_tags = tagset.size() == 0; //if no tags selected we read all decoys
 
 	// start looping over the structures
@@ -845,9 +848,11 @@ SilentFileData::read_stream(
 		add_structure( tmp_struct );
 	}
 
-	tr.Info << "Finished reading " << structure_map_.size() << " structures from "
-		<< filename << std::endl;
-	tr.flush();
+	if ( verbose_ ) {
+		tr.Info << "Finished reading " << structure_map_.size() << " structures from "
+						<< filename << std::endl;
+		tr.flush();
+	}
 
 	success = true;
 

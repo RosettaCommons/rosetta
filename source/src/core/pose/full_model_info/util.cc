@@ -25,6 +25,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/loop_graph/LoopGraph.hh>
 #include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/stream_util.hh>
@@ -191,12 +192,43 @@ update_constraint_set_from_full_model_info( pose::Pose & pose ){
 	pose.constraint_set( cst_set );
 }
 
+/////////////////////////////////////////////////////////////////////
+void
+update_disulfides_from_full_model_info( pose::Pose & pose ){
+	FullModelInfo const & full_model_info = nonconst_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	FullModelParametersCOP full_model_parameters = full_model_info.full_model_parameters();
+	std::map< Size, utility::vector1< Size > > const & disulfides =
+		full_model_parameters->get_parameter_as_res_lists( DISULFIDES );
+
+	utility::vector1< std::pair<Size,Size> > working_disulf_bonds;
+	for ( std::map< Size, utility::vector1< Size > >::const_iterator it = disulfides.begin();
+				it != disulfides.end(); it++ ){
+		if ( it->first == 0 ) continue; // 0 means the residues that are *not* disulfide-bonded.
+		if ( it->second.size() == 0 ) continue;
+		runtime_assert( it->second.size() == 2 );
+		Size const & res1 =  it->second[1];
+		Size const & res2 =  it->second[2];
+		if ( !res_list.has_value( res1 ) ) continue;
+		if ( !res_list.has_value( res2 ) ) continue;
+		std::pair< Size, Size > const disulfide_pair =
+			std::make_pair( full_model_info.full_to_sub( res1 ),
+											full_model_info.full_to_sub( res2 ) );
+		working_disulf_bonds.push_back( disulfide_pair );
+		runtime_assert( pose.residue_type( disulfide_pair.first  ).aa() == core::chemical::aa_cys );
+		runtime_assert( pose.residue_type( disulfide_pair.second ).aa() == core::chemical::aa_cys );
+	}
+
+	pose.conformation().fix_disulfides( working_disulf_bonds );
+
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 update_pose_objects_from_full_model_info( pose::Pose & pose ) {
 	update_pdb_info_from_full_model_info( pose );
 	update_constraint_set_from_full_model_info( pose );
+	update_disulfides_from_full_model_info( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -482,29 +514,44 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 	/////////////////////////////////////////////////////////
 	void
-	update_pose_domain_map( Pose & pose,
-													Size & pose_domain_number,
-													utility::vector1< Size > & pose_domain_map ){
-
-		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+	update_pose_domain_map_const( Pose const & pose,
+																Size & pose_domain_number,
+																utility::vector1< Size > & pose_domain_map ){
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 		for ( Size k = 1; k <= res_list.size(); k++ ) {
 			pose_domain_map[ res_list[k] ] = pose_domain_number;
 		}
 		utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
 		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
-			update_pose_domain_map( *(other_pose_list[ n ]), ++pose_domain_number, pose_domain_map );
+			update_pose_domain_map_const( *(other_pose_list[ n ]), ++pose_domain_number, pose_domain_map );
 		}
-
 	}
+
+	/////////////////////////////////////////////////////////
+	void
+	update_pose_domain_map( Pose & pose,
+													Size & pose_domain_number,
+													utility::vector1< Size > & pose_domain_map ){
+		make_sure_full_model_info_is_setup( pose );
+		update_pose_domain_map_const( pose, pose_domain_number, pose_domain_map );
+	}
+
 
 	/////////////////////////////////////////////////////////
 	utility::vector1< Size >
 	figure_out_pose_domain_map( pose::Pose & pose ){
+		make_sure_full_model_info_is_setup( pose );
+		return figure_out_pose_domain_map_const( pose );
+	}
 
-		utility::vector1< Size > pose_domain_map( full_model_size( pose ), 0 );
+	/////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	figure_out_pose_domain_map_const( pose::Pose const & pose ){
+
+		utility::vector1< Size > pose_domain_map( const_full_model_info( pose ).size(), 0 );
 		Size pose_domain_number = 1;
-		update_pose_domain_map( pose, pose_domain_number, pose_domain_map );
+		update_pose_domain_map_const( pose, pose_domain_number, pose_domain_map );
 		return pose_domain_map;
 	}
 
@@ -592,19 +639,47 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// deprecate soon in favor of direct loop-graph call
 	Size
 	get_number_missing_residues_and_connections( pose::Pose & pose ) {
+		make_sure_full_model_info_is_setup( pose );
 		utility::vector1< char > missing_residues;
-		return get_number_missing_residues_and_connections( pose, missing_residues );
+		utility::vector1< utility::vector1< Size > > loop_suite_lengths;
+		return get_number_missing_residues_and_connections( pose, missing_residues, loop_suite_lengths );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// deprecate soon in favor of direct loop-graph call
 	Size
-	get_number_missing_residues_and_connections( pose::Pose & pose,
-																							 utility::vector1< char > & missing_residues ) {
+	get_number_missing_residues_and_connections( pose::Pose const & pose,
+																							 utility::vector1< char > & missing_residues ){
+		utility::vector1< utility::vector1< Size > > loop_suites;
+		return get_number_missing_residues_and_connections( pose, missing_residues, loop_suites );
+	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// deprecate soon in favor of direct loop-graph call
+	Size
+	get_number_missing_residues_and_connections( pose::Pose const & pose,
+																							 utility::vector1< utility::vector1< Size > > loop_suites ){
+		utility::vector1< char > missing_residues;
+		return get_number_missing_residues_and_connections( pose, missing_residues, loop_suites );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// sort of a hodge-podge function -- might be better to unify with LoopGraph?
+	Size
+	get_number_missing_residues_and_connections( pose::Pose const & pose,
+																							 utility::vector1< char > & missing_residues,
+																							 utility::vector1< utility::vector1< Size > > & loop_suites ) {
+
+		////////////////////////////////////////////////////////
+		// following is old.
+		// probably should replace with LoopGraph -- see below.
+		// REMOVE in 2015.
+		////////////////////////////////////////////////////////
 		using namespace core::pose::full_model_info;
-		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
+		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
 		utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
 		utility::vector1< Size > const & fixed_domain_map = const_full_model_info( pose ).fixed_domain_map();
 		utility::vector1< Size > const & working_res = const_full_model_info( pose ).working_res();
@@ -619,19 +694,36 @@ check_full_model_info_OK( pose::Pose const & pose ){
 				if ( pose_domain_map[ n ] == 0 && working_res.has_value( n ) ) {
 					nmissing++;
 					missing_residues.push_back( full_sequence[ n - 1 ] );
-				}
+					}
 			} else if ( n < nres &&
 									!cutpoint_open.has_value( n ) &&
+									fixed_domain_map[ n   ] > 0 && /* put in later, during loop_graph checks --rd2014 */
 									fixed_domain_map[ n+1 ] > 0 &&
 									fixed_domain_map[ n+1 ] != fixed_domain_map[ n ] ) {
 				// missing suites between fixed domains (happens in, e.g., four-way junctions with no internal residues)
-				if ( pose_domain_map[ n ] == 0 ||
-						 pose_domain_map[ n+1 ] == 0 ||
+				if ( pose_domain_map[ n ] == 0 || /* don't need this? check with assert below */
+						 pose_domain_map[ n+1 ] == 0 || /* don't need this? check with assert below */
 						 ( pose_domain_map[ n ] != pose_domain_map[ n+1 ] ) ) {
+					runtime_assert( pose_domain_map[ n ] != 0 );
+					runtime_assert( pose_domain_map[ n+1 ] != 0 );
 					nmissing++;
 				}
 			}
 		}
+
+		//////////////////////////////////////////////////////////////////////////////
+		// Testing use of LoopGraph. -- rhiju, dec. 2014
+		//
+		//  if runtime_assert()'s are not triggered, then deprecate above... in fact
+		//   just carve out separate functions for get_number_missing_residues_and_connections,
+		//   which is kind of a silly mixed up function.
+		//
+		//////////////////////////////////////////////////////////////////////////////
+		core::scoring::loop_graph::LoopGraph loop_graph;
+		loop_graph.update_loops( pose );
+		runtime_assert( nmissing == loop_graph.nmissing( pose ) );
+		runtime_assert( missing_residues == loop_graph.missing_residues( pose ) );  // if OK, switch to this.
+		loop_suites = loop_graph.loop_suites();
 
 		return nmissing;
 	}

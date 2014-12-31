@@ -59,6 +59,7 @@ private:
 	bool strict_column_mode_;
 	bool record_source_;
 	std::string silent_struct_type_;
+	bool verbose_;
 	core::pose::full_model_info::FullModelParametersOP full_model_parameters_;
 
 public:
@@ -70,7 +71,8 @@ public:
 		store_argv_in_file_( false ),
 		strict_column_mode_( false ),
 		record_source_( false ),
-		silent_struct_type_("") // by default its option controlled.
+		silent_struct_type_(""), // by default its option controlled.
+		verbose_( true )
 	{}
 
 	SilentFileData( std::string const& filename ) :
@@ -78,7 +80,8 @@ public:
 		store_argv_in_file_( false ),
 		strict_column_mode_( false ),
 		record_source_( false ),
-		silent_struct_type_("") // by default its option controlled.
+		silent_struct_type_(""), // by default its option controlled.
+		verbose_( true )
 	{}
 
 	SilentFileData(
@@ -91,7 +94,8 @@ public:
 		store_argv_in_file_( store_argv_in_file ),
 		strict_column_mode_( strict_column_mode ),
 		record_source_( false ),
-		silent_struct_type_( silent_struct_type )
+		silent_struct_type_( silent_struct_type ),
+		verbose_( true )
 	{}
 
 	/// @brief Read in the SilentStruct objects contained in the given filename.
@@ -190,6 +194,10 @@ public:
 	void set_filename( std::string filename ) {
 		filename_ = filename;
 	}
+
+	/// @brief Sets the filename that this SilentFileData object will
+	/// write to.
+	void set_verbose( bool const setting ) { verbose_ = setting;	}
 
 	SilentStructOP operator[] (std::string tag);
 

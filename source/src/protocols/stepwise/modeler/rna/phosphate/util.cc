@@ -99,8 +99,8 @@ namespace phosphate {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	copy_over_phosphate_variants( pose::Pose & pose_input,
-			pose::Pose const & reference_pose,
-			utility::vector1< PhosphateMove > const & phosphate_move_list )
+																pose::Pose const & reference_pose,
+																utility::vector1< PhosphateMove > const & phosphate_move_list )
 	{
 		using namespace core::id;
 		using namespace core::chemical;
@@ -157,6 +157,7 @@ namespace phosphate {
 
 		}
 
+		map_constraints_from_original_pose( pose_input, pose );
 		pose_input = pose; // to prevent some problems with graphics thread
 	}
 
@@ -177,22 +178,17 @@ namespace phosphate {
 	////////////////////////////////////////////////////////////////////
 	core::scoring::ScoreFunctionCOP
 	get_phosphate_scorefxn(){
-		return get_phosphate_scorefxn( 0 );
+		core::scoring::methods::EnergyMethodOptions options;
+		return get_phosphate_scorefxn( options );
 	}
 
 	////////////////////////////////////////////////////////////////////
-	// I originally wanted this to be efficient by taking etables
-	//  and stuff from the input scorefxn, but couldn't get that to work..
 	core::scoring::ScoreFunctionCOP
-	get_phosphate_scorefxn( core::scoring::ScoreFunctionCOP /*scorefxn*/ ){
+	get_phosphate_scorefxn( core::scoring::methods::EnergyMethodOptions const & options ) {
 		using namespace scoring;
 		ScoreFunctionOP phosphate_scorefxn;
-		//		if ( scorefxn != 0 ) {
-		//			phosphate_scorefxn = scorefxn->clone();
-		//			//for ( Size n = 1; n <= end_of_score_type_enumeration; n++ ) phosphate_scorefxn->set_weight( ScoreType(n), 0.0 );
-		//		} else {
 		phosphate_scorefxn = ScoreFunctionOP( new ScoreFunction ); // creating anew seems wasteful, but having problems with setting from input scorefxn.
-			//		}
+		phosphate_scorefxn->set_energy_method_options( options );
 		phosphate_scorefxn->set_weight( scoring::fa_atr, 0.1); // argh seems to trigger etable?
 		phosphate_scorefxn->set_weight( scoring::fa_rep, 0.1);
 		phosphate_scorefxn->set_weight( scoring::free_suite, 1.0 );

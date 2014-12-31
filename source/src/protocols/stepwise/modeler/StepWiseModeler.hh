@@ -89,6 +89,8 @@ namespace modeler {
 
 		void set_moving_res_list( utility::vector1< Size > const & setting ){ moving_res_list_ = setting; }
 
+		scoring::ScoreFunctionCOP scorefxn() { return scorefxn_; }
+
 	private:
 
 		void

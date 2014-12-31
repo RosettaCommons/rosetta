@@ -576,6 +576,43 @@ namespace full_model_info {
 		return *full_model_pose_for_constraints_;
 	}
 
+	////////////////////////////////////////////////////
+	void
+	FullModelParameters::read_disulfides( std::string const disulfide_file ) {
+
+		if ( disulfide_file.size() == 0 ) return;
+		utility::vector1< Size > disulfide_map( size(), 0 );
+
+		// could use core::io::raw_data::DisulfideFile
+		// but, strangely, it does not seem to provide the
+		// chain/residue renumbering functionality that it should.
+		utility::io::izstream data( disulfide_file.c_str() );
+		Size count( 0 );
+		while( data.good() ) {
+			std::string line;
+			getline( data, line );
+			if ( line[0] == '#' || line[0] == '\n' || line.size() == 0 ) continue;
+
+			bool string_is_ok( false );
+			std::pair< std::vector< int >, std::vector< char > > resnum_and_chain = utility::get_resnum_and_chain( line, string_is_ok );
+			runtime_assert( string_is_ok );
+			runtime_assert( resnum_and_chain.first.size()  == 2);
+			runtime_assert( resnum_and_chain.second.size() == 2);
+			count++;
+			for ( int k = 0; k <= 1; k++ ){
+				Size const full_model_number = conventional_to_full( resnum_and_chain.first[k], resnum_and_chain.second[k] );
+				runtime_assert( full_sequence_[ full_model_number - 1 ] == 'C' ); // better be cysteine.
+				// disallow residue to have more than one disulfide partner:
+				runtime_assert( disulfide_map[ full_model_number ] == 0 );
+				disulfide_map[ full_model_number ] = count;
+			}
+		}
+		data.close();
+
+		set_parameter( DISULFIDES, disulfide_map );
+	}
+
+
 } //full_model_info
 } //pose
 } //core

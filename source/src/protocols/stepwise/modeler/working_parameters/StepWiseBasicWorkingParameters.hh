@@ -133,10 +133,6 @@ namespace working_parameters {
 		utility::vector1< core::Size > const &  working_calc_rms_res() const { return working_calc_rms_res_; }
 		void set_working_calc_rms_res(	utility::vector1< core::Size > const & working_calc_rms_res ) { working_calc_rms_res_ = working_calc_rms_res; }
 
-		utility::vector1< core::Size > const &  terminal_res() const { return terminal_res_; }
-		void set_terminal_res(	utility::vector1< core::Size > const & terminal_res ) { terminal_res_ = terminal_res; }
-		utility::vector1< core::Size > const &  working_terminal_res() const { return working_terminal_res_; }
-
 		utility::vector1< core::Size > const &  working_moving_partition_res() const { return working_moving_partition_res_; }
 		void set_working_moving_partition_res(	utility::vector1< core::Size > const & working_moving_partition_res ) {		working_moving_partition_res_ = working_moving_partition_res; }
 

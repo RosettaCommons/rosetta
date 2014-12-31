@@ -190,6 +190,7 @@ namespace modeler {
 
 		// if using native constraints, those got added to pose during align_pose_and_add_rmsd_constraints()
 		pose.constraint_set( cst_set_ );
+		( *scorefxn_ )( pose ); // updating constraints clears score.
 
 		// Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
 		working_parameters_.reset();

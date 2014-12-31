@@ -81,7 +81,6 @@ namespace modeler {
 		working_moving_res_( get_all_working_moving_res( working_parameters ) ),
 		working_fixed_res_( working_parameters->working_fixed_res() ),
 		working_calc_rms_res_( working_parameters->working_calc_rms_res() ), // only for output -- may deprecate.
-		vary_bond_geometry_( false ), // it remains unclear whether this is really different from cartesian.
 		allow_virtual_o2prime_hydrogens_( options->allow_virtual_o2prime_hydrogens() && !options->o2prime_legacy_mode() ),
 		protein_ccd_closer_( protein::loop_close::StepWiseProteinCCD_CloserOP( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) ) )
 	{
@@ -179,7 +178,7 @@ namespace modeler {
 		atom_tree_minimizer_ = core::optimization::AtomTreeMinimizerOP( new AtomTreeMinimizer );
 		cartesian_minimizer_ = core::optimization::CartesianMinimizerOP( new CartesianMinimizer );
     bool const use_nblist( true );
-    minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( options_->min_type(), options_->min_tolerance(), use_nblist, false, false ) );
+    minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( options_->min_type() /*default dfpmin_armijo_nonmonotone*/, options_->min_tolerance() /* default 0.000025*/, use_nblist, false, false ) );
     minimizer_options_->nblist_auto_update( true );
 	}
 
@@ -211,9 +210,8 @@ namespace modeler {
 		pose.constraint_set( save_pose_constraints );
 		mm = mm_save;
 
-		//		minimize_scorefxn_->show( pose );
+
 		rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, allow_virtual_o2prime_hydrogens_ );
-		//		minimize_scorefxn_->show( pose );
 
 	}
 

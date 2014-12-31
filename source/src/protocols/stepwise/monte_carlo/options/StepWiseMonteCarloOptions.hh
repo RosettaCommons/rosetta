@@ -161,6 +161,12 @@ namespace options {
 		bool const & sampler_perform_phosphate_pack() const { return sampler_perform_phosphate_pack_; }
 		void set_sampler_perform_phosphate_pack( bool const & setting ){ sampler_perform_phosphate_pack_ = setting; }
 
+ 		bool const & force_phosphate_instantiation() const { return force_phosphate_instantiation_; }
+		void set_force_phosphate_instantiation( bool const & setting ){ force_phosphate_instantiation_ = setting; }
+
+ 		bool const & virtualize_packable_moieties_in_screening_pose() const { return virtualize_packable_moieties_in_screening_pose_; }
+		void set_virtualize_packable_moieties_in_screening_pose( bool const & setting ){ virtualize_packable_moieties_in_screening_pose_ = setting; }
+
 		bool const & rebuild_bulge_mode() const { return rebuild_bulge_mode_; }
 		void set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
 
@@ -228,6 +234,8 @@ namespace options {
 		bool virtual_sugar_do_minimize_;
 		bool make_movie_;
 		bool sampler_perform_phosphate_pack_;
+		bool force_phosphate_instantiation_;
+		bool virtualize_packable_moieties_in_screening_pose_;
 		bool rebuild_bulge_mode_;
 		bool tether_jump_;
 		bool local_redock_only_;

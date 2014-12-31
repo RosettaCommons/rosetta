@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/sampler/rigid_body/util.hh
+/// @file protocols/toolbox/rigid_body/util.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_sampler_rigid_body_FloatingBaseUtil_HH
-#define INCLUDED_protocols_sampler_rigid_body_FloatingBaseUtil_HH
+#ifndef INCLUDED_protocols_toolbox_rigid_body_FloatingBaseUtil_HH
+#define INCLUDED_protocols_toolbox_rigid_body_FloatingBaseUtil_HH
 
 #include <core/id/AtomID.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -30,8 +30,7 @@ using namespace core::pose;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 namespace protocols {
-namespace stepwise {
-namespace sampler {
+namespace toolbox {
 namespace rigid_body {
 
 	void
@@ -133,8 +132,7 @@ namespace rigid_body {
 
 
 } //rigid_body
-} //sampler
-} //stepwise
+} //toolbox
 } //protocols
 
 #endif

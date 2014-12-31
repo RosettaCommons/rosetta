@@ -23,7 +23,7 @@
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/stepwise/sampler/rigid_body/util.hh>
+#include <protocols/toolbox/rigid_body/util.hh>
 #include <protocols/stepwise/sampler/rigid_body/EulerAngles.hh>
 
 #include <core/optimization/MinimizerOptions.hh>

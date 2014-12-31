@@ -75,6 +75,9 @@ namespace options {
 		core::Size const & num_random_samples() const { return num_random_samples_; };
 		void set_num_random_samples( core::Size const & setting ){ num_random_samples_ = setting; }
 
+		core::Size const & max_tries_multiplier_for_ccd() const { return max_tries_multiplier_for_ccd_; };
+		void set_max_tries_multiplier_for_ccd( core::Size const & setting ){ max_tries_multiplier_for_ccd_ = setting; }
+
 		void set_atr_rep_screen( bool const & setting ){ atr_rep_screen_ = setting; }
 		bool atr_rep_screen() const{ return atr_rep_screen_; }
 
@@ -114,6 +117,7 @@ namespace options {
 		core::Real cluster_rmsd_;
 		core::Size num_pose_minimize_;
 		core::Size num_random_samples_;
+		core::Size max_tries_multiplier_for_ccd_;
 		bool atr_rep_screen_;
 		core::Real rmsd_screen_;
 

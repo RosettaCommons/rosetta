@@ -86,6 +86,7 @@ public:
 private:
 
 	Real const bulge_bonus_;
+	bool const rna_bulge_bonus_once_per_loop_;
 
 };
 

@@ -57,6 +57,7 @@ namespace options {
 		cluster_rmsd_ = 0.0; // signal for clusterers to use their default value
 		num_pose_minimize_ = 0; // signal to minimize all.
 		num_random_samples_ = 20;
+		max_tries_multiplier_for_ccd_ = 10;
 		atr_rep_screen_ = true;
 		rmsd_screen_ = 0.0;
 		output_minimized_pose_list_ = false;
@@ -78,6 +79,7 @@ namespace options {
 	StepWiseBasicOptions::initialize_from_command_line(){
 		sampler_silent_file_ = option[ basic::options::OptionKeys::stepwise::sampler_silent_file ]();
 		num_random_samples_ = option[ basic::options::OptionKeys::stepwise::num_random_samples ]();
+		max_tries_multiplier_for_ccd_ = option[ basic::options::OptionKeys::stepwise::max_tries_multiplier_for_ccd ]();
 		sampler_num_pose_kept_ = option[ basic::options::OptionKeys::stepwise::rna::sampler_num_pose_kept ]();
 		if ( option[ basic::options::OptionKeys::cluster::radius ].user() ) cluster_rmsd_ = option[ basic::options::OptionKeys::cluster::radius ]();
 		atr_rep_screen_ = option[ basic::options::OptionKeys::stepwise::atr_rep_screen ]();
@@ -88,6 +90,7 @@ namespace options {
 		min_tolerance_ = option[ basic::options::OptionKeys::stepwise::min_tolerance ]();
 		vary_rna_bond_geometry_ = option[ basic::options::OptionKeys::rna::vary_geometry ]();
 		vary_polar_hydrogen_geometry_ = option[ basic::options::OptionKeys::stepwise::vary_polar_hydrogen_geometry ]();
+		output_minimized_pose_list_ = option[ basic::options::OptionKeys::stepwise::output_minimized_pose_list ]();
 	}
 
 

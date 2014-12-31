@@ -834,34 +834,36 @@ display_residues_wireframe(
 		if ( i>1 && !rsd.is_lower_terminus() && rsd.is_polymer() ) {
 
 			Residue const & prev_rsd( *(residues[i-1]));
-			int const atom1( prev_rsd.mainchain_atoms()[ prev_rsd.n_mainchain_atoms() ] );
-			int const atom2( rsd.mainchain_atoms()[ 1 ] );
+			if ( prev_rsd.is_polymer() && prev_rsd.n_mainchain_atoms() > 0 ) {
+				int const atom1( prev_rsd.mainchain_atoms()[ prev_rsd.n_mainchain_atoms() ] );
+				int const atom2( rsd.mainchain_atoms()[ 1 ] );
 
-			Vector const color1( get_atom_color( gs, residues, i-1,   atom1 ) );
-			Vector const color2( get_atom_color( gs, residues, i  , atom2 ) );
+				Vector const color1( get_atom_color( gs, residues, i-1,   atom1 ) );
+				Vector const color2( get_atom_color( gs, residues, i  , atom2 ) );
 
-			Vector const xyz1( prev_rsd.xyz( atom1 ) - center );
-			Vector const xyz2(      rsd.xyz( atom2 ) - center );
+				Vector const xyz1( prev_rsd.xyz( atom1 ) - center );
+				Vector const xyz2(      rsd.xyz( atom2 ) - center );
 
-			Vector const bond( xyz2 - xyz1 );
-			if ( !prev_rsd.is_virtual( atom1 ) &&
-					 !rsd.is_virtual( atom2 ) &&
-					 bond.length_squared() <= graphics::BOND_LENGTH_CUTOFF2 )  {
+				Vector const bond( xyz2 - xyz1 );
+				if ( !prev_rsd.is_virtual( atom1 ) &&
+						 !rsd.is_virtual( atom2 ) &&
+						 bond.length_squared() <= graphics::BOND_LENGTH_CUTOFF2 )  {
 
-				Vector width( cross( bond, z ) );
-				if ( width.length_squared() ) width.normalize();
-				width *= graphics::protein_wireframeScale;
+					Vector width( cross( bond, z ) );
+					if ( width.length_squared() ) width.normalize();
+					width *= graphics::protein_wireframeScale;
 
-				// also need to draw the elbow?
-				//			if (bond.length_squared() < 9.0 ){
-				glColor3fxyz( color1 );
-				glBegin(GL_POLYGON);
-				glVertex3fxyz ( xyz1 + width );
-				glVertex3fxyz ( xyz1 - width );
-				glColor3fxyz( color2 );
-				glVertex3fxyz ( xyz2 - width );
-				glVertex3fxyz ( xyz2 + width );
-				glEnd();
+					// also need to draw the elbow?
+					//			if (bond.length_squared() < 9.0 ){
+					glColor3fxyz( color1 );
+					glBegin(GL_POLYGON);
+					glVertex3fxyz ( xyz1 + width );
+					glVertex3fxyz ( xyz1 - width );
+					glColor3fxyz( color2 );
+					glVertex3fxyz ( xyz2 - width );
+					glVertex3fxyz ( xyz2 + width );
+					glEnd();
+				}
 			}
 		}
 
@@ -877,6 +879,7 @@ display_residues_wireframe(
 				Size const n( nbrs[jj] );
 				if ( n < m ) continue;
 				//if ( rsd.atom_type(m).is_hydrogen() && graphics::exclude_hydrogens ) continue;
+
 
 				Vector const color1( get_atom_color( gs, residues, i, m ) );
 				Vector const color2( get_atom_color( gs, residues, i, n ) );
@@ -897,6 +900,7 @@ display_residues_wireframe(
 
 				glColor3fxyz( color1 );
 
+
 				if ( prev_set[ m ] ) {
 					// draw the elbow
 					glBegin(GL_POLYGON);
@@ -910,6 +914,7 @@ display_residues_wireframe(
 					prev1[m] = xyz1 - width;
 					prev2[m] = xyz1 + width;
 				}
+
 
 				glBegin(GL_POLYGON);
 				glVertex3fxyz ( xyz1 + width );
@@ -1572,6 +1577,39 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 			} // jj
 		} // i
 	} // nres
+
+	// detect disulfides...
+	Real const DISULFIDE_LENGTH_CUTOFF2( 3.0 * 3.0 );
+	for ( int m = start; m <= end; m++ ){
+		if ( residues[ m ]->aa() != core::chemical::aa_cys ) continue;
+		Size const i = residues[ m ]->atom_index( " SG " );
+		Vector const & xyz1 = residues[ m ]->xyz( i );
+
+		for ( int n = start; n <= end; n++ ){
+			if ( residues[ n ]->aa() != core::chemical::aa_cys ) continue;
+			Size const j = residues[ n ]->atom_index( " SG " );
+			Vector const & xyz2 = residues[ n ]->xyz( j );
+
+			Vector const bond( xyz2 - xyz1 );
+			if (bond.length_squared() > DISULFIDE_LENGTH_CUTOFF2 ) continue;
+
+			Vector width( cross( bond, z ) );
+			if ( width.length_squared() ) width.normalize();
+			width *= xwidth;
+
+			Vector const color1 = get_atom_color( gs, residues, m, i );
+			Vector const color2 = get_atom_color( gs, residues, n, j );
+			glColor3fxyz( color1 );
+			glBegin(GL_POLYGON);
+			glVertex3fxyz ( xyz1 + width );
+			glVertex3fxyz ( xyz1 - width );
+			glColor3fxyz( color2 ); // change color
+			glVertex3fxyz ( xyz2 - width );
+			glVertex3fxyz ( xyz2 + width );
+			glEnd();
+	} // n
+} // m
+
 } // void draw_sidechains
 
 

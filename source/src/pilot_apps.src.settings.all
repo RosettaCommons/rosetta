@@ -251,6 +251,9 @@ sources = {
 	# E ######################################################################
 
 	# F ######################################################################
+	"pilot/fcchou" : [
+	    #"adenosine_sample_around", # /* Fang-Chieh Chou, demos/sample_around */
+	],
 	"pilot/firas" : [
 		#"check_burial", # /* Firas,Documentation Location,Demo Location */
 	],

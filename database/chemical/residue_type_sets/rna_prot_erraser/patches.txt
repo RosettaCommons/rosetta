@@ -13,6 +13,8 @@
 ../rna_phenix/patches/3prime_end_OH.txt
 ../rna_phenix/patches/5prime_end_OH.txt
 ../rna_phenix/patches/5prime_end_phosphate.txt
+../fa_standard/patches/nucleic/rna/5prime_phosphate.txt # FIVE_PRIME_PHOSPHATE
+../fa_standard/patches/nucleic/rna/3prime_phosphate.txt # THREE_PRIME_PHOSPHATE
 
 ../fa_standard_05.2009_icoor/patches/CtermProteinFull.txt
 ../fa_standard_05.2009_icoor/patches/NtermProteinFull.txt

@@ -70,6 +70,9 @@ namespace options {
 		bool const & disallow_realign() const { return disallow_realign_; }
 		void set_disallow_realign( bool const & setting ){ disallow_realign_ = setting; }
 
+		bool const & virtualize_packable_moieties_in_screening_pose() const { return virtualize_packable_moieties_in_screening_pose_; }
+		void set_virtualize_packable_moieties_in_screening_pose( bool const & setting ){ virtualize_packable_moieties_in_screening_pose_ = setting; }
+
 protected:
 
 		void
@@ -86,6 +89,7 @@ protected:
 		bool dump_;
 		bool skip_minimize_;
 		bool disallow_realign_;
+		bool virtualize_packable_moieties_in_screening_pose_;
 
 	};
 

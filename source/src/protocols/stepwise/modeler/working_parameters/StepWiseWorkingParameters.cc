@@ -110,6 +110,12 @@ namespace working_parameters {
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
+	StepWiseWorkingParameters::set_terminal_res( utility::vector1< core::Size > const & setting ){
+		terminal_res_ = setting;
+		working_terminal_res_ = apply_full_to_sub_mapping( terminal_res_ );
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	void
 	StepWiseWorkingParameters::set_force_north_sugar_list( utility::vector1< core::Size > const & setting ){
 		force_north_sugar_list_ = setting;
 		working_force_north_sugar_list_ = apply_full_to_sub_mapping( force_north_sugar_list_ );

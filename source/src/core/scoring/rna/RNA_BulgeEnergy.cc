@@ -26,6 +26,9 @@
 
 #include <utility/vector1.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+
 
 namespace core {
 namespace scoring {
@@ -53,7 +56,8 @@ RNA_BulgeEnergyCreator::score_types_for_method() const {
 /// ctor
 RNA_BulgeEnergy::RNA_BulgeEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new RNA_BulgeEnergyCreator ) ),
-	bulge_bonus_( -10.0 ) /*Totally made up for now*/
+	bulge_bonus_( -10.0 ), /*Totally made up for now*/
+	rna_bulge_bonus_once_per_loop_( basic::options::option[ basic::options::OptionKeys::score::rna_bulge_bonus_once_per_loop ]() /*default true*/)
 {}
 
 RNA_BulgeEnergy::~RNA_BulgeEnergy() {}
@@ -108,8 +112,17 @@ RNA_BulgeEnergy::finalize_total_energy(
 	//  variant types, but does have  a full_model_info object that tracks all residues that
 	//  need to be built ("missing").
 	if ( full_model_info_defined( pose ) ) {
-		Size nmissing = get_number_missing_residues_and_connections( pose );
-		totals[ rna_bulge ] += bulge_bonus_ * nmissing;
+		utility::vector1< utility::vector1< Size > > loop_suites;
+		Size nmissing = get_number_missing_residues_and_connections( pose, loop_suites );
+
+		if ( rna_bulge_bonus_once_per_loop_ ){
+			// refactor -- have entropic bonus for each loop, but don't increase the
+			//  bonus with the number of residues in the loop.
+			totals[ rna_bulge ] += bulge_bonus_ * loop_suites.size();
+		} else {
+			// initial setting -- each missing residue gets a bonus.
+			totals[ rna_bulge ] += bulge_bonus_ * nmissing;
+		}
 	}
 
 }

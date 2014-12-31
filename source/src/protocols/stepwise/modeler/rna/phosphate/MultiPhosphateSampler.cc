@@ -63,6 +63,7 @@ namespace phosphate {
 	MultiPhosphateSampler::clone_sampler() const {
 		MultiPhosphateSamplerOP multi_phosphate_sampler( new MultiPhosphateSampler( *pose_with_original_phosphates_ ) );
 		multi_phosphate_sampler->set_screen_all( screen_all_ );
+		multi_phosphate_sampler->set_force_phosphate_instantiation( force_phosphate_instantiation_ );
 		multi_phosphate_sampler->set_phosphate_move_list( phosphate_move_list_ );
 		return multi_phosphate_sampler;
 	}
@@ -71,13 +72,16 @@ namespace phosphate {
 	void
 	MultiPhosphateSampler::initialize_parameters(){
 		screen_all_ = true ;
+		force_phosphate_instantiation_ = false;
 		phosphate_takeoff_donor_distance_cutoff2_ = 8.0 * 8.0;
-		scorefxn_ = get_phosphate_scorefxn();
 	}
 
 	////////////////////////////////////////////////////////////////////
 	void
 	MultiPhosphateSampler::sample_phosphates(){
+
+		if (scorefxn_ == 0) scorefxn_ = get_phosphate_scorefxn();
+
 		phosphate_move_list_ = initialize_phosphate_move_list( *phosphate_sample_pose_ );
 		copy_over_phosphate_variants( *phosphate_sample_pose_, *pose_with_original_phosphates_, phosphate_move_list_ );
 
@@ -87,6 +91,7 @@ namespace phosphate {
 		instantiated_some_phosphate_ = false;
 		for ( Size i = 1; i <= actual_phosphate_move_list_.size(); i++ ){
 			PhosphateMover phosphate_mover( actual_phosphate_move_list_[i], scorefxn_ );
+			phosphate_mover.set_force_phosphate_instantiation( force_phosphate_instantiation_ );
 			phosphate_mover.apply( *phosphate_sample_pose_ );
 			if ( phosphate_mover.instantiated_phosphate() ) instantiated_some_phosphate_ = true;
 		}
@@ -137,6 +142,9 @@ namespace phosphate {
 						 !pose.residue_type( n ).has_variant_type( "CUTPOINT_UPPER" ) &&
 						 !pose.residue_type( n ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) ){
 					if ( static_cast<int>( n ) == pose.fold_tree().root() ){
+						// Note -- how to fix this? The only way would be to have the fold tree start inside the residue, e.g.
+						// at the base, rather than at phosphate. In current Rosetta, the only way to do that is to create a
+						// separate virtual residue, and have a jump into this 'root' residue. Sigh.
 						TR.Debug << "skipping pack of root phosphate at " << n << ". In the future, fix this, rhiju!" << std::endl;
 						continue;
 					}
@@ -181,6 +189,8 @@ namespace phosphate {
 			}
 		}
 
+		if ( force_phosphate_instantiation_ ) find_uninstantiated_phosphates( pose, phosphate_move_list_, actual_phosphate_move_list );
+
 		// check phosphates that make cross-partition contacts.
 		find_phosphate_contacts_other_partition( partition_res1, partition_res2, pose,
 																						 phosphate_move_list, actual_phosphate_move_list );
@@ -197,6 +207,24 @@ namespace phosphate {
 		}
 
 		return actual_phosphate_move_list;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	void
+	MultiPhosphateSampler::find_uninstantiated_phosphates( pose::Pose const & pose,
+																												 utility::vector1< PhosphateMove > const & phosphate_move_list,
+																												 utility::vector1< PhosphateMove > & actual_phosphate_move_list ) const {
+
+		for ( Size i = 1; i <= phosphate_move_list.size(); i++ ){
+			PhosphateMove const & phosphate_move = phosphate_move_list[ i ];
+			if ( actual_phosphate_move_list.has_value( phosphate_move ) ) continue;
+			Size const n = phosphate_move.rsd();
+			if ( phosphate_move.terminus() == FIVE_PRIME_PHOSPHATE &&
+					 pose.residue( n ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) continue;
+			if ( phosphate_move.terminus() == THREE_PRIME_PHOSPHATE &&
+					 pose.residue( n ).has_variant_type( core::chemical::THREE_PRIME_PHOSPHATE ) ) continue;
+			actual_phosphate_move_list.push_back( phosphate_move );
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////

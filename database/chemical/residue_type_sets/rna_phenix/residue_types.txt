@@ -11,9 +11,6 @@ MM_ATOM_TYPE_SET fa_standard
 ../fa_standard/residue_types/rosetta_specific/VRT.params
 ../fa_standard/residue_types/rosetta_specific/VRT1.params
 
-##probe atom for testing solvation stuff:
-#../fa_standard/residue_types/extra/C.params
-
 ## water & metal ions
 #../fa_standard/residue_types/water/TP3.params
 #../fa_standard/residue_types/metal_ions/MG.params
@@ -25,5 +22,6 @@ MM_ATOM_TYPE_SET fa_standard
 ../fa_standard/residue_types/nucleic/rna_nonnatural/1AP.params
 
 ## Extras
+##probe atom for testing solvation stuff:
 ../fa_standard/residue_types/extra/C.params
 

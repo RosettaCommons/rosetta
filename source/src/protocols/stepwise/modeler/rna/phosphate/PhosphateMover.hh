@@ -21,6 +21,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/types.hh>
 
 using namespace core;
@@ -60,6 +61,9 @@ namespace phosphate {
 
 		bool instantiated_phosphate() const{ return instantiated_phosphate_; }
 
+		void set_force_phosphate_instantiation( bool const & setting ){ force_phosphate_instantiation_ = setting; }
+		bool force_phosphate_instantiation() const { return force_phosphate_instantiation_; }
+
 	private:
 
 		void
@@ -91,6 +95,12 @@ namespace phosphate {
 											Size const n,
 											pose::Pose & pose );
 
+		void
+		apply_Aform_torsions_to_five_prime_phosphate( pose::Pose & pose, Size const sample_res ) const;
+
+		void
+		apply_Aform_torsions_to_three_prime_phosphate( pose::Pose & pose, Size const sample_res ) const;
+
 	private:
 
 		PhosphateMove const phosphate_move_;
@@ -108,6 +118,8 @@ namespace phosphate {
 		utility::vector1< Size > neighbor_copy_dofs_;
 		Size op1_atom_idx_, op2_atom_idx_;
 		Size number_score_calls_;
+
+		core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
 
 	};
 

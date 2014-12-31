@@ -49,6 +49,9 @@ namespace full_model_info {
 	void
 	update_constraint_set_from_full_model_info( core::pose::Pose & pose );
 
+	void
+	update_disulfides_from_full_model_info( pose::Pose & pose );
+
 	utility::vector1< char >
 	figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose );
 
@@ -103,9 +106,8 @@ namespace full_model_info {
 	utility::vector1< Size >
 	figure_out_pose_domain_map( core::pose::Pose & pose );
 
-	// Undefined, commenting out to fix PyRosetta build
-	// utility::vector1< Size >
-	// figure_out_pose_domain_map_const( core::pose::Pose const & pose );
+	utility::vector1< Size >
+	figure_out_pose_domain_map_const( core::pose::Pose const & pose );
 
 	core::conformation::Residue const &
 	get_residue( Size const seqpos_in_full_model,
@@ -127,7 +129,17 @@ namespace full_model_info {
 	get_number_missing_residues_and_connections( pose::Pose & pose );
 
 	Size
-	get_number_missing_residues_and_connections( pose::Pose & pose, utility::vector1< char > & missing_residues );
+	get_number_missing_residues_and_connections( pose::Pose const & pose,
+																							 utility::vector1< char > & missing_residues );
+
+	Size
+	get_number_missing_residues_and_connections( pose::Pose const & pose,
+																							 utility::vector1< utility::vector1< Size > > loop_suites );
+
+	Size
+	get_number_missing_residues_and_connections( pose::Pose const & pose,
+																							 utility::vector1< char > & missing_residues,
+																							 utility::vector1< utility::vector1< Size > > & loop_suites );
 
 	bool
 	check_all_residues_sampled( pose::Pose const & pose );

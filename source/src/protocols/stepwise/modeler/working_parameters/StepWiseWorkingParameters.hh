@@ -107,6 +107,10 @@ namespace working_parameters {
 		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting );  // updates working list, too
 		utility::vector1< core::Size > const & working_force_syn_chi_res_list() const { return working_force_syn_chi_res_list_; }
 
+		utility::vector1< core::Size > const &  terminal_res() const { return terminal_res_; }
+		void set_terminal_res(	utility::vector1< core::Size > const & terminal_res );
+		utility::vector1< core::Size > const &  working_terminal_res() const { return working_terminal_res_; }
+
 		utility::vector1< core::Size > const & force_north_sugar_list() const { return force_north_sugar_list_; }
 		void set_force_north_sugar_list( utility::vector1< core::Size > const & setting );  // updates working list, too
 		utility::vector1< core::Size > const & working_force_north_sugar_list() const {	return working_force_north_sugar_list_; }

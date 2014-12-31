@@ -77,6 +77,9 @@ namespace options {
 		bool const & sampler_perform_phosphate_pack() const { return sampler_perform_phosphate_pack_; }
 		void set_sampler_perform_phosphate_pack( bool const & setting ){ sampler_perform_phosphate_pack_ = setting; }
 
+		bool const & force_phosphate_instantiation() const { return force_phosphate_instantiation_; }
+		void set_force_phosphate_instantiation( bool const & setting ){ force_phosphate_instantiation_ = setting; }
+
 		bool const & distinguish_pucker() const { return distinguish_pucker_; }
 		void set_distinguish_pucker( bool const & setting ){ distinguish_pucker_ = setting; }
 
@@ -190,6 +193,7 @@ namespace options {
 		bool o2prime_legacy_mode_;
 		bool allow_virtual_o2prime_hydrogens_;
 		bool sampler_perform_phosphate_pack_;
+		bool force_phosphate_instantiation_;
 		bool distinguish_pucker_;
 		bool finer_sampling_at_chain_closure_;
 		bool PBP_clustering_at_chain_closure_;

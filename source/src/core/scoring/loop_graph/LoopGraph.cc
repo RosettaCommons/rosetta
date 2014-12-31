@@ -309,6 +309,15 @@ namespace loop_graph {
 		return true;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	LoopGraph::update_loops( pose::Pose const & pose ){
+		using namespace core::pose::full_model_info;
+		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
+		utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
+		update_loops( pose_domain_map, cutpoint_open );
+	}
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	void
@@ -380,9 +389,89 @@ namespace loop_graph {
 
 	}
 
+	/////////////////////////////////////////////
 	LoopScoreInfoOP
 	LoopGraph::loop_score_info( Size const n ) const {
 		return current_pose_loop_score_info_[ n ];
+	}
+
+	//////////////////////////////////////////////////////////////////
+	// metric for # missing residues + # missing 'connections' (as occur between
+	//  contiguous fixed domains). Was used historically to gauge how far
+	//  a stepwise run was getting towards filling in a full model.
+	//////////////////////////////////////////////////////////////////
+	Size
+	LoopGraph::nmissing( pose::Pose const & pose ) const {
+
+		utility::vector1< Size > const & fixed_domain_map = pose::full_model_info::const_full_model_info( pose ).fixed_domain_map();
+		utility::vector1< Size > const & working_res = pose::full_model_info::const_full_model_info( pose ).working_res();
+
+		Size nmissing_total( 0 );
+
+		for ( Size k = 1; k <= loops_.size(); k++ ) {
+			Loop const & loop = loops_[ k ];
+			for ( Size q = loop.takeoff_pos() + 1; q < loop.landing_pos(); q++ ) {
+				if ( fixed_domain_map[ q ] == 0 && working_res.has_value( q ) /*loop residue*/ ) {
+					nmissing_total++;
+				}
+			}
+
+			Size const nmissing_loop = loop.landing_pos() - loop.takeoff_pos() - 1;
+			if ( nmissing_loop == 0 ){
+				// super-special -- connection between separate domains.
+				// historically used for, e.g., four-way junctions with predefined helices.
+				// nmissing was incremented if the helices hadn't been connected yet.
+				Size const n = loop.takeoff_pos();
+				runtime_assert( loop.landing_pos() == n+1 );
+				if ( fixed_domain_map.size() > 0 && /* needs to be specified by user */
+						 fixed_domain_map[ n   ] > 0 &&
+						 fixed_domain_map[ n+1 ] > 0 &&
+						 fixed_domain_map[ n+1 ] != fixed_domain_map[ n ] ) {
+					if ( loop.takeoff_domain() != loop.landing_domain() ) {
+						nmissing_total++;
+					}
+				}
+			}
+			//			TR << loop << " --> " << nmissing_total << std::endl;
+		}
+		return nmissing_total;
+	}
+
+	//////////////////////////////////////////////////////////////////
+	// actual identities (a, c, g, u, etc.) of missing residues.
+	//////////////////////////////////////////////////////////////////
+	utility::vector1< char >
+	LoopGraph::missing_residues( pose::Pose const & pose ) const{
+		utility::vector1< Size > missing_pos;
+		utility::vector1< Size > const & fixed_domain_map = pose::full_model_info::const_full_model_info( pose ).fixed_domain_map();
+		utility::vector1< Size > const & working_res = pose::full_model_info::const_full_model_info( pose ).working_res();
+		for ( Size n = 1; n <= loops_.size(); n++ ) {
+			Loop const & loop = loops_[ n ];
+			for ( Size k = loop.takeoff_pos() + 1; k < loop.landing_pos(); k++ ) {
+				if ( fixed_domain_map[ k ] == 0 && working_res.has_value( k ) ) missing_pos.push_back( k );
+			}
+		}
+		std::sort( missing_pos.begin(), missing_pos.end() );
+
+		std::string const & full_sequence = core::pose::full_model_info::const_full_model_info( pose ).full_sequence();
+		utility::vector1< char > missing_residues;
+		for ( Size n = 1; n <= missing_pos.size(); n++ ){
+			missing_residues.push_back( full_sequence[ missing_pos[n] - 1 ] );
+		}
+		return missing_residues;
+	}
+
+	//////////////////////////////////////////////////////////////////
+	utility::vector1< utility::vector1< Size > >
+	LoopGraph::loop_suites() const {
+		utility::vector1< utility::vector1< Size > > loop_suites;
+		for ( Size n = 1; n <= loops_.size(); n++ ) {
+			Loop const & loop = loops_[ n ];
+			utility::vector1< Size > loop_suite_set;
+			for ( Size k = loop.takeoff_pos(); k < loop.landing_pos(); k++ )	loop_suite_set.push_back( k );
+			loop_suites.push_back( loop_suite_set );
+		}
+		return loop_suites;
 	}
 
 

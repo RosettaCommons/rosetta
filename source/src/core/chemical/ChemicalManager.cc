@@ -302,6 +302,9 @@ ChemicalManager::residue_type_set( std::string tag )
 	//something fancier.  Since these are covered by an override, they
 	//are NOT covered by proper global-data-string tags RNA_PHENIX and
 	//RNA_PROT_ERRASER.  SML & FC
+	//
+	// I put RNA into fa_standard -- we should remove this craziness -- rhiju, 2014.
+	//
 	if ( tag == "rna" ) {
 		using basic::options::OptionKeys::rna::corrected_geo;
 		using basic::options::OptionKeys::rna::rna_prot_erraser;
@@ -340,6 +343,11 @@ ChemicalManager::residue_type_set( std::string tag )
 #endif
 	}
 	return iter->second;
+}
+
+bool
+ChemicalManager::has_residue_type_set( std::string const & tag ) const {
+	return( residue_type_sets_.find( tag )  != residue_type_sets_.end() );
 }
 
 ResidueTypeSetOP

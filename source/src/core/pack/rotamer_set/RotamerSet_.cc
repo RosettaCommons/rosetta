@@ -423,7 +423,8 @@ RotamerSet_::build_rotamers_for_concrete(
 		// not ready for design yet.
 		if ( task.residue_task( resid() ).include_virtual_side_chain() ) {
 			if ( existing_residue.nchi() > 0 &&
-					 existing_residue.aa() != chemical::aa_pro ) {
+					 existing_residue.aa() != chemical::aa_pro &&
+					 existing_residue.n_non_polymeric_residue_connections() == 0 ) {
 				dunbrack::RotamerLibraryScratchSpace scratch;
 				Size n_min( 0 );
 				Real fa_dun_min( 0.0 );
@@ -765,12 +766,12 @@ RotamerSet_::compute_one_and_two_body_energies(
 	using namespace scoring;
 
 	std::fill( one_body_energies.begin(), one_body_energies.end(), core::PackerEnergy( 0.0 ) );
-	
+
 	int const nrotamers = num_rotamers(); // does not change in this function
 	Size const theresid = resid();
 
 	sf.evaluate_rotamer_intrares_energies( *this, pose, one_body_energies );
-	
+
 	for ( graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph->get_node( theresid )->const_edge_list_begin(),
 			ire = packer_neighbor_graph->get_node( theresid )->const_edge_list_end();
@@ -782,14 +783,14 @@ RotamerSet_::compute_one_and_two_body_energies(
 			packable_neighbors.push_back(neighbor_id);
 			continue;
 		}
-		
+
 		Residue const & neighbor( pose.residue( neighbor_id ) );
 		sf.evaluate_rotamer_background_energies( *this, neighbor, pose, one_body_energies );
 
 	}
-	
+
 	core::Size num_packable_neighbors = packable_neighbors.size();
-	
+
 	for ( int ii = 1; ii <= nrotamers; ++ii ) {
 		EnergyMap emap1b;
 		sf.eval_ci_1b( *rotamers_[ ii ], pose, emap1b );
@@ -806,7 +807,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 			two_body_energies[ ii ][ jj ] = neighbor_energy;
 		}
 	}
-	
+
 	// long-range energy interactions with background
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
@@ -823,11 +824,11 @@ RotamerSet_::compute_one_and_two_body_energies(
 				rniend = lrec->const_neighbor_iterator_end( theresid );
 				(*rni) != (*rniend); ++(*rni) ) {
 			Size const neighbor_id = rni->neighbor_id();
-			
+
 			//assert( neighbor_id != theresid );
 			//if ( task.pack_residue( neighbor_id ) ) continue;
 			if (theresid == neighbor_id) continue;
-			
+
 			(*lr_iter)->evaluate_rotamer_background_energies(
 				*this, pose.residue( neighbor_id ), pose, sf,
 				sf.weights(), one_body_energies );

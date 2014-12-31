@@ -68,6 +68,7 @@ namespace options {
 		o2prime_legacy_mode_ = false;
 		allow_virtual_o2prime_hydrogens_ = false;
 		sampler_perform_phosphate_pack_ = true;
+		force_phosphate_instantiation_ = true;
 		distinguish_pucker_ = true;
 		finer_sampling_at_chain_closure_ = false;
 		PBP_clustering_at_chain_closure_ = false;
@@ -120,6 +121,7 @@ namespace options {
 		o2prime_legacy_mode_ = option[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
 		allow_virtual_o2prime_hydrogens_ = option[ OptionKeys::stepwise::rna::allow_virtual_o2prime_hydrogens ]();
 		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
+		force_phosphate_instantiation_ = option[ OptionKeys::stepwise::rna::force_phosphate_instantiation ]();
 		distinguish_pucker_ = option[ OptionKeys::stepwise::rna::distinguish_pucker]();
 		finer_sampling_at_chain_closure_ = option[ OptionKeys::stepwise::rna::finer_sampling_at_chain_closure]();
 		PBP_clustering_at_chain_closure_ = option[ OptionKeys::stepwise::rna::PBP_clustering_at_chain_closure]();

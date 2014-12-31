@@ -81,11 +81,14 @@ stepwise_monte_carlo()
   using namespace protocols::stepwise::monte_carlo;
   using namespace utility::file;
 
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	bool const just_RNA = just_modeling_RNA( option[ in::file::fasta ]() );
+	// following toggles to FA_RNA for speed; if ResidueTypeSet instantiation can be accelerated, OK to always use FA_STANDARD.
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( just_RNA ? FA_RNA : FA_STANDARD);
 
-	core::scoring::ScoreFunctionOP scorefxn;
+	ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
-	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
+	else if ( just_RNA ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
+	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.
 	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
 	PoseOP native_pose, align_pose;
@@ -106,14 +109,14 @@ stepwise_monte_carlo()
 	StepWiseMonteCarloOP stepwise_monte_carlo( new StepWiseMonteCarlo( scorefxn ) );
 	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsOP options( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions );
 	bool const do_preminimize_move = option[ OptionKeys::stepwise::preminimize ]();
-	bool const test_move = option[ OptionKeys::stepwise::move ].user() || do_preminimize_move;
-	if ( test_move ) options->set_output_minimized_pose_list( true );
 	options->initialize_from_command_line();
+	if ( option[ OptionKeys::stepwise::enumerate ]() ) options->set_output_minimized_pose_list( true );
 	stepwise_monte_carlo->set_options( options );
 	stepwise_monte_carlo->set_native_pose( align_pose ); //allows for alignment to be to non-native
 	stepwise_monte_carlo->set_move( SWA_Move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() ) );
-	stepwise_monte_carlo->set_enumerate( option[ OptionKeys::stepwise::enumerate ]());
+	stepwise_monte_carlo->set_enumerate( option[ OptionKeys::stepwise::enumerate ]() );
 	stepwise_monte_carlo->set_do_preminimize_move( do_preminimize_move );
+	if ( ( options->from_scratch_frequency() > 0.0 || const_full_model_info( *pose_op ).other_pose_list().size() > 0 ) && !scorefxn->has_nonzero_weight( other_pose ) ) scorefxn->set_weight( other_pose, 1.0 ); // critical if more than one pose shows up and focus switches...
 
 	std::string const silent_file = option[ out::file::silent ]();
 	if ( option[ out::overwrite ]() ) remove_silent_file_if_it_exists( silent_file );
@@ -170,7 +173,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::full_model::cutpoint_open );
 		option.add_relevant( OptionKeys::full_model::cutpoint_closed );
 		option.add_relevant( OptionKeys::full_model::sample_res );
-		option.add_relevant( OptionKeys::stepwise::superimpose_over_all );
+		option.add_relevant( OptionKeys::full_model::motif_mode );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::cycles );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::skip_deletions );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::add_delete_frequency );
@@ -184,6 +187,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa_bank_size );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa_rmsd );
+		option.add_relevant( OptionKeys::stepwise::superimpose_over_all );
 		option.add_relevant( OptionKeys::stepwise::move );
 		option.add_relevant( OptionKeys::stepwise::num_random_samples );
 		option.add_relevant( OptionKeys::stepwise::num_pose_minimize );
@@ -191,6 +195,8 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::enumerate );
 		option.add_relevant( OptionKeys::stepwise::preminimize );
 		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
+		option.add_relevant( OptionKeys::stepwise::min_type );
+		option.add_relevant( OptionKeys::stepwise::min_tolerance );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
@@ -203,12 +209,28 @@ main( int argc, char * argv [] )
 
 		core::init::init(argc, argv);
 
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" ); // for protein side-chain packing/virtualization
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" ); // for skip-nucleotide moves.
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping & bulge.
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" ); // for bulge
+		// Following patch_selector code is unfortunate... ResidueTypeSet currently initializes a huge number of
+		// residue types with combinatorial application of patches, rather than creating them
+		// 'just-in-time'. Slow and memory-intensive. To save time, we can 'declare' which patches we want
+		// on command line. Following are basicaly hacks to set these global variables based on expectations of
+		// which patches will be needed. -- rhiju, 2014
+
+		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ){
+			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping & bulges in native.
+			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" ); // for bulge
+		}
+		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ||
+				 option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ){
+			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" ); // for skip-nucleotide moves.
+		}
+		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ||
+				 option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]() ){
+			option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
+		}
+		if ( option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]() ) {
+			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" ); // for protein side-chain packing/virtualization
+		}
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
 
 		protocols::viewer::viewer_main( my_main );
 
