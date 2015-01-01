@@ -45,7 +45,7 @@ namespace options {
 		skip_deletions_( false ),
 		erraser_( true ),
 		allow_internal_hinge_moves_( true ),
-		allow_internal_local_moves_( false ),
+		allow_internal_local_moves_( true ),
 		cycles_( 500 ),
 		add_delete_frequency_( 0.5 ),
 		intermolecular_frequency_( 0.2 ),

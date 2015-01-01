@@ -6029,7 +6029,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'skip_deletions', 'Boolean', desc= "no delete moves -- just for testing", default='false' ),
 #			Option( 'erraser', 'Boolean', desc= "Use KIC sampling", default='true' ),
 			Option( 'allow_internal_hinge_moves', 'Boolean', desc= "Allow moves in which internal suites are sampled (hinge-like motions)", default='true' ),
-			Option( 'allow_internal_local_moves', 'Boolean', desc= "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds", default='false' ),
+			Option( 'allow_internal_local_moves', 'Boolean', desc= "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds", default='true' ),
 			Option( 'allow_skip_bulge', 'Boolean', desc= "Allow moves in which an intervening residue is skipped and the next one is modeled as floating base", default='false' ),
 			Option( 'from_scratch_frequency', 'Real', desc= "Allow modeling of 'free' dinucleotides that are not part of input poses", default='0.1' ),
 			Option( 'allow_split_off', 'Boolean', desc= "Allow chunks that do not contain fixed domains to split off after nucleating on fixed domains.", default='true' ),
