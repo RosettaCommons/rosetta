@@ -67,8 +67,8 @@ namespace options {
 		native_edensity_score_cutoff_ = -1;
 		o2prime_legacy_mode_ = false;
 		allow_virtual_o2prime_hydrogens_ = false;
-		sampler_perform_phosphate_pack_ = true;
-		force_phosphate_instantiation_ = true;
+		sampler_perform_phosphate_pack_ = false;
+		force_phosphate_instantiation_ = false;
 		distinguish_pucker_ = true;
 		finer_sampling_at_chain_closure_ = false;
 		PBP_clustering_at_chain_closure_ = false;
