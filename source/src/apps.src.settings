@@ -183,6 +183,7 @@ sources = {
 	],
 	"public/pocket": [
 		"pocket_measure",
+    "pocket_suggest_target_residues_by_ddg",
 		"make_exemplar",
 	],
     "public/rna_util": [
