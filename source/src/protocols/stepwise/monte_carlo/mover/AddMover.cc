@@ -107,7 +107,7 @@ namespace mover {
 		AttachmentType attachment_type = (std::abs( offset ) == 1) ?
 			(offset > 0 ? BOND_TO_PREVIOUS : BOND_TO_NEXT) :
 			(offset > 0 ? JUMP_TO_PREV_IN_CHAIN : JUMP_TO_NEXT_IN_CHAIN );
-		if ( !check_same_chain( viewer_pose, res_to_add_in_full_model_numbering, res_to_build_off_in_full_model_numbering )) attachment_type = JUMP_INTERCHAIN;
+		if ( !check_same_chain( viewer_pose, res_to_add_in_full_model_numbering, res_to_build_off_in_full_model_numbering )) attachment_type = JUMP_DOCK;
 		SWA_Move swa_move( res_to_add_in_full_model_numbering,
 											 Attachment( res_to_build_off_in_full_model_numbering, attachment_type ), ADD );
 		apply( viewer_pose, swa_move );
@@ -134,7 +134,7 @@ namespace mover {
 
 		runtime_assert( res_list.has_value( res_to_build_off_in_full_model_numbering_ ) );
 		runtime_assert( !res_list.has_value( res_to_add_in_full_model_numbering_ ) );
-		if ( swa_move.attachment_type() == JUMP_INTERCHAIN ) { runtime_assert( !check_same_chain( pose ) );
+		if ( swa_move.attachment_type() == JUMP_DOCK ) { runtime_assert( !check_same_chain( pose ) );
 		} else { runtime_assert( check_same_chain( pose ) ); }
 
 		// need to encapsulate the following residue addition & domain addition functions...
@@ -178,7 +178,7 @@ namespace mover {
 
 		Size const offset = res_to_add_in_full_model_numbering_ - res_to_build_off_in_full_model_numbering_;
 		// addition to strand ending (append)
-		if ( swa_move_.attachment_type() != JUMP_INTERCHAIN ){
+		if ( swa_move_.attachment_type() != JUMP_DOCK ){
 			runtime_assert( res_to_build_off == pose.total_residue() ||
 											res_list[ res_to_build_off ] < res_list[ res_to_build_off + 1 ] - 1 );
 			runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );

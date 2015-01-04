@@ -222,8 +222,8 @@ namespace protein {
 	 }
 
 
- //////////////////////////////////////////////////////////////////////
- // This could even be its own class...
+	 //////////////////////////////////////////////////////////////////////
+	 // This could even be its own class...
 	 void
 	 StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 					 Size const & n,

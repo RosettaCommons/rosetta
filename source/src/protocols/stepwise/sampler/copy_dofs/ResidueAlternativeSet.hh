@@ -54,6 +54,7 @@ namespace copy_dofs {
 		utility::vector1< core::pose::PoseOP > pose_list() const;
 		core::pose::PoseOP pose( Size const n ) const;
 		core::Size representative_seqpos() const{ return representative_seqpos_; }
+		core::Size size() { return pose_list_.size(); }
 
 	private:
 

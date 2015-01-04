@@ -1173,9 +1173,9 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 	}// while ( new_member )
 
 	if ( new_edge_list_.size() != edge_list_.size() ) {
-		if ( verbose_if_fail ) {
+		if ( verbose_if_fail && nres() > 1 /* nres = 1 is innocuous edge case*/ ) {
 			TR.Error << "FoldTree::reorder( " << start_residue << " ) failed, new/old edge_list_ size mismatch" << std::endl;
-			TR.Error << edge_list_.size() << ' ' << new_edge_list_.size() << std::endl;
+			TR.Error << "old_edge_list.size() " << edge_list_.size() << "  new_edge_list.size()" << new_edge_list_.size() << std::endl;
 			TR.Error << *this;
 
 			// TR.Error << "show old edge list " << std::endl;
@@ -1900,12 +1900,59 @@ FoldTree::partition_by_jump(
 }
 
 /////////////////////////////////////////////////////////////////////////////
+/// when a jump edge is removed, the fold tree is separated into two parts. This
+/// fucntion is to find all residues connecting to the jump starting residue and flag
+/// them in the partner1(n_res) array as true. The residues on the other side are
+/// flagged as false. Useful to distinguish two docking partners when fold tree is
+/// properly set up.
+utility::vector1< bool >
+FoldTree::partition_by_jump( Size const jump_nr ) const {
+	ObjexxFCL::FArray1D<bool> partition_definition( nres_, false );
+	partition_by_jump( jump_nr, partition_definition );
+
+	//silly conversion. There may be a faster way to do this actually.
+	utility::vector1< bool > partition_definition_vector1;
+	for ( int n = 1; n <= nres_; n++ )	partition_definition_vector1.push_back( partition_definition(n) );
+
+	return partition_definition_vector1;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+/// @details partition the fold tree into n parts based on specified jumps.
+///  Just uses partition_by_jump over and over again.
+utility::vector1< Size >
+FoldTree::partition_coloring( utility::vector1< Size > const & jump_numbers ) const {
+
+	utility::vector1< Size > partition_color( nres(), 0 );
+
+	for ( Size n = 1; n <= jump_numbers.size(); n++ ) {
+		Size const jump_nr = jump_numbers[ n ];
+		Size const res1 = upstream_jump_residue( jump_nr );
+		Size const res2 = downstream_jump_residue( jump_nr );
+		runtime_assert( partition_color[ res1 ] == partition_color[ res2 ] ); // should not have been split yet.
+
+		Size original_color = partition_color[ res1 ]; // or res2, they're the same color
+
+		utility::vector1< bool > partition_definition = partition_by_jump( jump_nr );
+		for ( Size k = 1; k <= nres(); k++ ) {
+			if ( partition_definition[ k ] == partition_definition[ res2 ] &&
+					 partition_color[ k ] == original_color ){
+				partition_color[ k ] = n; // update coloring on downstream side of the partition.
+			}
+		}
+		runtime_assert( partition_color[ res1 ] != partition_color[ res2 ] ); // better be split.
+	}
+
+	return partition_color;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 /// @details partition the fold tree in two parts if a cut would be introduced between seqpos and seqpos+1.
 /// Function is an analog to partition_by_jump() -- its goal to find all residues
 ///  connecting to the jump starting residue and flag
 /// them in the partner1(n_res) array as true. The residues on the other side are
 /// flagged as false. Useful to distinguish two docking partners when fold tree is
-/// properly set up.void
+/// properly set up.
 void
 FoldTree::partition_by_residue(
 	int const seqpos,
@@ -1980,7 +2027,6 @@ FoldTree::partition_by_residue(
 		}
 	}
 }
-
 
 int
 FoldTree::jump_point(

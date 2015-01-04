@@ -20,7 +20,6 @@
 #include <protocols/stepwise/options/StepWiseBasicOptions.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
@@ -116,8 +115,8 @@ namespace options {
 		core::Real const & add_delete_frequency() const { return add_delete_frequency_; }
 		void set_add_delete_frequency( core::Real const & setting ){ add_delete_frequency_ = setting; }
 
-		core::Real const & intermolecular_frequency() const { return intermolecular_frequency_; }
-		void set_intermolecular_frequency( core::Real const & setting ){ intermolecular_frequency_ = setting; }
+		core::Real const & docking_frequency() const { return docking_frequency_; }
+		void set_docking_frequency( core::Real const & setting ){ docking_frequency_ = setting; }
 
 		core::Real const & minimize_single_res_frequency() const { return minimize_single_res_frequency_; }
 		void set_minimize_single_res_frequency(  core::Real const & setting ){ minimize_single_res_frequency_ = setting; }
@@ -130,9 +129,6 @@ namespace options {
 
 		core::Real const & temperature() const { return temperature_; }
 		void set_temperature(  core::Real const & setting ){ temperature_ = setting; }
-
-		utility::vector1< core::Size > const & bulge_res() const { return bulge_res_; }
-		void set_bulge_res( utility::vector1< core::Size > const & setting ){ bulge_res_ = setting; }
 
 		core::Real const & max_missing_weight() const { return max_missing_weight_; }
 		void set_max_missing_weight( core::Real const & setting ){ max_missing_weight_ = setting; }
@@ -219,12 +215,11 @@ namespace options {
 		bool allow_internal_local_moves_;
 		core::Size cycles_;
 		core::Real add_delete_frequency_;
-		core::Real intermolecular_frequency_;
+		core::Real docking_frequency_;
 		core::Real minimize_single_res_frequency_;
 		core::Real switch_focus_frequency_;
 		core::Real just_min_after_mutation_frequency_;
 		core::Real temperature_;
-		utility::vector1< core::Size > bulge_res_; // disallow addition of these.
 		core::Real max_missing_weight_;
 		core::Real chainbreak_weight_;
 		bool allow_skip_bulge_;

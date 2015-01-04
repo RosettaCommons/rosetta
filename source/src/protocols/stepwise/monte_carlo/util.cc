@@ -146,6 +146,17 @@ build_full_model( pose::Pose const & start_pose ){
 	return full_model_pose;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
+void
+filter_out_bulge_res(  utility::vector1< Size > & sample_res,
+ 											 utility::vector1< Size > const & bulge_res ) {
+	utility::vector1< Size > sample_res_new;
+	for ( Size n = 1; n <= sample_res.size(); n++ ) {
+		if ( !bulge_res.has_value( sample_res[ n ] ) ) sample_res_new.push_back( sample_res[ n ] );
+	}
+	sample_res = sample_res_new;
+}
+
 } //monte_carlo
 } //stepwise
 } //protocols

@@ -83,7 +83,7 @@ namespace mover {
 		options::StepWiseMonteCarloOptionsCOP options_;
 
 		bool minimize_single_res_;
-		bool slide_intermolecular_jumps_;
+		bool slide_docking_jumps_;
 	};
 
 } //mover

@@ -1604,17 +1604,22 @@ namespace protein {
 		FullModelParametersOP full_model_parameters = full_model_info->full_model_parameters()->clone();
 		utility::vector1< Size > const & is_working_res = working_parameters_->is_working_res();
 		utility::vector1< Size > extra_minimize_res = extra_minimize_res_; // may be updated.
-		utility::vector1< Size > fixed_domain; // convert from old convention to new one stored in full_model info.
+		utility::vector1< Size > input_domain; // convert from old convention to new one stored in full_model info.
 		for ( Size n = 1; n <= is_working_res.size(); n++ ){
 			if ( is_working_res[n] == MOVING_RES || is_working_res[n] == BRIDGE_RES ){
-				fixed_domain.push_back( 0 ); // moving and sample-able.
+				input_domain.push_back( 0 ); // moving and sample-able.
 			} else if ( fixed_res_.has_value( n ) ) {
-				fixed_domain.push_back( 1 ); // freeze this.
+				input_domain.push_back( 1 ); // freeze this.
 			} else {
-				fixed_domain.push_back( is_working_res[n] ); // 1 or 2, for input domains 1 or 2.
+				input_domain.push_back( is_working_res[n] ); // 1 or 2, for input domains 1 or 2.
 				if ( is_working_res[n] > 0 && !extra_minimize_res_.has_value( n ) ) extra_minimize_res.push_back( n );
 			}
 		}
+
+		utility::vector1< Size > fixed_domain = input_domain;
+		for ( Size n = 1; n <= extra_minimize_res.size(); n++ ) fixed_domain[ extra_minimize_res[n] ] = 0;
+
+		full_model_parameters->set_parameter( INPUT_DOMAIN, input_domain );
 		full_model_parameters->set_parameter( FIXED_DOMAIN, fixed_domain );
 		full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
 		full_model_parameters->set_parameter_as_res_list( CALC_RMS, calc_rms_res_ );

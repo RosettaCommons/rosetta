@@ -472,12 +472,12 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	//  stepwise monte carlo runs.
 	// Could in principle instantiate for proteins too.
 	if ( !options_->choose_random() && !protein_connection_ && moving_res_ > 0 ){
-		TR << TR.Magenta << "Creating VDW Bin Checker " << TR.Reset << std::endl;
+		TR << "Creating VDW Bin Checker " << TR.Reset << std::endl;
 		VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker() );
 		VDW_bin_checker_->setup_using_working_pose( *screening_pose_, working_parameters_ );
 	}
 	if ( !user_input_VDW_bin_checker_ /* could be externally defined for speed */ && options_->VDW_rep_screen_info().size() > 0 ) {
-		TR << TR.Magenta << "Creating USER VDW Bin Checker " << TR.Reset << std::endl;
+		TR << "Creating USER VDW Bin Checker " << TR.Reset << std::endl;
 		user_input_VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker() );
 		options_->setup_options_for_VDW_bin_checker( user_input_VDW_bin_checker_ );
 		user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( options_->VDW_rep_screen_info(),
@@ -488,9 +488,12 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	// virtual sugars even at residues that have instantiated sugars -- we can quickly screen this pose,
 	// and it provides the appropriate baseline atr/rep for checking contacts and clashes.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_,
-				core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
+		if ( residue_alternative_sets_[ n ].size() > 1 ) {
+			pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_,
+																							core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
+		}
 	}
+
 	// following is to check atr/rep even on sugars that will remain virtualized.
 	//  may now be deprecated due to development of PartitionContactScreener, which handles both protein & RNA.
 	bool const use_loose_rep_cutoff = ( kic_modeler_ || moving_partition_res_.size() > 1 /* is_internal */ );
@@ -502,8 +505,10 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 
 	// we will be checking clashes of even virtual sugars compared to no-sugar baseline.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		pose::remove_variant_type_from_pose_residue( *screening_pose_,
-				core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
+		if ( residue_alternative_sets_[ n ].size() > 1 ) {
+			pose::remove_variant_type_from_pose_residue( *screening_pose_,
+				 core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
+		}
 	}
 
 	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {

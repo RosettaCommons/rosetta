@@ -253,7 +253,7 @@ namespace monte_carlo {
 			attachment_type_name[ BOND_TO_NEXT ] = "BOND_TO_NEXT";
 			attachment_type_name[ JUMP_TO_PREV_IN_CHAIN ] = "JUMP_TO_PREV_IN_CHAIN";
 			attachment_type_name[ JUMP_TO_NEXT_IN_CHAIN ] = "JUMP_TO_NEXT_IN_CHAIN";
-			attachment_type_name[ JUMP_INTERCHAIN ] = "JUMP_INTERCHAIN";
+			attachment_type_name[ JUMP_DOCK ] = "JUMP_DOCK";
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////

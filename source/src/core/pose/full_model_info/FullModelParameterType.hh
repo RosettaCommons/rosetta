@@ -40,7 +40,7 @@ namespace full_model_info {
 	//  change during a run. For example, the 'bridge_res' for cutpoint closure is
 	//  not appropriate to store here, as those values change from move to move.
 	//
-	// Note that this is also used to enum over chains and fixed_domain, which
+	// Note that this is also used to enum over fixed_domain, input_domain, etc., which
 	//  have the form [0,1,1,1,0,0,0,2,2,2,...].
 	//
 	// For these cases, we have an accessor function
@@ -55,22 +55,26 @@ namespace full_model_info {
 	enum FullModelParameterType {
 		NO_TYPE = 0,
 		CALC_RMS,
-		//		CHAIN,          // Starts with 1 for first chain, then 2, ... note must agree with CUTPOINT_OPEN.
 		CUTPOINT_OPEN,  // Just points where a full pose would have fold-tree cutpoints.
-		FIXED_DOMAIN,   // Non-zero over residues that are fixed (e.g., from input pdbs). Cannot delete or split these.
-		EXTRA_MINIMIZE, // Specified by user for job -- can go into 'fixed domains'
+		DOCK_DOMAIN,    // 0,1,2,... for separate domains that can be docked/undocked.
+		EXTRA_MINIMIZE, // Specified by user for job -- can carve out of fixed domains
+		EXTRA_MINIMIZE_JUMP, // Pairs of residues connected by jumps that should be minimized
+		FIXED_DOMAIN,   // Non-zero over residues that are fixed. Can move/minimize relative to each other.
+		INPUT_DOMAIN,   // from input PDBs, typically a superset of FIXED_DOMAIN
+		JUMP,           // User-specified jump pairs, e.g., for fold-tree setup or docking contacts.
+		PREFERRED_ROOT, // good positions for roots.
 		SAMPLE,         // Whatever we can add/delete. Cannot include any FIXED_DOMAIN.
 		WORKING,        // Everything that might be modeled [SAMPLE + FIXED_DOMAIN]
 
 		// next-section: RNA-specific. Eventually expand.
+		RNA_BULGE, // nucleotides that should not be instantiated.
 		RNA_SYN_CHI,
 		RNA_NORTH_SUGAR,
 		RNA_SOUTH_SUGAR,
 		RNA_TERMINAL, // base pairs on which new bases cannot stack/pair.
-		RNA_BULGE, // nucleotides that should not be instantiated.
 
 		// next-section: anything protein-specific
-		DISULFIDES,
+		DISULFIDE,
 
 		// done.
 		LAST_TYPE

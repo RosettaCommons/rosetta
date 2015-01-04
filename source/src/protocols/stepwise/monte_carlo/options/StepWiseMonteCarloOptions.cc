@@ -48,7 +48,7 @@ namespace options {
 		allow_internal_local_moves_( true ),
 		cycles_( 500 ),
 		add_delete_frequency_( 0.5 ),
-		intermolecular_frequency_( 0.2 ),
+		docking_frequency_( 0.2 ),
 		minimize_single_res_frequency_( 0.0 ),
 		switch_focus_frequency_( 0.5 ),
 		just_min_after_mutation_frequency_( 0.5 ),
@@ -113,7 +113,11 @@ namespace options {
 		set_erraser( option[ OptionKeys::stepwise::rna::erraser ]() );
 		set_cycles( option[ OptionKeys::stepwise::monte_carlo::cycles ]() );
 		set_add_delete_frequency( option[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
-		set_intermolecular_frequency( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ]() );
+		set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::docking_frequency ]() );
+		if ( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ].user() ){
+			TR << TR.Red << "Use -docking_frequency instead of -intermolecular_frequency -- will be deprecated soon." << TR.Reset << std::endl;
+			set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ]() );
+		}
 		set_minimize_single_res_frequency( option[ OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency ]() );
 		set_switch_focus_frequency( option[ OptionKeys::stepwise::monte_carlo::switch_focus_frequency ]() );
 		set_just_min_after_mutation_frequency( option[ OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency ]() );
@@ -123,7 +127,6 @@ namespace options {
 		set_from_scratch_frequency( option[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
 		set_allow_split_off( option[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
 		set_temperature( option[ OptionKeys::stepwise::monte_carlo::temperature ]() );
-		set_bulge_res( option[ basic::options::OptionKeys::full_model::rna::bulge_res ]() );
 		set_virtual_sugar_keep_base_fixed( option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
 		set_virtual_sugar_do_minimize( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]() );
 		force_centroid_interaction_ = true; // note default is different from stepwise enumeration

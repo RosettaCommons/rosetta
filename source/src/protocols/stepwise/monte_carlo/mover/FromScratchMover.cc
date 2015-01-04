@@ -54,7 +54,7 @@ namespace mover {
 	//////////////////////////////////////////////////////////////////////
   void
   FromScratchMover::apply( core::pose::Pose & pose,
-															 utility::vector1< Size > const & residues_to_instantiate_in_full_model_numbering ) const
+													 utility::vector1< Size > const & residues_to_instantiate_in_full_model_numbering ) const
 	{
     using namespace core::chemical;
 		using namespace core::pose;
@@ -74,7 +74,7 @@ namespace mover {
 			new_sequence += newrestype;
 		}
 
-		ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( modeler::rna::just_modeling_RNA( full_sequence ) ? FA_RNA : FA_STANDARD ) );
 		PoseOP new_pose( new Pose );
 		make_pose_from_sequence( *new_pose, new_sequence, *rsd_set );
 

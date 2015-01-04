@@ -403,7 +403,7 @@ namespace loop_graph {
 	Size
 	LoopGraph::nmissing( pose::Pose const & pose ) const {
 
-		utility::vector1< Size > const & fixed_domain_map = pose::full_model_info::const_full_model_info( pose ).fixed_domain_map();
+		utility::vector1< Size > const & input_domain_map = pose::full_model_info::const_full_model_info( pose ).input_domain_map();
 		utility::vector1< Size > const & working_res = pose::full_model_info::const_full_model_info( pose ).working_res();
 
 		Size nmissing_total( 0 );
@@ -411,7 +411,7 @@ namespace loop_graph {
 		for ( Size k = 1; k <= loops_.size(); k++ ) {
 			Loop const & loop = loops_[ k ];
 			for ( Size q = loop.takeoff_pos() + 1; q < loop.landing_pos(); q++ ) {
-				if ( fixed_domain_map[ q ] == 0 && working_res.has_value( q ) /*loop residue*/ ) {
+				if ( input_domain_map[ q ] == 0 && working_res.has_value( q ) /*loop residue*/ ) {
 					nmissing_total++;
 				}
 			}
@@ -423,10 +423,10 @@ namespace loop_graph {
 				// nmissing was incremented if the helices hadn't been connected yet.
 				Size const n = loop.takeoff_pos();
 				runtime_assert( loop.landing_pos() == n+1 );
-				if ( fixed_domain_map.size() > 0 && /* needs to be specified by user */
-						 fixed_domain_map[ n   ] > 0 &&
-						 fixed_domain_map[ n+1 ] > 0 &&
-						 fixed_domain_map[ n+1 ] != fixed_domain_map[ n ] ) {
+				if ( input_domain_map.size() > 0 && /* needs to be specified by user */
+						 input_domain_map[ n   ] > 0 &&
+						 input_domain_map[ n+1 ] > 0 &&
+						 input_domain_map[ n+1 ] != input_domain_map[ n ] ) {
 					if ( loop.takeoff_domain() != loop.landing_domain() ) {
 						nmissing_total++;
 					}
@@ -443,12 +443,12 @@ namespace loop_graph {
 	utility::vector1< char >
 	LoopGraph::missing_residues( pose::Pose const & pose ) const{
 		utility::vector1< Size > missing_pos;
-		utility::vector1< Size > const & fixed_domain_map = pose::full_model_info::const_full_model_info( pose ).fixed_domain_map();
+		utility::vector1< Size > const & input_domain_map = pose::full_model_info::const_full_model_info( pose ).input_domain_map();
 		utility::vector1< Size > const & working_res = pose::full_model_info::const_full_model_info( pose ).working_res();
 		for ( Size n = 1; n <= loops_.size(); n++ ) {
 			Loop const & loop = loops_[ n ];
 			for ( Size k = loop.takeoff_pos() + 1; k < loop.landing_pos(); k++ ) {
-				if ( fixed_domain_map[ k ] == 0 && working_res.has_value( k ) ) missing_pos.push_back( k );
+				if ( input_domain_map[ k ] == 0 && working_res.has_value( k ) ) missing_pos.push_back( k );
 			}
 		}
 		std::sort( missing_pos.begin(), missing_pos.end() );

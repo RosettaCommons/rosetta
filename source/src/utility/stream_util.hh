@@ -30,6 +30,9 @@ namespace utility {
 /// We originally moved them out of name spaces so we can use them right away - without specifying it.
 /// Returned to utility namespace, as some compilers did not find the operator otherwise! -- rhiju
 
+template <typename T1, typename T2>
+std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v); // declare here to allow output of vector1< std::pair >.
+
 /// @brief Output function for std::vector object.
 template <class T>
 std::ostream & operator <<( std::ostream & os, std::vector<T> const & v)

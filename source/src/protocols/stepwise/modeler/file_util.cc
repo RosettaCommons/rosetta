@@ -42,8 +42,8 @@ namespace modeler {
 void
 remove_silent_file_if_it_exists( std::string const & silent_file){
 	if ( utility::file::file_exists( silent_file ) ) {
-		TR << "WARNING: silent_file " << silent_file << " already exists! removing..." << std::endl;
-		runtime_assert( std::remove( silent_file.c_str() ) );
+		TR << TR.Red << "WARNING: silent_file " << silent_file << " already exists! removing..." << TR.Reset << std::endl;
+		runtime_assert( std::remove( silent_file.c_str() ) == 0 );
 	}
 }
 

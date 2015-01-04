@@ -44,18 +44,23 @@ namespace full_model_info {
 	initialize_full_model_parameter_type_name(){
 		static bool init( false );
 		if ( !init ){
-			full_model_parameter_type_name[ CALC_RMS ] = "CALC_RMS";
-			//			full_model_parameter_type_name[ CHAIN ] = "CHAIN";
-			full_model_parameter_type_name[ CUTPOINT_OPEN ] = "CUTPOINT_OPEN";
-			full_model_parameter_type_name[ FIXED_DOMAIN ] = "FIXED_DOMAIN";
-			full_model_parameter_type_name[ EXTRA_MINIMIZE ] = "EXTRA_MINIMIZE";
-			full_model_parameter_type_name[ SAMPLE ] = "SAMPLE";
-			full_model_parameter_type_name[ WORKING ] = "WORKING";
-			full_model_parameter_type_name[ RNA_SYN_CHI ] = "RNA_SYN_CHI";
+			full_model_parameter_type_name[ CALC_RMS ]        = "CALC_RMS";
+			full_model_parameter_type_name[ CUTPOINT_OPEN ]   = "CUTPOINT_OPEN";
+			full_model_parameter_type_name[ DOCK_DOMAIN ]     = "DOCK_DOMAIN";
+			full_model_parameter_type_name[ EXTRA_MINIMIZE ]  = "EXTRA_MINIMIZE";
+			full_model_parameter_type_name[ EXTRA_MINIMIZE_JUMP ] = "EXTRA_MINIMIZE_JUMP";
+			full_model_parameter_type_name[ FIXED_DOMAIN ]    = "FIXED_DOMAIN";
+			full_model_parameter_type_name[ INPUT_DOMAIN ]    = "INPUT_DOMAIN";
+			full_model_parameter_type_name[ JUMP ]            = "JUMP";
+			full_model_parameter_type_name[ PREFERRED_ROOT ]  = "PREFERRED_ROOT";
+			full_model_parameter_type_name[ SAMPLE ]          = "SAMPLE";
+			full_model_parameter_type_name[ WORKING ]         = "WORKING";
+			full_model_parameter_type_name[ RNA_SYN_CHI ]     = "RNA_SYN_CHI";
+			full_model_parameter_type_name[ RNA_BULGE ]       = "RNA_BULGE";
 			full_model_parameter_type_name[ RNA_NORTH_SUGAR ] = "RNA_NORTH_SUGAR";
 			full_model_parameter_type_name[ RNA_SOUTH_SUGAR ] = "RNA_SOUTH_SUGAR";
-			full_model_parameter_type_name[ RNA_TERMINAL ] = "RNA_TERMINAL";
-			full_model_parameter_type_name[ RNA_BULGE ] = "RNA_BULGE";
+			full_model_parameter_type_name[ RNA_TERMINAL ]    = "RNA_TERMINAL";
+			full_model_parameter_type_name[ DISULFIDE ]      = "DISULFIDE";
 			init = true;
 		}
 	}

@@ -63,6 +63,7 @@
 using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace basic::options::OptionKeys::stepwise::monte_carlo;
 using utility::vector1;
 
 static thread_local basic::Tracer TR( "apps.pilot.rhiju.stepwise_monte_carlo" );
@@ -124,8 +125,8 @@ stepwise_monte_carlo()
 
 	// main loop
 	StepWiseJobDistributorOP stepwise_job_distributor( new StepWiseMonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );
-	if ( option[ OptionKeys::stepwise::monte_carlo::csa_bank_size ].user() ) {
-		stepwise_job_distributor = StepWiseJobDistributorOP( new StepWiseCSA_JobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ](), option[ OptionKeys::stepwise::monte_carlo::csa_bank_size ](), option[ OptionKeys::stepwise::monte_carlo::csa_rmsd ]() ) );
+	if ( option[ csa::csa_bank_size ].user() ) {
+		stepwise_job_distributor = StepWiseJobDistributorOP( new StepWiseCSA_JobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ](), option[ csa::csa_bank_size ](), option[ csa::csa_rmsd ](), option[ csa::csa_output_rounds ]() ) );
 	}
 	stepwise_job_distributor->set_native_pose( native_pose );
 	stepwise_job_distributor->set_superimpose_over_all( option[ OptionKeys::stepwise::superimpose_over_all ]() );
@@ -174,6 +175,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::full_model::cutpoint_closed );
 		option.add_relevant( OptionKeys::full_model::sample_res );
 		option.add_relevant( OptionKeys::full_model::motif_mode );
+		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
+		option.add_relevant( OptionKeys::full_model::rna::bulge_res );
+		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::cycles );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::skip_deletions );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::add_delete_frequency );
@@ -185,8 +189,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_skip_bulge );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::temperature );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry );
-		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa_bank_size );
-		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa_rmsd );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::csa_bank_size );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::csa_rmsd );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::csa_output_rounds );
 		option.add_relevant( OptionKeys::stepwise::superimpose_over_all );
 		option.add_relevant( OptionKeys::stepwise::move );
 		option.add_relevant( OptionKeys::stepwise::num_random_samples );
@@ -197,12 +202,10 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::min_type );
 		option.add_relevant( OptionKeys::stepwise::min_tolerance );
+		option.add_relevant( OptionKeys::stepwise::virtualize_free_moieties_in_native );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
-		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
-		option.add_relevant( OptionKeys::full_model::rna::bulge_res );
-		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 		option.add_relevant( OptionKeys::rna::data_file );

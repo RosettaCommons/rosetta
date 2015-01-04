@@ -58,6 +58,10 @@ build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_m
 core::pose::PoseOP
 build_full_model( pose::Pose const & start_pose );
 
+void
+filter_out_bulge_res(  utility::vector1< core::Size > & sample_res,
+											 utility::vector1< core::Size > const & bulge_res );
+
 } //monte_carlo
 } //stepwise
 } //protocols

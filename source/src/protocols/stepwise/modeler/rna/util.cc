@@ -1937,11 +1937,20 @@ virtualize_free_rna_moieties( pose::Pose & pose ){
 		if ( !pose.residue( i ).is_virtual_residue() && !pose.residue( i ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) all_virtual = false;
 	}
 	if ( all_virtual ) utility_exit_with_message( "Turned native into an all virtual pose. May want to fix native or rerun with -virtualize_free_moieties_in_native false." );
-	TR << pose.annotated_sequence() << std::endl; // for debugging
+	TR.Debug << pose.annotated_sequence() << std::endl;
 
 }
 
 
+/////////////////////////////////////////////////////////////////////////////
+bool
+just_modeling_RNA( std::string const & sequence ) {
+	std::string const rna_letters( "acgunZ" );
+	for ( Size k = 1; k <= sequence.size(); k++ ) {
+		if ( rna_letters.find( sequence[k-1] ) == std::string::npos ) return false;
+	}
+	return true;
+}
 
 } //rna
 } //modeler

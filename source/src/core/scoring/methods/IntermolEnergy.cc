@@ -24,6 +24,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh>
 
 // C++
 #include <basic/options/option.hh>
@@ -106,6 +107,7 @@ IntermolEnergy::get_num_chains_frozen( pose::Pose const & pose ) const {
 	using namespace core::pose::full_model_info;
 	Size const num_chains = const_full_model_info( pose ).cutpoint_open_in_full_model().size() + 1;
 
+	// OPTION #1 -- original. Prefer to replace with OPTION 2.
 	utility::vector1< utility::vector1< Size > > chains_connected;
 	utility::vector1< Size > blank_vector;
 	for ( Size n = 1; n <= num_chains; n++ ) blank_vector.push_back( false );
@@ -116,10 +118,20 @@ IntermolEnergy::get_num_chains_frozen( pose::Pose const & pose ) const {
 	// alternatively, there must be a graph/ sublibrary somewhere that does this.
 	Size const num_subgraphs = get_number_of_connected_subgraphs( chains_connected );
 	runtime_assert( num_subgraphs <= num_chains );
+
+	// OPTION #2
+	// alternative calculation --
+	// Reuses code that  will be used in FullModelInfoSetup to define docking domain, cutpoints, etc.
+	// Replace above with this in 2015 if we don't see any runtime_assert fails...
+	utility::vector1< std::pair< Size, Size > > chain_connections = get_chain_connections( pose );
+	utility::vector1< Size > connection_domains = get_connection_domains( chain_connections, num_chains  );
+	runtime_assert( num_subgraphs == max( connection_domains ) );
 	return ( num_chains - num_subgraphs );
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
+// DEPRECATE SOON
 Size
 IntermolEnergy::get_number_of_connected_subgraphs( utility::vector1< utility::vector1< Size > > const & chains_connected ) const {
 	Size const num_chains = chains_connected.size();
@@ -135,6 +147,9 @@ IntermolEnergy::get_number_of_connected_subgraphs( utility::vector1< utility::ve
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// There's a faster way to do this -- will import later from
+// FullModelInfoSetupFromCommandLine.
+// DEPRECATE SOON
 void
 IntermolEnergy::color_connected( utility::vector1< Size > & colors,
 																 utility::vector1< utility::vector1< Size > > const & chains_connected,
@@ -149,6 +164,7 @@ IntermolEnergy::color_connected( utility::vector1< Size > & colors,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// DEPRECATE SOON
 void
 IntermolEnergy::get_chains_connected( pose::Pose const & pose, utility::vector1< utility::vector1< Size > > &  chains_connected ) const {
 	using namespace core::pose::full_model_info;
@@ -159,8 +175,8 @@ IntermolEnergy::get_chains_connected( pose::Pose const & pose, utility::vector1<
 	}
 	for ( Size i = 1; i <= frozen_chains.size(); i++ ){
 		for ( Size j = 1; j <= frozen_chains.size(); j++ ){
-			chains_connected[ i ][ j ] = true;
-			chains_connected[ j ][ i ] = true;
+			chains_connected[ frozen_chains[ i ] ][ frozen_chains[ j ] ] = true;
+			chains_connected[ frozen_chains[ j ] ][ frozen_chains[ i ] ] = true;
 		}
 	}
 	// recurse through any daughter poses.

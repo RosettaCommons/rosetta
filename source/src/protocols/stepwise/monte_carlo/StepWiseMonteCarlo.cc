@@ -146,6 +146,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 		} else {
 			success = resample_mover_->apply( pose, move_type );
 		}
+		Real proposal_density_ratio( 1 ); // later will update correctly.
 		if ( minimize_single_res_ ) move_type += "-minsngl";
 
 		if ( !success ) continue;
@@ -157,7 +158,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 		output_movie( pose, k, "TRIAL", movie_file_trial_ );
 
 		anneal_missing( monte_carlo );
-		monte_carlo->boltzmann( pose, move_type );
+		monte_carlo->boltzmann( pose, move_type, proposal_density_ratio );
 
 		TR << "Monte Carlo accepted? " << monte_carlo->mc_accepted_string() << std::endl;
 		monte_carlo->show_counters();

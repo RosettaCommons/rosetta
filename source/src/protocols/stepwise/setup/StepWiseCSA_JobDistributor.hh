@@ -33,7 +33,8 @@ namespace setup {
 																std::string const silent_file,
 																core::Size const nstruct,
 																core::Size const csa_bank_size,
-																core::Real const csa_rmsd );
+																core::Real const csa_rmsd,
+																bool const output_round_silent_files );
 
 		//destructor
 		~StepWiseCSA_JobDistributor();
@@ -85,6 +86,7 @@ namespace setup {
 		core::Size const csa_bank_size_;
 		core::Size const total_updates_;
 		core::Real const csa_rmsd_;
+		bool const output_round_silent_files_;
 		core::Size total_updates_so_far_;
 		core::io::silent::SilentFileDataOP sfd_;
 

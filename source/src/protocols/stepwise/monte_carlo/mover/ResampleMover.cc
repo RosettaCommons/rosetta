@@ -60,7 +60,7 @@ namespace mover {
 		swa_move_selector_( SWA_MoveSelectorOP( new SWA_MoveSelector ) ),
 		options_( options::StepWiseMonteCarloOptionsCOP( options::StepWiseMonteCarloOptionsOP( new options::StepWiseMonteCarloOptions ) ) ),
 		minimize_single_res_( false ),
-		slide_intermolecular_jumps_( true )
+		slide_docking_jumps_( true )
 	{}
 
 	//Destructor
@@ -89,7 +89,7 @@ namespace mover {
 		utility::vector1< SWA_Move > swa_moves;
 		swa_move_selector_->set_allow_internal_hinge( options_->allow_internal_hinge_moves() );
 		swa_move_selector_->set_allow_internal_local( options_->allow_internal_local_moves() );
-		swa_move_selector_->set_intermolecular_frequency( options_->intermolecular_frequency() );
+		swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
 		swa_move_selector_->get_resample_move_elements( pose, swa_moves );
 
 		if ( swa_moves.size() == 0 ) return false;
@@ -131,7 +131,7 @@ namespace mover {
 
 		if ( is_single_attachment ) {
 			remodel_res = get_remodel_res( swa_move, pose );
-			if ( slide_intermolecular_jumps_ && swa_move.attachment_type() == JUMP_INTERCHAIN ) slide_jump_randomly( pose, remodel_res );
+			if ( slide_docking_jumps_ && swa_move.attachment_type() == JUMP_DOCK ) slide_jump_randomly( pose, remodel_res );
 		} else { // an internal residue or move_element, with two attachments.
 			runtime_assert( num_attachments == 2 );
 			runtime_assert( swa_move.attachments()[1].attachment_type() == BOND_TO_PREVIOUS );
@@ -246,6 +246,14 @@ namespace mover {
 		Size const jump_nr = f.get_jump_that_builds_residue( remodel_res );
 		Size const reference_res = f.upstream_jump_residue( jump_nr );
 
+		// check if user-inputted jump. Then can't move.
+		utility::vector1< Size > const & jump_res_map = const_full_model_info( pose ).jump_res_map();
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		if ( jump_res_map[ res_list[ remodel_res ]  ] > 0 &&
+				 jump_res_map[ res_list[ reference_res ] ] > 0 ) {
+			runtime_assert( jump_res_map[ res_list[ remodel_res ] ] == jump_res_map[ res_list[ reference_res ] ] );
+			return;
+		}
 		utility::vector1< Size > root_partition_res, moving_partition_res;
 		figure_out_root_and_moving_partition_res( pose, remodel_res, root_partition_res, moving_partition_res );
 
@@ -254,14 +262,14 @@ namespace mover {
 			filter_for_proximity( pose, moving_partition_res, remodel_res );
 		}
 
-		// need to make sure JUMP_INTERMOL remain in different chains!
-		utility::vector1< Size > chains = 	figure_out_chain_numbers_from_full_model_info_const( pose );
+		// need to make sure JUMP_DOCK remain in different chains!
+		utility::vector1< Size > dock_domain_map = figure_out_dock_domain_map_from_full_model_info_const( pose );
 		utility::vector1< std::pair< Size, Size > > possible_jump_pairs;
 		for ( Size i = 1; i <= root_partition_res.size(); i++ ) {
 			Size const & root_res = root_partition_res[ i ];
 			for ( Size j = 1; j <= moving_partition_res.size(); j++ ) {
 				Size const & move_res = moving_partition_res[ j ];
-				if ( chains[ root_res ] != chains[ move_res ] ) possible_jump_pairs.push_back( std::make_pair( root_res, move_res ) );
+				if ( dock_domain_map[ root_res ] != dock_domain_map[ move_res ] ) possible_jump_pairs.push_back( std::make_pair( root_res, move_res ) );
 			}
 		}
 		std::pair< Size, Size > const new_jump_pair = numeric::random::rg().random_element( possible_jump_pairs );
@@ -273,7 +281,7 @@ namespace mover {
 											default_jump_atom( pose.residue( new_remodel_res ) ) );
 
 		pose.fold_tree( f );
-		TR << "Slid jump from: " << remodel_res << "--" << reference_res <<
+		TR << "Slid jump from: " << remodel_res << " -- " << reference_res <<
 			" to: " << new_remodel_res << " -- " << new_reference_res << std::endl;
 
 		remodel_res = new_remodel_res;

@@ -119,10 +119,10 @@ namespace protein {
 		if ( !pose.residue( moving_res ).is_protein() ) return;
 
 		// go back another residue -- this was the default choice in protein SWA.
-		utility::vector1< Size > const & fixed_domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+		utility::vector1< Size > const sample_res_for_pose = core::pose::full_model_info::get_sample_res_for_pose( pose );
 		Size const upstream_res = pose.fold_tree().get_parent_residue( moving_res );
 		if ( pose.residue_type( upstream_res ).is_protein() &&
-				 fixed_domain_map[ upstream_res ] == 0 ) moving_res_list.push_back( upstream_res );
+				 sample_res_for_pose.has_value( upstream_res ) ) moving_res_list.push_back( upstream_res );
 	}
 
 
@@ -146,7 +146,7 @@ namespace protein {
 
 			// as in protein SWA, choose two bridge residues for CCD closure on the 'other side' of sampled residue.
 			utility::vector1< int > offsets;
-			utility::vector1< Size > const & fixed_domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+			utility::vector1< Size > const sample_res_for_pose = core::pose::full_model_info::get_sample_res_for_pose( pose );
 			if ( moving_res_list.has_value( cutpoint_closed ) ){
 				offsets = make_vector1( +1, +2 );
 			} else if ( moving_res_list.has_value( cutpoint_closed+1 ) ){
@@ -159,7 +159,7 @@ namespace protein {
 				int const bridge_res = cutpoint_closed + offsets[n];
 				if( bridge_res < 1 ) continue;
 				runtime_assert( !moving_res_list.has_value( bridge_res ) );
-				if ( fixed_domain_map[ bridge_res ] == 0 ) working_bridge_res.push_back( bridge_res );
+				if ( sample_res_for_pose.has_value( bridge_res ) ) working_bridge_res.push_back( bridge_res );
 			}
 			bridge_res = merge_vectors( bridge_res, const_full_model_info( pose ).sub_to_full( working_bridge_res ) );
 		}

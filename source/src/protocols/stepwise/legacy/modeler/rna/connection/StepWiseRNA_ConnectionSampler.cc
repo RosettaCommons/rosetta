@@ -456,8 +456,10 @@ StepWiseRNA_ConnectionSampler::initialize_poses_and_checkers( pose::Pose & pose 
 	// virtual sugars even at residues that have instantiated sugars -- we can quickly screen this pose,
 	// and it provides the appropriate baseline atr/rep for checking contacts and clashes.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_, chemical::VIRTUAL_RIBOSE,
+		if ( residue_alternative_sets_[ n ].size() > 1 ) {
+			pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_, chemical::VIRTUAL_RIBOSE,
 																							residue_alternative_sets_[ n ].representative_seqpos() );
+		}
 	}
 	// following is to check atr/rep even on sugars that will remain virtualized.
 	bool const use_loose_rep_cutoff = ( kic_modeler_ || moving_partition_res_.size() > 1 );
@@ -466,8 +468,10 @@ StepWiseRNA_ConnectionSampler::initialize_poses_and_checkers( pose::Pose & pose 
 
 	// we will be checking clashes of even virtual sugars compared to no-sugar baseline.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		pose::remove_variant_type_from_pose_residue( *screening_pose_, chemical::VIRTUAL_RIBOSE,
-																								 residue_alternative_sets_[ n ].representative_seqpos() );
+		if ( residue_alternative_sets_[ n ].size() > 1 ) {
+			pose::remove_variant_type_from_pose_residue( *screening_pose_, chemical::VIRTUAL_RIBOSE,
+																									 residue_alternative_sets_[ n ].representative_seqpos() );
+		}
 	}
 
 	for ( Size n = 1; n <= five_prime_chain_breaks_.size(); n++ ) {

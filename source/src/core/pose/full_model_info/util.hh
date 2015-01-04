@@ -20,6 +20,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
+#include <core/pose/full_model_info/FullModelParameters.fwd.hh>
+#include <map>
 
 namespace core {
 namespace pose {
@@ -62,7 +64,16 @@ namespace full_model_info {
 	figure_out_chain_numbers_from_full_model_info_const( pose::Pose const & pose );
 
 	utility::vector1< Size >
+	figure_out_dock_domain_map_from_full_model_info_const( pose::Pose const & pose );
+
+	utility::vector1< Size >
 	get_chains_full( pose::Pose const & pose );
+
+	utility::vector1< Size >
+	get_chains_from_cutpoint_open( utility::vector1< Size > const & cutpoint_open, Size const nres );
+
+	utility::vector1< Size >
+	get_sample_res_for_pose( pose::Pose const & pose );
 
 	bool
 	check_full_model_info_OK( pose::Pose const & pose );
@@ -87,6 +98,9 @@ namespace full_model_info {
 
 	utility::vector1< Size >
 	get_fixed_domain_from_full_model_info_const( pose::Pose const & pose );
+
+	utility::vector1< Size >
+	get_input_domain_from_full_model_info_const( pose::Pose const & pose );
 
 	core::Size
 	sub_to_full( core::Size const i, core::pose::Pose const & pose );
@@ -144,6 +158,15 @@ namespace full_model_info {
 	bool
 	check_all_residues_sampled( pose::Pose const & pose );
 
+	std::map< std::pair< Size, Size >, std::pair< Size, Size > >
+	get_preferred_jump_pair_for_docking_domains( FullModelInfo const & full_model_info );
+
+	utility::vector1< std::pair< core::Size, core::Size > >
+	get_chain_connections( core::pose::Pose const & pose );
+
+	utility::vector1< core::Size >
+	get_connection_domains( utility::vector1< std::pair< core::Size, core::Size > > const & chain_connections,
+													core::Size const nchains );
 
 } //full_model_info
 } //pose

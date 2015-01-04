@@ -15,7 +15,6 @@
 
 #include <protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
-#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/file_util.hh>
@@ -81,12 +80,14 @@ namespace setup {
 																													std::string const silent_file,
 																													core::Size const nstruct,
 																													core::Size const csa_bank_size,
-																													core::Real const csa_rmsd ):
+																													core::Real const csa_rmsd,
+																													bool const output_round_silent_files ):
 		StepWiseJobDistributor( stepwise_monte_carlo, silent_file, nstruct ),
 		lock_file( silent_file + ".lock" ),
 		csa_bank_size_( csa_bank_size ),
 		total_updates_( csa_bank_size * nstruct ),
 		csa_rmsd_( csa_rmsd ),
+		output_round_silent_files_( output_round_silent_files ),
 		total_updates_so_far_( 0 )
 	{}
 
@@ -154,7 +155,7 @@ namespace setup {
 		write_out_silent_file();
 		free_lock_on_silent_file();
 
-		write_out_round_silent_file();
+		if ( output_round_silent_files_ ) write_out_round_silent_file();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////

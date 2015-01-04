@@ -113,11 +113,18 @@ namespace full_model_info {
 		set_parameter_as_res_lists( FullModelParameterType const type,
 																std::map< Size, utility::vector1< Size > > const & setting );
 
+		void
+		set_parameter_as_res_list_in_pairs( FullModelParameterType const type,
+																				utility::vector1< Size > const & setting );
+
 		utility::vector1< Size > const &
 		get_res_list( FullModelParameterType const type, Size const value ) const;
 
 		utility::vector1< Size > const &
 		get_res_list( FullModelParameterType const type ) const { return get_res_list( type, 1 ); }
+
+		utility::vector1< std::pair< Size, Size > >
+		get_res_list_as_pairs( FullModelParameterType const type ) const;
 
 		utility::vector1< Size > const &
 		get_parameter( FullModelParameterType const type ) const;
@@ -148,6 +155,9 @@ namespace full_model_info {
 
 		int
 		full_to_conventional( Size const res_num ) const;
+
+		std::pair< utility::vector1< int >, utility::vector1< char > >
+		full_to_conventional_resnum_and_chain( utility::vector1< Size > const & res_list ) const;
 
 		utility::vector1< Size >
 		chains_in_full_model() const;

@@ -250,18 +250,6 @@ set_CCD_torsions_to_zero(
     pose::Pose & pose,
     Size const five_prime_res );
 
-// void
-// get_default_allowed_bulge_res(
-//     utility::vector1< Size > & allow_bulge_res_list,
-//     pose::Pose const & pose,
-//     bool const verbose );
-
-//void
-//print_atom_info( pose::Pose const & pose, Size const seq_num, std::string const pose_name );
-
-// void
-// print_individual_atom_info( conformation::Residue const & rsd, Size const atomno, std::string const rsd_name );
-
 void
 print_base_state( std::string const tag, Size const base_state, std::ostream & outstream = std::cout );
 
@@ -325,6 +313,10 @@ figure_out_moving_rna_chain_breaks( core::pose::Pose const & pose,
 																		utility::vector1< core::Size > & rna_chain_break_gap_sizes );
 void
 virtualize_free_rna_moieties( pose::Pose & pose );
+
+bool
+just_modeling_RNA( std::string const & sequence );
+
 
 } //rna
 } //modeler

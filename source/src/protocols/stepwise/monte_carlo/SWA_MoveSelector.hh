@@ -90,11 +90,8 @@ namespace monte_carlo {
 		void set_from_scratch_frequency( Real const & setting ){ from_scratch_frequency_ = setting; }
 		Real from_scratch_frequency() const{ return from_scratch_frequency_; }
 
-		void set_intermolecular_frequency( Real const & setting ){ intermolecular_frequency_ = setting; }
-		Real intermolecular_frequency() const{ return intermolecular_frequency_; }
-
-		void set_allow_shared_chains_in_dock_poses( bool const & setting ){ allow_shared_chains_in_dock_poses_ = setting; }
-		bool allow_shared_chains_in_dock_poses() const{ return allow_shared_chains_in_dock_poses_; }
+		void set_docking_frequency( Real const & setting ){ docking_frequency_ = setting; }
+		Real docking_frequency() const{ return docking_frequency_; }
 
 		void set_choose_random( bool const & setting ){ choose_random_ = setting; }
 		bool choose_random() const{ return choose_random_; }
@@ -122,10 +119,11 @@ namespace monte_carlo {
 
 		void
 		filter_by_sample_res( utility::vector1< SWA_Move > & swa_moves,
-													utility::vector1< Size > const & sample_res );
+													utility::vector1< Size > const & sample_res,
+													utility::vector1< Size > const & input_domain );
 
 		bool
-		check_for_fixed_domain_or_from_scratch(  pose::Pose const & pose,
+		check_for_input_domain_or_from_scratch(  pose::Pose const & pose,
 																						 utility::vector1< Size> const & partition_res ) const;
 
 		bool
@@ -133,20 +131,19 @@ namespace monte_carlo {
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		void
-		get_intermolecular_add_and_delete_elements( pose::Pose const & pose,
-																								utility::vector1< SWA_Move > & swa_moves,
-																								utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
+		get_docking_add_and_delete_elements( pose::Pose const & pose,
+																								utility::vector1< SWA_Move > & swa_moves );
 
 		void
-		get_intermolecular_add_move_elements( pose::Pose const & pose,
+		get_docking_add_move_elements( pose::Pose const & pose,
 																					utility::vector1< SWA_Move > & swa_moves );
 
 		void
-		get_intermolecular_delete_move_elements( pose::Pose const & pose,
+		get_docking_delete_move_elements( pose::Pose const & pose,
 																						utility::vector1< SWA_Move > & swa_moves );
 
 		void
-		get_intermolecular_split_move_elements( pose::Pose const & pose,
+		get_docking_split_move_elements( pose::Pose const & pose,
 																						utility::vector1< SWA_Move > & swa_moves,
 																						MoveType const move_type );
 
@@ -184,7 +181,7 @@ namespace monte_carlo {
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// helper functions
 		bool
-		partition_splits_a_fixed_domain( utility::vector1< Size > const & partition_definition,
+		partition_splits_an_input_domain( utility::vector1< Size > const & partition_definition,
 																		 utility::vector1< Size > const & domain_map ) const;
 
 		utility::vector1< Size >
@@ -206,9 +203,7 @@ namespace monte_carlo {
 		bool allow_internal_hinge_;
 		bool allow_internal_local_;
 		Real from_scratch_frequency_;
-		Real intermolecular_frequency_;
-		bool only_dock_preexisting_chunks_;
-		bool allow_shared_chains_in_dock_poses_;
+		Real docking_frequency_;
 		bool remodeler_;
 		bool choose_random_;
 	};

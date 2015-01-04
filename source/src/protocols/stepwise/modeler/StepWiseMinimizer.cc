@@ -54,7 +54,6 @@ using utility::tools::make_vector1;
 // Single, simplified minimizer for stepwise assembly and monte carlo of proteins and RNA.
 //
 // TO DO: restore native_edensity_score_checker, if it is needed for ERRASER. Also skip_minimize? -- need to check with Fang.
-// TO DO: put in variable bond geometry minimizer
 // TO DO: put in CCD closing of protein loops, in the same manner as RNA loops.
 // TO DO: figure out which side-chains are neighbors based on moving_partition, not moving_res!
 //
@@ -125,7 +124,7 @@ namespace modeler {
 		clusterer.set_max_decoys( pose_list_.size() );
 		clusterer.set_calc_rms_res( working_moving_res_ );
 
-		if ( pose_list_.size() > 1 ) TR << "Will cluster "  << pose_list_.size() << " poses with cluster radius " << clusterer.cluster_rmsd() << std::endl;
+		if ( pose_list_.size() > 1 && clusterer.cluster_rmsd() > 0.0 ) TR << "Will cluster "  << pose_list_.size() << " poses with cluster radius " << clusterer.cluster_rmsd() << std::endl;
 		clusterer.cluster();
 
 		pose_list_ = clusterer.pose_list();

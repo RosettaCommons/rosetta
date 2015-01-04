@@ -78,13 +78,19 @@ public:
 	utility::vector1< int > const & conventional_numbering() const;
 	utility::vector1< char > const & conventional_chains() const;
 	utility::vector1< Size > const & cutpoint_open_in_full_model() const;
+	utility::vector1< Size > const & dock_domain_map() const;
 	utility::vector1< Size > const & fixed_domain_map() const;
+	utility::vector1< Size > const & input_domain_map() const;
 	utility::vector1< Size > const & extra_minimize_res() const;
+	utility::vector1< Size > const & preferred_root_res() const;
 	utility::vector1< Size > const & sample_res() const;
 	utility::vector1< Size > const & working_res() const;
 	utility::vector1< Size > const & calc_rms_res() const;
 	utility::vector1< Size > const & rna_syn_chi_res() const;
 	utility::vector1< Size > const & rna_terminal_res() const;
+	utility::vector1< Size > const & rna_bulge_res() const;
+	utility::vector1< std::pair< Size, Size > > jump_pairs() const;
+	utility::vector1< Size > const & jump_res_map() const;
 
 	void clear_res_list();
 
@@ -120,8 +126,6 @@ public:
 	Size get_idx_for_other_pose( pose::Pose const & pose ) const;
 
 	utility::vector1< Size > chains_in_full_model() const;
-
-	utility::vector1< Size > moving_res_in_full_model() const;
 
 	Size size() const;
 

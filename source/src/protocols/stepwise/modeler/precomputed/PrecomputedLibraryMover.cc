@@ -101,9 +101,9 @@ namespace precomputed {
 	bool
 	PrecomputedLibraryMover::has_precomputed_move( core::pose::Pose const & pose ) const {
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-		utility::vector1< Size > const & fixed_domain_map = const_full_model_info( pose ).fixed_domain_map();
+		utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
 		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			if ( fixed_domain_map[ res_list[ i ] ] != 0 ) return false;
+			if ( !sample_res.has_value( res_list[ i ] ) ) return false;
 		}
 		return ( library_map_.find( pose.sequence() ) != library_map_.end() );
 	}

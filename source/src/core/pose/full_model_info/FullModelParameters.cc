@@ -84,6 +84,7 @@ namespace full_model_info {
 			conventional_numbering_.push_back( static_cast<int>( n ) );
 		}
 		set_parameter( FIXED_DOMAIN, fixed_domain_map );
+		set_parameter( INPUT_DOMAIN, fixed_domain_map );
 		set_parameter( WORKING,      fixed_domain_map );
 	}
 
@@ -107,6 +108,7 @@ namespace full_model_info {
 			fixed_domain_map[ res_num ] = 1;
 		}
 		set_parameter( FIXED_DOMAIN, fixed_domain_map );
+		set_parameter( INPUT_DOMAIN, fixed_domain_map );
 		set_parameter( WORKING,      fixed_domain_map );
 
 	}
@@ -192,6 +194,23 @@ namespace full_model_info {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< std::pair< Size, Size > >
+	FullModelParameters::get_res_list_as_pairs( FullModelParameterType const type ) const {
+		utility::vector1< std::pair< Size, Size > > res_list_as_pairs;
+		std::map< Size, utility::vector1< Size > > const & res_lists =	get_parameter_as_res_lists( type );
+		for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin();
+					it != res_lists.end(); it++ ){
+			if ( it->first == 0 ) continue;
+			if ( it->second.size() == 0 ) continue;
+			runtime_assert( it->second.size() == 2 );
+			Size const & res1_full =  it->second[1];
+			Size const & res2_full =  it->second[2];
+			res_list_as_pairs.push_back( std::make_pair( res1_full, res2_full ) );
+		}
+		return res_list_as_pairs;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > const &
 	FullModelParameters::get_parameter( FullModelParameterType const type ) const {
 		runtime_assert( parameter_values_at_res_.find( type ) != parameter_values_at_res_.end() );
@@ -267,14 +286,7 @@ namespace full_model_info {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size >
 	FullModelParameters::chains_in_full_model() const {
-		utility::vector1< Size > const & cutpoint_open_in_full_model = get_parameter( CUTPOINT_OPEN );
-		utility::vector1< Size > chains;
-		Size chain_number( 1 );
-		for ( Size n = 1; n <= full_sequence_.size(); n++ ){
-			chains.push_back( chain_number );
-			if ( cutpoint_open_in_full_model[ n ] ) chain_number++;
-		}
-		return chains;
+		return get_chains_from_cutpoint_open( get_parameter( CUTPOINT_OPEN ), size() );
 	}
 
 
@@ -387,6 +399,21 @@ namespace full_model_info {
 			res_list_in_conventional_numbering.push_back( full_to_conventional( res_list[n] ) );
 		}
 		return res_list_in_conventional_numbering;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	std::pair< utility::vector1< int >, utility::vector1< char > >
+	FullModelParameters::full_to_conventional_resnum_and_chain( utility::vector1< Size > const & res_list ) const {
+		utility::vector1< int > conventional_numbering_in_res_list;
+		utility::vector1< char > conventional_chains_in_res_list;
+		for ( Size n = 1; n <= res_list.size(); n++ ){
+			Size const & res_num = res_list[ n ];
+			runtime_assert( res_num >= 1 && res_num <= conventional_numbering_.size() );
+			runtime_assert( res_num >= 1 && res_num <= conventional_chains_.size() );
+			conventional_numbering_in_res_list.push_back( conventional_numbering_[ res_num ] );
+			conventional_chains_in_res_list.push_back( conventional_chains_[ res_num ] );
+		}
+		return std::make_pair( conventional_numbering_in_res_list, conventional_chains_in_res_list );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -581,7 +608,7 @@ namespace full_model_info {
 	FullModelParameters::read_disulfides( std::string const disulfide_file ) {
 
 		if ( disulfide_file.size() == 0 ) return;
-		utility::vector1< Size > disulfide_map( size(), 0 );
+		utility::vector1< Size > disulfide_res_list;
 
 		// could use core::io::raw_data::DisulfideFile
 		// but, strangely, it does not seem to provide the
@@ -602,16 +629,29 @@ namespace full_model_info {
 			for ( int k = 0; k <= 1; k++ ){
 				Size const full_model_number = conventional_to_full( resnum_and_chain.first[k], resnum_and_chain.second[k] );
 				runtime_assert( full_sequence_[ full_model_number - 1 ] == 'C' ); // better be cysteine.
-				// disallow residue to have more than one disulfide partner:
-				runtime_assert( disulfide_map[ full_model_number ] == 0 );
-				disulfide_map[ full_model_number ] = count;
+				disulfide_res_list.push_back( full_model_number );
 			}
 		}
 		data.close();
 
-		set_parameter( DISULFIDES, disulfide_map );
+		set_parameter_as_res_list_in_pairs( DISULFIDE, disulfide_res_list );
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// for disulfides, extra_min_jump_res, secstruct, etc. -- list of mutually exclusive pairs
+	void
+	FullModelParameters::set_parameter_as_res_list_in_pairs( FullModelParameterType const type, utility::vector1< Size > const & setting ) {
+		runtime_assert( setting.size() % 2 == 0 ); // must be even
+		utility::vector1< Size > parameter( size(), 0 );
+		for ( Size n = 1; n <= setting.size()/2; n++ ) {
+			for ( Size k = (2*n-1); k <= (2*n); k++ ){
+				runtime_assert( parameter[ setting[ k ] ] == 0 );
+				parameter[ setting[ k ] ] =  n;
+			}
+		}
+
+		set_parameter( type, parameter );
+	}
 
 } //full_model_info
 } //pose

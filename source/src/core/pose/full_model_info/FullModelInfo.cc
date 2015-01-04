@@ -154,12 +154,24 @@ FullModelInfo::cutpoint_open_in_full_model() const {
 	return full_model_parameters_->get_res_list( CUTPOINT_OPEN );
 }
 utility::vector1< Size > const &
+FullModelInfo::dock_domain_map() const {
+	return full_model_parameters_->get_parameter( DOCK_DOMAIN );
+}
+utility::vector1< Size > const &
 FullModelInfo::fixed_domain_map() const {
 	return full_model_parameters_->get_parameter( FIXED_DOMAIN );
 }
 utility::vector1< Size > const &
+FullModelInfo::input_domain_map() const {
+	return full_model_parameters_->get_parameter( INPUT_DOMAIN );
+}
+utility::vector1< Size > const &
 FullModelInfo::extra_minimize_res() const {
 	return full_model_parameters_->get_res_list( EXTRA_MINIMIZE );
+}
+utility::vector1< Size > const &
+FullModelInfo::preferred_root_res() const {
+	return full_model_parameters_->get_res_list( PREFERRED_ROOT );
 }
 utility::vector1< Size > const &
 FullModelInfo::sample_res() const {
@@ -178,34 +190,33 @@ FullModelInfo::rna_terminal_res() const {
 	return full_model_parameters_->get_res_list( RNA_TERMINAL );
 }
 utility::vector1< Size > const &
+FullModelInfo::rna_bulge_res() const {
+	return full_model_parameters_->get_res_list( RNA_BULGE );
+}
+utility::vector1< Size > const &
 FullModelInfo::rna_syn_chi_res() const {
 	return full_model_parameters_->get_res_list( RNA_SYN_CHI );
+}
+utility::vector1< std::pair< Size, Size > >
+FullModelInfo::jump_pairs() const {
+	return full_model_parameters_->get_res_list_as_pairs( JUMP );
+}
+utility::vector1< Size > const &
+FullModelInfo::jump_res_map() const {
+	return full_model_parameters_->get_parameter( JUMP );
 }
 Size
 FullModelInfo::size() const {
 	return full_model_parameters_->size();
 }
-
 utility::vector1< Size >
 FullModelInfo::chains_in_full_model() const {
  	return full_model_parameters_->chains_in_full_model();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-FullModelInfo::moving_res_in_full_model() const {
-	utility::vector1< Size > moving_res;
-	utility::vector1< Size > const & fixed_domain_map_ = full_model_parameters_->get_parameter( FIXED_DOMAIN );
-	runtime_assert( size() == fixed_domain_map_.size() );
-	for ( Size n = 1; n <= size(); n++ ){
-		if ( fixed_domain_map_[n] == 0 ) moving_res.push_back( n );
-	}
-	return moving_res;
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////
 std::map< Size, Size >
-FullModelInfo::full_to_sub() const{
+FullModelInfo::full_to_sub() const {
 	std::map< Size, Size > full_to_sub;
 	for ( Size n = 1; n <= size(); n++ ) {
 		if ( res_list_.has_value( n ) ) full_to_sub[ n ] = res_list_.index( n );
@@ -215,7 +226,7 @@ FullModelInfo::full_to_sub() const{
 
 ///////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
-FullModelInfo::full_to_sub( utility::vector1< Size > const & res_in_full_model_numbering ) const{
+FullModelInfo::full_to_sub( utility::vector1< Size > const & res_in_full_model_numbering ) const {
 	utility::vector1< Size > res;
 	for ( Size n = 1; n <= res_in_full_model_numbering.size(); n++ ){
 		Size const i = res_list_.index( res_in_full_model_numbering[ n ] );
@@ -226,14 +237,14 @@ FullModelInfo::full_to_sub( utility::vector1< Size > const & res_in_full_model_n
 
 ///////////////////////////////////////////////////////////////////////////////////////
 Size
-FullModelInfo::full_to_sub( Size const res_in_full_model_numbering ) const{
+FullModelInfo::full_to_sub( Size const res_in_full_model_numbering ) const {
 	runtime_assert( res_list_.index( res_in_full_model_numbering ) );
 	return res_list_.index( res_in_full_model_numbering );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
-FullModelInfo::sub_to_full( utility::vector1< Size > const & res ) const{
+FullModelInfo::sub_to_full( utility::vector1< Size > const & res ) const {
 	utility::vector1< Size > res_in_full_model_numbering;
 	for ( Size n = 1; n <= res.size(); n++ ){
 		Size const & i = res[n];
@@ -245,7 +256,7 @@ FullModelInfo::sub_to_full( utility::vector1< Size > const & res ) const{
 
 ///////////////////////////////////////////////////////////////////////////////////////
 Size
-FullModelInfo::sub_to_full( Size const & res ) const{
+FullModelInfo::sub_to_full( Size const & res ) const {
 	if ( res == 0 ) return 0;
 	runtime_assert( res >= 1 && res <= res_list_.size() );
 	return res_list_[ res ];

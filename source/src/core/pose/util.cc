@@ -743,7 +743,7 @@ void clearPoseExtraScores(
 ) {
 
 	using basic::datacache::DataCache_CacheableData;
-	
+
 	{
 		using basic::datacache::CacheableStringFloatMap;
 		pose.data().set(
@@ -2138,7 +2138,7 @@ std::string extract_tag_from_pose( core::pose::Pose &pose )
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
 	using basic::datacache::CacheableString;
 	using basic::datacache::CacheableStringOP;
-	
+
 	if( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ){
 			CacheableStringOP data =  utility::pointer::dynamic_pointer_cast< CacheableString > (  (pose.data().get_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
 			if( data.get() == NULL ) return std::string("UnknownTag");

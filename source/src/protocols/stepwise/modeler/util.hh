@@ -159,20 +159,17 @@ namespace modeler {
 	figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap const & mm );
 
 	bool
-	check_for_fixed_domain( pose::Pose const & pose,
+	check_for_input_domain( pose::Pose const & pose,
 													utility::vector1< Size> const & partition_res );
 
 	bool
-	check_for_fixed_domain( pose::Pose const & pose );
+	check_for_input_domain( pose::Pose const & pose );
 
 	void make_variants_match(
 			pose::Pose & pose,
 			pose::Pose const & reference_pose,
 			Size const n,
 			chemical::VariantType const variant_type );
-
-	void
-	try_reroot_at_fixed_domain( pose::Pose & pose );
 
 	bool
 	definite_terminal_root( pose::Pose const & pose, Size const i );
@@ -205,8 +202,19 @@ namespace modeler {
 	get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr /*jump_number*/ );
 
 	void
+	reroot_based_on_full_model_info( pose::Pose & pose );
+
+	void
 	reroot_based_on_full_model_info( pose::Pose & pose,
 																	 utility::vector1< Size > const & root_partition_res );
+	void
+	reroot( pose::Pose & pose,
+					utility::vector1< Size > const & root_partition_res /* should not be empty */,
+					utility::vector1< Size > const & res_list,
+					utility::vector1< Size > const & preferred_root_res /* can be empty */,
+					utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+					utility::vector1< Size > const & cutpoint_open_in_full_model,
+					utility::vector1< Size > const & working_res );
 
 	utility::vector1< Size >
 	figure_out_moving_partition_res_for_suite( pose::Pose const & pose,

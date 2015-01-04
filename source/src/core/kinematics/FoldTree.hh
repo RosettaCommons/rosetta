@@ -478,6 +478,16 @@ public:
 			ObjexxFCL::FArray1D_bool & partner1
 	) const ;
 
+	/// @brief partition the fold tree in two parts if the jump is disconnected.
+	utility::vector1< bool >
+	partition_by_jump(
+			Size const jump_nr
+	) const;
+
+	/// @brief partition the fold tree into n parts based on specified jumps.
+	utility::vector1< Size >
+	partition_coloring( utility::vector1< Size > const & jump_numbers ) const;
+
 	/// @brief partition the fold tree in two parts if a cut would be introduced between seqpos and seqpos+1
 	void
 	partition_by_residue(

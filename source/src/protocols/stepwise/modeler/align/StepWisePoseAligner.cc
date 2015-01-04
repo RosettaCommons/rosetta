@@ -383,8 +383,6 @@ namespace align {
 	StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const & pose ) {
 
 		utility::vector1< Size > domain_map = get_fixed_domain_from_full_model_info_const( pose );
-		utility::vector1< Size > const & extra_minimize_res = const_full_model_info( pose ).extra_minimize_res();
-		utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 
 		if ( user_defined_calc_rms_res_.size() > 0 ){
 			for ( Size n = 1; n <= user_defined_calc_rms_res_.size(); n++ )  domain_map[ user_defined_calc_rms_res_[n] ] = 0;
@@ -395,7 +393,6 @@ namespace align {
 		Size d_primary = 0;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( root_partition_res_.size() > 0 && !root_partition_res_.has_value( n ) ) continue;
-			if ( extra_minimize_res.has_value( res_list[n] ) ) continue;
 			Size const d = domain_map[ n ];
 			if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;
 		}
@@ -414,7 +411,6 @@ namespace align {
 					rmsd_res_in_pose_.push_back( n );
 				} else {
 					if ( domain_map[ n ] == d_primary ) {
-						if ( extra_minimize_res.has_value( res_list[n] ) ) continue;
 						if ( root_partition_res_.size() == 0 || root_partition_res_.has_value( n ) )	superimpose_res_in_pose_.push_back( n );
 					} else {
 						if ( !root_partition_res_.has_value( n ) )  rmsd_res_in_pose_.push_back( n );

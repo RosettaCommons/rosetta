@@ -226,7 +226,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     options.database = path.abspath(options.database)
 
     print 'Using Rosetta source dir at: ', options.mini_home
-    print 'Using Rosetta databse dir at:', options.database
+    print 'Using Rosetta database dir at:', options.database
 
     # Make sure the current directory is the script directory:
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."

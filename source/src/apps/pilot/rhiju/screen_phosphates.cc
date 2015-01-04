@@ -126,7 +126,7 @@ screen_phosphates()
 	PoseOP pose_op = input_poses[ 1 ];
 	pose::Pose & pose = *pose_op;
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500 );
-	try_reroot_at_fixed_domain( pose );
+	protocols::stepwise::modeler::reroot_based_on_full_model_info( pose );
 
 	fix_up_residue_type_variants( pose );
 

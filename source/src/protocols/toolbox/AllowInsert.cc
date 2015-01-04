@@ -130,8 +130,10 @@ namespace toolbox{
 		using namespace core::pose::full_model_info;
 		utility::vector1< Size > fixed_domain( pose.total_residue(), 0 );
 
-		// pose can store some information on separate domains... check inside.
-		if ( full_model_info_defined( pose ) ) fixed_domain = get_fixed_domain_from_full_model_info_const( pose );
+		if ( full_model_info_defined( pose ) ) {
+			// pose can store some information on separate domains... check inside.
+			fixed_domain = get_fixed_domain_from_full_model_info_const( pose );
+		}
 
 		allow_insert_.clear();
 		for (Size i = 1; i <= pose.total_residue(); i++ ) {
@@ -201,10 +203,10 @@ namespace toolbox{
 		bool const fail = conformation.get_jump_atom_ids( jump_number, id1, id2 );
 		if ( fail ) return false;
 
-		//		TR << jump_number << ": " << id1 << " " << get_domain( id1 ) << " -- " << id2 << " " << get_domain( id2 ) << std::endl;
-		if ( !get( id1 ) && !get( id2 ) && ( get_domain( id1 ) == get_domain( id2 ) ) ) return false;
+		bool fixed_jump = ( !get( id1 ) && !get( id2 ) && ( get_domain( id1 ) == get_domain( id2 ) ) );
+		//TR << TR.Cyan << jump_number << ": " << id1 << " " << get_domain( id1 ) << " -- " << id2 << " " << get_domain( id2 ) << "  MOVE? " << (!fixed_jump) << TR.Reset << std::endl;
 
-		return true;
+		return ( !fixed_jump );
 	}
 
 	//////////////////////////////////////////////////////////////////

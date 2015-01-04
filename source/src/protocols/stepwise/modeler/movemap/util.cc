@@ -52,6 +52,7 @@ namespace modeler {
 namespace movemap {
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+// used by legacy StepWiseProteinMinimizer.cc
 void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 														 core::pose::Pose const & pose,
@@ -62,6 +63,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+// used by legacy StepWiseRNA_Minimizer.cc
 void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 														 toolbox::AllowInsertOP & allow_insert,

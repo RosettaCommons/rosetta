@@ -52,7 +52,9 @@ namespace screener {
 		tag_ = create_tag( "U" + extra_tag_, first_sampler_->count() );
 		if ( sampler_include_torsion_value_in_tag_ &&
 				 ( moving_res_ != 0 ) &&
-				 ( reference_res_ != 0 ) ) tag_ += create_rotamer_string( pose_, moving_res_, reference_res_ );
+				 ( reference_res_ != 0 ) &&
+				 pose_.residue( moving_res_ ).is_RNA() &&
+				 pose_.residue( reference_res_ ).is_RNA() ) tag_ += create_rotamer_string( pose_, moving_res_, reference_res_ );
 		return true;
 	}
 

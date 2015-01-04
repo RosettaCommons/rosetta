@@ -37,7 +37,7 @@ namespace monte_carlo {
 	enum AttachmentType{ NO_ATTACHMENT = 0,
 											 BOND_TO_PREVIOUS, BOND_TO_NEXT,
 											 JUMP_TO_PREV_IN_CHAIN, JUMP_TO_NEXT_IN_CHAIN,
-											 JUMP_INTERCHAIN,
+											 JUMP_DOCK,
 											 LAST_ATTACHMENT_TYPE };
 
 	// If you add something here, update to_string( MoveType ) in SWA_Move.cc
@@ -141,7 +141,7 @@ namespace monte_carlo {
 
 		bool is_jump() { return ( attachment_type() == JUMP_TO_NEXT_IN_CHAIN ||
 															attachment_type() == JUMP_TO_PREV_IN_CHAIN ||
-															attachment_type() == JUMP_INTERCHAIN ); }
+															attachment_type() == JUMP_DOCK ); }
 
 	private:
 

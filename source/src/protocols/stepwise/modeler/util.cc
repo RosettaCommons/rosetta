@@ -52,6 +52,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh>
 #include <utility/stream_util.hh>
 
 #include <iostream>
@@ -279,12 +280,13 @@ find_root_without_virtual_ribose( kinematics::FoldTree const & f, pose::Pose con
 	return 0;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 effective_lower_terminus_based_on_working_res( Size const i,
-																				utility::vector1< Size > const & working_res,
-																				utility::vector1< Size > const & res_list,
-																				utility::vector1< Size > const & cutpoint_open_in_full_model ){
+																							 utility::vector1< Size > const & working_res,
+																							 utility::vector1< Size > const & res_list,
+																							 utility::vector1< Size > const & cutpoint_open_in_full_model ){
 
 	if ( working_res.size() == 0 ) return false; // not defined
 
@@ -306,10 +308,10 @@ effective_lower_terminus_based_on_working_res( Size const i,
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 effective_upper_terminus_based_on_working_res( Size const i,
-																							utility::vector1< Size > const & working_res,
-																							utility::vector1< Size > const & res_list,
-																							utility::vector1< Size > const & cutpoint_open_in_full_model,
-																							Size const nres_full){
+																							 utility::vector1< Size > const & working_res,
+																							 utility::vector1< Size > const & res_list,
+																							 utility::vector1< Size > const & cutpoint_open_in_full_model,
+																							 Size const nres_full){
 
 	if ( working_res.size() == 0 ) return false; // not defined
 
@@ -328,23 +330,22 @@ effective_upper_terminus_based_on_working_res( Size const i,
 	//				 ( i == pose.total_residue() || ( res_list[i + 1] > res_list[i] + 1 ) ) ) ){
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 bool
-definite_terminal_root( pose::Pose const & pose, Size const i ){
-	using namespace core::pose::full_model_info;
-	FullModelInfo const & full_model_info = const_full_model_info( pose );
-	utility::vector1< Size > const & res_list = full_model_info.res_list();
-	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-	utility::vector1< Size > const & working_res = full_model_info.working_res();
+definite_terminal_root( utility::vector1< Size > const & cutpoint_open_in_full_model,
+												utility::vector1< Size > const & working_res,
+												utility::vector1< Size > const & res_list,
+												Size const nres,
+												Size const i ) {
 	if ( res_list[ i ] == 1 ||
 			 cutpoint_open_in_full_model.has_value( res_list[ i ] - 1 ) ||
 			 effective_lower_terminus_based_on_working_res( i, working_res, res_list, cutpoint_open_in_full_model ) ){
 		// great, nothing will ever get prepended here.
 		return true;
 	}
-	if ( res_list[ i ] == full_model_info.size() ||
+	if ( res_list[ i ] == nres ||
 			 cutpoint_open_in_full_model.has_value( res_list[ i ] ) ||
-			 effective_upper_terminus_based_on_working_res( i, working_res, res_list, cutpoint_open_in_full_model, full_model_info.size() ) ){
+			 effective_upper_terminus_based_on_working_res( i, working_res, res_list, cutpoint_open_in_full_model, nres ) ){
 		// great, nothing will ever get appended here.
 		return true;
 	}
@@ -352,21 +353,14 @@ definite_terminal_root( pose::Pose const & pose, Size const i ){
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-try_reroot_at_fixed_domain( pose::Pose & pose ){
-
+bool
+definite_terminal_root( pose::Pose const & pose, Size const i ){
 	using namespace core::pose::full_model_info;
-	kinematics::FoldTree f = pose.fold_tree();
-	Size new_root( 0 );
-	for ( Size n = 1; n <= f.nres(); n++ ){
-		if ( definite_terminal_root( pose, n ) ){
-			new_root = n; break;
-		}
-	}
-	if ( new_root > 0 ){
-		f.reorder( new_root );
-		pose.fold_tree( f );
-	}
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	return definite_terminal_root( full_model_info.cutpoint_open_in_full_model(),
+																 full_model_info.working_res(),
+																 full_model_info.res_list(),
+																 full_model_info.size(), i );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -388,26 +382,123 @@ find_first_root_residue( kinematics::FoldTree const & f,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+reorder_root_partition_res(
+			  utility::vector1< Size > const & root_partition_res /* should not be empty */,
+				utility::vector1< Size > const & res_list,
+				utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */ ){
+
+	// reorder these residues based on size of fixed domains -- prefer *big* domains first.
+	utility::vector1< std::pair< Size, Size > > domain_sizes;
+	for ( Size domain = 1; domain <= max( fixed_domain_map ); domain++ ) {
+		Size nres_with_domain( 0 );
+		for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
+			if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
+				nres_with_domain++;
+			}
+		}
+		domain_sizes.push_back( std::make_pair( nres_with_domain, domain ) );
+	}
+
+	// largest block to smallest.
+	std::sort( domain_sizes.begin(), domain_sizes.end() );
+	std::reverse( domain_sizes.begin(), domain_sizes.end() );
+
+	utility::vector1< Size > root_partition_res_reorder;
+	for ( Size k = 1; k <= domain_sizes.size(); k++ ) {
+		if ( domain_sizes[ k ].first == 0 ) continue; // no residues found.
+		Size const domain = domain_sizes[ k ].second;
+		for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
+			if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
+				root_partition_res_reorder.push_back( root_partition_res[ n ] );
+			}
+		}
+	}
+
+	// the rest of the residues that weren't in fixed domains.
+	Size const domain( 0 );
+	for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
+		if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
+			root_partition_res_reorder.push_back( root_partition_res[ n ] );
+		}
+	}
+
+	runtime_assert( root_partition_res_reorder.size() == root_partition_res.size() );
+	return root_partition_res_reorder;
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+reroot_based_on_full_model_info( pose::Pose & pose ) {
+	utility::vector1< Size > root_partition_res;
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) root_partition_res.push_back( n );
+	reroot_based_on_full_model_info( pose, root_partition_res );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 void
 reroot_based_on_full_model_info( pose::Pose & pose,
 																 utility::vector1< Size > const & root_partition_res ){
+	// first look for any user-defined roots.
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	utility::vector1< Size > const & preferred_root_res = full_model_info.preferred_root_res();
+	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	utility::vector1< Size > const & working_res = full_model_info.working_res();
+	reroot( pose, root_partition_res, res_list, preferred_root_res, fixed_domain_map,
+					cutpoint_open_in_full_model, working_res );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+reroot( pose::Pose & pose,
+				utility::vector1< Size > const & root_partition_res /* should not be empty */,
+				utility::vector1< Size > const & res_list,
+				utility::vector1< Size > const & preferred_root_res /* can be empty */,
+				utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+				utility::vector1< Size > const & cutpoint_open_in_full_model,
+				utility::vector1< Size > const & working_res ){
+
 	using namespace core::kinematics;
-	Size new_root( 0 ), possible_root( 0 );
-	for ( Size n = 1; n <= root_partition_res.size(); n++ ){
-		Size const i = root_partition_res[ n ];
-		if ( !pose.fold_tree().possible_root( i ) ) continue;
-		if ( definite_terminal_root( pose, i ) ) {
+	Size new_root( 0 );
+	if ( root_partition_res.size() == 0 ) return;
+
+	runtime_assert( root_partition_res.size() > 0 );
+	utility::vector1< Size > root_partition_res_ordered = reorder_root_partition_res( root_partition_res, res_list, fixed_domain_map );
+
+	for ( Size n = 1; n <= root_partition_res_ordered.size(); n++ ){
+		Size const i = root_partition_res_ordered[ n ];
+		if ( preferred_root_res.has_value( res_list[ root_partition_res_ordered[ n ] ] ) ){
+			if ( !pose.fold_tree().possible_root( i ) ) {
+				TR << "Warning: " << res_list[ root_partition_res_ordered[ n ] ] << " specified as root res but not at a pose terminal. Cannot be used." << std::endl;
+				continue;
+			}
 			new_root = i; break;
 		}
-		if ( possible_root == 0 ) possible_root = i; // not as desirable, but sometimes necessary
 	}
-	if ( new_root == 0 ){
-		if ( possible_root == 0 ){
-			std::cerr << pose.fold_tree() << std::endl;
+
+	// next preference: roots that are definitely terminal -- nothing will be built past them.
+	if ( new_root == 0 ) {
+		for ( Size n = 1; n <= root_partition_res_ordered.size(); n++ ){
+			Size const i = root_partition_res_ordered[ n ];
+			if ( !pose.fold_tree().possible_root( i ) ) continue;
+			if ( definite_terminal_root( cutpoint_open_in_full_model, working_res, res_list, fixed_domain_map.size(), i ) ) {
+				new_root = i; break;
+			}
 		}
-		runtime_assert( possible_root > 0 );
-		new_root = possible_root;
 	}
+
+	// if all else fails...
+	if ( new_root == 0 ){
+		for ( Size n = 1; n <= root_partition_res_ordered.size(); n++ ){
+			Size const i = root_partition_res_ordered[ n ];
+			if ( !pose.fold_tree().possible_root( i ) ) continue;
+			new_root = i; break;
+		}
+	}
+	runtime_assert( new_root > 0 );
 
 	FoldTree f = pose.fold_tree();
 	if ( static_cast<int>(new_root) == f.root() ) return;
@@ -678,8 +769,6 @@ slice_out_pose( pose::Pose & pose,
 	full_model_info.set_res_list( apply_numbering( residues_to_retain, original_res_list )  );
 	update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
 
-	//		try_reroot_at_fixed_domain( pose );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -729,7 +818,6 @@ slice( pose::Pose & sliced_out_pose,
 	runtime_assert ( num_three_prime_connections <= 1 );
 	runtime_assert ( num_jumps_to_previous <= 1 );
 	runtime_assert ( num_jumps_to_next <= 1 );
-	//		TR << num_five_prime_connections << " " <<  num_three_prime_connections << " " << num_jumps_to_previous << " " <<  num_jumps_to_next << std::endl;
 	// requirement for a clean slice:
 	runtime_assert( (num_five_prime_connections + num_three_prime_connections + num_jumps_to_previous + num_jumps_to_next) == 1 );
 
@@ -974,9 +1062,9 @@ fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+	utility::vector1< Size > const & sample_res = full_model_info.sample_res();
 
-	if ( fixed_domain_map[ res_list[ res ] ] != 0 ) return;
+	if ( !sample_res.has_value( res_list[ res ] ) ) return;
 
 	if ( res > 1 &&
 			 res_list[ res ] - 1 == res_list[ res - 1 ] &&
@@ -1195,7 +1283,7 @@ figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-check_for_fixed_domain( pose::Pose const & pose,
+check_for_input_domain( pose::Pose const & pose,
 												utility::vector1< Size> const & partition_res ){
 	utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
 	for ( Size i = 1; i <= partition_res.size(); i++ ){
@@ -1220,10 +1308,10 @@ primary_fixed_domain( pose::Pose const & pose,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-check_for_fixed_domain( pose::Pose const & pose ){
+check_for_input_domain( pose::Pose const & pose ){
 	utility::vector1< Size > partition_res;
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) partition_res.push_back( i );
-	return check_for_fixed_domain( pose, partition_res );
+	return check_for_input_domain( pose, partition_res );
 }
 
 ///////////////////////////////////////////////////////////////
@@ -1321,15 +1409,7 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////////////
 utility::vector1< bool >
 get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr /*jump_number*/ ){
-	ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
-
-	pose.fold_tree().partition_by_jump( jump_nr, partition_definition );
-
-	//silly conversion. There may be a faster way to do this actually.
-	utility::vector1< bool > partition_definition_vector1;
-	for ( Size n = 1; n <= pose.total_residue(); n++ )	partition_definition_vector1.push_back( partition_definition(n) );
-
-	return partition_definition_vector1;
+	return pose.fold_tree().partition_by_jump( jump_nr );
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1493,7 +1573,7 @@ revise_root_and_moving_res_list( pose::Pose & pose,
 	if ( moving_res_list.size() == 0 ) return false; // maybe after a delete -- just minimize.
 	if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) return false; // for ERRASER.
 
-	// weird case, happens in some protein early moves -- get the root out of the moving res!
+	// weird case, happens in some protein early moves -- get the root out of the moving res!revise_root_and
 	if ( moving_res_list.has_value( pose.fold_tree().root() ) ){
 		utility::vector1< Size > other_res = get_other_residues( moving_res_list, pose.total_residue() );
 		if ( other_res.size() == 0 ) return false; // from scratch.

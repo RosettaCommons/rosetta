@@ -506,7 +506,9 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	devel::init(argc, argv);
 
-	option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
+	if ( option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]() ) {
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
+	}
 	option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
 
 	////////////////////////////////////////////////////////////////////////////

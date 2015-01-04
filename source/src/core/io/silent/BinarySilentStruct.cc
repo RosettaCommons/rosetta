@@ -598,31 +598,46 @@ void BinarySilentStruct::fill_pose (
 	if ( is_symmetric() )
 		 nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
 	for ( Size seqpos = 1; seqpos <= nres_pose; ++seqpos ) {
-		int natoms_pose = pose.residue(seqpos).natoms() ;
-		int atm_seqpos =  symmetry_info()->get_asymmetric_seqpos( seqpos ) ;
-		int natoms_struct = atm_coords_[atm_seqpos].size();
-		int natoms_total = std::min( natoms_pose , natoms_struct );
+		core::conformation::Residue const & rsd = pose.residue(seqpos);
+		Size natoms_pose = rsd.natoms() ;
+		Size atm_seqpos =  symmetry_info()->get_asymmetric_seqpos( seqpos ) ;
+		Size natoms_struct = atm_coords_[atm_seqpos].size();
+		bool fixup( false );
 		if ( natoms_pose != natoms_struct) {
-			tr.Warning 	<< "[ WARNING ] "
-				<< "Number of atoms in pose and silent file disagree! "
-				<< "Attempting to continue ..." << std::endl
-				<< "[ WARNING ]    (in residue " << pose.residue(seqpos).name() << " at " << seqpos
-				<< "  natoms_pose=" << natoms_pose
-				<< "atm_seqpos " << atm_seqpos << "  natoms_struct="
-				<< natoms_struct << ")" << std::endl;
+
+			// for backwards compatibility -- sorry for hack. If this
+			// hack needs to be expanded, would be best to move into separate function.
+			// N_ACETYLATION & C_METHYLAMIDATION lost 3 hydrogen atoms.
+			if ( (natoms_pose + 3) == natoms_struct && rsd.has_variant_type( chemical::C_METHYLAMIDATION ) ) fixup = true;
+			if ( (natoms_pose + 3) == natoms_struct && rsd.has_variant_type( chemical::N_ACETYLATION ) ) fixup = true;
+
+			if ( !fixup )  {
+				tr.Warning 	<< tr.Red << "[ WARNING ] "
+										<< "Number of atoms in pose and silent file disagree! "
+										<< "Attempting to continue ..." << std::endl
+										<< "[ WARNING ]    (in residue " << pose.residue(seqpos).name() << " at " << seqpos
+										<< "  natoms_pose=" << natoms_pose
+										<< "atm_seqpos " << atm_seqpos << "  natoms_struct="
+										<< natoms_struct << ")" << tr.Reset << std::endl;
 			tr.flush();
+			}
 		}
 
 		//natoms_pose  = pose.residue(seqpos).natoms();
 		//natoms_total = std::min( natoms_pose, natoms_struct );
+		Size count( 0 );
+		for ( Size j = 1; j <= natoms_struct; ++j ){
 
-		for ( int j = 1; j <= natoms_total; ++j ){
-			id::AtomID id( j, seqpos );
-			//numeric::xyzVector< core::Real> atom_i(atm_coords_[atm_seqpos][j][0], atm_coords_[atm_seqpos][j][1], atm_coords_[atm_seqpos][j][2]);
-			//pose.set_xyz( id, atom_i );
+			// hydrogens that were present in old rosetta, now removed.
+			if ( fixup && rsd.has_variant_type( chemical::C_METHYLAMIDATION ) && (j > rsd.nheavyatoms()+3) && (j < rsd.nheavyatoms()+7 ) ) continue;
+			if ( fixup && rsd.has_variant_type( chemical::N_ACETYLATION ) && (j > rsd.nheavyatoms()+2) && (j < rsd.nheavyatoms()+6 ) ) continue;
+
+			id::AtomID id( ++count, seqpos );
 			atm_ids.push_back( id );
 			atm_xyzs.push_back(
-			     numeric::xyzVector< core::Real>(atm_coords_[atm_seqpos][j][0], atm_coords_[atm_seqpos][j][1], atm_coords_[atm_seqpos][j][2]) );
+			     numeric::xyzVector< core::Real>(atm_coords_[atm_seqpos][j][0],
+																					 atm_coords_[atm_seqpos][j][1],
+																					 atm_coords_[atm_seqpos][j][2]) );
 		}
 		pose.set_secstruct( seqpos, secstruct_[atm_seqpos] );
 	} // for ( seqpos )

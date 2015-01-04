@@ -49,9 +49,7 @@ namespace monte_carlo {
 		allow_delete_( true ),
 		allow_skip_bulge_( false ),
 		from_scratch_frequency_( 0.0 ),
-		intermolecular_frequency_( 0.0 ),
-		only_dock_preexisting_chunks_( false ),
-		allow_shared_chains_in_dock_poses_( false ),
+		docking_frequency_( 0.0 ),
 		remodeler_( false ),
 		choose_random_( true )
 	{}
@@ -63,12 +61,13 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// The reason to consider add and delete together is to help ensure detailed balance.
 	//
-	// The current scheme (intermolecular_frequency_ ) allows user input of how often docking vs. folding is sampled.
+	// The current scheme (docking_frequency_ ) allows user input of how often docking vs. folding is sampled.
 	//  however it does not quite follow detailed balance. Instead, would need to compile all add & delete
 	//  moves, and then compute rates for each move, weighted relative to, e.g., the addition of a single residue.
 	//  Not all deletes are the same! [their rates would depend on our rate scheme for additions].
 	//  I have worked this out, but will need to implement carefully. -- rhiju, march 2014.
 	//
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	SWA_MoveSelector::get_add_or_delete_element( pose::Pose const & pose,
 																							 SWA_Move & swa_move,
@@ -76,16 +75,16 @@ namespace monte_carlo {
 		using namespace core::pose::full_model_info;
 
 		utility::vector1< SWA_Move > swa_moves;
-		if ( numeric::random::rg().uniform() < intermolecular_frequency_ ) {
-			get_intermolecular_add_and_delete_elements( pose, swa_moves, sample_res ); // docking
+		if ( numeric::random::rg().uniform() < docking_frequency_ ) {
+			get_docking_add_and_delete_elements( pose, swa_moves ); // docking
 		} else if ( numeric::random::rg().uniform() < from_scratch_frequency_ ){
 			get_from_scratch_add_and_delete_elements( pose, swa_moves, sample_res ); // docking
 		}
 		if ( swa_moves.size() == 0  ) get_intramolecular_add_and_delete_elements( pose, swa_moves, sample_res ); // folding
 
 		// backup -- in case we're starting really from nil.
-		if ( swa_moves.size() == 0  ) get_from_scratch_add_and_delete_elements( pose, swa_moves, sample_res ); // docking
-		if ( swa_moves.size() == 0  ) get_intermolecular_add_and_delete_elements( pose, swa_moves, sample_res ); // folding
+		if ( swa_moves.size() == 0  ) get_from_scratch_add_and_delete_elements( pose, swa_moves, sample_res ); // folding
+		if ( swa_moves.size() == 0  ) get_docking_add_and_delete_elements( pose, swa_moves ); // docking
 
 		for ( Size n = 1; n <= swa_moves.size(); n++ )	TR.Debug << TR.Green << swa_moves[ n ] << TR.Reset << std::endl;
 
@@ -147,7 +146,7 @@ namespace monte_carlo {
 																												 utility::vector1< SWA_Move > & swa_moves ) {
 		utility::vector1< SWA_Move > swa_moves_internal;
 		get_intramolecular_split_move_elements( pose, swa_moves_internal, RESAMPLE );
-		if ( intermolecular_frequency_ > 0.0 ) get_intermolecular_split_move_elements( pose, swa_moves_internal, RESAMPLE );
+		if ( docking_frequency_ > 0.0 ) get_docking_split_move_elements( pose, swa_moves_internal, RESAMPLE );
 		for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
 	}
 
@@ -175,7 +174,9 @@ namespace monte_carlo {
 
 		if ( allow_delete_ )     get_intramolecular_delete_move_elements( pose, swa_moves );
 		get_intramolecular_add_move_elements( pose, swa_moves );
-		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves, sample_res );
+		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves, sample_res,
+																											 const_full_model_info( pose ).fixed_domain_map() );
+
 	}
 
 
@@ -280,7 +281,7 @@ namespace monte_carlo {
 		utility::vector1< SWA_Move > swa_moves_split;
 		utility::vector1< bool > partition_definition;
 		utility::vector1< Size > partition_res1, partition_res2;
-		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_input_domain_from_full_model_info_const( pose );
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
 
@@ -291,16 +292,16 @@ namespace monte_carlo {
 						 domain_map[ i ] == 0 || domain_map [ i+1 ] == 0 ) ){
 
 				partition_definition = get_partition_definition( pose, i /*suite*/ );
-				if ( partition_splits_a_fixed_domain( partition_definition, domain_map ) ) continue;
+				if ( partition_splits_an_input_domain( partition_definition, domain_map ) ) continue;
 
 				partition_res1 = get_partition_res( partition_definition, true );
 				partition_res2 = get_partition_res( partition_definition, false );
 
-				if ( check_for_fixed_domain_or_from_scratch( pose, partition_res1 )  ) {
+				if ( check_for_input_domain_or_from_scratch( pose, partition_res1 )  ) {
 					swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res2),
 																							 Attachment( full_model_info.sub_to_full(i), BOND_TO_PREVIOUS ), move_type ) );
 				}
-				if ( check_for_fixed_domain_or_from_scratch( pose, partition_res2 ) ) {
+				if ( check_for_input_domain_or_from_scratch( pose, partition_res2 ) ) {
 					swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res1),
 																							 Attachment( full_model_info.sub_to_full(i+1), BOND_TO_NEXT ), move_type ) );
 				}
@@ -313,7 +314,7 @@ namespace monte_carlo {
 		for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 
 			partition_definition = get_partition_definition_by_jump( pose, n );
-			if ( partition_splits_a_fixed_domain( partition_definition, domain_map ) ) continue;
+			if ( partition_splits_an_input_domain( partition_definition, domain_map ) ) continue;
 
 			Size const moving_res = pose.fold_tree().downstream_jump_residue( n );
 			Size const reference_res = pose.fold_tree().upstream_jump_residue( n );
@@ -321,13 +322,13 @@ namespace monte_carlo {
 
 			partition_res1 = get_partition_res( partition_definition, true );
 			partition_res2 = get_partition_res( partition_definition, false );
-			if ( partition_res1.size() == 1 && check_for_fixed_domain_or_from_scratch( pose, partition_res2 ) ){
+			if ( partition_res1.size() == 1 && check_for_input_domain_or_from_scratch( pose, partition_res2 ) ){
 				Size const anchor_res = get_anchor_res( partition_res1[1], pose );
 				AttachmentType type = ( anchor_res > partition_res1[1] ) ? JUMP_TO_NEXT_IN_CHAIN : JUMP_TO_PREV_IN_CHAIN;
 				swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res1),
 																						 Attachment( full_model_info.sub_to_full(anchor_res), type ), move_type ) );
 			}
-			if ( partition_res2.size() == 1 && check_for_fixed_domain_or_from_scratch( pose, partition_res1 ) ){
+			if ( partition_res2.size() == 1 && check_for_input_domain_or_from_scratch( pose, partition_res1 ) ){
 				Size const anchor_res = get_anchor_res( partition_res2[1], pose );
 				AttachmentType type = ( anchor_res > partition_res2[1] ) ? JUMP_TO_NEXT_IN_CHAIN : JUMP_TO_PREV_IN_CHAIN;
 				swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res2),
@@ -339,32 +340,33 @@ namespace monte_carlo {
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// intermolecular (cross-chain)
+	// docking (cross-chain)
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	SWA_MoveSelector::get_intermolecular_split_move_elements( pose::Pose const & pose,
+	SWA_MoveSelector::get_docking_split_move_elements( pose::Pose const & pose,
 																														utility::vector1< SWA_Move > & swa_moves,
 																														MoveType const move_type ){
 		using namespace protocols::stepwise::modeler::rna;
 
 		utility::vector1< SWA_Move > swa_moves_split;
 		utility::vector1< bool > partition_definition;
-		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
+		utility::vector1< Size > const dock_domain_map = full_model_info.dock_domain_map();
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 
 		// look at jumps.
 		for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 			partition_definition = get_partition_definition_by_jump( pose, n );
-			if ( partition_splits_a_fixed_domain( partition_definition, domain_map ) ) continue;
-
 			Size const moving_res = pose.fold_tree().downstream_jump_residue( n );
 			Size const reference_res = pose.fold_tree().upstream_jump_residue( n );
-			if ( chains[ moving_res ] == chains[ reference_res ] ) continue;
-
+			Size const moving_res_full =  res_list[ moving_res ];
+			Size const reference_res_full = res_list[ reference_res ];
+			runtime_assert( dock_domain_map[ moving_res_full ] > 0 );
+			runtime_assert( dock_domain_map[ reference_res_full ] > 0 );
+			if ( dock_domain_map[ moving_res_full ] == dock_domain_map[ reference_res_full ] ) continue;
 			utility::vector1< Size > moving_partition_res = get_partition_res( partition_definition,  partition_definition[ moving_res ] );
 			swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full( moving_partition_res ),
-																					 Attachment( full_model_info.sub_to_full(reference_res), JUMP_INTERCHAIN ), move_type ) );
+																					 Attachment( reference_res_full, JUMP_DOCK ), move_type ) );
 		}
 
 		for ( Size n = 1; n <= swa_moves_split.size(); n++ ) swa_moves.push_back( swa_moves_split[ n ] );
@@ -372,11 +374,11 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	SWA_MoveSelector::check_for_fixed_domain_or_from_scratch(  pose::Pose const & pose,
+	SWA_MoveSelector::check_for_input_domain_or_from_scratch(  pose::Pose const & pose,
 																														 utility::vector1< Size> const & partition_res ) const {
 		if ( remodeler_ ) return true;
 		if ( from_scratch_frequency_ > 0.0 ) return true;
-		return check_for_fixed_domain( pose, partition_res );
+		return check_for_input_domain( pose, partition_res );
 	}
 
 
@@ -420,7 +422,8 @@ namespace monte_carlo {
 
 		get_from_scratch_add_move_elements( pose, swa_moves );
 		get_from_scratch_delete_move_elements( pose, swa_moves );
-		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves, sample_res );
+		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves, sample_res,
+																											 const_full_model_info( pose ).fixed_domain_map() );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -455,9 +458,9 @@ namespace monte_carlo {
 	SWA_MoveSelector::figure_out_from_scratch_delete_move_elements( pose::Pose const & pose,
 																																	utility::vector1< SWA_Move > & swa_moves ) const {
 
-		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_input_domain_from_full_model_info_const( pose );
 		if ( pose.total_residue() == 2 &&
-				 !partition_splits_a_fixed_domain( utility::tools::make_vector1(true,false), domain_map ) ) {
+				 !partition_splits_an_input_domain( utility::tools::make_vector1(true,false), domain_map ) ) {
 			swa_moves.push_back( SWA_Move( sub_to_full( 1, pose ), Attachment( sub_to_full( 2, pose ), BOND_TO_NEXT ), DELETE ) );
 			swa_moves.push_back( SWA_Move( sub_to_full( 2, pose ), Attachment( sub_to_full( 1, pose ), BOND_TO_PREVIOUS ), DELETE ) );
 		}
@@ -483,18 +486,16 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	SWA_MoveSelector::get_intermolecular_add_and_delete_elements( pose::Pose const & pose,
-																																utility::vector1< SWA_Move > & swa_moves,
-																																utility::vector1< Size > const & sample_res /*leave empty if no filter*/) {
+	SWA_MoveSelector::get_docking_add_and_delete_elements( pose::Pose const & pose,
+																																utility::vector1< SWA_Move > & swa_moves ) {
 
-		get_intermolecular_add_move_elements( pose, swa_moves );
-		if ( allow_delete_ ) get_intermolecular_delete_move_elements( pose, swa_moves );
-		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves, sample_res );
+		get_docking_add_move_elements( pose, swa_moves );
+		if ( allow_delete_ ) get_docking_delete_move_elements( pose, swa_moves );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	SWA_MoveSelector::get_intermolecular_add_move_elements( pose::Pose const & pose,
+	SWA_MoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 																													utility::vector1< SWA_Move > & swa_moves ){
 
 		using namespace core::pose::full_model_info;
@@ -502,37 +503,31 @@ namespace monte_carlo {
 		Size const & nres( pose.total_residue() );
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-		utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
-		utility::vector1< Size > const chains_current = figure_out_chain_numbers_from_full_model_info_const( pose );
-		utility::vector1< Size > const chains_full = get_chains_full( pose );
-		utility::vector1< Size > const current_unique_chains = get_unique_chains( pose );
+		utility::vector1< Size > const dock_domain_map = const_full_model_info( pose ).dock_domain_map();
 
 		if ( res_list.size() == 0 ) return;
 
+		std::map< std::pair< Size, Size >, std::pair< Size, Size > > preferred_jump_pair =
+      get_preferred_jump_pair_for_docking_domains( full_model_info );
+
 		for ( Size i = 1; i <= nres; i++ ){
-			Size const chain_i = chains_current[ i ];
 			Size const i_full = res_list[ i ] ;
+			Size const dock_domain_i = dock_domain_map[ i_full ];
+			for ( Size j_full = 1; j_full <= full_model_info.size(); j_full++ ){
+				if ( res_list.has_value( j_full ) ) continue; // must be docked to different pose.
 
-			if ( only_dock_preexisting_chunks_ ){
-				for ( Size q = 1; q <= other_pose_list.size(); q++ ){
-					Pose const & other_pose = *other_pose_list[ q ];
-					for ( Size j = 1; j <= other_pose.total_residue(); j++ ){
-						Size const j_full = get_res_list_from_full_model_info_const( other_pose )[ j ];
-						if ( !allow_shared_chains_in_dock_poses_ && share_chains( current_unique_chains, pose, j_full ) ) break;
-						Size const chain_j = chains_full[ j_full ];
-						if ( chain_j == chain_i  ) continue;
-						swa_moves.push_back( SWA_Move( j_full, Attachment( i_full, JUMP_INTERCHAIN ), ADD ) );
-					}
-				}
-			} else {
-				for ( Size j_full = 1; j_full <= full_model_info.size(); j_full++ ){
-					if ( res_list.has_value( j_full ) ) continue;
-					Size const chain_j = chains_full[ j_full ];
-					if ( chain_j == chain_i  ) continue;
-					if ( !allow_shared_chains_in_dock_poses_ && share_chains( current_unique_chains, pose, j_full ) ) continue;
-					swa_moves.push_back( SWA_Move( j_full, Attachment( i_full, JUMP_INTERCHAIN ), ADD ) );
-				}
+				Size const dock_domain_j = dock_domain_map[ j_full ];
+				if ( dock_domain_j == 0 ) continue; // not a working res.
+				if ( dock_domain_i == dock_domain_j ) continue;
 
+				if ( preferred_jump_pair.find( std::make_pair( dock_domain_i, dock_domain_j ) ) !=
+						 preferred_jump_pair.end() ) {
+					std::pair< Size, Size > preferred_jump_for_dock_domain = preferred_jump_pair[ std::make_pair( dock_domain_i, dock_domain_j ) ];
+					//					TR << i_full << "  " << j_full << "       " << dock_domain_i << " " << dock_domain_j << "   " <<
+					//						"[ " << preferred_jump_for_dock_domain.first << ", " << preferred_jump_for_dock_domain.second << "] " << std::endl;
+					if ( std::make_pair( i_full, j_full ) != preferred_jump_for_dock_domain ) continue;
+				}
+				swa_moves.push_back( SWA_Move( j_full, Attachment( i_full, JUMP_DOCK ), ADD ) );
 			}
 		}
 	}
@@ -572,9 +567,9 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	SWA_MoveSelector::get_intermolecular_delete_move_elements( pose::Pose const & pose,
+	SWA_MoveSelector::get_docking_delete_move_elements( pose::Pose const & pose,
 																														 utility::vector1< SWA_Move > & swa_moves ){
-		get_intermolecular_split_move_elements( pose, swa_moves, DELETE );
+		get_docking_split_move_elements( pose, swa_moves, DELETE );
 	}
 
 
@@ -582,7 +577,8 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	SWA_MoveSelector::filter_by_sample_res( utility::vector1< SWA_Move > & swa_moves,
-																					utility::vector1< Size > const & sample_res ){
+																					utility::vector1< Size > const & sample_res,
+																					utility::vector1< Size > const & input_domain ){
 
 		if ( sample_res.size() == 0 ) return;
 
@@ -601,7 +597,11 @@ namespace monte_carlo {
 						break;
 					}
 				}
-				if ( !in_sample_res ) continue;
+				if ( !in_sample_res )	{
+					// there is only one way to save this... if connecting residues are different 'input domains'.
+					if ( swa_move.attached_res() > 0 &&
+							 input_domain[ add_element[ 1 ] ] == input_domain[ swa_move.attached_res() ] ) continue;
+				}
 			}
 			swa_moves_filtered.push_back( swa_move );
 		}
@@ -619,8 +619,8 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// don't break up any fixed domains by a split.
 	bool
-	SWA_MoveSelector::partition_splits_a_fixed_domain( utility::vector1< Size > const & partition_definition,
-																										 utility::vector1< Size > const & domain_map ) const {
+	SWA_MoveSelector::partition_splits_an_input_domain( utility::vector1< Size > const & partition_definition,
+																											utility::vector1< Size > const & domain_map ) const {
 		// parse out which residues go into each domain.
 		utility::vector1< Size > blank_vector;
 		utility::vector1< utility::vector1< Size > > all_domain_res;

@@ -1800,6 +1800,8 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 		}
 		TR << "-----------------------------------------------------------" << std::endl;
 
+		output_is_prepend_map( " is_prepend_map = ",  is_prepend_map, working_parameters->full_sequence().size(), TR ) ;
+
 		TR << "------------After slice to Before slice seq_num------------" << std::endl;
 		for ( Size seq_num = 1; seq_num <= sliced_to_working_res_map_.size(); seq_num++ ){
 			TR << seq_num << "----> " << sliced_to_working_res_map_[seq_num] << std::endl;
@@ -1807,9 +1809,10 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 
 			Size const working_seq_num = sliced_to_working_res_map_[seq_num];
 			Size const full_seq_num = sub_to_full.find( working_seq_num )->second;
-			bool const is_prepend = is_prepend_map.find( full_seq_num )->second;
-			sliced_pose_is_prepend_map[seq_num] = ( is_prepend );
-
+			if ( is_prepend_map.find( full_seq_num ) != is_prepend_map.end() ) {
+				bool const is_prepend = is_prepend_map.find( full_seq_num )->second;
+				sliced_pose_is_prepend_map[seq_num] = ( is_prepend );
+			}
 		}
 		TR << "-----------------------------------------------------------" << std::endl;
 
@@ -1848,7 +1851,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 		//output debug
 		output_seq_num_list( "sliced_pose_best_alignment = ", sliced_pose_best_alignment, TR, 50 );
 		output_seq_num_list( "sliced_pose_calc_rms_res = ", sliced_pose_calc_rms_res, TR, 50 );
-		output_is_prepend_map( "sliced_pose_is_prepend_map = ", sliced_pose_is_prepend_map, working_to_sliced_res_map_.size(), TR, 50 );
+		output_is_prepend_map( "sliced_pose_is_prepend_map = ", sliced_pose_is_prepend_map, sliced_to_working_res_map_.size(), TR, 50 );
 		output_pair_size( delete_res_range_list_, "delete_res_range_list = ", TR, 50 );
 
 		output_title_text( "Exit SlicedPoseWorkingParameters::setup()", TR );

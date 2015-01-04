@@ -18,6 +18,7 @@
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
+#include <protocols/stepwise/monte_carlo/util.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -98,7 +99,7 @@ namespace mover {
 		swa_move_selector_->set_allow_delete( !disallow_delete );
 		swa_move_selector_->set_allow_skip_bulge( options_->allow_skip_bulge() );
 		swa_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
-		swa_move_selector_->set_intermolecular_frequency( options_->intermolecular_frequency() );
+		swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
 		swa_move_selector_->set_choose_random( choose_random_ );
 
 		utility::vector1< Size > const actual_sample_res = figure_out_actual_sample_res( pose );
@@ -125,19 +126,16 @@ namespace mover {
 	AddOrDeleteMover::figure_out_actual_sample_res( pose::Pose const & pose ) const{
 
 		utility::vector1< Size > sample_res = const_full_model_info( pose ).sample_res();
-		if ( sample_res.size() == 0 ){ // not user provided
-			std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
-			for ( Size n = 1; n <= full_sequence.size(); n++ )	sample_res.push_back( n );
-		}
+		utility::vector1< Size > const & bulge_res = const_full_model_info( pose ).rna_bulge_res();
 
-		// get rid of bulge_res -- this may now be defunct, actually, as bulge_res
-		// is set properly in FullModelInfoSetupFromCommandLine
-		utility::vector1< Size > actual_sample_res;
-		for ( Size n = 1; n <= sample_res.size(); n++ ){
-			if ( options_->bulge_res().has_value( sample_res[n] ) ) continue;
-			actual_sample_res.push_back( sample_res[n] );
-		}
-		return actual_sample_res;
+		filter_out_bulge_res( sample_res, bulge_res );
+
+		// this is silly -- an empty sample_res vector is a signal to SWA_MoveSelector that
+		// sample_res was undefined. If we just include 0 (which is not an index of any residue)
+		// we will get the desired behavior -- nothing counts as a sample_res.
+		if ( sample_res.size() == 0 ) sample_res.push_back( 0 );
+
+		return sample_res;
 	}
 
 

@@ -132,7 +132,7 @@ namespace mover {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
   DeleteMover::decide_to_keep_pose( pose::Pose const & pose ) const {
-		return ( check_for_fixed_domain( pose ) ||
+		return ( check_for_input_domain( pose ) ||
 						 ( ( (options_->from_scratch_frequency() > 0.0) || options_->allow_split_off() ) && pose.total_residue() > 1 ) );
 	}
 
