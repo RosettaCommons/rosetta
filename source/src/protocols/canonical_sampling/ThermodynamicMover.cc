@@ -86,7 +86,7 @@ ThermodynamicMover::is_multi_trial()
 }
 
 core::Real
-ThermodynamicMover::last_inner_score_temperature_delta()
+ThermodynamicMover::last_inner_score_delta_over_temperature()
 {
 	return 0;
 }

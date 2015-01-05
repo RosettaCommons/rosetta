@@ -158,7 +158,7 @@ public:
 
 	virtual
 	core::Real
-	last_inner_score_temperature_delta()
+	last_inner_score_delta_over_temperature()
 	{
 		return (score_post_apply_-score_pre_apply_)/temperature_;
 	}

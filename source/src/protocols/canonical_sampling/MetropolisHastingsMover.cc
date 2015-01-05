@@ -239,7 +239,7 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
          pose,
 				 mover->type(),
 				 mover->last_proposal_density_ratio(),
-				 mover->last_inner_score_temperature_delta()
+				 mover->last_inner_score_delta_over_temperature()
 		);
 		set_last_move( mover );
 		set_last_accepted( accepted );

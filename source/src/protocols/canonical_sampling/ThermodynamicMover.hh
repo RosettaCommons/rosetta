@@ -108,7 +108,7 @@ public:
 	) = 0;
 
 	/// @brief Return true if the move performs multiple trials on each apply.
-	/// @see last_inner_score_temperature_delta()
+	/// @see last_inner_score_delta_over_temperature()
 	/// @see metropolis_hastings_mover()
 	/// @see set_metropolis_hastings_mover()
 	virtual
@@ -120,7 +120,7 @@ public:
 	/// @see is_multi_trial()
 	virtual
 	core::Real
-	last_inner_score_temperature_delta();
+	last_inner_score_delta_over_temperature();
 
 	/// @brief If this is a multi-trial move, return the MetropolisHastingsMover 
 	/// being used internally.

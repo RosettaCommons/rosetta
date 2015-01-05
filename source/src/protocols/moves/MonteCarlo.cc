@@ -218,7 +218,7 @@ void
 MonteCarlo::change_weight( core::scoring::ScoreType const & t, Real const & setting ) {
 	score_function_->set_weight( t, setting );
 }
-	
+
 /// set the scorefxn,  re-scores last-accepted and lowest-score pose
 void
 MonteCarlo::score_function( ScoreFunction const & scorefxn )
@@ -311,7 +311,7 @@ MonteCarlo::score_function( ScoreFunction const & scorefxn )
 
 /////////////////////////////////////////////////////////////////////////////
 //////////////////////////////
-// behavior depends on setting of temperature
+// @details behavior depends on setting of temperature
 //
 // return true for an accept, false otherwise
 //
@@ -320,13 +320,28 @@ MonteCarlo::score_function( ScoreFunction const & scorefxn )
 // 		2 = accepted:score beat last_accepted score
 // 		1 = thermally accepted: score worse than last_accepted score
 // 		0 = not accepted
+//
+// Optional inputs:
+//
+//  proposal_density_ratio = ratio of backward proposal probability to
+//                            forward proposal probability,
+//                            to maintain detailed balance.
+//
+//  inner_score_delta_over_temperature
+//                          = change in energy in any separate inner loop that
+//                            used Boltzmann criterion with different energy
+//                            function. Don't penalize with that energy
+//                            difference again. See, e.g.,
+//                             Hetenyi et al., JCP 117: 8203-8207.
+//                            ( Note: functionally redundant with
+//                               proposal_density_ratio)
 
 bool
 MonteCarlo::boltzmann(
 	Pose & pose,
 	std::string const & move_type, // = unk
 	core::Real const proposal_density_ratio, // = 1
-	core::Real const inner_score_temperature_delta // = 0
+	core::Real const inner_score_delta_over_temperature // = 0
 )
 {
 
@@ -339,7 +354,7 @@ MonteCarlo::boltzmann(
 	// score the pose:
 	Real const score( (*score_function_)( pose ) );
 	//now delegate decision making...
-	bool const accept( boltzmann( score, move_type, proposal_density_ratio, inner_score_temperature_delta ) );
+	bool const accept( boltzmann( score, move_type, proposal_density_ratio, inner_score_delta_over_temperature ) );
 
 	//rejected ?
 	if ( !accept ) {
@@ -351,7 +366,7 @@ MonteCarlo::boltzmann(
 	//accepted !
 	PROF_START( basic::MC_ACCEPT );
 	*last_accepted_pose_ = pose;
-	
+
 	// print out the scores for each decoy to cmd out, if you pass a flag
 	// nice for testing
 	if ( basic::options::option[ basic::options::OptionKeys::mc::log_scores_in_MC ].user() && basic::options::option[ basic::options::OptionKeys::mc::log_scores_in_MC ]() == true ){
@@ -378,13 +393,15 @@ MonteCarlo::boltzmann(
 	return true; // accept!
 }
 
-
+//////////////////////////////////////////////////////////
+// See notes above on boltzmann()
+//////////////////////////////////////////////////////////
 bool
 MonteCarlo::boltzmann(
 	core::Real score,
 	std::string const & move_type, // = "unk"
 	core::Real const proposal_density_ratio, // = 1
-	core::Real const inner_score_temperature_delta, // = 0
+	core::Real const inner_score_delta_over_temperature, // = 0
 	bool check_lowest_score //=true
 )
 {
@@ -398,7 +415,7 @@ MonteCarlo::boltzmann(
 #endif
 
 	Real const score_delta( score - last_accepted_score_ );
-	Real const boltz_factor =  -score_delta / temperature_ + inner_score_temperature_delta;
+	Real const boltz_factor =  ( -score_delta / temperature_ ) + inner_score_delta_over_temperature;
 	Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) ) * proposal_density_ratio;
 	if ( probability < 1 ) {
 		if ( numeric::random::rg().uniform() >= probability ) {

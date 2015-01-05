@@ -187,7 +187,7 @@ ReplicaExchangeMC::boltzmann(
         Pose & pose,//PoseOP pose,
         std::string const & move_type,
         core::Real const proposal_density_ratio,
-				core::Real const inner_score_temperature_delta)
+				core::Real const inner_score_delta_over_temperature)
 {
     ntrials_++;
 
@@ -212,7 +212,7 @@ ReplicaExchangeMC::boltzmann(
         //TR << "proc=" << rank_  << " step=" << ntrials_ << " T=" << temperature() << " E=" << last_accepted_score() << std::endl;
     //}
 
-    return Parent::boltzmann( pose, move_type, proposal_density_ratio, inner_score_temperature_delta );
+    return Parent::boltzmann( pose, move_type, proposal_density_ratio, inner_score_delta_over_temperature );
 }
 
 } // moves

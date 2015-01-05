@@ -92,7 +92,7 @@ BiasedMonteCarlo::boltzmann(
 	Pose & pose,
 	std::string const & move_type, // = unk
 	core::Real const proposal_density_ratio, // = 1
-	core::Real const inner_score_temperature_delta // = 0
+	core::Real const inner_score_delta_over_temperature // = 0
 )
 {
 
@@ -121,7 +121,7 @@ BiasedMonteCarlo::boltzmann(
 								biased_score,
 								move_type,
 								proposal_density_ratio,
-								inner_score_temperature_delta,
+								inner_score_delta_over_temperature,
 								false /*don't check lowest_score */ )
 	);
 
