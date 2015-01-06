@@ -197,6 +197,7 @@ SpanningTopology::get_spans() const { return topology_; } // get topology
 void SpanningTopology::add_span( SpanOP span, Size offset ){
 	span->shift( offset );
 	topology_.push_back( span );
+	nres_topo_ += span->end() - span->start() + 1;
 }// add span
 
 //////////////////////////////////////////////////////////////////////////////
@@ -205,6 +206,7 @@ void SpanningTopology::add_span( SpanOP span, Size offset ){
 void SpanningTopology::add_span( Size start, Size end, Size offset ){
 	SpanOP span( new Span( start+offset, end+offset ) );
 	topology_.push_back( span );
+	nres_topo_ += end - start + 1;
 }// add span
 
 /// @brief Sort Spans
