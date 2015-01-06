@@ -135,7 +135,7 @@ public:
         // for now
         SymDockProtocolOP symdock( new SymDockProtocol( true, false, false, sfxn_low, sfxn_high ) );
         symdock->hurry( true ); 
-        //symdock->apply( pose );  
+        symdock->apply( pose );  
 
         // Done!
 
