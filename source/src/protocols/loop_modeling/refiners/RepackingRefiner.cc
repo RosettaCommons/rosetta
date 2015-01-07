@@ -43,7 +43,8 @@ std::string RepackingRefinerCreator::keyname() const {
 }
 
 RepackingRefiner::RepackingRefiner(Size repack_period)
-	: repack_period_(repack_period) {}
+	: repack_period_(repack_period),
+	  iteration_counter_(0) {}
 
 void RepackingRefiner::parse_my_tag(
 		utility::tag::TagCOP tag,
