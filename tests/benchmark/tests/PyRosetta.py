@@ -81,7 +81,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         shutil.copy(config['boost_python_library'], buildings_path)  # Copying boost python library
 
         memory = config['memory'];  jobs = config['cpu_count']
-        if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+        if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_unit_test_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_unit_test_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
         distr_file_list = os.listdir(buildings_path)
 

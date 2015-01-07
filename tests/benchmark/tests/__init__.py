@@ -42,6 +42,7 @@ _TotalKey_    = 'total'
 _FailedTestsKey_ = 'failed_tests'
 
 PyRosetta_unix_memory_requirement_per_cpu = 2.5  # Memory per sub-process in Gb's
+PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-process in Gb's for running PyRosetta unit tests
 
 
 # Standard funtions and classes below ---------------------------------------------------------------------------------

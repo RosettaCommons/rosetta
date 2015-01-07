@@ -20,7 +20,7 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 _api_version_ = '1.0'  # api version
 
 
-_failure_threshold_pct_ = 5  # specify how much execution time could deviate (percent) from previous value without raising the alarm
+_failure_threshold_pct_ = 7  # specify how much execution time could deviate (percent) from previous value without raising the alarm
 
 
 def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
