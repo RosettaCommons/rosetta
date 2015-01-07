@@ -32,7 +32,9 @@ sources = {
 		"util",
 	],
         "protocols/helical_bundle": [
-                "FitSimpleHelix",
+		"BundleGridSampler",
+		"BundleGridSamplerHelper",
+		"FitSimpleHelix",
 		"FitSimpleHelixMultiFunc",
 		"MakeBundle",
 		"MakeBundleHelix",

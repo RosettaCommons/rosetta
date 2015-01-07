@@ -67,7 +67,7 @@ MakeBundleHelixCreator::mover_name()
 }
 
 ///
-///@brief Creator for MakeBundleHelix mover.
+///@brief Constructor for MakeBundleHelix mover.
 MakeBundleHelix::MakeBundleHelix():
 		Mover("MakeBundleHelix"),
 		reset_pose_(true),
@@ -81,15 +81,29 @@ MakeBundleHelix::MakeBundleHelix():
 }
 
 ///
+///@brief Copy constructor for MakeBundleHelix mover.
+MakeBundleHelix::MakeBundleHelix( MakeBundleHelix const &src ):
+		protocols::moves::Mover( src ),
+		reset_pose_(src.reset_pose_),
+		bundle_parameters_(  utility::pointer::dynamic_pointer_cast< BundleParameters >( src.bundle_parameters()->clone() ) ),
+		helix_length_(src.helix_length_),
+		residue_name_(src.residue_name_),
+		tail_residue_name_(src.tail_residue_name_),
+		last_apply_failed_(src.last_apply_failed_)
+{
+}
+
+///
 ///@brief Destructor for MakeBundleHelix mover.
 MakeBundleHelix::~MakeBundleHelix() {}
 
 ///
 ///@brief Clone operator to create a pointer to a fresh MakeBundleHelix object that copies this one.
 protocols::moves::MoverOP MakeBundleHelix::clone() const {
-	MakeBundleHelixOP newmover(new MakeBundleHelix( *this ));
+	return protocols::moves::MoverOP( new MakeBundleHelix ( *this ) );
+	/*MakeBundleHelixOP newmover(new MakeBundleHelix( *this ));
 	newmover->set_bundle_parameters( utility::pointer::dynamic_pointer_cast< BundleParameters >(bundle_parameters()->clone()) );
-	return utility::pointer::dynamic_pointer_cast<protocols::moves::Mover>( newmover );
+	return utility::pointer::dynamic_pointer_cast<protocols::moves::Mover>( newmover );*/
 }
 
 ///

@@ -74,6 +74,7 @@ public: //Typedefs
 
 public:
 	MakeBundle();
+	MakeBundle( MakeBundle const &src );
 	virtual ~MakeBundle();
 
 	virtual protocols::moves::MoverOP clone() const;
@@ -93,6 +94,34 @@ public:
 		core::pose::Pose const &
 	);
 
+	/// @brief Set crick_params_file, set_bondlengths, set_bondangles, and set_dihedrals options for a single helix, based on an input tag.
+	///
+	void set_helix_params_from_tag ( core::Size const helix_index, utility::tag::TagCOP tag );
+
+	/// @brief Set omega1, z1, and delta_omega1 for a single helix, based on an input tag.
+	///
+	void set_minor_helix_params_from_tag( core::Size const helix_index, utility::tag::TagCOP tag );
+
+	/// @brief Set residue_name, invert, and helix_length for a single helix, based on an input tag.
+	///
+	void set_other_helix_params_from_tag( core::Size const helix_index, utility::tag::TagCOP tag );
+
+	/// @brief Set symmetry and symmetry_copies options based on an input tag.
+	///
+	void set_symmetry_options_from_tag( utility::tag::TagCOP tag );
+
+	/// @brief Set defaults for whether the mover can set bond lengths, bond angles, and dihedrals.
+	///
+	void set_dofs_from_tag( utility::tag::TagCOP tag );
+
+	/// @brief Set the crick_params_file, omega1, and z1 default values from a tag.
+	///
+	void set_minorhelix_defaults_from_tag( utility::tag::TagCOP tag );
+
+	/// @brief Set the residue_name, invert, and helix_length default values based on an input tag.
+	///
+	void set_other_defaults_from_tag( utility::tag::TagCOP tag );
+
 	/// @brief Set whether the input pose should be reset prior to building a helix.
 	///
 	void set_reset_pose( bool const reset_in) { reset_pose_ = reset_in; }
@@ -110,6 +139,13 @@ public:
 	///
 	protocols::helical_bundle::MakeBundleHelixOP helix( core::Size const &index ) {
 		runtime_assert_string_msg( index>0 && index<=make_bundle_helix_movers_.size(), "In MakeBundle::helix(): index is out of range (i.e. it doesn't refer to an already-defined helix)." );
+		return make_bundle_helix_movers_[index];
+	}
+
+	/// @brief Const access to helix in the bundle.
+	///
+	protocols::helical_bundle::MakeBundleHelixCOP helix_cop( core::Size const &index ) const {
+		runtime_assert_string_msg( index>0 && index<=make_bundle_helix_movers_.size(), "In MakeBundle::helix_cop(): index is out of range (i.e. it doesn't refer to an already-defined helix)." );
 		return make_bundle_helix_movers_[index];
 	}
 
@@ -305,7 +341,14 @@ public:
 	///
 	bool default_allow_dihedrals() const;
 
+	/// @brief Returns true or false based on whether the last call to the apply() function
+	/// failed (true) or succeeded (false).
+	/// @details The apply() function calls the private function set_last_apply_failed() to
+	/// set this.
+	bool last_apply_failed() const { return last_apply_failed_; }
+
 private:
+
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE DATA                                                      //
 ////////////////////////////////////////////////////////////////////////////////
@@ -445,9 +488,17 @@ private:
 	///
 	bool default_allow_dihedrals_set_;
 
+	/// @brief Did the last apply fail?
+	///
+	bool last_apply_failed_;
+
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //
 ////////////////////////////////////////////////////////////////////////////////
+
+	/// @brief Set whether the last apply failed.
+	/// @details Called by the apply() function.
+	void set_last_apply_failed (bool const val) { last_apply_failed_=val; return; }
 
 };
 

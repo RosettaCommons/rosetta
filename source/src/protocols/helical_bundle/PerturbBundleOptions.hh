@@ -106,6 +106,22 @@ namespace protocols {
 				///
 				core::Size other_helix() const { return use_value_from_other_helix_; }
 
+				/// @brief Returns the number of values to sample for this parameter.
+				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.  If the sample value is 0, no sampling occurs.
+				core::Size samples() const { return samples_; }
+
+				/// @brief Returns the default value of this parameter.
+				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.
+				core::Real default_value() const { return default_value_; }
+
+				/// @brief Returns the lower sampled value of this parameter.
+				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.
+				core::Real lower_value() const { return lower_value_; }
+
+				/// @brief Returns the upper sampled value of this parameter.
+				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.
+				core::Real upper_value() const { return upper_value_; }
+
 			public: //Setters
 
 				/// @brief Sets the index of the helix that these options refer to.
@@ -135,7 +151,23 @@ namespace protocols {
 
 				/// @brief Sets the helix from which we should copy a parameter value.  If set to zero, no copying occurs.
 				///
-				void set_helix_to_copy(core::Size helix_index) { use_value_from_other_helix_=helix_index; use_defaults_=false; return; }
+				void set_helix_to_copy(core::Size const helix_index) { use_value_from_other_helix_=helix_index; use_defaults_=false; return; }
+
+				/// @brief Sets the number of values to sample for this parameter.
+				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.  If set to 0, no sampling occurs.
+				void set_samples( core::Size const val ) { samples_=val; return; }
+
+				/// @brief Set the default value of this parameter.
+				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.
+				void set_default_value( core::Real const &val ) { default_value_=val; return; }
+
+				/// @brief Set the lower sampled value of this parameter.
+				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.
+				void set_lower_value( core::Real const &val ) { lower_value_=val; return; }
+
+				/// @brief Set the upper sampled value of this parameter.
+				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.
+				void set_upper_value( core::Real const &val ) { upper_value_=val; return; }
 
 			private:
 
@@ -150,7 +182,7 @@ namespace protocols {
 			core::Size helix_index_;
 
 			/// @brief The magnitude of the perturbation.
-			///
+			/// @default  This is used by the PerturbBundle mover.
 			core::Real perturbation_magnitude_;
 
 			/// @brief The type of perturbation.
@@ -168,6 +200,23 @@ namespace protocols {
 			/// @brief Should we just use the parameter value from another helix?
 			/// @details Default value (0) means no; otherwise the helix index must be specified.
 			core::Size use_value_from_other_helix_;
+
+			/// @brief For the grid sampler only -- how many values should we sample for this parameter?
+			/// @brief Default value (0) means no sampling.
+			core::Size samples_;
+
+			/// @brief For the grid sampler only -- the default value of this parameter.
+			///
+			core::Real default_value_;
+
+			/// @brief For the grid sampler only -- store the lower value of this parameter.
+			///
+			core::Real lower_value_;
+
+			/// @brief For the grid sampler only -- store the upper value of this parameter.
+			///
+			core::Real upper_value_;
+
 
 		}; //class PerturbBundleOptions
 

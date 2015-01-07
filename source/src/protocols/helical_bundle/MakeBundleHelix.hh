@@ -72,6 +72,7 @@ public:
 
 public:
 	MakeBundleHelix();
+	MakeBundleHelix( MakeBundleHelix const &src );
 	virtual ~MakeBundleHelix();
 
 	virtual protocols::moves::MoverOP clone() const;

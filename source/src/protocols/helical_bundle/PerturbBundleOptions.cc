@@ -47,7 +47,11 @@ namespace protocols {
 			perturbation_type_(pt_gaussian),
 			perturbable_(false),
 			use_defaults_(true),
-			use_value_from_other_helix_(0)
+			use_value_from_other_helix_(0),
+			samples_(0),
+			default_value_(0),
+			lower_value_(0),
+			upper_value_(0)
 		{
 		}
 
@@ -59,7 +63,11 @@ namespace protocols {
 			perturbation_type_(src.perturbation_type_),
 			perturbable_(src.perturbable_),
 			use_defaults_(src.use_defaults_),
-			use_value_from_other_helix_(src.use_value_from_other_helix_)
+			use_value_from_other_helix_(src.use_value_from_other_helix_),
+			samples_(src.samples_),
+			default_value_(src.default_value_),
+			lower_value_(src.lower_value_),
+			upper_value_(src.upper_value_)
 		{
 		}
 

@@ -104,8 +104,55 @@ MakeBundle::MakeBundle():
 		default_allow_bondangles_(false),
 		default_allow_bondangles_set_(false),
 		default_allow_dihedrals_(true),
-		default_allow_dihedrals_set_(false)
+		default_allow_dihedrals_set_(false),
+		last_apply_failed_(false)
 {}
+
+///
+/// @brief Copy constructor for MakeBundle mover.
+///
+///@brief Creator for MakeBundle mover.
+MakeBundle::MakeBundle( MakeBundle const & src ):
+		protocols::moves::Mover(src),
+		reset_pose_(src.reset_pose_),
+		make_bundle_helix_movers_(), //copy this below
+		bundle_symmetry_(src.bundle_symmetry_),
+		bundle_symmetry_copies_(src.bundle_symmetry_copies_),
+		default_r0_(src.default_r0_),
+		default_r0_set_(src.default_r0_set_),
+		default_omega0_(src.default_omega0_),
+		default_omega0_set_(src.default_omega0_set_),
+		default_delta_omega0_(src.default_delta_omega0_),
+		default_delta_omega0_set_(src.default_delta_omega0_set_),
+		default_crick_params_file_(src.default_crick_params_file_),
+		default_crick_params_file_set_(src.default_crick_params_file_set_),
+		default_omega1_(src.default_omega1_),
+		default_omega1_set_(src.default_omega1_set_),
+		default_z1_(src.default_z1_),
+		default_z1_set_(src.default_z1_set_),
+		default_delta_omega1_all_(src.default_delta_omega1_all_),
+		default_delta_omega1_all_set_(src.default_delta_omega1_all_set_),
+		default_residue_name_(src.default_residue_name_),
+		default_residue_name_set_(src.default_residue_name_set_),
+		default_delta_t_(src.default_delta_t_),
+		default_delta_t_set_(src.default_delta_t_set_),
+		default_invert_(src.default_invert_),
+		default_invert_set_(src.default_invert_set_),
+		default_helix_length_(src.default_helix_length_),
+		default_helix_length_set_(src.default_helix_length_set_),
+		default_allow_bondlengths_(src.default_allow_bondlengths_),
+		default_allow_bondlengths_set_(src.default_allow_bondlengths_set_),
+		default_allow_bondangles_(src.default_allow_bondangles_),
+		default_allow_bondangles_set_(src.default_allow_bondangles_set_),
+		default_allow_dihedrals_(src.default_allow_dihedrals_),
+		default_allow_dihedrals_set_(src.default_allow_dihedrals_set_),
+		last_apply_failed_(src.last_apply_failed_)
+{
+	make_bundle_helix_movers_.clear();
+	for(core::Size i=1, imax=src.make_bundle_helix_movers_.size(); i<=imax; ++i) {
+		make_bundle_helix_movers_.push_back( utility::pointer::dynamic_pointer_cast< MakeBundleHelix >( src.make_bundle_helix_movers_[i]->clone() ) );
+	}
+}
 
 ///
 ///@brief Destructor for MakeBundle mover.
@@ -167,8 +214,10 @@ void MakeBundle::apply (core::pose::Pose & pose)
 	}
 
 	if(failed) {
+		set_last_apply_failed(true);
 		if(TR.visible()) TR << "Build of helical bundle failed, likely due to bad Crick parameters resulting in nonsensical geometry.  Returning input pose." << std::endl;
 	} else {
+		set_last_apply_failed(false);
 
 		//At this point, newpose has a bunch of ParametersSet objects, each with one Parameters object.  We want a single ParametersSet object with all of the Parameters objects.
 		//So we do some shuffling around:
@@ -226,6 +275,179 @@ MakeBundle::parse_my_tag(
 
 	runtime_assert_string_msg( !tag->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );
 
+	//Set symmetry options for the MakeBundle mover:
+	set_symmetry_options_from_tag(tag);
+
+	//Set the reset option:
+	if ( tag->hasOption("reset") ) {
+		set_reset_pose( tag->getOption<bool>("reset", false) );
+		if(TR.visible()) TR << "Reset mode set to " << (reset_pose() ? "true" : "false") << "." << std::endl;
+	}
+
+	//Set defaults for whether the mover can set bond lengths, bond angles, and dihedrals:
+	set_dofs_from_tag(tag);
+
+	//Set defaults for the major helix:
+	if (tag->hasOption("r0")) {
+		set_default_r0( tag->getOption<core::Real>("r0", 0.0) );
+		if(TR.visible()) TR << "Default r0 (major helix radius) set to " << default_r0() << "." << std::endl;
+	}
+	if (tag->hasOption("omega0")) {
+		set_default_omega0( tag->getOption<core::Real>("omega0", 0.0) );
+		if(TR.visible()) TR << "Default omega0 (major helix turn per residue) set to " << default_omega0() << "." << std::endl;
+	}
+	if (tag->hasOption("delta_omega0")) {
+		set_default_delta_omega0( tag->getOption<core::Real>("delta_omega0", 0.0) );
+		if(TR.visible()) TR << "Default delta_omega0 (major helix rotation) set to " << default_delta_omega0() << "." << std::endl;
+	}
+
+	//Set defaults for the minor helix:
+	set_minorhelix_defaults_from_tag( tag );
+	if (tag->hasOption("delta_omega1")) {
+		set_default_delta_omega1_all( tag->getOption<core::Real>("delta_omega1", 0) );
+		if(TR.visible()) TR << "Default delta_omega1 (minor helix rotation) set to " << default_delta_omega1_all() << "." << std::endl;
+	}
+
+	//Set defaults for other params:
+	if (tag->hasOption("delta_t")) {
+		set_default_delta_t( tag->getOption<core::Real>("delta_t", 0) );
+		if(TR.visible()) TR << "Default delta_t (residue offset) set to " << default_delta_t() << "." << std::endl;
+	}
+	set_other_defaults_from_tag( tag );
+
+	//Check that at least one helix is defined:
+	bool at_least_one_helix = false;
+
+	//Parse sub-tags, setting major and minor helix params.  (Note that the add_helix function will automatically set the defaults).
+  utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+	for( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
+		if ( (*tag_it)->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
+			at_least_one_helix = true;
+			runtime_assert_string_msg( !(*tag_it)->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );
+			add_helix(); //This will set all of the parameters to defaults
+			core::Size const helix_index( n_helices() ); //The index of the current helix
+			if( TR.visible() ) TR << "Added a helix." << std::endl;
+
+			//Set crick_params_file, set_bondlengths, set_bondangles, and set_dihedrals options for this helix, based on the tag.
+			set_helix_params_from_tag( helix_index, (*tag_it) );
+
+			//Major helix params:
+			if( (*tag_it)->hasOption( "r0" ) ) {
+				core::Real const r0val( (*tag_it)->getOption<core::Real>("r0", 0) );
+				helix(helix_index)->set_r0(r0val);
+				if(TR.visible()) TR << "\tSet r0 value (major helix radius) to " << r0val << "." << std::endl;
+			}
+			if( (*tag_it)->hasOption( "omega0" ) ) {
+				core::Real const omega0val( (*tag_it)->getOption<core::Real>("omega0", 0) );
+				helix(helix_index)->set_omega0(omega0val);
+				if(TR.visible()) TR << "\tSet omega0 value (major helix turn per residue) to " << omega0val << "." << std::endl;
+			}
+			if( (*tag_it)->hasOption( "delta_omega0" ) ) {
+				core::Real const delta_omega0val( (*tag_it)->getOption<core::Real>("delta_omega0", 0) );
+				helix(helix_index)->set_delta_omega0(delta_omega0val);
+				if(TR.visible()) TR << "\tSet delta_omega0 value (major helix rotation) to " << delta_omega0val << "." << std::endl;
+			}
+
+			//Set minor helix params (omega1, z1, delta_omega1):
+			set_minor_helix_params_from_tag(helix_index, (*tag_it));
+
+			//Set residue_name, invert, and helix_length for this helix:
+			set_other_helix_params_from_tag(helix_index, (*tag_it));
+			if( (*tag_it)->hasOption( "delta_t" ) ) {
+				core::Real const delta_tval( (*tag_it)->getOption<core::Real>("delta_t", 0) );
+				helix(helix_index)->set_delta_t(delta_tval);
+				if(TR.visible()) TR << "\tSet delta_t value (residue offset) to " << delta_tval << "." << std::endl;
+			}
+
+		}
+	}
+
+	runtime_assert_string_msg(at_least_one_helix, "In protocols::helical_bundle::MakeBundle::parse_my_tag(): At least one helix must be defined using a <Helix ...> sub-tag!");
+
+	return;
+} //parse_my_tag
+
+/// @brief Set crick_params_file, set_bondlengths, set_bondangles, and set_dihedrals options for a single helix, based on an input tag.
+///
+void MakeBundle::set_helix_params_from_tag ( core::Size const helix_index, utility::tag::TagCOP tag )
+{
+		//FIRST, check for a minor helix Crick params file, and set minor helix params accordingly.
+		if( tag->hasOption( "crick_params_file" ) ) {
+			std::string const paramsfile = tag->getOption<std::string>( "crick_params_file", "" );
+			helix(helix_index)->set_minor_helix_params_from_file( paramsfile );
+			if(TR.visible()) TR << "\tRead minor helix parameters from " << paramsfile << "." << std::endl;
+		}
+		//SECOND, check for params that have been set manually, and set accordingly.
+		//Params for what DOFs can be set:
+		if (tag->hasOption("set_bondlengths")) {
+			helix(helix_index)->set_allow_bondlengths( tag->getOption<bool>("set_bondlengths", false) );
+			if(TR.visible()) {
+				TR << "\tSet the permission for the mover to set bondlengths for this helix to " << (default_allow_bondlengths() ? "true." : "false.") << std::endl;
+			}
+		}
+		if (tag->hasOption("set_bondangles")) {
+			helix(helix_index)->set_allow_bondangles( tag->getOption<bool>("set_bondangles", false) );
+			if(TR.visible()) {
+				TR << "\tSet the permission for the mover to set bondangles for this helix to " << (default_allow_bondangles() ? "true." : "false.") << std::endl;
+			}
+		}
+		if (tag->hasOption("set_dihedrals")) {
+			helix(helix_index)->set_allow_dihedrals( tag->getOption<bool>("set_dihedrals", true) );
+			if(TR.visible()) {
+				TR << "\tSet the permission for the mover to set dihedrals for this helix to " << (default_allow_dihedrals() ? "true." : "false.") << std::endl;
+			}
+		}
+		return;
+}
+
+/// @brief Set omega1, z1, and delta_omega1 for a single helix, based on an input tag.
+///
+void MakeBundle::set_minor_helix_params_from_tag( core::Size const helix_index, utility::tag::TagCOP tag )
+{
+			if( tag->hasOption( "omega1" ) ) {
+				core::Real const omega1val( tag->getOption<core::Real>("omega1", 0) );
+				helix(helix_index)->set_omega1(omega1val);
+				if(TR.visible()) TR << "\tSet omega1 value (minor helix turn per residue) to " << omega1val << "." << std::endl;
+			}
+			if( tag->hasOption( "z1" ) ) {
+				core::Real const z1val( tag->getOption<core::Real>("z1", 0) );
+				helix(helix_index)->set_z1(z1val);
+				if(TR.visible()) TR << "\tSet z1 value (minor helix rise per residue) to " << z1val << "." << std::endl;
+			}
+			if( tag->hasOption( "delta_omega1" ) ) {
+				core::Real const deltaomega1val( tag->getOption<core::Real>("delta_omega1", 0) );
+				helix(helix_index)->set_delta_omega1_all(deltaomega1val);
+				if(TR.visible()) TR << "\tSet delta_omega1 value (minor helix rotation) to " << deltaomega1val << "." << std::endl;
+			}
+			return;
+}
+
+/// @brief Set residue_name, invert, and helix_length for a single helix, based on an input tag.
+///
+void MakeBundle::set_other_helix_params_from_tag( core::Size const helix_index, utility::tag::TagCOP tag )
+{
+			if( tag->hasOption( "residue_name" ) ) {
+				std::string const resname( tag->getOption<std::string>("residue_name", "ALA") );
+				helix(helix_index)->set_residue_name(resname);
+				if(TR.visible()) TR << "\tSet the residue type for the helix to " << resname << "." << std::endl;
+			}
+			if( tag->hasOption( "invert" ) ) {
+				bool const invertval( tag->getOption<bool>("invert", false) );
+				helix(helix_index)->set_invert_helix(invertval);
+				if(TR.visible()) TR << "\tSet invert value (should the helix be flipped?) to " << (invertval ? "true" : "false") << "." << std::endl;
+			}
+			if( tag->hasOption( "helix_length" ) ) {
+				core::Size const helixlength( tag->getOption<core::Size>("helix_length", 0) );
+				helix(helix_index)->set_helix_length(helixlength);
+				if(TR.visible()) TR << "\tSet helix length to " << helixlength << "." << std::endl;
+			}
+			return;
+}
+
+/// @brief Set symmetry and symmetry_copies options based on an input tag.
+///
+void MakeBundle::set_symmetry_options_from_tag( utility::tag::TagCOP tag )
+{
 	//Set options for the MakeBundle mover:
 	if (tag->hasOption("symmetry")) {
 		set_symmetry( tag->getOption<core::Size>("symmetry", 0) );
@@ -247,12 +469,14 @@ MakeBundle::parse_my_tag(
 			}
 		}
 	}
-	if ( tag->hasOption("reset") ) {
-		set_reset_pose( tag->getOption<bool>("reset", false) );
-		if(TR.visible()) TR << "Reset mode set to " << (reset_pose() ? "true" : "false") << "." << std::endl;
-	}
 
-	//Set defaults for whether the mover can set bond lengths, bond angles, and dihedrals:
+	return;
+} //set_global_options_from_tag
+
+/// @brief Set defaults for whether the mover can set bond lengths, bond angles, and dihedrals.
+///
+void MakeBundle::set_dofs_from_tag( utility::tag::TagCOP tag )
+{
 	if (tag->hasOption("set_bondlengths")) {
 		set_default_allow_bondlengths( tag->getOption<bool>("set_bondlengths", false) );
 		if(TR.visible()) {
@@ -271,22 +495,13 @@ MakeBundle::parse_my_tag(
 			TR << "Set the default permission for the mover to set dihedrals to " << (default_allow_dihedrals() ? "true." : "false.") << std::endl;
 		}
 	}
+	return;
+} //set_dofs_from_tag
 
-	//Set defaults for the major helix:
-	if (tag->hasOption("r0")) {
-		set_default_r0( tag->getOption<core::Real>("r0", 0.0) );
-		if(TR.visible()) TR << "Default r0 (major helix radius) set to " << default_r0() << "." << std::endl;
-	}
-	if (tag->hasOption("omega0")) {
-		set_default_omega0( tag->getOption<core::Real>("omega0", 0.0) );
-		if(TR.visible()) TR << "Default omega0 (major helix turn per residue) set to " << default_omega0() << "." << std::endl;
-	}
-	if (tag->hasOption("delta_omega0")) {
-		set_default_delta_omega0( tag->getOption<core::Real>("delta_omega0", 0.0) );
-		if(TR.visible()) TR << "Default delta_omega0 (major helix rotation) set to " << default_delta_omega0() << "." << std::endl;
-	}
-
-	//Set defaults for the minor helix:
+/// @brief Set the crick_params_file, omega1, and z1 default values from a tag.
+///
+void MakeBundle::set_minorhelix_defaults_from_tag( utility::tag::TagCOP tag )
+{
 	if (tag->hasOption("crick_params_file")) {
 		set_default_crick_params_file( tag->getOption<std::string>("crick_params_file", "") );
 		if(TR.visible()) TR << "Default Crick params file set to " << default_crick_params_file() << "." << std::endl;
@@ -299,20 +514,17 @@ MakeBundle::parse_my_tag(
 		set_default_z1( tag->getOption<core::Real>("z1", 0) );
 		if(TR.visible()) TR << "Default z1 (minor helix rise per residue) set to " << default_z1() << "." << std::endl;
 	}
-	if (tag->hasOption("delta_omega1")) {
-		set_default_delta_omega1_all( tag->getOption<core::Real>("delta_omega1", 0) );
-		if(TR.visible()) TR << "Default delta_omega1 (minor helix rotation) set to " << default_delta_omega1_all() << "." << std::endl;
-	}
+	return;
+} //set_minorhelix_defaults_from_tag
 
-	//Set defaults for other params:
+/// @brief Set the residue_name, invert, and helix_length default values based on an input tag.
+///
+void MakeBundle::set_other_defaults_from_tag( utility::tag::TagCOP tag )
+{
 	if (tag->hasOption("residue_name")) {
 		set_default_residue_name( tag->getOption<std::string>("residue_name", "") );
 		if(TR.visible()) TR << "Default residue name set to " << default_residue_name() << "." << std::endl;
 	}	
-	if (tag->hasOption("delta_t")) {
-		set_default_delta_t( tag->getOption<core::Real>("delta_t", 0) );
-		if(TR.visible()) TR << "Default delta_t (residue offset) set to " << default_delta_t() << "." << std::endl;
-	}
 	if (tag->hasOption("invert")) {
 		set_default_invert( tag->getOption<bool>("invert", false) );
 		if(TR.visible()) TR << "Default invert (should the helix be flipped?) set to " << (default_invert() ? "true" : "false") << "." << std::endl;
@@ -321,109 +533,8 @@ MakeBundle::parse_my_tag(
 		set_default_helix_length( tag->getOption<core::Size>("helix_length", 0) );
 		if(TR.visible()) TR << "Default helix length set to " << default_helix_length() << "." << std::endl;
 	}
-
-	//Check that at least one helix is defined:
-	bool at_least_one_helix = false;
-
-	//Parse sub-tags, setting major and minor helix params.  (Note that the add_helix function will automatically set the defaults).
-  utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
-		if ( (*tag_it)->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
-			at_least_one_helix = true;
-			runtime_assert_string_msg( !(*tag_it)->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );
-			add_helix(); //This will set all of the parameters to defaults
-			core::Size const helix_index( n_helices() ); //The index of the current helix
-			if( TR.visible() ) TR << "Added a helix." << std::endl;
-			//FIRST, check for a minor helix Crick params file, and set minor helix params accordingly.
-			if( (*tag_it)->hasOption( "crick_params_file" ) ) {
-				std::string const paramsfile = (*tag_it)->getOption<std::string>( "crick_params_file", "" );
-				helix(helix_index)->set_minor_helix_params_from_file( paramsfile );
-				if(TR.visible()) TR << "\tRead minor helix parameters from " << paramsfile << "." << std::endl;
-			}
-			//SECOND, check for params that have been set manually, and set accordingly.
-			//Params for what DOFs can be set:
-			if ((*tag_it)->hasOption("set_bondlengths")) {
-				helix(helix_index)->set_allow_bondlengths( (*tag_it)->getOption<bool>("set_bondlengths", false) );
-				if(TR.visible()) {
-					TR << "\tSet the permission for the mover to set bondlengths for this helix to " << (default_allow_bondlengths() ? "true." : "false.") << std::endl;
-				}
-			}
-			if ((*tag_it)->hasOption("set_bondangles")) {
-				helix(helix_index)->set_allow_bondangles( (*tag_it)->getOption<bool>("set_bondangles", false) );
-				if(TR.visible()) {
-					TR << "\tSet the permission for the mover to set bondangles for this helix to " << (default_allow_bondangles() ? "true." : "false.") << std::endl;
-				}
-			}
-			if ((*tag_it)->hasOption("set_dihedrals")) {
-				helix(helix_index)->set_allow_dihedrals( (*tag_it)->getOption<bool>("set_dihedrals", true) );
-				if(TR.visible()) {
-					TR << "\tSet the permission for the mover to set dihedrals for this helix to " << (default_allow_dihedrals() ? "true." : "false.") << std::endl;
-				}
-			}
-
-			//Major helix params:
-			if( (*tag_it)->hasOption( "r0" ) ) {
-				core::Real const r0val( (*tag_it)->getOption<core::Real>("r0", 0) );
-				helix(helix_index)->set_r0(r0val);
-				if(TR.visible()) TR << "\tSet r0 value (major helix radius) to " << r0val << "." << std::endl;
-			}
-			if( (*tag_it)->hasOption( "omega0" ) ) {
-				core::Real const omega0val( (*tag_it)->getOption<core::Real>("omega0", 0) );
-				helix(helix_index)->set_omega0(omega0val);
-				if(TR.visible()) TR << "\tSet omega0 value (major helix turn per residue) to " << omega0val << "." << std::endl;
-			}
-			if( (*tag_it)->hasOption( "delta_omega0" ) ) {
-				core::Real const delta_omega0val( (*tag_it)->getOption<core::Real>("delta_omega0", 0) );
-				helix(helix_index)->set_delta_omega0(delta_omega0val);
-				if(TR.visible()) TR << "\tSet delta_omega0 value (major helix rotation) to " << delta_omega0val << "." << std::endl;
-			}
-
-			//Minor helix params:
-			if( (*tag_it)->hasOption( "omega1" ) ) {
-				core::Real const omega1val( (*tag_it)->getOption<core::Real>("omega1", 0) );
-				helix(helix_index)->set_omega1(omega1val);
-				if(TR.visible()) TR << "\tSet omega1 value (minor helix turn per residue) to " << omega1val << "." << std::endl;
-			}
-			if( (*tag_it)->hasOption( "z1" ) ) {
-				core::Real const z1val( (*tag_it)->getOption<core::Real>("z1", 0) );
-				helix(helix_index)->set_z1(z1val);
-				if(TR.visible()) TR << "\tSet z1 value (minor helix rise per residue) to " << z1val << "." << std::endl;
-			}
-			if( (*tag_it)->hasOption( "delta_omega1" ) ) {
-				core::Real const deltaomega1val( (*tag_it)->getOption<core::Real>("delta_omega1", 0) );
-				helix(helix_index)->set_delta_omega1_all(deltaomega1val);
-				if(TR.visible()) TR << "\tSet delta_omega1 value (minor helix rotation) to " << deltaomega1val << "." << std::endl;
-			}
-
-			//Other params:
-			if( (*tag_it)->hasOption( "residue_name" ) ) {
-				std::string const resname( (*tag_it)->getOption<std::string>("residue_name", "ALA") );
-				helix(helix_index)->set_residue_name(resname);
-				if(TR.visible()) TR << "\tSet the residue type for the helix to " << resname << "." << std::endl;
-			}
-			if( (*tag_it)->hasOption( "delta_t" ) ) {
-				core::Real const delta_tval( (*tag_it)->getOption<core::Real>("delta_t", 0) );
-				helix(helix_index)->set_delta_t(delta_tval);
-				if(TR.visible()) TR << "\tSet delta_t value (residue offset) to " << delta_tval << "." << std::endl;
-			}
-			if( (*tag_it)->hasOption( "invert" ) ) {
-				bool const invertval( (*tag_it)->getOption<bool>("invert", false) );
-				helix(helix_index)->set_invert_helix(invertval);
-				if(TR.visible()) TR << "\tSet invert value (should the helix be flipped?) to " << (invertval ? "true" : "false") << "." << std::endl;
-			}
-			if( (*tag_it)->hasOption( "helix_length" ) ) {
-				core::Size const helixlength( (*tag_it)->getOption<core::Size>("helix_length", 0) );
-				helix(helix_index)->set_helix_length(helixlength);
-				if(TR.visible()) TR << "\tSet helix length to " << helixlength << "." << std::endl;
-			}
-
-		}
-	}
-
-	runtime_assert_string_msg(at_least_one_helix, "In protocols::helical_bundle::MakeBundle::parse_my_tag(): At least one helix must be defined using a <Helix ...> sub-tag!");
-
 	return;
-} //parse_my_tag
+} //set_other_defaults_from_tag
 
 /// @brief Function to add a helix.
 /// @details This creates a MakeBundleHelix mover that will be called at apply time.
