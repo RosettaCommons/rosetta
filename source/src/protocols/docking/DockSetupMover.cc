@@ -21,9 +21,12 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/docking/RigidBodyInfo.hh>
+#include <protocols/scoring/InterfaceInfo.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/datacache/BasicDataCache.hh>
 //Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -92,6 +95,10 @@ void DockSetupMover::copy(DockSetupMover & lhs, DockSetupMover const & rhs) {
 void
 DockSetupMover::apply( pose::Pose & pose ) {
 	docking::setup_foldtree( pose, partners_, movable_jumps_ );
+	protocols::scoring::InterfaceInfoOP docking_interface( new protocols::scoring::InterfaceInfo( movable_jumps_ ) );
+	pose.data().set(
+									core::pose::datacache::CacheableDataType::INTERFACE_INFO,
+									docking_interface);
 	//	runtime_assert( rb_mover_ );
 	//	rb_mover_->clear_jumps(); //this doesn't work because of cloning --- have to communicate via data-map !
 	//	for ( Size i=1; i<=pose.num_jump(); ++i ) {

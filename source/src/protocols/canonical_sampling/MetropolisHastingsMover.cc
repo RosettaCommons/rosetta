@@ -51,6 +51,8 @@
 #include <core/types.hh>
 #include <core/pose/util.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <basic/Tracer.hh>
 
 // numeric headers
@@ -189,7 +191,11 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 			if ( bias_energy ) {
 				tr.Debug << "bias energy used " << std::endl;
 				restart = bias_energy->restart_simulation( pose, *this, cycle_number, temp_level, temperature );
-				if ( restart ) tr.Info << "grid info collected, restart now!" << std::endl;
+				if ( restart ) {
+					tr.Info << "grid info collected, restart now!" << std::endl;
+				} else {
+					tr.Info << "failed collecting grid info, restart failed!" << std::endl;
+				}
 			}
 		}
 	}
@@ -264,21 +270,46 @@ MetropolisHastingsMover::write_checkpoint( core::pose::Pose const & pose ) {
 	if ( !Timer::time_to_checkpoint() ) return;
 
 	checkpoint_count_++;
-	std::string const & checkpoint_id( jd2::current_output_name() + "_" + string_of( jd2::current_replica() ) + "_" + string_of( checkpoint_count_ ) ); // protAB_0001_3_N
+
+	std::ostringstream checkpoint_id;
+	//	checkpoint_id << jd2::current_output_filename(); // decoys.out
 	utility::file::FileName jd2_filename( jd2::current_output_filename() );
-	checkpoint_ids_.push_back( jd2_filename.base()+"_"+checkpoint_id );
+	checkpoint_id << jd2_filename.base(); // decoys
+	checkpoint_id << "_" << jd2::current_output_name(); // protAB_0001
+	checkpoint_id << "_" << jd2::current_replica(); // rep
+	checkpoint_id << "_" << checkpoint_count_;
+
+	checkpoint_ids_.push_back( checkpoint_id.str() ); // decoys_protAB_0001_1_n
+	utility::io::ozstream out( checkpoint_id.str()+".out");
+	//	std::string const & checkpoint_id( jd2::current_output_name() + "_" + string_of( jd2::current_replica() ) + "_" + string_of( checkpoint_count_ ) ); // protAB_0001_3_N
+	//	utility::file::FileName jd2_filename( jd2::current_output_filename() );
+	//	checkpoint_ids_.push_back( jd2_filename.base()+"_"+checkpoint_id );
 	//	tr.Debug << "checkpoint_id: " << checkpoint_id << std::endl;  // "decoys_protAB_0001_3_n"
-	core::pose::Pose tmp_pose( pose );
+	//	core::pose::Pose tmp_pose( pose );
+
+	core::io::silent::SilentStructOP pss( new core::io::silent::BinarySilentStruct() );
+	std::ostringstream tag;
+	tag << jd2::current_output_name();
+	tag << "_" << std::setfill('0') << std::setw(3) << jd2::current_replica();
+	tag << "_" << std::setfill('0') << std::setw(8) << current_trial_;
+
+	pss->fill_struct( pose, tag.str() );
 
 	BiasedMonteCarloOP biased_mc = utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::BiasedMonteCarlo > ( monte_carlo_ );
 	if ( biased_mc ) { // if BiasedMonteCarlo, write out bias grid info
 		std::string str="";
 		biased_mc->bias_energy()->write_to_string( str );
-		core::pose::Pose tmp_pose( pose );
-		core::pose::add_comment( tmp_pose, "BIASENERGY", str );
+		//		core::pose::Pose tmp_pose( pose );
+		//		core::pose::add_comment( tmp_pose, "BIASENERGY", str );
+		pss->add_comment("BIASENERGY", str);
 	}
-	// write out snapshots for the replica
- 	job_outputter_->other_pose( jd2::get_current_job(), tmp_pose, checkpoint_id, current_trial_, false );
+	// write out snapshots for the replica, with joboutputter, the comment in pose will be not outputted
+	// 	job_outputter_->other_pose( jd2::get_current_job(), tmp_pose, checkpoint_id, current_trial_, false );
+
+	protocols::jd2::add_job_data_to_ss( pss, jd2::get_current_job() );
+	pss->print_header( out );
+	pss->print_scores( out );
+	pss->print_conformation( out );
 
 	Timer::reset();
 	//	tr.Debug << "have done writing checkpoint " << checkpoint_ids_.back() << std::endl;
@@ -297,7 +328,7 @@ MetropolisHastingsMover::get_checkpoints() {
 
 	utility::file::FileName jd2_filename( jd2::current_output_filename() );
 	std::string filename_base( jd2_filename.base()+"_"+jd2::current_output_name() );
-	std::string filename_pattern( filename_base+"_"+ObjexxFCL::string_of( jd2::current_replica()) +"_");
+	std::string filename_pattern( filename_base+"_"+ObjexxFCL::string_of( jd2::current_replica()) +"_"); // current_replica()=0 for FixedTemp
 
 	utility::vector1< std::string > names;
 	std::vector< int > checkpoint_indics;
@@ -317,29 +348,46 @@ MetropolisHastingsMover::get_checkpoints() {
 	std::vector< int >::reverse_iterator rit = checkpoint_indics.rbegin();
 	for ( ; rit != checkpoint_indics.rend(); ++rit ) {
 		tr.Debug << "checkpoint_indics: " << *rit << std::endl;
-		utility::vector1< core::Size > found_levels;
-		// collect all the temp_levels from the file of this checkpoint
-		for ( core::Size replica=1; replica <= tempering_->n_temp_levels(); ++replica ) {
-			core::io::silent::SilentFileData sfd( filename_base+"_"+ObjexxFCL::string_of( replica )+"_"+ObjexxFCL::string_of( *rit )+".out");
-			if ( utility::file::file_exists( sfd.filename() ) ) {
-				sfd.read_file( sfd.filename() );
-				found_levels.push_back( sfd.begin()->get_energy( "temp_level" ));
-			} else break;
-		}
-		// check if any temp_level is missing, if not, then return.
-		for ( core::Size replica=1; replica <= tempering_->n_temp_levels(); ++replica ) {
-			if ( !found_levels.has_value( replica ) ) { // certain level missing
-				tr.Debug << "temp_level: " << replica << " is missing" << std::endl;
-				break;
-			}
-			if ( replica == tempering_->n_temp_levels() ) {
+
+		if ( tempering_->n_temp_levels() == 1 ) { // FixedTemperatureController
+			core::io::silent::SilentFileData sfd( filename_base+"_"+ObjexxFCL::string_of( 0 )+"_"+ObjexxFCL::string_of( *rit )+".out");
+			if ( utility::file::file_exists( sfd.filename() ) && utility::file::file_size( sfd.filename() ) ) {
 				checkpoint_ids_.push_back( filename_pattern + ObjexxFCL::string_of( *rit ) );
 				checkpoint_count_ = *rit;
+
 				// delete any checkpoint file before the successfully collected checkpoint
 				std::vector< int >::reverse_iterator d_rit = ++rit;
 				for ( ; d_rit != checkpoint_indics.rend(); ++d_rit ) utility::file::file_delete( filename_pattern+ObjexxFCL::string_of( *d_rit )+".out" );
 				tr.Debug << "checkpoint for restart: " << checkpoint_ids_.front() << std::endl;
 				return true;
+			} else continue;
+
+		} else { // replica exchange
+
+			utility::vector1< core::Size > found_levels;
+			// collect all the temp_levels from the file of this checkpoint
+			for ( core::Size replica=1; replica <= tempering_->n_temp_levels(); ++replica ) {
+				core::io::silent::SilentFileData sfd( filename_base+"_"+ObjexxFCL::string_of( replica )+"_"+ObjexxFCL::string_of( *rit )+".out");
+				if ( utility::file::file_exists( sfd.filename() ) ) {
+					sfd.read_file( sfd.filename() );
+					found_levels.push_back( sfd.begin()->get_energy( "temp_level" ));
+				} else break;
+			}
+			// check if any temp_level is missing, if not, then return.
+			for ( core::Size replica=1; replica <= tempering_->n_temp_levels(); ++replica ) {
+				if ( !found_levels.has_value( replica ) ) { // certain level missing
+					tr.Debug << "temp_level: " << replica << " is missing" << std::endl;
+					break;
+				}
+				if ( replica == tempering_->n_temp_levels() ) {
+					checkpoint_ids_.push_back( filename_pattern + ObjexxFCL::string_of( *rit ) );
+					checkpoint_count_ = *rit;
+					// delete any checkpoint file before the successfully collected checkpoint
+					std::vector< int >::reverse_iterator d_rit = ++rit;
+					for ( ; d_rit != checkpoint_indics.rend(); ++d_rit ) utility::file::file_delete( filename_pattern+ObjexxFCL::string_of( *d_rit )+".out" );
+					tr.Debug << "checkpoint for restart: " << checkpoint_ids_.front() << std::endl;
+					return true;
+				}
 			}
 		}
 	}

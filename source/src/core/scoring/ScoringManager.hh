@@ -225,6 +225,10 @@ public:
 	void
 	add_etable( std::string const & name, etable::EtableOP etable );
 
+	/// @brief make etable for extra partially softies
+	etable::EtableOP
+	make_partially_soft_etable( std::string const & name, etable::EtableOptions etable_options ) const;
+
 	///pba
 	void
 	add_memb_etable( std::string const & name, etable::MembEtableOP etable );

@@ -775,6 +775,42 @@ ScoringManager::add_etable( std::string const & name, etable::EtableOP etable )
 	etables_by_string_[ name ] = etable;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+/// @details Make etable for extra partial softies, pilot app r_play_with_etables does not really work anymore
+/// the etables it added will be somehow cleared or overwriten, so I do it here now
+///
+/// table_id: i.e. FA_STANDARD_SOFT40,
+/// the number in the end is a percentage, lj_radius are given for every 5% softie
+/// from 5% to 95% in database/chemical/atom_type_sets/fa_standard/extras/extra_soft_rep_params.txt
+/// FA_STANDARD_SOFT50 would be halfway between normal softrep and normal hardrep.
+etable::EtableOP
+ScoringManager::make_partially_soft_etable( std::string const & table_id, etable::EtableOptions etable_options ) const
+{
+	using namespace etable;
+	using namespace utility;
+
+	assert( utility::startswith( table_id, "FA_STANDARD_SOFT" ) );
+	std::string table_name( string_split( table_id, '_').back() );
+	std::string table_value( trim( table_id, "FA_STANDARD_SOFT" ) );
+	if ( string2float( table_value ) != -1 ) {
+		core::Real weight( string2Real( table_value ) * 0.01 );
+		if ( weight < 1 && weight > 0 && ( string2int( table_value ) % 5 ==0 ) ) {
+			etable_options.lj_switch_dis2sigma = 0.6*(1.0-weight) + weight*0.91;
+			return etable::EtableOP(new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+					etable_options, table_name ));
+		} else {
+			std::string msg = "lj_radius is not given for partially soft " + trim(table_id, "FA_STANDARD_SOFT") + "%";
+			utility_exit_with_message( msg );
+		}
+	} else {
+		std::string msg = "input " + table_id + " format error, expecting a integer between 5 and 95 after FA_STANDARD_SOFT";
+		utility_exit_with_message( msg );
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+
 //XRW_B_T1
 /*
 ///////////////////////////////////////////////////////////////////////////////
@@ -850,7 +886,12 @@ ScoringManager::etable( methods::EnergyMethodOptions const &options_in ) const
 			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 											options_loc.etable_options(), "SOFT" ) );
 
-		} else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
+		} else if ( utility::startswith( table_id, "FA_STANDARD_SOFT" ) ) {
+			// add more softies, radii and lj_switch_dis2sigma are linear-interpolated from standard to SOFT
+			// radii are given in database/chemical/atom_type_sets/fa_standard/extras/extra_soft_rep_params.txt
+			methods::EnergyMethodOptions options_loc( options_in );
+			etable_ptr = make_partially_soft_etable( table_id, options_loc.etable_options() );
+		}	else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
 			// original comments: note we check for soft rep 1st since that would match this as well -- confusing??
 			// apply a modification of the radii/wdepths
 			std::string const alternate_parameters( table_id.substr( FA_STANDARD_DEFAULT.size() + 1 ) );
@@ -901,6 +942,10 @@ ScoringManager::etable( std::string const & table_id ) const
 											options, "SOFT" ) );
 			etables_by_string_[ table_id ] = etable_ptr;
 
+		} else if ( utility::startswith( table_id, "FA_STANDARD_SOFT" ) ) {
+			EtableOptions options;
+			EtableOP etable_ptr( make_partially_soft_etable( table_id, options ));
+			etables_by_string_[ table_id ] = etable_ptr;
 		} else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
 			// note we check for soft rep 1st since that would match this as well -- confusing??
 			// apply a modification of the radii/wdepths
