@@ -70,37 +70,38 @@ AddChainMover::AddChainMover()
 utility::vector1< numeric::xyzVector< core::Real > >
 Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const positions ){
     utility::vector1< numeric::xyzVector< core::Real > > coords;
-    
+
     coords.clear();
     BOOST_FOREACH( core::Size const pos, positions ){
         coords.push_back( pose.residue( pos ).xyz( "CA" ) );
     }
     return coords;
 }
-    
+
 void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is passed by reference. So function does not return anything but modifies pose, and leave it modified. The function is const as it does not modify private member data.
     if( swap_chain_number()!=0 )
 		return;
     TR<<"AddChainMover is adding a new chain to pose: "<<std::endl;
 
     using namespace core::pose;
-    
+
     Pose new_pose;
-    
+
     utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
 	core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
 	std::string const curr_fname( split_names[ random_num ] );
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
-    
+
 	TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
 	core::import_pose::pose_from_pdb( new_pose, curr_fname );
 	new_pose.conformation().detect_disulfides();
 	(*scorefxn()) ( new_pose );
-    
+
 	append_pose_to_pose( pose, new_pose, new_chain() );
 	pose.conformation().detect_disulfides();
 	pose.update_residue_neighbors();
+	pose.update_pose_chains_from_pdb_chains();
 	(*scorefxn())( pose );
 	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
 	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
@@ -112,49 +113,49 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
     if( swap_chain_number()==0 )
 		return;
     TR<<"AddChainMover will swap chain: "<<swap_chain_number()<<std::endl;
-    
+
     using namespace core::pose;
     using namespace protocols::toolbox;
-    
-    
+
+
     Pose new_chain;
-    
+
     utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
 	core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
 	std::string const curr_fname( split_names[ random_num ] );
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
-    
+
     TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
 	core::import_pose::pose_from_pdb( new_chain, curr_fname );
 	new_chain.conformation().detect_disulfides();
 	(*scorefxn()) ( new_chain );
-    
+
     // Here we have the new chain in new_chain. This needs to be aligned to chain 2 in pose, and current chain 2 should be deleted.
     utility::vector1< PoseOP > pose_chains( pose.split_by_chain() ); // splits pose into a vector of poses, with one chain per pose
-    
+
     Pose template_pose;
     append_pose_to_pose( template_pose, *pose_chains[ swap_chain_number() ], true ); // the template chain is the chain that will be swapped
-    
+
     // Now I should align new_chain to template_pose
     utility::vector1< core::Size > template_positions;
     for (core::Size i = 1; i <= template_pose.total_residue(); ++i){
         template_positions.push_back(i);
     }
-    
+
     utility::vector1< core::Size > new_chain_positions;
     for (core::Size i = 1; i <= new_chain.total_residue(); ++i){
         new_chain_positions.push_back(i);
     }
-    
+
     runtime_assert( new_chain_positions == template_positions ); // The two residue number vectors should be identical
-    
+
     utility::vector1< numeric::xyzVector< core::Real > > init_coords( Ca_coords( new_chain, new_chain_positions ) ), ref_coords( Ca_coords( template_pose, template_positions ) );
 	numeric::xyzMatrix< core::Real > rotation;
 	numeric::xyzVector< core::Real > to_init_center, to_fit_center;
 	superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
 	apply_superposition_transform( new_chain, rotation, to_init_center, to_fit_center );
-    
+
     // new_chain is aligned to template_pose. Now everything that is not swap_chain_number in pose_chains should be combined with new_chain in pose.
     Pose new_pose;
     for (core::Size i = 1; i<swap_chain_number(); ++i) {
@@ -164,18 +165,18 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
     for (core::Size i = swap_chain_number() + 1; i <= pose_chains.size(); ++i) {
         append_pose_to_pose( new_pose, *pose_chains[i], true );
     }
-    
+
      // Now add the comments from pose to new_pose, and while doing this update the AddedChainName to the new chain name.
     std::map< std::string, std::string > const comments = core::pose::get_all_comments( pose );
     std::map< std::string, std::string>::const_iterator it;
-   
+
     for (it = comments.begin(); it != comments.end(); ++it){
 	if (it->first == "AddedChainName ") // update AddedChain name
            core::pose::add_comment(new_pose,"AddedChainName ",curr_fname);
         else
            core::pose::add_comment(new_pose,it->first,it->second);
     }
-	
+
     // Assign new_pose to pose and update score/disulfides/neighbors.
     pose = new_pose;
 	pose.conformation().detect_disulfides();
@@ -184,7 +185,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
 	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
 }
-    
+
 void
 AddChainMover::apply( Pose & pose )
 {
@@ -192,8 +193,8 @@ AddChainMover::apply( Pose & pose )
     //runtime_assert( ( new_chain() && swap_chain_number()==0) || (!new_chain() && swap_chain_number()!=0)); // You cannot do both new chain and swap chain and you have to do one of the two...
     add_new_chain(pose);
     swap_chain(pose);
-    
-    
+
+
 }
 
 std::string
