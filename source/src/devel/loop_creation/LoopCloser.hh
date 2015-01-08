@@ -30,6 +30,12 @@ class LoopCloser : public protocols::moves::Mover
 {
 public:
 
+	///@brief default constructor
+	LoopCloser();
+
+	///@brief explicit constructor
+	LoopCloser(bool prevent_nonloop_modifications);
+
 	///@brief Was the most recent loop-closure attempt successful?
 	virtual bool success() const;
 	

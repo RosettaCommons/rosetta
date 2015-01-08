@@ -70,7 +70,6 @@ CCDLoopCloserCreator::mover_name()
 ///@brief default constructor
 CCDLoopCloser::CCDLoopCloser():
 	max_closure_attempts_(10),
-	prevent_nonloop_modifications_(true),
 	max_ccd_moves_per_closure_attempt_(10000),
 	tolerance_( 0.1 ),
 	max_rama_score_increase_( 2.0 ),
@@ -94,8 +93,8 @@ CCDLoopCloser::CCDLoopCloser(
 	core::Real max_total_delta_loop,
 	core::Real early_exit_cutoff
 ):
+	LoopCloser(prevent_nonloop_modifications),
 	max_closure_attempts_(max_closure_attempts),
-	prevent_nonloop_modifications_(prevent_nonloop_modifications),
 	max_ccd_moves_per_closure_attempt_(max_ccd_moves_per_closure_attempt),
 	tolerance_(tolerance),
 	max_rama_score_increase_(max_rama_score_increase),
@@ -247,7 +246,7 @@ CCDLoopCloser::parse_my_tag(
 	using namespace core;
 	
 	if(tag->hasOption("prevent_nonloop_modification"))
-		prevent_nonloop_modifications_ = tag->getOption< bool >("prevent_nonloop_modifications");
+		prevent_nonloop_modifications(tag->getOption< bool >("prevent_nonloop_modifications"));
 	
 	if(tag->hasOption("max_ccd_moves_per_closure_attempt"))
 		max_ccd_moves_per_closure_attempt_ = tag->getOption< Size >("max_ccd_moves_per_closure_attempt");

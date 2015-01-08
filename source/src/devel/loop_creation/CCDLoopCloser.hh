@@ -82,9 +82,6 @@ private:
 	//Max number of CCD calls to make before giving up
 	core::Size max_closure_attempts_;
 	
-	//Should we set up a fold tree that prevents modification outside the loop region?
-	bool prevent_nonloop_modifications_;
-
 	//Number of CCD moves per call to CCD closure
 	core::Size max_ccd_moves_per_closure_attempt_;
 

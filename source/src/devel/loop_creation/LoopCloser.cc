@@ -17,6 +17,17 @@
 
 namespace devel {
 namespace loop_creation {
+
+	LoopCloser::LoopCloser():
+		prevent_nonloop_modifications_(true) {
+	}
+	
+	LoopCloser::LoopCloser(
+		bool prevent_nonloop_modifications
+	):
+		prevent_nonloop_modifications_(prevent_nonloop_modifications) {
+	}
+	
 	
 	///@brief Was the most recent loop-closure attempt successful?
 	bool

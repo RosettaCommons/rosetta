@@ -71,8 +71,6 @@ public:
 		core::pose::Pose & pose
 	);
 
-private:
-	bool prevent_nonloop_changes_;
 };
 
 } //loop_creation

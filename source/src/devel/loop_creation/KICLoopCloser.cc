@@ -64,9 +64,7 @@ KICLoopCloserCreator::mover_name()
 //****END CREATOR METHODS****//
 ///@brief default constructor
 KICLoopCloser::KICLoopCloser():
-	prevent_nonloop_changes_(true)
 //	max_closure_attempts_(10),
-//	prevent_nonloop_modifications_(true),
 //	max_KIC_moves_per_closure_attempt_(10000),
 //	max_rama_score_increase_( 2.0 ),
 //	max_total_delta_helix_( 15 ),
@@ -86,8 +84,8 @@ KICLoopCloser::KICLoopCloser():
 //	core::Real max_total_delta_loop,
 //	core::Real tolerance
 //):
+//	LoopCloser(prevent_nonloop_modifications),
 //	max_closure_attempts_(max_closure_attempts),
-//	prevent_nonloop_modifications_(prevent_nonloop_modifications),
 //	max_KIC_moves_per_closure_attempt_(max_KIC_moves_per_closure_attempt),
 //	max_rama_score_increase_(max_rama_score_increase),
 //	max_total_delta_helix_(max_total_delta_helix),
