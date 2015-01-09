@@ -331,7 +331,7 @@ main( int argc, char * argv [] )
 						core::Real maxZ=-10000.;
 						if (ddg>0) {
 							core::conformation::Residue const & rsd3 = input_pose.residue(i);
-							for(Size a = 1, a_end = rsd2.nheavyatoms(); a <= a_end; ++a) {
+							for(Size a = 1, a_end = rsd3.nheavyatoms(); a <= a_end; ++a) {
 								if (!rsd3.atom_is_backbone(a) && !rsd3.atom_is_hydrogen(a)){
 									if ( minX > rsd3.atom(a).xyz()(1)) minX = rsd3.atom(a).xyz()(1);
 									if ( minY > rsd3.atom(a).xyz()(2)) minY = rsd3.atom(a).xyz()(2);
