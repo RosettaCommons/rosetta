@@ -586,7 +586,7 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		if(mypose.residue(1).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
 
 		{//Make the pose:
-			core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+			core::chemical::ResidueTypeSetCOP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 			core::chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( diala_seq, *standard_residues, false );
 			for(core::Size ir=1, numres=requested_types.size(); ir<=numres; ir++){
 				core::chemical::ResidueType const & rsd_type = *requested_types[ ir ];
@@ -2293,9 +2293,9 @@ int main(int argc, char *argv[]) {
 				if(continue_on) continue;
 			}
 			if(betapositions[ir]) { //beta-amino acids:
-				target_aa=all_betas[RG.random_range(0,all_betas.length()-1)]; //Choosing from the allowed mutations.
+				target_aa=all_betas[numeric::random::rg().random_range(0,all_betas.length()-1)]; //Choosing from the allowed mutations.
 			} else { //default -- alpha-amino acids (D and L)
-				target_aa=all_aa[RG.random_range(0,all_aa.length()-1)]; //Choosing from the allowed mutations.
+				target_aa=all_aa[numeric::random::rg().random_range(0,all_aa.length()-1)]; //Choosing from the allowed mutations.
 			}
 			currentseq[ir-1] = target_aa;
 		}
@@ -2654,13 +2654,13 @@ int main(int argc, char *argv[]) {
 			if(procnum==0) {
 				//Picking a random position and mutation:
 				//Pick a position of the allowed positions:
-				target_pos = all_positions[RG.random_range(1, all_positions.size())];
+				target_pos = all_positions[numeric::random::rg().random_range(1, all_positions.size())];
 				while(true) {
 					//Pick an amino acid randomly:
 					if(betapositions[target_pos]) { //beta-amino acids
-						target_aa=all_betas[RG.random_range(0,all_betas.length()-1)]; //Choosing from allowed beta-mutations.
+						target_aa=all_betas[numeric::random::rg().random_range(0,all_betas.length()-1)]; //Choosing from allowed beta-mutations.
 					} else { //default -- alpha-amino acids (D or L)
-						target_aa=all_aa[RG.random_range(0,all_aa.length()-1)]; //Choosing from allowed mutations.
+						target_aa=all_aa[numeric::random::rg().random_range(0,all_aa.length()-1)]; //Choosing from allowed mutations.
 					}
 					if(currentsequence[target_pos-1]!=target_aa) break; //Continue only if we're not mutating to the same residue.
 				}

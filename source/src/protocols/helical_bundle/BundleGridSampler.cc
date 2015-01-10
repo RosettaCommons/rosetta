@@ -95,6 +95,8 @@ namespace protocols {
 			make_bundle_( new MakeBundle ),
 			pre_selection_mover_(),
 			pre_selection_mover_exists_(false),
+			pre_selection_filter_(),
+			pre_selection_filter_exists_(false),
 			dump_pdbs_(false),
 			pdb_prefix_("bgs_out"),
 			sfxn_set_(false),
@@ -121,6 +123,8 @@ namespace protocols {
 			make_bundle_(  utility::pointer::dynamic_pointer_cast< MakeBundle >(src.make_bundle_->clone()) ),
 			pre_selection_mover_( src.pre_selection_mover_ ), //NOTE that we're not cloning this mover, but using it straight
 			pre_selection_mover_exists_(src.pre_selection_mover_exists_),
+			pre_selection_filter_( src.pre_selection_filter_ ), //NOTE that we're not cloning this filter, but using it straight
+			pre_selection_filter_exists_(src.pre_selection_filter_exists_),
 			dump_pdbs_(src.dump_pdbs_),
 			pdb_prefix_(src.pdb_prefix_),
 			sfxn_set_(src.sfxn_set_),
@@ -328,6 +332,19 @@ namespace protocols {
 					pre_selection_mover_->apply(temppose);
 				}
 
+				//Apply the preselection filter, if it exists:
+				if(preselection_filter_exists()) {
+					if(TR.visible()) {
+						TR << "Applying filter to generated helical bundle." << std::endl;
+					}
+					bool const filterpassed( pre_selection_filter_->apply( temppose ) ); //Apply the filter and store the result in filterpassed.
+					if(TR.visible()) {
+						if(filterpassed) TR << "Filter passed!" << std::endl;
+						else TR << "Filter failed!  Discarding current grid sample and moving on to next." << std::endl;
+					}
+					if(!filterpassed) continue; //Go on to the next grid sample.
+				}
+
 				// Score the pose:
 				(*sfxn_)(	temppose);
 				if( first_bundle || ( selection_low() && temppose.energies().total_energy() < lowest_energy ) || ( !selection_low() && temppose.energies().total_energy() > lowest_energy) ) {
@@ -403,7 +420,7 @@ namespace protocols {
 		BundleGridSampler::parse_my_tag(
 				utility::tag::TagCOP tag,
 				basic::datacache::DataMap & data_map,
-				protocols::filters::Filters_map const &/*filters*/,
+				protocols::filters::Filters_map const &filters,
 				protocols::moves::Movers_map const &movers,
 				core::pose::Pose const & /*pose*/
 		) {
@@ -436,6 +453,11 @@ namespace protocols {
 				protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_selection_mover" ), movers );
 				set_preselection_mover(curmover);
 				if(TR.visible()) TR << "BundleGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned mover \"" << tag->getOption< std::string >("pre_selection_mover") << "\" as a pre-selection mover that will be applied to all generated bundles prior to energy evaluation." << std::endl;
+			}
+			if( tag->hasOption("pre_selection_filter") ) {
+				protocols::filters::FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "pre_selection_filter" ), filters );
+				set_preselection_filter(curfilter);
+				if(TR.visible()) TR << "BundleGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned filter \"" << tag->getOption< std::string >("pre_selection_filter") << "\" as a pre-selection filter that will be applied to all generated bundles prior to energy evaluation." << std::endl;
 			}
 			if( tag->hasOption("dump_pdbs") ) {
 				bool const val = tag->getOption<bool>("dump_pdbs", false);
@@ -955,6 +977,16 @@ namespace protocols {
 			pre_selection_mover_exists_ = true;
 			return;
 		}
+
+		/// @brief Sets the filter that will be applied to all helical bundles generated prior to energy evaluation.
+		/// @details See the pre_selection_filter_ private member variable for details.
+		void BundleGridSampler::set_preselection_filter ( protocols::filters::FilterOP filter )
+		{
+			pre_selection_filter_ = filter;
+			pre_selection_filter_exists_ = true;
+			return;
+		}
+
 
 		////////////////////////////////////////////////////////////////////////////////
 		//          PRIVATE FUNCTIONS                                                 //

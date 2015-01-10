@@ -17,6 +17,8 @@
 
 // Unit Headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/filters/Filter.hh>
 #include <protocols/helical_bundle/BundleGridSampler.fwd.hh>
 #include <protocols/helical_bundle/BundleGridSamplerHelper.fwd.hh>
 #include <protocols/helical_bundle/BundleGridSamplerHelper.hh>
@@ -246,9 +248,17 @@ namespace protocols {
 			/// parameter space.  (That is, this mover could move the backbone.)
 			void set_preselection_mover ( protocols::moves::MoverOP mover );
 
+			/// @brief Sets the filter that will be applied to all helical bundles generated prior to energy evaluation.
+			/// @details See the pre_selection_filter_ private member variable for details.
+			void set_preselection_filter ( protocols::filters::FilterOP filter );
+
 			/// @brief Returns "true" if and only if a preselection mover has been assigned.
 			///
 			bool preselection_mover_exists() const { return pre_selection_mover_exists_; }
+
+			/// @brief Returns "true" if and only if a preselection filter has been assigned.
+			///
+			bool preselection_filter_exists() const { return pre_selection_filter_exists_; }
 
 			/// @brief Set whether the mover dumps pdbs or not.
 			///
@@ -350,6 +360,14 @@ namespace protocols {
 			/// @brief Bool determining whether there exists a pre-selection mover that wlil be applied.
 			///
 			bool pre_selection_mover_exists_;
+
+			/// @brief Owning pointer for an (optional) pre-selection filter applied to all helical bundles after the pre-selection mover but before
+			/// picking the lowest-energy solution.  If PDBs are dumped, only those passing filters are dumped.
+			protocols::filters::FilterOP pre_selection_filter_;
+
+			/// @brief Bool determining whether a pre-selection filter has been set.
+			///
+			bool pre_selection_filter_exists_;
 
 			/// @brief Dump a PDB file for each bundle generated?  False by default.
 			///
