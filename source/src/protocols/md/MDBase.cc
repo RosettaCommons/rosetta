@@ -28,6 +28,14 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
+// silent
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
+
 // parsing
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
@@ -37,6 +45,12 @@ namespace protocols {
 namespace md {
 
 static thread_local basic::Tracer TR( "protocols.md" );
+
+MDBase::MDBase() :
+	constrained_( false )
+{}
+
+MDBase::~MDBase() {}
 
 void
 MDBase::set_constraint(	Real const sdev )
@@ -50,6 +64,8 @@ MDBase::set_constraint(	Real const sdev )
 void
 MDBase::cst_on_pose( pose::Pose &pose )
 {
+	using namespace core::scoring::constraints;
+
 	// Remove all the constraints first
 	pose.remove_constraints();
 
@@ -68,11 +84,51 @@ MDBase::cst_on_pose( pose::Pose &pose )
 			Size i_ca = pose.residue(i_res).atom_index(" CA ");
 			id::AtomID atomID( i_ca, i_res );
 
-			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new scoring::constraints::CoordinateConstraint(
-				atomID, atomID, pose.residue(i_res).xyz(i_ca), fx
-			) ) ) );
+			pose.add_constraint( ConstraintCOP( ConstraintOP( 
+  		 new CoordinateConstraint( atomID, atomID, pose.residue(i_res).xyz(i_ca), fx )
+																												)));
 		}
 	}
+}
+
+void
+MDBase::report_as_silent( std::string const filename,
+													bool const scoreonly ){
+
+	TR << "Set reporting at silent " << filename << "." << std::endl;
+	report_as_silent_ = true;
+	silentname_ = filename;
+	trj_score_only_ = scoreonly;
+}
+
+void 
+MDBase::report_silent( pose::Pose &pose,
+											 core::Real rmsd, core::Real gdttm, core::Real gdtha )
+{
+
+  chemical::ResidueTypeSetCOP rsd_set;
+  rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+
+	Size timeid = (Size)( cummulative_time()*1000.0 );
+
+	// pose should contain up-to-date score info
+  io::silent::SilentFileData sfd;
+	io::silent::SilentStructOP ss = 
+		io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+
+	std::stringstream tag;
+	tag << "trj_" << timeid;
+
+	scorefxn_->score( pose );
+	ss->energies_from_pose( pose );
+	ss->fill_struct( pose, tag.str() );
+	if( rmsd  > 0.0 ) ss->add_energy( "rmsd", rmsd );
+	if( gdttm > 0.0 ) ss->add_energy( "gdttm", gdttm );
+	if( gdtha > 0.0 ) ss->add_energy( "gdtha", gdtha );
+
+	//ss->set_decoy_tag( tag.str() );
+	sfd.write_silent_struct( *ss, silentname_, trj_score_only_ );
+
 }
 
 void
@@ -99,13 +155,27 @@ MDBase::parse_schfile( std::string const schfile ){
 		line = filelines[i];
 		TR.Debug << line << std::endl;
 		utility::vector1< std::string > tokens ( utility::split( line ) );
-		// Format: sch nstep temp0
+
+		MDscheduleData sch;
 		if( tokens[1].compare("sch") == 0 ){
-			MDscheduleData sch;
+			sch.type = "sch";
 			sch.temp0 = atof( tokens[2].c_str() );
 			sch.nstep = atoi( tokens[3].c_str() );
-			mdsch_.push_back( sch );
+		} else if( tokens[1].compare("repack") == 0 ){
+			sch.type = "repack";
+		} else if( tokens[1].compare("min") == 0 ){
+			sch.type = "min";
+		} else if( tokens[1].compare("set_weight") == 0){
+			core::scoring::ScoreType scoretype = core::scoring::score_type_from_name( tokens[2] );
+			core::Real weight = atof( tokens[3].c_str() );
+			sch.type = "set_weight";
+			sch.scorename = tokens[2];
+			sch.scoretype = scoretype;
+			sch.weight = weight;
+		} else {
+			continue;
 		}
+		mdsch_.push_back( sch );
 	}
 
 }
