@@ -208,7 +208,7 @@ InterfaceFeatures::report_all_interface_features(
 		std::string interface_side1 = interface_sides[1];
 		std::string interface_side2 = interface_sides[2];
 		interface_analyzer_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(interface, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_) );
-		interface_analyzer_->set_use_centroid_dG(true); //Uses score3 by default without rg - used in zinc homodimer design .  Used for clash detection
+		interface_analyzer_->set_use_centroid_dG(false); //Uses score3 by default without rg - used in zinc homodimer design .  Used for clash detection
 		interface_analyzer_->apply_const(pose);
 
 		if (interface_analyzer_->get_interface_delta_sasa() < dSASA_cutoff_){
