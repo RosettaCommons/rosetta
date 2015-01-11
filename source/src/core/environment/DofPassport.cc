@@ -73,40 +73,45 @@ void DofPassport::render_movemap( core::kinematics::MoveMapOP mm ) const {
   }
 
   for( core::Size seqpos = 1; seqpos <= conf_->size(); ++seqpos ){
-    if( conf_->residue( seqpos ).is_protein() ){
-      bool seqpos_access = true;
-      for( Size torsion_type = id::phi_torsion; torsion_type <= id::omega_torsion; ++torsion_type ){
-        id::TorsionID t_id = id::TorsionID( seqpos, id::BB, torsion_type );
-        id::DOF_ID d_id = conf_->dof_id_from_torsion_id( t_id );
+//    if( conf_->residue( seqpos ).is_protein() ){
 
-        if( d_id.valid() ){
-          seqpos_access &= accessible_dofs_.find( d_id ) != accessible_dofs_.end();
-        }
-      }
-      mm->set_bb( seqpos, seqpos_access );
+    // false if no bb torsions
+    Size const n_bbs = conf_->residue( seqpos ).mainchain_torsions().size();
+    bool seqpos_access = (bool) n_bbs;
 
-      seqpos_access = true;
-      for( core::Size chi_i = 1; chi_i <= conf_->residue( seqpos ).nchi(); ++chi_i ){
-        id::TorsionID t_id = id::TorsionID( seqpos, id::CHI, chi_i );
-        id::DOF_ID d_id = conf_->dof_id_from_torsion_id( t_id );
+    for( Size i = 1; i <= n_bbs; ++i ){
+      id::TorsionID t_id = id::TorsionID( seqpos, id::BB, i );
+      id::DOF_ID d_id = conf_->dof_id_from_torsion_id( t_id );
 
-        if( d_id.valid() ){
-          seqpos_access &= accessible_dofs_.find( d_id ) != accessible_dofs_.end();
-        }
-      }
-      mm->set_chi( seqpos, seqpos_access );
-    } else { // nonprotein (e.g. VRT) can't be configured into a movemap?
-      // TODO: add cases for sugars, RNA, etc.
-      mm->set_bb( seqpos, false );
-      mm->set_chi( seqpos, false );
-      if( !conf_->residue( seqpos ).is_virtual_residue() &&
-          !conf_->residue( seqpos ).is_virtual( 1 ) ){
-        tr.Warning << "Residue " << seqpos << " named " << conf_->residue( seqpos ).name3()
-                   << " is being ignored by DofPassport::render (" << __FILE__ << ":"
-                   << __LINE__ << ") because it doesn't how to encode information about its "
-                   << "backbone and sidechain angles in the movemap." << std::endl;
+      if( d_id.valid() ){
+        seqpos_access &= accessible_dofs_.find( d_id ) != accessible_dofs_.end();
       }
     }
+    mm->set_bb( seqpos, seqpos_access );
+
+    // false if no chi torsions
+    seqpos_access = conf_->residue( seqpos ).nchi();
+    for( core::Size chi_i = 1; chi_i <= conf_->residue( seqpos ).nchi(); ++chi_i ){
+      id::TorsionID t_id = id::TorsionID( seqpos, id::CHI, chi_i );
+      id::DOF_ID d_id = conf_->dof_id_from_torsion_id( t_id );
+
+      if( d_id.valid() ){
+        seqpos_access &= accessible_dofs_.find( d_id ) != accessible_dofs_.end();
+      }
+    }
+    mm->set_chi( seqpos, seqpos_access );
+//    } else { // nonprotein (e.g. VRT) can't be configured into a movemap?
+//      // TODO: add cases for sugars, RNA, etc.
+//      mm->set_bb( seqpos, false );
+//      mm->set_chi( seqpos, false );
+//      if( !conf_->residue( seqpos ).is_virtual_residue() &&
+//          !conf_->residue( seqpos ).is_virtual( 1 ) ){
+//        tr.Warning << "Residue " << seqpos << " named " << conf_->residue( seqpos ).name3()
+//                   << " is being ignored by DofPassport::render (" << __FILE__ << ":"
+//                   << __LINE__ << ") because it doesn't how to encode information about its "
+//                   << "backbone and sidechain angles in the movemap." << std::endl;
+//      }
+//    }
   }
 
   for( int jump_i = 1; jump_i <= (int) conf_->fold_tree().num_jump(); ++jump_i ){

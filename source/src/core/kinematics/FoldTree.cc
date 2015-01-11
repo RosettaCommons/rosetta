@@ -716,7 +716,11 @@ FoldTree::insert_fold_tree_by_jump(
 		new_edge.stop () = new_edge.stop () + insert_seqpos-1;
 		if ( new_edge.is_jump() ) new_edge.label() = new_edge.label() + insert_jumppos-1;
 
-		edge_list_.push_back( new_edge );
+    if( new_edge.start() != new_edge.stop() ) {
+      // fixes the case where a single-residue FT creates an invalid single-residue peptide edge
+      // led to by a jump.
+      edge_list_.push_back( new_edge );
+    }
 	}
 
 	new_topology = true;
@@ -728,7 +732,6 @@ FoldTree::insert_fold_tree_by_jump(
 
 	TR.Trace << "insert_fold_tree_by_jump: new fold_tree: " << *this;
 	assert( check_fold_tree() );
-
 }
 
 

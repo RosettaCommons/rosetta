@@ -55,9 +55,13 @@ public:
 
   virtual std::string get_name() const;
 
-  void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+  void sim_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
 
-  core::pack::task::residue_selector::ResidueSelectorCOP selector() const;
+  core::pack::task::residue_selector::ResidueSelectorCOP sim_selector() const;
+
+  void templ_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+
+  core::pack::task::residue_selector::ResidueSelectorCOP templ_selector() const;
 
   virtual void initialize( Pose& pose );
 
@@ -76,9 +80,9 @@ public:
   loops::Loops select_parts( loops::Loops const& rigid_core,
                              core::Size random_grow_loops_by );
 
-  void rigid_core( loops::Loops rigid_core );
+//  void rigid_core( loops::Loops rigid_core );
 
-  loops::Loops const& rigid_core() const;
+//  loops::Loops const& rigid_core() const;
 
   core::pose::Pose const& templ() const { return *template_; }
 
@@ -99,9 +103,11 @@ private:
 
 
   EnvClaims claims_;
-  loops::Loops rigid_core_;
+//  loops::Loops rigid_core_;
   core::pose::PoseCOP template_;
-  core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+  core::pack::task::residue_selector::ResidueSelectorCOP sim_selector_;
+  core::pack::task::residue_selector::ResidueSelectorCOP templ_selector_;
+
 
   // configured during claiming
   std::map< core::Size, core::Size > templ_target_;

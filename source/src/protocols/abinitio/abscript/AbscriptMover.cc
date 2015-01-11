@@ -337,7 +337,7 @@ AbscriptMover::parse_my_tag(
                  stage_movers_[id]->scorefxn()->clone() );
   }
 
-  //cycles control
+  //cycles control default
   core::Real cycles_prefactor = 1.0;
 
   if( tag->hasOption( "cycles" ) ){
@@ -347,6 +347,12 @@ AbscriptMover::parse_my_tag(
     }
   } else if ( option[ OptionKeys::abinitio::increase_cycles ].user() ){
     cycles_prefactor = option[ OptionKeys::abinitio::increase_cycles ];
+  }
+
+  if( option[ OptionKeys::run::test_cycles ].user() ) {
+    // This has to go here rather than in the above if block so that we don't get die for unaccessed tags problems.
+    tr.Info << "Found -run:test_cycles; overriding cycles behavior to test mode." << std::endl;
+    cycles_prefactor = 0.01;
   }
 
   for( std::map< StageID, AbscriptStageMoverOP >::const_iterator it = stage_movers_.begin();

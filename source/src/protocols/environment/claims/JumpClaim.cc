@@ -76,6 +76,8 @@ JumpClaim::JumpClaim( ClaimingMoverOP owner,
   if( tag->hasOption( "physical_cut" ) ){
     physical( tag->getOption< bool >( "physical_cut" ) );
   }
+
+  validate();
 }
 
 
@@ -96,7 +98,7 @@ JumpClaim::JumpClaim( ClaimingMoverOP owner,
   stubs_intra_residue_( false ),
   c_str_( EXCLUSIVE ),
   i_str_( DOES_NOT_CONTROL )
-{}
+{ validate(); }
 
 void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, ResidueElements& elements ) const {
   // this will create virtual residues to target with the jump if those labels don't exist.
@@ -118,6 +120,8 @@ void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, Residu
 
 void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, JumpElements& elements ) const {
   JumpElement e;
+
+  validate();
 
   e.p1 = pos1();
   e.p2 = pos2();
@@ -199,6 +203,14 @@ EnvClaimOP JumpClaim::clone() const {
 
 std::string JumpClaim::type() const{
   return "Jump";
+}
+
+void JumpClaim::validate() const {
+  if( pos1() == pos2() ) {
+    std::ostringstream ss;
+    ss << this << " tried to build a jump to *and* from " << pos1();
+    throw utility::excn::EXCN_RangeError( ss.str() );
+  }
 }
 
 void JumpClaim::show( std::ostream& os ) const {

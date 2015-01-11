@@ -79,9 +79,14 @@ class ExtendedPoseMover : public protocols::moves::Mover {
                     const protocols::moves::Movers_map& movers,
                     const core::pose::Pose& pose);
 
+  string chain() const { return chain_; }
+
+  void chain( string const& setting ) { chain_ = setting; }
+
  private:
   string sequence_;
   string residue_type_set_;
+  string chain_;
 };
 
 }  // namespace simple_moves

@@ -109,6 +109,8 @@ protected:
   //protected and not public because it can return garbage if the value isn't set.
   LocalPosition const& cut() const;
 
+  virtual void validate() const;
+
 private:
 
   std::string label_;

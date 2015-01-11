@@ -45,7 +45,8 @@ LoadPDBMoverCreator::mover_name()
 
 LoadPDBMover::LoadPDBMover()
 	: moves::Mover("LoadPDB"),
-	filename_( "" )
+	filename_( "" ),
+  append_( false )
 {
 }
 
@@ -53,8 +54,14 @@ void
 LoadPDBMover::apply( Pose & pose )
 {
 	TR<<"Loading pdb file "<<filename_<<std::endl;
-	pose = *core::import_pose::pose_from_pdb( filename_, false/*read foldtree*/ );
-	core::pose::read_comment_pdb(filename_,pose); //read comments from pdb file
+  core::pose::Pose loaded_pose = *core::import_pose::pose_from_pdb( filename_, false/*read foldtree*/ );
+	core::pose::read_comment_pdb( filename_, loaded_pose ); //read comments from pdb file
+
+  if( append() ){
+    pose.append_pose_by_jump( loaded_pose, pose.total_residue() );
+  } else {
+    pose = loaded_pose;
+  }
 }
 
 std::string
@@ -82,8 +89,10 @@ LoadPDBMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-	filename_ = tag->getOption< std::string >( "filename" );
+  filename( tag->getOption< std::string >( "filename" ) );
 	TR<<"filename: "<<filename_<<std::endl;;
+
+  append( tag->getOption< bool >( "append", false ) );
 }
 
 void

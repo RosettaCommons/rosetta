@@ -93,6 +93,8 @@ public:
 
   utility::vector1< Size > const cycle( Size const start = 1 ) const;
 
+  std::set< Size > remove_cycles();
+
   std::set< Size > remove_cycles( utility::vector1< Real > const& bias );
 
   /// @brief wrapper for the other render()

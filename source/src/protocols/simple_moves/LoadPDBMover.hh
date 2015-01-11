@@ -49,8 +49,12 @@ public:
 
 	std::string filename() const;
 	void filename( std::string const f );
+
+  bool append() const { return append_; };
+  void append( bool setting ){ append_ = setting; }
 private:
 	std::string filename_;
+  bool append_;
 };
 
 

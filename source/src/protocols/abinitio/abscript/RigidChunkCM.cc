@@ -24,7 +24,6 @@
 #include <protocols/environment/claims/CutBiasClaim.hh>
 #include <protocols/environment/claims/JumpClaim.hh>
 #include <protocols/environment/claims/XYZClaim.hh>
-#include <protocols/environment/claims/EnvLabelSelector.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -37,6 +36,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
+
+#include <core/pack/task/residue_selector/TrueResidueSelector.hh>
+#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
@@ -85,9 +87,59 @@ RigidChunkCMCreator::mover_name() {
   return "RigidChunkCM";
 }
 
+// This could be adapted to underpin the loops::Loops object, probably.
+class ResidueChunkSelection {
+  typedef utility::vector1< std::pair< core::Size, core::Size > > ChunkList;
+
+public:
+  typedef ChunkList::iterator iterator;
+  typedef ChunkList::const_iterator const_iterator;
+
+public:
+  ResidueChunkSelection( utility::vector1< bool > sele ) {
+
+    core::Size sele_start = 0;
+    for( core::Size i = 1; i <= sele.size(); ++i ){
+      if( sele_start ){
+        if( !sele[i] ) {
+          add_chunk( sele_start, i-1 );
+          sele_start = 0;
+        } else {
+          continue;
+        }
+      } else {
+        if( sele[i] ){
+          sele_start = i;
+        } else {
+          continue;
+        }
+      }
+    }
+
+    if( sele_start ){
+      add_chunk( sele_start, sele.size() );
+    }
+  }
+
+  void add_chunk( core::Size start, core::Size stop ){
+    list_.push_back( std::make_pair( start, stop ) );
+  }
+
+  iterator begin() { return list_.begin(); }
+  const_iterator begin() const { return list_.begin(); }
+
+  iterator end() { return list_.end(); }
+  const_iterator end() const { return list_.end(); }
+
+private:
+  ChunkList list_;
+};
+
+
 RigidChunkCM::RigidChunkCM():
   Parent(),
-  selector_( NULL )
+  sim_selector_( new core::pack::task::residue_selector::TrueResidueSelector() ),
+  templ_selector_( new core::pack::task::residue_selector::TrueResidueSelector() )
 {}
 
 RigidChunkCM::RigidChunkCM(
@@ -96,12 +148,9 @@ RigidChunkCM::RigidChunkCM(
 ):
   Parent(),
   template_( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(template_pose) ) ) ),
-  selector_( selector )
-{
-  loops::Loops regions_in;
-  regions_in.add_loop( loops::Loop( 1, templ().total_residue() ) );
-  rigid_core( regions_in );
-}
+  sim_selector_( selector ),
+  templ_selector_( selector )
+{}
 
 loops::Loops read_rigid_core( std::string const& file){
 
@@ -125,13 +174,14 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
                                  core::pose::Pose const& ){
 
   using namespace basic::options;
+  using namespace core::pack::task::residue_selector;
 
   //This option must be provided, but is not always accessed. This is here to fail fast.
   tag->hasOption( "name" );
 
   std::string const SELECTOR = "selector";
   if( tag->hasOption( SELECTOR ) ){
-    set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( SELECTOR ) ) );
+    sim_selector( datamap.get_ptr< ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( SELECTOR ) ) );
   }
 
   std::string const APPLY_TO_TEMPLATE = "apply_to_template";
@@ -171,25 +221,49 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
     throw utility::excn::EXCN_BadInput( "RigidChunkCM requires a template pdb with coordinates for rigid regions.");
   }
 
-  loops::Loops regions_in;
   if( tag->hasOption("region_file") ){
-    regions_in = read_rigid_core( tag->getOption< std::string >( "region_file" ) );
+    loops::Loops region_in = read_rigid_core( tag->getOption< std::string >( "region_file" ) );
+    std::stringstream ss;
+    for( loops::Loops::const_iterator loop = region_in.begin(); loop != region_in.end(); ++loop ){
+      ss << loop->start() << "-" << loop->stop() << ",";
+    }
+    ResidueSelectorCOP sele( new ResidueIndexSelector( ss.str() ) );
+    templ_selector( sele );
+  } else if( tag->hasOption( "region_selector" ) ) {
+    ResidueSelectorCOP sele( datamap.get_ptr< ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "region_selector" ) ) );
+    templ_selector( sele );
   } else if ( tag->hasOption( "region" ) ){
-    runtime_assert( false ); // unimplemented
-  } else if ( tag->hasOption("loop_file") ){
-    runtime_assert( false ); // unimplemented
-  } else if ( selector() ){
-    tr.Debug << "Using ALL residues in '" << tag->getOption< std::string >( SELECTOR )
-             << "' in the absence of a specification (e.g. 'region_file')." << std::endl;
-    regions_in.add_loop( loops::Loop( 1, templ().total_residue() ) );
+    ResidueSelectorCOP sele( new ResidueIndexSelector( tag->getOption< std::string >( "region" ) ) );
+    templ_selector( sele );
   } else {
-    std::string const err = "RigidChunkCM did not recieve any information about which chunks to fix. Use options 'region_file' to specify.";
-    throw utility::excn::EXCN_BadInput( err );
+    tr.Warning << "[WARNING] RigidChunkCM named " << tag->getOption< std::string >( "name", "UNK" )
+               << " defaulted to ALL residues." << std::endl;
   }
 
-  rigid_core( select_parts( regions_in, tag->getOption( "random_grow_by",
-                                                        (core::Size)( option[ OptionKeys::loops::random_grow_loops_by ]() ) ) ) );
+//  rigid_core( select_parts( regions_in, tag->getOption( "random_grow_by",
+//                                                        (core::Size)( option[ OptionKeys::loops::random_grow_loops_by ]() ) ) ) );
+}
 
+core::Size find_disulfide_partner( core::pose::Pose const& pose,
+                             core::Size const resid ) {
+  if( pose.residue( resid ).type().has_variant_type( core::chemical::DISULFIDE ) )
+     return 0;
+
+  using core::Size;
+
+  if( !pose.residue( resid ).has( "SG" ) ){
+    // no SG atom => no disulfide (e.g. because in centroid)
+    return 0;
+  }
+
+  Size const cys_bound_atom( pose.residue( resid ).atom_index( "SG" ) );
+  for ( Size jj = pose.residue( resid ).type().n_residue_connections(); jj >= 1; --jj ) {
+    if ( (Size) pose.residue( resid ).type().residue_connection( jj ).atomno() == cys_bound_atom ) {
+      return pose.residue( resid ).connect_map( jj ).resid();
+    }
+  }
+
+  return 0;
 }
 
 void RigidChunkCM::configure(
@@ -202,19 +276,33 @@ void RigidChunkCM::configure(
     template_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( in_p ) ) );
   }
 
-  utility::vector1< bool > templ_selection( templ().total_residue() );
-  rigid_core().transfer_to_residue_vector( templ_selection, true );
+  utility::vector1< bool > templ_selection = templ_selector()->apply( templ() );
 
-  if( templ_selection.index( true ) == 0 ){
-    std::ostringstream ss;
-    ss << this->get_name() << " reports that its input loops file (aka rigid core file) contained no residues."
-       << " Check your input." << std::endl;
-    throw utility::excn::EXCN_BadInput( ss.str() );
-  } else if( sim_selection.index( true ) == 0 ) {
-    std::ostringstream ss;
-    ss << this->get_name() << " reports that its selector (used on the simulation to determine where to insert residues)"
-    << " returned an empty selection. Check your input." << std::endl;
-    throw utility::excn::EXCN_BadInput( ss.str() );
+  { // Debug output and error checking
+    if( tr.Debug.visible() ){
+      tr.Debug << "template selection: ";
+      for( Size i = 1; i <= templ().total_residue(); ++i ){
+        tr.Debug << ( templ_selection[i] ? "T" : "F" );
+      }
+      tr.Debug << std::endl;
+      tr.Debug << "simulation selection: ";
+      for( Size i = 1; i <= in_p.total_residue(); ++i ){
+        tr.Debug << ( sim_selection[i] ? "T" : "F" );
+      }
+      tr.Debug << std::endl;
+
+    }
+    if( templ_selection.index( true ) == 0 ){
+      std::ostringstream ss;
+      ss << this->get_name() << " reports that its input loops file (aka rigid core file) contained no residues."
+         << " Check your input." << std::endl;
+      throw utility::excn::EXCN_BadInput( ss.str() );
+    } else if( sim_selection.index( true ) == 0 ) {
+      std::ostringstream ss;
+      ss << this->get_name() << " reports that its selector (used on the simulation to determine where to insert residues)"
+      << " returned an empty selection. Check your input." << std::endl;
+      throw utility::excn::EXCN_BadInput( ss.str() );
+    }
   }
 
   core::Size templ_pos = 1;
@@ -227,6 +315,7 @@ void RigidChunkCM::configure(
       // this position is selected in both, it's a correspondence.
       templ_target[ templ_pos ] = sim_pos;
       sim_origin[ sim_pos ] = templ_pos;
+      tr.Trace << "Added sim " << sim_pos << "/templ" << templ_pos << " to mapping." << std::endl;
       templ_pos += 1;
       sim_pos += 1;
     } else if( sim_selection[ sim_pos ] ){
@@ -244,24 +333,58 @@ void RigidChunkCM::configure(
   this->templ_target( templ_target );
   this->sim_origin( sim_origin );
 
-  for( core::Size i = templ_pos; i <= templ_selection.size(); ++i ){
-    if( templ_selection[i] ){
-      tr.Warning << "[WARNING] " << this->get_name() << " reports that "
-                 << std::count( templ_selection.begin() + i - 1, templ_selection.end(), true )
-                 << " residues beginning at " << templ().residue( i ).name3() << i
-                 << "in the template do not fit in the selection given. "
-                 << "This may or may not be problematic." << std::endl;
-      break;
+  { // Error checking and warnings.
+    for( core::Size i = templ_pos; i <= templ_selection.size(); ++i ){
+      if( templ_selection[i] ){
+        tr.Warning << "[WARNING] " << this->get_name() << " reports that "
+                   << std::count( templ_selection.begin() + i - 1, templ_selection.end(), true )
+                   << " residues beginning at " << templ().residue( i ).name3() << i
+                   << "in the template do not fit in the selection given. "
+                   << "This may or may not be problematic." << std::endl;
+        break;
+      }
     }
-  }
-  for( core::Size i = sim_pos; i <= sim_selection.size(); ++i ){
-    if( sim_selection[i] ){
-      tr.Warning << "[WARNING] " << this->get_name() << " reports that "
-                 << std::count( sim_selection.begin() + i - 1, sim_selection.end(), true )
-                 << " residues beginning at " << in_p.residue( i ).name3() << i
-                 << " in the template do not fit in the selection given. "
-                 << "This may or may not be problematic." << std::endl;
-      break;
+    for( core::Size i = sim_pos; i <= sim_selection.size(); ++i ){
+      if( sim_selection[i] ){
+        tr.Warning << "[WARNING] " << this->get_name() << " reports that "
+                   << std::count( sim_selection.begin() + i - 1, sim_selection.end(), true )
+                   << " residues beginning at " << in_p.residue( i ).name3() << i
+                   << " in the template do not fit in the selection given. "
+                   << "This may or may not be problematic." << std::endl;
+        break;
+      }
+    }
+
+    for( core::Size i = 1; i <= templ().total_residue(); ++i ){
+      if( templ_selection[i] &&
+          templ().residue( i ).aa() == core::chemical::aa_cys ){
+        Size cys_partner = find_disulfide_partner( templ(), i );
+        if( cys_partner &&
+            templ_target.find( cys_partner ) == templ_target.end() ){
+          std::ostringstream ss;
+          ss << "RigidChunkClaimer " << this->get_name() << " reports failure on its selection/template "
+             << " combination because template residue " << templ().residue(cys_partner).name3()
+             << cys_partner << " is disulfide bonded with " << templ().residue( i ).name3() << i
+             << ". RigidChunkClaimer must include both or neither." << std::endl;
+          throw utility::excn::EXCN_BadInput( ss.str() );
+        }
+      }
+    }
+
+    for( core::Size i = 1; i <= in_p.total_residue(); ++i ){
+      if( sim_selection[i] &&
+        in_p.residue( i ).aa() == core::chemical::aa_cys ){
+        Size cys_partner = find_disulfide_partner( in_p, i );
+        if( cys_partner &&
+           sim_origin.find( cys_partner ) == sim_origin.end() ){
+          std::ostringstream ss;
+          ss << "RigidChunkClaimer " << this->get_name() << " reports failure on its selection target "
+          << " selection because input pose residue " << in_p.residue(cys_partner).name3()
+          << cys_partner << " is disulfide bonded with " << in_p.residue( i ).name3() << i
+          << ". RigidChunkClaimer's rigid chunk must include both or neither." << std::endl;
+          throw utility::excn::EXCN_BadInput( ss.str() );
+        }
+      }
     }
   }
 }
@@ -272,30 +395,17 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
   EnvClaims claims;
 
   utility::vector1< bool > selection( in_p.total_residue(), false );
-  if( selector() ){
-    selection = selector()->apply( in_p );
-  } else {
-    selection = utility::vector1< bool >( in_p.total_residue(), true );
-  }
+  selection = sim_selector()->apply( in_p );
   configure( in_p, selection );
 
   ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() );
 
-  loops::Loops simulation_regions( selection );
+  ResidueChunkSelection simulation_regions( selection );
 
   std::pair< core::Size, core::Size > prev_region = std::make_pair( 0, 0 );
-  for ( loops::Loops::const_iterator loop_it = simulation_regions.begin();
+  for ( ResidueChunkSelection::const_iterator loop_it = simulation_regions.begin();
         loop_it != simulation_regions.end(); ++loop_it ) {
-
-    // Calculate the area that needs to be claimed.
-    core::Size excl_region_end = loop_it->stop();
-    while( sim_origin().find( excl_region_end ) == sim_origin().end() ){
-      assert( excl_region_end != loop_it->start() );
-      assert( excl_region_end > 0 );
-      excl_region_end -= 1;
-    }
-    std::pair< core::Size, core::Size > const excl_region = std::make_pair( loop_it->start(),
-                                                                            excl_region_end );
+    std::pair< core::Size, core::Size > const excl_region = *loop_it;
 
     XYZClaimOP xyz_claim( new XYZClaim( this_ptr, "BASE", excl_region ) );
 
@@ -613,6 +723,8 @@ void RigidChunkCM::initialize( Pose& pose ){
       }
     }
   }
+
+
 }
 
 
@@ -651,40 +763,35 @@ loops::Loops RigidChunkCM::select_parts( loops::Loops const& rigid_core, core::S
   return current_rigid_core;
 }
 
-void RigidChunkCM::set_selector(
+void RigidChunkCM::sim_selector(
   core::pack::task::residue_selector::ResidueSelectorCOP selector
 ) {
-  if( Parent::state_check( __FUNCTION__, ( selector.get() == selector_.get() ) ) ){
-    selector_ = selector;
+  if( Parent::state_check( __FUNCTION__, ( selector.get() == sim_selector_.get() ) ) ){
+    sim_selector_ = selector;
   }
 }
 
-core::pack::task::residue_selector::ResidueSelectorCOP RigidChunkCM::selector() const {
-  return selector_;
+void RigidChunkCM::templ_selector(
+  core::pack::task::residue_selector::ResidueSelectorCOP selector
+) {
+  if( Parent::state_check( __FUNCTION__, ( selector.get() == templ_selector_.get() ) ) ){
+    templ_selector_ = selector;
+  }
+}
+
+core::pack::task::residue_selector::ResidueSelectorCOP RigidChunkCM::sim_selector() const {
+  assert( sim_selector_ );
+  return sim_selector_;
+}
+
+core::pack::task::residue_selector::ResidueSelectorCOP RigidChunkCM::templ_selector() const {
+  assert( templ_selector_ );
+  return templ_selector_;
 }
 
 std::string RigidChunkCM::get_name() const {
   std::ostringstream ss;
-  ss << "RigidChunkCM(";
-
-  if( sim_origin().empty() ) {
-    for ( loops::Loops::const_iterator region = rigid_core().begin();
-         region != rigid_core().end(); ++region ) {
-      ss << "template:" << region->start() << "-" << region->stop() << ",";
-    }
-  } else {
-    ss << "simulation :";
-    for( std::map< Size, Size >::const_iterator pos = sim_origin().begin(); pos != sim_origin().end(); ++pos ){
-      if( sim_origin().find( pos->first - 1 ) == sim_origin().end() ){
-        ss << pos->first << "-";
-      }
-      if( sim_origin().find( pos->first + 1 ) == sim_origin().end() ){
-        ss << pos->first << ",";
-      }
-    }
-  }
-  ss << ")";
-
+  ss << "RigidChunkCM(" << sim_selector()->get_name() << "+" << templ_selector()->get_name() << ")";
   return ss.str();
 }
 
@@ -698,17 +805,6 @@ void RigidChunkCM::passport_updated() {
 moves::MoverOP RigidChunkCM::clone() const {
   return moves::MoverOP( new RigidChunkCM( *this ) );
 }
-
-void RigidChunkCM::rigid_core(
-  loops::Loops core_in
-) {
-  rigid_core_ = core_in;
-}
-
-loops::Loops const& RigidChunkCM::rigid_core() const {
-  return rigid_core_;
-}
-
 
 } // abscript
 } // abinitio

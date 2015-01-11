@@ -123,6 +123,46 @@ claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const&,
   return claims;
 }
 
+core::Real angle_diff( core::Real const& a, core::Real const& b ){
+  //use arcsin to get back degrees, but need an f(0)=0, so sin not cos.
+  return std::asin( std::abs( std::cos( a ) - std::cos ( b ) ) );
+}
+
+bool angle_cpy( core::pose::Pose& target, core::pose::Pose const& source, core::id::TorsionID t_id ) {
+  // Empirically, a tolerance of 2 has worked for me. It's in degrees, so it's small, but not small enough
+  // for my taste. Ideally, I would run some kind of minimization procedure to try to pull target back to its
+  // original configuration, but I'm not sure how to do that. Typically, these structures will be all-atom
+  // relaxed after this anyway, so that helps.
+  core::Real const TOLERANCE = 2;
+  std::string angle;
+  if( t_id.torsion() == core::id::psi_torsion )
+    angle = "PSI";
+  else if( t_id.torsion() == core::id::phi_torsion )
+    angle = "PHI";
+  else if( t_id.torsion() == core::id::omega_torsion )
+    angle = "OMEGA";
+  else {
+    angle = "OTHER";
+  }
+
+  if( angle_diff( target.torsion( t_id ), source.torsion( t_id ) ) > TOLERANCE ){
+    try {
+      target.set_torsion( t_id, source.torsion( t_id ) );
+    } catch ( EXCN_Env_Security_Exception& ){
+      tr.Error << "[ERROR] Loop closure tried to write to residue " << t_id.rsd() << " " << angle << " angle ("
+               << t_id << "). Target angle was " << target.torsion( t_id ) << " and source angle was "
+               << source.torsion( t_id ) << " (delta=" << angle_diff( target.torsion( t_id ), source.torsion( t_id ) )
+               << "; tolerance is " << TOLERANCE << ")." << std::endl;
+      throw protocols::loops::EXCN_Loop_not_closed();
+    }
+  } else {
+    tr.Debug << "  ignoring modified " << angle << " @ " << t_id.torsion() << " (input=" << source.torsion( t_id ) << ", output=" << target.torsion( t_id ) << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
 void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 
   assert( passport() );
@@ -153,25 +193,23 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
   // Copy result into protected conformation in in_pose
   DofUnlock unlock( in_pose.conformation(), passport() );
 
+  Size warn = 0;
+
   for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
     tr.Debug << "Movemap for " << in_pose.residue( i ).name3() << i
              << ": bb(" << ( movemap_->get_bb( i ) ? "T" : "F" )
              << ") chi(" << ( movemap_->get_chi( i ) ? "T" : "F" ) << ")" << std::endl;
-    try {
-      if( pose.omega( i ) != in_pose.omega( i ) ){
-        in_pose.set_omega( i, pose.omega( i ) );
-      }
-      if( pose.phi( i ) != in_pose.phi( i ) ){
-        in_pose.set_phi( i, pose.phi( i ) );
-      }
-      if( pose.psi( i ) != in_pose.psi( i ) ) {
-        in_pose.set_psi( i, pose.psi( i ) );
-      }
-    } catch ( EXCN_Env_Security_Exception& ){
-      tr.Error << "[ERROR] Unauthorized changes occurred during loop closure (attempt to write to resid "
-               << i << ")." << std::endl;
-      throw;
-    }
+
+    if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::omega_torsion ) ) )
+      warn += 1;
+    if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::phi_torsion ) ) )
+      warn += 1;
+    if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::psi_torsion ) ) )
+      warn += 1;
+  }
+  if( warn ){
+    tr.Warning << "[WARNING] AbscriptLoopMoverCM ignoring " << warn
+    << " values that differ between idealized and unidealized poses. Use '-out:levels protocols.abinitio.abscript.AbscriptLoopCloserCM:debug' to see more info." << std::endl;
   }
 }
 
@@ -257,13 +295,16 @@ void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
     if( movemap_->get_bb( i ) ){
       pos_list.push_back( i );
     }
-    if( tr.Trace.visible() ){
-      for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-        tr.Trace << ( movemap_->get_bb(i) ? "T" : "F" );
-      }
-      tr.Trace << std::endl;
-    }
   }
+
+  if( tr.Trace.visible() ){
+    for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+      tr.Trace << ( movemap_->get_bb(i) ? "T" : "F" );
+    }
+    tr.Trace << std::endl;
+    tr.Trace << "movable positions: " << pos_list << std::endl;
+  }
+
 
   if( pos_list.size() == 0 &&
       pose.fold_tree().num_cutpoint() - final_ft_->num_cutpoint() > 0 ){

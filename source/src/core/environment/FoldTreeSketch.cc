@@ -323,6 +323,10 @@ core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > bias ){
   throw EXCN_FTSketchGraph( ss.str() );
 }
 
+std::set< core::Size > FoldTreeSketch::remove_cycles() {
+  return remove_cycles( utility::vector1< Real >( nres(), 1.0 ) );
+}
+
 std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > const& bias ){
   if( bias.size() != this->nres() ){
     throw EXCN_FTSketchGraph( "Cut bias array does not match FoldTreeSize." );
@@ -361,6 +365,7 @@ std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > c
         // there is a peptide bond between them.
         if( std::find( cycle.begin(), cycle.end(), seqpos+1 ) != cycle.end() &&
             nodes_[seqpos]->has_peptide_neighbor( NodeCAP( nodes_[ seqpos + 1 ] ) ) ){
+          // this should probably be this->insert_cut( seqpos );
           nodes_[seqpos]->rm_peptide_neighbor( NodeAP( nodes_[ seqpos + 1 ] ) );
           new_cuts.insert( seqpos );
           tr.Debug << "removing cycle by cutting at " << seqpos << std::endl;

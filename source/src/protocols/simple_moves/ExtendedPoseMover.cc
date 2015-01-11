@@ -19,20 +19,24 @@
 // Project headers
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/util.hh>
+#include <core/sequence/Sequence.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 
 // Package headers
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 
 // C/C++ headers
 #include <string>
 
+#include <utility/exit.hh>
+
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <basic/Tracer.hh>
 
 // Option Headers
 #include <basic/options/option.hh>
@@ -42,6 +46,8 @@
 #include <core/conformation/Residue.hh>
 #include <utility/excn/Exceptions.hh>
 #include <core/kinematics/Jump.hh>
+
+static thread_local basic::Tracer tr( "protocols.simple_moves.ExtendedPoseMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -62,6 +68,12 @@ void ExtendedPoseMover::apply(core::pose::Pose& pose) {
   protocols::loops::Loops loops;
   core::pose::make_pose_from_sequence(pose, sequence_, residue_type_set_);
   protocols::loops::set_extended_torsions_and_idealize_loops(pose, loops);
+
+  if( chain() != "" ){
+    core::pose::PDBInfoOP info( new core::pose::PDBInfo( pose, true ) );
+    info->set_chains( (char) chain()[0] );
+    pose.pdb_info( info );
+  }
 }
 
 std::string ExtendedPoseMover::get_name() const {
@@ -97,17 +109,34 @@ void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
                                      const protocols::filters::Filters_map&,
                                      const protocols::moves::Movers_map&,
                                      const core::pose::Pose&) {
+  using namespace core::sequence;
+
   // required options
-  if (tag->hasOption("sequence")) sequence(tag->getOption<string>("sequence")); 
-  else if (tag->getOption<bool>("use_fasta", false )){
-    sequence( core::sequence::read_fasta_file_return_str(
-        basic::options::option[ basic::options::OptionKeys::in::file::fasta ]()[1] ) );
+  if (tag->hasOption( "fasta" )) {
+    utility::vector1< SequenceOP > sequences = read_fasta_file( tag->getOption< string >( "fasta" ) );
+    sequence( sequences.front()->sequence() );
+    if( sequences.size() > 1 ) {
+      std::ostringstream ss;
+      ss << "In " << tag->getOption< string >( "name" ) << ": The fasta file " << tag->getOption< string >( "fasta" ) << " contained >1 sequence; using the first one only. Use multiple ExtendedPoseMovers for multiple chains." << std::endl;
+      throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+    }
+  } else if( tag->hasOption( "sequence" ) ) {
+    sequence( tag->getOption<string>( "sequence" ) );
+  } else if (tag->getOption<bool>("use_fasta", false )){
+    string filename = basic::options::option[ basic::options::OptionKeys::in::file::fasta ]()[1];
+    sequence( read_fasta_file( filename ).front()->sequence() );
+  } else {
+    throw utility::excn::EXCN_RosettaScriptsOption("Failed to specify required option `sequence` or fasta file");
   }
-  else throw utility::excn::EXCN_RosettaScriptsOption("Failed to specify required option `sequence` or fasta file");
 
   // additional options
   if (tag->hasOption("residue_type_set"))
     residue_type_set(tag->getOption<string>("residue_type_set"));
+
+  chain( tag->getOption< string >( "chain", "" ) );
+  if( chain().length() != 1 ){
+    throw utility::excn::EXCN_RosettaScriptsOption( chain()+" is an invalid chain code in "+tag->getOption< string >( "name" )+"." );
+  }
 }
 
 }  // namespace simple_moves
