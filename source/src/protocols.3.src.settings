@@ -575,7 +575,6 @@ sources = {
 		"BoltzmannRotamerMover",
 		"ChainSplitMover",
 		"ClearConstraintsMover",
-		"CombinePoseMover",
 		"ConsensusDesignMover",
 		"ConstrainToIdealMover",
 		"ConstraintSetMover",

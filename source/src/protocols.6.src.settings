@@ -294,24 +294,6 @@ sources = {
 	"protocols/motif_grafting/movers": [
 		"MotifGraftMover",
 	],
-
-	"protocols/mpi_refinement": [
-	        "util",
-	        "MultiObjective",
-		"StructAvrgMover",
-		"Scheduler",
-		"Clusterer",
-	        "WorkUnit_Sampler",
-	        "WorkUnit_Aggressive",
-	        "WorkUnit_Relax",
-	        "WorkUnit_Loop",
-	        "MPI_Refinement",
-	        "MPI_Refine_Emperor",
-	        "MPI_Refine_Master",
-		"Serial_Refine",
-	],
-
-
 }
 include_path = [
 ]

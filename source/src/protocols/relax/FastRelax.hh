@@ -95,9 +95,6 @@ public:
 		core::Size                     standard_repeats = 0
 	);
 
-	/// @brief replace schedule by providing lines of commands explicitly
-	void set_script_from_lines( std::vector< std::string > const filelines );
-
 	/// @brief Force us to batchrelax with nonideal geometry (using additional memory)
 	void set_force_nonideal( bool val ) { force_nonideal_ = val; }
 

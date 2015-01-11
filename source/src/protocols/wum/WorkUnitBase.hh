@@ -71,12 +71,7 @@ class WorkUnitBase  : public utility::pointer::ReferenceCount   {
     /// @brief Accessor to the extra_data_1 and 3 field of the header
 		//  Needed for blacklisting based on start_ir and ssid
 		core::Size extra_data_1(){ return header.extra_data_1_; }
-		core::Size extra_data_2(){ return header.extra_data_2_; }
 		core::Size extra_data_3(){ return header.extra_data_3_; }
-
-  	void set_extra_data_1( core::Size const value ){ header.extra_data_1_ = value; }
-  	void set_extra_data_2( core::Size const value ){ header.extra_data_2_ = value; }
-  	void set_extra_data_3( core::Size const value ){ header.extra_data_3_ = value; }
 
 		/// @brief Adds to the blacklist
 		void add_blacklist( int mpi_rank );
@@ -86,10 +81,7 @@ class WorkUnitBase  : public utility::pointer::ReferenceCount   {
  
 		/// @brief Finds in blacklist, true if is, false if it isn't
 		bool in_blacklist( int mpi_rank );
-
-    /// @brief Accesor to the "options" text field
-		void set_options( const std::string &text );
-
+ 
   protected:
     /// @brief Make ready for sending
     virtual void serialize() {};
@@ -107,6 +99,9 @@ protected:
 
     /// @brief Accessor to the serial data field
     const std::string &serial_data() const { return serial_data_; }
+
+    /// @brief Accesor to the "options" text field
+		void set_options( const std::string &text );
 
     /// @brief Set the unixtime of the start of the execution of this WorkUnit
 		void set_run_start();

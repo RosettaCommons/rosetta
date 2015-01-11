@@ -1026,36 +1026,6 @@ CA_gdttm(
 	gdtha_score = tm.get_GDTHA();
 }
 
-
-void CA_gdttm(const core::pose::Pose& pose1,
-							const core::pose::Pose& pose2,
-							core::Real &gdttm_score,
-							core::Real &gdtha_score,
-							const std::map<core::Size, core::Size>& residues) {
-  using core::Real;
-	using core::Size;
-	using utility::vector1;
-
-	vector1<Size> residues_1;  // residues in pose1
-	vector1<Size> residues_2;  // residues in pose2
-	for (std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i) {
-		Size res_1 = i->first;
-		Size res_2 = i->second;
-		residues_1.push_back(res_1);
-		residues_2.push_back(res_2);
-	}
-
-	FArray2D<Real> p1;  // coordinates of CA atoms of selected residues in pose1
-	FArray2D<Real> p2;  // coordinates of CA atoms of selected residues in pose2
-	retrieve_coordinates(pose1, residues_1, &p1);
-	retrieve_coordinates(pose2, residues_2, &p2);
-
-	TMscore tm( p1 );
-	tm.apply( p2 );
-	gdttm_score = tm.get_GDTTS();
-	gdtha_score = tm.get_GDTHA();
-}
-
 void
 CA_gdttm(
 	core::pose::Pose const& pose1,

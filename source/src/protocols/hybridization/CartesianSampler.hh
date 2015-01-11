@@ -69,8 +69,6 @@ public:
 	// set the centroid scorefunction
 	void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { scorefxn_=scorefxn_in; }
 
-	void set_mc_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { mc_scorefxn_=scorefxn_in; }
-
 	// set the fullatom scorefunction (only used for some option sets)
 	void set_fa_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { fa_scorefxn_=scorefxn_in; }
 
@@ -95,15 +93,9 @@ public:
 	void set_restore_csts(bool restore_csts_in) { restore_csts_ = restore_csts_in; }
 	void set_frag_sizes(utility::vector1<core::Size> const &frag_sizes_in) { frag_sizes_ = frag_sizes_in; }
 	void set_nminsteps(core::Size nminsteps_in) { nminsteps_ = nminsteps_in; }
-	//void set_mc_scorefxn(core::scoring::ScoreFunctionOP){ ;}
 
 	void set_ncycles(core::Size ncycles_in) { ncycles_=ncycles_in; }
 	void set_overlap(core::Size overlap_in) { overlap_=overlap_in; }
-	void set_nfrags(core::Size nfrags_in) { nfrags_=nfrags_in; }
-	void set_temp(core::Real temp_in) { temp_=temp_in; }
-
-	// TODO
-	//void set_bias_fraction( std::map< core::Size, std::pair< char, core::Real > > bias_map ){ bias_map_ = bias_map; }
 
 protected:
 	// apply a sequence fragment

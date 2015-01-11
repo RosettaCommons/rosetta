@@ -42,15 +42,8 @@ public:
 	//constructor
 	CartesianMD( core::pose::Pose const &pose,
 	 core::scoring::ScoreFunctionCOP sfxn,
-	 core::kinematics::MoveMapCOP movemap = 0 );
+	 core::kinematics::MoveMapCOP movemap );
 
-	CartesianMD( core::pose::Pose const & pose, 
-							 core::scoring::ScoreFunction const &sfxn );
-
-	CartesianMD( core::pose::Pose const & pose, 
-							 core::scoring::ScoreFunction const &sfxn,
-							 core::kinematics::MoveMap const &movemap );
-	
 	void
 	init( );
 
@@ -70,19 +63,14 @@ public:
 
 	virtual core::kinematics::MoveMapOP movemap() const { return movemap_; }
 
-	void use_rattle( bool const value );
-
-	Multivec get_current_eqxyz() const;
-	void update_restraint( pose::Pose & pose,
-												 CartesianMinimizerMap const &min_map );
-
-	void cst_on_pose_simple( pose::Pose &pose ) const;
-
-	void cst_on_pose_dynamic( pose::Pose &pose, 
-														Multivec const &ref_xyz, 
-														Multivec const &curr_eqxyz, 
-														Multivec &prv_eqxyz,
-														CartesianMinimizerMap const &min_map ) const;
+	void use_rattle( bool const value ){
+		use_rattle_ = value;
+		if( use_rattle_ ){
+			dt_ = 0.002;
+		} else {
+			dt_ = 0.001;
+		}
+	}
 
 	virtual
 	void parse_my_tag(
@@ -114,7 +102,9 @@ public:
 private:
 	void get_native_info( pose::Pose const &pose );
 
-	void do_initialize( core::pose::Pose &pose );
+	void do_initialize(
+		core::pose::Pose &pose,
+		core::Real const &temp0 );
 
 	// deprecated
 	void Berendsen_Integrator( core::pose::Pose & pose,
@@ -122,8 +112,7 @@ private:
 
 	void VelocityVerlet_Integrator( core::pose::Pose & pose,
 																	core::optimization::CartesianMinimizerMap &min_map,
-																	md::Rattle & rattle,
-																	bool const update_score = false );
+																	md::Rattle & rattle );
 
 	void do_minimize( pose::Pose &pose,
 										core::optimization::MinimizerOptions const &options,
@@ -136,9 +125,7 @@ private:
 
 	void initialize_velocity( core::Real const &temperature );
 
-	void report_MD( core::pose::Pose &pose,
-									CartesianMinimizerMap const &min_map,
-									bool const report_trj );
+	void report_MD( core::pose::Pose &pose );
 
 private:
 

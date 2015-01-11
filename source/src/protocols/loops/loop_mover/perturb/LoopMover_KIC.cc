@@ -280,7 +280,6 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	const std::string min_type = "linmin";
 	core::Real dummy_tol( 0.001 ); // linmin sets tol internally -- MinMover doesn't accept const input...
 	bool use_nblist( false ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
-
 	if ( use_cartmin ) runtime_assert( scorefxn()->get_weight( core::scoring::cart_bonded ) > 1e-3 ); // AS -- actually I'm not sure if this makes any sense in centroid... ask Frank?
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
 		min_mover = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check ) );
@@ -297,8 +296,6 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	min_mover->nb_list( use_nblist );
 	min_mover->deriv_check( deriv_check );
 	 */
-	if( option[ OptionKeys::loops::minimize_max_iter ].user() )
-		min_mover->max_iter( option[ OptionKeys::loops::minimize_max_iter ]() );
 	min_mover->cartesian( use_cartmin );
 
 

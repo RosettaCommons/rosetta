@@ -76,7 +76,6 @@ sources = {
 		"MPI_LoopHashRefine_Master",
 		"WorkUnit_LoopHash",
 	],
-
 	"protocols/pockets": [
 		"Fingerprint",
 		"FingerprintMultifunc",

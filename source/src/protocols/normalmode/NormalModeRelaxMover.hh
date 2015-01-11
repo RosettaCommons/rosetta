@@ -89,15 +89,12 @@ public:
 
 	void set_minoption( optimization::MinimizerOptionsCOP minoption ){ minoption_ = minoption->clone(); }
 
-	void set_relaxmode( std::string const mode ){ relaxmode_=mode; }
-
 	void refresh_normalmode() { refresh_normalmode_ = true; }
 
 	// Accessors
 	protocols::normalmode::NormalMode NM(){ return NM_; }
 	Real cst_sdev(){ return cst_sdev_; }
 	Real get_dynamic_scale(){ return scale_dynamic_; }
-	std::string relaxmode() const { return relaxmode_; }
 
 protected:
 	Real direction_;

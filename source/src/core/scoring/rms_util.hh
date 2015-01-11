@@ -478,13 +478,6 @@ CA_gdttm(
 	std::list< Size > residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
 );
 
-void 
-CA_gdttm(const core::pose::Pose& pose1,
-				 const core::pose::Pose& pose2,
-				 core::Real &gdttm_score,
-				 core::Real &gdtha_score,
-				 const std::map<core::Size, core::Size>& residues);
-
 void
 CA_gdttm(
 	core::pose::Pose const& pose1,
