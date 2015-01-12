@@ -192,7 +192,11 @@
 #include <core/scoring/saxs/SAXSEnergyCreator.hh>
 #include <core/scoring/saxs/SAXSEnergyCreatorFA.hh>
 #include <core/scoring/saxs/SAXSEnergyCreatorCEN.hh>
-
+#include <core/scoring/fiber_diffraction/FiberDiffractionEnergyCreator.hh>
+#include <core/scoring/fiber_diffraction/FiberDiffractionEnergyDensCreator.hh>
+#ifdef USECUDA
+#include <core/scoring/fiber_diffraction/FiberDiffractionEnergyGpuCreator.hh>
+#endif
 
 // Constraint registration
 #include <core/scoring/constraints/ConstraintFactory.hh>
@@ -277,6 +281,8 @@ using basic::Warning;
 #include <basic/resource_manager/ResourceOptionsRegistrator.hh>
 #include <core/scoring/electron_density/ElectronDensityLoaderCreator.hh>
 #include <core/scoring/electron_density/ElectronDensityOptionsCreator.hh>
+#include <core/scoring/fiber_diffraction/FiberDiffractionLoaderCreator.hh>
+#include <core/scoring/fiber_diffraction/FiberDiffractionOptionsCreator.hh>
 #include <core/chemical/ResidueLoaderCreator.hh>
 #include <core/chemical/ResidueLoaderOptionsCreator.hh>
 
@@ -481,6 +487,12 @@ static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreatorCEN > SAXSEnergy
 static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreatorFA > SAXSEnergyCreatorFA_registrator;
 static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreator > SAXSEnergyCreator_registrator;
 
+static EnergyMethodRegistrator< scoring::fiber_diffraction::FiberDiffractionEnergyCreator > FiberDiffractionEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::fiber_diffraction::FiberDiffractionEnergyDensCreator > FiberDiffractionEnergyDensCreator_registrator;
+#ifdef USECUDA
+static EnergyMethodRegistrator< scoring::fiber_diffraction::FiberDiffractionEnergyGpuCreator > FiberDiffractionEnergyGpuCreator_registrator;
+#endif
+
 
 /// Constraint Registrators
 using namespace scoring::constraints;
@@ -594,6 +606,7 @@ static ResourceLoaderRegistrator< core::conformation::symmetry::SymmDataLoaderCr
 static ResourceLoaderRegistrator< core::io::silent::SilentFileLoaderCreator > SilentFileLoaderCreator_registrator;
 static ResourceLoaderRegistrator< core::import_pose::PoseFromPDBLoaderCreator > PoseFromPDBLoaderCreator_registrator;
 static ResourceLoaderRegistrator< core::scoring::electron_density::ElectronDensityLoaderCreator > ElectronDensityLoaderCreator_registrator;
+static ResourceLoaderRegistrator< core::scoring::fiber_diffraction::FiberDiffractionLoaderCreator > FiberDiffractionLoaderCreator_registrator;
 static ResourceLoaderRegistrator< core::chemical::ResidueLoaderCreator > ResidueLoaderCreator_registrator;
 
 using basic::resource_manager::ResourceOptionsRegistrator;
@@ -601,6 +614,7 @@ static ResourceOptionsRegistrator< core::conformation::symmetry::SymmDataOptions
 static ResourceOptionsRegistrator< core::import_pose::ImportPoseOptionsCreator > ImportPoseOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::io::silent::SilentFileOptionsCreator > SilentFileOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::scoring::electron_density::ElectronDensityOptionsCreator > ElectronDensityOptionsCreator_registrator;
+static ResourceOptionsRegistrator< core::scoring::fiber_diffraction::FiberDiffractionOptionsCreator > FiberDiffractionOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator > ResiudeLoaderOptionsCreator_registrator;
 
 #endif

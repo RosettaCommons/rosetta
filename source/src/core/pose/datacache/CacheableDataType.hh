@@ -67,6 +67,8 @@ enum Enum {
 	RESIDUAL_DIPOLAR_COUPLING_DATA,//NMR Residual Dipolar Coupling data
 	RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL,//NMR Residual Dipolar Coupling data - for rdc_rohl
 	RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA,
+	FIBER_DIFFRACTION_CEN_SCATTERING, //Fiber Diffraction scattering form factors in centroid mode
+	FIBER_DIFFRACTION_FA_SCATTERING, //Fiber Diffraction scattering form factors in all-atom mode
 	PSEUDOCONTACT_SHIFT_DATA,//NMR Psuedocontact Shift (PCS) data SHOULD DESEAPPEAR END 2010
 	TS1_PSEUDOCONTACT_SHIFT_DATA,
 	TS2_PSEUDOCONTACT_SHIFT_DATA,

@@ -95,6 +95,12 @@ enum ScoreType {
 	saxs_fa_score, // full-atom SAXS score
 	pddf_score, // score based on pairwise distance distribution function
 
+	fiberdiffraction, // fiber diffraction score
+  fiberdiffractiondens, // fiber diffraction density score
+  #ifdef USECUDA
+	fiberdiffractiongpu, // fiber diffraction gpu score
+	#endif
+
 	//pba Membrane all atom terms
 	fa_mbenv,       // depth dependent reference term
 	fa_mbsolv,      // burial+depth dependent term

@@ -1,0 +1,51 @@
+-run:protocol broker
+-broker:setup inputs/setup_init.tpb
+
+-in:file:frag3 inputs/1IFP_.200.mini.3mers
+-in:file:frag9 inputs/1IFP_.200.mini.9mers
+-in:file:fasta inputs/1IFP.mini.fasta
+-symmetry:symmetry_definition ./inputs/helix_denovo.sdef
+-symmetry:initialize_rigid_body_dofs
+
+-fold_and_dock:rigid_body_cycles 1
+-fold_and_dock:rigid_body_frequency 0.2
+-fold_and_dock:rotate_anchor_to_x
+-run:test_cycles ## Remove to run a real case prediction
+-run:reinitialize_mover_for_each_job
+-abinitio::recover_low_in_stages 0
+-abinitio:rg_reweight 0.001
+-abinitio:stage1_patch inputs/fiberdiffdens_patch
+-abinitio:stage2_patch inputs/fiberdiffdens_patch
+-abinitio:stage4_patch inputs/fiberdiffdens_patch
+-packing:ex1
+-packing:ex2
+-relax:quick
+-relax:jump_move
+-score:patch inputs/fiberdiff_patch
+
+-fiber_diffraction:layer_lines inputs/1ifp.mini.dat
+-fiber_diffraction:a 27
+-fiber_diffraction:b 5
+-fiber_diffraction:resolution_cutoff_low 0.0833333333
+-fiber_diffraction:resolution_cutoff_high 0.3333333333
+
+-fiber_diffraction::b_factor 20.0
+-fiber_diffraction::b_factor_solv 400
+-fiber_diffraction::b_factor_solv_K 0.4
+
+-fiber_diffraction:qfht_K1 2.0
+-fiber_diffraction:qfht_K2 2.2
+-edensity:sc_scaling 0.92
+
+-fiber_diffraction:grid_r 256
+-fiber_diffraction:grid_z 128
+-fiber_diffraction:grid_phi 128
+
+-out:nstruct 1
+-out:file:silent_struct_type binary
+-out:file:silent 1ifp.out
+-no_prof_info_in_silentout
+-mute core.io.database
+-out:level 500
+-out:file:scorefile score.sc
+

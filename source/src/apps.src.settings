@@ -135,6 +135,9 @@ sources = {
 	    "rna_score",
 	    "cs_rosetta_rna"
 	],
+	 "public/fiber_diffraction": [
+                "FiberDiffractionFreeSet",
+        ],
 	"public/flexpep_docking": [
 		"BuildPeptide",
 		"FlexPepDocking", # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */

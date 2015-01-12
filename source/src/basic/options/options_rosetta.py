@@ -1302,6 +1302,33 @@ Options = Option_Group( '',
 			Option('fit_pddf_area', 'Boolean', desc="PDDF curve for a scored pose will be normalized to match the area under the reference PDDF curve"
 				, default='false' ),
 		), # -score:saxs
+		Option_Group( 'fiber_diffraction',
+			Option( 'layer_lines','File',desc="reads layer_lines from a file"),
+			Option( 'layer_lines_calc','File',desc="writes simualted layer_lines to a file"),
+			Option( 'a','Real'  , desc="number of subunits per repeat", default='0'),
+			Option( 'b','Real'  , desc="number of turns per repeat", default='0'),
+			Option( 'p','Real'  , desc="helical pitch", default='0'),
+			Option( 'radius','Real'  , desc="helical radius", default='0'),
+			Option( 'resolution_cutoff_low','Real'  , desc="Ignore intensity data below this point", default='0.05'),
+			Option( 'resolution_cutoff_high','Real'  , desc="Ignore intensity data above this point", default='0.5'),
+			Option( 'max_bessel_order','Integer'  , desc="Ignore bessel orders above this number", default='50'),
+			Option( 'cn_symmetry','Integer'  , desc="cn symmetry at one z level", default='0'),
+			Option( 'b_factor','Real'  , desc="b_factor", default='20'),
+			Option( 'b_factor_solv','Real'  , desc="b_factor_solv", default='400'),
+			Option( 'b_factor_solv_K','Real'  , desc="b_factor_solv_K", default='0.4'),
+			Option( 'grid_reso','Real'  , desc="resolution for density sampling", default='0.5'),
+			Option( 'grid_r','Integer'  , desc="number of grid points along r", default='256'),
+			Option( 'grid_phi','Integer'  , desc="number of grid points along phi", default='128'),
+			Option( 'grid_z','Integer'  , desc="number of grid points along z", default='256'),
+			Option( 'qfht_K1','Real'  , desc="value of K1 for Hankel sampling", default='2.0'),
+			Option( 'qfht_K2','Real'  , desc="value of K2 for Hankel sampling", default='2.2'),
+			Option( 'chi_free_iterations','Integer', desc="Number of iterations to calculate chi free", default='0'),
+			Option( 'R_free_shannon','Boolean', desc="If you want to calculate Rfree using Shannon sampling", default='false'),
+			Option( 'rfactor_refinement','Boolean', desc="Rfactor refinement", default='false'),
+			Option( 'output_fiber_spectra','Boolean', desc="Output intensity, reciprocal R, layer line", default='false'),
+			Option( 'gpu_processor','Integer', desc="GPU processor - for systems with more than 1", default='0'),
+			Option( 'centroid_density_mass','Real'  , desc="Density mass of centroid", default='4.88284'),
+		), #-score:fiber_diffraction
 	), # -score
 
 	# packing options -----------------------------------------------------------

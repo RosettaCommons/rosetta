@@ -14,3 +14,4 @@
 // NVIDIA Specific support
 // BOOST_GPU_ENABLED : Flag a function or a method as being enabled on the host and device
 #define BOOST_GPU_ENABLED __host__ __device__
+//#define BOOST_NOINLINE //Cuda doesn't compile in debug mode without this definition

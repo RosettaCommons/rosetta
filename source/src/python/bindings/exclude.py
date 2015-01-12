@@ -71,6 +71,11 @@ BannedFiles = [
     'core/scoring/memb_etable/BaseMembEtableEnergy.hh', # abandoned?
     'core/scoring/rna/RNA_FA_Stack.hh', # not in scons (.hh only)
     'core/scoring/methods/GaussianOverlapEnergyCreator.hh', # not in scons
+    
+    'core/scoring/fiber_diffraction/FiberDiffractionEnergyGpuCreator.hh',
+    'core/scoring/fiber_diffraction/FiberDiffractionEnergyGpu.hh',
+    'core/scoring/fiber_diffraction/FiberDiffractionKernelGpu.hh',
+
     'protocols/forge/remodel/RemodelLoopMoverCreator.hh',
     #'protocols/toolbox/task_operations/RestrictToMoveMapChiOperationCreator.hh',
 
@@ -547,7 +552,6 @@ def mb_exclude(path, mb, hfile):
         if hfile == 'core/scoring/electron_density/util.hh':
             #mb.free_function('alignVectorSets').exclude()
             pass
-
 
     if path == 'core/scoring/hbonds':
         if hfile == "__core/scoring/hbonds/HBondSet.hh":

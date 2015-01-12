@@ -2134,6 +2134,15 @@ settings = {
             "defines" : [ "USEBOOSTMPI" ],
         },
     },
+	
+    "gcc, cuda" : {
+        "appends" : {
+            "include_path"  : [ "/usr/local/cuda/include", "#external/include/cuda"],
+            "libraries"     : [ "cudart"],
+            "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib"],
+            "defines"       : [ "USECUDA" ],
+        },
+    },
 
 
 }  # end settings

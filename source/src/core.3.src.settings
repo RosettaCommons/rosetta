@@ -365,6 +365,22 @@ sources = {
 		"FACTSPotential",
 		"FACTSEnergy",
 	],
+	
+	"core/scoring/fiber_diffraction" : [
+		"CentroidScatter",
+		"FAScatter",
+		"FiberDiffraction",
+		"FiberDiffractionLoader",
+		"FiberDiffractionOptions",
+                "FiberDiffractionEnergy",
+                "FiberDiffractionEnergyDens",
+                "FiberDiffractionEnergyGpu",
+                "FiberDiffractionKernelGpu.cu",
+		"hankel_kiss_fft",
+                "util",
+                "util_ndft",
+                "xray_scattering",
+        ],
 
 	"core/scoring/geometric_solvation": [
 		"ContextDependentGeometricSolEnergy",
@@ -645,6 +661,7 @@ sources = {
 		"SAXSEnergyCreatorFA",
 		"SinXOverX",
 	],
+
 	"core/scoring/solid_surface" : [
 		"SurfaceEnergies"
 	],

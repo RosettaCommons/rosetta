@@ -917,6 +917,11 @@ sources = {
 	    #"willmatch_d6_bpy",
 	    #"yeates_align",
 	],
+	
+	 "pilot/wojtek" : [
+                "FiberDiffractionTest",
+        ],
+
 
 	# X ######################################################################
 

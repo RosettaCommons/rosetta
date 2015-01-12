@@ -1,0 +1,12 @@
+-database /home/wojtek/git/Rosetta/main/database
+-in:file:s 1IFP.pdb
+-in:file:centroid_input
+-symmetry:symmetry_definition helix_denovo.sdef 
+-symmetry:initialize_rigid_body_dofs 
+-fiber_diffraction:layer_lines 1ifp.work.fiber.dat
+-fiber_diffraction:a 27
+-fiber_diffraction:b 5
+-score:weights fiberdiffdens
+-mute                           core.conformation.Conformation
+-mute                           core.io.silent
+-mute                           core.io.pdb

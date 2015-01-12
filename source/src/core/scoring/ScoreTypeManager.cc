@@ -147,6 +147,12 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "saxs_cen_score" ] = saxs_cen_score;
 	name2score_type_[ "pddf_score" ] = pddf_score;
 
+	name2score_type_[ "fiberdiffraction" ] = fiberdiffraction;
+  name2score_type_[ "fiberdiffractiondens" ] = fiberdiffractiondens;
+  #ifdef USECUDA
+	name2score_type_[ "fiberdiffractiongpu" ] = fiberdiffractiongpu;
+	#endif
+
 	name2score_type_[ "fa_pair" ] = fa_pair; // fa_pair == fa_pair_pol_pol
 	name2score_type_[ "fa_pair_aro_aro" ] = fa_pair_aro_aro;
 	name2score_type_[ "fa_pair_aro_pol" ] = fa_pair_aro_pol;

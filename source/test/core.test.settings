@@ -227,6 +227,9 @@ sources = {
 		"TableVsAnalyticEtable",
 		#"VectorizedEtable",
 	],
+	"scoring/fiber_diffraction" : [
+                "FiberDiffractionEnergy",
+        ],
 	"scoring/geometric_solvation" : [
 		"GeometricSolEnergy",
 		"OccludedHbondSolEnergy",
@@ -620,4 +623,7 @@ testinputfiles = [
 	"util/abego_test.pdb",
 	"util/2c9v_stripped.pdb",
 	"pack/task/short_his.pdb",
+	"scoring/fiber_diffraction/data/1IFP.mini.pdb",
+        "scoring/fiber_diffraction/data/1ifp.mini.dat",
+        "scoring/fiber_diffraction/data/helix_denovo.sdef"
 ]

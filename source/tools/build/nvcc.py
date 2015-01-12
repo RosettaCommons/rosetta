@@ -67,6 +67,10 @@ def generate(env):
   env['NVCCFLAGS'] = SCons.Util.CLVar('')
   env['SHNVCCFLAGS'] = SCons.Util.CLVar('') + ' -shared -Xcompiler -fPIC'
 
+  #Uncomment these two lines if you want to use GPU with fiber diffraction score
+  #env['NVCCFLAGS'] = SCons.Util.CLVar('') + ' -arch=sm_20'
+  #env['SHNVCCFLAGS'] = SCons.Util.CLVar('') + ' -arch=sm_20 -shared -Xcompiler -fPIC'
+
   # 'NVCC Command'
   env['NVCCCOM']   =  '$NVCC -o $TARGET -c $NVCCFLAGS $_NVCCWRAPCFLAGS $_NVCCWRAPCCFLAGS $_NVCCCOMCOM $SOURCES'
   env['SHNVCCCOM'] =  '$SHNVCC -o $TARGET -c $SHNVCCFLAGS $_NVCCWRAPSHCFLAGS $_NVCCWRAPSHCCFLAGS $_NVCCCOMCOM $SOURCES'
