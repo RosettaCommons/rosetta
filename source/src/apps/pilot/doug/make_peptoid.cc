@@ -85,103 +85,104 @@ basic::options::StringOptionKey const peptoid_tlc( "peptoid_tlc" );
 int
 main( int argc, char * argv [] )
 {
-	// add local options
- 	option.add( peptoid_tlc, "peptoid three letter code" ).def("01");
+	try {
+		// add local options
+		option.add( peptoid_tlc, "peptoid three letter code" ).def("01");
 
-	// init options, rng, etc.
-	devel::init(argc, argv);
+		// init options, rng, etc.
+		devel::init(argc, argv);
 
-	std::cout << "SCORE FUNCTION" << std::endl;
+		std::cout << "SCORE FUNCTION" << std::endl;
 
-// create score function
-	core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::MM_STD_WTS ) );
-	score_fxn->set_weight( unfolded, 0.0 );
+		// create score function
+		core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::MM_STD_WTS ) );
+		score_fxn->set_weight( unfolded, 0.0 );
 
-	// get a ResidueTypeSet
-	std::cout << "RTS" << std::endl;
-	ResidueTypeSetCAP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		// get a ResidueTypeSet
+		std::cout << "RTS" << std::endl;
+		ResidueTypeSetCOP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
-	// make a list of names
-	std::cout << "NAME LIST" << std::endl;
+		// make a list of names
+		std::cout << "NAME LIST" << std::endl;
 
-	std::string name( option[ peptoid_tlc ].value() );
-	//std::stringstream nterm_name; nterm_name << name << "_p:NtermPeptoidFull";
-	std::stringstream nterm_name; nterm_name << name << "_p:AcetylatedPeptoidNterm";
-	std::stringstream cterm_name; cterm_name << name << "_p:CtermPeptoidFull";
+		std::string name( option[ peptoid_tlc ].value() );
+		//std::stringstream nterm_name; nterm_name << name << "_p:NtermPeptoidFull";
+		std::stringstream nterm_name; nterm_name << name << "_p:AcetylatedPeptoidNterm";
+		std::stringstream cterm_name; cterm_name << name << "_p:CtermPeptoidFull";
 
-	// load array with names
-	utility::vector1<std::string> aa_names;
-	aa_names.push_back( nterm_name.str() );
-	aa_names.push_back( name );
-	aa_names.push_back( cterm_name.str() );
+		// load array with names
+		utility::vector1<std::string> aa_names;
+		aa_names.push_back( nterm_name.str() );
+		aa_names.push_back( name );
+		aa_names.push_back( cterm_name.str() );
 
-	// turn array in to pose
-	std::cout << "BUILD POSE" << std::endl;
-	pose::Pose pose;
+		// turn array in to pose
+		std::cout << "BUILD POSE" << std::endl;
+		pose::Pose pose;
 
-	for ( utility::vector1<std::string>::const_iterator i( aa_names.begin() ), end( aa_names.end() ); i != end; ++i ) {
+		for ( utility::vector1<std::string>::const_iterator i( aa_names.begin() ), end( aa_names.end() ); i != end; ++i ) {
 
-		ResidueType const & rsd_type( rsd_type_set->name_map( *i ) );
+			ResidueType const & rsd_type( rsd_type_set->name_map( *i ) );
 
-		Residue rsd( rsd_type, true );
+			Residue rsd( rsd_type, true );
 
-		if ( i == aa_names.begin() ) {
-			pose.append_residue_by_jump( rsd, 1 );
-		} else {
-			pose.append_residue_by_bond( rsd, true );
-		}
-	}
-
-	// pymol mover
-	protocols::moves::PyMolMoverOP pmm( new protocols::moves::PyMolMover() );
-	pmm->keep_history( true );
-	pmm->apply( pose );
-
-	// rot precedding omg
-	Real orig_pomg( pose.omega(1) );
-	for ( Real i(0); i <= 360; i += 10 ) {
-		pose.set_omega( 1, orig_pomg + i );
-		pmm->apply( pose );
-	}
-
-	// rot phi
-	Real orig_phi( pose.phi(2) );
-	for ( Real i(0); i <= 360; i += 10 ) {
-		pose.set_phi( 2, orig_phi + i );
-		pmm->apply( pose );
-	}
-
-	// rot psi
-	Real orig_psi( pose.psi(2) );
-	for ( Real i(0); i <= 360; i += 10 ) {
-		pose.set_psi( 2, orig_psi + i );
-		pmm->apply( pose );
-	}
-
-	// rot omg
-	Real orig_omg( pose.omega(2) );
-	for ( Real i(0); i <= 360; i += 10 ) {
-		pose.set_omega( 2, orig_omg + i );
-		pmm->apply( pose );
-	}
-
-	// rot chis
-	if ( pose.residue(2).type().nchi() >= 1 ) {
-		for ( Size j(1); j <=  pose.residue(2).type().nchi(); ++j ) {
-			Real orig_chi( pose.chi( j, 2 ) );
-			for ( Real i(0); i <= 360; i += 10 ) {
-				pose.set_chi( j, 2, orig_chi + i );
-				pmm->apply( pose );
+			if ( i == aa_names.begin() ) {
+				pose.append_residue_by_jump( rsd, 1 );
+			} else {
+				pose.append_residue_by_bond( rsd, true );
 			}
 		}
-	}
 
-	// dump pose to file
-	std::stringstream filename;
-	filename << name << ".pdb";
-	pose.dump_scored_pdb( filename.str(), *score_fxn );
+		// pymol mover
+		protocols::moves::PyMolMoverOP pmm( new protocols::moves::PyMolMover() );
+		pmm->keep_history( true );
+		pmm->apply( pose );
 
-	// std::cout << "MINIMIZING" << std::endl;
+		// rot precedding omg
+		Real orig_pomg( pose.omega(1) );
+		for ( Real i(0); i <= 360; i += 10 ) {
+			pose.set_omega( 1, orig_pomg + i );
+			pmm->apply( pose );
+		}
+
+		// rot phi
+		Real orig_phi( pose.phi(2) );
+		for ( Real i(0); i <= 360; i += 10 ) {
+			pose.set_phi( 2, orig_phi + i );
+			pmm->apply( pose );
+		}
+
+		// rot psi
+		Real orig_psi( pose.psi(2) );
+		for ( Real i(0); i <= 360; i += 10 ) {
+			pose.set_psi( 2, orig_psi + i );
+			pmm->apply( pose );
+		}
+
+		// rot omg
+		Real orig_omg( pose.omega(2) );
+		for ( Real i(0); i <= 360; i += 10 ) {
+			pose.set_omega( 2, orig_omg + i );
+			pmm->apply( pose );
+		}
+
+		// rot chis
+		if ( pose.residue(2).type().nchi() >= 1 ) {
+			for ( Size j(1); j <=  pose.residue(2).type().nchi(); ++j ) {
+				Real orig_chi( pose.chi( j, 2 ) );
+				for ( Real i(0); i <= 360; i += 10 ) {
+					pose.set_chi( j, 2, orig_chi + i );
+					pmm->apply( pose );
+				}
+			}
+		}
+
+		// dump pose to file
+		std::stringstream filename;
+		filename << name << ".pdb";
+		pose.dump_scored_pdb( filename.str(), *score_fxn );
+
+		// std::cout << "MINIMIZING" << std::endl;
 
 	// core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 
@@ -195,7 +196,12 @@ main( int argc, char * argv [] )
 	// std::string after_min_filename( "after_min.pdb" );
 	// pose.dump_scored_pdb( after_min_filename, *score_fxn );
 
-	std::cout << "DONE" << std::endl;
+		std::cout << "************************************d**o**n**e***********************************" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 
 	return 0;
 }
