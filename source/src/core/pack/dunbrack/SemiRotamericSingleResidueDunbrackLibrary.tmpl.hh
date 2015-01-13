@@ -702,8 +702,17 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 	BBDepScoreInterpData const & d111( bbdep_nrc_interpdata_[ packed_rotno ]( phibin_next, psibin_next, nrchi_bin_next ));
 
 	Real interpolated_energy(0.0);
-
-	tricubic_interpolation(
+    
+    /*std::cout << d000.value_ << "\t" << d001.value_ << "\t" << d010.value_ << "\t" << d011.value_ << "\t" << d100.value_ << "\t" << d101.value_ << "\t" << d110.value_ << "\t" << d111.value_ << std::endl;
+    std::cout << d000.dsecoz_ << "\t" << d001.dsecoz_ << "\t" << d010.dsecoz_ << "\t" << d011.dsecoz_ << "\t" << d100.dsecoz_ << "\t" << d101.dsecoz_ << "\t" << d110.dsecoz_ << "\t" << d111.dsecoz_ << std::endl;
+    std::cout << d000.dsecoy_ << "\t" << d001.dsecoy_ << "\t" << d010.dsecoy_ << "\t" << d011.dsecoy_ << "\t" << d100.dsecoy_ << "\t" << d101.dsecoy_ << "\t" << d110.dsecoy_ << "\t" << d111.dsecoy_ << std::endl;
+    std::cout << d000.dsecoyz_ << "\t" << d001.dsecoyz_ << "\t" << d010.dsecoyz_ << "\t" << d011.dsecoyz_ << "\t" << d100.dsecoyz_ << "\t" << d101.dsecoyz_ << "\t" << d110.dsecoyz_ << "\t" << d111.dsecoyz_ << std::endl;
+    std::cout << d000.dsecox_ << "\t" << d001.dsecox_ << "\t" << d010.dsecox_ << "\t" << d011.dsecox_ << "\t" << d100.dsecox_ << "\t" << d101.dsecox_ << "\t" << d110.dsecox_ << "\t" << d111.dsecox_ << std::endl;
+    std::cout << d000.dsecoxz_ << "\t" << d001.dsecoxz_ << "\t" << d010.dsecoxz_ << "\t" << d011.dsecoxz_ << "\t" << d100.dsecoxz_ << "\t" << d101.dsecoxz_ << "\t" << d110.dsecoxz_ << "\t" << d111.dsecoxz_ << std::endl;
+    std::cout << d000.dsecoxy_ << "\t" << d001.dsecoxy_ << "\t" << d010.dsecoxy_ << "\t" << d011.dsecoxy_ << "\t" << d100.dsecoxy_ << "\t" << d101.dsecoxy_ << "\t" << d110.dsecoxy_ << "\t" << d111.dsecoxy_ << std::endl;
+    std::cout << d000.dsecoxyz_ << "\t" << d001.dsecoxyz_ << "\t" << d010.dsecoxyz_ << "\t" << d011.dsecoxyz_ << "\t" << d100.dsecoxyz_ << "\t" << d101.dsecoxyz_ << "\t" << d110.dsecoxyz_ << "\t" << d111.dsecoxyz_ << std::endl;*/
+    
+    tricubic_interpolation(
 		d000.value_, d000.dsecox_, d000.dsecoy_, d000.dsecoz_, d000.dsecoxy_, d000.dsecoxz_, d000.dsecoyz_, d000.dsecoxyz_,
 		d001.value_, d001.dsecox_, d001.dsecoy_, d001.dsecoz_, d001.dsecoxy_, d001.dsecoxz_, d001.dsecoyz_, d001.dsecoxyz_,
 		d010.value_, d010.dsecox_, d010.dsecoy_, d010.dsecoz_, d010.dsecoxy_, d010.dsecoxz_, d010.dsecoyz_, d010.dsecoxyz_,
@@ -719,6 +728,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 		dnrchi_score_dpsi,
 		dnrchi_score_dnrchi );
 
+    //std::cout << "bbdep_nrchi_score interpolated_energy = " << interpolated_energy << " derivs " << dnrchi_score_dphi << ", " << dnrchi_score_dpsi << ", " << dnrchi_score_dnrchi << std::endl;
 	return interpolated_energy;
 
 	/* Trilinear interpolation scheme below
@@ -2447,11 +2457,13 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_rotameric_data(
 				stdev[ ii ] = 5; // bogus!
 			}
 		}
-		if ( prob == 0.0 ) {
-			prob = 1e-4;
+		if ( prob <= 1e-6 ) {
+			prob = 1e-6;
 			/// APL -- On the advice of Roland Dunbrack, modifying the minimum probability to the
 			/// resolution of the library.  This helps avoid overwhelmingly unfavorable energies
 			/// (5 log-units difference between 1e-4 and 1e-9) for rare rotamers.
+            /// AMW -- Changing this to be a <= criterion and to 1e-6 to actually match the resolution
+            /// of the library
 		}
 
 		Size phibin, psibin;
@@ -2585,7 +2597,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_bbdep_continuous_minimizati
 		/// APL -- On the advice of Roland Dunbrack, modifying the minimum probability to the
 		/// resolution of the library.  This helps avoid overwhelmingly unfavorable energies
 		/// (5 log-units difference between 1e-4 and 1e-9) for rare rotamers.
-		if (base_prob == 0.0 ) { base_prob = 1e-4; } // correct probability 0 events.
+        /// AMW -- Changing this to be a <= criterion and to 1e-6 to actually match the resolution
+        /// of the library
+		if (base_prob <= 1e-6 ) { base_prob = 1e-6; } // correct probability 0 events.
 
 		/// Now, convert the probabilities into scores
 		Size phibin, psibin;
@@ -2597,7 +2611,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_bbdep_continuous_minimizati
 			/// APL -- On the advice of Roland Dunbrack, modifying the minimum probability to the
 			/// resolution of the library.  This helps avoid overwhelmingly unfavorable energies
 			/// (5 log-units difference between 1e-4 and 1e-9) for rare rotamers.
-			Real const prob = base_prob * ( nrchi_probs[ ii ] == 0.0 ? 1e-4 : nrchi_probs[ ii ] );
+            /// AMW -- Changing this to be a <= criterion and to 1e-6 to actually match the resolution
+            /// of the library
+			Real const prob = base_prob * ( nrchi_probs[ ii ] <= 1e-6 ? 1e-6 : nrchi_probs[ ii ] );
 			bbdep_non_rotameric_chi_scores[ rotno ]( phibin, psibin, ii ) = -std::log( prob );
 		}
 	}

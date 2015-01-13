@@ -616,7 +616,7 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 	for ( Size ii = 1; ii <= T; ++ii ) {
 		chidevpensum += chidevpen[ ii ];
 	}
-
+    
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 		scratch.fa_dun_tot() = scratch.negln_rotprob() + chidevpensum;
 		scratch.fa_dun_rot() = scratch.negln_rotprob();
@@ -655,7 +655,8 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 		Real const gprime = 4*chisd[ ii ];
 		Real const invgg  = 1 / (g*g);
 
-		/// also need to add in derivatives for log(stdv) height normalization
+        
+        /// also need to add in derivatives for log(stdv) height normalization
 		/// dE/dphi = (above) + 1/stdv * dstdv/dphi
 		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX  ] +=
 			( g*fprime*dchimean_dphi[ ii ] - f*gprime*dchisd_dphi[ ii ] ) * invgg;
@@ -1071,7 +1072,7 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 
 	for ( Size ii = 1; ii <= T; ++ii ) {
 
-		interpolate_bilinear_by_value(
+        interpolate_bilinear_by_value(
 			static_cast< Real >  ( rot00.chi_mean(ii)),
 			static_cast< Real >  ( rot10.chi_mean(ii)),
 			static_cast< Real >  ( rot01.chi_mean(ii)),
@@ -1079,8 +1080,8 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 			phi_alpha, psi_alpha, PHIPSI_BINRANGE, true /*treat_as_angles*/,
 			scratch.chimean()[ii], scratch.dchimean_dphi()[ii], scratch.dchimean_dpsi()[ii] );
 		interpolated_rotamer.chi_mean( ii ) = scratch.chimean()[ii];
-
-		interpolate_bilinear_by_value(
+        
+        interpolate_bilinear_by_value(
 			static_cast< Real >  ( rot00.chi_sd(ii)),
 			static_cast< Real >  ( rot10.chi_sd(ii)),
 			static_cast< Real >  ( rot01.chi_sd(ii)),
@@ -1088,7 +1089,7 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 			phi_alpha, psi_alpha, PHIPSI_BINRANGE, false /*treat_as_angles*/,
 			scratch.chisd()[ii], scratch.dchisd_dphi()[ii], scratch.dchisd_dpsi()[ii] );
 		interpolated_rotamer.chi_sd( ii ) = scratch.chisd()[ii];
-
+        
 	}
 
 }
@@ -1541,7 +1542,6 @@ RotamericSingleResidueDunbrackLibrary< T >::chisamples_for_rotamer_and_chi(
 		} else if ( rsd_type.is_proton_chi( chi_index ) ) {
 			pack::task::ExtraRotSample ex_samp_level = rtask.extrachi_sample_level( buried, chi_index, rsd_type );
 
-			//std::cout << "chi_index: " << chi_index << " ex_samp_level " << ex_samp_level << std::endl;
 			bool const skip_extra_proton_chi_samples = ( ex_samp_level == pack::task::NO_EXTRA_CHI_SAMPLES );
 
 			Size const proton_chi_index = rsd_type.chi_2_proton_chi( chi_index );
@@ -1964,11 +1964,13 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_file(
 				chisd[ ii ] = 5; // bogus!
 			}
 		}
-		if ( probability == 0.0 ) {
-			probability = 1e-4;
+		if ( probability <= 1e-6 ) {
+			probability = 1e-6;
 			/// APL -- On the advice of Roland Dunbrack, modifying the minimum probability to the
 			/// resolution of the library.  This helps avoid overwhelmingly unfavorable energies
 			/// (5 log-units difference between 1e-4 and 1e-9) for rare rotamers.
+            /// AMW -- Changing this to be a <= criterion and to 1e-6 to actually match the resolution
+            /// of the library
 		}
 
 		get_phipsi_bins( phi, psi, phibin, psibin );

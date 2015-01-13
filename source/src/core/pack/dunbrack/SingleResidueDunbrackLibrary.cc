@@ -97,6 +97,7 @@ SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 		std::fill( rotwell_exists_.begin(), rotwell_exists_.end(), false );
 		std::fill( rotno_2_packed_rotno_.begin(), rotno_2_packed_rotno_.end(), 0 );
 	}
+    
 }
 
 /// @details Sets the number of bins for a particular chi angle, used for the NCAAs, info for CAAs is hardcoded bellow

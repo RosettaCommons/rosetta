@@ -170,7 +170,7 @@ private:
 private:
 
 	utility::vector1< conformation::ResidueOP > rotamers_;
-
+    
 	// A baseline reference energy applied to *all* conformers in this library,
 	// like amino acid reference energies.
 	Real ref_energy_;
