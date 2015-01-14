@@ -529,7 +529,6 @@ namespace protocols {
 				runtime_assert_string_msg(!tag->hasOption("omega0_min") && !tag->hasOption("omega0_max"),
 					"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 				core::Real const val( tag->getOption<core::Real>("omega0", 0.0) );
-				runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an omega0 value less than 0." );
 				if(TR.visible()) TR << "Setting default omega0 value to " << val << "." << std::endl;
 				default_omega0()->set_default_value(val);
 				default_omega0()->set_perturbable(false);
@@ -563,7 +562,6 @@ namespace protocols {
 				runtime_assert_string_msg(!tag->hasOption("delta_omega0_min") && !tag->hasOption("delta_omega0_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0 defined alongside delta_omega0_min or delta_omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 				core::Real const val( tag->getOption<core::Real>("delta_omega0", 0.0) );
-				runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an delta_omega0 value less than 0." );
 				if(TR.visible()) TR << "Setting default delta_omega0 value to " << val << "." << std::endl;
 				default_delta_omega0()->set_default_value(val);
 				default_delta_omega0()->set_perturbable(false);
@@ -597,7 +595,6 @@ namespace protocols {
 				runtime_assert_string_msg(!tag->hasOption("delta_omega1_min") && !tag->hasOption("delta_omega1_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1 defined alongside delta_omega1_min or delta_omega1_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 				core::Real const val( tag->getOption<core::Real>("delta_omega1", 0.0) );
-				runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an delta_omega1 value less than 0." );
 				if(TR.visible()) TR << "Setting default delta_omega1 value to " << val << "." << std::endl;
 				default_delta_omega1()->set_default_value(val);
 				default_delta_omega1()->set_perturbable(false);
@@ -631,7 +628,6 @@ namespace protocols {
 				runtime_assert_string_msg(!tag->hasOption("delta_t_min") && !tag->hasOption("delta_t_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_t defined alongside delta_t_min or delta_t_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 				core::Real const val( tag->getOption<core::Real>("delta_t", 0.0) );
-				runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an delta_t value less than 0." );
 				if(TR.visible()) TR << "Setting default delta_t value to " << val << "." << std::endl;
 				default_delta_t()->set_default_value(val);
 				default_delta_t()->set_perturbable(false);
@@ -739,7 +735,6 @@ namespace protocols {
 						runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_min") && !(*tag_it)->hasOption("omega0_max"),
 							"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 						core::Real const val( (*tag_it)->getOption<core::Real>("omega0", 0.0) );
-						runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an omega0 value less than 0." );
 						if(TR.visible()) TR << "Setting the omega0 value for helix " << helix_index << " to " << val << "." << std::endl;
 						omega0(helix_index)->set_default_value(val);
 						omega0(helix_index)->set_perturbable(false);
@@ -787,7 +782,6 @@ namespace protocols {
 						runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega0_min") && !(*tag_it)->hasOption("delta_omega0_max"),
 							"When parsing options for the BundleGridSampler mover, found delta_omega0 defined alongside delta_omega0_min or delta_omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 						core::Real const val( (*tag_it)->getOption<core::Real>("delta_omega0", 0.0) );
-						runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an delta_omega0 value less than 0." );
 						if(TR.visible()) TR << "Setting the delta_omega0 value for helix " << helix_index << " to " << val << "." << std::endl;
 						delta_omega0(helix_index)->set_default_value(val);
 						delta_omega0(helix_index)->set_perturbable(false);
@@ -835,7 +829,6 @@ namespace protocols {
 						runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega1_min") && !(*tag_it)->hasOption("delta_omega1_max"),
 							"When parsing options for the BundleGridSampler mover, found delta_omega1 defined alongside delta_omega1_min or delta_omega1_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 						core::Real const val( (*tag_it)->getOption<core::Real>("delta_omega1", 0.0) );
-						runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an delta_omega1 value less than 0." );
 						if(TR.visible()) TR << "Setting the delta_omega1 value for helix " << helix_index << " to " << val << "." << std::endl;
 						delta_omega1(helix_index)->set_default_value(val);
 						delta_omega1(helix_index)->set_perturbable(false);
@@ -883,7 +876,6 @@ namespace protocols {
 						runtime_assert_string_msg(!(*tag_it)->hasOption("delta_t_min") && !(*tag_it)->hasOption("delta_t_max"),
 							"When parsing options for the BundleGridSampler mover, found delta_t defined alongside delta_t_min or delta_t_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 						core::Real const val( (*tag_it)->getOption<core::Real>("delta_t", 0.0) );
-						runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an delta_t value less than 0." );
 						if(TR.visible()) TR << "Setting the delta_t value for helix " << helix_index << " to " << val << "." << std::endl;
 						delta_t(helix_index)->set_default_value(val);
 						delta_t(helix_index)->set_perturbable(false);
