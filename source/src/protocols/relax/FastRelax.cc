@@ -1065,6 +1065,34 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 	}
 }
 
+// Override the stored script with the default script for batchrelax
+void FastRelax::set_script_from_lines( std::vector< std::string > const filelines ) {
+
+	script_.clear();
+	std::string line;
+
+	int linecount=0;
+	script_.clear();
+
+	core::Size i;
+	for( i =0; i< filelines.size(); i++ ){
+		line = filelines[i];
+		TR.Debug << line << std::endl;
+		linecount++;
+		utility::vector1< std::string > tokens ( utility::split( line ) );
+
+		if ( tokens.size() > 0 ) {
+			RelaxScriptCommand newcmd;
+			newcmd.command = tokens[1];
+
+			if (tokens.size() > 1) {newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
+			if (tokens.size() > 2) {newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
+			if (tokens.size() > 3) {newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
+			if (tokens.size() > 4) {newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
+			script_.push_back( newcmd );
+		}
+	}
+}
 
 void FastRelax::read_script_file( const std::string &script_file, core::Size standard_repeats ){
 	using namespace ObjexxFCL;

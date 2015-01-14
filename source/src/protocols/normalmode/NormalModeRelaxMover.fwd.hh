@@ -21,16 +21,16 @@ namespace protocols {
 namespace normalmode {
 
 class NormalModeRelaxMover;
-typedef utility::pointer::owning_ptr< NormalModeRelaxMover > NormalModeRelaxMoverOP;
-typedef utility::pointer::owning_ptr< NormalModeRelaxMover const > NormalModeRelaxMoverCOP;
+typedef utility::pointer::shared_ptr< NormalModeRelaxMover > NormalModeRelaxMoverOP;
+typedef utility::pointer::shared_ptr< NormalModeRelaxMover const > NormalModeRelaxMoverCOP;
 
 class CartesianNormalModeMover;
-typedef utility::pointer::owning_ptr< CartesianNormalModeMover > CartesianNormalModeMoverOP;
-typedef utility::pointer::owning_ptr< CartesianNormalModeMover const > CartesianNormalModeMoverCOP;
+typedef utility::pointer::shared_ptr< CartesianNormalModeMover > CartesianNormalModeMoverOP;
+typedef utility::pointer::shared_ptr< CartesianNormalModeMover const > CartesianNormalModeMoverCOP;
 
 class TorsionNormalModeMover;
-typedef utility::pointer::owning_ptr< TorsionNormalModeMover > TorsionNormalModeMoverOP;
-typedef utility::pointer::owning_ptr< TorsionNormalModeMover const > TorsionNormalModeMoverCOP;
+typedef utility::pointer::shared_ptr< TorsionNormalModeMover > TorsionNormalModeMoverOP;
+typedef utility::pointer::shared_ptr< TorsionNormalModeMover const > TorsionNormalModeMoverCOP;
 
 } // normalmode
 } // protocols

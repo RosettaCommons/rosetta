@@ -308,6 +308,12 @@ sources = {
 		#"david_darc_multirun",
 	],
 
+	"pilot/hpark" : [
+	        #"test_sampling",
+		"mpi_refinement",
+		#"serial_refinement"
+	],
+
 	# I ######################################################################
 	"pilot/ian" : [
 		#"ligdock_confidence", # /* Ian Davis,Documentation Location,Demo Location */

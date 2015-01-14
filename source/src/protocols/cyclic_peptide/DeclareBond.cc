@@ -58,6 +58,29 @@ DeclareBond::DeclareBond():
 {}
 DeclareBond::~DeclareBond(){}
 
+void
+DeclareBond::set( core::Size const res1,
+									std::string const atom1,
+									core::Size const res2,
+									std::string const atom2,
+									bool const add_termini,
+									bool const run_kic,
+									core::Size const kic_res1,
+									core::Size const kic_res2,
+									bool const rebuild_fold_tree
+									)
+{ 
+	res1_ = res1;
+	atom1_ = atom1;
+	res2_ = res2;
+	atom2_ = atom2;
+	add_termini_ = add_termini;
+	run_kic_ = run_kic;
+	kic_res1_ = kic_res1;
+	kic_res2_ = kic_res2;
+	rebuild_fold_tree_ = rebuild_fold_tree;
+}
+
 void DeclareBond::apply( core::pose::Pose & pose )
 {
 	  using namespace core::chemical;

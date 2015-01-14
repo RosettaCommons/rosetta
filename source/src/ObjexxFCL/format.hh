@@ -507,7 +507,7 @@ inline
 Bite< std::string >
 bite( std::string & t )
 {
-	return Bite< std::string >( std::numeric_limits< int >::max(), t );
+  return Bite< std::string >( (std::numeric_limits< int >::max)(), t );
 }
 
 
@@ -590,7 +590,7 @@ inline
 std::istream &
 skip( std::istream & stream )
 {
-	return stream.ignore( std::numeric_limits< std::streamsize >::max(), '\n' );
+  return stream.ignore( (std::numeric_limits< std::streamsize >::max)(), '\n' );
 }
 
 
