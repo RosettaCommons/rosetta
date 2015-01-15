@@ -470,11 +470,13 @@ cycles = int(options.cycles)
 jobs = int(options.jobs)
 job_output = options.job_output
 
+''' Disabled until Abinitio error is fixed
 sample_folding(sequence,
     long_frag_filename, long_frag_length,
     short_frag_filename, short_frag_length,
     kT, long_inserts, short_inserts, cycles,
     jobs, job_output)
+'''
 
 ################################################################################
 # ALTERNATE SCENARIOS

@@ -95,6 +95,7 @@ mc.show_counters()
 mc.show_state()
 
 print 'mover: ClassicAbinitio ERROR'
+''' Disabled until Abinitio error is fixed
 ab = ClassicAbinitio(fragset3mer, fragset9mer, movemap)
 #ab.apply(pose) # Error!
 
@@ -109,3 +110,4 @@ trialmover.apply(pose)
 trialmover.num_accepts()
 trialmover.acceptance_rate()
 mc.show_state() # this should have breakdown by mover type now
+'''
