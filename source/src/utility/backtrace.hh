@@ -35,8 +35,8 @@
 #include <cxxabi.h>
 #include <string>
 #include <cstdio>
+#include <stdlib.h>
 #include <iostream>
-
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -98,7 +98,7 @@ demangle( std::string trace ) {
 ////////////////////////////////////////////////////////////////////
 
 inline
-void
+bool
 print_backtrace() {
 
   void* callstack[128];
@@ -108,7 +108,10 @@ print_backtrace() {
 		std::cerr << demangle( strs[i] ).c_str() << std::endl;
 	}
 	free(strs);
+	return false; // allows use in debug_assert
 }
+
+#define debug_assert(condition) { assert( ( condition ) || print_backtrace() ); }
 
 #else
 // _WIN32, etc.
@@ -119,6 +122,8 @@ print_backtrace(){
 	// no op
 	// if someone cares, should be possible to code up a backtrace for Windows!
 }
+
+#define debug_assert(condition) { assert( condition ); }
 
 #endif
 

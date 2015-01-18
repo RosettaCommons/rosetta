@@ -19,6 +19,7 @@
 // Unit headers
 #include <utility/vectorL.fwd.hh>
 #include <utility/vectorL_Selector.hh>
+#include <utility/backtrace.hh> // for debug_assert
 
 // C++ headers
 #include <cassert>
@@ -352,8 +353,8 @@ public: // Indexers
 	const_reference
 	operator []( index_type const i ) const
 	{
-		assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
-		assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
 		return super::operator []( i - l_ );
 	}
 
@@ -363,8 +364,8 @@ public: // Indexers
 	reference
 	operator []( index_type const i )
 	{
-		assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
-		assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
 		return super::operator []( i - l_ );
 	}
 
@@ -374,7 +375,7 @@ public: // Indexers
 	const_reference
 	at( index_type const i ) const
 	{
-		assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
 		return super::at( i - l_ );
 	}
 
@@ -384,7 +385,7 @@ public: // Indexers
 	reference
 	at( index_type const i )
 	{
-		assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
 		return super::at( i - l_ );
 	}
 
@@ -403,8 +404,8 @@ public: // Indexers
 	index_type
 	u() const
 	{
-		assert( ! super::empty() ); // Upper index only meaningful for non-empty vectors
-		assert( static_cast< index_type >( super::size() ) >= 0 ); // Catch size range error
+		debug_assert( ! super::empty() ); // Upper index only meaningful for non-empty vectors
+		debug_assert( static_cast< index_type >( super::size() ) >= 0 ); // Catch size range error
 		return l_ + static_cast< index_type >( super::size() ) - 1;
 	}
 
