@@ -63,6 +63,7 @@
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 #include <basic/basic.hh>
+#include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
@@ -2978,6 +2979,7 @@ Conformation::residues_replace(
 	residues_[ seqpos ]->chain( old_chain );
 
 	residues_[ seqpos ]->copy_residue_connections( *old_residue );
+	if ( residues_[ seqpos ]->data_ptr() != 0 ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
 	//Loop through all the connections of the new residue and ensure that the residues connected to it have their
 	//connect_map_ updated appropriately:
 	for(core::Size i=1, imax=residues_[seqpos]->type().n_residue_connections(); i<=imax; ++i)
@@ -3054,6 +3056,7 @@ Conformation::residues_insert(
 	}
 	// wipe residue connection data that may have been cloned from the original residue
 	residues_[ seqpos ]->clear_residue_connections();
+	if ( residues_[ seqpos ]->data_ptr() != 0 ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
 
 	// rederive polymeric connection status from chain id's or termini status
 	update_polymeric_connection( seqpos-1 );
@@ -3138,6 +3141,7 @@ Conformation::residues_append( Residue const & new_rsd, bool const start_new_cha
 	}
 	// wipe residue connection data that may have been cloned from the original residue
 	residues_[ nres ]->clear_residue_connections();
+	if ( residues_[ nres ]->data_ptr() != 0 ) residues_[ nres ]->nonconst_data_ptr()->clear();
 
 	// update polymeric connection status from chain id's and termini status (but only if it's possible they're chemically connected)
 	if ( nres > 1 && ! by_jump ) {

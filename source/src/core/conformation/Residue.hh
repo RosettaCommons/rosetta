@@ -24,6 +24,7 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
 #include <core/conformation/PseudoBond.hh>
+#include <basic/datacache/BasicDataCache.fwd.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Orbital.hh>
@@ -2010,6 +2011,16 @@ public:
 #endif
 
 
+
+	/// @brief BasicDataCache indexed by enum in residue_datacache.hh
+	basic::datacache::BasicDataCacheCOP
+	data_ptr() const;
+
+	/// @brief BasicDataCache indexed by enum in residue_datacache.hh
+	basic::datacache::BasicDataCacheOP
+	nonconst_data_ptr();
+
+
 	/////////////////////////////////////////////////////////////////////////////
 	// private methods
 	/////////////////////////////////////////////////////////////////////////////
@@ -2082,6 +2093,7 @@ private:
 	/// in fact, only for fa-pair
 	Vector actcoord_;
 
+	basic::datacache::BasicDataCacheOP data_cache_;
 
 	/////////////////////////////////
 	/// Inter-residue connection data
@@ -2101,6 +2113,7 @@ private:
 	/// @brief other residues within 4 bonds (connected through PseudoBonds)
 	/// may include this residue (intra-residue pseudo-bonds)
 	std::map< Size, PseudoBondCollectionCOP > pseudobonds_;
+
 
 #ifdef USEBOOSTSERIALIZE
 private:

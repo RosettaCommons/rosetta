@@ -17,6 +17,7 @@
 // Package headers
 #include <core/conformation/PseudoBond.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/residue_datacache.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
 
 // Project headers
@@ -34,6 +35,7 @@
 // Basic headers
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
+#include <basic/datacache/BasicDataCache.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
@@ -67,6 +69,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	nus_(rsd_type_.n_nus(), 0.0),
 	mainchain_torsions_( rsd_type_.mainchain_atoms().size(), 0.0 ),
 	actcoord_( 0.0 ),
+	data_cache_( 0 ),
 	nonstandard_polymer_( false ),
 	connect_map_( rsd_type_in.n_residue_connections() )
 {
@@ -107,6 +110,7 @@ Residue::Residue(
 	nus_(rsd_type_.n_nus(), 0.0),
 	mainchain_torsions_( current_rsd.mainchain_torsions() ),
 	actcoord_( 0.0 ),
+	data_cache_( 0 ),
 	nonstandard_polymer_( current_rsd.nonstandard_polymer_ ),
 	connect_map_( current_rsd.connect_map_ ),
 	connections_to_residues_( current_rsd.connections_to_residues_ ),
@@ -192,11 +196,17 @@ Residue::Residue( Residue const & src ) :
 	nus_(src.nus_),
 	mainchain_torsions_(src.mainchain_torsions_),
 	actcoord_(src.actcoord_),
+	data_cache_(0),
 	nonstandard_polymer_(src.nonstandard_polymer_),
 	connect_map_(src.connect_map_),
 	connections_to_residues_(src.connections_to_residues_),
 	pseudobonds_(src.pseudobonds_)
-{}
+{
+	if ( src.data_cache_ != 0 ) {
+		if ( data_cache_ != 0 ) (*data_cache_) = (*src.data_cache_);
+		else data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( *src.data_cache_) );
+	}
+}
 
 Residue::~Residue() {}
 
@@ -1317,6 +1327,25 @@ Residue::is_virtual( Size const & atomno ) const
 	return rsd_type_.atom_type( atomno ).is_virtual();
 }
 
+
+/// @details Return a COP to the data cache
+/// @note Might be a null pointer if the cache has not been initialized
+basic::datacache::BasicDataCacheCOP
+Residue::data_ptr() const
+{
+	return data_cache_;
+}
+
+/// @details Return an OP to the datacache
+/// @note Will create new one if not already initialized
+basic::datacache::BasicDataCacheOP
+Residue::nonconst_data_ptr()
+{
+	if ( data_cache_ == 0 ) {
+		data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( residue_datacache::n_cacheable_types ) );
+	}
+	return data_cache_;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //ja
