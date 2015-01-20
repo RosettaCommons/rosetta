@@ -1004,6 +1004,9 @@ min_pack_optimize(
 				atc->moltenres_atomtree_collection( jj_moltenres_id ).
 					update_from_momento( curr_state.momento_for_moltenres( jj_moltenres_id ) );
 				bgres[ jj_resid ] = atc->moltenres_atomtree_collection( jj_moltenres_id ).active_residue_cop();
+
+				reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, *scminmap, *bgres[ jj_resid ], *mingraph );
+
 #ifdef APL_FULL_DEBUG
 				debug_pose.replace_residue( jj_resid, *bgres[ jj_resid ], false );
 				sfxn( debug_pose );
