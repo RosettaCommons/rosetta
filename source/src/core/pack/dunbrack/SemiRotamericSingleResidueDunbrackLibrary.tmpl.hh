@@ -22,9 +22,11 @@
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
 
 // Project Headers
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
+#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
+
 #include <core/conformation/Residue.hh>
 #include <basic/basic.hh>
+#include <basic/Tracer.hh>
 
 // Package Headers
 #include <core/pack/dunbrack/RotamerLibrary.hh>
@@ -34,6 +36,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
+// Basic Headers
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/vector1.functions.hh>
@@ -42,6 +47,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/MathTensor.hh>
 #include <numeric/interpolation/spline/TricubicSpline.hh>
+#include <numeric/util.hh>
 
 // Boost Headers
 #include <boost/cstdint.hpp>
@@ -411,7 +417,115 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-//using namespace ObjexxFCL;
+template < class P >
+bool
+BBDepNRChiSample< P >::operator==( BBDepNRChiSample<P> const & other ) const {
+	static thread_local basic::Tracer TR( "core.pack.dunbrack.BBDepNRChiSample" );
+
+	core::Real const & ANGLE_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::ANGLE_DELTA;
+	core::Real const & PROB_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::PROB_DELTA;
+
+	bool equal( true );
+
+	if( packed_rotno_ != other.packed_rotno_ ) {
+		TR.Debug << "Comparision error, packed_rotno - " << packed_rotno_ << " vs. " << other.packed_rotno_ << std::endl;
+		equal = false;
+	}
+	if( nrchi_bin_ != other.nrchi_bin_ ) {
+		TR.Debug << "Comparision error, nrchi_bin - " << nrchi_bin_ << " vs. " << other.nrchi_bin_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( nrchi_mean_, other.nrchi_mean_, ANGLE_DELTA ) ){
+		TR.Debug << "Comparision error, nrchi_mean - " << nrchi_mean_ << " vs. " << other.nrchi_mean_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( nrchi_sd_, other.nrchi_sd_, ANGLE_DELTA ) ){
+		TR.Debug << "Comparision error, nrchi_sd - " << nrchi_sd_ << " vs. " << other.nrchi_sd_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( prob_, other.prob_, PROB_DELTA ) ){
+		TR.Debug << "Comparision error, prob - " << prob_ << " vs. " << other.prob_ << std::endl;
+		equal = false;
+	}
+
+	return equal;
+}
+
+template < class P >
+bool
+BBIndNRChiSample< P >::operator==( BBIndNRChiSample<P> const & other ) const {
+	static thread_local basic::Tracer TR( "core.pack.dunbrack.BBIndNRChiSample" );
+
+	core::Real const & ANGLE_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::ANGLE_DELTA;
+	core::Real const & PROB_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::PROB_DELTA;
+
+	bool equal( true );
+
+	if( ! numeric::equal_by_epsilon( left_, other.left_, ANGLE_DELTA ) ){
+		TR.Debug << "Comparision error, left - " << left_ << " vs. " << other.left_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( median_, other.median_, ANGLE_DELTA ) ){
+		TR.Debug << "Comparision error, median - " << median_ << " vs. " << other.median_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( right_, other.right_, ANGLE_DELTA ) ){
+		TR.Debug << "Comparision error, right - " << right_ << " vs. " << other.right_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( prob_, other.prob_, PROB_DELTA ) ){
+		TR.Debug << "Comparision error, prob - " << prob_ << " vs. " << other.prob_ << std::endl;
+		equal = false;
+	}
+
+	return equal;
+}
+
+inline
+bool
+BBDepScoreInterpData::operator==( BBDepScoreInterpData const & other ) const {
+	static thread_local basic::Tracer TR( "core.pack.dunbrack.BBDepScoreInterpData" );
+
+	core::Real const & COEF_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::COEF_DELTA;
+
+	bool equal( true );
+
+	if( ! numeric::equal_by_epsilon( value_, other.value_, COEF_DELTA ) ){
+		TR.Debug << "Comparision error, value - " << value_ << " vs. " << other.value_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( dsecox_, other.dsecox_, COEF_DELTA ) ){
+		TR.Debug << "Comparision error, dsecox - " << dsecox_ << " vs. " << other.dsecox_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( dsecoy_, other.dsecoy_, COEF_DELTA ) ){
+		TR.Debug << "Comparision error, dsecoy - " << dsecoy_ << " vs. " << other.dsecoy_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( dsecoz_, other.dsecoz_, COEF_DELTA ) ){
+		TR.Debug << "Comparision error, dsecoz - " << dsecoz_ << " vs. " << other.dsecoz_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( dsecoxy_, other.dsecoxy_, COEF_DELTA ) ){
+		TR.Debug << "Comparision error, dsecoxy - " << dsecoxy_ << " vs. " << other.dsecoxy_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( dsecoxz_, other.dsecoxz_, COEF_DELTA ) ){
+		TR.Debug << "Comparision error, dsecoxz - " << dsecoxz_ << " vs. " << other.dsecoxz_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( dsecoyz_, other.dsecoyz_, COEF_DELTA ) ){
+		TR.Debug << "Comparision error, dsecoyz - " << dsecoyz_ << " vs. " << other.dsecoyz_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( dsecoxyz_, other.dsecoxyz_, COEF_DELTA ) ){
+		TR.Debug << "Comparision error, dsecoxyz - " << dsecoxyz_ << " vs. " << other.dsecoxyz_ << std::endl;
+		equal = false;
+	}
+
+	return equal;
+}
+
 
 template < Size T >
 SemiRotamericSingleResidueDunbrackLibrary< T >::SemiRotamericSingleResidueDunbrackLibrary(
@@ -702,7 +816,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 	BBDepScoreInterpData const & d111( bbdep_nrc_interpdata_[ packed_rotno ]( phibin_next, psibin_next, nrchi_bin_next ));
 
 	Real interpolated_energy(0.0);
-    
+
     /*std::cout << d000.value_ << "\t" << d001.value_ << "\t" << d010.value_ << "\t" << d011.value_ << "\t" << d100.value_ << "\t" << d101.value_ << "\t" << d110.value_ << "\t" << d111.value_ << std::endl;
     std::cout << d000.dsecoz_ << "\t" << d001.dsecoz_ << "\t" << d010.dsecoz_ << "\t" << d011.dsecoz_ << "\t" << d100.dsecoz_ << "\t" << d101.dsecoz_ << "\t" << d110.dsecoz_ << "\t" << d111.dsecoz_ << std::endl;
     std::cout << d000.dsecoy_ << "\t" << d001.dsecoy_ << "\t" << d010.dsecoy_ << "\t" << d011.dsecoy_ << "\t" << d100.dsecoy_ << "\t" << d101.dsecoy_ << "\t" << d110.dsecoy_ << "\t" << d111.dsecoy_ << std::endl;
@@ -711,7 +825,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
     std::cout << d000.dsecoxz_ << "\t" << d001.dsecoxz_ << "\t" << d010.dsecoxz_ << "\t" << d011.dsecoxz_ << "\t" << d100.dsecoxz_ << "\t" << d101.dsecoxz_ << "\t" << d110.dsecoxz_ << "\t" << d111.dsecoxz_ << std::endl;
     std::cout << d000.dsecoxy_ << "\t" << d001.dsecoxy_ << "\t" << d010.dsecoxy_ << "\t" << d011.dsecoxy_ << "\t" << d100.dsecoxy_ << "\t" << d101.dsecoxy_ << "\t" << d110.dsecoxy_ << "\t" << d111.dsecoxy_ << std::endl;
     std::cout << d000.dsecoxyz_ << "\t" << d001.dsecoxyz_ << "\t" << d010.dsecoxyz_ << "\t" << d011.dsecoxyz_ << "\t" << d100.dsecoxyz_ << "\t" << d101.dsecoxyz_ << "\t" << d110.dsecoxyz_ << "\t" << d111.dsecoxyz_ << std::endl;*/
-    
+
     tricubic_interpolation(
 		d000.value_, d000.dsecox_, d000.dsecoy_, d000.dsecoz_, d000.dsecoxy_, d000.dsecoxz_, d000.dsecoyz_, d000.dsecoxyz_,
 		d001.value_, d001.dsecox_, d001.dsecoy_, d001.dsecoz_, d001.dsecoxy_, d001.dsecoxz_, d001.dsecoyz_, d001.dsecoxyz_,
@@ -2237,6 +2351,166 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_from_binary( utility::io::i
 
 }
 
+/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
+/// Values tested should parallel those used in the read_from_binary() function.
+template < Size T >
+bool
+SemiRotamericSingleResidueDunbrackLibrary< T >::operator ==( SingleResidueRotamerLibrary const & rhs) const {
+	static thread_local basic::Tracer TR( "core.pack.dunbrack.SemiRotamericSingleResidueDunbrackLibrary" );
+
+	// Raw pointer okay, we're just using it to check for conversion
+	SemiRotamericSingleResidueDunbrackLibrary< T > const * ptr( dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< T > const * > ( &rhs ) );
+	if( ptr == 0 ) {
+		TR << "In comparison operator: right-hand side is not a matching SemiRotamericSingleResidueDunbrackLibrary." << std::endl;
+		return false;
+	}
+	SemiRotamericSingleResidueDunbrackLibrary< T > const & other( dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< T > const & > ( rhs ) );
+
+	bool equal( true );
+
+	if( ! parent::operator==( rhs ) ) {
+		//TR.Debug << "In SemiRotamericSingleResidueDunbrackLibrary< T >::operator== : Parent comparsion returns false, stopping equality test." << std::endl;
+		//return false;
+		equal = false;
+	}
+
+	core::Real const & ENERGY_DELTA( grandparent::ENERGY_DELTA );
+	core::Real const & ANGLE_DELTA( grandparent::ANGLE_DELTA );
+
+	// 0. Non-binary-loaded data
+	if( ! numeric::equal_by_epsilon( nrchi_periodicity_, other.nrchi_periodicity_, ANGLE_DELTA ) ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " nrchi_periodicity_ " << nrchi_periodicity_ << " vs. " << other.nrchi_periodicity_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( nrchi_lower_angle_, other.nrchi_lower_angle_, ANGLE_DELTA ) ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " nrchi_lower_angle_ " << nrchi_lower_angle_ << " vs. " << other.nrchi_lower_angle_ << std::endl;
+		equal = false;
+	}
+	if( bbdep_nrchi_nbins_ != other.bbdep_nrchi_nbins_ ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " bbdep_nrchi_nbins_ " << bbdep_nrchi_nbins_ << " vs. " << other.bbdep_nrchi_nbins_ << std::endl;
+		return false; // Major data consistency issues - don't bother with the rest
+	}
+	if( ! numeric::equal_by_epsilon( bbdep_nrchi_binsize_, other.bbdep_nrchi_binsize_, ANGLE_DELTA ) ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " bbdep_nrchi_binsize_ " << bbdep_nrchi_binsize_ << " vs. " << other.bbdep_nrchi_binsize_ << std::endl;
+		equal = false;
+	}
+	if( bbind_nrchi_nbins_ != other.bbind_nrchi_nbins_ ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " bbind_nrchi_nbins_ " << bbind_nrchi_nbins_ << " vs. " << other.bbind_nrchi_nbins_ << std::endl;
+		return false; // Major data consistency issues - don't bother with the rest
+	}
+	if( ! numeric::equal_by_epsilon( bbind_nrchi_binsize_, other.bbind_nrchi_binsize_, ANGLE_DELTA ) ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " bbind_nrchi_binsize_ " << bbind_nrchi_binsize_ << " vs. " << other.bbind_nrchi_binsize_ << std::endl;
+		equal = false;
+	}
+
+
+	// 1. bbind_nrchi_scoring_
+	if( bbind_nrchi_scoring_ != other.bbind_nrchi_scoring_ ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " bbind_nrchi_scoring_ " << bbind_nrchi_scoring_ << " vs. " << other.bbind_nrchi_scoring_ << std::endl;
+		return false; // Major data consistency issues - don't bother with the rest
+	}
+
+	// 2. bbind_nrchi_sampling_
+	if( bbind_nrchi_sampling_ != other.bbind_nrchi_sampling_ ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " bbind_nrchi_sampling_ " << bbind_nrchi_sampling_ << " vs. " << other.bbind_nrchi_sampling_ << std::endl;
+		return false; // Major data consistency issues - don't bother with the rest
+	}
+
+	if( grandparent::n_packed_rots() != other.n_packed_rots() ) {
+		return false;
+	}
+
+	if ( ! bbind_nrchi_scoring_ ) {
+		// 3a. bbdep_non_rotameric_chi_scores_
+		assert( bbdep_nrchi_nbins_ == other.bbdep_nrchi_nbins_ ); // Assumed the same?
+		for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
+			for ( Size jj = 1; jj <= bbdep_nrchi_nbins_; ++jj ) {
+				for ( Size kk = 1; kk <= parent::N_PHIPSI_BINS; ++kk ) {
+					for ( Size ll = 1; ll <= parent::N_PHIPSI_BINS; ++ll ) {
+						if( !( bbdep_nrc_interpdata_[ ii ]( ll, kk, jj ) == other.bbdep_nrc_interpdata_[ ii ]( ll, kk, jj ) ) ) {
+							TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+									<< " bbdep_nrc_interpdata:   " << ii << " " << ll << " " << kk << " " << jj << std::endl;
+							equal = false;
+						}
+					}
+				}
+			}
+		}
+	} else {
+		// 3b. bbind_non_rotameric_chi_scores_
+		for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
+			for ( Size jj = 1; jj <= bbind_nrchi_nbins_; ++jj ) {
+				if( ! numeric::equal_by_epsilon( bbind_non_rotameric_chi_scores_( jj, ii ), other.bbind_non_rotameric_chi_scores_( jj, ii ), ENERGY_DELTA ) ) {
+						TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+								<< " bbind_non_rotameric_chi_scores: " << ii << " " << jj << " - "
+								<< bbind_non_rotameric_chi_scores_( jj, ii ) << " vs. " << other.bbind_non_rotameric_chi_scores_( jj, ii ) << std::endl;
+						equal = false;
+				}
+			}
+		}
+	}
+
+	/// 4.n_nrchi_sample_bins_
+	if( n_nrchi_sample_bins_ != other.n_nrchi_sample_bins_ ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+				<< " n_nrchi_sample_bins_ " << n_nrchi_sample_bins_ << " vs. " << other.n_nrchi_sample_bins_ << std::endl;
+		return false; // Major data consistency issues - don't bother with the rest
+	}
+
+	// 5. bbdep_rotamers_to_sample_, bbdep_rotsample_sorted_order_
+	if ( ! bbind_nrchi_sampling_ ) {
+		Size count_iijj( 1 ); // 3d array sorted by frequency instead of 4d array divided first by rotameric rotno.
+		for ( Size ii = 1; ii <= n_nrchi_sample_bins_; ++ii ) {
+			for ( Size jj = 1; jj <= grandparent::n_packed_rots(); ++jj ) {
+				for ( Size kk = 1; kk <= parent::N_PHIPSI_BINS; ++kk ) {
+					for ( Size ll = 1; ll <= parent::N_PHIPSI_BINS; ++ll ) {
+						if( !( bbdep_rotamers_to_sample_( ll, kk, count_iijj ) == other.bbdep_rotamers_to_sample_( ll, kk, count_iijj ) ) ) {
+							TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+									<< " bbdep_rotamers_to_sample: " << ii << " " << jj << " " << kk << " " << ll << std::endl;
+							equal = false;
+						}
+						if( bbdep_rotsample_sorted_order_( ll, kk, jj, ii ) != other.bbdep_rotsample_sorted_order_( ll, kk, jj, ii ) ) {
+							TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+									<< " bbdep_rotsample_sorted_order " << ii << " " << jj << " " << kk << " " << ll << " - "
+									<< bbdep_rotsample_sorted_order_( ll, kk, jj, ii ) << " vs. " << other.bbdep_rotsample_sorted_order_( ll, kk, jj, ii ) << std::endl;
+							equal = false;
+						}
+					}
+				}
+				++count_iijj;
+			}
+		}
+	}
+
+	// 6. bbind_rotamers_to_sample_, bbind_rotamers_sorted_by_probability_
+	for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
+		for ( Size jj = 1; jj <= n_nrchi_sample_bins_; ++jj ) {
+			if( !( bbind_rotamers_to_sample_( jj, ii ) == other.bbind_rotamers_to_sample_( jj, ii ) ) ) {
+				TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+						<< " bbind_rotamers_to_sample: " << ii << " " << jj << std::endl;
+				equal = false;
+			}
+			if ( bbind_nrchi_sampling_ ) {
+				if( bbind_rotamers_sorted_by_probability_( jj, ii ) != other.bbind_rotamers_sorted_by_probability_( jj, ii ) ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
+							<< " bbind_rotamers_sorted_by_probability: " << ii << " " << jj << " - "
+							<< bbind_rotamers_sorted_by_probability_( jj, ii ) << " vs. " << bbind_rotamers_sorted_by_probability_( jj, ii ) << std::endl;
+					equal = false;
+				}
+			}
+		}
+	}
+
+	return equal;
+}
 
 template < Size T >
 void

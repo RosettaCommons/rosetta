@@ -15,12 +15,26 @@
 // Unit Headers
 #include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 
+#include <basic/Tracer.hh>
+
 namespace core {
 namespace pack {
 namespace dunbrack {
 
+static thread_local basic::Tracer TR( "core.pack.dunbrack.SingleResidueRotamerLibrary" );
+
 SingleResidueRotamerLibrary::~SingleResidueRotamerLibrary()
 {}
+
+/// @brief Equality test for equivalence.
+/// Two SingleResidueRotamerLibraries test equal if and only if they represent the exact same behavior
+bool
+SingleResidueRotamerLibrary::operator ==( SingleResidueRotamerLibrary const & ) const {
+	// If you're comparing arbitrary SingleResidueRotamerLibrary, chances are they aren't equal.
+	// (Override your subclass if this doesn't work for you.)
+	TR.Warning << "[ WARNING ] Program is trying to compare two arbitrary SingleResidueRotamerLibraries - this is probably a bug." << std::endl;
+	return false;
+}
 
 } // namespace dunbrack
 } // namespace pack

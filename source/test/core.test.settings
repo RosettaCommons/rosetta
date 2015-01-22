@@ -125,6 +125,7 @@ sources = {
 		"annealer/FASTERAnnealer",
 		"dunbrack/DunbrackEnergy",
 		"dunbrack/RotamerConstraintDun2002",
+		"dunbrack/ValidateDunbrackBinaries",
 		"interaction_graph/InteractionGraphFactory",
 		"interaction_graph/FASTERInteractionGraph",
 		"interaction_graph/HPatchInteractionGraph",

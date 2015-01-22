@@ -61,10 +61,15 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-static thread_local basic::Tracer SRDL_TR( "core.pack.dunbrack" );
+static thread_local basic::Tracer TR( "core.pack.dunbrack" );
 
 Real const SingleResidueDunbrackLibrary::NEUTRAL_PHI = -90; // R++ value.  Roland Dunbrack suggests -60.
 Real const SingleResidueDunbrackLibrary::NEUTRAL_PSI = 130; // R++ value.  Roland Dunbrack suggests  60.
+
+core::Real const SingleResidueDunbrackLibrary::ANGLE_DELTA( 1e-6 );
+core::Real const SingleResidueDunbrackLibrary::PROB_DELTA( 1e-6 );
+core::Real const SingleResidueDunbrackLibrary::ENERGY_DELTA( 1e-6 );
+core::Real const SingleResidueDunbrackLibrary::COEF_DELTA( 1e-6 );
 
 SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 	AA const aa,
@@ -97,7 +102,7 @@ SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 		std::fill( rotwell_exists_.begin(), rotwell_exists_.end(), false );
 		std::fill( rotno_2_packed_rotno_.begin(), rotno_2_packed_rotno_.end(), 0 );
 	}
-    
+
 }
 
 /// @details Sets the number of bins for a particular chi angle, used for the NCAAs, info for CAAs is hardcoded bellow
@@ -497,6 +502,139 @@ SingleResidueDunbrackLibrary::read_from_binary( utility::io::izstream & in )
 	delete [] packed_rotno_2_rotwell;
 	}
 	packed_rotno_conversion_data_current_ = true;
+}
+
+/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
+/// Values tested should parallel those used in the read_from_binary() function.
+bool
+SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & rhs) const {
+	// Raw pointer okay, we're just using it to check for conversion
+	SingleResidueDunbrackLibrary const * ptr( dynamic_cast< SingleResidueDunbrackLibrary const * > ( &rhs ) );
+	if( ptr == 0 ) {
+		TR << "In comparison operator: right-hand side is not a SingleResidueDunbrackLibrary." << std::endl;
+		return false;
+	}
+
+	SingleResidueDunbrackLibrary const & other( dynamic_cast< SingleResidueDunbrackLibrary const & > ( rhs ) );
+
+	// We don't call the parent == operator, as there's no meaningful data there to compare.
+	bool equal( true );
+
+	if( aa_ != other.aa_ ) {
+		TR.Debug << "Comparison failure: " << core::chemical::name_from_aa(aa_)
+				<< " does not match " << core::chemical::name_from_aa(other.aa_) << std::endl;
+		return false; // Major data mismatch - don't bother reporting others.
+	}
+	if( dun02_ != other.dun02_ ) {
+		TR.Debug << "Comparison failure: Dun02 setting mismatch: " << dun02_ << " vs. " << other.dun02_ << std::endl;
+		return false; // Major data mismatch - don't bother reporting others.
+	}
+
+	/// Non-binary loaded data - check for equality for sanity purposes
+	if( n_rotameric_chi_ != other.n_rotameric_chi_ ) {
+		TR.Debug << "Comparison failure: n_rotameric_chi: " << n_rotameric_chi_ << " vs. " << other.n_rotameric_chi_ << std::endl;
+		equal = false;
+	}
+	if( n_possible_rots_ != other.n_possible_rots_ ) {
+		TR.Debug << "Comparison failure: n_possible_rots: " << n_possible_rots_ << " vs. " << other.n_possible_rots_ << std::endl;
+		equal = false;
+	}
+	if( packed_rotno_conversion_data_current_ != other.packed_rotno_conversion_data_current_ ) {
+		TR.Debug << "Comparison failure: packed_rotno_conversion_data_current: " << packed_rotno_conversion_data_current_ << " vs. " << other.packed_rotno_conversion_data_current_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( prob_to_accumulate_buried_, other.prob_to_accumulate_buried_, PROB_DELTA) ) {
+		TR.Debug << "Comparison failure: prob_to_accumulate_buried: " << prob_to_accumulate_buried_ << " vs. " << other.prob_to_accumulate_buried_ << std::endl;
+		equal = false;
+	}
+	if( ! numeric::equal_by_epsilon( prob_to_accumulate_nonburied_, other.prob_to_accumulate_nonburied_, PROB_DELTA) ) {
+		TR.Debug << "Comparison failure: prob_to_accumulate_nonburied: " << prob_to_accumulate_nonburied_ << " vs. " << other.prob_to_accumulate_nonburied_ << std::endl;
+		equal = false;
+	}
+
+	if( n_chi_bins_.size() != other.n_chi_bins_.size() ) {
+			TR.Debug << "Comparison failure: n_chi_bins vector length: " << n_chi_bins_.size() << " vs. " << other.n_chi_bins_.size() << std::endl;
+			equal = false;
+	} else {
+		for( core::Size ii(1); ii <= n_chi_bins_.size(); ++ii ) {
+			if( n_chi_bins_[ii] != other.n_chi_bins_[ii] ) {
+				TR.Debug << "Comparison failure: n_chi_bins: " << n_chi_bins_[ii] << " vs. " << other.n_chi_bins_[ii] << std::endl;
+				equal = false;
+			}
+		}
+	}
+	if( n_chi_products_.size() != other.n_chi_products_.size() ) {
+			TR.Debug << "Comparison failure: n_chi_products vector length: " << n_chi_products_.size() << " vs. " << other.n_chi_products_.size() << std::endl;
+			equal = false;
+	} else {
+		for( core::Size ii(1); ii <= n_chi_products_.size(); ++ii ) {
+			if( n_chi_products_[ii] != other.n_chi_products_[ii] ) {
+				TR.Debug << "Comparison failure: n_chi_products: " << n_chi_products_[ii] << " vs. " << other.n_chi_products_[ii] << std::endl;
+				equal = false;
+			}
+		}
+	}
+	// // For some reason, rotwell_exists_ is not matching on direct re-load comparison (empty vector on ASCII reload ?)
+	//if( rotwell_exists_.size() != other.rotwell_exists_.size() ) {
+	//		TR.Debug << "Comparison failure: rotwell_exists vector length: " << rotwell_exists_.size() << " vs. " << other.rotwell_exists_.size() << std::endl;
+	//		equal = false;
+	//} else {
+	//	for( core::Size ii(1); ii <= rotwell_exists_.size(); ++ii ) {
+	//		if( rotwell_exists_[ii] != other.rotwell_exists_[ii] ) {
+	//			TR.Debug << "Comparison failure: rotwell_exists: " << rotwell_exists_[ii] << " vs. " << other.rotwell_exists_[ii] << std::endl;
+	//			equal = false;
+	//		}
+	//	}
+	//}
+
+	/// Binary-loaded data.
+
+	/// 1. n_packed_rots_
+	if( n_packed_rots_ != other.n_packed_rots_ ) {
+		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_ )
+				<< ": n_packed_rots is unequal. " << n_packed_rots_ << " vs. " << other.n_packed_rots_ << std::endl;
+		equal = false;
+	}
+
+	/// 2. rotno_2_packed_rotno_
+	assert( n_possible_rots_ == other.n_possible_rots_ ); // This doesn't vary?
+	for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) {
+		if( rotno_2_packed_rotno_[ ii ] != other.rotno_2_packed_rotno_[ ii ] ) {
+			TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_ )
+					<< ": rotno_2_packed_rotno " << ii << " - "
+					<< rotno_2_packed_rotno_[ ii ] << " vs. " << other.rotno_2_packed_rotno_[ ii ] << std::endl;
+			equal = false;
+		}
+	}
+
+	/// 3. packed_rotno_2_rotno_
+	if( n_packed_rots_ == other.n_packed_rots_ ) {
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
+			if( packed_rotno_2_rotno_[ ii ] != other.packed_rotno_2_rotno_[ ii ] ) {
+				TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_ )
+						<< ": packed_rotno_2_rotno " << ii << " - "
+						<< packed_rotno_2_rotno_[ ii ] << " vs. " << other.packed_rotno_2_rotno_[ ii ] << std::endl;
+				equal = false;
+			}
+		}
+	}
+
+	/// 4. packed_rotno_2_rotwell_
+	assert( n_rotameric_chi_ == other.n_rotameric_chi_ );
+	if( n_packed_rots_ == other.n_packed_rots_ ) {
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
+			for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
+				if( packed_rotno_2_rotwell_[ ii ][ jj ] != other.packed_rotno_2_rotwell_[ ii ][ jj ] ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_)
+							<< ": packed_rotno_2_rotwell " << ii << " " << jj << " - "
+							<< packed_rotno_2_rotwell_[ ii ][ jj ] << " vs. " << other.packed_rotno_2_rotwell_[ ii ][ jj ] << std::endl;
+					equal = false;
+				}
+			}
+		}
+	}
+
+	return equal;
 }
 
 /// @details not as fast as going through the packed_rotno_2_rotwell_

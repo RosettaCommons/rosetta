@@ -50,6 +50,12 @@ public:
 	/// A good "psi" value to use for C-term residues
 	static Real const NEUTRAL_PSI;
 
+	/// @brief Precision measures for comparsions.
+	static Real const ANGLE_DELTA;
+	static Real const PROB_DELTA;
+	static Real const ENERGY_DELTA;
+	static Real const COEF_DELTA; // intepolation coefficients
+
 public:
 
 	/// c-tor
@@ -318,6 +324,12 @@ public:
 		chemical::AA const aa,
 		RotVector & rot
 	);
+
+	/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
+	/// Values tested should parallel those used in the read_from_binary() function.
+	virtual
+	bool
+	operator ==( SingleResidueRotamerLibrary const & ) const;
 
 private:
 

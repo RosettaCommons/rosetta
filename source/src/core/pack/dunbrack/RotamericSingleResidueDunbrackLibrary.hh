@@ -183,6 +183,12 @@ public:
 	virtual void write_to_binary( utility::io::ozstream & out ) const;
 	virtual void read_from_binary( utility::io::izstream & in );
 
+	/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
+	/// Values tested should parallel those used in the read_from_binary() function.
+	virtual
+	bool
+	operator ==( SingleResidueRotamerLibrary const & ) const;
+
 	virtual
 	void
 	get_rotamer_from_chi(

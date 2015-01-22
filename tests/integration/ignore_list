@@ -18,7 +18,8 @@ protocols.jd2.JobDistributor: [0-9]+ jobs considered, [0-9]+ jobs attempted in [
 core.init: 'RNG device' seed mode, using
 TIMING
 core.init.random: RandomGenerator:init: Normal mode, seed=
-version
+Rosetta version
+svn_version
 TIME_STAMP
 Warning: Unable to locate database file .*Dunbrack[0-9]+.lib.bin
 core.pack.dunbrack: Opening file .* for output.

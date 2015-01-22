@@ -147,6 +147,9 @@ sources = {
 		"AnchoredPDBCreator", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchoredPDBCreator.dox, test/integration/tests/AnchoredPDBCreator/ */
 		"AnchorFinder", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchorFinder.dox, test/integration/tests/AnchorFinder/ */
 	],
+	"public/internal": [
+		"validate_database",
+	],
 	"public/ligand_docking": [
 		"extract_atomtree_diffs",
 		"ligand_dock",

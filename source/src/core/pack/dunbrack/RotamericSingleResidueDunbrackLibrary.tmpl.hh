@@ -55,6 +55,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/util.hh>
 
 // Boost Headers
 #include <boost/cstdint.hpp>
@@ -402,6 +403,7 @@
 #include <boost/function.hpp>
 #include <boost/pool/detail/mutex.hpp>
 #include <boost/pool/poolfwd.hpp>
+#include <basic/Tracer.hh>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 
@@ -616,7 +618,7 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 	for ( Size ii = 1; ii <= T; ++ii ) {
 		chidevpensum += chidevpen[ ii ];
 	}
-    
+
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 		scratch.fa_dun_tot() = scratch.negln_rotprob() + chidevpensum;
 		scratch.fa_dun_rot() = scratch.negln_rotprob();
@@ -655,7 +657,7 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 		Real const gprime = 4*chisd[ ii ];
 		Real const invgg  = 1 / (g*g);
 
-        
+
         /// also need to add in derivatives for log(stdv) height normalization
 		/// dE/dphi = (above) + 1/stdv * dstdv/dphi
 		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX  ] +=
@@ -1080,7 +1082,7 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 			phi_alpha, psi_alpha, PHIPSI_BINRANGE, true /*treat_as_angles*/,
 			scratch.chimean()[ii], scratch.dchimean_dphi()[ii], scratch.dchimean_dpsi()[ii] );
 		interpolated_rotamer.chi_mean( ii ) = scratch.chimean()[ii];
-        
+
         interpolate_bilinear_by_value(
 			static_cast< Real >  ( rot00.chi_sd(ii)),
 			static_cast< Real >  ( rot10.chi_sd(ii)),
@@ -1089,7 +1091,7 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 			phi_alpha, psi_alpha, PHIPSI_BINRANGE, false /*treat_as_angles*/,
 			scratch.chisd()[ii], scratch.dchisd_dphi()[ii], scratch.dchisd_dpsi()[ii] );
 		interpolated_rotamer.chi_sd( ii ) = scratch.chisd()[ii];
-        
+
 	}
 
 }
@@ -1794,6 +1796,114 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_binary( utility::io::izstr
 	/// Entropy setup once reading is finished
 	if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] )
 		setup_entropy_correction();
+}
+
+/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
+/// Values tested should parallel those used in the read_from_binary() function.
+template < Size T >
+bool
+RotamericSingleResidueDunbrackLibrary< T >::operator ==( SingleResidueRotamerLibrary const & rhs) const {
+	static thread_local basic::Tracer TR( "core.pack.dunbrack.RotamericSingleResidueDunbrackLibrary" );
+
+	// Raw pointer okay, we're just using it to check for conversion
+	RotamericSingleResidueDunbrackLibrary< T > const * ptr( dynamic_cast< RotamericSingleResidueDunbrackLibrary< T > const * > ( &rhs ) );
+	if( ptr == 0 ) {
+		TR << "In comparison operator: right-hand side is not a matching RotamericSingleResidueDunbrackLibrary." << std::endl;
+		return false;
+	}
+	RotamericSingleResidueDunbrackLibrary< T > const & other( dynamic_cast< RotamericSingleResidueDunbrackLibrary< T > const & > ( rhs ) );
+
+	bool equal( true );
+
+	if( ! parent::operator==( rhs ) ) {
+		//TR.Debug << "In RotamericSingleResidueDunbrackLibrary< T >::operator== : Parent comparsion returns false, stopping equality test." << std::endl;
+		//return false;
+		equal = false;
+	}
+
+
+	/// 1. rotamers_
+	if(  parent::n_packed_rots() != other.n_packed_rots() ) {
+		return false;
+	}
+	assert( parent::n_packed_rots() == other.n_packed_rots() );
+	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
+		for ( Size jj = 1; jj <= N_PHIPSI_BINS; ++jj ) {
+			for ( Size kk = 1; kk <= N_PHIPSI_BINS; ++kk ) {
+				PackedDunbrackRotamer< T > const & this_rot( rotamers_( kk, jj, ii ) );
+				PackedDunbrackRotamer< T > const & other_rot( other.rotamers_( kk, jj, ii ) );
+				for ( Size ll = 1; ll <= T; ++ll ) {
+					if( ! numeric::equal_by_epsilon( this_rot.chi_mean( ll ), other_rot.chi_mean( ll ), ANGLE_DELTA ) ) {
+						TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+								<< " rotamers chi mean " << kk << " " << jj << " " << ii << " " << ll << " - "
+								<< this_rot.chi_mean( ll ) << " vs. " <<  other_rot.chi_mean( ll ) << std::endl;
+						equal = false;
+					}
+					if( ! numeric::equal_by_epsilon( this_rot.chi_sd( ll ), other_rot.chi_sd( ll ), ANGLE_DELTA ) ) {
+						TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+								<< " rotamers chi sd " << kk << " " << jj << " " << ii << " " << ll << " - "
+								<< this_rot.chi_sd( ll ) << " vs. " <<  other_rot.chi_sd( ll ) << std::endl;
+						equal = false;
+					}
+				}
+				if( ! numeric::equal_by_epsilon( this_rot.rotamer_probability(), other_rot.rotamer_probability(), PROB_DELTA ) ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+							<< " rotamer probability " << kk << " " << jj << " " << ii << " - "
+							<< this_rot.rotamer_probability() << " vs. " <<  other_rot.rotamer_probability() << std::endl;
+					equal = false;
+				}
+				if( ! numeric::equal_by_epsilon( this_rot.rotE(), other_rot.rotE(), ENERGY_DELTA ) ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+							<< " rotE " << kk << " " << jj << " " << ii << " - "
+							<< this_rot.rotE() << " vs. " <<  other_rot.rotE() << std::endl;
+					equal = false;
+				}
+				if( ! numeric::equal_by_epsilon( this_rot.rotE_dsecophi(), other_rot.rotE_dsecophi(), ENERGY_DELTA ) ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+							<< " rotE_dsecophi() " << kk << " " << jj << " " << ii << " - "
+							<< this_rot.rotE_dsecophi() << " vs. " <<  other_rot.rotE_dsecophi() << std::endl;
+					equal = false;
+				}
+				if( ! numeric::equal_by_epsilon( this_rot.rotE_dsecopsi(), other_rot.rotE_dsecopsi(), ENERGY_DELTA ) ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+							<< " rotE_dsecopsi() " << kk << " " << jj << " " << ii << " - "
+							<< this_rot.rotE_dsecopsi() << " vs. " <<  other_rot.rotE_dsecopsi() << std::endl;
+					equal = false;
+				}
+				if( ! numeric::equal_by_epsilon( this_rot.rotE_dsecophipsi(), other_rot.rotE_dsecophipsi(), ENERGY_DELTA ) ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+							<< " rotE_dsecophipsi() " << kk << " " << jj << " " << ii << " - "
+							<< this_rot.rotE_dsecophipsi() << " vs. " <<  other_rot.rotE_dsecophipsi() << std::endl;
+					equal = false;
+				}
+				if( this_rot.packed_rotno() != other_rot.packed_rotno() ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+							<< " packed rotno " << kk << " " << jj << " " << ii << " - "
+							<< this_rot.packed_rotno() << " vs. " <<  other_rot.packed_rotno() << std::endl;
+					equal = false;
+				}
+			}
+		}
+	}
+
+	/// 2. packed_rotno_to_sorted_rotno_
+	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
+		for ( Size jj = 1; jj <= N_PHIPSI_BINS; ++jj ) {
+			for ( Size kk = 1; kk <= N_PHIPSI_BINS; ++kk ) {
+				if( packed_rotno_2_sorted_rotno_( kk, jj, ii ) != packed_rotno_2_sorted_rotno_( kk, jj, ii ) ) {
+					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( aa() )
+							<< " packed_rotno_2_sorted_rotno " << kk << " " << jj << " " << ii << " - "
+							<< packed_rotno_2_sorted_rotno_( kk, jj, ii ) << " vs. " << other.packed_rotno_2_sorted_rotno_( kk, jj, ii ) << std::endl;
+					equal = false;
+				}
+			}
+		}
+	}
+
+	/// Other variables ( ShanonEntropy_, S_dsecophi_, S_dsecopsi_, S_dsecophipsi_) are set up from the loaded data
+	/// automatically - they should be equivalent if all other data is equivalent.
+
+	return equal;
 }
 
 // Entropy

@@ -2109,6 +2109,63 @@ RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_t
 	return ( peptoid_rotlibs_.find( aa_name3 )->second);
 }
 
+/// @brief Reload the Dunbrack Rotamer libraries from ASCII, and make sure that they match the ones loaded from binary.
+/// NOTE WELL: This is *not* a const function, as reloading from ASCII modifies internals.
+bool
+RotamerLibrary::validate_dunbrack_binary() {
+	std::string const binary_name( get_binary_name() ); // Handles Dun10/Dun02 decision internally
+	// If the existing rotamer library wasn't loaded from binary, we don't need to validate it.
+	if( ! decide_read_from_binary() ) {
+		TR.Warning << "Existing Dunbrack binary file '" << binary_name << "' either doesn't exist, or is known to be invalid. Skipping reloading check." << std::endl;
+		return true; // Because any reads against it will get the valid ASCII-parsed version
+	}
+
+	// We need to offload the existing rotamer libraries, and then reload them from ASCII
+	// Entries in libraries_ and aa_libraries_ will be over-written on reload
+	// Need to make a copy of aa_libraries , as well as remove the entries from libraries_ops_
+	utility::vector1 < SingleResidueRotamerLibraryCOP > aa_libraries_copy( aa_libraries_ );
+	for( core::Size aa( 1 ); aa <= core::chemical::num_canonical_aas; ++aa ) {
+		utility::vector1 < SingleResidueRotamerLibraryCOP >::iterator item( std::find( libraries_ops_.begin(), libraries_ops_.end(), aa_libraries_[ aa ] ) );
+		if( item == libraries_ops_.end() ) {
+			TR << "Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( aa ) ) << " not found." << std::endl;
+		} else {
+			TR << "Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( aa ) ) << " found and erased." << std::endl;
+			libraries_ops_.erase( item );
+		}
+	}
+
+	TR << "Comparing ASCII version of Dunbrack library to binary version at " << binary_name << std::endl;
+
+	// Now, we reload the libraries from ASCII specifically
+	create_fa_dunbrack_libraries_from_ASCII(); // Handles Dun10/Dun02 decision internally
+
+	// And compare
+	if( aa_libraries_copy.size() != aa_libraries_.size() ) {
+		TR.Error << "AA Library sizes don't match! *SEVERE* logic error!" << std::endl;
+		return false;
+	}
+	bool valid( true );
+	for( core::Size ii( 1 ); ii <= aa_libraries_copy.size(); ++ii ) {
+		if( aa_libraries_copy[ii] == 0 && aa_libraries_[ii] == 0 ) {
+			// Both null? We're fine.
+			TR << "Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " NULL in both ASCII and binary." << std::endl;
+		} else if ( aa_libraries_copy[ii] == 0 ) {
+			TR.Error << "[ ERROR ] Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " NULL in binary, but present in ASCII." << std::endl;
+			valid = false;
+		} else if ( aa_libraries_[ii] == 0 ) {
+			TR.Error << "[ ERROR ] Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " NULL in ASCII, but present in binary." << std::endl;
+			valid = false;
+		} else if( *(aa_libraries_[ii]) == *(aa_libraries_copy[ii]) ) { // ASCII first (as reference), binary second
+			// Match. Good!
+			TR << "Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " matches in both ASCII and binary." << std::endl;
+		} else {
+			// No match. BAD!
+			TR.Error << "Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " DOES NOT MATCH for ASCII and binary." << std::endl;
+			valid = false;
+		}
+	}
+	return valid;
+}
 
 } // dunbrack
 } // namespace scoring

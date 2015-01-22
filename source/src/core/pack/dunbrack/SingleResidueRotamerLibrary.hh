@@ -118,6 +118,12 @@ public:
   void
   write_to_file( utility::io::ozstream &out ) const = 0;
 
+	/// @brief Equality test for equivalence.
+	/// Two SingleResidueRotamerLibraries test equal if and only if they represent the exact same behavior
+	virtual
+	bool
+	operator ==( SingleResidueRotamerLibrary const & ) const;
+
 };
 
 } // namespace dunbrack

@@ -138,10 +138,7 @@ class Tester:
 
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
         path = "cd " + self.testpath + " && "
-        mute, unmute  = ' ', ' '
-        if Options.mute:   mute   = ' -mute '   + ' '.join(Options.mute)
-        if Options.unmute: unmute = ' -unmute ' + ' '.join(Options.unmute)
-        exe = "./" + lib + ' ' + Options.one + ' --database ' + Options.database + mute + unmute
+        exe = " ".join(["./" + lib, Options.one] + self.genericTestFlags())
         #if self.db_path: exe += " " + self.db_path
         print "Command line:: %s%s" % (path, exe)
 
@@ -395,7 +392,7 @@ class Tester:
         """Generate generic command line flags (database/tracer/etc...) for tests."""
 
         flags = ["--database", Options.database]
-        
+
         if Options.mute:
             flags.extend(["-mute"] +  Options.mute)
 
@@ -404,7 +401,7 @@ class Tester:
 
         if Options.levels:
             flags.extend(["-out:levels"] + Options.levels)
-        
+
         return flags
 
 def main(args):

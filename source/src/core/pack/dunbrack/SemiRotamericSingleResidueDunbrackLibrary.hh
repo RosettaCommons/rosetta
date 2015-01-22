@@ -58,6 +58,9 @@ public:
 		prob_( 0.0 )
 	{}
 
+	bool
+	operator==( BBDepNRChiSample<P> const & other ) const;
+
 	/// The packed_rotno_ information is sufficient to determine the
 	/// mean and standard deviation of the rotameric chis; it is used
 	/// as an index into another table containing this data.
@@ -78,6 +81,9 @@ public:
 		right_(  P( 0.0 ) ),
 		prob_(   P( 0.0 ) )
 	{}
+
+	bool
+	operator==( BBIndNRChiSample<P> const & other ) const;
 
 	P left_;
 	P median_;
@@ -132,6 +138,9 @@ public:
 		dsecoyz_(0.0),
 		dsecoxyz_(0.0)
 	{}
+
+	bool
+	operator==( BBDepScoreInterpData const & other ) const;
 
 	DunbrackReal value_;      ///< f(x,y,z)
 	DunbrackReal dsecox_;     ///< second order derivative for x -- d**2/dx**2 f(x,y,z)
@@ -357,6 +366,12 @@ public:
 	);
 
 	virtual void read_from_binary( utility::io::izstream & in );
+
+	/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
+	/// Values tested should parallel those used in the read_from_binary() function.
+	virtual
+	bool
+	operator ==( SingleResidueRotamerLibrary const & ) const;
 
 	virtual
 	void

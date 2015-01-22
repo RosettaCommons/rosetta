@@ -182,10 +182,19 @@ public:
 	SingleResidueRotamerLibraryCOP
 	get_peptoid_rotamer_library( chemical::ResidueType const & rsd_type ) const;
 
+	/// @brief Reload the Dunbrack Rotamer libraries from ASCII, and make sure that they match the ones loaded from binary.
+	/// Return true if the binary file is valid, false if the binary is invalid.
+	/// NOTE WELL: This is *not* a const function, as reloading from ASCII modifies internals.
+	bool
+	validate_dunbrack_binary();
 
 private:
 
+public: // public such that people can see if we're reading from the binary or ASCII, for debugging purposes
+
 	bool decide_read_from_binary() const;
+
+private:
 
 	bool decide_read_from_binary_02() const;
 	bool decide_read_from_binary_10() const;
@@ -202,7 +211,11 @@ private:
 
 	std::string get_library_name_02() const;
 
+public: // public such that people can see which binary we're reading from.
+
 	std::string get_binary_name() const;
+
+private:
 
 	std::string get_binary_name_02() const;
 	std::string get_binary_name_10() const;
