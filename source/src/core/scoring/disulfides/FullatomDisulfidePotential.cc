@@ -264,7 +264,7 @@ FullatomDisulfidePotential::score_this_disulfide_old(
 	//std::cout << "DUMP_SS_DIH " << dihed << " " << sgsg_dihedral_func_->func(dihed*degrees_to_radians) << std::endl;
 
 	//std::cout << "DUMP_ANG " << csang_1 << " " << cb_angle_func_->func(csang_1*degrees_to_radians) << std::endl;
-	//	std::cout << "DUMP_ANG " << csang_2 << " " << cb_angle_func_->func(csang_2*degrees_to_radians) << std::endl;
+		//std::cout << "DUMP_ANG " << csang_2 << " " << cb_angle_func_->func(csang_2*degrees_to_radians) << std::endl;
 
 	//std::cout << "DUMP_DIST " << ssdist << " " << sg_dist_func_->func(ssdist) << std::endl;
 
@@ -673,14 +673,6 @@ FullatomDisulfidePotential::get_disulfide_params(
 //------------------------------------------------------------------------------
 
 CBSG_Dihedral_Func::CBSG_Dihedral_Func() :
-	//cbsg_pos_peak_( 86.0 ),
-	//cbsg_pos_sd_( 72.0 ),
-	//cbsg_neg_peak_( -74.0 ),
-	//cbsg_neg_sd_( 39.0 )
-
-	//csf_cbang1a_(0.1,0.9,10,0.0),
-	//csf_cbang1b_(0.1,0.9,10,0.0)
-
 	csf_cbang1_(0.1,0.9,10,0.0),
 	csf_cbang2_(1.35,1.1,-5,0.0),
 	csf_cbang3_(-1.25,1.5,-5,0.0)
@@ -695,31 +687,12 @@ CBSG_Dihedral_Func::~CBSG_Dihedral_Func() {}
 Real
 CBSG_Dihedral_Func::func( Real const ang ) const
 {
-// 	using namespace numeric::constants::d;
-
-// 	Real ang_deg = ang * radians_to_degrees;
-// 	Real const ang_peak  = ang_deg > 0.0 ? cbsg_pos_peak_ : cbsg_neg_peak_;
-// 	Real const ang_sd    = ang_deg > 0.0 ? cbsg_pos_sd_   : cbsg_neg_sd_;
-// 	Real const delta_ang = ang_deg - ang_peak;
-// 	Real const ang_frac  = delta_ang / ang_sd;
-// 	return -std::exp(-(ang_frac*ang_frac));
-	//return csf_cbang1a_.func(ang) + csf_cbang1b_.func(ang);
-
 	return csf_cbang1_.func(ang) + (csf_cbang2_.func(ang))/10 + (csf_cbang3_.func(ang))/10 + 0.095;
 }
 
 /// @param ang[in] Dihedral angle in radians
 Real
 CBSG_Dihedral_Func::dfunc( Real const ang ) const {
-// 	using namespace numeric::constants::d;
-
-// 	Real ang_deg = ang * radians_to_degrees;
-// 	Real const ang_peak  = ang_deg > 0.0 ? cbsg_pos_peak_ : cbsg_neg_peak_;
-// 	Real const ang_sd    = ang_deg > 0.0 ? cbsg_pos_sd_   : cbsg_neg_sd_;
-// 	Real const delta_ang = ang_deg - ang_peak;
-// 	Real const ang_frac  = delta_ang / ang_sd;
-
-// 	return radians_to_degrees * std::exp(-(ang_frac*ang_frac)) * ( 2*ang_deg - 2*ang_peak ) / ( ang_sd * ang_sd );
 	return  csf_cbang1_.dfunc(ang) + (csf_cbang2_.dfunc(ang))/10 + (csf_cbang3_.dfunc(ang))/10;
 }
 
@@ -730,10 +703,6 @@ CBSG_Dihedral_Func::dfunc( Real const ang ) const {
 // negCBSGSGCB MEAN: -1.517302   SDEV: 0.203992
 
 SGSG_Dihedral_Func::SGSG_Dihedral_Func() :
-	//csf_cbang1a_( 1.641426, 0.25, -2, 0.0),
-	//csf_cbang2a_( 1.641426, 0.7, -40, 0.0),
-	//csf_cbang1b_(-1.517302, 0.25, -2, 0.0),
-	//csf_cbang2b_(-1.517302, 0.7, -40, 0.0)
 csf_cbang1a_( 1.641426, 0.25, -2.3, 0.0),
 csf_cbang2a_( 1.641426, 0.9, -20, 0.0),
 csf_cbang1b_(-1.517302, 0.25, -2.3, 0.0),
@@ -746,18 +715,6 @@ SGSG_Dihedral_Func::~SGSG_Dihedral_Func() {}
 Real
 SGSG_Dihedral_Func::func( Real const ang) const
 {
-// 	using namespace numeric::constants::d;
-
-// 	Real ang_deg = ang * radians_to_degrees;
-// 	Real score(0);
-// 	fa_sgsg_dihedral_scores()->interpolate(ang_deg,score);
-// 	return score;
-
-	//std::cout << "SGSG " << ang << " " << csf_cbang1a_.func(ang) << " " << csf_cbang2a_.func(ang) << " " << csf_cbang1b_.func(ang) << " " << csf_cbang2b_.func(ang) << " " << 2*csf_cbang1a_.func(ang) + csf_cbang2a_.func(ang) + 2*csf_cbang1b_.func(ang) + csf_cbang2b_.func(ang) << std::endl;
-
-	//return 2*csf_cbang1a_.func(ang) + csf_cbang2a_.func(ang) + 2*csf_cbang1b_.func(ang) + csf_cbang2b_.func(ang) + 0.6602761;
-
-	//return 10*csf_cbang1a_.func(ang) + csf_cbang2a_.func(ang) + 10*csf_cbang1b_.func(ang) + csf_cbang2b_.func(ang);
 	return 25*csf_cbang1a_.func(ang) + csf_cbang2a_.func(ang) + 25*csf_cbang1b_.func(ang) + csf_cbang2b_.func(ang) + 4.58;
 }
 
@@ -765,56 +722,14 @@ SGSG_Dihedral_Func::func( Real const ang) const
 Real
 SGSG_Dihedral_Func::dfunc( Real const ang ) const
 {
-// 	using namespace numeric::constants::d;
-
-// 	Real ang_deg = ang * radians_to_degrees;
-// 	Real deriv;
-// 	fa_sgsg_dihedral_scores()->derivative(ang_deg, deriv); // units/degree
-// 	return deriv*radians_to_degrees; // return units/radian
-
-//	return 10*csf_cbang1a_.dfunc(ang) + csf_cbang2a_.dfunc(ang) + 10*csf_cbang1b_.dfunc(ang) + csf_cbang2b_.dfunc(ang);
 	return 25*csf_cbang1a_.dfunc(ang) + csf_cbang2a_.dfunc(ang) + 25*csf_cbang1b_.dfunc(ang) + csf_cbang2b_.dfunc(ang);
 }
-
-/// Access the histogram for this Func (in degrees)
-// numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type
-// SGSG_Dihedral_Func::fa_sgsg_dihedral_scores()
-// {
-// 	using namespace numeric::interpolation;
-// 	static HistogramCOP<Real,Real>::Type scores(0);
-// 	if(scores == 0) {
-// 		utility::io::izstream scores_stream;
-// 		basic::database::open( scores_stream, "scoring/score_functions/disulfides/fa_CbSSCb_dihedral_score");
-// 		scores = new Histogram<Real,Real>( scores_stream() );
-// 		scores_stream.close();
-// 	}
-// 	return scores;
-// }
 
 ///////////////
 
 CB_Angle_Func::CB_Angle_Func() :
-	//chf_cbang_( 1.819120, 0.104496 )
-	//chf_cbang_( 1.819120, 0.4 ),
-
-	//onno
-	//csf_cbang_( 1.819120, 0.1, -10, 0.0)
-	//ommo
-
-	//CHECKIN
-	//csf_cbang_( 1.819120, 0.104496, -200, 0.0)
-
 	csf_cbang1_( 1.819120, 0.208961, -200, 0.0),
 	csf_cbang2_( 1.819120, 0.208961, -50, 0.0)
-
-//csf_cbang1_( 1.819120, 0.3, -2, 0.0),
-	//csf_cbang2_( 1.819120, 0.1, -10, 0.0)
-	//2c
-													//csf_cbang1_( 1.819120, 0.104496, -7, 0.0),
-														//csf_cbang2_( 1.819120, 0.104496, -0.5, 0.0)
-	//csf_cbang1_( 1.819120, 0.104496, -200 ),
-	//csf_cbang2_( 1.819120, 0.2, -20 ),
-	//csf_cbang3_( 1.819120, 0.2, -5, 0.0)
 {}
 
 CB_Angle_Func::~CB_Angle_Func() {}
@@ -823,35 +738,6 @@ CB_Angle_Func::~CB_Angle_Func() {}
 Real
 CB_Angle_Func::func( Real const ang) const
 {
-// 	using namespace numeric::constants::d;
-
-// 	Real ang_deg = ang*radians_to_degrees;
-// 	//Check that csang is in the right domain
-// 	runtime_assert_msg(  0 <= ang_deg && ang_deg <= 180., "Error csang > 180" );
-
-// 	Real score(0);
-// 	// Will be out of the histogram's range sometimes, but we like the default
-// 	// behavior of using the boundary scores for extreme ang_deg
-// 	CB_Angle_Func::fa_csang_scores()->interpolate(ang_deg,score);
-// 	return score;
-
-	//std::cout << "CBANG " << ang << " " << csf_cbang1_.func(ang) << " " << csf_cbang2_.func(ang) << " " << csf_cbang3_.func(ang) << " " << (0.2*chf_cbang_.func(ang)) + csf_cbang1_.func(ang) + csf_cbang2_.func(ang) + csf_cbang3_.func(ang) << std::endl;
-
-	//return (0.2*chf_cbang_.func(ang)) + csf_cbang1_.func(ang) + csf_cbang2_.func(ang) + csf_cbang3_.func(ang);
-
-	//std::cout << "CBANG " << ang << " " << csf_cbang1_.func(ang) << " " << csf_cbang2_.func(ang) << " " << (50*csf_cbang1_.func(ang)) + (1000.0*csf_cbang2_.func(ang)) << std::endl;
-
-
-	//return (csf_cbang1_.func(ang)) + (20.0*csf_cbang2_.func(ang)) - 0.393803696;
-	//return (csf_cbang1_.func(ang)) + (csf_cbang2_.func(ang)) - 0.393803696;
-	//return (csf_cbang1_.func(ang)) + (csf_cbang2_.func(ang)) - 0.393803696;
-
-	//onno
-	//return 10*(csf_cbang_.func(ang)) + std::abs(ang - 1.819120) + 2.44918662;
-
-	//CHECKIN
-	//return 2*(csf_cbang_.func(ang)) + std::abs(ang - 1.819120) + 2.0;
-
 	return (csf_cbang1_.func(ang)) + (csf_cbang2_.func(ang)) + 4*(std::abs(ang - 1.819120)) + 2.0;
 }
 
@@ -859,41 +745,9 @@ CB_Angle_Func::func( Real const ang) const
 Real
 CB_Angle_Func::dfunc( Real const ang ) const
 {
-// 	using namespace numeric::constants::d;
-// 	Real ang_deg = ang * radians_to_degrees;
-// 	//std::cout << "ang_deg: " << ang_deg << std::endl;
-
-// 	Real d_csang_score_dang( 0.0 );
-// 	// Should be zero when ang_deg is not in the hist range
-// 	CB_Angle_Func::fa_csang_scores()->derivative(ang_deg,d_csang_score_dang);
-// 	return d_csang_score_dang * radians_to_degrees;
-//	return (0.2*chf_cbang_.dfunc(ang)) + csf_cbang1_.dfunc(ang) + csf_cbang2_.dfunc(ang) + csf_cbang3_.dfunc(ang);
-
-	//return (csf_cbang1_.dfunc(ang)) + (20.0*csf_cbang2_.dfunc(ang));
-
-	//onno
-	//return 10*(csf_cbang_.dfunc(ang)) + (ang - 1.819120)/std::abs(ang - 1.819120);
-
-	//CHECKIN
-	//return 2*(csf_cbang_.dfunc(ang)) + (ang - 1.819120)/std::abs(ang - 1.819120);
-
 	return (csf_cbang1_.dfunc(ang)) + (csf_cbang2_.dfunc(ang)) + 4*((ang - 1.819120)/std::abs(ang - 1.819120));
 }
 
-/// Access the histogram for this Func (in degrees)
-// numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type
-// CB_Angle_Func::fa_csang_scores()
-// {
-// 	using namespace numeric::interpolation;
-// 	static HistogramCOP<Real,Real>::Type scores(0);
-// 	if(scores == 0) {
-// 		utility::io::izstream scores_stream;
-// 		basic::database::open( scores_stream, "scoring/score_functions/disulfides/fa_CaCbS_angle_score");
-// 		scores = new Histogram<Real,Real>( scores_stream() );
-// 		scores_stream.close();
-// 	}
-// 	return scores;
-// }
 
 //////////////////
 

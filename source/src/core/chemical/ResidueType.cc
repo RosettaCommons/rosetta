@@ -1748,6 +1748,18 @@ ResidueType::is_polymer() const
 }
 
 bool
+ResidueType::forms_disulfide_bond() const
+{
+	return properties_->has_property( FORMS_DISULFIDE_BOND );
+}
+
+bool
+ResidueType::is_disulfide_bonded() const
+{
+	return properties_->has_property( DISULFIDE_BONDED );
+}
+
+bool
 ResidueType::is_protein() const
 {
 	return properties_->has_property( PROTEIN );

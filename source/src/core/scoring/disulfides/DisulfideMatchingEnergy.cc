@@ -120,9 +120,20 @@ void DisulfideMatchingEnergy::residue_pair_energy(
 	Energy match_RT;
 
 	//Require cysteines
-	if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
 	//Require Centroid (NOT NO MORE!)
 	//if (rsd1.residue_type_set().name() != chemical::CENTROID ||
+	//if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
+	//if ( ( ! rsd1.type().forms_disulfide_bond() && ! rsd1.type().is_disulfide_bonded() ) || (! rsd2.type().forms_disulfide_bond() && ! rsd2.type().is_disulfide_bonded() ) ) return;
+    if ( ( rsd1.type().name3() != "CYS"
+        && rsd1.type().name3() != "CYD"
+        && rsd1.type().name3() != "DCS"
+        && rsd1.type().name3() != "C26"
+        && rsd1.type().name3() != "F26" ) ||
+         ( rsd2.type().name3() != "CYS"
+        && rsd2.type().name3() != "CYD"
+        && rsd2.type().name3() != "DCS"
+        && rsd2.type().name3() != "C26"
+        && rsd2.type().name3() != "F26" ) ) return;
 	//		rsd2.residue_type_set().name() != chemical::CENTROID )
 	//	return;
 
@@ -172,8 +183,8 @@ DisulfideMatchingEnergy::long_range_type() const
 
 bool DisulfideMatchingEnergy::defines_residue_pair_energy(
 		pose::Pose const & pose,
-		Size res1,
-		Size res2
+		Size rsd1,
+		Size rsd2
 		) const
 {
 	using namespace methods;
@@ -181,7 +192,7 @@ bool DisulfideMatchingEnergy::defines_residue_pair_energy(
 
 	DisulfideMatchingEnergyContainerCOP dec = DisulfideMatchingEnergyContainerCOP (
 			utility::pointer::static_pointer_cast< core::scoring::disulfides::DisulfideMatchingEnergyContainer const > ( pose.energies().long_range_container( disulfide_matching_energy ) ));
-	return dec->disulfide_bonded( res1, res2 );
+	return dec->disulfide_bonded( rsd1, rsd2 );
 }
 core::Size
 DisulfideMatchingEnergy::version() const

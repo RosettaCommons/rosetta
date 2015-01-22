@@ -115,8 +115,8 @@ residue_types/water/TP5.params
 #residue_types/d-caa/DARG.params
 #residue_types/d-caa/DASN.params
 #residue_types/d-caa/DASP.params
-#residue_types/d-caa/DCYD.params
-#residue_types/d-caa/DCYS.params
+residue_types/d-caa/DCYD.params
+residue_types/d-caa/DCYS.params
 #residue_types/d-caa/DGLN.params
 #residue_types/d-caa/DGLU.params
 #residue_types/d-caa/DHIS_D.params
@@ -241,7 +241,8 @@ residue_types/water/TP5.params
 #residue_types/d-ncaa/d-fluoro-leucine_ent1.params
 #residue_types/d-ncaa/d-fluoro-leucine_ent2.params
 #residue_types/d-ncaa/d-hexafluoro-leucine.params
-#residue_types/d-ncaa/d-homocysteine.params
+residue_types/d-ncaa/d-homocysteine.params
+residue_types/d-ncaa/d-homocysteine-disulfide.params
 #residue_types/d-ncaa/d-homophenylalanine.params
 #residue_types/d-ncaa/d-homoserine.params
 #residue_types/d-ncaa/d-n-in-methyl-tryptophan.params
@@ -260,6 +261,7 @@ residue_types/water/TP5.params
 #residue_types/l-ncaa/ABA.params
 #residue_types/l-ncaa/APA.params
 residue_types/l-ncaa/HLU.params
+#residue_types/l-ncaa/EDA.params
 residue_types/l-ncaa/YPN.params
 #residue_types/l-ncaa/HPR.params
 #residue_types/l-ncaa/HTY.params
@@ -368,7 +370,8 @@ residue_types/l-ncaa/cyclohexyl-glycine_chair.params
 #residue_types/l-ncaa/fluoro-leucine_ent1.params
 #residue_types/l-ncaa/fluoro-leucine_ent2.params
 #residue_types/l-ncaa/hexafluoro-leucine.params
-#residue_types/l-ncaa/homocysteine.params
+residue_types/l-ncaa/homocysteine.params
+residue_types/l-ncaa/homocysteine-disulfide.params
 #residue_types/l-ncaa/homophenylalanine.params
 #residue_types/l-ncaa/homoserine.params
 #residue_types/l-ncaa/n-in-methyl-tryptophan.params

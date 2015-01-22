@@ -1367,7 +1367,6 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 
 				rni->save_energy( emap );
 				//rni->mark_energy_computed();
-
 				total_energies += emap;
 
 			}

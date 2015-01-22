@@ -1385,6 +1385,12 @@ public:
 	/// @brief is polymer?
 	bool is_polymer() const;
 
+	/// @brief is thiol?
+	bool forms_disulfide_bond() const;
+
+	/// @brief is disulfide?
+	bool is_disulfide_bonded() const;
+
 	/// @brief is protein?
 	bool is_protein() const;
 

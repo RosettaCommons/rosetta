@@ -133,7 +133,7 @@ void
 DisulfResNeighbIterator::save_energy( EnergyMap const & emap )
 {
 	assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
-	owner_->save_energy( disulfide_index_, emap );
+    owner_->save_energy( disulfide_index_, emap );
 }
 
 
@@ -477,6 +477,14 @@ FullatomDisulfideEnergyContainer::other_neighbor_id( Size resid ) const
 	void
 FullatomDisulfideEnergyContainer::save_energy( Size disulfide_index, EnergyMap const & emap )
 {
+    /*std::cout << "amw storing emap values into the disulfide_info_" << std::endl;
+    std::cout << disulfide_info_[ disulfide_index ].first.dslf_ss_dst() << " += " << emap[ dslf_ss_dst ] << std::endl;
+    std::cout << disulfide_info_[ disulfide_index ].first.dslf_cs_ang() << " += " << emap[ dslf_cs_ang ] << std::endl;
+    std::cout << disulfide_info_[ disulfide_index ].first.dslf_ss_dih() << " += " << emap[ dslf_ss_dih ] << std::endl;
+    std::cout << disulfide_info_[ disulfide_index ].first.dslf_ca_dih() << " += " << emap[ dslf_ca_dih ] << std::endl;
+    std::cout << disulfide_info_[ disulfide_index ].first.dslf_cbs_ds() << " += " << emap[ dslf_cbs_ds ] << std::endl;
+    std::cout << disulfide_info_[ disulfide_index ].first.dslf_fa13()   << " += " << emap[ dslf_fa13   ] << std::endl;
+     */
 	disulfide_info_[ disulfide_index ].first.dslf_ss_dst() = emap[ dslf_ss_dst ];
 	disulfide_info_[ disulfide_index ].first.dslf_cs_ang() = emap[ dslf_cs_ang ];
 	disulfide_info_[ disulfide_index ].first.dslf_ss_dih() = emap[ dslf_ss_dih ];
@@ -545,6 +553,14 @@ FullatomDisulfideEnergyContainer::other_neighbor_atom_indices( Size resid ) cons
 
 void FullatomDisulfideEnergyContainer::accumulate_energy( Size disulfide_index, EnergyMap & emap ) const
 {
+    /*std::cout << "amw accumulating disulfide_info_ values into the emap" << std::endl;
+    std::cout << emap[ dslf_ss_dst ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_ss_dst() << std::endl;
+    std::cout << emap[ dslf_cs_ang ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_cs_ang() << std::endl;
+    std::cout << emap[ dslf_ss_dih ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_ss_dih() << std::endl;
+    std::cout << emap[ dslf_ca_dih ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_ca_dih() << std::endl;
+    std::cout << emap[ dslf_cbs_ds ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_cbs_ds() << std::endl;
+    std::cout << emap[ dslf_fa13   ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_fa13()   << std::endl;
+     */
 	emap[ dslf_ss_dst ] += disulfide_info_[ disulfide_index ].first.dslf_ss_dst();
 	emap[ dslf_cs_ang ] += disulfide_info_[ disulfide_index ].first.dslf_cs_ang();
 	emap[ dslf_ss_dih ] += disulfide_info_[ disulfide_index ].first.dslf_ss_dih();
@@ -555,6 +571,14 @@ void FullatomDisulfideEnergyContainer::accumulate_energy( Size disulfide_index, 
 
 void FullatomDisulfideEnergyContainer::retrieve_energy( Size disulfide_index, EnergyMap & emap ) const
 {
+    /*std::cout << "amw storing disulfide_info_ values in the emap" << std::endl;
+    std::cout << emap[ dslf_ss_dst ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_ss_dst() << std::endl;
+    std::cout << emap[ dslf_cs_ang ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_cs_ang() << std::endl;
+    std::cout << emap[ dslf_ss_dih ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_ss_dih() << std::endl;
+    std::cout << emap[ dslf_ca_dih ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_ca_dih() << std::endl;
+    std::cout << emap[ dslf_cbs_ds ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_cbs_ds() << std::endl;
+    std::cout << emap[ dslf_fa13   ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_fa13()   << std::endl;
+     */
 	emap[ dslf_ss_dst ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dst();
 	emap[ dslf_cs_ang ] = disulfide_info_[ disulfide_index ].first.dslf_cs_ang();
 	emap[ dslf_ss_dih ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dih();
@@ -589,13 +613,16 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 
 	Size count_disulfides( 0 );
 	for ( Size ii = 1; ii <= indep_res; ++ii ) {
-		if ( pose.residue( ii ).aa() == chemical::aa_cys &&
-				pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
-				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
-				pose.residue_type( ii ).has( "SG" ) // full atom residue
-				) {
+		if ( ( pose.residue( ii ).aa() == chemical::aa_cys || pose.residue( ii ).aa() == chemical::aa_unk ) &&
+               pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
+               resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
+             ( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) // full atom residue
+           ) {
+            //amw std::cout << "We are identifying a disulfide for scoring purposes at " << ii << std::endl;
 			++count_disulfides;
-			Size const ii_connect_atom( pose.residue( ii ).atom_index( "SG" ) );
+            Size const ii_connect_atom( pose.residue_type( ii ).has( "SD" ) ?
+                pose.residue( ii ).atom_index( "SD" ) :
+                pose.residue( ii ).atom_index( "SG" ) );
 			Size other_res( 0 );
 			for ( Size jj = pose.residue( ii ).type().n_residue_connections(); jj >= 1; --jj ) {
 				if ( (Size) pose.residue( ii ).type().residue_connection( jj ).atomno() == ii_connect_atom ) {
@@ -614,8 +641,10 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 			disulfide_residue_types_[ ii ] = pose.residue_type( ii ).get_self_ptr();
 			disulfide_residue_types_[ other_res ] = pose.residue_type( other_res ).get_self_ptr();
 			disulfide_partners_.push_back( std::pair< Size, Size >( ii, other_res ) );
-			disulfide_atom_indices_.push_back( std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
-						DisulfideAtomIndices( pose.residue(ii ) ), DisulfideAtomIndices( pose.residue( other_res ) ) ));
+			disulfide_atom_indices_.push_back(
+                std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
+                    DisulfideAtomIndices( pose.residue( ii ) ),
+                    DisulfideAtomIndices( pose.residue( other_res ) ) ));
 			FullatomDisulfideEnergyComponents temp;
 			disulfide_info_.push_back( std::pair< FullatomDisulfideEnergyComponents, bool > ( temp, false ) );
 		}
@@ -629,28 +658,31 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 {
 	Size nres = pose.total_residue(), indep_res = pose.total_residue();
-	if( core::pose::symmetry::is_symmetric(pose) ) {
-		indep_res = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-		nres = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		indep_res = core::pose::symmetry::symmetry_info( pose )->num_independent_residues();
+		nres = core::pose::symmetry::symmetry_info( pose )->num_total_residues_without_pseudo();
 	}
 	Size const total_residue( indep_res );
 	if ( resid_2_disulfide_index_.size() != nres ) return true;
 
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
-			if ( pose.residue( ii ).aa() != chemical::aa_cys ||
-					disulfide_residue_types_[ ii ].get() != & (pose.residue_type( ii )) ||
-					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
-					! pose.residue_type( ii ).has( "SG" ) || //no longer full atom
-					pose.residue( ii ).connect_map(
-						pose.residue( ii ).type().residue_connection_id_for_atom(
-							pose.residue( ii ).atom_index( "SG" ) ) ).resid() !=
-					other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) ) {
-				return true;
+			if ( pose.residue( ii ).aa() != chemical::aa_cys
+              || disulfide_residue_types_[ ii ].get() != & ( pose.residue_type( ii ) )
+              || ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) /// subsumed by residue type check amw but reactivating
+              || ! ( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) //no longer full atom
+              || ! ( pose.residue( ii ).connect_map(
+                        pose.residue( ii ).type().residue_connection_id_for_atom(
+                            pose.residue( ii ).atom_index(
+                                 pose.residue_type( ii ).has( "SG" ) ? "SG" : "SD" ) ) ).resid()
+                              == other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) )
+                     ) {
+                return true;
 			}
-		} else if ( pose.residue( ii ).aa() == chemical::aa_cys &&
-				pose.residue( ii ).has_variant_type( chemical::DISULFIDE )) {
-			return true;
+		} else if ( ( pose.residue( ii ).aa() == chemical::aa_cys
+                   || pose.residue( ii ).aa() == chemical::aa_unk )
+                   && pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ) {
+            return true;
 		}
 	}
 	return false;

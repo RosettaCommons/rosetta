@@ -26,16 +26,21 @@ namespace disulfides {
 
 
 DisulfideAtomIndices::DisulfideAtomIndices( conformation::Residue const & res ) :
-	c_alpha_index_( res.atom_index( "CA" ) ),
-	c_beta_index_( res.atom_index(  "CB" ) ),
+	c_alpha_index_( res.type().has("SD") ? res.atom_index( "CB" ) : res.atom_index( "CA" ) ),
+	c_beta_index_( res.type().has("SD") ? res.atom_index( "CG" ): res.atom_index( "CB" ) ),
 	derivative_atom_types_( res.natoms(), NO_DERIVATIVES_FOR_ATOM )
 {
-	derivative_atom_types_[ c_alpha_index_ ] = CYS_C_ALPHA;
-	derivative_atom_types_[ c_beta_index_  ] = CYS_C_BETA;
-
 	if( res.type().has("SG") ) {
 		disulf_atom_index_ = res.atom_index( "SG" );
+        derivative_atom_types_[ c_alpha_index_ ] = CYS_C_ALPHA;
+        derivative_atom_types_[ c_beta_index_  ] = CYS_C_BETA;
 		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_GAMMA;
+	}
+	else if( res.type().has("SD") ) {
+		disulf_atom_index_ = res.atom_index( "SD" );
+        derivative_atom_types_[ c_alpha_index_ ] = CYS_C_BETA;
+        derivative_atom_types_[ c_beta_index_  ] = CYS_C_GAMMA;
+		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_DELTA;
 	}
 	else {
 		assert(res.type().has("CEN") );//disulfides form to SG or CEN only

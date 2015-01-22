@@ -98,7 +98,7 @@ orient_residue_for_ideal_bond(
 
 	// a1 ---  a2  --- (a3)
 	//
-	//        (b2) ---  b3  --- b4
+	//		(b2) ---  b3  --- b4
 	//
 	// a3 and b2 are the pseudo-atoms built from their respective residues using the ideal geometry in the
 	// corresponding ResidueConnection objects
@@ -182,9 +182,9 @@ insert_ideal_mainchain_bonds(
 	for ( Size i=2; i<= nbb; ++i ) {
 		AtomID
 			bb1_idl( rsd.mainchain_atom(i-1), idl_pos ),
-			bb1    ( rsd.mainchain_atom(i-1),  seqpos ),
+			bb1	( rsd.mainchain_atom(i-1),  seqpos ),
 			bb2_idl( rsd.mainchain_atom(  i), idl_pos ),
-			bb2    ( rsd.mainchain_atom(  i),  seqpos );
+			bb2	( rsd.mainchain_atom(  i),  seqpos );
 
 		// bond length
 		conformation.set_bond_length( bb1, bb2, idl.bond_length( bb1_idl, bb2_idl ) );
@@ -192,7 +192,7 @@ insert_ideal_mainchain_bonds(
 		if ( i<nbb ) {
 			AtomID
 				bb3_idl( rsd.mainchain_atom(i+1), idl_pos ),
-				bb3    ( rsd.mainchain_atom(i+1),  seqpos );
+				bb3	( rsd.mainchain_atom(i+1),  seqpos );
 
 			// bond angle
 			conformation.set_bond_angle( bb1, bb2, bb3, idl.bond_angle( bb1_idl, bb2_idl, bb3_idl ) );
@@ -207,11 +207,11 @@ insert_ideal_mainchain_bonds(
 		Size const nbb_prev( prev_rsd->n_mainchain_atoms() );
 		AtomID
 			bb1_idl( prev_rsd->mainchain_atom( nbb_prev ), idl_pos-1 ),
-			bb1    ( prev_rsd->mainchain_atom( nbb_prev ),  seqpos-1 ),
+			bb1	( prev_rsd->mainchain_atom( nbb_prev ),  seqpos-1 ),
 			bb2_idl( rsd.mainchain_atom( 1 ), idl_pos ),
-			bb2    ( rsd.mainchain_atom( 1 ),  seqpos ),
+			bb2	( rsd.mainchain_atom( 1 ),  seqpos ),
 			bb3_idl( rsd.mainchain_atom( 2 ), idl_pos ),
-			bb3    ( rsd.mainchain_atom( 2 ),  seqpos );
+			bb3	( rsd.mainchain_atom( 2 ),  seqpos );
 		conformation.set_bond_angle( bb1, bb2, bb3, idl.bond_angle( bb1_idl, bb2_idl, bb3_idl ) );
 	}
 
@@ -221,11 +221,11 @@ insert_ideal_mainchain_bonds(
 
 		AtomID
 			bb1_idl( rsd.mainchain_atom( nbb-1 ), idl_pos ),
-			bb1    ( rsd.mainchain_atom( nbb-1 ),  seqpos ),
+			bb1	( rsd.mainchain_atom( nbb-1 ),  seqpos ),
 			bb2_idl( rsd.mainchain_atom( nbb   ), idl_pos ),
-			bb2    ( rsd.mainchain_atom( nbb   ),  seqpos ),
+			bb2	( rsd.mainchain_atom( nbb   ),  seqpos ),
 			bb3_idl( next_rsd->mainchain_atom( 1 ), idl_pos+1 ),
-			bb3    ( next_rsd->mainchain_atom( 1 ),  seqpos+1 );
+			bb3	( next_rsd->mainchain_atom( 1 ),  seqpos+1 );
 
 		// bond angle
 		conformation.set_bond_angle( bb1, bb2, bb3, idl.bond_angle( bb1_idl, bb2_idl, bb3_idl ) );
@@ -274,13 +274,13 @@ insert_ideal_bonds_at_polymer_junction(
 
 	AtomID
 		bb1_idl( rsd.mainchain_atom( nbb-1 ), idl_pos ),
-		bb1    ( rsd.mainchain_atom( nbb-1 ),  seqpos ),
+		bb1	( rsd.mainchain_atom( nbb-1 ),  seqpos ),
 		bb2_idl( rsd.mainchain_atom( nbb   ), idl_pos ),
-		bb2    ( rsd.mainchain_atom( nbb   ),  seqpos ),
+		bb2	( rsd.mainchain_atom( nbb   ),  seqpos ),
 		bb3_idl( next_rsd->mainchain_atom( 1 ), idl_pos+1 ),
-		bb3    ( next_rsd->mainchain_atom( 1 ),  seqpos+1 ),
+		bb3	( next_rsd->mainchain_atom( 1 ),  seqpos+1 ),
 		bb4_idl( next_rsd->mainchain_atom( 2 ), idl_pos+1 ),
-		bb4    ( next_rsd->mainchain_atom( 2 ),  seqpos+1 );
+		bb4	( next_rsd->mainchain_atom( 2 ),  seqpos+1 );
 
 	// bond angle
 	conformation.set_bond_angle( bb1, bb2, bb3, idl.bond_angle( bb1_idl, bb2_idl, bb3_idl ) );
@@ -365,9 +365,9 @@ idealize_position(
 		for ( Size i=2; i<= nbb; ++i ) {
 			AtomID
 				bb1_idl( rsd.mainchain_atom(i-1), idl_pos ),
-				bb1    ( rsd.mainchain_atom(i-1),  seqpos ),
+				bb1	( rsd.mainchain_atom(i-1),  seqpos ),
 				bb2_idl( rsd.mainchain_atom(  i), idl_pos ),
-				bb2    ( rsd.mainchain_atom(  i),  seqpos );
+				bb2	( rsd.mainchain_atom(  i),  seqpos );
 
 			// bond length
 			conformation.set_bond_length( bb1, bb2, idl.bond_length( bb1_idl, bb2_idl ) );
@@ -375,7 +375,7 @@ idealize_position(
 			if ( i<nbb ) {
 				AtomID
 					bb3_idl( rsd.mainchain_atom(i+1), idl_pos ),
-					bb3    ( rsd.mainchain_atom(i+1),  seqpos );
+					bb3	( rsd.mainchain_atom(i+1),  seqpos );
 
 				// bond angle
 				conformation.set_bond_angle( bb1, bb2, bb3, idl.bond_angle( bb1_idl, bb2_idl, bb3_idl ) );
@@ -388,11 +388,11 @@ idealize_position(
 			Size const nbb_prev( prev_rsd.n_mainchain_atoms() );
 			AtomID
 				bb1_idl( prev_rsd.mainchain_atom( nbb_prev ), idl_pos-1 ),
-				bb1    ( prev_rsd.mainchain_atom( nbb_prev ),  seqpos-1 ),
-				bb2_idl(      rsd.mainchain_atom(        1 ), idl_pos   ),
-				bb2    (      rsd.mainchain_atom(        1 ),  seqpos   ),
-				bb3_idl(      rsd.mainchain_atom(        2 ), idl_pos   ),
-				bb3    (      rsd.mainchain_atom(        2 ),  seqpos   );
+				bb1	( prev_rsd.mainchain_atom( nbb_prev ),  seqpos-1 ),
+				bb2_idl(	  rsd.mainchain_atom(		1 ), idl_pos   ),
+				bb2	(	  rsd.mainchain_atom(		1 ),  seqpos   ),
+				bb3_idl(	  rsd.mainchain_atom(		2 ), idl_pos   ),
+				bb3	(	  rsd.mainchain_atom(		2 ),  seqpos   );
 			conformation.set_bond_angle( bb1, bb2, bb3, idl.bond_angle( bb1_idl, bb2_idl, bb3_idl ) );
 		}
 
@@ -400,12 +400,12 @@ idealize_position(
 			Residue const & next_rsd( idl.residue( idl_pos+1 ) );
 
 			AtomID
-				bb1_idl(      rsd.mainchain_atom( nbb-1 ), idl_pos   ),
-				bb1    (      rsd.mainchain_atom( nbb-1 ),  seqpos   ),
-				bb2_idl(      rsd.mainchain_atom( nbb   ), idl_pos   ),
-				bb2    (      rsd.mainchain_atom( nbb   ),  seqpos   ),
-				bb3_idl( next_rsd.mainchain_atom(     1 ), idl_pos+1 ),
-				bb3    ( next_rsd.mainchain_atom(     1 ),  seqpos+1 );
+				bb1_idl(	  rsd.mainchain_atom( nbb-1 ), idl_pos   ),
+				bb1	(	  rsd.mainchain_atom( nbb-1 ),  seqpos   ),
+				bb2_idl(	  rsd.mainchain_atom( nbb   ), idl_pos   ),
+				bb2	(	  rsd.mainchain_atom( nbb   ),  seqpos   ),
+				bb3_idl( next_rsd.mainchain_atom(	 1 ), idl_pos+1 ),
+				bb3	( next_rsd.mainchain_atom(	 1 ),  seqpos+1 );
 
 			// bond angle
 			conformation.set_bond_angle( bb1, bb2, bb3, idl.bond_angle( bb1_idl, bb2_idl, bb3_idl ) );
@@ -752,8 +752,8 @@ build_jump_edge(
 {
 	assert( edge.is_jump() );
 
-	int const estart     ( edge.start() );
-	int const estop      ( edge.stop () );
+	int const estart	 ( edge.start() );
+	int const estop	  ( edge.stop () );
 
 	// these may have been set in the edge
 	Size anchor_atomno, root_atomno;
@@ -811,7 +811,7 @@ build_polymer_edge(
 		build_residue_tree( root_atomno, rsd, atom_pointer[pos], false /*Jump*/ );
 
 		kinematics::tree::AtomOP anchor_atom( atom_pointer( id::AtomID( anchor_atomno, anchor_pos ) ) );
-		kinematics::tree::AtomOP   root_atom( atom_pointer( id::AtomID(   root_atomno,        pos ) ) );
+		kinematics::tree::AtomOP   root_atom( atom_pointer( id::AtomID(   root_atomno,		pos ) ) );
 		assert( anchor_atom && root_atom );
 		anchor_atom->insert_atom( root_atom );
 		//std::cout << "build_polymer_edge: " << edge << ' ' <<  pos << ' ' << root_atomno << ' ' <<
@@ -838,8 +838,8 @@ build_chemical_edge(
 	)
 {
 
-	int const estart     ( edge.start() );
-	int const estop      ( edge.stop () );
+	int const estart	 ( edge.start() );
+	int const estop	  ( edge.stop () );
 
 	// these may have been set in the edge
 	Size anchor_atomno, root_atomno;
@@ -910,7 +910,7 @@ get_root_atomno(
 			// C-terminal to jump_pos, which is bad for loop modeling where the usual assumption was that
 			// we can use loop_begin-1 and loop_end+1 as jump points
 			//
-			Size const nbb( rsd.n_mainchain_atoms() ); //       1  2  3  4  5  6  -- nbb
+			Size const nbb( rsd.n_mainchain_atoms() ); //	   1  2  3  4  5  6  -- nbb
 			Size const mainchain_index( ( nbb-1 )/2 + 1 ); //   1  1  2  2  3  3  -- mainchain_index
 			return rsd.mainchain_atoms()[ mainchain_index ];
 		}
@@ -992,8 +992,8 @@ build_residue_tree(
 			//assert( edge.has_atom_info() );
 			//root_atomno = rsd.atom_index( edge.downstream_atom() );
 			// Connection atoms are not always present in the edge, but might be;  else use defaults.
-			int const estart     ( edge.start() );
-			int const estop      ( edge.stop () );
+			int const estart	 ( edge.start() );
+			int const estop	  ( edge.stop () );
 			Size anchor_atno, root_atno;
 			get_anchor_and_root_atoms( *residues[ estart ], *residues[ estop ], edge, anchor_atno, root_atno );
 			root_atomno = (int) root_atno; // stupid Size/int confusion...
@@ -1111,11 +1111,11 @@ setup_links_simple(
 // called recursively
 
 // Rule I -- dont enter a chi angle in the middle (atoms 2 or 3 ),
-//           and don't enter a chi angle from one side if the other side's atoms have already been added to the tree
+//		   and don't enter a chi angle from one side if the other side's atoms have already been added to the tree
 //
 //
 // Rule II -- if you're atom 2 and atom 1 hasn't been done, put that first
-//            likewise for atoms 3 and 4
+//			likewise for atoms 3 and 4
 //
 // Rule III -- mainchain atoms 1st, tiebreaking by rule II
 //
@@ -1144,7 +1144,7 @@ setup_atom_links(
 	is_done[atom1] = true;
 
 	utility::vector1< Size > const & full_l( full_links[atom1] );
-	utility::vector1< Size >       &  new_l(  new_links[atom1] );
+	utility::vector1< Size >	   &  new_l(  new_links[atom1] );
 
 	assert( new_l.empty() );
 
@@ -1543,7 +1543,7 @@ get_anchor_atomno(
 			return 1;
 		} else {
 			// PB 10/29/07 - changing to use an interior mainchain atom
-			Size const nbb( rsd.n_mainchain_atoms() ); //       1  2  3  4  5  6  -- nbb
+			Size const nbb( rsd.n_mainchain_atoms() ); //	   1  2  3  4  5  6  -- nbb
 			Size const mainchain_index( ( nbb-1 )/2 + 1 ); //   1  1  2  2  3  3  -- mainchain_index
 			return rsd.mainchain_atoms()[ mainchain_index ];
 			//return rsd.mainchain_atoms()[1];
@@ -1666,7 +1666,7 @@ get_chemical_root_and_anchor_atomnos(
 	Size first_connection_id = rsd_anchor.connections_to_residue( rsd_root )[ 1 ];
 	chemical::ResConnID first_connection = rsd_anchor.connect_map( first_connection_id );
 	anchor_atom_no = rsd_anchor.residue_connection( first_connection_id ).atomno();
-	root_atom_no    = rsd_root.residue_connection( first_connection.connid() ).atomno();
+	root_atom_no	= rsd_root.residue_connection( first_connection.connid() ).atomno();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1766,41 +1766,69 @@ setup_corresponding_atoms(
 bool change_cys_state( Size const index, std::string cys_type_name3, Conformation & conf ) {
 	// Cache information on old residue.
 	Residue const & res( conf.residue( index ) );
+	// amw: can't use name3 here because of overlaps between e.g. CYS/CYD name3
+	// but conveniently the first three characters of name are always correct
+	std::string rn = res.type().name().substr(0,res.type().name().find(":"));
+	//TR << "residue current name is |" << rn << "|" << std::endl;
 	chemical::ResidueTypeSet const & residue_type_set = res.type().residue_type_set();
 
 	// make sure we're working on a cys
-	if ( res.aa() != chemical::aa_cys ) {
-		TR.Warning << "WARNING: change_cys_state() was called on non-cys residue " << index << ", skipping!" << std::endl;
+	//if ( (!res.type().forms_disulfide_bond()) && (!res.type().is_disulfide_bonded()) ) {
+	if ( !(res.type().name3() == "CYS") && !(res.type().name3() == "CYD") &&
+		 !(res.type().name3() == "DCS") &&
+		 !(res.type().name3() == "C26") &&
+		 !(res.type().name3() == "F26")) {
+		TR.Warning << "WARNING: change_cys_state() was called on non-cys-like residue " << index << ", skipping!" << std::endl;
 		return false;
 	}
-
-	// Get the residue type set of the desired new residue type.  Unfortunately
-	// variant types for residues define in different parameter files aren't
-	// yet handled via functions such as ResidueTypeSet::get_residue_type_with_variant_*
-	// functions, so we need the name3 string to grab the possible residue types and
-	// look through them manually to find the right one.
-	chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map( cys_type_name3 );
 
 	// Track the variant types of the old residue type.  We want the
 	// new residue to have the same variant type as the old.
 	utility::vector1< std::string > variant_types = res.type().properties().get_list_of_variants();
 
+	std::string dest_name = "CYD";
 	// check and handle disulfide state
 	if ( res.has_variant_type( chemical::DISULFIDE ) && cys_type_name3 == "CYS" ) {
 		// if the old residue has DISULFIDE variant type then we are removing a
 		// disulfide, so remove the variant type from the list
 		variant_types.erase( std::find( variant_types.begin(), variant_types.end(), "DISULFIDE" ) );
-	} else if ( cys_type_name3 == "CYD" ) {
-		variant_types.push_back( "DISULFIDE" );  // creating a disulfide
+		//TR << "We just erased the DISULFIDE variant type as desired, since we are going from rn " << rn << " to thiol type " << std::endl;
+		if ( rn == "CYD" ) dest_name = "CYS";
+		else if (rn == "DCYD") dest_name = "DCS";
+		else if (rn == "HCYD") dest_name = "C26";
+		else if (rn == "DHCYD") dest_name = "F26";
+		//TR << "So our destination name is " << dest_name << std::endl;
+		
+	} else if (! res.has_variant_type( chemical::DISULFIDE ) && cys_type_name3 == "CYD" ){
+		if (rn == "CYS") dest_name = "CYD";
+		else if (rn == "DCYS") dest_name = "DCS";
+		else if (rn == "HCYS") dest_name = "C26";
+		else if (rn == "DHCYS") dest_name = "F26";
+		
+		variant_types.push_back( "DISULFIDE" ); //chemical::DISULFIDE );	// creating a disulfide
+	}  else dest_name = res.type().name3();
+	//TR << "After the conditional, our destination name is " << dest_name << std::endl;
+	/*chemical::ResidueType possible_type = residue_type_set.name_map(dest_name);
+	for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
+		if (! possible_type.has_variant_type( variant_types[ kk ] ) )
+			possible_type.add_variant_type(variant_types[kk]);
 	}
-
+	ResidueOP new_res = ResidueFactory::create_residue( possible_type, res, conf );
+	copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, conf );
+	conf.replace_residue( index, *new_res, false );
+	return true;
+	*/
+	chemical::ResidueTypeCOPs possible_types = residue_type_set.name3_map(dest_name);
+	
 	// Run through all possible new residue types.
 	for ( chemical::ResidueTypeCOPs::const_iterator
 		type_iter = possible_types.begin(), type_end = possible_types.end();
 		type_iter != type_end; ++type_iter )
 	{
 		bool perfect_match( true ); // indicates this type has all the same variant types as the old residue
+		//TR << "contemplating " << (*type_iter)->name() << std::endl;
 		for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
+			//TR << "checking for variant type " << variant_types[kk ]<< std::endl;
 			if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
 				perfect_match = false;
 				break;
@@ -1808,13 +1836,16 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 		}
 
 		if ( perfect_match ) { // Do replacement.
+			//TR << (*type_iter)->name() << " success!" << std::endl;
 			ResidueOP new_res = ResidueFactory::create_residue( **type_iter, res, conf );
 			copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, conf );
 			conf.replace_residue( index, *new_res, false );
+			//TR << "still in change cys state post residue replace, we observe that residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) is " << ( conf.residue( index ).has_variant_type( chemical::DISULFIDE ) ? " true " : " false ") << std::endl;
 
 			return true;
 		}
 	}
+	
 
 	// If we are here then a residue type match wasn't found; issue error message.
 	TR.Error << "ERROR: Couldn't find a " << cys_type_name3 << " equivalent for residue " << index << "." <<std::endl;
@@ -1907,14 +1938,20 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 
 	chemical::ResidueTypeSetCOP restype_set =
 		chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
+	std::string lcatom = conformation.residue_type(lower_res).has("SG") ? "SG":"SD";
+	std::string ucatom = conformation.residue_type(upper_res).has("SG") ? "SG":"SD";
 
 	// Break existing disulfide bonds to lower
-	if( conformation.residue(lower_res).aa() == chemical::aa_cys &&
-			conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) &&
-			conformation.residue_type( lower_res ).has( "SG" ) // full atom residue
-			)
+	if ( ( conformation.residue( lower_res ).name3() == "CYS"
+        || conformation.residue( lower_res ).name3() == "CYD"
+        || conformation.residue( lower_res ).name3() == "DCS"
+        || conformation.residue( lower_res ).name3() == "C26"
+        || conformation.residue( lower_res ).name3() == "F26" )
+        && conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE )
+        && ( conformation.residue_type( lower_res ).has( "SG" )     // full atom residue
+          || conformation.residue_type( lower_res ).has( "SD" ) ) ) // full atom residue
 	{
-		Size const connect_atom( conformation.residue( lower_res ).atom_index( "SG" ) );
+		Size const connect_atom( conformation.residue( lower_res ).atom_index( lcatom ) );
 		Size other_res( 0 );
 		Size conn(0);
 		for ( conn = conformation.residue( lower_res ).type().n_residue_connections(); conn >= 1; --conn ) {
@@ -1931,7 +1968,7 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 		if(other_res == upper_res) {
 			// Already a disulfide bond
 			runtime_assert_msg(conformation.residue( upper_res ).connect_map( conn ).resid() == lower_res,
-				"Error: Disulfide bond wasn't reciprical");
+				"Error: Disulfide bond wasn't reciprocal");
 			return;
 		}
 
@@ -1940,22 +1977,31 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 		runtime_assert_msg(result,"Error converting CYD->CYS");
 	}
 	else {
-		ResidueOP lower_cyd = ResidueFactory::create_residue( restype_set->name_map("CYD"), conformation.residue(lower_res), conformation );
+		std::string lower_name = conformation.residue(lower_res).name();
+		core::chemical::ResidueType lower_type = restype_set->name_map("CYD");
+		if (lower_name == "DCYS") lower_type = restype_set->name_map("DCYD");
+		else if (lower_name == "C26") lower_type = restype_set->name_map("HCYD");
+		else if (lower_name == "F26") lower_type = restype_set->name_map("DHCYD");
+		ResidueOP lower_cyd = ResidueFactory::create_residue( lower_type, conformation.residue(lower_res), conformation );
 		copy_residue_coordinates_and_rebuild_missing_atoms(
 			conformation.residue(lower_res), *lower_cyd, conformation );
 		conformation.replace_residue(lower_res, *lower_cyd, false /*backbone already oriented*/); // doug
 	}
 	// Break existing disulfide bonds to upper
-	if( conformation.residue(upper_res).aa() == chemical::aa_cys &&
-			conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) &&
-			conformation.residue_type( upper_res ).has( "SG" ) // full atom residue
-			)
+	if ( ( conformation.residue( lower_res ).name3() == "CYS"
+        || conformation.residue( lower_res ).name3() == "CYD"
+        || conformation.residue( lower_res ).name3() == "DCS"
+        || conformation.residue( lower_res ).name3() == "C26"
+        || conformation.residue( lower_res ).name3() == "F26" )
+      && conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE )
+      && ( conformation.residue_type( upper_res ).has( "SG" ) // full atom residue
+        || conformation.residue_type( lower_res ).has( "SD" ) ) ) // full atom residue
 	{
-		Size const connect_atom( conformation.residue( upper_res ).atom_index( "SG" ) );
+		Size const connect_atom( conformation.residue( upper_res ).atom_index( ucatom ) );
 		Size other_res( 0 );
 		Size conn(0);
 		for ( conn = conformation.residue( upper_res ).type().n_residue_connections(); conn >= 1; --conn ) {
-			if( Size( conformation.residue(upper_res).type().residue_connection(conn).atomno() ) == connect_atom ) {
+			if ( Size ( conformation.residue(upper_res).type().residue_connection(conn).atomno() ) == connect_atom ) {
 				other_res = conformation.residue( upper_res ).connect_map( conn ).resid();
 				break;
 			}
@@ -1969,17 +2015,27 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 		bool result = change_cys_state( other_res, "CYS", conformation );
 		runtime_assert_msg(result,"Error converting CYD->CYS");
 	}	else {
-		ResidueOP upper_cyd = ResidueFactory::create_residue( restype_set->name_map("CYD"), conformation.residue(upper_res), conformation );
+		std::string upper_name = conformation.residue(upper_res).name();
+		core::chemical::ResidueType upper_type = restype_set->name_map("CYD");
+		//awatkins: TODO	
+		//if (conformation.residue(upper_res).type().name() == "DCYS") upper_type = restype_set->name_map("DCYD");
+		//else if (conformation.residue(upper_res).type().name() == "C26") upper_type = restype_set->name_map("HCYD");
+		//else if (conformation.residue(upper_res).type().name() == "F26") upper_type = restype_set->name_map("DHCYD");
+		if (upper_name == "DCYS") upper_type = restype_set->name_map("DCYD");
+		else if (upper_name == "C26") upper_type = restype_set->name_map("HCYD");
+		else if (upper_name == "F26") upper_type = restype_set->name_map("DHCYD");
+		ResidueOP upper_cyd = ResidueFactory::create_residue( upper_type, conformation.residue(upper_res), conformation );
 		copy_residue_coordinates_and_rebuild_missing_atoms(
 			conformation.residue(upper_res), *upper_cyd, conformation );
 		conformation.replace_residue(upper_res, *upper_cyd, false /*backbone already oriented*/);
 	}
 
 	// Both residues are now CYD
-	runtime_assert(conformation.residue(lower_res).name() == "CYD" && conformation.residue(upper_res).name() == "CYD" );
+	//runtime_assert(conformation.residue(lower_res).name() == "CYD" && conformation.residue(upper_res).name() == "CYD" );
+	runtime_assert( (conformation.residue(lower_res).type().name3() == "CYD" || conformation.residue(lower_res).type().name3() == "DCS" || conformation.residue(lower_res).type().name3() == "C26" || conformation.residue(lower_res).type().name3() == "F26" ) && (conformation.residue(upper_res).type().name3() == "CYD" || conformation.residue(upper_res).type().name3() == "DCS" || conformation.residue(upper_res).type().name3() == "C26" || conformation.residue(upper_res).type().name3() == "F26" ) );
 
 	//form the bond between the two residues
-	conformation.declare_chemical_bond(lower_res,"SG",upper_res,"SG");
+	conformation.declare_chemical_bond(lower_res,lcatom,upper_res,ucatom);
 
 }
 
@@ -1994,17 +2050,24 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 	Residue const& A = conformation.residue(residueA_pos);
 	Residue const& B = conformation.residue(residueB_pos);
 
-	if( !A.is_protein() || !B.is_protein() )
+	if ( !A.is_protein() || !B.is_protein() )
 		return false;
 
 	//both Cys or CysD
-	if( A.type().name1() != 'C' || B.type().name1() != 'C' )
-		return false;
+	//if( A.type().name1() != 'C' || B.type().name1() != 'C' )
+	//if(! A.type().forms_disulfide_bond() && ! A.type().is_disulfide_bonded() )
+	//	return false;
 
+	std::string n1 = A.type().name3(); std::string n2 = B.type().name3();
+	if ( ( n1 != "CYS" && n1 != "CYD" && n1 != "DCS" && n1 != "C26" && n1 != "F26" )
+	  || ( n2 != "CYS" && n2 != "CYD" && n2 != "DCS" && n2 != "C26" && n2 != "F26" ) ) return false;
+	
 	//bonded
 	Size a_connect_atom;
 	if( A.type().has( "SG" ) )
 		a_connect_atom = A.atom_index( "SG" );
+	else if ( A.type().has( "SD" ) ) 
+		a_connect_atom = A.atom_index( "SD" );
 	else {
 		runtime_assert( A.type().has( "CEN" ) ); //should be fa or centroid
 		a_connect_atom = A.atom_index( "CEN" );
@@ -2024,16 +2087,19 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 void
 disulfide_bonds( conformation::Conformation const& conformation, utility::vector1< std::pair<Size,Size> > & disulfides )
 {
-	for( Size i=1; i<= conformation.size(); ++i)
+	for ( Size i = 1; i<= conformation.size(); ++i)
 	{
 		Residue const& res(conformation.residue(i));
 
 		// Skip things besides CYD
-		if( !(res.aa() == chemical::aa_cys && res.has_variant_type(chemical::DISULFIDE) ))
+		//if( !(res.aa() == chemical::aa_cys && res.has_variant_type(chemical::DISULFIDE) ))
+		if( !(res.type().is_disulfide_bonded() && res.has_variant_type(chemical::DISULFIDE) ))
 			continue;
 		Size connect_atom( 0);
 		if( res.type().has( "SG" ))
 			connect_atom = res.atom_index( "SG" );
+		else if( res.type().has( "SD" ))
+			connect_atom = res.atom_index( "SD" );
 		else if( res.type().has( "CEN" ))
 			connect_atom = res.atom_index( "CEN" );
 		else {

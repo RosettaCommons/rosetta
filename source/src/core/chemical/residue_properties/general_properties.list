@@ -62,6 +62,8 @@ CHARGED
 AROMATIC
 CYCLIC
 METALBINDING  # This residue type is a one capable of binding to a metal ion.
+FORMS_DISULFIDE_BOND  # This residue type is capable of forming a disulfide bond
+DISULFIDE_BONDED  # This residue type contains a disulfide bond/noncanonical connection
 
 ## Membranes
 MEMBRANE

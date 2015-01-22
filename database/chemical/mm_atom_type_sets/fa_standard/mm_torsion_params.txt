@@ -1010,3 +1010,16 @@ CT1  CT2  ON2  P     0.65    2     0.0 #
 CT1  CT2  ON2  P     0.05    3     0.0 #
 CT2  ON2  P    ON3   0.10    3     0.0 # from ON3  P    ON2  CN8B
 HA   CT2  ON2  P     0.00    3     0.0 !from P    ON2  CN8B HN8
+
+# added for EDA
+HA	 CT1  NH1  C	 0.0	3	180
+HA	 CT1  NH1  H	 0.8	3	0
+CT1  NH1  C  NH1	1.8	1	0
+CT1	NH1	C	NH2 1.8 1 0
+H NH1 C NH1 0 3 180
+H NH1 C NH2 0 3 180
+CT1 CT2 NH1 C 0 3 180
+CT1 CT2 NH1 H 0 3 180
+CT2 NH1 C NH1 1.8 1 0
+CT2 NH1 C NH2 1.8 1 0
+NH1 C NH2 H 0 3 180

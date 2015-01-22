@@ -579,10 +579,11 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 	Size count_disulfides( 0 );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		conformation::Residue res = pose.residue( ii );
-		if ( res.aa() == chemical::aa_cys &&
+		if (// res.aa() == chemical::aa_cys &&
+			res.type().is_disulfide_bonded() &&
 				res.has_variant_type( chemical::DISULFIDE ) &&
 				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
-				( pose.residue_type( ii ).has( "CEN" ) || pose.residue_type( ii ).has( "SG" ) )
+				( pose.residue_type( ii ).has( "CEN" ) || pose.residue_type( ii ).has( "SD" ) || pose.residue_type( ii ).has( "SG" ) )
 			 ) {
 			++count_disulfides;
 
@@ -592,9 +593,11 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 			Size ii_connect_atom(0);
 			if ( pose.residue_type( ii ).has( "CEN" ) ) {
 				ii_connect_atom = res.atom_index( "CEN" );
-			} else {
+			} else if (pose.residue_type( ii ).has( "SG" ) ) {
 				ii_connect_atom = res.atom_index( "SG" );
-			}
+			} else {
+				ii_connect_atom = res.atom_index( "SD" );
+			}	
 
 			Size other_res_ii( 0 );
 			for ( Size jj = 1; jj <= res.type().n_residue_connections(); ++jj ) {
@@ -651,7 +654,12 @@ DisulfideMatchingEnergyContainer::disulfides_changed( pose::Pose const & pose )
 					other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) ) {
 				return true;
 			}
-		} else if ( pose.residue( ii ).aa() == chemical::aa_cys &&
+		} else if ( //pose.residue( ii ).aa() == chemical::aa_cys &&
+				//( pose.residue( ii ).type().forms_disulfide_bond() || pose.residue( ii ).type().is_disulfide_bonded() ) &&
+                   ((pose.residue(ii).type().name3() == "CYS") || (pose.residue(ii).type().name3() == "CYD") ||
+                    (pose.residue(ii).type().name3() == "DCS") ||
+                    (pose.residue(ii).type().name3() == "C26") ||
+                    (pose.residue(ii).type().name3() == "F26")) &&
 				pose.residue( ii ).has_variant_type( chemical::DISULFIDE )) {
 			return true;
 		}

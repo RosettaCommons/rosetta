@@ -30,6 +30,10 @@ CUTPOINT_UPPER  # for use during loop modeling, at positions after a cutpoint
 
 DISULFIDE
 
+SG_CONNECT
+NE2_CONNECT
+ZN_CONNECT
+
 BRANCH_POINT_VARIANT  # used for branched polymers and glycosylations
 BRANCH_LOWER_TERMINUS_VARIANT  # used for branched polymers and glycosylations
 
