@@ -883,10 +883,11 @@ RotamerLibrary::get_binary_name_10() const
 ///             6/16/2009.  Andrew Leaver-Fay
 /// Version 21: Write out bicubic spline parameters for -log(p(rot|phi,psi)).  3/28/2012.  Andrew Leaver-Fay
 /// Version 22: Bicubic spline bugfix  3/29/2012.  Andrew Leaver-Fay
+/// Version 23: Version bump for various accumulated changes 1/22/2015 Rocco Moretti
 Size
 RotamerLibrary::current_binary_format_version_id_02() const
 {
-	return 22;
+	return 23;
 }
 
 
@@ -900,10 +901,11 @@ RotamerLibrary::current_binary_format_version_id_02() const
 /// Version 2: Rotameric residues write out bicubic spline parameters for -log(p(rot|phi,psi)).  3/28/2012.  Andrew Leaver-Fay
 /// Version 3: Tricubic interpolation data for semi-rotameric residues.  3/29/2012.  Andrew Leaver-Fay
 /// Version 4: Generate and write out bicubic spline data for the rotameric portion of the semi-rotameric residues .  3/29/2012.  Andrew Leaver-Fay
+/// Version 5: Version bump for various accumulated changes 1/22/2015 Rocco Moretti
 Size
 RotamerLibrary::current_binary_format_version_id_10() const
 {
-	return 4;
+	return 5;
 }
 
 void
