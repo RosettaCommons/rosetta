@@ -180,7 +180,7 @@ add_covalent_linkage_helper(
 			}
 		}
 	}
-	std::string res_type_mod_name( current_residue_type_basename + current_residue_type_patches_name + res_patchname );
+	std::string res_type_mod_name( current_residue_type_basename + res_patchname + current_residue_type_patches_name );
 
 	//check whether the modified residues have already been created earlier
 	if( !pose.residue(res_pos).residue_type_set().has_name(res_type_mod_name) ){
