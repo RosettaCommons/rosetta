@@ -15,7 +15,7 @@
 
 // Unit Headers
 #include <protocols/abinitio/abscript/StructPerturberCM.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 #ifdef WIN32
   #include <basic/datacache/WriteableCacheableMap.hh>
@@ -33,8 +33,8 @@ namespace protocols {
 namespace abinitio {
 namespace abscript {
 
-class StructPerturberCM : public protocols::environment::ClaimingMover {
-  typedef ClaimingMover Parent;
+class StructPerturberCM : public protocols::environment::ClientMover {
+  typedef ClientMover Parent;
   typedef environment::claims::EnvClaims EnvClaims;
 	
 public:

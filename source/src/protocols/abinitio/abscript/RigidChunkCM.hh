@@ -15,7 +15,7 @@
 
 // Unit Headers
 #include <protocols/abinitio/abscript/RigidChunkCM.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
 
 // Package headers
@@ -38,8 +38,8 @@ namespace protocols {
 namespace abinitio {
 namespace abscript {
 
-class RigidChunkCM : public protocols::environment::ClaimingMover {
-  typedef ClaimingMover Parent;
+class RigidChunkCM : public protocols::environment::ClientMover {
+  typedef ClientMover Parent;
   typedef environment::claims::EnvClaims EnvClaims;
 
 public:
@@ -108,6 +108,7 @@ private:
   core::pack::task::residue_selector::ResidueSelectorCOP sim_selector_;
   core::pack::task::residue_selector::ResidueSelectorCOP templ_selector_;
 
+  std::string xml_name_;
 
   // configured during claiming
   std::map< core::Size, core::Size > templ_target_;

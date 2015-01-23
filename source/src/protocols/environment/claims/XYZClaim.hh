@@ -59,16 +59,16 @@ class XYZClaim : public EnvClaim {
 
 public:
 
-  XYZClaim( ClaimingMoverOP owner,
+  XYZClaim( ClientMoverOP owner,
             utility::tag::TagCOP tag,
             basic::datacache::DataMap const& );
 
   // Initializer for a single backbone angle
-  XYZClaim( ClaimingMoverOP owner,
+  XYZClaim( ClientMoverOP owner,
             LocalPosition const& local_pos );
 
   // Initializer for a contiguous range of residues.
-  XYZClaim( ClaimingMoverOP owner,
+  XYZClaim( ClientMoverOP owner,
             std::string const& label,
             std::pair< core::Size, core::Size > const& range );
 

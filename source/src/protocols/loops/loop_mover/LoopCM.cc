@@ -59,7 +59,7 @@ LoopCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopCMCreator::create_mover() const {
-  return environment::ClaimingMoverOP( new LoopCM );
+  return environment::ClientMoverOP( new LoopCM );
 }
 
 std::string
@@ -182,7 +182,7 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
     }
   }
 
-  environment::ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() );
+  environment::ClientMoverOP this_ptr = utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() );
   TorsionClaimOP torsion( new TorsionClaim( this_ptr, pos_list ) );
   torsion->claim_backbone( true );
   torsion->claim_sidechain( true );

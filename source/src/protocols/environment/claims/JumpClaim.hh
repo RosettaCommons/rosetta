@@ -47,11 +47,11 @@ class JumpClaim : public EnvClaim {
 
 public:
 
-  JumpClaim( ClaimingMoverOP owner,
+  JumpClaim( ClientMoverOP owner,
              utility::tag::TagCOP tag,
              basic::datacache::DataMap const& );
 
-  JumpClaim( ClaimingMoverOP owner,
+  JumpClaim( ClientMoverOP owner,
              std::string const& label,
              LocalPosition const& jpos1,
              LocalPosition const& jpos2,

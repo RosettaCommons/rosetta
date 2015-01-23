@@ -25,7 +25,7 @@
 #include <core/pack/task/residue_selector/ResidueSelector.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 
 // Project Headers
@@ -64,7 +64,7 @@ public:
   ///       likely superfluous.
   static
   EnvClaimOP make_claim( std::string const& name,
-                         ClaimingMoverOP owner,
+                         ClientMoverOP owner,
                          utility::tag::TagCOP tag,
                          basic::datacache::DataMap& datamap );
 
@@ -74,14 +74,14 @@ public:
   ///@brief Virtual destructor
   virtual ~EnvClaim();
 
-  EnvClaim( ClaimingMoverOP );
+  EnvClaim( ClientMoverOP );
 
   virtual EnvClaimOP clone() const = 0;
 
   /// @brief A clone used by the EnvClaimFactory to instantiate new EnvClaims using an XML tag.
-  ClaimingMoverOP owner() const;
+  ClientMoverOP owner() const;
 
-  void set_owner( ClaimingMoverOP owner ) { claim_source_ = owner; }
+  void set_owner( ClientMoverOP owner ) { claim_source_ = owner; }
 
   /// @brief allow the claim to use any internally queued ResidueSelectors to create sequence annotations.
   void annotate( core::pose::Pose const&, core::environment::SequenceAnnotationOP ) const;
@@ -116,7 +116,7 @@ protected:
 private:
 
   AnnotatingSelectors selector_list_;
-  ClaimingMoverOP claim_source_;
+  ClientMoverOP claim_source_;
 
 }; //class EnvClaim
 

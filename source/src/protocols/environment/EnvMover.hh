@@ -19,7 +19,7 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/environment/Environment.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Project headers
 #include <protocols/moves/MoverContainer.hh>

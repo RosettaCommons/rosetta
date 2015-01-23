@@ -14,7 +14,7 @@
 #include <protocols/environment/Environment.hh>
 
 // Package headers
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/ProtectedConformation.hh>
 
 #include <protocols/environment/EnvExcn.hh>
@@ -69,7 +69,7 @@ Environment::~Environment() {
 
 void Environment::register_mover( moves::MoverOP mover ){
   // I think this is kind of ugly, but I don't think this happens too often, so it's probably ok.
-  ClaimingMoverOP claiming_mover = utility::pointer::dynamic_pointer_cast< protocols::environment::ClaimingMover > ( mover );
+  ClientMoverOP claiming_mover = utility::pointer::dynamic_pointer_cast< protocols::environment::ClientMover > ( mover );
   moves::MoverContainerOP mover_container = utility::pointer::dynamic_pointer_cast< moves::MoverContainer > ( mover );
   moves::MoverApplyingMoverOP mover_applier = utility::pointer::dynamic_pointer_cast< moves::MoverApplyingMover > ( mover );
 
@@ -78,7 +78,7 @@ void Environment::register_mover( moves::MoverOP mover ){
       tr.Trace << "Registered mover '" << claiming_mover->get_name() << "'" << std::endl;
       registered_movers_.insert( claiming_mover );
 
-      std::set< ClaimingMoverOP > submovers;
+      std::set< ClientMoverOP > submovers;
       claiming_mover->yield_submovers( submovers );
       register_movers( submovers.begin(), submovers.end() );
     }
@@ -92,7 +92,7 @@ void Environment::register_mover( moves::MoverOP mover ){
   } else if( !allow_pure_movers() ){
     std::ostringstream err;
     err << "The mover '" << mover->get_name()
-        << "' is not a ClaimingMover or a MoverContainer, and thus cannot be used inside an BrokeredEnvironment. "
+        << "' is not a ClientMover or a MoverContainer, and thus cannot be used inside an BrokeredEnvironment. "
         << "If you're sure you want to include this mover, set the option 'allow_pure_movers' to true. "
         << "This will cause the Environment to ignore Environment-incompatible movers during registration.";
     throw utility::excn::EXCN_BadInput( err.str() );
@@ -147,7 +147,7 @@ core::pose::Pose Environment::end( core::pose::Pose const& pose ){
       tr.Warning << "[WARNING] The brokered pose contained WriteableCacheable data in the Pose DataCache, but this "
                  << "data is no longer present in the DataCache at environment closing. This is probably "
                  << "because a call was made to pose::set_new_conformation somewhere (anywhere), which clears the "
-                 << "cache. Certain features of one or more of the ClaimingMovers registered to the Environment '"
+                 << "cache. Certain features of one or more of the ClientMovers registered to the Environment '"
                  << name() << "' are nonfunctional." << std::endl;
     }
 
@@ -206,12 +206,12 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
   return ret_conf;
 }
 
-void Environment::assign_passport( ClaimingMoverOP mover, core::environment::DofPassportCOP passport ){
+void Environment::assign_passport( ClientMoverOP mover, core::environment::DofPassportCOP passport ){
   mover->push_passport( get_self_weak_ptr() , passport );
 }
 
 void Environment::cancel_passports(){
-  BOOST_FOREACH( ClaimingMoverOP mover, registered_movers_ ){
+  BOOST_FOREACH( ClientMoverOP mover, registered_movers_ ){
     tr.Error << "stripping passport from " << mover->get_name() << std::endl;
     mover->pop_passport( get_self_weak_ptr() );
   }
@@ -294,11 +294,11 @@ core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
   tr.Debug << "Beginning Broking for environment " << this->name() << " with "
            << registered_movers_.size() << " registered movers." << std::endl;
   tr.Debug << "  Registered movers are:" << std::endl;
-  BOOST_FOREACH( ClaimingMoverOP mover, registered_movers_ ){ tr.Debug << "    " << mover->get_name() << std::endl; }
+  BOOST_FOREACH( ClientMoverOP mover, registered_movers_ ){ tr.Debug << "    " << mover->get_name() << std::endl; }
 
-  std::map< ClaimingMoverOP, core::environment::DofPassportOP > mover_passports;
+  std::map< ClientMoverOP, core::environment::DofPassportOP > mover_passports;
 
-  BOOST_FOREACH( ClaimingMoverOP mover, registered_movers_ ){
+  BOOST_FOREACH( ClientMoverOP mover, registered_movers_ ){
     assert( mover_passports.find( mover ) == mover_passports.end() );
     mover_passports[ mover ] = Parent::issue_passport( mover->get_name() );
     assign_passport( mover, mover_passports[ mover ] );
@@ -342,7 +342,7 @@ void Environment::remove_chainbreak_variants( core::pose::Pose& pose, core::Size
   conf.replace_residue( rsd_upper.seqpos(), *new_upper, true );
 }
 
-bool Environment::is_registered( ClaimingMoverOP mover ) const {
+bool Environment::is_registered( ClientMoverOP mover ) const {
   return ( std::find( registered_movers_.begin(), registered_movers_.end(), mover ) != registered_movers_.end() );
 }
 

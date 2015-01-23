@@ -17,7 +17,7 @@
 // Package Headers
 #include <core/environment/LocalPosition.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Project Headers
 #include <core/fragment/SecondaryStructure.hh>
@@ -44,7 +44,7 @@ namespace claims {
 using core::environment::LocalPosition;
 using core::environment::LocalPositions;
 
-CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
+CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
                             utility::tag::TagCOP tag,
                             basic::datacache::DataMap const& datamap ):
   Parent( owner ),
@@ -67,7 +67,7 @@ CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
   }
 }
 
-CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
+CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
                             std::string const& label,
                             core::fragment::SecondaryStructure const& ss_in ):
   Parent( owner ),
@@ -81,7 +81,7 @@ CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
 
 }
 
-CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
+CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
                            std::string const& label,
                            std::map< LocalPosition, core::Real > const& biases ):
   Parent( owner ),
@@ -89,7 +89,7 @@ CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
   biases_( biases )
 {}
 
-CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
+CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
                             std::string const& label,
                             std::pair< core::Size, core::Size > const& range,
                             core::Real bias ):

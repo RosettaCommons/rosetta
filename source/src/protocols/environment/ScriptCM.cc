@@ -25,7 +25,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/moves/MoverFactory.hh>
-
+#include <protocols/moves/NullMover.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
@@ -69,9 +69,9 @@ ScriptCMCreator::mover_name() {
 }
 
 ScriptCM::ScriptCM():
-  ClaimingMover(),
+  ClientMover(),
   name_( NOT_SET ),
-  client_( /* NULL */ )
+  client_( new moves::NullMover() )
 {}
 
 void ScriptCM::passport_updated(){
@@ -85,18 +85,18 @@ void ScriptCM::passport_updated(){
     mm->set_jump( true );
   }
 
-  client_->set_movemap( mm );
+  client()->set_movemap( mm );
 
 }
 
 void ScriptCM::initialize( core::pose::Pose& pose ){
   DofUnlock activation( pose.conformation(), passport() );
-  client_->initialize( pose );
+  client()->initialize( pose );
 }
 
 void ScriptCM::apply( core::pose::Pose& pose ){
   DofUnlock activation( pose.conformation(), passport() );
-  client_->apply( pose );
+  client()->apply( pose );
 }
 
 void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
@@ -120,7 +120,7 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
       }
     } else if( claims::EnvClaim::is_claim( subtag->getName() ) ) {
       tr.Debug << " Interpreting tag with name " << subtag->getName() << " as new claim." << std::endl;
-      add_claim( claims::EnvClaim::make_claim( subtag->getName(), utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() ), subtag, datamap ) );
+      add_claim( claims::EnvClaim::make_claim( subtag->getName(), utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() ), subtag, datamap ) );
     } else {
       tr.Debug << " Interpreting tag with name " << subtag->getName() << " as a new mover." << std::endl;
 
@@ -135,10 +135,6 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 void ScriptCM::set_client( moves::MoverOP mover_in ) {
-  if( client_ ){
-    throw utility::excn::EXCN_RosettaScriptsOption( "The ScriptCM '" + this->get_name() + "' cannot contain >1 client mover." );
-  }
-
   moves::MoveMapMoverOP mover_ptr = utility::pointer::dynamic_pointer_cast< moves::MoveMapMover > ( mover_in );
 
   if ( !mover_ptr ){
@@ -166,11 +162,11 @@ std::string ScriptCM::get_name() const {
 }
 
 moves::MoverOP ScriptCM::fresh_instance() const {
-  return ClaimingMoverOP( new ScriptCM() );
+  return ClientMoverOP( new ScriptCM() );
 }
 
 moves::MoverOP ScriptCM::clone() const{
-  return ClaimingMoverOP( new ScriptCM( *this ) );
+  return ClientMoverOP( new ScriptCM( *this ) );
 }
 
 } // environment

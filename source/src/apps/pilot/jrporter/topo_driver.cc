@@ -48,64 +48,85 @@
 #define ANGLE_DELTA( x , y , d ) TS_ASSERT_DELTA( std::cos( x ) , std::cos( y ), d );
 
 std::string const TEST_CHUNK_PDB = "/Users/jrporter/Rosetta/main/source/test/protocols/abinitio/abscript/ubq_frag.pdb";
+core::Real const TOLERANCE = 1e-6;
 
 void test_chunk( core::pose::Pose const pose );
 
-void test_chunk( core::pose::Pose const pose ) {
+core::pose::Pose make_seq( std::string const& str );
 
-  using namespace protocols::environment;
-  using namespace core::pack::task::residue_selector;
-  using namespace protocols::abinitio::abscript;
+core::pose::Pose make_seq( std::string const& str ) {
+  core::pose::Pose pose;
 
-  basic::datacache::DataMap datamap;
+  core::pose::make_pose_from_sequence(pose, str, "fa_standard");
 
-  std::string const SELECTOR_NAME = "sele";
-
-
-  core::Size const BEGIN_CHUNK_1 = 3;
-  core::Size const END_CHUNK_1 = 7;
-  core::Size const BEGIN_CHUNK_2 = 9;
-  core::Size const END_CHUNK_2 = 12;
-  std::ostringstream os;
-  os << BEGIN_CHUNK_1 << "-" << END_CHUNK_1 ;// << "," << BEGIN_CHUNK_2 << "-" << END_CHUNK_2;
-  datamap.add( "ResidueSelector", SELECTOR_NAME, ResidueSelectorOP( new ResidueIndexSelector( os.str() ) ) );
-
-  std::stringstream ss;
-  ss << "<RigidChunkCM template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME << "\" />";
-  utility::tag::TagPtr tag( new utility::tag::Tag );
-  tag->read( ss );
-
-  RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
-  TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() ) );
-  TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
-
-  EnvironmentOP env( new Environment( "env" ) );
-  env->auto_cut( true );
-  env->register_mover( rigid_chunk );
-
-  core::pose::Pose ppose;
-  TS_ASSERT_THROWS_NOTHING( ppose = env->start( pose ) );
-
-  //core::Size const cut = ppose.fold_tree().cutpoint( 1 );
-  for( core::Size i = 1; i <= ppose.total_residue(); ++i ){
-    if( ( i > BEGIN_CHUNK_1 && i < END_CHUNK_1 ) || ( i >= BEGIN_CHUNK_2 && i <= BEGIN_CHUNK_2 ) ){
-      core::Size const seqpos = i - BEGIN_CHUNK_1 + 1;
-      ANGLE_DELTA( ppose.phi( i ), rigid_chunk->templ().phi( seqpos ), 1e-10 );
-      ANGLE_DELTA( ppose.psi( i ), rigid_chunk->templ().psi( seqpos ), 1e-10 );
-      ANGLE_DELTA( ppose.omega( i ) , rigid_chunk->templ().omega( seqpos ), 1e-10 );
-    } else if( i == BEGIN_CHUNK_1 || i == END_CHUNK_1 || i == BEGIN_CHUNK_2 || i == END_CHUNK_2 ) {
-      // inconsistent contributions.
-    } else {
-      if( i != 1 ) ANGLE_DELTA( ppose.phi( i ), pose.phi( i ), 1e-10 );
-      if( i != pose.total_residue() ) {
-        ANGLE_DELTA( ppose.psi( i ), pose.psi( i ), 1e-10 );
-        ANGLE_DELTA( ppose.omega( i ), pose.omega( i ), 1e-10 );
-      }
-    }
+  for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+    pose.set_phi( i, -65 );
+    pose.set_psi( i, -41 );
+    pose.set_omega( i, 180 );
   }
 
-  core::pose::Pose end_pose;
-  TS_ASSERT_THROWS_NOTHING( end_pose = env->end( ppose ) );
+  return pose;
+}
+
+void test_chunk( core::pose::Pose const ) {
+
+		TS_TRACE( "Starting test_chunk" );
+
+		using namespace protocols::environment;
+		using namespace core::pack::task::residue_selector;
+		using namespace protocols::abinitio::abscript;
+
+		basic::datacache::DataMap datamap;
+
+    core::pose::Pose pose = make_seq( "MQIFV" );
+
+		std::string const SELECTOR_NAME = "sele";
+		core::Size const BEGIN_CHUNK = 1;
+		core::Size const END_CHUNK = 5;
+
+		std::ostringstream os;
+		os << BEGIN_CHUNK << "-" << END_CHUNK;
+		datamap.add( "ResidueSelector", SELECTOR_NAME, ResidueSelectorOP( new ResidueIndexSelector( os.str() ) ) );
+
+		std::stringstream ss;
+		ss << "<RigidChunkCM name=chunk template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME << "\" />";
+		utility::tag::TagPtr tag( new utility::tag::Tag );
+		tag->read( ss );
+
+		RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
+
+		EnvironmentOP env( new Environment( "env" ) );
+		env->register_mover( rigid_chunk );
+
+		core::pose::Pose ppose;
+		TS_ASSERT_THROWS_NOTHING( ppose = env->start( pose ) );
+
+		for( core::Size i = 1; i <= ppose.total_residue(); ++i ){
+      if( i >= BEGIN_CHUNK && i <= END_CHUNK ){
+        core::Size const seqpos = i - BEGIN_CHUNK + 1;
+        if( seqpos != 1 )
+          ANGLE_DELTA( ppose.phi( i ), rigid_chunk->templ().phi( seqpos ), TOLERANCE );
+        if( seqpos != rigid_chunk->templ().total_residue() &&
+           seqpos != ppose.total_residue() ){
+          ANGLE_DELTA( ppose.psi( i ), rigid_chunk->templ().psi( seqpos ), TOLERANCE );
+          ANGLE_DELTA( ppose.omega( i ) , rigid_chunk->templ().omega( seqpos ), TOLERANCE );
+        }
+      } else if( ( i == BEGIN_CHUNK - 1 ) ||
+                ( i == END_CHUNK + 1 ) ) {
+        // inconsistent contributions.
+      } else {
+        if( i != 1 ) ANGLE_DELTA( ppose.phi( i ), pose.phi( i ), TOLERANCE );
+        if( i != pose.total_residue() ) {
+          ANGLE_DELTA( ppose.psi( i ), pose.psi( i ), TOLERANCE );
+          ANGLE_DELTA( ppose.omega( i ), pose.omega( i ), TOLERANCE );
+        }
+      }
+    }
+  
+		core::pose::Pose end_pose;
+		TS_ASSERT_THROWS_NOTHING( end_pose = env->end( ppose ) );
 
 }
 

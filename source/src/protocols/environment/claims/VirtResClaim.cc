@@ -24,7 +24,7 @@
 #include <protocols/environment/claims/BrokerElements.hh>
 
 #include <protocols/environment/ProtectedConformation.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 #include <core/pack/task/residue_selector/ResidueSelector.hh>
 
@@ -57,7 +57,7 @@ namespace claims {
 std::string const VRT_LABEL_OPTION = "vrt_name";
 std::string const PARENT_LABEL_OPTION = "parent";
 
-VirtResClaim::VirtResClaim( ClaimingMoverOP owner,
+VirtResClaim::VirtResClaim( ClientMoverOP owner,
                             utility::tag::TagCOP tag,
                             basic::datacache::DataMap const& datamap ):
   EnvClaim( owner ),
@@ -81,7 +81,7 @@ VirtResClaim::VirtResClaim( ClaimingMoverOP owner,
 }
 
 
-VirtResClaim::VirtResClaim( ClaimingMoverOP owner,
+VirtResClaim::VirtResClaim( ClientMoverOP owner,
                             LocalPosition parent,
                             std::string const& jump_label,
                             std::string const& vrt_label ):

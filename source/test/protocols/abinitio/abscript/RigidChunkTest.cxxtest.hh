@@ -105,7 +105,7 @@ public:
 		datamap.add( "ResidueSelector", SELECTOR_NAME, ResidueSelectorOP( new ResidueIndexSelector( os.str() ) ) );
 
 		std::stringstream ss;
-		ss << "<RigidChunkCM template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME << "\" />";
+		ss << "<RigidChunkCM name=chunk template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME << "\" />";
 		utility::tag::TagPtr tag( new utility::tag::Tag );
 		tag->read( ss );
 
@@ -165,7 +165,7 @@ public:
 		os_1 << BEGIN_CHUNK_1 << "-" << END_CHUNK_1;
 		datamap.add( "ResidueSelector", SELECTOR_NAME_1, ResidueSelectorOP( new ResidueIndexSelector( os_1.str() ) ) );
 		std::stringstream ss_1;
-		ss_1 << "<RigidChunkCM template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME_1 << "\" />";
+		ss_1 << "<RigidChunkCM name=chunk template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME_1 << "\" />";
 		utility::tag::TagPtr tag( new utility::tag::Tag );
 		tag->read( ss_1 );
 
@@ -181,7 +181,7 @@ public:
 		os_2 << BEGIN_CHUNK_2 << "-" << END_CHUNK_2;
 		datamap.add( "ResidueSelector", SELECTOR_NAME_2, ResidueSelectorOP( new ResidueIndexSelector( os_2.str() ) ) );
 		std::stringstream ss_2;
-		ss_2 << "<RigidChunkCM template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME_2 << "\" />";
+		ss_2 << "<RigidChunkCM name=chunk template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME_2 << "\" />";
 		tag = utility::tag::TagPtr( new utility::tag::Tag() );
 		tag->read( ss_2 );
 
@@ -325,7 +325,7 @@ public:
     datamap.add( "ResidueSelector", SELECTOR_NAME, ResidueSelectorOP( new ResidueIndexSelector( os.str() ) ) );
 
     std::stringstream ss;
-    ss << "<RigidChunkCM template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME << "\" />";
+    ss << "<RigidChunkCM name=chunk template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME << "\" />";
     utility::tag::TagPtr tag( new utility::tag::Tag );
     tag->read( ss );
 

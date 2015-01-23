@@ -83,7 +83,7 @@ FragmentCMCreator::mover_name() {
 
 
 FragmentCM::FragmentCM():
-  ClaimingMover(),
+  ClientMover(),
   mover_( /* NULL */ ),
   selector_( /* NULL */ ),
   bInitialize_( true ),
@@ -92,7 +92,7 @@ FragmentCM::FragmentCM():
 
 FragmentCM::FragmentCM( simple_moves::FragmentMoverOP mover,
                         core::pack::task::residue_selector::ResidueSelectorCOP selector ):
-  ClaimingMover(),
+  ClientMover(),
   selector_( selector ),
   bInitialize_( true ),
   bYieldCutBias_( false )
@@ -183,7 +183,7 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
   if( yield_cut_bias() ){
     core::fragment::SecondaryStructureOP ss( new core::fragment::SecondaryStructure( *( mover()->fragments() ) ) );
     claim_list.push_back( protocols::environment::claims::EnvClaimOP( new environment::claims::CutBiasClaim(
-		utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
+		utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
 		"BASE",
 		*ss ) ) );
   }
@@ -192,10 +192,17 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
   if( selector() ){
     utility::vector1< bool > torsion_mask = selector()->apply( pose );
     shift = torsion_mask.index( true )-1;
+
+    if( shift == -1 ) { // verify that torsion_mask isn't all-false.
+      std::ostringstream ss;
+      ss << "Selector used address fragment insertions of '" << this->get_name() << "' was empty.";
+      throw utility::excn::EXCN_BadInput( ss.str() );
+    }
+
     mover()->set_fragments( mover()->fragments()->clone_shifted( shift ) );
   }
 
-  TorsionClaimOP new_claim( new TorsionClaim( utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
+  TorsionClaimOP new_claim( new TorsionClaim( utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
                                                "BASE",
                                                std::make_pair( mover()->fragments()->min_pos(),
                                                                mover()->fragments()->max_pos() ) ) );

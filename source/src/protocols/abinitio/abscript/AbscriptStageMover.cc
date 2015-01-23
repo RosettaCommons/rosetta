@@ -81,7 +81,7 @@ void AbscriptStageMover::yield_submovers( MoverSet& set ) const {
   std::copy( movers_.begin(), movers_.end(), std::inserter( set, set.begin() ) );
 }
 
-void AbscriptStageMover::add_submover( ClaimingMoverOP mover, core::Real weight ) {
+void AbscriptStageMover::add_submover( ClientMoverOP mover, core::Real weight ) {
   random_mover_->add_mover( mover, weight );
   movers_.insert( mover );
 }

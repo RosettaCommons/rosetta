@@ -19,10 +19,10 @@
 #include <protocols/environment/ProtectedConformation.hh>
 #include <protocols/environment/EnvExcn.hh>
 #include <protocols/environment/DofUnlock.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/Environment.hh>
 
-#include <test/protocols/environment/TestClaimingMover.hh>
+#include <test/protocols/environment/TestClientMover.hh>
 
 //Other headers
 #include <core/conformation/Conformation.hh>

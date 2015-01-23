@@ -17,7 +17,7 @@
 #include <protocols/abinitio/abscript/ConstraintPreparer.fwd.hh>
 
 // Package headers
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/abinitio/abscript/StagePreparer.hh>
 
 // Project headers

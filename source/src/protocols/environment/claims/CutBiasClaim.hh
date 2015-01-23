@@ -52,19 +52,19 @@ class CutBiasClaim : public EnvClaim {
   typedef core::environment::LocalPosition LocalPosition;
 
 public:
-  CutBiasClaim( ClaimingMoverOP owner,
+  CutBiasClaim( ClientMoverOP owner,
                 utility::tag::TagCOP tag,
                 basic::datacache::DataMap const& );
 
-  CutBiasClaim( ClaimingMoverOP owner,
+  CutBiasClaim( ClientMoverOP owner,
                 std::string const& label,
                 core::fragment::SecondaryStructure const& ss );
 
-  CutBiasClaim( ClaimingMoverOP owner,
+  CutBiasClaim( ClientMoverOP owner,
                 std::string const& label,
                 std::map< LocalPosition, core::Real > const& biases );
 
-  CutBiasClaim( ClaimingMoverOP owner,
+  CutBiasClaim( ClientMoverOP owner,
                 std::string const& label,
                 std::pair< core::Size, core::Size > const& range,
                 core::Real bias );

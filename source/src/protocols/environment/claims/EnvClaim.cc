@@ -15,7 +15,7 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 
 // Package Headers
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <core/environment/SequenceAnnotation.hh>
 
 #include <protocols/environment/claims/ClaimStrength.hh>
@@ -53,7 +53,7 @@ namespace environment {
 namespace claims {
 
 EnvClaimOP EnvClaim::make_claim( std::string const& name,
-                                 ClaimingMoverOP owner,
+                                 ClientMoverOP owner,
                                  utility::tag::TagCOP tag,
                                  basic::datacache::DataMap& datamap ) {
   if      ( name == "CutBiasClaim" ) return EnvClaimOP( new CutBiasClaim( owner, tag, datamap ) );
@@ -73,7 +73,7 @@ bool EnvClaim::is_claim( std::string const& name ) {
   else return false;
 }
 
-EnvClaim::EnvClaim( ClaimingMoverOP owner ):
+EnvClaim::EnvClaim( ClientMoverOP owner ):
   ReferenceCount(),
   claim_source_( owner )
 {}
@@ -92,7 +92,7 @@ DOFElement EnvClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
   return e;
 }
 
-ClaimingMoverOP EnvClaim::owner() const {
+ClientMoverOP EnvClaim::owner() const {
   return claim_source_;
 }
 

@@ -59,6 +59,7 @@ LoadPDBMover::apply( Pose & pose )
 
   if( append() ){
     pose.append_pose_by_jump( loaded_pose, pose.total_residue() );
+    TR.Debug << "Fold tree after insertion " << pose.fold_tree() << std::endl;
   } else {
     pose = loaded_pose;
   }

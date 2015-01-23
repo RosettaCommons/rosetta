@@ -24,7 +24,7 @@ namespace protocols {
 namespace moves {
 
 NullMover::NullMover() :
-	Mover( "NullMover" )
+	MoveMapMover( "NullMover" )
 {
 }
 

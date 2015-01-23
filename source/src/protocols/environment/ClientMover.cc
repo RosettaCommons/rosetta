@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/ClaimingMover.cc
+/// @file src/protocols/environment/ClientMover.cc
 /// @author Justin Porter
 
 // Unit Headers
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Package headers
 #include <core/environment/DofPassport.hh>
@@ -32,7 +32,7 @@
 
 // ObjexxFCL Headers
 
-static thread_local basic::Tracer tr( "protocols.environment.ClaimingMover", basic::t_info );
+static thread_local basic::Tracer tr( "protocols.environment.ClientMover", basic::t_info );
 
 namespace protocols {
 namespace environment {
@@ -42,24 +42,24 @@ using core::environment::DofPassportCOP;
 
 core::Real const TOLERANCE = 1e-6;
 
-ClaimingMover::ClaimingMover():
+ClientMover::ClientMover():
   Mover(),
   passports_()
 {}
 
-ClaimingMover::ClaimingMover( ClaimingMover const& other ):
+ClientMover::ClientMover( ClientMover const& other ):
   Mover( other ),
   passports_( other.passports_ )
 {
 }
 
-ClaimingMover::~ClaimingMover() {}
+ClientMover::~ClientMover() {}
 
 bool ang_delta( core::Real const& a, core::Real const& b ){
   return std::abs( std::cos( a ) - std::cos( b ) ) > TOLERANCE;
 }
 
-void ClaimingMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
+void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
                                     core::pose::Pose& true_pose ) const {
   // Copy result into protected conformation in in_pose
   environment::DofUnlock unlock( true_pose.conformation(), passport() );
@@ -109,22 +109,22 @@ void ClaimingMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 
 //CLAIMING METHODS:
 
-void ClaimingMover::initialize( Pose& ) {
-  throw utility::excn::EXCN_Msg_Exception( "ClaimingMover "+this->get_name()+
-                                           " claimed a dof to initialize, but did not override ClaimingMover::initialize" );
+void ClientMover::initialize( Pose& ) {
+  throw utility::excn::EXCN_Msg_Exception( "ClientMover "+this->get_name()+
+                                           " claimed a dof to initialize, but did not override ClientMover::initialize" );
 }
 
 
 //PASSPORT MANAGEMENT METHODS:
-core::environment::DofPassportCOP ClaimingMover::passport() const {
+core::environment::DofPassportCOP ClientMover::passport() const {
   if( passports_.empty() ){
-    throw utility::excn::EXCN_NullPointer( "ClaimingMover "+this->get_name()+
+    throw utility::excn::EXCN_NullPointer( "ClientMover "+this->get_name()+
                                            " tried to access its passports, of which it has none.");
   }
   return passports_.top().second;
 }
 
-EnvironmentCAP ClaimingMover::active_environment() const {
+EnvironmentCAP ClientMover::active_environment() const {
   if( passports_.empty()) {
     return EnvironmentCAP();
   } else {
@@ -133,27 +133,27 @@ EnvironmentCAP ClaimingMover::active_environment() const {
 }
 
 
-void ClaimingMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
+void ClientMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
   // Bad-state checks:
   // 1) If there's a superenvironment that mover is registered with, there SHOULD be a superenv passport
   // 2) If not, there should be an empty passport stack.
   EnvironmentCOP env( env_ap );
   EnvironmentCOP superenv( env->superenv().lock() );
-  if( superenv && superenv->is_registered( utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() ) ) ){
+  if( superenv && superenv->is_registered( utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() ) ) ){
 		EnvironmentCOP passport_env = passports_.top().first.lock();
     if( passport_env && passport_env->id() == superenv->id() ){
-      throw EXCN_Env_Passport( "ClaimingMover being double-assigned a passport for an environment.",
+      throw EXCN_Env_Passport( "ClientMover being double-assigned a passport for an environment.",
                                get_name(), env_ap );
     }
   } else {
     if( !( passports_.empty() ) ){
       if( passports_.top().first.lock()->id() == env->id() ) {
         std::ostringstream ss;
-        ss << "ClaimingMover " << this->get_name() << " already has a passport for " << env->name()
+        ss << "ClientMover " << this->get_name() << " already has a passport for " << env->name()
            << ". This probably means Environment::start got called multiple times." << std::endl;
         throw EXCN_Env_Passport( ss.str(), get_name(), env_ap );
       } else {
-        throw EXCN_Env_Passport( "ClaimingMover lacks a superenvironment passport for a superenvironment with which it is registered.",
+        throw EXCN_Env_Passport( "ClientMover lacks a superenvironment passport for a superenvironment with which it is registered.",
                                get_name(), env_ap );
       }
     }
@@ -162,7 +162,7 @@ void ClaimingMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
   passports_.push( std::make_pair( env_ap, pass ) );
 }
 
-void ClaimingMover::pop_passport( EnvironmentCAP env_ap ) {
+void ClientMover::pop_passport( EnvironmentCAP env_ap ) {
   // passport_cancel should never be called on an empty passport stack
   if( passports_.empty() ) {
     throw EXCN_Env_Passport( "Environment trying to pop a passport on an empty pass stack.", get_name(), env_ap );
@@ -177,7 +177,7 @@ void ClaimingMover::pop_passport( EnvironmentCAP env_ap ) {
   passport_updated();
 }
 
-bool ClaimingMover::state_check( std::string const& method_name, bool test ) const {
+bool ClientMover::state_check( std::string const& method_name, bool test ) const {
   if( !has_passport() || test ){
     return true;
   } else {

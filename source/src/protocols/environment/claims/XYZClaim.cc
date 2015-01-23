@@ -26,7 +26,7 @@
 #include <protocols/environment/claims/ClaimStrength.hh>
 #include <protocols/environment/claims/EnvLabelSelector.hh>
 
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/ProtectedConformation.hh>
 
 // Project Headers
@@ -53,7 +53,7 @@ namespace claims {
 using core::environment::LocalPosition;
 using core::environment::LocalPositions;
 
-XYZClaim::XYZClaim( ClaimingMoverOP owner,
+XYZClaim::XYZClaim( ClientMoverOP owner,
                     utility::tag::TagCOP tag,
                     basic::datacache::DataMap const& datamap ):
   EnvClaim( owner ),
@@ -71,7 +71,7 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner,
   }
 }
 
-XYZClaim::XYZClaim( ClaimingMoverOP owner,
+XYZClaim::XYZClaim( ClientMoverOP owner,
                     LocalPosition const& local_pos):
   EnvClaim( owner ),
   selector_( ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
@@ -80,7 +80,7 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner,
   bRelative_( false )
 {}
 
-XYZClaim::XYZClaim( ClaimingMoverOP owner,
+XYZClaim::XYZClaim( ClientMoverOP owner,
                             std::string const& label,
                             std::pair< core::Size, core::Size > const& range ):
   EnvClaim( owner ),
@@ -109,6 +109,15 @@ void XYZClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elemen
 
   utility::vector1< bool > selection = selector()->apply( pose );
 
+  if( tr.Debug.visible() ){
+    tr.Debug << *this << " selection for DoF Claiming: ";
+    for( core::Size i = 1; i <= selection.size(); ++i )
+      tr.Debug << ( selection[i] ? "T" : "F" );
+    tr.Debug << std::endl;
+  }
+
+  // Run through each position in the pose and claim produce DoFElements claiming it,
+  // iff it's selected
   for( Size seqpos = 1; seqpos <= selection.size(); ++seqpos ){
     if( selection[seqpos] ){
       for( Size i = 1; i <= pose.conformation().residue( seqpos ).atoms().size(); ++i ){
@@ -118,9 +127,8 @@ void XYZClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elemen
         // in other words, if the parent is outside the selection, don't claim it.
         core::kinematics::tree::AtomCOP parent = pose.conformation().atom_tree().atom( atom_id ).parent();
         if( !parent ){
-          tr.Debug << this->type() << "Claim owned by '" << owner()->get_name() << "' and strengths ctrl="
-                   << ctrl_strength() << " and init=" << init_strength() << " skipping " << atom_id
-                   << " because its parent is null." << std::endl;
+          tr.Debug << *this << " and strengths ctrl=" << ctrl_strength() << " and init=" << init_strength()
+                   << " skipping " << atom_id << " because its parent is null." << std::endl;
         } else if ( !relative() || selection[ parent->id().rsd() ] ) {
           if( pose.conformation().atom_tree().atom( atom_id ).is_jump() ){
             for( int j = core::id::RB1; j <= core::id::RB6; ++j ){
@@ -134,8 +142,8 @@ void XYZClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elemen
             }
           }
         } else {
-          tr.Debug << this->type() << "Claim owned by '" << owner()->get_name() << "' and strengths ctrl=" << ctrl_strength()
-                   << " and init=" << init_strength() << " skipping " << atom_id << " because its parent ("
+          tr.Debug << *this << " and strengths ctrl=" << ctrl_strength() << " and init=" << init_strength()
+                   << " skipping " << atom_id << " because its parent ("
                    << pose.conformation().atom_tree().atom( atom_id ).parent()->id()
                    << ") doesn't belong to the XYZ selection and it is configured in relative mode." << std::endl;
         }
@@ -171,11 +179,11 @@ EnvClaimOP XYZClaim::clone() const {
 }
 
 std::string XYZClaim::type() const {
-  return "Torsion";
+  return "XYZClaim";
 }
 
 void XYZClaim::show( std::ostream& os ) const {
-  os << type() << " owned by a " << owner()->get_name() << ".";
+  os << type() << " owned by a " << owner()->get_name();
 }
 
 } //claims

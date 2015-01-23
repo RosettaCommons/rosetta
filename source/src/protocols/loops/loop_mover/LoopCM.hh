@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_loops_loop_mover_LoopCM_hh
 
 #include <protocols/loops/loop_mover/LoopCM.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
@@ -35,8 +35,8 @@ namespace protocols {
 namespace loops {
 namespace loop_mover {
 
-class LoopCM: public protocols::environment::ClaimingMover {
-  typedef protocols::environment::ClaimingMover Parent;
+class LoopCM: public protocols::environment::ClientMover {
+  typedef protocols::environment::ClientMover Parent;
 
   typedef environment::claims::EnvClaims EnvClaims;
 public:

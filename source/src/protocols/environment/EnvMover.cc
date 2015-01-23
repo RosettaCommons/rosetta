@@ -16,7 +16,7 @@
 
 // Package headers
 #include <protocols/environment/Environment.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -71,7 +71,13 @@ void EnvMover::apply( Pose& pose ) {
     env_->register_mover( *mv_it );
   }
 
-  core::pose::Pose ppose = env_->start( pose );
+  core::pose::Pose ppose;
+  try {
+    ppose = env_->start( pose );
+  } catch( ... ) {
+    tr.Error << "[ERROR] Error during broking in environment '" << get_name() << "'." << std::endl;
+    throw;
+  }
   movers_->apply( ppose );
   pose = env_->end( ppose );
 }
@@ -153,12 +159,12 @@ void EnvMover::add_apply_mover( protocols::moves::MoverOP mover_in ) {
     throw utility::excn::EXCN_NullPointer( ss.str() );
   }
   movers_->add_mover( mover_in );
-//  environment::ClaimingMoverOP c_mover = dynamic_cast< ClaimingMover* >( mover_in.get() );
+//  environment::ClientMoverOP c_mover = dynamic_cast< ClientMover* >( mover_in.get() );
 //  if( c_mover ){
 //    movers_->add_mover( c_mover );
 //  } else {
 //    std::ostringstream ss;
-//    ss << "The Mover '" << mover_in->get_name() << "' could not be added to the Environment because it is not a ClaimingMover.";
+//    ss << "The Mover '" << mover_in->get_name() << "' could not be added to the Environment because it is not a ClientMover.";
 //    throw utility::excn::EXCN_BadInput( ss.str() );
 //  }
 }
@@ -170,12 +176,12 @@ void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
     throw utility::excn::EXCN_NullPointer( ss.str() );
   }
   reg_only_movers_.insert( mover_in );
-//  environment::ClaimingMoverOP c_mover = dynamic_cast< ClaimingMover* >( mover_in.get() );
+//  environment::ClientMoverOP c_mover = dynamic_cast< ClientMover* >( mover_in.get() );
 //  if( c_mover ){
 //    reg_only_movers_.insert( c_mover );
 //  } else {
 //    std::ostringstream ss;
-//    ss << "The Mover '" << mover_in->get_name() << "' could not be added to the Environment because it is not a ClaimingMover.";
+//    ss << "The Mover '" << mover_in->get_name() << "' could not be added to the Environment because it is not a ClientMover.";
 //    throw utility::excn::EXCN_BadInput( ss.str() );
 //  }
 }

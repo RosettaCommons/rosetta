@@ -18,7 +18,7 @@
 
 // Unit Headers
 #include <protocols/environment/ScriptCM.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Package headers#
 #include <protocols/moves/MoveMapMover.hh>
@@ -35,7 +35,7 @@
 namespace protocols {
 namespace environment {
 
-class ScriptCM : public environment::ClaimingMover {
+class ScriptCM : public environment::ClientMover {
   typedef environment::claims::EnvClaims EnvClaims;
 
 public:
@@ -78,7 +78,9 @@ protected:
 
   void add_claim( claims::EnvClaimOP claim );
 
-  moves::MoveMapMoverOP client() const { return client_; }
+  moves::MoveMapMoverOP client() { return client_; }
+
+  moves::MoveMapMoverCOP client() const { return client_; }
 
 private:
   std::string name_;

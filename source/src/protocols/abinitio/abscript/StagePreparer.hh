@@ -17,7 +17,7 @@
 #include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
 // Package headers
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -30,7 +30,7 @@ namespace protocols {
 namespace abinitio {
 namespace abscript{
 
-class StagePreparer : public protocols::environment::ClaimingMover {
+class StagePreparer : public protocols::environment::ClientMover {
 
 public:
   virtual void prepare( core::pose::Pose& pose, core::Real progress ) = 0;

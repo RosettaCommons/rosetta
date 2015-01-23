@@ -24,7 +24,7 @@
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/EnvClaimBroker.hh>
 
-#include <test/protocols/environment/TestClaimingMover.hh>
+#include <test/protocols/environment/TestClientMover.hh>
 
 //Other headers
 #include <core/conformation/Conformation.hh>

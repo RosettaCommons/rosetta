@@ -27,7 +27,7 @@
 
 #include <core/environment/SequenceAnnotation.hh>
 
-#include <protocols/environment/ClaimingMover.fwd.hh>
+#include <protocols/environment/ClientMover.fwd.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 #include <protocols/environment/EnvClaimBroker.hh>
 
@@ -76,7 +76,7 @@ public:
     }
   }
 
-  bool is_registered( ClaimingMoverOP ) const;
+  bool is_registered( ClientMoverOP ) const;
 
   core::pose::Pose start( core::pose::Pose const& );
 
@@ -118,7 +118,7 @@ private:
 
   void remove_nonpermenant_features( core::pose::Pose& );
 
-  void assign_passport( ClaimingMoverOP, core::environment::DofPassportCOP );
+  void assign_passport( ClientMoverOP, core::environment::DofPassportCOP );
 
   void cancel_passports();
 
@@ -126,7 +126,7 @@ private:
 
   EnvClaimBrokerOP broker_;
   core::pose::Pose input_pose_;
-  std::set<ClaimingMoverOP> registered_movers_;
+  std::set<ClientMoverOP> registered_movers_;
 
   SequenceAnnotationOP ann_;
 

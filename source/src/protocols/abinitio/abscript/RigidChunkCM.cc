@@ -139,7 +139,8 @@ private:
 RigidChunkCM::RigidChunkCM():
   Parent(),
   sim_selector_( new core::pack::task::residue_selector::TrueResidueSelector() ),
-  templ_selector_( new core::pack::task::residue_selector::TrueResidueSelector() )
+  templ_selector_( new core::pack::task::residue_selector::TrueResidueSelector() ),
+  xml_name_("")
 {}
 
 RigidChunkCM::RigidChunkCM(
@@ -149,7 +150,8 @@ RigidChunkCM::RigidChunkCM(
   Parent(),
   template_( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(template_pose) ) ) ),
   sim_selector_( selector ),
-  templ_selector_( selector )
+  templ_selector_( selector ),
+  xml_name_("")
 {}
 
 loops::Loops read_rigid_core( std::string const& file){
@@ -176,8 +178,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
   using namespace basic::options;
   using namespace core::pack::task::residue_selector;
 
-  //This option must be provided, but is not always accessed. This is here to fail fast.
-  tag->hasOption( "name" );
+  xml_name_ = std::string( tag->getOption< std::string >( "name" ) );
 
   std::string const SELECTOR = "selector";
   if( tag->hasOption( SELECTOR ) ){
@@ -212,8 +213,14 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
                                        file );
 
       for( Size i = 1; i <= apply_movers.size(); ++i ){
-        apply_movers[i]->apply( *p );
-        tr.Debug << "RigidChunkCM named " << tag->getOption< std::string >( "name" ) << " applied " << apply_movers[i]->get_name() << std::endl;
+        if( apply_movers[i] ) {
+          apply_movers[i]->apply( *p );
+          tr.Debug << "RigidChunkCM named " << this->get_name() << " applied " << apply_movers[i]->get_name() << std::endl;
+        } else {
+          std::ostringstream ss;
+          ss << "RigidChunkCM named '" << this->get_name() << " couldn't apply one of its input movers because it doesn't exist.";
+          throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+        }
       }
       template_ = p;
     }
@@ -280,12 +287,12 @@ void RigidChunkCM::configure(
 
   { // Debug output and error checking
     if( tr.Debug.visible() ){
-      tr.Debug << "template selection: ";
+      tr.Debug << "template selection for " << this->get_name() << ": ";
       for( Size i = 1; i <= templ().total_residue(); ++i ){
         tr.Debug << ( templ_selection[i] ? "T" : "F" );
       }
       tr.Debug << std::endl;
-      tr.Debug << "simulation selection: ";
+      tr.Debug << "simulation selection for " << this->get_name() << ": ";
       for( Size i = 1; i <= in_p.total_residue(); ++i ){
         tr.Debug << ( sim_selection[i] ? "T" : "F" );
       }
@@ -398,7 +405,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
   selection = sim_selector()->apply( in_p );
   configure( in_p, selection );
 
-  ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() );
+  ClientMoverOP this_ptr = utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() );
 
   ResidueChunkSelection simulation_regions( selection );
 
@@ -419,7 +426,9 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
     std::pair< core::Size, core::Size > const supp_region = std::make_pair( std::max( Size( 1 ), excl_region.first-1 ),
                                                                             std::min( in_p.total_residue(), excl_region.second+1 ) );
     XYZClaimOP support_claim( new XYZClaim( this_ptr, "BASE", supp_region ) );
-    support_claim->strength( MUST_CONTROL, MUST_CONTROL );
+    // These would be MUST_CONTROL, but sometimes the edges of the rigid chunk are cuts, and in this
+    // case, we want to allow a directly abutting EXCLUSIVE claim. If it's a problem, we'll fail later.
+    support_claim->strength( CAN_CONTROL, CAN_CONTROL );
     claims.push_back( support_claim );
     tr.Debug << this->get_name() << ": built support XYZClaim for " << supp_region.first << "-" << supp_region.second
              << " in " << "BASE" << std::endl;
@@ -431,11 +440,13 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
       core::Size const jump_end   = excl_region.first + ( ( excl_region.second - excl_region.first ) / 2 );
 
       JumpClaimOP j_claim( new JumpClaim( this_ptr,
-                                          "RigidChunkJump"+utility::to_string( claims.size()/4 ),
+                                          this->get_name()+"Jump"+utility::to_string( claims.size()/4 ),
                                           LocalPosition( "BASE", jump_start ),
                                           LocalPosition( "BASE", jump_end ) ) );
       j_claim->strength( EXCLUSIVE, EXCLUSIVE );
       j_claim->physical( false );
+
+      tr.Debug << this->get_name() << ": built jump claim " << jump_start << "->" << jump_end << std::endl;
 
       claims.push_back( j_claim );
     }
@@ -689,19 +700,27 @@ void RigidChunkCM::initialize( Pose& pose ){
       bool lower_connect = ( sim_pos > 1
                             && !pose.residue( sim_pos ).is_lower_terminus()
                             && !pose.fold_tree().is_cutpoint( sim_pos - 1 ) );
-      if ( lower_connect && templ_pos - 1 < 1 ){
-        tr.Debug << "fixing lower connection for " << sim_pos << " using non-template values." << std::endl;
-        fix_mainchain_connect( pose, sim_pos, reference, sim_pos );
-      } else if ( lower_connect ) {
-        tr.Debug << "fixing lower connection for " << sim_pos << std::endl;
-        fix_mainchain_connect( pose, sim_pos, templ(), templ_pos );
-      } else {
-        tr.Debug << "NOT fixing lower connection for " << sim_pos
-                 << " ( lower_terminus : " << ( pose.residue( sim_pos ).is_lower_terminus() ? "T" : "F" )
-                 << ", cutpoint " << ( pose.fold_tree().is_cutpoint( sim_pos - 1 ) ? "T" : "F" )
-                 << std::endl;
+      try {
+        if ( lower_connect && templ_pos - 1 < 1 ){
+          tr.Debug << "fixing lower connection for " << sim_pos << " using non-template values." << std::endl;
+          fix_mainchain_connect( pose, sim_pos, reference, sim_pos );
+        } else if ( lower_connect ) {
+          tr.Debug << "fixing lower connection for " << sim_pos << std::endl;
+          fix_mainchain_connect( pose, sim_pos, templ(), templ_pos );
+        } else {
+          tr.Debug << "NOT fixing lower connection for " << sim_pos
+                   << " ( lower_terminus : " << ( pose.residue( sim_pos ).is_lower_terminus() ? "T" : "F" )
+                   << ", cutpoint " << ( pose.fold_tree().is_cutpoint( sim_pos - 1 ) ? "T" : "F" )
+                   << std::endl;
+        }
+      } catch( core::environment::EXCN_Env_Exception& e ) {
+        std::ostringstream ss;
+        ss << this->get_name() << " couldn't repair the chunk's N-terminal connection to the mainchain at " << lower_connect
+           << " because it does not have DoF access at that position (which is one outside the selected region). "
+           << "Some other claimer must be claiming EXCLUSIVE at this position.";
+        e.add_msg( ss.str() );
+        throw e;
       }
-
     }
     // If the residue after this is not in the region
     if( sim_origin().find( sim_pos + 1 ) == sim_origin().end() &&
@@ -712,14 +731,23 @@ void RigidChunkCM::initialize( Pose& pose ){
                             && !pose.residue( sim_pos ).is_upper_terminus()
                             && !pose.fold_tree().is_cutpoint( sim_pos ) );
 
-      if ( upper_connect && templ_pos + 1 > templ().total_residue() ){
-        tr.Debug << "fixing upper connection for " << sim_pos << " using non-template values." << std::endl;
-        fix_mainchain_connect( pose, sim_pos+1, reference, sim_pos+1 );
-      } else if ( upper_connect ) {
-        tr.Debug << "fixing upper connection for " << sim_pos << std::endl;
-        fix_mainchain_connect( pose, sim_pos+1, templ(), templ_pos+1 );
-      } else {
-        tr.Debug << "NOT fixing upper connection for " << sim_pos << std::endl;
+      try {
+        if ( upper_connect && templ_pos + 1 > templ().total_residue() ){
+          tr.Debug << "fixing upper connection for " << sim_pos << " using non-template values." << std::endl;
+          fix_mainchain_connect( pose, sim_pos+1, reference, sim_pos+1 );
+        } else if ( upper_connect ) {
+          tr.Debug << "fixing upper connection for " << sim_pos << std::endl;
+          fix_mainchain_connect( pose, sim_pos+1, templ(), templ_pos+1 );
+        } else {
+          tr.Debug << "NOT fixing upper connection for " << sim_pos << std::endl;
+        }
+      } catch( core::environment::EXCN_Env_Exception& e ) {
+        std::ostringstream ss;
+        ss << this->get_name() << " couldn't repair the chunk's C-terminal connection to the mainchain at " << upper_connect
+           << " because it does not have DoF access at that position (which is one outside the selected region). "
+           << "Some other claimer must be claiming EXCLUSIVE at this position.";
+        e.add_msg( ss.str() );
+        throw e;
       }
     }
   }
@@ -791,7 +819,16 @@ core::pack::task::residue_selector::ResidueSelectorCOP RigidChunkCM::templ_selec
 
 std::string RigidChunkCM::get_name() const {
   std::ostringstream ss;
-  ss << "RigidChunkCM(" << sim_selector()->get_name() << "+" << templ_selector()->get_name() << ")";
+  ss << "RigidChunkCM(";
+
+  if( xml_name_ == "" ){
+    ss << sim_selector()->get_name() << "+" << templ_selector()->get_name();
+    return ss.str();
+  } else {
+    ss << xml_name_;
+  }
+
+  ss << ")";
   return ss.str();
 }
 

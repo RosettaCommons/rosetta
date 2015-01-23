@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file ClaimingMover.fwd.hh
-/// @brief definition of the ClaimingMover class
+/// @file ClientMover.fwd.hh
+/// @brief definition of the ClientMover class
 /// @author
 
-#ifndef INCLUDED_protocols_environment_ClaimingMover_fwd_hh
-#define INCLUDED_protocols_environment_ClaimingMover_fwd_hh
+#ifndef INCLUDED_protocols_environment_ClientMover_fwd_hh
+#define INCLUDED_protocols_environment_ClientMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
@@ -23,14 +23,14 @@
 namespace protocols {
 namespace environment {
 
-class ClaimingMover;
-typedef utility::pointer::shared_ptr< ClaimingMover > ClaimingMoverOP;
-typedef utility::pointer::shared_ptr< ClaimingMover const > ClaimingMoverCOP;
+class ClientMover;
+typedef utility::pointer::shared_ptr< ClientMover > ClientMoverOP;
+typedef utility::pointer::shared_ptr< ClientMover const > ClientMoverCOP;
 
-typedef utility::pointer::weak_ptr< ClaimingMover > ClaimingMoverAP;
-typedef utility::pointer::weak_ptr< ClaimingMover const > ClaimingMoverCAP;
+typedef utility::pointer::weak_ptr< ClientMover > ClientMoverAP;
+typedef utility::pointer::weak_ptr< ClientMover const > ClientMoverCAP;
 
 } // environment
 } // protocols
 
-#endif //INCLUDED_protocols_moves_ClaimingMover_fwd_HH
+#endif //INCLUDED_protocols_moves_ClientMover_fwd_HH

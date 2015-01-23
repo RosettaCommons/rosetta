@@ -17,7 +17,7 @@
 #include <protocols/abinitio/abscript/AbscriptMover.fwd.hh>
 
 // Package headers
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
 
 #include <protocols/abinitio/abscript/StageID.hh>
@@ -52,10 +52,10 @@ namespace protocols {
 namespace abinitio {
 namespace abscript {
 
-class AbscriptMover : public protocols::environment::ClaimingMover {
+class AbscriptMover : public protocols::environment::ClientMover {
   typedef environment::claims::EnvClaims EnvClaims;
-  typedef environment::ClaimingMoverOP ClaimingMoverOP;
-  typedef std::set<ClaimingMoverOP> MoverSet;
+  typedef environment::ClientMoverOP ClientMoverOP;
+  typedef std::set<ClientMoverOP> MoverSet;
   typedef std::map< StageID, MoverSet > IDMoverSetMap;
 
 
@@ -71,7 +71,7 @@ public:
   virtual EnvClaims yield_claims( core::pose::Pose const&,
                                   basic::datacache::WriteableCacheableMapOP );
 
-  virtual void yield_submovers( std::set< ClaimingMoverOP >& ) const;
+  virtual void yield_submovers( std::set< ClientMoverOP >& ) const;
 
   // the Abscript mover does not make any claims, and should never be given
   // initialization rights

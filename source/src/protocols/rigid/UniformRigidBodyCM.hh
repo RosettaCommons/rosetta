@@ -17,7 +17,7 @@
 
 // Unit Headers
 #include <protocols/rigid/UniformRigidBodyCM.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Package headers
 #include <protocols/rigid/UniformRigidBodyMover.hh>
@@ -39,7 +39,7 @@
 namespace protocols {
 namespace rigid {
 
-class UniformRigidBodyCM : public environment::ClaimingMover {
+class UniformRigidBodyCM : public environment::ClientMover {
   typedef core::environment::LocalPosition LocalPosition;
   typedef environment::claims::EnvClaims EnvClaims;
   typedef int JumpNumber;

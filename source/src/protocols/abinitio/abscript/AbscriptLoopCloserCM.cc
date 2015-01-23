@@ -115,7 +115,7 @@ claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const&,
   claims::EnvClaims claims;
 
   // We want to control everything that will be relevant to the output pose (which should be the same as the input.
-  claims::TorsionClaimOP claim( new claims::TorsionClaim( utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ), selector() ) );
+  claims::TorsionClaimOP claim( new claims::TorsionClaim( utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ), selector() ) );
   claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
   claims.push_back( claim );
@@ -133,7 +133,7 @@ bool angle_cpy( core::pose::Pose& target, core::pose::Pose const& source, core::
   // for my taste. Ideally, I would run some kind of minimization procedure to try to pull target back to its
   // original configuration, but I'm not sure how to do that. Typically, these structures will be all-atom
   // relaxed after this anyway, so that helps.
-  core::Real const TOLERANCE = 2;
+  core::Real const TOLERANCE = 1e-6;
   std::string angle;
   if( t_id.torsion() == core::id::psi_torsion )
     angle = "PSI";
@@ -149,11 +149,12 @@ bool angle_cpy( core::pose::Pose& target, core::pose::Pose const& source, core::
     try {
       target.set_torsion( t_id, source.torsion( t_id ) );
     } catch ( EXCN_Env_Security_Exception& ){
-      tr.Error << "[ERROR] Loop closure tried to write to residue " << t_id.rsd() << " " << angle << " angle ("
-               << t_id << "). Target angle was " << target.torsion( t_id ) << " and source angle was "
-               << source.torsion( t_id ) << " (delta=" << angle_diff( target.torsion( t_id ), source.torsion( t_id ) )
-               << "; tolerance is " << TOLERANCE << ")." << std::endl;
-      throw protocols::loops::EXCN_Loop_not_closed();
+      std::ostringstream ss;
+      ss << "[ERROR] Loop closure tried to write to residue " << t_id.rsd() << " " << angle << " angle ("
+         << t_id << "). Target angle was " << target.torsion( t_id ) << " and source angle was "
+         << source.torsion( t_id ) << " (delta=" << angle_diff( target.torsion( t_id ), source.torsion( t_id ) )
+         << "; tolerance is " << TOLERANCE << ")." << std::endl;
+      throw protocols::loops::EXCN_Loop_not_closed( ss.str() );
     }
   } else {
     tr.Debug << "  ignoring modified " << angle << " @ " << t_id.torsion() << " (input=" << source.torsion( t_id ) << ", output=" << target.torsion( t_id ) << std::endl;
@@ -195,17 +196,23 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 
   Size warn = 0;
 
-  for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
-    tr.Debug << "Movemap for " << in_pose.residue( i ).name3() << i
-             << ": bb(" << ( movemap_->get_bb( i ) ? "T" : "F" )
-             << ") chi(" << ( movemap_->get_chi( i ) ? "T" : "F" ) << ")" << std::endl;
+  try {
+    for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
+      tr.Debug << "Movemap for " << in_pose.residue( i ).name3() << i
+               << ": bb(" << ( movemap_->get_bb( i ) ? "T" : "F" )
+               << ") chi(" << ( movemap_->get_chi( i ) ? "T" : "F" ) << ")" << std::endl;
 
-    if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::omega_torsion ) ) )
-      warn += 1;
-    if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::phi_torsion ) ) )
-      warn += 1;
-    if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::psi_torsion ) ) )
-      warn += 1;
+      if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::omega_torsion ) ) )
+        warn += 1;
+      if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::phi_torsion ) ) )
+        warn += 1;
+      if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::psi_torsion ) ) )
+        warn += 1;
+    }
+  } catch( loops::EXCN_Loop_not_closed const& e ) {
+    tr.Info << "Loop closure in " << this->get_name() << " failed. Retrying this output." << std::endl;
+    tr.Debug << e.msg() << std::endl;
+    set_last_move_status( moves::FAIL_RETRY );
   }
   if( warn ){
     tr.Warning << "[WARNING] AbscriptLoopMoverCM ignoring " << warn
@@ -229,7 +236,7 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
                                get_current_tag(),
                                *final_ft_ );
   } catch ( loops::EXCN_Loop_not_closed& excn ) {
-    set_last_move_status( moves::FAIL_DO_NOT_RETRY );
+    set_last_move_status( moves::FAIL_RETRY );
     set_current_tag( "C_"+get_current_tag().substr(std::min(2,(int)get_current_tag().size())) );
     return false;
   }

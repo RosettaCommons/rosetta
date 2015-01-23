@@ -20,7 +20,7 @@
 
 #include <protocols/environment/claims/EnvClaim.hh>
 
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/ProtectedConformation.hh>
 
 // Project Headers
@@ -46,7 +46,7 @@ namespace claims {
 
 using core::environment::LocalPosition;
 
-JumpClaim::JumpClaim( ClaimingMoverOP owner,
+JumpClaim::JumpClaim( ClientMoverOP owner,
                       utility::tag::TagCOP tag,
                       basic::datacache::DataMap const& datamap ):
   EnvClaim( owner ),
@@ -81,7 +81,7 @@ JumpClaim::JumpClaim( ClaimingMoverOP owner,
 }
 
 
-JumpClaim::JumpClaim( ClaimingMoverOP owner,
+JumpClaim::JumpClaim( ClientMoverOP owner,
                       std::string const& jump_label,
                       LocalPosition const& jpos1,
                       LocalPosition const& jpos2,

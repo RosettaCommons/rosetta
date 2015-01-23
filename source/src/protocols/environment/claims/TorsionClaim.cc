@@ -23,7 +23,7 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/ClaimStrength.hh>
 
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/ProtectedConformation.hh>
 
 // Project Headers
@@ -51,7 +51,7 @@ using core::environment::LocalPosition;
 using core::environment::LocalPositions;
 using core::conformation::Conformation;
 
-TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
+TorsionClaim::TorsionClaim( ClientMoverOP owner,
                             core::pack::task::residue_selector::ResidueSelectorCOP selector ) :
   EnvClaim( owner ),
   selector_( selector ),
@@ -62,7 +62,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
 {}
 
 
-TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
+TorsionClaim::TorsionClaim( ClientMoverOP owner,
                             utility::tag::TagCOP tag,
                             basic::datacache::DataMap& datamap ):
   EnvClaim( owner ),
@@ -82,7 +82,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
 }
 
-TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
+TorsionClaim::TorsionClaim( ClientMoverOP owner,
                             LocalPosition const & local_pos):
   EnvClaim( owner ),
   selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
@@ -92,7 +92,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   claim_backbone_( true )
 {}
 
-TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
+TorsionClaim::TorsionClaim( ClientMoverOP owner,
                             std::string const & label,
                             std::pair< core::Size, core::Size > const & range ):
   EnvClaim( owner ),
@@ -110,7 +110,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   selector_ = core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_positions ) ) );
 }
 
-TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
+TorsionClaim::TorsionClaim( ClientMoverOP owner,
                             LocalPositions const & positions ):
   EnvClaim( owner ),
   selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( positions ) ) ) ),
@@ -161,11 +161,11 @@ void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& e
       continue;
     }
 
-//    if( conf.residue( seqpos ).type().is_protein() ) {
     if( claim_backbone() ){
       for( Size i = 1; i <= conf.residue( seqpos ).mainchain_torsions().size(); ++i ){
         insert_dof_element( conf, elements, seqpos, BB, i );
       }
+    }
     if( claim_sidechain() ){
       for( Size i = 1; i <= conf.residue( seqpos ).nchi(); ++i ){
         insert_dof_element( conf, elements, seqpos, CHI, i );
@@ -175,40 +175,7 @@ void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& e
       for( Size i = 1; i <= conf.residue( seqpos ).n_nus(); ++i ){
         insert_dof_element( conf, elements, seqpos, NU, i );
       }
-    }
-//    } else if( conf.residue( seqpos ).is_virtual_residue() || conf.residue( seqpos ).name3() == "XXX" ) {
-//      tr.Debug << *this << " ignoring seqpos " << seqpos << ", because it's a virtual residue." << std::endl;
-//    } else if( conf.residue( seqpos ).nchi() + conf.residue( seqpos ).mainchain_torsions().size() == 0 ){
-//      tr.Debug << *this << " ignoring seqpos " << seqpos << " because it has no claimable torsions." << std::endl;
-//    } else if( conf.residue( seqpos ).is_NA() ){
-//      tr.Fatal << "[FATAL] The Broker is not currently built to deal with nucleic acids. Go in to TorsionClaim::"
-//         << __FUNCTION__ << " in " << __FILE__ << ":" << __LINE__ << " and build the appropriate DOF_IDs." << std::endl;
-//      utility_exit();
-//    } else {
-//
-//      if( claim_backbone() ){
-//        for( Size i = 1; i <= conf.residue( seqpos ).mainchain_torsions().size(); ++i ){
-//        insert_dof_element( conf, elements, seqpos, BB, i );
-//      }
-//      if( claim_sidechain() ){
-//        for( Size i = 1; i <= conf.residue( seqpos ).nchi(); ++i ){
-//          insert_dof_element( conf, elements, seqpos, CHI, i );
-//        }
-//      }
-
-      // Hey there! If you got here because you're using sugars or something,
-      // all you have to do is put an else if for your case (see the virtual check above),
-      // and correctly generate the DOF_IDs for all your torsions. Then call wrap_dof_id( dof_id )
-      // to build a DOFElement out of it, and put it into elements. See insert_dof_element above. JRP
-
-//      std::ostringstream ss;
-//      ss << "[ERROR] TorsionClaim::" << __FUNCTION__ << " owned by " << owner()->get_name()
-//         << " doesn't know how to handle residue " << seqpos << " with name3 "
-//         << conf.residue( seqpos ).name3() << " because it is not protein."
-//         << "If you're using non-protein residue types (sugars, ligands, RNA/DNA, etc.), check out "
-//         << __FILE__ << ":" << __LINE__ << " to tell the TorsionClaim how to turn torsion "
-//         << "numbers in to DOF_IDs" << std::endl;
-//      throw utility::excn::EXCN_BadInput( ss.str() );
+      tr.Warning << "[WARNING] Nu angles for " << seqpos << " are being claimed. Is this what you want? You can investigate in " << __FILE__ << ":" << __LINE__ << std::endl;
     }
   }
 }

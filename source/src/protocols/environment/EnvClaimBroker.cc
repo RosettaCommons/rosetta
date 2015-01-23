@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/environment/EnvClaimBroker.cc
-/// @author Justin Porter
+/// @author Justin R. Porter
 
 // Unit Headers
 #include <protocols/environment/EnvClaimBroker.hh>
@@ -25,7 +25,7 @@
 #include <protocols/environment/claims/JumpClaim.hh>
 
 #include <protocols/environment/ProtectedConformation.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/AutoCutData.hh>
 
@@ -39,6 +39,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/util.hh>
 #include <core/kinematics/Exceptions.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/BondedAtom.hh>
@@ -159,6 +160,10 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
   safe_set_conf( pose, conf );
   update_pdb_info( in_pose.pdb_info(), pose );
 
+  if( tr.Debug.visible() ){
+    pose.dump_pdb( "BROKERDEBUG_pre_dof_broker.pdb" );
+  }
+
   broker_dofs( pose );
 
   result_.pose = pose;
@@ -226,7 +231,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
     add_chainbreak_variants( cut, conf );
   }
 
-  tr.Info << "Broking finished. Consensus fold tree: " << *ft << std::endl;
+  tr.Info << "Broking finished. Consensus fold tree: " << core::kinematics::visualize_fold_tree(*ft) << std::endl;
 }
 
 core::Size find_implied_cut( utility::vector1< core::Size > const& cycle,
@@ -378,14 +383,19 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
     if( !made_cut && datamap_autocuts.empty() && env->auto_cut() ){
       utility::vector1< core::Real > masked_bias( bias.size(), 0 );
 
-      // k must be strictly less than cycle.size() so that the automatic
-      // cut doesn't get placed at the end of the cycle.
       core::Real bias_sum = 0.0;
-      for( Size k = 1; k < cycle.size(); ++k ){
-        if( fts.has_jump( cycle[k], cycle[k+1] ) ){
+      for( Size k = 1; k <= cycle.size(); ++k ){
+        core::Size seqpos = cycle[k];
+        // you could do the following with mod, but 1 indexing makes it suck too.
+        core::Size prev_seqpos = cycle[ ( k != 1 ) ? k-1 : cycle.size() ];
+        if( fts.has_jump( seqpos, prev_seqpos ) ){
           // if a jump originating at residue k is part of the cycle, do not cut here because
           // a cut at this residue is actually *outside* of the loop, since cuts are placed after k.
-          masked_bias[cycle[k]] = 0.0;
+          if( seqpos > prev_seqpos )
+            masked_bias[ seqpos ] = 0.0;
+          else
+            masked_bias[ prev_seqpos ] = 0.0;
+
         } else {
           masked_bias[cycle[k]] = bias[cycle[k]];
           bias_sum += bias[cycle[k]];
@@ -394,16 +404,25 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 
       try {
         Size const cut = fts.insert_cut( masked_bias );
+        assert( masked_bias[cut] != 0 );
         tr.Debug << "  Inserted automatic cut at " << cut << std::endl;
         result_.auto_cuts.insert( cut );
         made_cut = true;
-      } catch( ... ){
-        tr.Error << "[ERROR] Cut insertion failed with biases: [";
+      } catch( utility::excn::EXCN_Msg_Exception& e ){
+        std::ostringstream ss;
+        ss << "Automatic cut insertion failed with biases: [";
         for( Size k = 1; k <= cycle.size(); ++k ){
-          tr.Error << cycle[k] << ":" << bias[cycle[k]] << ", ";
+          ss << cycle[k] << ":" << bias[cycle[k]] << ", ";
         }
-        tr.Error << std::endl;
-        throw;
+        ss << "] Do you have a jump across a region that's zero cut-bias ("
+           << "this can happen when you combine, say, a RigidChunkCM and a JumpFragmentCM in the same region)."
+           << " This can be resolved by looking at your input and being more careful about which jumps are claimed."
+           << std::endl;
+        e.add_msg( ss.str() );
+        // reported to info stream because (hopefully) the exception will print as error. The role of the info trace is
+        // in case the exception is expected and handled successfully.
+        tr.Info << ss.str() << std::endl;
+        throw e;
       }
     }
 
@@ -425,10 +444,12 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 
   try {
     return fts.render();
-  } catch ( ... ) {
-    tr.Error << "[ERROR] A problem was encountered rendering fold tree"
-             << "choices in EnvClaimBroker::render_fold_tree." << std::endl;
-    throw;
+  } catch ( utility::excn::EXCN_Msg_Exception& e ) {
+    std::ostringstream ss;
+    ss << "A problem was encountered rendering fold tree choices in " << __FILE__ << ":"
+       << __LINE__ - 4 << ". Turn on debug output with '-out:levels' to investigate.";
+    e.add_msg( ss.str() );
+    throw e;
   }
 }
 
@@ -481,17 +502,17 @@ void EnvClaimBroker::add_virtual_residues( Conformation& conf,
   }
 }
 
-ControlStrength const& init_str_selector( std::pair< claims::DOFElement, ClaimingMoverOP > const& d ){
+ControlStrength const& init_str_selector( std::pair< claims::DOFElement, ClientMoverOP > const& d ){
   return d.first.i_str;
 }
 
-ControlStrength const& ctrl_str_selector( std::pair< claims::DOFElement, ClaimingMoverOP > const& d ){
+ControlStrength const& ctrl_str_selector( std::pair< claims::DOFElement, ClientMoverOP > const& d ){
   return d.first.c_str;
 }
 
 void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 
-  std::set< ClaimingMoverOP > initializers;
+  std::set< ClientMoverOP > initializers;
 
   //Broker Arbitrary DOFs ---------------------------------------------------------------------------
   DOFElemVect d_elems = collect_elements< DOFElement >( pose );
@@ -524,30 +545,32 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 /// @brief A brief comparator object initialized with the correct strength accessor for reuse of setup_passports
 class Comparator {
 public:
-  Comparator( claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClaimingMoverOP > const& ) ):
+  Comparator( claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const& ) ):
     str_access_( str_access ) {}
-  bool operator() ( std::pair< claims::DOFElement, ClaimingMoverOP > const& a,
-                    std::pair< claims::DOFElement, ClaimingMoverOP > const& b ){
+  bool operator() ( std::pair< claims::DOFElement, ClientMoverOP > const& a,
+                    std::pair< claims::DOFElement, ClientMoverOP > const& b ){
     return str_access_( a ) > str_access_( b );
   }
 private:
-  claims::ControlStrength const& (*str_access_)( std::pair< claims::DOFElement, ClaimingMoverOP > const& );
+  claims::ControlStrength const& (*str_access_)( std::pair< claims::DOFElement, ClientMoverOP > const& );
 };
 
 void EnvClaimBroker::setup_passports( DOFElemVect& elems,
-                                      claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClaimingMoverOP > const& ) ) {
+                                      claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const& ) ) {
 
   // Figure out if we're doing initialization or not for output purposes.
   std::string const style = ( str_access == *init_str_selector ) ? "initialization" : "sampling";
 
-  // Similarly to setup_initialization_passports, sort by control strength
+  // Sort by control strength, so we're guaranteed have things ordered EXCLUSIVE, MUST, CAN, DOES NOT
   std::sort( elems.begin(), elems.end(), Comparator( str_access ) );
-  std::map< core::id::DOF_ID, std::pair< ControlStrength, ClaimingMoverOP > > max_strength;
+  std::map< core::id::DOF_ID, std::pair< ControlStrength, ClientMoverOP > > max_strength;
 
-  //Iterate through each element. If it's EXCLUSIVE, we know not to admit any further claims.
+  // Iterate through each element, and tag it as claimed if it's not been claimed.
+  // Using max_strength, we can check to see if somebody else has already claimed, and
+  // if we have a conflict.
   BOOST_FOREACH( DOFElemVect::Value pair, elems ){
     DOFElement const& element = pair.first;
-    ClaimingMoverOP const& owner = pair.second;
+    ClientMoverOP const& owner = pair.second;
     ControlStrength const strength = str_access( pair );
 
     tr.Trace << "    considering: " << element.id << " from " << owner->get_name();
@@ -559,15 +582,14 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
       assert( element.id.valid() );
     }
 
-    std::pair< ControlStrength, ClaimingMoverOP > prev_str = std::make_pair( DOES_NOT_CONTROL, ClaimingMoverOP( NULL ) );
+    std::pair< ControlStrength, ClientMoverOP > prev_str = std::make_pair( DOES_NOT_CONTROL, ClientMoverOP( NULL ) );
 
     if( max_strength.find( element.id ) != max_strength.end() ){
       prev_str = max_strength[ element.id ];
     }
 
     if( prev_str.first == EXCLUSIVE ){
-        if( strength >= MUST_CONTROL &&
-            ( owner != prev_str.second ) ){
+        if( strength >= MUST_CONTROL && ( owner != prev_str.second ) ){
           assert( prev_str.second );
           std::ostringstream ss;
           ss << "While broking for " << style << ", there were conflicting claim strengths on DoF "
@@ -587,7 +609,7 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
   }
 }
 
-void EnvClaimBroker::grant_access( DOFElement const& e, ClaimingMoverOP owner ) const {
+void EnvClaimBroker::grant_access( DOFElement const& e, ClientMoverOP owner ) const {
   using namespace core::id;
   using namespace core::kinematics::tree;
 
@@ -597,8 +619,8 @@ void EnvClaimBroker::grant_access( DOFElement const& e, ClaimingMoverOP owner ) 
 }
 
 template < typename T, typename I >
-utility::vector1< std::pair< T, ClaimingMoverOP > > EnvClaimBroker::collect_elements( I const& info ) const {
-  typedef utility::vector1< std::pair< T, ClaimingMoverOP > > ElementList;
+utility::vector1< std::pair< T, ClientMoverOP > > EnvClaimBroker::collect_elements( I const& info ) const {
+  typedef utility::vector1< std::pair< T, ClientMoverOP > > ElementList;
 
   utility::vector1< T > tmp;
   ElementList elements;
@@ -697,7 +719,7 @@ void EnvClaimBroker::process_elements( ResElemVect const& elems, FoldTreeSketch&
 
   for( ResElemVect::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
     ResidueElement const& element = e_it->first;
-    ClaimingMoverCOP owner = e_it->second;
+    ClientMoverCOP owner = e_it->second;
 
     if( !element.allow_duplicates ) {
       if( ann_->has_seq_label( element.label ) ){
@@ -716,7 +738,7 @@ void EnvClaimBroker::process_elements( ResElemVect const& elems, FoldTreeSketch&
 
   for( ResElemVect::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
     ResidueElement const& element = e_it->first;
-    ClaimingMoverCOP owner = e_it->second;
+    ClientMoverCOP owner = e_it->second;
 
     if( element.allow_duplicates ) {
       if( !ann_->has_seq_label( element.label ) ){
@@ -744,7 +766,7 @@ void EnvClaimBroker::process_elements( JumpElemVect const& elems,
 
   BOOST_FOREACH( JumpElemVect::Value pair, elems ){
     JumpElement const& element = pair.first;
-    ClaimingMoverCOP owner = pair.second;
+    ClientMoverCOP owner = pair.second;
 
     Size abs_p1 = ann_->resolve_seq( element.p1 );
     Size abs_p2 = ann_->resolve_seq( element.p2 );
@@ -772,7 +794,7 @@ void EnvClaimBroker::process_elements( JumpElemVect const& elems,
         ss << "The broker element claiming a jump between " << element.p1 << " and " << element.p2
            << " overlaps with an existing jump between absolute positions " << pos_pair.first
            << " and " << pos_pair.second << ". Normally, this would be ok (the jumps would be "
-           << "the same jump and access would be offered to both ClaimingMovers), but the jump data "
+           << "the same jump and access would be offered to both ClientMovers), but the jump data "
            << "differs. This jump was: " << std::endl;
 
         new_jump->operator<<( ss );

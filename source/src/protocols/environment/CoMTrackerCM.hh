@@ -18,7 +18,7 @@
 
 // Unit Headers
 #include <protocols/environment/CoMTrackerCM.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Package headers
 #include <protocols/environment/claims/EnvClaim.hh>
@@ -36,7 +36,7 @@
 namespace protocols {
 namespace environment {
 
-class CoMTrackerCM : public environment::ClaimingMover {
+class CoMTrackerCM : public environment::ClientMover {
   typedef environment::claims::EnvClaims EnvClaims;
   typedef int JumpNumber;
 

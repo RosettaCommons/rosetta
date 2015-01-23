@@ -219,7 +219,7 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
   setup_fragments( jump_sample );
   tr.Debug <<"mover.configured" << mover()->get_name() << std::endl;
   int shift = residue_selection.index( true )-1;
-  ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() );
+  ClientMoverOP this_ptr = utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() );
 
   for( int i = 1; i <= (int) jump_sample.size(); i++ ){
     Size const up = jump_sample.jumps()( 1, i ) + shift;

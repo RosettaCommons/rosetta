@@ -21,7 +21,7 @@
 #include <protocols/abinitio/abscript/AbscriptMover.hh>
 #include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -45,8 +45,8 @@ namespace abinitio {
 namespace abscript{
 
 class AbscriptStageMover : public moves::Mover {
-	typedef environment::ClaimingMoverOP ClaimingMoverOP;
-  typedef std::set< ClaimingMoverOP > MoverSet;
+	typedef environment::ClientMoverOP ClientMoverOP;
+  typedef std::set< ClientMoverOP > MoverSet;
   typedef std::set< StagePreparerOP > PreparerSet;
 
 public:
@@ -64,7 +64,7 @@ public:
   //@returns if this stage step should be run or not (sometimes they can be skipped).
   bool setup_stage( core::pose::Pose& pose, core::Real const& progress );
 
-  void add_submover( ClaimingMoverOP mover, core::Real weight );
+  void add_submover( ClientMoverOP mover, core::Real weight );
 
   void add_preparer( StagePreparerOP mover );
 

@@ -62,23 +62,23 @@ public:
   typedef core::environment::LocalPosition LocalPosition;
   typedef core::environment::LocalPositions LocalPositions;
 
-  TorsionClaim( ClaimingMoverOP owner,
+  TorsionClaim( ClientMoverOP owner,
                 utility::tag::TagCOP tag,
                 basic::datacache::DataMap& );
 
-  TorsionClaim( ClaimingMoverOP owner,
+  TorsionClaim( ClientMoverOP owner,
                 core::pack::task::residue_selector::ResidueSelectorCOP );
 
   // Initializer for a single backbone angle
-  TorsionClaim( ClaimingMoverOP owner,
+  TorsionClaim( ClientMoverOP owner,
                 LocalPosition const& local_pos );
 
   // Initializer for a contiguous range of backbone angles.
-  TorsionClaim( ClaimingMoverOP owner,
+  TorsionClaim( ClientMoverOP owner,
                 std::string const& label,
                 std::pair< core::Size, core::Size > const& range );
 
-  TorsionClaim( ClaimingMoverOP owner,
+  TorsionClaim( ClientMoverOP owner,
                 LocalPositions const& positions );
 
   virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;

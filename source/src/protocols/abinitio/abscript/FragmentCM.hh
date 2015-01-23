@@ -15,7 +15,7 @@
 
 // Unit Headers
 #include <protocols/abinitio/abscript/FragmentCM.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Package headers
 #include <protocols/simple_moves/FragmentMover.hh>
@@ -32,8 +32,8 @@ namespace protocols {
 namespace abinitio {
 namespace abscript {
 
-class FragmentCM : public protocols::environment::ClaimingMover {
-  typedef protocols::environment::ClaimingMover Parent;
+class FragmentCM : public protocols::environment::ClientMover {
+  typedef protocols::environment::ClientMover Parent;
   typedef environment::claims::EnvClaims EnvClaims;
 
 public:

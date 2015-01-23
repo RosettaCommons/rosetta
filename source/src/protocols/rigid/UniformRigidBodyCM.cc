@@ -69,7 +69,7 @@ UniformRigidBodyCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 UniformRigidBodyCMCreator::create_mover() const {
-  return ClaimingMoverOP( new UniformRigidBodyCM );
+  return ClientMoverOP( new UniformRigidBodyCM );
 }
 
 std::string
@@ -78,7 +78,7 @@ UniformRigidBodyCMCreator::mover_name() {
 }
 
 UniformRigidBodyCM::UniformRigidBodyCM():
-  ClaimingMover(),
+  ClientMover(),
   mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover() ) )
 {}
 
@@ -87,7 +87,7 @@ UniformRigidBodyCM::UniformRigidBodyCM( std::string const& name,
                                         LocalPosition const& stationary_label,
                                         core::Real rotation_magnitude,
                                         core::Real translation_magnitude ):
-  ClaimingMover(),
+  ClientMover(),
   name_( name ),
   mobile_label_( mobile_label ),
   stationary_label_( stationary_label ),
@@ -147,7 +147,7 @@ claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
   using core::pack::task::residue_selector::ResidueSubset;
   claims::EnvClaims claim_list;
 
-  ClaimingMoverOP this_ptr( utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() ) );
+  ClientMoverOP this_ptr( utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() ) );
   claims::JumpClaimOP jclaim( new claims::JumpClaim( this_ptr,
                                                       name() + DOCKJUMP_TAG,
                                                       mobile_label_,
@@ -168,11 +168,11 @@ std::string UniformRigidBodyCM::get_name() const {
 }
 
 moves::MoverOP UniformRigidBodyCM::fresh_instance() const {
-  return ClaimingMoverOP( new UniformRigidBodyCM() );
+  return ClientMoverOP( new UniformRigidBodyCM() );
 }
 
 moves::MoverOP UniformRigidBodyCM::clone() const{
-  return ClaimingMoverOP( new UniformRigidBodyCM( *this ) );
+  return ClientMoverOP( new UniformRigidBodyCM( *this ) );
 }
 
 } // rigid

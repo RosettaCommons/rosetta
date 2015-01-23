@@ -84,7 +84,7 @@ claims::EnvClaims StructPerturberCM::yield_claims( core::pose::Pose const& in_po
   claims::EnvClaims claims;
 
   claims::TorsionClaimOP claim( new claims::TorsionClaim(
-	utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
+	utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
 	label(), std::make_pair( 1, in_pose.total_residue() ) ) );
   claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 

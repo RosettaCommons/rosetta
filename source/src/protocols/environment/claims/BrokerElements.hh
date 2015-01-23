@@ -18,7 +18,7 @@
 // #include <protocols/environment/claims/BrokerElements.fwd.hh>
 
 // Package Headers
-#include <protocols/environment/ClaimingMover.fwd.hh>
+#include <protocols/environment/ClientMover.fwd.hh>
 
 // Project Headers
 #include <core/environment/LocalPosition.hh>

@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/ClaimingMover.hh
+/// @file src/protocols/environment/ClientMover.hh
 /// @brief An environment that automatically distributes rights to shared degrees of freedom (e.g. fold tree)
 ///
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_ClaimingMover_hh
-#define INCLUDED_protocols_environment_ClaimingMover_hh
+#ifndef INCLUDED_protocols_environment_ClientMover_hh
+#define INCLUDED_protocols_environment_ClientMover_hh
 
 // Unit Headers
-#include <protocols/environment/ClaimingMover.fwd.hh>
+#include <protocols/environment/ClientMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Package headers
@@ -44,7 +44,7 @@
 namespace protocols {
 namespace environment {
 
-class ClaimingMover : public protocols::moves::Mover {
+class ClientMover : public protocols::moves::Mover {
   // Uses push and pop_passport.
   friend class Environment;
   // Uses passport_updated during initialization
@@ -55,11 +55,11 @@ class ClaimingMover : public protocols::moves::Mover {
   typedef std::stack< std::pair< EnvironmentCAP, DofPassportCOP > > PassportStack;
 
 public:
-  ClaimingMover();
+  ClientMover();
 
-  ClaimingMover( ClaimingMover const& );
+  ClientMover( ClientMover const& );
 
-  virtual ~ClaimingMover();
+  virtual ~ClientMover();
 
   /// @brief   Returns a list of claims for this mover.
   /// @details The pose passed as an argument is used for reference informational
@@ -76,7 +76,7 @@ public:
   /// @brief this method is used to make sure any movers contained in this
   ///        mover (that want to make claims) also get registered with the
   ///        environment.
-  virtual void yield_submovers( std::set< ClaimingMoverOP >& ) const {};
+  virtual void yield_submovers( std::set< ClientMoverOP >& ) const {};
 
 protected:
 
@@ -112,10 +112,10 @@ protected:
 private:
 
   /// @brief called by environments to push a new passport on the passport stack
-  //friend void Environment::assign_passport( ClaimingMoverOP, DofPassportCOP );
+  //friend void Environment::assign_passport( ClientMoverOP, DofPassportCOP );
 
   /// @brief called by environments when the environment expires to pop the environment.
-  //friend void Environment::cancel_passport( ClaimingMoverOP );
+  //friend void Environment::cancel_passport( ClientMoverOP );
 
   void push_passport( EnvironmentCAP, DofPassportCOP );
 
@@ -123,9 +123,9 @@ private:
 
   PassportStack passports_;
 
-}; // end ClaimingMover base class
+}; // end ClientMover base class
 
 } // moves
 } // protocols
 
-#endif //INCLUDED_protocols_environment_ClaimingMover_HH
+#endif //INCLUDED_protocols_environment_ClientMover_HH

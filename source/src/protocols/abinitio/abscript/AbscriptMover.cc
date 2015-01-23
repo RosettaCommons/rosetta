@@ -165,7 +165,7 @@ core::scoring::ScoreFunctionOP setup_score( std::string const& scorename,
 }
 
 AbscriptMover::AbscriptMover():
-  ClaimingMover(),
+  ClientMover(),
   id_map_(),
   stage_movers_(),
   mc_()
@@ -234,7 +234,7 @@ AbscriptMover::AbscriptMover():
 }
 
 AbscriptMover::AbscriptMover( AbscriptMover const& src ):
-  ClaimingMover( src ),
+  ClientMover( src ),
   id_map_( src.id_map_ ),
   stage_movers_( src.stage_movers_ ),
   mc_( src.mc_ )
@@ -461,12 +461,19 @@ AbscriptMover::parse_my_tag(
   if( tag->hasOption( "std_frags" ) ){
     // The die for unread tags will cause a crash, but we want to elaborate a bit on why.
     tr.Error << "[ERROR] The AbscriptMover tag 'std_frags' is deprecated. Use 'Fragments' instead. For example:\n"
-             << "                 <Fragments small_frags='frag3.txt' large_frags='frag9.txt' selector='ChainA' />" << std::endl;
+             << "                 <Fragments small_frags='frag3.txt' large_frags='frag9.txt' selector='ChainA' />"
+             << std::endl;
   }
 
   if( !tag->hasTag( "Fragments" ) && !tag->hasTag( "fragments" ) ){
-    add_frags( tag->getOption<std::string>("small_frags", option[ OptionKeys::in::file::frag3 ]() ),
-               tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ]() ) );
+    if( !tag->hasTag( "no_fragments" ) &&
+        option[ OptionKeys::in::file::frag3 ].active() &&
+        option[ OptionKeys::in::file::frag9 ].active() ) {
+      add_frags( tag->getOption<std::string>("small_frags", option[ OptionKeys::in::file::frag3 ]() ),
+                 tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ]() ) );
+    } else {
+      tr.Warning << "[WARNING] " << this->get_name() << " being defined without any fragments." << std::endl;
+    }
   }
 }
 
@@ -549,12 +556,12 @@ StageIDs AbscriptMover::parse_stage_id( std::string const& id_str ) const {
 void AbscriptMover::register_submover( protocols::moves::MoverOP mover_in,
                                        StageIDs const& ids,
                                        core::Real weight ){
-  ClaimingMoverOP mover = utility::pointer::dynamic_pointer_cast< protocols::environment::ClaimingMover > ( mover_in );
+  ClientMoverOP mover = utility::pointer::dynamic_pointer_cast< protocols::environment::ClientMover > ( mover_in );
   if( !mover ){
     tr.Error << "The mover " << mover_in->get_name()
-             << " cannot be attached to the Abscript mover because it is not a ClaimingMover "
+             << " cannot be attached to the Abscript mover because it is not a ClientMover "
              << std::endl;
-    throw utility::excn::EXCN_RosettaScriptsOption("Abscript mover takes only ClaimingMovers.");
+    throw utility::excn::EXCN_RosettaScriptsOption("Abscript mover takes only ClientMovers.");
   }
 
   for( StageIDs::const_iterator id = ids.begin(); id != ids.end(); ++id ){

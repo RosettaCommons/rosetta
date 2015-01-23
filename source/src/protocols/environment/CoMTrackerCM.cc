@@ -84,7 +84,7 @@ CoMTrackerCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 CoMTrackerCMCreator::create_mover() const {
-  return ClaimingMoverOP( new CoMTrackerCM );
+  return ClientMoverOP( new CoMTrackerCM );
 }
 
 std::string
@@ -93,13 +93,13 @@ CoMTrackerCMCreator::mover_name() {
 }
 
 CoMTrackerCM::CoMTrackerCM():
-  ClaimingMover()
+  ClientMover()
 {}
 
 CoMTrackerCM::CoMTrackerCM( std::string const& name,
                             core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector,
                             std::string const& stationary_label ):
-  ClaimingMover(),
+  ClientMover(),
   name_( name ),
   stationary_label_( stationary_label ),
   mobile_selector_( mobile_selector )
@@ -107,7 +107,7 @@ CoMTrackerCM::CoMTrackerCM( std::string const& name,
 
 CoMTrackerCM::CoMTrackerCM( std::string const& name,
                             core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector ):
-  ClaimingMover(),
+  ClientMover(),
   name_( name ),
   stationary_label_( GENERATE_STATIONARY_ATTACHMENT_POINT ),
   mobile_selector_( mobile_selector )
@@ -294,7 +294,7 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
   assert( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) != mobile_residues_.end() );
 
   moves::MoverOP this_ptr = get_self_ptr();
-  claims::VirtResClaimOP vclaim( new claims::VirtResClaim( utility::pointer::static_pointer_cast< ClaimingMover >(this_ptr),
+  claims::VirtResClaimOP vclaim( new claims::VirtResClaim( utility::pointer::static_pointer_cast< ClientMover >(this_ptr),
                                                             LocalPosition( "BASE", mobile_connection_point ),
                                                             com_jump_name_,
                                                             com_name_ ) );
@@ -318,11 +318,11 @@ std::string CoMTrackerCM::get_name() const {
 }
 
 moves::MoverOP CoMTrackerCM::fresh_instance() const {
-  return ClaimingMoverOP( new CoMTrackerCM() );
+  return ClientMoverOP( new CoMTrackerCM() );
 }
 
 moves::MoverOP CoMTrackerCM::clone() const{
-  return ClaimingMoverOP( new CoMTrackerCM( *this ) );
+  return ClientMoverOP( new CoMTrackerCM( *this ) );
 }
 
 } // rigid

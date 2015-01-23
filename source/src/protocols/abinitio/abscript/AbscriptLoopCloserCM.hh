@@ -15,7 +15,7 @@
 
 // Unit Headers
 #include <protocols/abinitio/abscript/AbscriptLoopCloserCM.fwd.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 
 // Package headers
 
@@ -41,8 +41,8 @@ namespace protocols {
 namespace abinitio {
 namespace abscript {
 
-class AbscriptLoopCloserCM : public protocols::environment::ClaimingMover {
-  typedef ClaimingMover Parent;
+class AbscriptLoopCloserCM : public protocols::environment::ClientMover {
+  typedef ClientMover Parent;
   typedef environment::claims::EnvClaims EnvClaims;
 
 public:

@@ -197,7 +197,7 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 
     throw EXCN_FTSketchGraph( "Number of jumps ("+utility::to_string( jumps.size() )+
                               ") and number of cuts ("+utility::to_string(cuts.size())+
-                              ") must be equal for rendering. Try randomized cut deletion first." );
+                              ") must be equal for rendering." );
   }
 
   // Populate the stupid FCL arrays for use in the fold tree constructor thing.

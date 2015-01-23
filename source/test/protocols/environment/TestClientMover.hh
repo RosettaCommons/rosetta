@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/DofUnlock.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
@@ -21,20 +21,20 @@
 namespace protocols {
 namespace environment {
 
-class Tester : public protocols::environment::ClaimingMover {
+class Tester : public protocols::environment::ClientMover {
 public:
 
   Tester() : claim_( /* NULL */ ) {}
 
   void init( protocols::environment::claims::EnvClaimOP claim ) {
 	claim_ = claim;
-    claim_->set_owner( utility::pointer::dynamic_pointer_cast< protocols::environment::ClaimingMover >(get_self_ptr()) );
+    claim_->set_owner( utility::pointer::dynamic_pointer_cast< protocols::environment::ClientMover >(get_self_ptr()) );
   }
 
   virtual void apply( core::pose::Pose& ){}
 
   // This use of bool apply allows us to apply an aribtrary functi
-	using ClaimingMover::apply;
+	using ClientMover::apply;
   virtual void apply( core::pose::Pose& pose, boost::function< void() > f ) {
     protocols::environment::DofUnlock activation( pose.conformation(), passport() );
     f();

@@ -8,9 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/environment/EnvClaimBroker.hh
-/// @brief A class responsible for managing claims from ClaimingMovers, and retaining important information about the result of the brokering process.
+/// @brief A class responsible for managing claims from ClientMovers, and retaining important information about the result of the brokering process.
 ///
-/// @author Justin Porter
+/// @author Justin R. Porter
 
 #ifndef INCLUDED_protocols_environment_EnvClaimBroker_hh
 #define INCLUDED_protocols_environment_EnvClaimBroker_hh
@@ -24,7 +24,7 @@
 #include <core/environment/FoldTreeSketch.hh>
 
 #include <protocols/environment/Environment.fwd.hh>
-#include <protocols/environment/ClaimingMover.fwd.hh>
+#include <protocols/environment/ClientMover.fwd.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
@@ -51,7 +51,7 @@ namespace protocols {
 namespace environment {
 
 class EnvClaimBroker : public utility::pointer::ReferenceCount {
-  typedef std::map< ClaimingMoverOP, core::environment::DofPassportOP > MoverPassMap;
+  typedef std::map< ClientMoverOP, core::environment::DofPassportOP > MoverPassMap;
   typedef core::environment::SequenceAnnotationCOP SequenceAnnotationCOP;
   typedef core::environment::SequenceAnnotationOP SequenceAnnotationOP;
   typedef core::environment::FoldTreeSketch FoldTreeSketch;
@@ -60,11 +60,11 @@ class EnvClaimBroker : public utility::pointer::ReferenceCount {
   typedef core::conformation::ConformationOP ConformationOP;
   typedef core::conformation::ConformationCOP ConformationCOP;
 
-  typedef utility::vector1< std::pair< claims::ResidueElement, ClaimingMoverOP > > ResElemVect;
-  typedef utility::vector1< std::pair< claims::JumpElement, ClaimingMoverOP > > JumpElemVect;
-  typedef utility::vector1< std::pair< claims::CutElement, ClaimingMoverOP > > CutElemVect;
-  typedef utility::vector1< std::pair< claims::CutBiasElement, ClaimingMoverOP > > CutBiasElemVect;
-  typedef utility::vector1< std::pair< claims::DOFElement, ClaimingMoverOP > > DOFElemVect;
+  typedef utility::vector1< std::pair< claims::ResidueElement, ClientMoverOP > > ResElemVect;
+  typedef utility::vector1< std::pair< claims::JumpElement, ClientMoverOP > > JumpElemVect;
+  typedef utility::vector1< std::pair< claims::CutElement, ClientMoverOP > > CutElemVect;
+  typedef utility::vector1< std::pair< claims::CutBiasElement, ClientMoverOP > > CutBiasElemVect;
+  typedef utility::vector1< std::pair< claims::DOFElement, ClientMoverOP > > DOFElemVect;
 
   typedef std::map< core::Size, std::string > SizeToStringMap;
   typedef std::map< std::string, std::pair< Size, Size > > StringToSizePairMap;
@@ -141,13 +141,13 @@ private:
 
   void process_elements( CutBiasElemVect const& elems, BiasVector& bias );
 
-  void grant_access( claims::DOFElement const& e, ClaimingMoverOP owner ) const;
+  void grant_access( claims::DOFElement const& e, ClientMoverOP owner ) const;
 
   void setup_passports( DOFElemVect& elements,
-                        claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClaimingMoverOP > const& ) );
+                        claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const& ) );
 
   template < typename T, typename I >
-  utility::vector1< std::pair< T, ClaimingMoverOP > > collect_elements( I const& info ) const;
+  utility::vector1< std::pair< T, ClientMoverOP > > collect_elements( I const& info ) const;
 
   claims::EnvClaims collect_claims( MoverPassMap const& movers_and_passes,
                                     core::pose::Pose& pose );

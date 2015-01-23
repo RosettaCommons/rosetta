@@ -100,18 +100,6 @@ void DofPassport::render_movemap( core::kinematics::MoveMapOP mm ) const {
       }
     }
     mm->set_chi( seqpos, seqpos_access );
-//    } else { // nonprotein (e.g. VRT) can't be configured into a movemap?
-//      // TODO: add cases for sugars, RNA, etc.
-//      mm->set_bb( seqpos, false );
-//      mm->set_chi( seqpos, false );
-//      if( !conf_->residue( seqpos ).is_virtual_residue() &&
-//          !conf_->residue( seqpos ).is_virtual( 1 ) ){
-//        tr.Warning << "Residue " << seqpos << " named " << conf_->residue( seqpos ).name3()
-//                   << " is being ignored by DofPassport::render (" << __FILE__ << ":"
-//                   << __LINE__ << ") because it doesn't how to encode information about its "
-//                   << "backbone and sidechain angles in the movemap." << std::endl;
-//      }
-//    }
   }
 
   for( int jump_i = 1; jump_i <= (int) conf_->fold_tree().num_jump(); ++jump_i ){

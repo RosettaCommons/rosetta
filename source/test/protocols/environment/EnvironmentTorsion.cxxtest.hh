@@ -22,7 +22,7 @@
 #include <protocols/environment/ProtectedConformation.hh>
 #include <protocols/environment/EnvExcn.hh>
 #include <protocols/environment/DofUnlock.hh>
-#include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/EnvClaimBroker.hh>
 
@@ -55,7 +55,7 @@ const core::Real NEW_PHI = 23.0;
 
 const core::Size JUMP_START = 3;
 const core::Size JUMP_END = 7;
-class ToyMover : public protocols::environment::ClaimingMover {
+class ToyMover : public protocols::environment::ClientMover {
 protected:
 
   ToyMover( bool claim, bool move ):
@@ -108,7 +108,7 @@ public:
 
     if( claim_ ){
       claims::TorsionClaimOP new_claim( new claims::TorsionClaim(
-		utility::pointer::dynamic_pointer_cast< protocols::environment::ClaimingMover >(get_self_ptr()),
+		utility::pointer::dynamic_pointer_cast< protocols::environment::ClientMover >(get_self_ptr()),
 		LocalPosition( "BASE", resnum_ ) ) );
       new_claim->strength( control_str_, init_str_ );
       claims.push_back( new_claim );

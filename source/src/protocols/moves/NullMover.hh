@@ -16,10 +16,11 @@
 #define INCLUDED_protocols_moves_NullMover_hh
 
 #include <protocols/moves/NullMover.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoveMapMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
 
 #include <utility/vector1.hh>
 
@@ -30,7 +31,7 @@ namespace protocols {
 namespace moves {
 
 
-class NullMover : public moves::Mover
+class NullMover : public moves::MoveMapMover
 {
 public:
 	/// @brief
@@ -41,6 +42,8 @@ public:
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
+  virtual void set_movemap( core::kinematics::MoveMapCOP ) {}
+  virtual core::kinematics::MoveMapCOP movemap() const { return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap ); }
 	virtual ~NullMover();
 	virtual void test_move( core::pose::Pose &  ){};
 

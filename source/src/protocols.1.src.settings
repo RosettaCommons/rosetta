@@ -16,7 +16,7 @@ sources = {
 	],
 	"protocols/environment": [
 	        "AutoCutData",
-	        "ClaimingMover",
+	        "ClientMover",
 		"CoMTrackerCM",
 		"DofUnlock",
 		"EnvClaimBroker",
