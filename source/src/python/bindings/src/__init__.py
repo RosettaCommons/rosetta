@@ -353,7 +353,7 @@ def mpi_init(*args, **kargs):
     init(*args, **kargs)
 
 
-def MPIJobDistributor(nstruct, fun):
+def MPIJobDistributor(njobs, fun):
     from mpi4py import MPI
 
     comm = MPI.COMM_WORLD
@@ -361,23 +361,30 @@ def MPIJobDistributor(nstruct, fun):
     rank = comm.Get_rank()
     size = comm.Get_size()
 
+    myjobs = []
+
     if rank == 0:
-        jobs = range(nstruct)
-        jobs.extend( [None]*(size - nstruct % size) )
+        jobs = range(njobs)
+        jobs.extend( [None]*(size - njobs % size) )
         n = len(jobs)/size
         for i in range(size):
             queue = []  # list of jobs for individual cpu
             for j in range(n):
                 queue.append(jobs[j*size+i])
 
-            # now sending the queue to the process
-            TR('Sending %s to node %s' % (queue, i) )
-            comm.send(queue, dest=i)
+            if( i == 0 ):
+                myjobs = queue
+            else:
+                # now sending the queue to the process
+                logger.info('Sending %s to node %s' % (queue, i) )
+                comm.send(queue, dest=i)
+    else:
+        # getting decoy lists
+        myjobs = comm.recv(source=0)
 
-    # getting decoy lists
-    data = comm.recv(source=0)
-    TR('Node %s, got queue:%s' % (rank, data) )
-    for j in data:
+    logger.info('Node %s, got queue:%s' % (rank, myjobs) )
+
+    for j in myjobs:
         if j is not None: fun(j)
 
 
