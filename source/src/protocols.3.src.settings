@@ -300,7 +300,7 @@ sources = {
 		"MembranePositionFromTopologyMover",
 		"RandomMembranePositionMover",
 		"TransformIntoMembraneMover",
-		"TranslationRotationMover", 
+		"TranslationRotationMover",
 		"metrics",
     ],
     "protocols/membrane/io": [
@@ -491,6 +491,7 @@ sources = {
 		"ExternalEvaluator",
 		"ExtraScoreEvaluatorCreator",
 		"HolesFilter",
+		"AngleToVectorFilter",
 		"InterfaceSasaFilter",
 		"InterfaceBindingEnergyDensityFilter",
 		"InterRepeatContactFilter",
