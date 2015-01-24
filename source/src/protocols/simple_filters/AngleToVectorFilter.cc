@@ -96,7 +96,7 @@ AngleToVector::apply( core::pose::Pose const & pose ) const{
 }
 
 void
-AngleToVector::report( std::ostream &os, core::pose::Pose const & pose ) const {
+AngleToVector::report( std::ostream &, core::pose::Pose const & ) const {
 //	os<<"angle: "<<compute( pose )<<std::endl;
 }
 
