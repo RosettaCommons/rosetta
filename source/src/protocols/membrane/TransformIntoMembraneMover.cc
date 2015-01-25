@@ -234,7 +234,7 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 	
 	// get current protein embedding from pose
 	// uses however many spans are in the topology object held in MembraneInfo
-	EmbeddingDefOP embedding ( compute_structure_based_membrane_position( pose ) );
+	EmbeddingDefOP embedding = compute_structure_based_embedding( pose );
 	Vector old_center = embedding->center();
 	Vector old_normal = embedding->normal();
 	

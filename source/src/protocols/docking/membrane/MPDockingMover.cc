@@ -45,6 +45,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/mpdock.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -57,12 +59,16 @@ namespace docking {
 namespace membrane {
 
 using namespace core;
+using namespace core::import_pose;
 using namespace core::pose;
 using namespace core::scoring;
+using namespace core::conformation::membrane;
 using namespace protocols::membrane;
 using namespace protocols::moves;
 using namespace protocols::docking;
-	
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -72,8 +78,19 @@ using namespace protocols::docking;
 MPDockingMover::MPDockingMover() :
 	protocols::moves::Mover(),
 	center_(0, 0, 0),
-	normal_(0, 0, 1)
+	normal_(0, 0, 1),
+	jump_num_( 1 )
 {}
+
+/// @brief Default Constructor
+/// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
+MPDockingMover::MPDockingMover( Size jump_num ) :
+	protocols::moves::Mover(),
+	center_(0, 0, 0),
+	normal_(0, 0, 1),
+	jump_num_( jump_num )
+{}
+
 
 /// @brief Copy Constructor
 MPDockingMover::MPDockingMover( MPDockingMover const & src ) :
@@ -107,18 +124,101 @@ MPDockingMover::get_name() const {
 	return "MPDockingMover";
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// sets default which can be overwritten by input flags
+void MPDockingMover::set_defaults( const Pose & pose ){
+
+	// set AddMembraneMover in protocol
+	add_membrane_mover_ = AddMembraneMoverOP( new AddMembraneMover() );
+	
+	// create scorefunctions for lowres and highres
+	// these don't contain the smooth term!
+	ScoreFunctionOP lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpdocking_cen_14-7-23_no-penalties.wts" );
+	ScoreFunctionOP highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpdocking_fa_14-7-23_no-penalties.wts" );
+
+	// create new docking protocol; both low-res and high-res
+	docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
+	
+	// set native to pose, can be overwritten by flag -in:file:native
+	native_ = PoseOP( new Pose( pose ) );
+
+}// set defaults
+
+////////////////////////////////////////////////////////////////////////////////
+// register options
+void MPDockingMover::register_options(){
+	
+	option.add_relevant( OptionKeys::in::file::native );
+	option.add_relevant( OptionKeys::docking::docking_local_refine );
+	option.add_relevant( OptionKeys::mpdock::weights_cen );
+	option.add_relevant( OptionKeys::mpdock::weights_fa );
+
+}// register options
+
+////////////////////////////////////////////////////////////////////////////////
+// overwrite defaults from flags file
+void MPDockingMover::init_from_cmd(){
+	
+	// if native flag given, set native from flag
+	if ( option[OptionKeys::in::file::native].user() ){
+		TR << "Setting native from flag -in::file::native" << std::endl;
+		native_ = pose_from_pdb(option[OptionKeys::in::file::native].value_string() );
+	}
+
+	// if local_refine flag on, only do high-res
+	if ( option[OptionKeys::docking::docking_local_refine].user() ){
+		TR << "Running highres refinement only using flag -docking_local_refine" << std::endl;
+		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ ) );
+	}
+
+	// read low-res weights
+	if ( option[OptionKeys::mpdock::weights_cen].user() ){
+		TR << "Weights for low-resolution step from flag -mpdock::weights_cen" << std::endl;
+		lowres_scorefxn_->reset();
+		lowres_scorefxn_->initialize_from_file( option[OptionKeys::mpdock::weights_cen].value_string() );
+	}
+	
+	// read high-res weights
+	if ( option[OptionKeys::mpdock::weights_fa].user() ){
+		TR << "Weights for high-resolution step from flag -mpdock::weights_fa" << std::endl;
+		highres_scorefxn_->reset();
+		highres_scorefxn_->initialize_from_file( option[OptionKeys::mpdock::weights_fa].value_string() );
+	}
+
+}// init_from_cmd
+
+////////////////////////////////////////////////////////////////////////////////
+// finalize setup
+void MPDockingMover::finalize_setup(){
+	
+	// add membrane to native to have equal number of atoms for rmsd calculation
+	add_membrane_mover_->apply( *native_ );
+	
+	// set native in docking protocol
+	docking_protocol_->set_native_pose( native_ );
+	
+	// get movable jump
+	TR.Debug << "movable jumps: " << to_string(docking_protocol_->movable_jumps()) << std::endl;
+
+}// finalize setup
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Add membrane components to the pose, then dock proteins along
 ///			the flexible jump
 void MPDockingMover::apply( Pose & pose ) {
 	
-	using namespace core::conformation::membrane;
+	// setup
+	set_defaults( pose );
 	
-	// calling setup
-	setup();
+	// register options with JD2
+	register_options();
 	
-	// set native pose, either from native flag or from given pose
-	read_native( pose );
+	// overwrite defaults with stuff from cmdline
+	init_from_cmd();
+	
+	// finalize setup
+	finalize_setup();
 	
 	// assuming that protein 1 is fixed in the membrane!!!
 	// add membrane VRT, call AddMembraneMover
@@ -131,8 +231,8 @@ void MPDockingMover::apply( Pose & pose ) {
 	// creating foldtree from pose
 	pose.fold_tree().show(std::cout);
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
-	
-	// reorder only reorders, but does not rename jump edges
+
+	// reorder foldtree
 	foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
 	pose.fold_tree( foldtree );
 
@@ -140,71 +240,11 @@ void MPDockingMover::apply( Pose & pose ) {
 	TR << "foldtree reordered" << std::endl;
 	pose.fold_tree().show(std::cout);
 		
-	// run docking protocol (low-res and high-res)
+	// run docking protocol
 	TR << "calling docking protocol" << std::endl;
 	docking_protocol_->apply( pose );
 
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// setup docking protocol
-void MPDockingMover::setup(){
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::membrane;
-	using namespace protocols::docking;
-	using namespace core::scoring;
-
-	// set AddMembraneMover in protocol
-	add_membrane_mover_ = AddMembraneMoverOP( new AddMembraneMover() );
-	//	low_res_scorefxn_ = getScoreFunction();
-
-	// create scorefunctions for lowres and highres
-	ScoreFunctionOP lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpdocking_cen_14-7-23_no-penalties.wts" );
-	ScoreFunctionOP highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpdocking_fa_14-7-23_no-penalties.wts" );
-
-	// create new docking protocol; both low-res and high-res
-	docking_protocol_ = DockingProtocolOP( new DockingProtocol( 1, false, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
-	
-	// if local_refine flag on, only do high-res
-	if ( option[OptionKeys::docking::docking_local_refine].user() ){
-	
-		TR << "MPDocking: doing highres only using flag -docking_local_refine" << std::endl;
-		docking_protocol_ = DockingProtocolOP( new DockingProtocol( 1, false, true, false, lowres_scorefxn_, highres_scorefxn_ ) );
-	}
-
-	// get movable jump
-	TR.Debug << "movable jumps: " << to_string(docking_protocol_->movable_jumps()) << std::endl;
-
-	// set kT in docking protocol
-	kT_ = 1;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// read in native flags for rmsd calculation
-void MPDockingMover::read_native( const Pose & pose ){
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	// initialize native
-	core::pose::PoseOP native;
-	
-	// if native flag given, set native from flag, otherwise from pose
-	if ( option[OptionKeys::in::file::native].user() ){
-		native = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native].value_string() );
-	}
-	else {
-		native = PoseOP( new Pose( pose ) );
-	}
-	
-	// add membrane to native to have equal number of atoms for rmsd calculation
-	add_membrane_mover_->apply( *native );
-	
-	// set native in docking protocol
-	docking_protocol_->set_native_pose( native );
-}
+} // apply
 
 } // membrane
 } // docking

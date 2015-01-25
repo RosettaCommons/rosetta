@@ -50,13 +50,10 @@ public:
 	EmbeddingDef( core::Vector const center, core::Vector const normal );
 	
 	/// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
-	EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end, bool pos_z=false );
-
-	/// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
-	EmbeddingDef( core::pose::Pose & pose, core::Size start, core::Size end, bool pos_z=false );
+	EmbeddingDef( core::pose::Pose const & pose, core::Size const start, core::Size const end, bool pos_z=false );
 	
 	/// @brief Copy Constructor
-	EmbeddingDef( EmbeddingDef const & EmbeddingDef );
+	EmbeddingDef( EmbeddingDef const & src );
 	
 	/// @brief Assignment Operator
 	EmbeddingDef & operator = ( EmbeddingDef const & src );
@@ -80,7 +77,7 @@ public:
 	void invert();
 	
 	/// @brief Translate by center and normal
-	void translate_by( EmbeddingDefOP translation );
+	void translate_by( EmbeddingDef const & translation );
 	
 	/// @brief Set Center Param
 	void set_center( core::Vector center );
@@ -89,19 +86,13 @@ public:
 	void set_normal( core::Vector normal );
 	
 	/// @brief Equals method
-	bool equals( EmbeddingDef & other );
+	bool equals( EmbeddingDef const & other ) const;
 	
 	/// @brief From span
-	void from_span( core::pose::PoseOP pose, core::Size start, core::Size end );
-
-	/// @brief From span
-	void from_span( core::pose::Pose & pose, core::Size start, core::Size end );
+	void from_span( core::pose::Pose const & pose, core::Size const start, core::Size const end );
 	
 	/// @brief From span
-	void from_span_positive_z( core::pose::PoseOP pose, core::Size start, core::Size end );
-
-	/// @brief From span
-	void from_span_positive_z( core::pose::Pose & pose, core::Size start, core::Size end );
+	void from_span_positive_z( core::pose::Pose const & pose, core::Size const start, core::Size const end );
 	
 	
 private: // data

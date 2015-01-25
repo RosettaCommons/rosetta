@@ -1,25 +1,21 @@
-# #file: mpframework_docking_fa_2014.wts
-# @desc: All atom membrane scoring function with new electrostatics term
-# on for high resolution docking
-# @note: Supported by the membrane framework - 2014
-# @cite: Terms from [Barth, 2007, PNAS]
-# @dj: all terms for mpdocking, first test
-# membrane
-fa_atr 0.78
-fa_rep 0.43
+#for mpdocking for MPframework paper
+#membrane
+fa_atr 0.8
+fa_rep 0.44
 fa_sol 0.00
 fa_intra_rep 0.004
-fa_pair 0.48
+fa_pair 0.49
 fa_plane 0
-fa_dun 0.56
-fa_mpsolv 0.60
-fa_mpenv 0.48
+fa_dun 0.01
+fa_mpsolv 0.35
+fa_mpenv 0.3
+fa_mpenv_smooth 0.5
 ref 1
-hbond_lr_bb 1.16
-hbond_sr_bb 1.16
-hbond_bb_sc 1.16
-hbond_sc 1.1
-p_aa_pp 0.64
+hbond_lr_bb 1.17
+hbond_sr_bb 1.17
+hbond_bb_sc 2.34
+hbond_sc 2.2
+p_aa_pp 0.32
 dslf_ss_dst 0.5
 dslf_cs_ang 2
 dslf_ss_dih 5
@@ -27,10 +23,10 @@ dslf_ca_dih 5
 pro_close 1.0
 rama  0.2
 omega  0.5
-mp_nonhelix 1.0
-mp_tmproj 1.0
-mp_termini 1.0
 
-# docking weights
+
+
+
+#docking
 fa_elec 0.026
 

@@ -2239,6 +2239,23 @@ core::Size noncanonical_chi_count(core::pose::Pose const & pose)
 	return count;
 }
 
+/// @brief Number of protein residues in the pose
+/// @details No virtuals, membrane residues or embedding residues counted
+Size nres_protein( pose::Pose const & pose ) {
+
+	Size cnt(0);
+
+	// go over pose residues and ask whether is_protein
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+
+		if ( pose.residue(i).is_protein() ) {
+			cnt++;
+		}
+	}
+
+	return cnt;
+}// nres_protein
+
 ////////////////////////////////////////////////////////////////////////////////////
 /// @begin center_of_mass
 ///

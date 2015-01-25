@@ -450,7 +450,7 @@ void PyMolMover::send_energy(Pose const &pose, std::string const & stype)
 }
 
 /// @brief Send Membrane Planes to PyMol
-/// @details If pose is a membrane pose and view_in_pymol flag is set to true
+/// @details If pose is a membrane pose 
 /// pymol viewer will build CGO planes from points specified
 void PyMolMover::send_membrane_planes( Pose const & pose ) {
 

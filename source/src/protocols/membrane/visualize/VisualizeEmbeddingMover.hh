@@ -23,8 +23,8 @@
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
-#include <protocols/membrane/geometry/Embedding.fwd.hh>
+#include <protocols/membrane/geometry/EmbeddingDef.hh>
+#include <protocols/membrane/geometry/Embedding.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 
@@ -108,7 +108,7 @@ private:
 private:
 
 	// Embedding object containing (multiple) EmbeddingDefinition(s)
-	EmbeddingOP embeddings_;
+	Embedding embeddings_;
 };
 	
 } // visualize

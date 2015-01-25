@@ -58,14 +58,7 @@ EmbeddingDef::EmbeddingDef( core::Vector const center, core::Vector const normal
 {}
 
 /// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
-EmbeddingDef::EmbeddingDef( core::pose::PoseOP pose, core::Size start, core::Size end, bool pos_z ) :
-    utility::pointer::ReferenceCount()
-{
-	EmbeddingDef( *pose, start, end, pos_z );
-}
-
-/// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
-EmbeddingDef::EmbeddingDef( core::pose::Pose & pose, core::Size start, core::Size end, bool pos_z ) :
+EmbeddingDef::EmbeddingDef( core::pose::Pose const & pose, core::Size start, core::Size end, bool pos_z ) :
 utility::pointer::ReferenceCount()
 {
 	center_ = mem_center;
@@ -80,10 +73,10 @@ utility::pointer::ReferenceCount()
 }
 
 /// @brief Copy Constructor
-EmbeddingDef::EmbeddingDef( EmbeddingDef const & config ) :
+EmbeddingDef::EmbeddingDef( EmbeddingDef const & src ) :
     utility::pointer::ReferenceCount(),
-    center_( config.center_ ),
-	normal_( config.normal_ )
+    center_( src.center_ ),
+	normal_( src.normal_ )
 {}
 
 /// @brief Assignment Operator
@@ -115,9 +108,9 @@ void EmbeddingDef::check_range() const{
 }
 
 /// @brief Translate by center and normal
-void EmbeddingDef::translate_by( EmbeddingDefOP translation ){
-    center_ += translation->center();
-    normal_ += translation->normal();
+void EmbeddingDef::translate_by( EmbeddingDef const & translation ){
+    center_ += translation.center();
+    normal_ += translation.normal();
     check_range();
 }
 
@@ -151,7 +144,7 @@ core::Vector EmbeddingDef::center() const {
 }
 
 /// @brief Check Object Equality
-bool EmbeddingDef::equals( EmbeddingDef & other ) {
+bool EmbeddingDef::equals( EmbeddingDef const & other ) const {
     
     if ( normal_ != other.normal() ) return false;
     if ( center_ != other.center() ) return false;
@@ -162,7 +155,7 @@ bool EmbeddingDef::equals( EmbeddingDef & other ) {
 /// @brief Embedding object from span
 /// @details Takes the CA coords of two residues and calculates center and normal
 ///				from this.
-void EmbeddingDef::from_span( core::pose::Pose & pose, core::Size start, core::Size end ) {
+void EmbeddingDef::from_span( core::pose::Pose const & pose, core::Size const start, core::Size const end ) {
 
     TR << "Computing membrane embedding from TMspan " << start << " to " << end << std::endl;
     
@@ -196,15 +189,8 @@ void EmbeddingDef::from_span( core::pose::Pose & pose, core::Size start, core::S
 
 /// @brief Embedding object from span
 /// @details Takes the CA coords of two residues and calculates center and normal
-///				from this.
-void EmbeddingDef::from_span( core::pose::PoseOP pose, core::Size start, core::Size end ) {
-	from_span( *pose, start, end );
-}
-
-/// @brief Embedding object from span
-/// @details Takes the CA coords of two residues and calculates center and normal
 ///				from this. Normal always shows in positive z-direction!
-void EmbeddingDef::from_span_positive_z( core::pose::Pose & pose, core::Size start, core::Size end ) {
+void EmbeddingDef::from_span_positive_z( core::pose::Pose const & pose, core::Size start, core::Size end ) {
 
 	TR << "Computing membrane embedding from TMspan " << start << " to " << end << std::endl;
 
@@ -242,13 +228,6 @@ void EmbeddingDef::from_span_positive_z( core::pose::Pose & pose, core::Size sta
 	normal_.assign( normal.x(), normal.y(), normal.z() );
 
 }// from span, positive z direction
-
-/// @brief Embedding object from span
-/// @details Takes the CA coords of two residues and calculates center and normal
-///				from this. Normal always shows in positive z-direction!
-void EmbeddingDef::from_span_positive_z( core::pose::PoseOP pose, core::Size start, core::Size end ) {
-	from_span_positive_z( *pose, start, end);
-}
 
 } // geometry
 } // membrane

@@ -17,9 +17,6 @@
 #include <core/conformation/membrane/util.hh>
 
 // Project Headers
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/Conformation.hh>
-
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
 
@@ -61,7 +58,6 @@ utility::vector1< std::string > spanfile_names(){
 std::string spanfile_name(){
 	return spanfile_names()[1];
 }
-
 
 } // membrane
 } // conformation

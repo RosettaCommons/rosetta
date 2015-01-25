@@ -101,7 +101,7 @@ Real read_thickness() {
 		TR << "Taking user-defined thickness: " << thickness << std::endl;
 	}
 	else{
-		thickness = 12.5;
+		thickness = 15;
 		TR << "Taking default thickness: " << thickness << std::endl;
 	}
 	TR.Debug << "got thickness: " << thickness << std::endl;
@@ -121,7 +121,7 @@ void spanfile_for_each_chain( PoseOP pose, Real thickness, std::string spanfile)
 	for ( Size i = 1; i <= split_poses.size(); ++i ){
 		
 		// get pose info
-		std::pair< utility::vector1< Real >, utility::vector1< Size > > split_pose_info( get_chain_and_z( split_poses[i] ));
+		std::pair< utility::vector1< Real >, utility::vector1< Size > > split_pose_info( get_chain_and_z( *split_poses[i] ));
 		utility::vector1< Real > split_z_coord( split_pose_info.first );
 		utility::vector1< Size > split_chain_info( split_pose_info.second );
 		
@@ -158,7 +158,7 @@ void spanfile_from_pdb(){
 	Real thickness = read_thickness();
 	
 	// get pose info
-	std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));
+	std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( *pose ));
 	utility::vector1< Real > z_coord = pose_info.first;
 	utility::vector1< Size > chain_info = pose_info.second;
 
