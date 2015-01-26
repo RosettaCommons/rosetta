@@ -124,7 +124,7 @@ std::map< std::string, AA > setup_name2aa() {
 
     // Virtual residues
 	n2aa[ "VRT" ] = aa_vrt;
-         
+
 	n2aa[ "UNP" ] = aa_unp;
 	n2aa[ "UNK" ] = aa_unk;
 
@@ -168,10 +168,11 @@ std::map< char, AA > setup_oneletter2aa() {
 	l2aa[ 'g' ] = na_rgu;
 	l2aa[ 'u' ] = na_ura;
 
+	l2aa[ 'w' ] = aa_h2o;
 	l2aa[ 'z' ] = aa_unp;
 	l2aa[ 'Z' ] = aa_unk;
 	l2aa[ 'X' ] = aa_vrt;
-    
+
 	//vmullig -- The conflict for the D-amino acids and the beta-amino acids is also a problem:
 	/*l2aa[ "A" ] = aa_dal;
 	l2aa[ "C" ] = aa_dcs;
@@ -382,7 +383,7 @@ operator <<(
 
 std::string
 name_from_aa( AA aa ) {
-	if( aa > num_aa_types ) return "AAOutOfRange";
+	if( aa > num_aa_types || aa == 0 ) return "AAOutOfRange";
 	return aa2name()[ aa ];
 }
 
@@ -397,7 +398,12 @@ oneletter_code_from_aa( AA aa ) {
 AA
 aa_from_oneletter_code( char onelettercode )
 {
-	return oneletter2aa().find( onelettercode )->second;
+	std::map< char, AA >::iterator item( oneletter2aa().find( onelettercode ) );
+	if( item == oneletter2aa().end() ) {
+		return aa_unk; // Not ideal, but better than a random value or a crash later on.
+	} else {
+		return item->second;
+	}
 }
 
 
