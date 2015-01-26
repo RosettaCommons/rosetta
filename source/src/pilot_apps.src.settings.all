@@ -427,7 +427,7 @@ sources = {
 		"spanfile_from_pdb",
 		"mpdocking_setup",
 		"mpframework_test",
-		"mpfolding",
+#		"mpfolding",
 		"transform_into_membrane",
 		"add_membrane",
 	],

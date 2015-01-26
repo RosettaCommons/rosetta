@@ -57,28 +57,28 @@ public:
 	/////////////////////
 
 	/// @brief Default Constructor
-	/// @details Defaults: jump = membrane jump, angle = 180 deg,
-	///			axis = x-axis
+	/// @details Defaults: jump = membrane jump, angle = 180 deg, axis =
+	///			 axis between COMs projected into the membrane plane
 	FlipMover();
 	
-	/// @brief Custom Constructor
-	/// @details User can specify jump number
-	FlipMover( Size jump_num );
-
-	/// @brief Custom constructor
-	/// @details User can specify jump number and rotation axis
-	FlipMover( Size jump_num, Vector axis );
-
-	/// @brief Custom constructor
-	/// @details User can specify jump number and angle
-	FlipMover( Size jump_num, Real angle );
-	
-	/// @brief Custom constructor
-	/// @details User can specify jump number and rotation axis
-	FlipMover( Size jump_num, Vector axis, Real angle );
-
-	/// @brief Copy Constructor
-	FlipMover( FlipMover const & src );
+//	/// @brief Custom Constructor
+//	/// @details User can specify jump number
+//	FlipMover( Size jump_num );
+//
+//	/// @brief Custom constructor
+//	/// @details User can specify jump number and rotation axis
+//	FlipMover( Size jump_num, Vector axis );
+//
+//	/// @brief Custom constructor
+//	/// @details User can specify jump number and angle
+//	FlipMover( Size jump_num, Real angle );
+//	
+//	/// @brief Custom constructor
+//	/// @details User can specify jump number and rotation axis
+//	FlipMover( Size jump_num, Vector axis, Real angle );
+//
+//	/// @brief Copy Constructor
+//	FlipMover( FlipMover const & src );
 
 	/// @brief Assignment Operator
 	FlipMover & operator = ( FlipMover const & src );

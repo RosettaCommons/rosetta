@@ -15,44 +15,33 @@
 #include <devel/init.hh>
 
 // Package Headers
+#include <protocols/membrane/AddMembraneMover.hh> 
+#include <protocols/membrane/TransformIntoMembraneMover.hh>
+#include <protocols/membrane/SetMembranePositionMover.hh>
+#include <protocols/membrane/visualize/VisualizeEmbeddingMover.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/util.hh>
+#include <core/conformation/membrane/SpanningTopology.fwd.hh>
+#include <core/conformation/membrane/Span.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
-
+#include <protocols/moves/Mover.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh> 
+#include <core/kinematics/Jump.hh>
+#include <core/types.hh> 
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
 #include <protocols/rigid/RB_geometry.hh>
-
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/util.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
-
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
 #include <protocols/membrane/geometry/util.hh>
-
-#include <protocols/moves/Mover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/docking/DockingLowRes.hh>
-#include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/docking/membrane/MPDockingSetupMover.hh>
-#include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/FlipMover.hh>
-#include <protocols/membrane/TransformIntoMembraneMover.hh>
-#include <protocols/membrane/SetMembranePositionMover.hh>
-#include <protocols/membrane/visualize/VisualizeEmbeddingMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 // Utility Headers
-#include <core/types.hh>
-#include <core/pose/util.hh>
-#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/owning_ptr.hh> 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
@@ -72,14 +61,10 @@
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
 
 using namespace core;
-using namespace core::scoring;
 using namespace numeric;
 using namespace protocols::moves;
-using namespace protocols::docking;
-using namespace protocols::docking::membrane;
 using namespace core::kinematics;
 using namespace core::conformation::membrane;
-using namespace protocols::rigid;
 using namespace protocols::membrane;
 using namespace protocols::simple_moves;
 using namespace protocols::membrane::geometry;
@@ -114,70 +99,55 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 		// Add Membrane, appends MEM as jump1
-//		AddMembraneMoverOP add_memb( new AddMembraneMover() );
-//		add_memb->apply( pose );
-
-		MPDockingSetupMoverOP setup( new MPDockingSetupMover() );
-		setup->apply( pose );
-
+		AddMembraneMoverOP add_memb( new AddMembraneMover() );
+		add_memb->apply( pose );
 		
-		// visualize embedding
-//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
-//		vis_emb->apply( pose );
-		pose.dump_pdb("after1.pdb");
+		// before move
+		pose.dump_pdb("after.pdb");
 
-
-////////////////////////////////////////////////////////////////////////////////
-
-// TRIALS FOR FINDING INTERFACE USING EXISTING DOCKING MOVERS
-
-//		DockingInitialPerturbationOP initial( new DockingInitialPerturbation( 1, true ) );
-//		initial->set_randomize1( true );
-//		initial->set_randomize2( false );
-		
-// slide together
-//		Vector axis = membrane_axis( pose, 1 );
-//		DockingSlideIntoContactOP slide( new DockingSlideIntoContact( 1, axis ) );
-//		slide->apply( pose );
-
-//		ScoreFunctionOP lowres_scorefxn = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2014.wts" );
-//		
-//		DockingLowResOP lowresdocking( new DockingLowRes( lowres_scorefxn, 1 ) );
-//		lowresdocking->set_trans_magnitude( 100 );
-//		lowresdocking->set_rot_magnitude( 360 );
-//		lowresdocking->apply( pose );
-
-////////////////////////////////////////////////////////////////////////////////
-
-		// VECTORS
-		// set new center and normal
-//		Vector new_center( 0, 5, 10 );
-//		Vector new_normal( 0, 15, 0 );
-//		Vector new_center (0, 0, 0);
-//		Vector new_normal (0, 0, 15);
-
-		// SPANNING TOPOLOGY
-//		std::string spanfile("protocols/membrane/1AFO_AB.span");
 		// get topology
 //		SpanningTopologyOP topo( pose.conformation().membrane_info()->spanning_topology() );
 //		pose.conformation().membrane_info()->show();
 
-		// EMBEDDING
+		// set new center and normal
+		Vector new_center( 0, 5, 10 );
+		Vector new_normal( 0, 15, 0 );
+		
+		// Apply Rotation and translation move
+		SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );
+		rt->apply( pose );
+
+
+		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
+		vis_emb->apply( pose );
+		
+		// before move
+		pose.dump_pdb("after1.pdb");
+
 //		// get EmbeddingDef
 //		EmbeddingOP embedding( new Embedding( topo, pose ) );
 //		embedding->show();
 //		embedding->invert();
 //		embedding->show();
 
+//		FlipMoverOP flip( new FlipMover() );
+//		flip->apply( pose );
+//		vis_emb->apply( pose );
+//		pose.dump_pdb("after2.pdb");
+
 		// get embedding object from pose and topology
 ////		PoseOP pose1( new Pose( pose ) );
 //		EmbeddingOP embedding( new Embedding( topo, pose ) );
 //		embedding->show();
 
-//		EmbeddingDefOP embedding( compute_structure_based_embedding(pose) );
+//		EmbeddingDefOP embedding( compute_structure_based_membrane_position(pose) );
 //		embedding->show();
 
-		// FOLDTREE
+		
+//		Vector new_center (0, 0, 0);
+//		Vector new_normal (0, 0, 15);
+//		std::string spanfile("protocols/membrane/1AFO_AB.span");
+
 		// reorder foldtree
 //		pose.fold_tree().show(std::cout);
 //		core::kinematics::FoldTree foldtree = pose.fold_tree();
@@ -186,19 +156,29 @@ public:
 //		TR << "foldtree reordered" << std::endl;
 //		pose.fold_tree().show(std::cout);
 		
-		// VISUALIZE EMBEDDING
-//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
-//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
-//		vis_emb->apply( pose );
-		
-		// MOVERS
-//		SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );
-//		rt->apply( pose );
-
 //		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile ) );
 //		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover() );
 //		rt->apply( pose );
 		
+		// Visualize embedding
+//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
+//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
+//		vis_emb->apply( pose );
+//
+//		// before move
+//		pose.dump_pdb("before.pdb");
+
+//
+//		// define vectors
+//		Vector new_center(20, 20, 20);
+//		Vector new_normal(1, 0, 0);
+////		Vector new_center(0, 0, 0);
+////		Vector new_normal(0, 0, 1);
+//				
+//		Size jumpnum = pose.conformation().membrane_info()->membrane_jump();
+//		TR << "jump: " << jumpnum << std::endl;
+		
+		// mover
 //		TranslationMoverOP trans = new TranslationMover( translation, jumpnum );
 //		trans->apply( pose );
 
@@ -208,11 +188,12 @@ public:
 //		TranslationRotationMoverOP rt = new TranslationRotationMover( old_center, old_normal, new_center, new_normal, jumpnum );
 //		rt->apply( pose );
 
-//		FlipMoverOP flip( new FlipMover(2, axis, 45) );
-//		flip->apply( pose );
+//		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile_name() ) );
+//		rt->apply( pose );
+//
+//		// after move
+//		pose.dump_pdb("after.pdb");
 
-//		RigidBodyRandomizeMoverOP random( new RigidBodyRandomizeMover( pose, 1, partner_downstream, 180, 360, true ) );
-//		random->apply( pose );
 
 ////////////////////////////////////////////////////
 

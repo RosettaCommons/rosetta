@@ -27,7 +27,7 @@
 #include <core/conformation/membrane/Span.fwd.hh>
 
 #ifdef WIN32
-#include <core/conformation/membrane/Span.hh>
+	#include <core/conformation/membrane/Span.hh>
 #endif
 
 
@@ -96,7 +96,7 @@ public: // methods
 	virtual void show( std::ostream & output=std::cout ) const;
 
 	// write spanfile
-	void write_spanfile( std::string output_filename ) const;
+	void write_spanfile( std::string output_filename );
 	
 	/////////////////////////
 	// GETTERS AND SETTERS //
@@ -109,20 +109,16 @@ public: // methods
     Size nspans() const;
 
     // get span by number
-    SpanOP span( Size span_number ) const;
+    SpanOP span( Size span_number );
 	
 	// fill from spanfile - can be used after creating empty object
 	void fill_from_spanfile( std::string spanfile, Size total_residues = 0 );
-
-	// fill from structure - can be used after creating empty object
-	void fill_from_structure( utility::vector1< Real > res_z_coord,
-							 utility::vector1< Size > chainID, Real thickness );
 	
 	// concatenate 2nd topology object
-	SpanningTopology & concatenate_topology( SpanningTopology const & topo );
+	SpanningTopologyOP concatenate_topology( SpanningTopologyOP topo );
 	
 	// add span to end of SpanningTopology object, doesn't reorder
-	void add_span( Span const & span, Size offset = 0 );
+	void add_span( SpanOP span, Size offset = 0 );
 
 	// add span to end of SpanningTopology object, doesn't reorder
 	void add_span( Size start, Size end, Size offset = 0 );
@@ -135,17 +131,17 @@ public: // methods
 	//////////////////
 	
     // is residue in membrane?
-    bool in_span( Size residue ) const;
+    bool in_span( Size residue );
 	
 	// does the span cross z=0, i.e. really spanning the membrane?
-	bool spanning( utility::vector1< Real > res_z_coord, Span const & span ) const;
+	bool spanning( utility::vector1< Real > res_z_coord, SpanOP span );
 
     /// @brief Determine if this Spanning Topology Object is Valid
 	/// @details Check that spans still span the membrane
-    bool is_valid() const;
+    bool is_valid();
 
 	// return number of residues in spanfile - for checking
-	Size nres_topo() const;
+	Size nres_topo();
 
 private: // methods
 

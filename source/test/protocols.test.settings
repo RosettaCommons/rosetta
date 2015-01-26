@@ -218,7 +218,6 @@ sources = {
 
 	"membrane" : [
 		"AddMembraneMover",
-		"FlipMover",
 		"MembranePositionFromTopologyMover",
 		"SetMembranePositionMover",
 		"TransformIntoMembraneMover",

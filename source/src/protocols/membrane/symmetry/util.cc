@@ -70,7 +70,7 @@ symmetrize_spans( Pose & pose, SpanningTopology & topology ) {
         for ( core::Size j = 1; j <= topology.nspans(); ++j ) {
             core::Size new_start( topology.span( j )->start() + nres_monomer*(i-1)  );
             core::Size new_end( topology.span( j )->end() + nres_monomer*(i-1) );
-            Span new_span = Span( new_start, new_end );
+            SpanOP new_span( new Span( new_start, new_end ) );
             symmetrized_topology->add_span( new_span );
         }
     }

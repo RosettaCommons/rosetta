@@ -312,7 +312,7 @@ public:
 	void send_RAW_Energies(Pose const &, std::string energyType, utility::vector1<int> const & energies);
 	
 	/// @brief Send Membrane Planes to PyMol
-	/// @details If pose is a membrane pose 
+	/// @details If pose is a membrane pose and view_in_pymol flag is set to true
 	/// pymol viewer will build CGO planes from points specified
 	void send_membrane_planes( Pose const & );
 

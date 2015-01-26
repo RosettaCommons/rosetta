@@ -17,7 +17,6 @@
 
 // Unit Headers
 #include <core/conformation/Residue.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
 #include <protocols/membrane/geometry/util.hh>
@@ -66,10 +65,10 @@ public: // test functions
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	// compute_structure_based_embedding
+	// compute_structure_based_membrane_position
 	void test_compute_structure_based_membrane_position() {
 		
-		TS_TRACE("Test compute_structure_based_embedding");
+		TS_TRACE("Test compute_structure_based_membrane_position");
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 		
@@ -90,7 +89,7 @@ public: // test functions
 		Vector normal1(-12.7367, -7.68036, 1.94611);
 		
 		// compute embedding
-		EmbeddingDefOP embed1( compute_structure_based_embedding( pose1 ) );
+		EmbeddingDefOP embed1( compute_structure_based_membrane_position( pose1 ) );
 		
 		// compare
 		TS_ASSERT( position_equal_within_delta( embed1->center(), center1, 0.001 ) );
@@ -104,7 +103,7 @@ public: // test functions
 		addmem2->apply(pose2);
 		Vector center2(73.9421, 26.7549, 24.4493);
 		Vector normal2(5.7604, -0.605734, 13.8366);
-		EmbeddingDefOP embed2( compute_structure_based_embedding( pose2 ) );
+		EmbeddingDefOP embed2( compute_structure_based_membrane_position( pose2 ) );
 		TS_ASSERT( position_equal_within_delta( embed2->center(), center2, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed2->normal(), normal2, 0.001 ) );
 
@@ -116,7 +115,7 @@ public: // test functions
 		addmem3->apply(pose3);
 		Vector center3(31.2161, 16.9685, 37.6119);
 		Vector normal3(13.1689, -7.07507, 1.23442);
-		EmbeddingDefOP embed3( compute_structure_based_embedding( pose3 ) );
+		EmbeddingDefOP embed3( compute_structure_based_membrane_position( pose3 ) );
 		TS_ASSERT( position_equal_within_delta( embed3->center(), center3, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed3->normal(), normal3, 0.001 ) );
 
@@ -128,7 +127,7 @@ public: // test functions
 		addmem4->apply(pose4);
 		Vector center4(21.4326, 6.0464, -41.0573);
 		Vector normal4(0.0900585, 0.176022, 14.9987);
-		EmbeddingDefOP embed4( compute_structure_based_embedding( pose4 ) );
+		EmbeddingDefOP embed4( compute_structure_based_membrane_position( pose4 ) );
 		TS_ASSERT( position_equal_within_delta( embed4->center(), center4, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed4->normal(), normal4, 0.001 ) );
 
@@ -140,7 +139,7 @@ public: // test functions
 		addmem5->apply(pose5);
 		Vector center5(0.3645, 3.66025, 41.345);
 		Vector normal5(0.104341, 14.9499, 1.221);
-		EmbeddingDefOP embed5( compute_structure_based_embedding( pose5 ) );
+		EmbeddingDefOP embed5( compute_structure_based_membrane_position( pose5 ) );
 		TS_ASSERT( position_equal_within_delta( embed5->center(), center5, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed5->normal(), normal5, 0.001 ) );
 
@@ -152,7 +151,7 @@ public: // test functions
 		addmem6->apply(pose6);
 		Vector center6(18.8453, 122.117, 1.079);
 		Vector normal6(-11.3264, -9.83365, 0.106647);
-		EmbeddingDefOP embed6( compute_structure_based_embedding( pose6 ) );
+		EmbeddingDefOP embed6( compute_structure_based_membrane_position( pose6 ) );
 		TS_ASSERT( position_equal_within_delta( embed6->center(), center6, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed6->normal(), normal6, 0.001 ) );
 
@@ -164,7 +163,7 @@ public: // test functions
 		addmem7->apply(pose7);
 		Vector center7(-0.000166667, -0.000125, 0.295625);
 		Vector normal7(1.19923e-05, 2.70232e-05, 15);
-		EmbeddingDefOP embed7( compute_structure_based_embedding( pose7 ) );
+		EmbeddingDefOP embed7( compute_structure_based_membrane_position( pose7 ) );
 		TS_ASSERT( position_equal_within_delta( embed7->center(), center7, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed7->normal(), normal7, 0.001 ) );
 
@@ -176,9 +175,52 @@ public: // test functions
 		addmem8->apply(pose8);
 		Vector center8(-36.1201, -7.59636, 37.6713);
 		Vector normal8(-14.793, -2.47196, 0.237567);
-		EmbeddingDefOP embed8( compute_structure_based_embedding( pose8 ) );
+		EmbeddingDefOP embed8( compute_structure_based_membrane_position( pose8 ) );
 		TS_ASSERT( position_equal_within_delta( embed8->center(), center8, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed8->normal(), normal8, 0.001 ) );
+		
+		//////////////////////////////////////////////////////////////////////////////
+		
+		// make sure that the embedding normal is always in positive z direction
+		// independent of the orientation of the protein
+
+//		Embedding: center: (-0.017, -0.1035, -0.37975), normal: (-0.912964, 3.15385, 14.6362)
+
+		// 1afo up
+//		TS_TRACE("1AFO up");
+//		Pose pose9;
+//		core::import_pose::pose_from_pdb( pose9, "protocols/membrane/geometry/1AFO_up.pdb" );
+//		AddMembraneMoverOP addmem9( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
+//		addmem9->apply(pose9);
+//		Vector center9(0.53225, 0.361, 0.095);
+//		Vector normal9(12.7367, 7.68036, -1.94611);
+//		EmbeddingDefOP embed9( compute_structure_based_membrane_position( pose9 ) );
+//		TS_ASSERT( position_equal_within_delta( embed9->center(), center9, 0.001 ) );
+//		TS_ASSERT( position_equal_within_delta( embed9->normal(), normal9, 0.001 ) );
+//		
+//		// 1afo down
+//		TS_TRACE("1AFO down");
+//		Pose pose10;
+//		core::import_pose::pose_from_pdb( pose10, "protocols/membrane/geometry/1AFO_down.pdb" );
+//		AddMembraneMoverOP addmem10( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
+//		addmem10->apply(pose10);
+//		Vector center10(0.53225, 0.361, 0.095);
+//		Vector normal10(12.7367, 7.68036, -1.94611);
+//		EmbeddingDefOP embed10( compute_structure_based_membrane_position( pose10 ) );
+//		TS_ASSERT( position_equal_within_delta( embed10->center(), center10, 0.001 ) );
+//		TS_ASSERT( position_equal_within_delta( embed10->normal(), normal10, 0.001 ) );
+//		
+//		// 1afo parallel to the membrane
+//		TS_TRACE("1AFO parallel");
+//		Pose pose11;
+//		core::import_pose::pose_from_pdb( pose11, "protocols/membrane/geometry/1AFO_parallel.pdb" );
+//		AddMembraneMoverOP addmem11( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
+//		addmem11->apply(pose11);
+//		Vector center11(0.53225, 0.361, 0.095);
+//		Vector normal11(12.7367, 7.68036, -1.94611);
+//		EmbeddingDefOP embed11( compute_structure_based_membrane_position( pose11 ) );
+//		TS_ASSERT( position_equal_within_delta( embed11->center(), center11, 0.001 ) );
+//		TS_ASSERT( position_equal_within_delta( embed11->normal(), normal11, 0.001 ) );
 	}
 
 	// check vector for reasonable size
@@ -229,32 +271,6 @@ public: // test functions
 		// check for equality
 		TS_ASSERT( position_equal_within_delta( avg->center(), avg_center, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( avg->normal(), avg_normal, 0.001 ) );
-	}
-	
-	// TODO: average antiparallel embeddings!!!
-	
-	// split topology by jump
-	void test_split_topology_by_jump() {
-
-		TS_TRACE("Test average embeddings");
-		using namespace core::conformation::membrane;
-		using namespace protocols::membrane::geometry;
-
-		// read in pose and create topology object
-		Pose pose, pose_up, pose_down;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_.pdb" );
-		
-		SpanningTopology topo = SpanningTopology( "protocols/membrane/geometry/1AFO__tr.span" );
-		SpanningTopology topo_up, topo_down;
-		
-		// call function
-		split_topology_by_jump( pose, 1, topo, pose_up, pose_down, topo_up, topo_down );
-		
-		// test
-		TS_ASSERT_EQUALS( topo_up.span(1)->start(), 15 );
-		TS_ASSERT_EQUALS( topo_up.span(1)->end(), 31 );
-		TS_ASSERT_EQUALS( topo_down.span(1)->start(), 15 );
-		TS_ASSERT_EQUALS( topo_down.span(1)->end(), 33 );
 	}
 	
 		

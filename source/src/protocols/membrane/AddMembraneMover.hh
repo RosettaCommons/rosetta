@@ -72,7 +72,7 @@ public:
 	/// @brief Custom Constructor - Create membrane pose from existing membrane resnum
 	/// @details Loads in membrane information from the commandline. Just needs a
 	/// membrane residue number (application is symmetry)
-	AddMembraneMover( core::Size membrane_rsd );
+	AddMembraneMover( core::SSize membrane_rsd );
 	
 	/// @brief Custom Constructor - mainly for PyRosetta
 	/// @details Creates a membrane pose setting the membrane
@@ -82,7 +82,7 @@ public:
 		Vector mem_center,
 		Vector mem_normal,
 		std::string spanfile,
-		core::Size membrane_rsd=0
+		core::SSize membrane_rsd=0
 	);
 
 	/// @brief Custom Constructor - mainly for PyRosetta
@@ -93,8 +93,7 @@ public:
         Vector mem_center,
         Vector mem_normal,
         SpanningTopologyOP topology,
-		core::Size anchor_residue=1,
-        core::Size membrane_rsd=0
+        core::SSize membrane_rsd=0
 	);
 				
 	/// @brief Custorm Constructur with lips info - mainly for PyRosetta
@@ -107,7 +106,7 @@ public:
 		Vector emb_normal,
 		std::string spanfile,
 		std::string lipsfile,
-		core::Size membrane_rsd=0
+		core::SSize membrane_rsd=0
 	);
 	
 	/// @brief Copy Constructor
@@ -178,7 +177,7 @@ private:
 	/// @details If there is an MEM residue in the PDB at the end of the pose
 	/// with property MEMBRANE, return it's residue number. In the control flow of the
 	/// apply method, if this returns non-zero, a new membrane residue will not be added.
-	utility::vector1< core::SSize > check_pdb_for_mem( Pose & pose );
+	core::SSize check_pdb_for_mem( Pose & pose );
 	
 private:
 
@@ -197,9 +196,8 @@ private:
 	// Lipid Accessibility Info - Lips Files
 	std::string lipsfile_;
 	
-	// Membrane residue number (when applicable)
-	core::Size anchor_rsd_;
-	core::Size membrane_rsd_;
+	// Symm membrane residue number (when applicable)
+	core::SSize membrane_rsd_;
 };
 
 } // membrane

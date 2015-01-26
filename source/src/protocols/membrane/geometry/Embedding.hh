@@ -25,8 +25,8 @@
 
 // Project Headers
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
+#include <core/conformation/membrane/SpanningTopology.fwd.hh>
+#include <core/conformation/membrane/Span.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
@@ -58,14 +58,18 @@ public: // constructors
 	Embedding();
 
 	/// @brief	Construction from single EmbeddingDef object
-	Embedding( EmbeddingDef const & embedding );
+	Embedding( EmbeddingDefOP embedding );
 
 	/// @brief	Constructs bogus object from topology
-	Embedding( SpanningTopology const & topology, Real radius );
+	Embedding( SpanningTopologyOP topology, Real radius );
 
 	/// @brief Custom Constructor - from topology & structure
 	/// @details Construct Embedding from Structure & Topology
-	Embedding( SpanningTopology const & topology, Pose const & pose );
+	Embedding( SpanningTopologyOP topology, Pose & pose );
+
+	/// @brief Custom Constructor - from topology & structure
+	/// @details Construct Embedding from Structure & Topology
+	Embedding( SpanningTopologyOP topology, PoseOP pose );
 
 	/// @brief Copy Constructor
 	Embedding( Embedding const & Embedding );
@@ -79,29 +83,32 @@ public: // constructors
 public: // methods
 
 	// show object
-	virtual void show( std::ostream & out=std::cout ) const;
+	virtual void show( std::ostream & out=std::cout );
 	
 	// invert all normals in Embedding object
 	void invert();
 	
 	// number of span embeddings in object
-	Size nspans() const;
+	Size nspans();
 
 	// get span embedding by number
-	EmbeddingDefOP embedding( Size span_number ) const;
+	EmbeddingDefOP embedding( Size span_number );
 
 	// get all span embeddings
-	utility::vector1< EmbeddingDefOP > embeddings() const;
+	utility::vector1< EmbeddingDefOP > embeddings();
 
 	// get chain embedding
-	EmbeddingDefOP total_embed() const;
+	EmbeddingDefOP total_embed();
 
 	//////////////////////
 	/// HELPER METHODS ///
 	//////////////////////
 
 	// from TMspans
-	utility::vector1< EmbeddingDefOP > from_spans( SpanningTopology const & topology, Pose const & pose );
+	utility::vector1< EmbeddingDefOP > from_spans( SpanningTopologyOP topology, PoseOP pose );
+
+	// from TMspans
+	utility::vector1< EmbeddingDefOP > from_spans( SpanningTopologyOP topology, Pose & pose );
 
 private: // data
 

@@ -49,7 +49,6 @@
 // Project Headers
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/TranslationRotationMover.hh>
-#include <protocols/membrane/FlipMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -61,12 +60,10 @@
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/visualize/VisualizeEmbeddingMover.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/conformation/membrane/util.hh>
 #include <protocols/membrane/geometry/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -75,8 +72,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
@@ -231,7 +226,6 @@ MPFoldingMover::apply( Pose & pose ) {
 	using namespace core::sequence;
 	using namespace core::conformation::membrane;
 	using namespace protocols::membrane::geometry;
-	using namespace protocols::membrane::visualize;
 	using namespace protocols::membrane;
 
 	// register options
@@ -254,29 +248,23 @@ MPFoldingMover::apply( Pose & pose ) {
 
 	// create pose from sequence
 	make_pose_from_sequence( pose, "MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIMLGFPINFLTLYVTVQHKKLRTPLNYILLNLAVADLFMVFGGFTTTLYTSLHGYFVFGPTGCNLEGFFATLGGEIALWSLVVLAIERYVVVCKPMSNFRFGENHAIMGVAFTWVMALACAAPPLVGWSRYIPEGMQCSCGIDYYTPHEETNNESFVIYMFVVHFIIPLIVIFFCYGQLVFTVKEAAAQQQESATTQKAEKEVTRMVIIMVIAFLICWLPYAGVAFYIFTHQGSDFGPIFMTIPAFFAKTSAVYNPVIYIMMNKQFRNCMVTTLCCGKNPLGDDEASTTVSKTETSQVAPA", "centroid" );
-	TR << "pose:total_residue: " << pose.total_residue() << std::endl;
-
-	// need to set the PDBInfo object in the pose, because make_pose_from_sequence
-	// doesn't take care of that!
-	PDBInfoOP pdbinfo( new PDBInfo( pose ) );
-	pose.pdb_info( pdbinfo );
-	pose.pdb_info()->show( std::cout );
 	
 	// create topology from spanfile
 	SpanningTopologyOP topo( new SpanningTopology( spanfile_name() ) );
 
 	pose.dump_pdb("1_ideal_helices.pdb");
+
 	TR << "1" << std::endl;
 	
 	// create topology object holding loops = 'inverse' of spans
-	// this is for later to rebuild the loops
-	SpanningTopologyOP loops( new SpanningTopology() );
+	SpanningTopologyOP loops = new SpanningTopology();
 	Size prev_end = 1;
 	for ( Size i = 1; i <= topo->nspans(); ++i ){
 		loops->add_span( prev_end, topo->span(i)->start() - 1 );
 		prev_end = topo->span(i)->end() + 1;
 	}
 	loops->add_span( prev_end, pose.total_residue() );
+
 	TR << "2" << std::endl;
 
 	// create ideal helices from SSEs
@@ -288,34 +276,44 @@ MPFoldingMover::apply( Pose & pose ) {
 		}
 	}
 	pose.dump_pdb("2_ideal_helices.pdb");
+
 	TR << "3" << std::endl;
 	
 	// default center
-//	EmbeddingDefOP membrane( new EmbeddingDef() );
-//	TR << "4" << std::endl;
+	EmbeddingDefOP membrane = new EmbeddingDef();
+
+	TR << "4" << std::endl;
 	
 	// define center and normal
 	Vector center(0, 0, 0);
 	Vector normal(0, 0, 1);
 	
-	// get jump anchor residue in first SSE
-	Size anchor1 = topo->span(1)->center();
-	TR << "8: anchor1: " << anchor1 << std::endl;
-
 	// add MEM to root of foldtree
-	AddMembraneMoverOP add_mem( new AddMembraneMover( center, normal, topo, anchor1 ) );
+	AddMembraneMoverOP add_mem = new AddMembraneMover( center, normal, topo );
 	add_mem->apply( pose );
+
 	TR << "5" << std::endl;
 	
 	// foldtree stuff, get membrane jump, etc
-//	Size memjump = pose.conformation().membrane_info()->membrane_jump();
-	Size memrsd = static_cast< Size >( pose.conformation().membrane_info()->membrane_rsd_num() );
+	Size memjump = pose.conformation().membrane_info()->membrane_jump();
+	Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
+
 	TR << "6" << std::endl;
 	
 	// more foldtree
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
+
 	TR << "7" << std::endl;
-	foldtree.show( std::cout );
+	
+	// get jump anchor residue in first SSE
+	Size anchor1 = topo->span(1)->center();
+
+	TR << "8" << std::endl;
+
+	// slide: jumpnumber, newres1, newres2
+	foldtree.slide_jump( 1, memrsd, anchor1 );
+
+	TR << "9" << std::endl;
 	
 	// add jumps to residues at centers of SSEs
 	// these are not the COMs, these are only defined from the topo object
@@ -324,6 +322,7 @@ MPFoldingMover::apply( Pose & pose ) {
 		Size cut = loops->span(i)->center();
 		foldtree.new_jump( memrsd, anchor, cut );
 	}
+
 	TR << "10" << std::endl;
 	
 	// set foldtree
@@ -332,13 +331,15 @@ MPFoldingMover::apply( Pose & pose ) {
 	// reorder foldtree to set MEM to root
 	reorder_membrane_foldtree( pose );
 	pose.fold_tree().show( std::cout );
+	
 	TR << "11" << std::endl;
 
-	PoseOP mypose( new Pose( pose ) );
+	PoseOP mypose = new Pose( pose );
 
 	// create embedding object from topology and pose
 	// this describes how the normals currently are
-	EmbeddingOP embedding_old( new Embedding( *topo, *mypose ) );
+	EmbeddingOP embedding_old = new Embedding( topo, mypose );
+
 	TR << "12" << std::endl;
 	TR << "embedding_old: " << std::endl;
 	embedding_old->show();
@@ -348,9 +349,10 @@ MPFoldingMover::apply( Pose & pose ) {
 	// orientations of normals around a circle of radius 200
 	// this object describes how the normals should be
 	Real radius( 50 );
-	EmbeddingOP embedding_new( new Embedding( *topo, radius ) );
+	EmbeddingOP embedding_new = new Embedding( topo, radius );
 	TR << "embedding_new: " << std::endl;
 	embedding_new->show();
+
 	TR << "13" << std::endl;
 	
 	// move the SSEs out to their desired position using both embedding objects
@@ -369,70 +371,38 @@ MPFoldingMover::apply( Pose & pose ) {
 		TR << "new_normal: " << new_normal.to_string() << std::endl;
 		TR << "jumpnum: " << jumpnum << std::endl;
 
-//		TranslationMoverOP trans( new TranslationMover( trans_vec, jumpnum ) );
+//		TranslationMoverOP trans = new TranslationMover( trans_vec, jumpnum );
 //		trans->apply( pose );
+//
+//		RotationMoverOP rot = new RotationMover( old_normal, new_normal, new_center, jumpnum );
+//		rot->apply( pose );
 
-		TranslationRotationMoverOP transrot( new TranslationRotationMover(
-		old_center, old_normal, new_center, new_normal, jumpnum ) );
+				
+		TranslationRotationMoverOP transrot = new TranslationRotationMover(
+		old_center, old_normal, new_center, new_normal, jumpnum );
 		transrot->apply( pose );
-
 	}
 
-	// get new EmbeddingDef of this span
-	TR << "RECOMPUTING EMBEDDING" << std::endl;
-	Embedding emb = Embedding( *topo, pose );
-	emb.show();
-	
-	for ( Size i = 1; i <= topo->nspans(); ++i ){
-
-		TR << "i%2: " << i%2 << " and normal: " << emb.embedding(i)->normal().z() << std::endl;
-	
-		// if new embedding for even span show in positive z-direction or
-		// new embedding for odd span shows in negative z-direction, flip span
-		if ( ( i % 2 == 1 && emb.embedding(i)->normal().z() < 0 ) ||
-			 ( i % 2 == 0 && emb.embedding(i)->normal().z() > 0 ) ) {
-		
-			TR << "flipping " << i << std::endl;
-		
-			// get angle between old and new embedding normal
-			//			Real angle = numeric::conversions::degrees( angle_of( new_normal, emb.normal() ) );
-			Vector axis = center - emb.embedding(i)->center();
-			
-			FlipMoverOP flip( new FlipMover( i, 180 ) );
-			flip->apply( pose );
-
-		}
-		
-//		TranslationRotationMoverOP transrot( new TranslationRotationMover(
-//		old_center, old_normal, new_center, new_normal, jumpnum ) );
-//		transrot->apply( pose );
-		
-	}
-	
-	// check embedding
-	Embedding after_rot = Embedding( *topo, pose );
-	after_rot.show();
-	
 	TR << "14" << std::endl;
-	VisualizeEmbeddingMoverOP visemb( new VisualizeEmbeddingMover() );
-	visemb->apply( pose );
+
 	pose.dump_pdb("14.pdb");
 
 	// get center SSE number to start docking from
-//	Size sse_number;
-//	if ( topo->nspans() % 2 == 0 ){
-//		sse_number = topo->nspans() / 2;
-//	}
-//	else{
-//		sse_number = ( topo->nspans() + 1 ) / 2;
-//	}
-//	TR << "15" << std::endl;
+	Size sse_number;
+	if ( topo->nspans() % 2 == 0 ){
+		sse_number = topo->nspans() / 2;
+	}
+	else{
+		sse_number = ( topo->nspans() + 1 ) / 2;
+	}
+
+	TR << "15" << std::endl;
 	
 	// start in middle: if odd, start in middle, go up, down, up, etc
 	// if even, start below middle, go up, down, up, etc
-//	Size sse_raw = 1;
-//	Size sse_signed = 1;
-//	Size sign = 1;
+	Size sse_raw = 1;
+	Size sse_signed = 1;
+	Size sign = 1;
 //	while ( sse_number <= topo->nspans() ){
 //		
 //		Size jumpnum = sse
@@ -500,6 +470,26 @@ MPFoldingMover::apply( Pose & pose ) {
 
 	
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+// read spanfiles
+std::string read_spanfile(){
+	
+	using namespace basic;
+	using namespace basic::options;
+
+	// cry if spanfiles not given
+	if ( ! option[OptionKeys::membrane_new::setup::spanfiles].user() ){
+		utility_exit_with_message("Please provide a single spanfiles!");
+	}
+	
+	// get filenames from Optionsystem
+	std::string spanfile = option[OptionKeys::membrane_new::setup::spanfiles]()[1];
+	
+	return spanfile;
+}// read spanfile
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

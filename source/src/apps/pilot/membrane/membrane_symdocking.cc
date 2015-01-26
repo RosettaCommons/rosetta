@@ -114,8 +114,8 @@ public:
         // Symmetrize the spanning topology
         SpanningTopologyOP symmetrized_topology = symmetrize_spans( pose, *pose.conformation().membrane_info()->spanning_topology() ); 
         symmetrized_topology->show();
-        Embedding embeddings = Embedding( *symmetrized_topology, pose );
-        EmbeddingDefOP final_embed = embeddings.total_embed();
+        EmbeddingOP embeddings( new Embedding( symmetrized_topology, pose ) );
+        EmbeddingDefOP final_embed = embeddings->total_embed(); 
 
         // Set Initial Membrane position to be the symmetrized position
         SetMembranePositionMoverOP set_initial_position( new SetMembranePositionMover( final_embed->center(), final_embed->normal() ) );

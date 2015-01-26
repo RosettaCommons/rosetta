@@ -25,7 +25,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
 
@@ -47,8 +46,7 @@ namespace protocols {
 namespace membrane {
 namespace geometry {
 
-using namespace core;
-using namespace core::conformation::membrane;
+using namespace core; 
 
 //////////////// Utility Functions from Docking Protocol - Geometry Util for Center of Mass ////////////////
 
@@ -96,45 +94,31 @@ return_nearest_residue(
 ///				returns a pair of vectors:
 ///				vector1 is z-coord of CA atoms of the pose
 ///				vector2 is chainID of CA atoms of the pose
-std::pair< utility::vector1< Real >, utility::vector1< Real > > get_chain_and_z( pose::Pose const & pose );
+std::pair< utility::vector1< Real >, utility::vector1< Real > > get_chain_and_z( pose::PoseOP pose );
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
-void compute_structure_based_embedding(
-			  pose::Pose const & pose,
-			  SpanningTopology const & topology,
+void compute_structure_based_membrane_position(
+			  pose::Pose & pose,
 			  Vector & center,
 			  Vector & normal
 			  );
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
-/// topology, uses topology from MembraneInfo
-void compute_structure_based_embedding(
-			   pose::Pose const & pose,
-			   Vector & center,
-			   Vector & normal
-			   );
-
-/// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
 protocols::membrane::geometry::EmbeddingDefOP
-compute_structure_based_embedding( pose::Pose const & pose, SpanningTopology const & topo );
-
-/// @brief Compute Membrane Center/Normal from Membrane Spanning
-/// topology, uses topology from MembraneInfo
-protocols::membrane::geometry::EmbeddingDefOP
-compute_structure_based_embedding( pose::Pose const & pose );
+compute_structure_based_membrane_position( pose::Pose & pose );
 
 /// @brief Check reasonable range of vector
 void check_vector( core::Vector const vector );
 
 /// @brief Average EmbeddingDefs as they are (without vector inversion accounting for topology)
 /// @details Get average center and normal from a vector of EmbeddingDefs
-EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > const parts );
+EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts );
 
 /// @brief Average EmbeddingDefs after first inverting some vectors accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
-EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP > const parts );
+EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP > parts );
 
 /// @brief Normalize normal vector to length 15 for visualization
 void membrane_normal_to_length_15( pose::Pose & pose );
@@ -147,21 +131,6 @@ void reorder_membrane_foldtree( pose::Pose & pose );
 /// @brief Calculates translation axis lying in the membrane (= projection of COM axis into the membrane plane)
 core::Vector const membrane_axis( core::pose::Pose &, int jumpnum );
 
-/// @brief Splits the SpanningTopology object into two objects, depending on
-///			given jump number
-/// @details This is useful for calculating an embedding for parts of the
-///			structure: this can now easily be accomplished by creating two
-///			empty topology objects, call this function, and then use both topology
-///			objects and subposes to call compute_structure_based_membrane_embedding
-void split_topology_by_jump(
-		pose::Pose const & pose,		// full pose
-		Size const jumpnum,				// jump number to split on
-		SpanningTopology const & topo,	// topology to split
-		pose::Pose & pose_up,			// upstream partner after pose splitting
-		pose::Pose & pose_down,			// downstream partner after pose splitting
-		SpanningTopology & topo_up,		// topology of upstream pose
-		SpanningTopology & topo_down	// topology of downstream pose
-		);
 
 } // geometry
 } // membrane

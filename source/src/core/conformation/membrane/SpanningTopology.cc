@@ -107,9 +107,9 @@ SpanningTopology::operator=( SpanningTopology const & src ) {
 	
 	// Deep Copy of the data
     this->topology_ = src.topology_;
-
-	
+    
     return *this;
+	
 }
 
 /// @brief Destructor
@@ -127,19 +127,6 @@ void SpanningTopology::fill_from_spanfile( std::string spanfile, Size total_resi
     create_from_spanfile( spanfile, total_residues );
 	
 }// fill from spanfile
-
-// fill from structure - can be used after creating empty object
-void SpanningTopology::fill_from_structure( utility::vector1< Real > res_z_coord,
-						 utility::vector1< Size > chainID, Real thickness ) {
-	TR << "Filling membrane spanning topology from structure with thickness " << thickness << std::endl;
-	create_from_structure( res_z_coord, chainID, thickness );
-	
-	this->show();
-	
-	TR << "WATCH OUT: Writing spanfile out.span!" << std::endl;
-	write_spanfile( "out.span" );
-	
-}// fill from structure
 
 /// @brief Generating a String Representation of Spanning Topology Object for debugging purposes
 void SpanningTopology::show( std::ostream & ) const {
@@ -161,25 +148,25 @@ void SpanningTopology::show( std::ostream & ) const {
 } // show
 
 // concatenate 2nd topology object
-SpanningTopology & SpanningTopology::concatenate_topology( SpanningTopology const & topo ){
+SpanningTopologyOP SpanningTopology::concatenate_topology( SpanningTopologyOP topo ){
 	
 	// add spans
-	for ( Size i = 1; i <= topo.nspans(); ++i ){
-		SpanOP span( topo.span( i ) );
-		span->shift( topo.nres_topo() );
+	for ( Size i = 1; i <= topo->nspans(); ++i ){
+		SpanOP span = topo->span( i );
+		span->shift( topo->nres_topo() );
 		topology_.push_back( span );
 	}
 	
 	// update nres of topo1 object
-	nres_topo_ += topo.nres_topo();
+	nres_topo_ += topo->nres_topo();
 	
-	return *this;
+	return SpanningTopologyOP( new SpanningTopology( *this ) );
 }
 	
 //////////////////////////////////////////////////////////////////////////////
 
 // write spanfile
-void SpanningTopology::write_spanfile( std::string output_filename ) const {
+void SpanningTopology::write_spanfile( std::string output_filename ){
 
 	TR.Debug << "printing spanfile" << std::endl;
 	
@@ -207,11 +194,10 @@ utility::vector1< SpanOP >
 SpanningTopology::get_spans() const { return topology_; } // get topology
 
 // add span to end of SpanningTopology object, doesn't reorder
-void SpanningTopology::add_span( Span const & span, Size offset ){
-	SpanOP new_span ( new Span( span ) );
-	new_span->shift( offset );
-	topology_.push_back( new_span );
-	nres_topo_ += span.end() - span.start() + 1;
+void SpanningTopology::add_span( SpanOP span, Size offset ){
+	span->shift( offset );
+	topology_.push_back( span );
+	nres_topo_ += span->end() - span->start() + 1;
 }// add span
 
 //////////////////////////////////////////////////////////////////////////////
@@ -231,9 +217,8 @@ void SpanningTopology::reorder_spans() {
 
 /// @brief Return Transmembrane Span
 /// @details Return transmembrane span by it's index in the spanning topology object
-SpanOP SpanningTopology::span( Size span_number ) const {
-	return topology_[ span_number ];
-} // get span
+SpanOP
+SpanningTopology::span( Size span_number ){ return topology_[ span_number ]; } // get span
 
 /// @brief Get total number of spans
 /// @details Return the number of transmembrane spanning regions in this object
@@ -242,7 +227,7 @@ SpanningTopology::nspans() const { return topology_.size(); } // total_spans
 
 /// @brief Is the residue in the membrane region?
 /// @details Return true if this residue is in a transmembrane span
-bool SpanningTopology::in_span( Size resnum ) const {
+bool SpanningTopology::in_span( Size resnum ){
     
     // go through spans and check whether residue is in spans
     for ( Size i = 1; i <= nspans(); ++i ) {
@@ -259,15 +244,15 @@ bool SpanningTopology::in_span( Size resnum ) const {
 /// @brief Does the span cross the membrane
 /// @details Determine if the membrane spanning region crosses the whole membrane
 bool
-SpanningTopology::spanning( utility::vector1< Real > res_z_coord, Span const & span ) const {
+SpanningTopology::spanning( utility::vector1< Real > res_z_coord, SpanOP span ){
 	
 	// z coordinates of start and end both negative?
-	if ( res_z_coord[ span.start() ] < 0 && res_z_coord[ span.end() ] < 0 ) {
+	if ( res_z_coord[ span->start() ] < 0 && res_z_coord[ span->end() ] < 0 ) {
 		return false;
 	}
 	
 	// z coordinates of start and end both positive?
-	if ( res_z_coord[ span.start() ] > 0 && res_z_coord[ span.end() ] > 0 ) {
+	if ( res_z_coord[ span->start() ] > 0 && res_z_coord[ span->end() ] > 0 ) {
 		return false;
 	}
 	
@@ -277,7 +262,7 @@ SpanningTopology::spanning( utility::vector1< Real > res_z_coord, Span const & s
 
 /// @brief Determine if this Spanning Topology Object is Valid
 /// @details Check that spans still span the membrane
-bool SpanningTopology::is_valid() const {
+bool SpanningTopology::is_valid(){
     
 	bool valid( false );
 	
@@ -308,7 +293,7 @@ bool SpanningTopology::is_valid() const {
 
 
 /// @brief Return the number of residues represented by this topology object
-Size SpanningTopology::nres_topo() const {
+Size SpanningTopology::nres_topo(){
 	return nres_topo_;
 }
 
@@ -445,14 +430,14 @@ SpanningTopology::create_from_structure(
 				SpanOP span( new Span( start, end ) );
 				
 				// if span spans the membrane
-				if ( spanning( res_z_coord, *span ) ){
+				if ( spanning( res_z_coord, span ) ){
 					TR << "Adding TMspan " << std::endl;
 					span->show();
 					topology_.push_back( span );
 					++num_spans;
 					start = end + 1;
 				}
-				if ( ! spanning( res_z_coord, *span )){
+				if ( ! spanning( res_z_coord, span )){
 					span->show();
 					TR << "...thrown out because it doesn't span the membrane!" << std::endl;
 				}

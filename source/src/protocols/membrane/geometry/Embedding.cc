@@ -68,30 +68,28 @@ embeddings_(),
 total_embed_(){}
 
 /// @brief	Construction from single EmbeddingDef object
-Embedding::Embedding( EmbeddingDef const & embedding ) {
-	EmbeddingDefOP copy( new EmbeddingDef( embedding ) );
-	embeddings_.push_back( copy );
-	total_embed_ = copy;
+Embedding::Embedding( EmbeddingDefOP embedding ) {
+	embeddings_.push_back( embedding );
+	total_embed_ = embedding;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief	Constructs bogus object from topology
-Embedding::Embedding( SpanningTopology const & topology, Real radius ) :
+Embedding::Embedding( SpanningTopologyOP topology, Real radius ) :
 	embeddings_()
 {
 	// initialize embedding objects
-	EmbeddingDefOP new_embed( new EmbeddingDef() );
-	total_embed_ = new_embed;
+	total_embed_ = EmbeddingDefOP( new EmbeddingDef() );
 	
     TR << "Create a bogus embedding from topology" << std::endl;
 	using namespace numeric::conversions;
 		
 	// initializations
-	core::Real increment = 360 / topology.nspans();
+	core::Real increment = 360 / topology->nspans();
 
 	// get position around a circle
-	for ( Size i = 1; i <= topology.nspans(); ++i ) {
+	for ( Size i = 1; i <= topology->nspans(); ++i ) {
 
 		core::Real alpha = radians( increment * i );
 		core::Real x = radius * cos( alpha );
@@ -122,7 +120,12 @@ Embedding::Embedding( SpanningTopology const & topology, Real radius ) :
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief	Constructs from topology and pose
-Embedding::Embedding( SpanningTopology const & topology, Pose const & pose ){
+Embedding::Embedding( SpanningTopologyOP topology, PoseOP pose ){
+	Embedding( topology, *pose );
+}
+
+/// @brief	Constructs from topology and pose
+Embedding::Embedding( SpanningTopologyOP topology, Pose & pose ){
 
 	TR << "Constructing Embedding object from topology and pose" << std::endl;
 	
@@ -173,7 +176,7 @@ Embedding::~Embedding(){}
 ///////////////
 
 // show object
-void Embedding::show( std::ostream & out ) const {
+void Embedding::show( std::ostream & out ){
     
     out << "Span Embedding: " << std::endl;
     for ( Size i = 1; i <= embeddings_.size(); ++i ){
@@ -203,14 +206,14 @@ void Embedding::invert() {
 }
 
 // number of span embeddings in object
-Size Embedding::nspans() const {
+Size Embedding::nspans() {
 	return embeddings_.size();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 // get span embedding by number
-EmbeddingDefOP Embedding::embedding( Size span_number ) const {
+EmbeddingDefOP Embedding::embedding( Size span_number ){
 
 	if ( span_number <= embeddings_.size() ) {
 		return embeddings_[ span_number ];
@@ -223,42 +226,42 @@ EmbeddingDefOP Embedding::embedding( Size span_number ) const {
 //////////////////////////////////////////////////////////////////////////////
 
 // get all span embeddings
-utility::vector1< EmbeddingDefOP > Embedding::embeddings() const {
+utility::vector1< EmbeddingDefOP > Embedding::embeddings(){
     return embeddings_;
 }// span_embeddings
 
 //////////////////////////////////////////////////////////////////////////////
 
 // get chain embedding
-EmbeddingDefOP Embedding::total_embed() const {
+EmbeddingDefOP Embedding::total_embed(){
     return total_embed_;
 }// chain_embedding
 
 // from TMspans, they are all in a similar direction as the first TM span!
-utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const & topology, Pose const & pose ){
+utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopologyOP topology, Pose & pose ){
 
     TR << "Computing membrane embedding from TMspans: " << std::endl;
 
-	if ( topology.nspans() == 0 ){
+	if ( topology->nspans() == 0 ){
 		utility_exit_with_message("The topology object is empty!");
 	}
 
 	// get first embedding for comparison of inside/out orientation
-	Size start1( topology.span( 1 )->start() );
-	Size end1( topology.span( 1 )->end() );
+	Size const start1( topology->span( 1 )->start() );
+	Size const end1( topology->span( 1 )->end() );
 	
 	// create embedding object and fill it from span for first embedding object in positive z direction
-	EmbeddingDef embedding1 = EmbeddingDef( pose, start1, end1 );
-	Vector const center1 = embedding1.center();
-	Vector const normal1 = embedding1.normal();
+	EmbeddingDefOP embedding1( new EmbeddingDef( pose, start1, end1 ) );
+	Vector const center1 = embedding1->center();
+	Vector const normal1 = embedding1->normal();
 	TR << "first span center and normal: " << center1.to_string() << ", " << normal1.to_string() << std::endl;
 	
     // go through rest of TMspans
-    for ( Size i = 1; i <= topology.nspans(); ++i ){
+    for ( Size i = 1; i <= topology->nspans(); ++i ){
 
         // residues
-        Size start( topology.span( i )->start() );
-        Size end( topology.span( i )->end() );
+        Size start( topology->span( i )->start() );
+        Size end( topology->span( i )->end() );
 		
         // create embedding object and fill it from span
         EmbeddingDefOP embedding( new EmbeddingDef( pose, start, end ) );
@@ -293,6 +296,12 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const
 	}
     return embeddings_;
 }// from spans
+
+// from TMspans, they are all in a similar direction of the first TM span!
+utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopologyOP topology, PoseOP pose ){
+	return from_spans( topology, *pose );
+}// from spans
+
 
 } // geometry
 } // membrane

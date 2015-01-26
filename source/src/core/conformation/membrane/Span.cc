@@ -119,14 +119,14 @@ void Span::shift( Size offset ) {
 /// @brief Show This Span
 /// @details Show the information in this span. TODO: Should override base method
 void
-Span::show() const {
+Span::show() {
 	TR << "Span: start: " << start_ << ", end: " << end_ << std::endl;
 }
 
 /// @brief Check that this Span is Valid
 /// @details Check that this span describes a consecutive transmembrane span
 /// of nonzero length.
-bool Span::is_valid() const {
+bool Span::is_valid(){
 
 	bool valid( false );
 
@@ -159,7 +159,7 @@ bool Span::is_valid() const {
 	
 } // is valid
 
-void Span::not_valid() const {
+void Span::not_valid(){
 	
 	if ( ! is_valid() ){
 		throw utility::excn::EXCN_Msg_Exception( "Span is invalid!" );

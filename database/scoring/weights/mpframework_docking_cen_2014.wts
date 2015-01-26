@@ -1,11 +1,16 @@
-#for mpdocking for MPframework paper
+# #file: mpframework_docking_cen_2014.wts
+# @desc: Low resolution membrane scoring function with low resolution
+# protein-protein docking score terms (used in regular docking protocol)
+# @note: Supported by the membrane framework - 2014
+# @cite: Terms from [Yarov-Yaravoy, 2006, Proteins] and [Gray, 2003, Journal
+# of Molecular Biology]
 #membrane
 mp_pair 1.0
 mp_env 2.019
 mp_cbeta 2.5
-
-
-
+mp_nonhelix 2.019
+mp_termini 2.019
+mp_tmproj 2.019
 rama 0.15
 rsigma 1.0
 sheet 1.0
@@ -13,8 +18,8 @@ ss_pair 1.0
 hs_pair 1.0
 
 #docking
-interchain_env 0.1
-interchain_pair 0.1
-interchain_vdw 10.0
-interchain_contact 0.2
+interchain_env 1.0
+interchain_pair 1.0
+interchain_vdw 1.0
+interchain_contact 2.0
 

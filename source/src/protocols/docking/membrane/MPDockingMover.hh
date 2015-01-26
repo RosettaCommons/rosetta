@@ -67,8 +67,8 @@ using namespace protocols::docking;
 	
 /// @brief Docks two proteins together in the membrane bilayer
 /// @details Requires running mpdocking_setup first to create a single pose;
-///			 Should also run docking_prepack before
-
+///			 Should also run docking_prepack before which uses the membrane option
+///			 when passed the -membrane_new::setup::spanfiles flag
 class MPDockingMover : public protocols::moves::Mover {
 
 public:
@@ -80,11 +80,7 @@ public:
 	/// @brief Default Constructor
 	/// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
 	MPDockingMover();
-
-	/// @brief Constructor with jump number to dock over
-	/// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
-	MPDockingMover( Size jump_num );
-	
+		
 	/// @brief Copy Constructor
 	/// @details Create a deep copy of this mover
 	MPDockingMover( MPDockingMover const & src );
@@ -114,16 +110,10 @@ public: // methods
 private: // methods
 	
 	// setup
-	void set_defaults( const Pose & pose );
+	void setup();
 	
-	// register options with JD2
-	void register_options();
-	
-	// overwrite defaults with stuff from cmdline
-	void init_from_cmd();
-	
-	// finalize setup
-	void finalize_setup();
+	// read native pose for proper RMSD calculation
+	void read_native( const Pose & pose );
 
 private: // data
 
@@ -137,15 +127,15 @@ private: // data
 	ScoreFunctionOP lowres_scorefxn_;
 	ScoreFunctionOP highres_scorefxn_;
 
+	// kT for the MC protocol
+	Real kT_;
+
 	// Membrane Center/Normal pair used for setup
 	Vector center_;
 	Vector normal_;
 
-	// jump number to dock over
-	Size jump_num_;
-	
-	// native for RMSD calculation
-	PoseOP native_;
+	// SpanningTopology
+	std::string spanfile_;
 	
 };
 

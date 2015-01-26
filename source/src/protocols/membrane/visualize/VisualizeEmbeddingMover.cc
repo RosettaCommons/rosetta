@@ -155,21 +155,21 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 		bool fullatom = pose.is_fullatom();
 		
 		// get topology
-		SpanningTopology topo = *pose.conformation().membrane_info()->spanning_topology();
+		SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
 		
 		// get embedding object from pose and topology
-		embeddings_ = Embedding( topo, pose );
-		embeddings_.show();
+		embeddings_ = EmbeddingOP( new Embedding( topo, pose ) );
+		embeddings_->show();
 		
 		// create empty object to push embedding residues back into
 		utility::vector1< ResidueOP > embedding_residues;
 
 		// grab residues out of embedding object
-		for ( Size i = 1; i <= embeddings_.nspans(); ++i ) {
+		for ( Size i = 1; i <= embeddings_->nspans(); ++i ) {
 			
 			// get center and normal POINTS
-			Vector center = embeddings_.embedding( i )->center();
-			Vector normal = center + embeddings_.embedding( i )->normal();
+			Vector center = embeddings_->embedding( i )->center();
+			Vector normal = center + embeddings_->embedding( i )->normal();
 
 			// Create a new residue, append to list
 			ResidueOP emb = create_embedding_virtual( center, normal, fullatom );
@@ -179,8 +179,8 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 		}
 
 		// add total embedding
-		Vector center_tot = embeddings_.total_embed()->center();
-		Vector normal_tot = center_tot + embeddings_.total_embed()->normal();
+		Vector center_tot = embeddings_->total_embed()->center();
+		Vector normal_tot = center_tot + embeddings_->total_embed()->normal();
 
 		// Create a new residue, append to list
 		ResidueOP emb_tot = create_embedding_virtual( center_tot, normal_tot, fullatom );

@@ -165,7 +165,7 @@ MembranePositionFromTopologyMover::apply( Pose & pose ) {
 	Vector center( 0, 0, 0 );
 
 	// Compute position from pose
-	compute_structure_based_embedding( pose, center, normal );
+	compute_structure_based_membrane_position( pose, center, normal );
 
 	// Update membrane position - shift normal along center
 	pose.conformation().update_membrane_position( center, normal );

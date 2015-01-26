@@ -18,6 +18,7 @@
 #define INCLUDED_core_conformation_membrane_util_hh
 
 // Project Headers
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 
 // Package Headers
