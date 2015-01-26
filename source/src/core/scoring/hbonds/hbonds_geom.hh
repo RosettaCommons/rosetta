@@ -227,6 +227,7 @@ bah_chi_compute_energy_sp2(
 	Real const l,
 	Real const xH,
 	Real const chi,
+	Real const acc_don_scale,
 	Real & energy,
 	Real & dE_dBAH,
 	Real & dE_dchi
@@ -253,7 +254,7 @@ bah_chi_compute_energy_sp2(
 		G = m-0.5;
 	}
 
-	energy += H*F + (1-H)*G;
+	energy += acc_don_scale * ( H*F + (1-H)*G );
 
 	if(&dE_dchi != &DUMMY_DERIV){
 		Real const dH_dchi(-1 * sin(2*chi));
@@ -265,8 +266,8 @@ bah_chi_compute_energy_sp2(
 			dF_dBAH = m/2 * d_outer_rise_dBAH;
 			dG_dBAH = (m - d)/2 * d_outer_rise_dBAH;
 		}
-		dE_dchi = F*dH_dchi - G*dH_dchi;
-		dE_dBAH = H*dF_dBAH + (1-H)*dG_dBAH;
+		dE_dchi = acc_don_scale * ( F*dH_dchi - G*dH_dchi );
+		dE_dBAH = acc_don_scale * ( H*dF_dBAH + (1-H)*dG_dBAH );
 	}
 }
 
@@ -276,6 +277,7 @@ void
 bah_chi_compute_energy_sp3(
 	Real const /*xH*/,
 	Real const chi,
+	Real const acc_don_scale,
 	Real & energy,
 	Real & dE_dBAH,
 	Real & dE_dchi
@@ -284,10 +286,10 @@ bah_chi_compute_energy_sp3(
 	// is only multiplied in for the sp2 term.
 	Real const max_penalty = 0.25;
 	Real cos2ChiShifted = max_penalty * ( 1 + std::cos(chi)) / 2;
-	energy += cos2ChiShifted;
+	energy += acc_don_scale * cos2ChiShifted;
 
 	if(&dE_dBAH != &DUMMY_DERIV){
-		dE_dchi = -1 * max_penalty * std::sin(chi)/2;
+		dE_dchi = -1 * max_penalty * std::sin(chi)/2 * acc_don_scale;
 	}
 }
 

@@ -688,17 +688,17 @@ hbond_compute_energy(
 			hbondoptions.sp2_BAH180_rise(),
 			hbondoptions.fade_energy() ? 1.6 : 1.5,
 			hbondoptions.sp2_outer_width(),
-			xH, chi, energy, dE_dBAH, dE_dchi);
+			xH, chi, acc_don_scale, energy, dE_dBAH, dE_dchi);
 		apply_chi_torsion_penalty = true;
 	} else if (
 		hbondoptions.measure_sp3acc_BAH_from_hvy() &&
 		( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )
 	){
-		bah_chi_compute_energy_sp3(xH, chi, energy, dE_dBAH, dE_dchi);
+		bah_chi_compute_energy_sp3(xH, chi, acc_don_scale, energy, dE_dBAH, dE_dchi);
 		apply_chi_torsion_penalty = true;
 	}
-	dE_dBAH *= acc_don_scale;
-	dE_dchi *= acc_don_scale;
+	// dE_dBAH *= acc_don_scale; // moved inside chi energy computations
+	// dE_dchi *= acc_don_scale;
 
 	// NOTE: if any deriv parameter omitted, we don't compute derivatives.
 	if (&dE_dxH == &DUMMY_DERIV) {
