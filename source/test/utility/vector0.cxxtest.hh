@@ -142,6 +142,39 @@ class Vector0Tests : public CxxTest::TestSuite {
 		}
 
 
+		/// @brief  Test assorted utility methods.
+		/// @author Labonte <JWLabonte@jhu.edu>
+		void test_vector0_utility_methods() {
+
+			// Set up vectors.
+			utility::vector0_int v( 3 );
+			v[ 0 ] = 1; v[ 1 ] = 2; v[ 2 ] = 3;
+			utility::vector0_int w( 3 );
+			w[ 0 ] = 4; w[ 1 ] = 5; w[ 2 ] = 6;
+			
+			// Test append().
+			v.append( w );
+			TS_ASSERT_EQUALS( v.size(), 6 );
+			TS_ASSERT_EQUALS( v[ 4 ], 5 );
+			
+			// Test contains().
+			TS_ASSERT( v.contains( 4 ) );
+			TS_ASSERT( ! v.contains( 0 ) );
+			
+			// Test index_of().
+			TS_ASSERT_EQUALS( v.index_of( 1 ), 0 );
+			TS_ASSERT_EQUALS( v.index_of( 6 ), 5 );
+			TS_TRACE( "An out-of-bounds error message should follow:" );
+			try {
+				v.index_of( 7 );  // This should force an exit.
+				TS_ASSERT( false );  // Exception was not thrown!
+			} catch ( utility::excn::EXCN_Base const & e) {
+				TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
+						"ERROR: vectorL:index_of: element not found\n\n" );
+				TS_TRACE( "The above error message was expected." );
+			}
+		}
+
 		/// @brief Test of bounds checking
 		/// @note  This test is not used yet!  With the existing testing system,
 		///        it would cause an assert() to fail and abort testing.  But perhaps

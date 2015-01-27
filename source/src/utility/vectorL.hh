@@ -20,6 +20,7 @@
 #include <utility/vectorL.fwd.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/backtrace.hh> // for debug_assert
+#include <utility/exit.hh>
 
 // C++ headers
 #include <cassert>
@@ -276,6 +277,17 @@ public: // Conversion
 public: // Methods
 
 
+	/// @brief  Append another vectorL to the back of the vector.
+	/// @author Labonte <JWLabonte@jhu.edu>
+	inline
+	vectorL &
+	append( vectorL const & v )
+	{
+		insert( end(), v.begin(), v.end() );
+		return *this;
+	}
+
+
 	/// @brief Add an element to the back of the vector
 	inline
 	vectorL &
@@ -306,11 +318,12 @@ public: // Methods
 
 
 	/// @brief  Check if vector contains a given element.
+	/// @author Labonte <JWLabonte@jhu.edu>
 	inline
 	bool
-	contains(T const & t) const
+	contains( T const & t ) const
 	{
-		if (std::find(begin(), end(), t) == end()) {
+		if ( std::find( begin(), end(), t ) == end() ) {
 			return false;
 		}
 		else {
@@ -319,17 +332,18 @@ public: // Methods
 	}
 
 
-	/// @brief  Return the index of a given element or NULL if not found.
+	/// @brief  Return the index of a given element or exit if not found.
+	/// @author Labonte <JWLabonte@jhu.edu>
 	inline
-	index_type
-	index_of(T const & t)
+	SSize
+	index_of( T const & t )
 	{
-		index_type loc = std::find(begin(), end(), t) - begin();
-		if (loc < size()) {
+		index_type const loc( std::find( begin(), end() , t ) - begin() );
+		if ( loc < size() ) {
 			return loc + l_;
 		}
 		else {
-			return NULL;
+			utility_exit_with_message( "vectorL:index_of: element not found" );
 		}
 	}
 
