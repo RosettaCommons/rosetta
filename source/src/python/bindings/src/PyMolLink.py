@@ -421,7 +421,12 @@ class PyMOLMover(rosetta.protocols.moves.PyMolMover):
                                                         info.chain(i)).rjust(6)
             else:
                 pdb = (str(i) + ' A').rjust(6)
-            dat = str(data[i - 1])[0:size]
+            
+            #proper formatting so 0 doesn't cast to 0.0 and is less than size
+            if data[i-1] == 0 and size > 2:
+                dat = '{0:.{1}f}'.format(data[i-1],size-2)
+            else:
+                dat = str(data[i - 1])[0:size]
             if not len(dat) == size:
                 raise IOError('Error: Not all data is the same size!')
 
