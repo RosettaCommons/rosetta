@@ -119,7 +119,7 @@ private:
 
   void push_passport( EnvironmentCAP, DofPassportCOP );
 
-  void pop_passport( EnvironmentCAP );
+  void pop_passport( Environment const& );
 
   PassportStack passports_;
 

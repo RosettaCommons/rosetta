@@ -91,11 +91,14 @@ using core::environment::FoldTreeSketch;
 
 using core::conformation::Conformation;
 
-void update_pdb_info( core::pose::PDBInfoCOP input_pdb_info, core::pose::Pose& pose ){
+void update_pdb_info(
+  core::pose::PDBInfoCOP input_pdb_info,
+  core::pose::Pose& pose,
+  EnvClaimBroker::BrokerResult const& result )
+{
   //Rebuild an appropriate PDBInfo object.
   if( pose.pdb_info() ){
-    tr.Error << "Environment does not expect a PDBInfo object to be created during broking. Something has gone wrong!" << std::endl;
-    utility_exit_with_message( "Problem in broking!" );
+    utility_exit_with_message( "Environment does not expect a PDBInfo object to be created during broking. Something has gone wrong!" );
   } else if( input_pdb_info ) {
     //ASSUMPTION: all new residues are virtual
     core::Size const new_vrts = pose.total_residue() - input_pdb_info->nres();
@@ -106,9 +109,16 @@ void update_pdb_info( core::pose::PDBInfoCOP input_pdb_info, core::pose::Pose& p
       new_info->append_res( new_info->nres(), 3 );
     }
 
-    tr.Debug << "Updating PDBInfo object to account for " << new_vrts << " (temporary) virtual residues in new pose of size "
+    tr.Debug << "  Updating PDBInfo object to account for " << new_vrts << " (temporary) virtual residues in new pose of size "
              << pose.total_residue() << ". Old Size: " << input_pdb_info->nres() << "; New Size: "
              << new_info->nres() << std::endl;
+
+
+    BOOST_FOREACH( Size cut , result.auto_cuts ){
+      new_info->replace_res( cut, pose.residue( cut ).natoms() );
+      new_info->replace_res( cut+1, pose.residue( cut+1 ).natoms() );
+      tr.Debug << "  Updating PDBInfo object to account updated numbers of atoms at " << cut << " and " << cut+1 << "." << std::endl;
+    }
 
     pose.pdb_info( new_info );
   } else {
@@ -158,7 +168,7 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
 
   // Bookkeeping for pose-associated info caches (datacache and pdb_info).
   safe_set_conf( pose, conf );
-  update_pdb_info( in_pose.pdb_info(), pose );
+  update_pdb_info( in_pose.pdb_info(), pose, result() );
 
   if( tr.Debug.visible() ){
     pose.dump_pdb( "BROKERDEBUG_pre_dof_broker.pdb" );

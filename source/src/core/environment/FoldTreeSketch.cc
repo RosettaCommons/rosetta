@@ -308,7 +308,7 @@ core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > bias ){
           ++failures;
           bias[ seqpos ] = core::Real( 0.0 );
           tr.Debug << "  Cut insertion failed at " << seqpos << " ignoring this element next time around." << std::endl;
-          continue;
+          break;
         }
         tr.Debug << "FoldTreeSketch inserting random cut at " << seqpos << std::endl;
         insert_cut( seqpos );

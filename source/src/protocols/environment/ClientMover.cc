@@ -162,16 +162,16 @@ void ClientMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
   passports_.push( std::make_pair( env_ap, pass ) );
 }
 
-void ClientMover::pop_passport( EnvironmentCAP env_ap ) {
+void ClientMover::pop_passport( Environment const& env ) {
   // passport_cancel should never be called on an empty passport stack
   if( passports_.empty() ) {
-    throw EXCN_Env_Passport( "Environment trying to pop a passport on an empty pass stack.", get_name(), env_ap );
+    throw utility::excn::EXCN_Msg_Exception( "Environment "+env.name()+" trying to pop a passport on "+this->get_name()+"'s empty pass stack." );
   }
   // in fact, we should only ever cancel our own passports. (Should this be an assert?)
-  EnvironmentCOP env( env_ap );
-  EnvironmentCOP passport_env = passports_.top().first.lock();
-  if( passport_env->id() != env->id() ){
-    throw EXCN_Env_Passport( "Environment trying to pop a passport it did not issue.", get_name(), env_ap );
+  EnvironmentCOP passport_env = active_environment().lock();
+  if( passport_env &&
+      passport_env->id() != env.id() ){
+    throw utility::excn::EXCN_Msg_Exception( "Environment "+env.name()+" trying to pop a passport on "+this->get_name()+" it did not issue.");
   }
   passports_.pop();
   passport_updated();

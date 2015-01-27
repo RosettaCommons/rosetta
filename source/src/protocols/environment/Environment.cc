@@ -65,6 +65,8 @@ Environment::~Environment() {
       pconf->env_destruction();
     }
   }
+
+  cancel_passports();
 }
 
 void Environment::register_mover( moves::MoverOP mover ){
@@ -213,7 +215,10 @@ void Environment::assign_passport( ClientMoverOP mover, core::environment::DofPa
 void Environment::cancel_passports(){
   BOOST_FOREACH( ClientMoverOP mover, registered_movers_ ){
     tr.Error << "stripping passport from " << mover->get_name() << std::endl;
-    mover->pop_passport( get_self_weak_ptr() );
+    if( mover->has_passport() &&
+        mover->passport()->env_id() == this->id() ) {
+      mover->pop_passport( *this );
+    }
   }
 }
 

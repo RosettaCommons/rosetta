@@ -64,22 +64,27 @@ void EnvMover::apply( Pose& pose ) {
                << " is being run without any registrant movers." << std::endl;
   }
 
-  env_->register_mover( movers_ );
+  EnvironmentOP env( new Environment( env_->name() ) );
+  env->auto_cut( env_->auto_cut() );
+  env->inherit_cuts( env_->inherit_cuts() );
+  env->allow_pure_movers( env_->allow_pure_movers() );
+
+  env->register_mover( movers_ );
 
   for( std::set< moves::MoverOP >::const_iterator mv_it = reg_only_movers_.begin();
         mv_it != reg_only_movers_.end(); ++mv_it ) {
-    env_->register_mover( *mv_it );
+    env->register_mover( *mv_it );
   }
 
   core::pose::Pose ppose;
   try {
-    ppose = env_->start( pose );
+    ppose = env->start( pose );
   } catch( ... ) {
     tr.Error << "[ERROR] Error during broking in environment '" << get_name() << "'." << std::endl;
     throw;
   }
   movers_->apply( ppose );
-  pose = env_->end( ppose );
+  pose = env->end( ppose );
 }
 
 void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
@@ -159,14 +164,6 @@ void EnvMover::add_apply_mover( protocols::moves::MoverOP mover_in ) {
     throw utility::excn::EXCN_NullPointer( ss.str() );
   }
   movers_->add_mover( mover_in );
-//  environment::ClientMoverOP c_mover = dynamic_cast< ClientMover* >( mover_in.get() );
-//  if( c_mover ){
-//    movers_->add_mover( c_mover );
-//  } else {
-//    std::ostringstream ss;
-//    ss << "The Mover '" << mover_in->get_name() << "' could not be added to the Environment because it is not a ClientMover.";
-//    throw utility::excn::EXCN_BadInput( ss.str() );
-//  }
 }
 
 void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
@@ -176,14 +173,6 @@ void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
     throw utility::excn::EXCN_NullPointer( ss.str() );
   }
   reg_only_movers_.insert( mover_in );
-//  environment::ClientMoverOP c_mover = dynamic_cast< ClientMover* >( mover_in.get() );
-//  if( c_mover ){
-//    reg_only_movers_.insert( c_mover );
-//  } else {
-//    std::ostringstream ss;
-//    ss << "The Mover '" << mover_in->get_name() << "' could not be added to the Environment because it is not a ClientMover.";
-//    throw utility::excn::EXCN_BadInput( ss.str() );
-//  }
 }
 
 

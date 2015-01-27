@@ -133,7 +133,7 @@ bool angle_cpy( core::pose::Pose& target, core::pose::Pose const& source, core::
   // for my taste. Ideally, I would run some kind of minimization procedure to try to pull target back to its
   // original configuration, but I'm not sure how to do that. Typically, these structures will be all-atom
   // relaxed after this anyway, so that helps.
-  core::Real const TOLERANCE = 1e-6;
+  core::Real const TOLERANCE = 2;
   std::string angle;
   if( t_id.torsion() == core::id::psi_torsion )
     angle = "PSI";
@@ -210,9 +210,9 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
         warn += 1;
     }
   } catch( loops::EXCN_Loop_not_closed const& e ) {
-    tr.Info << "Loop closure in " << this->get_name() << " failed. Retrying this output." << std::endl;
-    tr.Debug << e.msg() << std::endl;
-    set_last_move_status( moves::FAIL_RETRY );
+    tr.Info << "Loop closure in " << this->get_name() << " failed. Retrying this output. Report: " << std::endl;
+    tr.Info << e.msg() << std::endl;
+    set_last_move_status( moves::FAIL_DO_NOT_RETRY );
   }
   if( warn ){
     tr.Warning << "[WARNING] AbscriptLoopMoverCM ignoring " << warn
