@@ -279,6 +279,7 @@ WorkUnit_Sampler::get_energy( std::string const sfxn_name,
 	if( sfxn_name.compare( "talaris2013_cart" ) == 0 ||
 			sfxn_name.compare( "talaris2013_cart_softrep" ) == 0 )
 		sfxn->set_weight( core::scoring::cart_bonded, 0.5 );
+		sfxn->set_weight( core::scoring::pro_close, 0.0 );
 
 	if( softpack ){
  		sfxn->set_weight( core::scoring::fa_rep, 0.004 );

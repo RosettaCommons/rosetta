@@ -376,6 +376,7 @@ CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
 	// Next, set coordinate constraint if specified
 	if( constrained_ ){
 		TR << "Set constraints uniformly with stdev: " << cst_sdev_ << std::endl;
+		Size nrsr( 0 );
 		for( Size i_res = 1; i_res <= pose.total_residue(); ++i_res ){
 			std::string resname = pose.residue(i_res).name();
 
@@ -393,7 +394,9 @@ CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
 			pose.add_constraint(  ConstraintCOP( ConstraintOP( 
 				new CoordinateConstraint( atomID, atomID, xyz, fx )
 																												 )));
+			nrsr++;
 		}
+		TR << "Added " << nrsr << " coordinate constraints." << std::endl;
 	}
 }
 
@@ -532,7 +535,6 @@ void CartesianMD::apply( core::pose::Pose & pose ){
 	// Set constraint 
 	TR << "Set constraint on initial." << std::endl;
 	cst_on_pose_simple( pose ); 
-
 
 	TR << "Reporting initial..." << std::endl;
 	CartesianMinimizerMap min_map;

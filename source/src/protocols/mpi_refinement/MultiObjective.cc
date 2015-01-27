@@ -96,8 +96,9 @@ MultiObjective::set_defaults()
 
 		if( score_name.compare("goap") == 0 ){
 			TR << "- " << i_obj << ". Added Goap potential as 'goap'" << std::endl;
-			core::scoring::ScoreFunctionCOP sfxn =
-				core::scoring::ScoreFunctionFactory::create_score_function( "goap" );
+			core::scoring::ScoreFunctionOP sfxn =
+				core::scoring::ScoreFunctionFactory::create_score_function( "empty" );
+			sfxn->set_weight( core::scoring::goap, 0.01 );
 			objsfxnOPs_.push_back( sfxn );
 
 		} else if( score_name.compare("score") == 0){
@@ -388,6 +389,8 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 	TR << structs.size() << "/" << new_structs.size() << "/";
 	TR << totalpool.size() << "/" << nmax_filt << std::endl;
 
+	core::Size time1 = time(NULL);
+
 	// Be careful - all the indices start from 0
   utility::vector0< protocols::wum::SilentStructStore > frontier( 1 );
   utility::vector0< utility::vector0< core::Size > > ifront( 1 );
@@ -439,6 +442,8 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 		for( core::Size k = 0; k < Sp[j].size(); ++k ) TR.Debug << " " << Sp[j][k];
 		TR.Debug << std::endl;
 	}
+
+	core::Size time2 = time(NULL);
 
   // Assign frontiers
   core::Size i( 0 );
@@ -499,6 +504,8 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
   protocols::wum::SilentStructStore &last_frontier = frontier[ frontier.size()-1 ];
 	//utility::vector0< core::Size > &ilast = ifront[ frontier.size()-1 ];
 
+	core::Size time3 = time(NULL);
+
   //last_frontier.sort_by( fobjnames(1) );
   //last_frontier.sort_by( "goap" );
 	// try using "similarity to the already selected pool" for picking among the last frontier
@@ -510,6 +517,7 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 		}
 	}
   last_frontier.sort_by( "similarity" );
+	core::Size time4 = time(NULL);
 
   core::Size const nleft( nmax - sorted_pool.size() );
 
@@ -519,6 +527,8 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 		TR << "NSGAII: Adding on pool, " << sorted_pool.size() << " from first " << frontier.size() - 2 << " frontiers";
 		TR << " and " << nleft << " from the last frontier" << std::endl;
 	}
+
+	TR << "Time required for NSGA (front 1/n-1/n): " << time2-time1 << " " << time3-time2 << " " << time4-time2 << std::endl;
 
 	// new_structs will return the removed ones
 	new_structs.clear();
@@ -681,10 +691,14 @@ MultiObjective::add_objective_function_info(
 	core::chemical::ResidueTypeSetCOP rsd_set_cen
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
+	core::pose::Pose pose0;
+	core::import_pose::pose_from_pdb( pose0, *rsd_set, option[ in::file::s ](1) );
+	add_poseinfo_to_ss( *ss, pose0, "_i" );
+
 	if( option[ in::file::native ].user() ){
 		core::pose::Pose native_pose;
     core::import_pose::pose_from_pdb( native_pose, *rsd_set, option[ in::file::native ]() );
-		add_nativeinfo_to_ss( *ss, native_pose );
+		add_poseinfo_to_ss( *ss, native_pose, "" );
 	}
 
 	protocols::moves::MoverOP tocen 

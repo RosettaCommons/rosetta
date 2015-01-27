@@ -2259,6 +2259,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default = '0', lower = '0'
 		),
 		Option( 'outer_cycles', 'Integer',
+			desc='outer cycles in perturbation', default = '5', lower = '1'
+		),
+		Option( 'refine_outer_cycles', 'Integer',
 			desc='outer cycles in fullatom loop refinement', default = '5', lower = '1'
 		),
 		Option( 'max_inner_cycles', 'Integer',
@@ -4945,6 +4948,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'max_ref_lib_size', 'Integer', default = '2' ),
 		Option( 'multi_objective_functions', 'StringVector', desc = 'What to use as the objective function', default='utility::vector1<std::string>(1,"score")' ),
 		Option( 'additional_objective_functions', 'StringVector', desc = 'What to add for the multi-objective function' ),
+		Option( 'edensity_weight_for_sampling', 'Real', desc = 'weight for elec_dens_fast in WorkUnit_Samplers', default='0.0' ),
  		Option( 'mpi_master_schfile',  'String', default = '', desc = 'schedule file'),
  		Option( 'mpi_master_cpu_weight',  'IntegerVector', default = ['0.0'], desc = 'weight on number of slaves'),
  		Option( 'mpi_loophash_scan_type', 'String', default='random' ),

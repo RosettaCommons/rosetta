@@ -113,8 +113,9 @@ void ramp_minpack_pose( core::pose::Pose &pose,
 			bool const ramp = true
 			);
 
-void add_nativeinfo_to_ss( core::io::silent::SilentStruct &ss,
-			   core::pose::Pose const native_pose );
+void add_poseinfo_to_ss( core::io::silent::SilentStruct &ss,
+			 core::pose::Pose const &ref_pose,
+			 std::string const suffix );
 
 core::Real Zscore_to_library( core::Real const score,
 			      core::Real const mean,

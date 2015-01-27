@@ -334,10 +334,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 		int nnonvrt_native = native_pose.total_residue();
 		while (  nnonvrt_native>0 && native_pose.residue( nnonvrt_native ).aa() == core::chemical::aa_vrt ) nnonvrt_native--;
-		if ( nnonvrt_native != nnonvrt_start )
-			utility_exit_with_message(
-				"Start pose and native pose don't match in length"
-			);
+		if ( nnonvrt_native != nnonvrt_start ){
+			TR << "Start pose and native pose don't match. replace native to starting." << std::endl;
+			//utility_exit_with_message( "Start pose and native pose don't match in length" );
+			native_pose = start_pose;
+		}
 	}
 
 	evaluation::MetaPoseEvaluatorOP evaluator( new evaluation::MetaPoseEvaluator );

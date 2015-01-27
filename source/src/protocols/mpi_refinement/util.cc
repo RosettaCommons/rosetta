@@ -477,30 +477,24 @@ void ramp_minpack_pose( core::pose::Pose &pose,
 
 }
 
-void add_nativeinfo_to_ss( core::io::silent::SilentStruct &ss,
-			   core::pose::Pose const native_pose )
+void add_poseinfo_to_ss( core::io::silent::SilentStruct &ss,
+			 core::pose::Pose const &ref_pose,
+			 std::string const suffix )
 {
   core::pose::Pose pose;
-  //core::io::silent::BinaryProteinSilentStruct *ss2 
-  //  = dynamic_cast < core::io::silent::BinaryProteinSilentStruct * > (&ss);
-  
   ss.fill_pose( pose );
 
   // 1. Get resmap: this might be duplication but lets just use
   std::map< core::Size, core::Size > resmap;
 
   for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-    //std::cout << "ii " << ii << std::endl;
     core::Size ii_pdb( pose.pdb_info()->number( ii ) );
-    //std::cout << "pose: " << ii << " " << pose.residue( ii ).aa() << std::endl;
-    //if( pose.residue( ii ).aa() >= core::chemical::num_canonical_aas ) continue;
     if( !pose.residue( ii ).is_protein() ) continue;
     
-    for ( core::Size jj = 1; jj <= native_pose.total_residue(); ++jj ) {
-      if( !native_pose.residue(jj).is_protein() ) continue;
-      // std::cout << "jj " << jj << std::endl;
+    for ( core::Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+      if( !ref_pose.residue(jj).is_protein() ) continue;
 
-      core::Size jj_pdb( native_pose.pdb_info()->number( jj ) );
+      core::Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
       
       if( ii_pdb == jj_pdb ){
 	resmap[ii] = jj;
@@ -510,17 +504,13 @@ void add_nativeinfo_to_ss( core::io::silent::SilentStruct &ss,
   }
 
   // 2. run gdtmm, gdtha
-  /*
-  core::Real const gdtha = core::scoring::gdtha   ( pose, native_pose, resmap );
-  core::Real const gdtmm = core::scoring::CA_gdtmm( pose, native_pose, resmap );
-  */
   // use new gdttm based on TMscore
   core::Real gdtha, gdttm;
 
-  core::scoring::CA_gdttm( pose, native_pose, gdttm, gdtha, resmap );
+  core::scoring::CA_gdttm( pose, ref_pose, gdttm, gdtha, resmap );
 
-  ss.add_energy( "gdttm", gdttm );
-  ss.add_energy( "gdtha", gdtha );
+  ss.add_energy( "gdttm"+suffix, gdttm );
+  ss.add_energy( "gdtha"+suffix, gdtha );
 }
 
 core::Real Zscore_to_library( core::Real const score,

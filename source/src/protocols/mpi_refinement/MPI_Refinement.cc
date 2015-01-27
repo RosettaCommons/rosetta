@@ -119,13 +119,16 @@ MPI_Refinement::set_defaults(){
   rms_limit_                  = option[ OptionKeys::lh::rms_limit ]();
   //objective_function_         = option[ OptionKeys::lh::objective_function ]();
 
+	core::chemical::ResidueTypeSetCOP rsd_set
+		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
   native_given_ = false;
   if( option[ in::file::native ].user() ){
     native_given_ = true;
-    core::chemical::ResidueTypeSetCOP rsd_set
-      = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
     core::import_pose::pose_from_pdb( native_pose_, *rsd_set, option[ in::file::native ]() );
   }
+
+	// initial "reference" structure should be provided as the first at -in:file:s
+	core::import_pose::pose_from_pdb( pose0_, *rsd_set, option[ in::file::s ](1) );
 
 	fobj_ = MultiObjectiveOP( new MultiObjective() );
 
@@ -227,7 +230,8 @@ MPI_Refinement::load_structures_from_cmdline_into_library(
 
     ss->add_energy( "state", 0 );     // state: 0 init, 1 loophashed, 2 relaxed 
 
-    if( native_given_ ) add_nativeinfo_to_ss( *ss, native_pose_ );
+    if( native_given_ ) add_poseinfo_to_ss( *ss, native_pose_, "" );
+		add_poseinfo_to_ss( *ss, pose0_, "_i" );
 
     library.add( ss );
     count ++;
@@ -525,8 +529,8 @@ MPI_Refinement::print_library( protocols::wum::SilentStructStore &library,
 	TR << fobj_->formatted_objs_names();
 
 	TR << "   Front Round Nuse ";
-  if( native_given_ ) TR << "  GDTTM      GDTHA";
-  TR << std::endl;
+  if( native_given_ ) TR << " GDTTM    GDTHA";
+	TR << "  IGDTHA" << std::endl;
 
   for( SilentStructStore::const_iterator it = library.begin(); it != library.end(); ++ it ){
     TR << prefix << ": " << format_silent_struct( *it ) << std::endl;
@@ -821,8 +825,9 @@ MPI_Refinement::format_silent_struct( const core::io::silent::SilentStruct &ss )
 					<< " | " << I(2, ss.get_energy("nuse"));
 
   if( native_given_ )
-  sstream << " | " << F(8,2, ss.get_energy("gdttm"))
-	  << " | " << F(8,2, ss.get_energy("gdtha"));
+  sstream << " | " << F(6,2, ss.get_energy("gdttm"))
+	  << " | " << F(6,2, ss.get_energy("gdtha"));
+	sstream  << " | " << F(6,2, ss.get_energy("gdtha_i"));
 
   sstream << " ]";
 	//sstream << "  " << ss.get_string_value("added");

@@ -134,7 +134,7 @@ Serial_Refine::load_structures_from_cmdline_into_library(
 	ss->fill_struct( pose_work );
 	ss->add_energy( "state", 0 );     // state: 0 init, 1 perturbed, 2 relaxed 
 
-	if( native_given_ ) add_nativeinfo_to_ss( *ss, native_pose_ );
+	if( native_given_ ) add_poseinfo_to_ss( *ss, native_pose_, "" );
 
 	library.add( ss );
 

@@ -173,6 +173,7 @@ protected: // statistics can be protected such that derived classes can modify t
 	// Native 
 	bool native_given_;
 	core::pose::Pose native_pose_;
+	core::pose::Pose pose0_;
 
 private:
 		std::string ident_string_; // Unique identified for this job.

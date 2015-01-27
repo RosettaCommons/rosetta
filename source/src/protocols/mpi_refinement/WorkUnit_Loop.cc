@@ -365,8 +365,8 @@ WorkUnit_FragInsert::run()
 		core::pose::Pose pose_work( pose );
 		sampler.apply( pose_work );
 
-		core::io::silent::SilentStructOP ss = 
-			core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+		//core::io::silent::SilentStructOP ss = 
+		//	core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 
 		if( pose_work.is_centroid() ){
 			tofa->apply( pose_work );
@@ -382,7 +382,8 @@ WorkUnit_FragInsert::run()
 			}
 		}
 		ramp_minpack_loop2( pose_work, loopres, sfxn_sampling, true, false, false, 0.0 );
-		store_to_decoys( start_struct, ss, "_"+ObjexxFCL::string_of( i ) );
+		//store_to_decoys( start_struct, ss, "_"+ObjexxFCL::string_of( i ) );
+		store_to_decoys( start_struct, pose_work ); 
 	}
 
 	core::Size endtime = time(NULL);
@@ -472,6 +473,9 @@ WorkUnit_KicCloser::run()
 	core::scoring::ScoreFunctionOP sfxn_obj = get_energy( obj_name );
 	core::scoring::ScoreFunctionOP sfxn_cen = get_energy( "cen_loop" );
 
+	if( sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) > 0.0 )
+		TR << "Sampling with elec_dens_fast : " << sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) << std::endl;
+
 	// 2. Setup sampler
 	protocols::loops::Loops loops;
 	loops.add_loop( get_res1(), get_res2() );
@@ -530,8 +534,8 @@ WorkUnit_KicCloser::run()
 
 	// ramping relax (necessary if refine_kic does everything)
 	// two rounds: tors-min followed by cart-min
-	ramp_minpack_loop2( pose_min, loopresext, sfxn_sampling, false, true, false, 0.0 );
-	ramp_minpack_loop2( pose_min, loopresext, sfxn_sampling, true, false, false, 6.0 );
+	//ramp_minpack_loop2( pose_min, loopresext, sfxn_sampling, false, true, false, 0.0 );
+	ramp_minpack_loop2( pose_min, loopresext, sfxn_sampling, true, false, false, 6.0 ); // only cartmin
 
 	store_to_decoys( start_struct, pose_min );
 

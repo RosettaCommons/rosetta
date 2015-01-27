@@ -60,7 +60,7 @@ MPI_WorkUnitManager_Slave::MPI_WorkUnitManager_Slave( core::Size my_master ):
 	MPI_WorkUnitManager( 'S' ),   // this is the one-letter identifier used in printing statistics
 	my_master_( my_master )
 {
-
+	terminate_ = false;
 
 }
 
@@ -76,6 +76,7 @@ MPI_WorkUnitManager_Slave::go()
 		request_new_jobs();
 
 		TRDEBUG << "Slave: Waiting for and processing incoming messages... " << std::endl;
+
 		process_incoming_msgs( true );
 
 		TRDEBUG << "Running jobs" << std::endl;
@@ -84,10 +85,14 @@ MPI_WorkUnitManager_Slave::go()
 		TRDEBUG << "Slave: Processing outbound queue..." << std::endl;
 		process_outbound_wus();
 
+		if( terminate_ ) break;
+
 		print_stats_auto();
 	} while ( true );
 
 	MPI_WorkUnitManager::print_stats();
+
+	TR << "Process terminating!" << std::endl;
 }
 
 /// @brief Process workunits on the slave node. I.e. Execute the WU jobs.
@@ -97,9 +102,24 @@ MPI_WorkUnitManager_Slave::process_inbound_wus()
 	start_timer( TIMING_CPU );
 	// for every workunit on the stack send execute it and transfer it to the outbound queue
 	while( inbound().size() > 0 ){
+
+		TRDEBUG << "inbound: " << inbound().next()->get_wu_type() << std::endl;
+
+		// Terminate if gets termination WU from Master
+		if( inbound().next()->get_wu_type() == "terminate" ){
+			TRDEBUG << "Received termination sigal from Master." << std::endl;
+			//Important to send back to Master that I'm terminating...
+			outbound().add( inbound().next() );
+
+			terminate_ = true;
+			inbound().pop_next(); // Clean them before you leave!
+			continue;
+		}
+
 		// run the WU
-		runtime_assert( inbound().next() != 0 );
-		TRDEBUG << "Slave: " << mpi_rank() << " running WU..." << std::endl;
+		runtime_assert( inbound().next() );
+		TRDEBUG << "Slave: " << mpi_rank() << " running WU...";
+		TRDEBUG << inbound().next()->get_wu_type() << std::endl;
 
 		// special rule for wait workunit. Basically count execution of a wait workunit as
 		// IDLING and that of every other one as CPU time
@@ -112,7 +132,12 @@ MPI_WorkUnitManager_Slave::process_inbound_wus()
 		start_timer( TIMING_CPU );                // Now we're definitely back in CPU mode
 
 		// Transfer results to the outbound queue
-		TRDEBUG << "Slave: " << mpi_rank() << " transferring WU..." << std::endl;
+		TRDEBUG << "Slave: " << mpi_rank() << " transferring WU...";
+		TRDEBUG << inbound().next()->get_wu_type() << std::endl;
+
+		// Don't add waitwu on outbound!
+		// waitwu will attempt to send useless info to master and will prevent having any "real" inbound from master
+		//if( inbound().next()->get_wu_type() != "waitwu" )	outbound().add( inbound().next() );
 		outbound().add( inbound().next() );
 		inbound().pop_next();
 	}

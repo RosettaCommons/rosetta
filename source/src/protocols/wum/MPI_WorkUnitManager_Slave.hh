@@ -61,6 +61,7 @@ class MPI_WorkUnitManager_Slave: public MPI_WorkUnitManager {
 
 	private:
 		const core::Size my_master_;
+  	bool terminate_;
 };
 
 

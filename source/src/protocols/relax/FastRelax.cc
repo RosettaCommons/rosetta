@@ -878,9 +878,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			// The fourth paramter is the minimization
 			if( cmd.nparams >= 4 ){
 				Size const iter_cmd = (Size)(cmd.param4);
-				Size const original_iter = max_iter();
 				max_iter( iter_cmd );
-				max_iter( original_iter );
+				//Size const original_iter = max_iter();
+				//max_iter( original_iter );
 			}
 
 			// decide when to call ramady repair code

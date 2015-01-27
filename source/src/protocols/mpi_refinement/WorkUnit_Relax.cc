@@ -340,6 +340,9 @@ WorkUnit_MD::run()
 		mm = get_movemap( pose, "full", true );
 	}
 
+	if( sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) > 0.0 )
+		TR << "Sampling with elec_dens_fast : " << sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) << std::endl;
+
   protocols::md::CartesianMD MD( pose, sfxn_sampling, mm );
 
 	core::Size neqstep( 2 );  // first 1ps is for eq and will be removed
@@ -425,7 +428,6 @@ WorkUnit_Relax::set_relax_schedule() const
 
 	if( get_relaxtype() ==  0 ) return cmdlines;
 
-	/*
 	// Special schedule for rerelax-style
 	if( get_relaxtype() == 10 ){ //prv 5
 		cmdlines.push_back( "switch:cartesian" );
@@ -569,7 +571,6 @@ WorkUnit_Relax::set_relax_schedule() const
 
 	cmdlines.push_back( "accept_to_best" );
 	cmdlines.push_back( "endrepeat" );
-	*/
 
 	return cmdlines;
 }
@@ -608,6 +609,9 @@ WorkUnit_Relax::run()
 	}
 
 	core::scoring::ScoreFunctionOP sfxn_sampling = get_energy( sfxn_name, false, get_cstweight() );
+
+	if( sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) > 0.0 )
+		TR << "Sampling with elec_dens_fast : " << sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) << std::endl;
 
 	core::pose::Pose pose;
 

@@ -132,6 +132,9 @@ MPI_Refine_Master::init(){
 		load_structures_from_cmdline_into_library( library_ref() );
 	}
 
+	// just take first index as "starting structure"; 
+	// be aware of it when using multiple inputs (which haven't been tried anyway)
+
 	// Assign loop info 
 	for( SilentStructStore::iterator it = library_ref().begin(); it !=  library_ref().end();
 			 it++ ){
@@ -240,14 +243,15 @@ MPI_Refine_Master::go()
 		// this should be after inbound in order to update receivings from slave
 		//TRDEBUG << "Master: processing round.." << std::endl;
 		//bool wait = process_round();
+		process_round();
 
-		TRDEBUG << "Master: process outbound" << std::endl;
+		//TRDEBUG << "Master: process outbound" << std::endl;
 		process_outbound_wus();
 
-		TRDEBUG << "stucked here?" << std::endl;
+		//TRDEBUG << "stucked here?" << std::endl;
 		// ok, we've done all our work, now wait until we hear from our slaves
 		process_incoming_msgs( true );
-		TRDEBUG << "not stucked here..." << std::endl;
+		//TRDEBUG << "not stucked here..." << std::endl;
 
 		print_stats_auto();
 	}
@@ -458,7 +462,7 @@ MPI_Refine_Master::process_inbound_wus(){
 			int i_rank = (int)( next_wu->last_received_from());
 
 			if( i_rank == (int)(my_emperor()) ){
-				TR.Debug << "Got termination signal from Emperor!" << std::endl;
+				TR << "Got termination signal from Emperor!" << std::endl;
 				got_termination_signal_ = true;
 
 			} else { //from slaves

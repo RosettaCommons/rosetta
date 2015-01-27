@@ -292,8 +292,13 @@ WorkUnit_NormalMode::run()
 	core::scoring::ScoreFunctionOP sfxn_pack
 		= core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" );
 
-	if( cartmin && sfxn_loc->get_weight( core::scoring::cart_bonded ) == 0.0 ) 
+	if( cartmin && sfxn_loc->get_weight( core::scoring::cart_bonded ) == 0.0 ){
 		sfxn_loc->set_weight( core::scoring::cart_bonded, 0.5 ); //make sure!
+		sfxn_loc->set_weight( core::scoring::pro_close, 0.0 ); //make sure!
+	}
+
+	if( sfxn_loc->get_weight( core::scoring::elec_dens_fast ) > 0.0 )
+		TR << "Sampling with elec_dens_fast : " << sfxn_loc->get_weight( core::scoring::elec_dens_fast ) << std::endl;
 
 	// change pose level if necessary
 	protocols::moves::MoverOP tofa 

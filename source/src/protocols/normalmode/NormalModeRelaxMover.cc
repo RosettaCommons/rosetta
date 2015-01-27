@@ -50,6 +50,10 @@
 
 #include <numeric/random/random.hh>
 
+#if defined(WIN32) || defined(__CYGWIN__)
+	#include <ctime>
+#endif
+
 //Temporary
 //#include <core/io/pdb/pose_io.hh>
 //#include <sys/time.h>
@@ -231,7 +235,11 @@ CartesianNormalModeMover::apply( pose::Pose &pose )
   // Don't solve again NormalMode until "refresh_normalmode" is called
   if( refresh_normalmode_ ){
 		TR << "Solving Normal Mode for given pose... " << std::endl;
+		clock_t starttime = clock();
     NM_.solve( pose );
+		clock_t endtime = clock();
+		// important for bigger system to trace time limiting step
+		TR << "NM solved in " << (Real)((endtime - starttime)/CLOCKS_PER_SEC) << " sec." << std::endl;
     refresh_normalmode_ = false;
   }
 
