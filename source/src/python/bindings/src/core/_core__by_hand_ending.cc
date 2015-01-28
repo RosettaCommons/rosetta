@@ -22,6 +22,11 @@ void __core_by_hand_ending__()
 
     expose_pair_types<std::string, std::string>("string", "string");
 
+	expose_pair_types<int, int>("int", "int");
+	expose_pair_types<core::Size, core::Size>("Size", "Size");
+	expose_pair_types<core::SSize, core::SSize>("SSize", "SSize");
+    expose_pair_types<core::Real, core::Real>("Real", "Real");
+
     expose_pair_types<int, std::string>("int", "string");
     expose_pair_types<std::string, int>("string", "int");
 
