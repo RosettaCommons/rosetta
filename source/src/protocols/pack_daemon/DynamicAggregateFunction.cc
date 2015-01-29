@@ -170,7 +170,7 @@ void IterativeVectorExpression::initialize(
 		if ( input_vector_expressions_[ ii ]->size() != input_vector_expressions_[ ii - 1 ]->size() ) {
 			utility_exit_with_message( "IterativeVectorExpression " + name() + " initialized with vector-expressions of uneven sizes: "
 				+ input_vector_expressions_[ ii   ]->name() + " with size of " + utility::to_string( input_vector_expressions_[ ii   ]->size()) + ", and "
-				+ input_vector_expressions_[ ii-1 ]->name() + " with size of " + utility::to_string( input_vector_expressions_[ ii   ]->size()) );
+				+ input_vector_expressions_[ ii-1 ]->name() + " with size of " + utility::to_string( input_vector_expressions_[ ii-1 ]->size()) );
 		}
 	}
 
@@ -1367,7 +1367,7 @@ DynamicAggregateFunction::process_VECTOR_VARIABLE_line(
 	std::list< std::string > varname_list;
 	while ( input_line ) {
 		input_line >> scalar_variable_name;
-		if ( scalar_variable_name.size() == 0 ) continue;
+		if ( !input_line ) continue;
 		if ( scalar_variable_names_dec_line_.find( scalar_variable_name ) == scalar_variable_names_dec_line_.end() ) {
 			if ( vector_variable_names_dec_line_.find( scalar_variable_name ) != vector_variable_names_dec_line_.end() ) {
 				throw utility::excn::EXCN_Msg_Exception( "Variable '" + scalar_variable_name + "' is a vector variable and"

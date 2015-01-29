@@ -678,7 +678,7 @@ public:
 		daf->add_file_contents( "trpcage.list", "1l2y.pdb 1l2y.correspondence.txt 1l2y.secondary.resfile\n" );
 		daf->set_score_function( *sfxn );
 
-		std::istringstream iss( "STATE_VECTOR trpcage trpcage.list\nPOSE_ENERGY trpcage_wt 1l2y.pdb\nVECTOR_VARIABLE tc_vec = trpcage_wt\nFITNESS trpcage - trpcage_wt\n" );
+		std::istringstream iss( "STATE_VECTOR trpcage trpcage.list\nPOSE_ENERGY trpcage_wt 1l2y.pdb\nVECTOR_VARIABLE tc_vec = trpcage_wt trpcage_wt\nFITNESS trpcage - trpcage_wt\n" );
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( true );
@@ -687,6 +687,19 @@ public:
 			TS_ASSERT( false );
 		}
 
+		// Now let's go and make sure that the vector variable actually has length 2
+		// and not some other size.
+		using namespace numeric::expression_parser;
+		ArithmeticScanner scanner;
+		scanner.add_variable( "tc_vec" );
+		TokenSetOP toks = scanner.scan( "tc_vec");
+		ArithmeticASTValue val;
+		val.parse( *toks );
+
+		ExpressionCOP tcvec_expression = daf->variable_expression( val );
+		VariableVectorExpressionCOP tcvec_exp = utility::pointer::dynamic_pointer_cast< VariableVectorExpression const >( tcvec_expression );
+		TS_ASSERT( tcvec_exp );
+		TS_ASSERT( tcvec_exp->size() == 2 );
 	}
 
 
