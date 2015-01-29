@@ -277,7 +277,7 @@ AngleConstraint::p1_theta_deriv(
 	f2 *= dtheta_dx;
 
 	// translation of p1 along v1 or perpendicular to v1 and v2 ==> deriv=0
-	assert( f1.distance( cross(f2,p1) ) < 1e-3 && // see helper fcn
+debug_assert( f1.distance( cross(f2,p1) ) < 1e-3 && // see helper fcn
 					std::abs( dot( f2, v1 ) ) < 1e-3 &&
 					std::abs( dot( f2, cross( v1, v2 ) ) ) < 1e-3 );
 
@@ -287,7 +287,7 @@ AngleConstraint::p1_theta_deriv(
 		ASSERT_ONLY(Vector const u_phi( v2.normalized() );)
 		ASSERT_ONLY(Vector const R_phi( p2 );)
 		ASSERT_ONLY(Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);)
-		assert( std::abs( deriv ) < 1e-3 );
+	debug_assert( std::abs( deriv ) < 1e-3 );
 		//std::cout << "deriv: " << deriv<< ' ' <<
 		//	F(9,3,u_phi(1)) << F(9,3,u_phi(2)) << F(9,3,u_phi(3)) << ' ' <<
 		//	F(9,3,R_phi(1)) << F(9,3,R_phi(2)) << F(9,3,R_phi(3)) << "\nF1,F2: " <<
@@ -371,7 +371,7 @@ AngleConstraint::p2_deriv(
 
 	// translation of p2 atom perpendicular to plane ==> deriv = 0
 	//std::cout << "p2 deriv check: " << std::endl;
-	assert( std::abs( dot( f2, cross( v1,v2) ) ) < 1e-3 );
+debug_assert( std::abs( dot( f2, cross( v1,v2) ) ) < 1e-3 );
 
 	Real d( dot(v1,v2) / v12 );
 	Real const tol(0.001);

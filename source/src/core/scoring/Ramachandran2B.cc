@@ -177,8 +177,8 @@ Ramachandran2B::eval_rama_score_residue(
 {
 	using namespace numeric;
 
-	//assert( pose.residue(res).is_protein() );
-	assert( rsd.is_protein() );
+//debug_assert( pose.residue(res).is_protein() );
+debug_assert( rsd.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
@@ -209,7 +209,7 @@ Ramachandran2B::eval_rama_score_residue(
 {
 	using namespace numeric;
 
-	assert( center.is_protein() );
+debug_assert( center.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( center.mainchain_torsion(1)));
@@ -328,7 +328,7 @@ Ramachandran2B::RamaE_Lower(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
@@ -398,7 +398,7 @@ Ramachandran2B::RamaE_Upper(
 {
 	using namespace numeric;
 
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
@@ -468,7 +468,7 @@ Ramachandran2B::RamaE(
 
 	using namespace numeric;
 
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));

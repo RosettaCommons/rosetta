@@ -73,7 +73,7 @@ find_connected_components( Graph const & g )
 		}
 	}
 
-	assert( all_visited( reached ) );
+debug_assert( all_visited( reached ) );
 
 	// Prepare output descriptions
 	vector1< std::pair< platform::Size, platform::Size > > cc_descriptions( representative.size() );
@@ -101,7 +101,7 @@ delete_all_intragroup_edges(
 	utility::vector1< platform::Size > const & node_groups
 )
 {
-	assert( node_groups.size() == g.num_nodes() );
+debug_assert( node_groups.size() == g.num_nodes() );
 
 	for( Graph::EdgeListIter edge_it = g.edge_list_begin();	 edge_it != g.edge_list_end(); ){
 

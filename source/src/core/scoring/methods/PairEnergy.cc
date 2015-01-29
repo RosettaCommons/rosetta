@@ -426,7 +426,7 @@ PairEnergy::eval_residue_pair_derivatives(
 			return;
 	}
 
-	assert( (rsd1.is_polar() || rsd1.is_aromatic()) && (rsd2.is_polar() || rsd2.is_aromatic() ) );
+debug_assert( (rsd1.is_polar() || rsd1.is_aromatic()) && (rsd2.is_polar() || rsd2.is_aromatic() ) );
 
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 	int const nbr_count1( tenA_neighbor_graph.get_node( rsd1.seqpos() )->
@@ -513,7 +513,7 @@ PairEnergy::eval_atom_derivative(
 	int const seqpos( atom_id.rsd() );
 	conformation::Residue const & rsd( pose.residue( seqpos ) );
 	if ( potential_.pair_term_energy_exists( rsd ) ) {
-		assert( !rsd.actcoord_atoms().empty() );
+	debug_assert( !rsd.actcoord_atoms().empty() );
 		TenANeighborGraph const & tenA_neighbor_graph
 			( pose.energies().tenA_neighbor_graph() );
 		EnergyGraph const & energy_graph( pose.energies().energy_graph() );

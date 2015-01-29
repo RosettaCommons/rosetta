@@ -27,6 +27,7 @@
 /// #include <core/conformation/signals/GeneralEvent.hh> -- Illegal and unneccessary
 #include <utility/signals/BufferedSignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
+#include <utility/assert.hh>
 /// #include <core/pose/signals/DestructionEvent.hh> -- Illegal and unneccessary
 // boost headers
 #include <boost/bind.hpp>

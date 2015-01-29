@@ -157,7 +157,7 @@ Size ResidualDipolarCoupling_Rohl::get_RDC_data_type(
 
 	//	std::cout << "RDC_type " << RDC_type << std::endl;
 
-	assert(RDC_type != 0 );
+debug_assert(RDC_type != 0 );
 
 	return RDC_type;
 

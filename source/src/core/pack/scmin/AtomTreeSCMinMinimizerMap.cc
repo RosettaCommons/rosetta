@@ -97,8 +97,8 @@ void AtomTreeSCMinMinimizerMap::clear_active_dofs()
 /// @details This should be called at most once per residue between calls to "clear_active_chi"
 void AtomTreeSCMinMinimizerMap::activate_residue_dofs( Size resindex )
 {
-	assert( domain_map_( resindex ) == 1 ); // activate_residue_chi should not have already been called.
-	assert( active_residue_index_for_res_[ resindex ] == 0 ); // activate_residue_chi should not have already been called.
+debug_assert( domain_map_( resindex ) == 1 ); // activate_residue_chi should not have already been called.
+debug_assert( active_residue_index_for_res_[ resindex ] == 0 ); // activate_residue_chi should not have already been called.
 
 	domain_map_( resindex ) = 0;
 	active_residues_[ ++nactive_residues_ ] = resindex;
@@ -148,21 +148,21 @@ AtomTreeSCMinMinimizerMap::add_torsion(
 		} else if (parent.type() == core::id::THETA) {
 			dofind = atoms_representing_thetas_[ parent.atomno() ];
 		}
-		assert( dofind != 0 );
+	debug_assert( dofind != 0 );
 		Size const pind = dof_start_for_focused_residue_ + dofind - 1;
-		assert( pind != 0 && pind <= n_active_dof_nodes_ );
+	debug_assert( pind != 0 && pind <= n_active_dof_nodes_ );
 		pnode = dof_nodes_[ pind ];
 	}
 
 	++ndofs_added_for_focused_residue_;
 	if (new_torsion.type() == core::id::PHI) {
-		assert( atoms_representing_chis_[ new_torsion.atomno() ] == 0 );
+	debug_assert( atoms_representing_chis_[ new_torsion.atomno() ] == 0 );
 		atoms_representing_chis_[ new_torsion.atomno() ] = ndofs_added_for_focused_residue_;
 	} else if (new_torsion.type() == core::id::D) {
-		assert( atoms_representing_ds_[ new_torsion.atomno() ] == 0 );
+	debug_assert( atoms_representing_ds_[ new_torsion.atomno() ] == 0 );
 		atoms_representing_ds_[ new_torsion.atomno() ] = ndofs_added_for_focused_residue_;
 	} else if (new_torsion.type() == core::id::THETA) {
-		assert( atoms_representing_thetas_[ new_torsion.atomno() ] == 0 );
+	debug_assert( atoms_representing_thetas_[ new_torsion.atomno() ] == 0 );
 		atoms_representing_thetas_[ new_torsion.atomno() ] = ndofs_added_for_focused_residue_;
 	}
 
@@ -193,23 +193,23 @@ AtomTreeSCMinMinimizerMap::add_atom(
 		//		if (nonideal_) {
 		if (dof_id.type() == core::id::D ) {
 			Size const d = atoms_representing_ds_[ dof_id.atomno() ];
-			assert( d != 0 );
+		debug_assert( d != 0 );
 			dofind = dof_start_for_focused_residue_ + d - 1;
-			assert( dofind <= n_active_dof_nodes_ );
+		debug_assert( dofind <= n_active_dof_nodes_ );
 			dof_nodes_[ dofind ]->add_atom( id::AtomID( atom_id.atomno(), focused_residue_ ) );
 
 		} else if (dof_id.type() == core::id::THETA) {
 			Size const theta = atoms_representing_thetas_[ dof_id.atomno() ];
-			assert( theta != 0 );
+		debug_assert( theta != 0 );
 			dofind = dof_start_for_focused_residue_ + theta - 1;
-			assert( dofind <= n_active_dof_nodes_ );
+		debug_assert( dofind <= n_active_dof_nodes_ );
 			dof_nodes_[ dofind ]->add_atom( id::AtomID( atom_id.atomno(), focused_residue_ ) );
 		} else {
 			Size const chi = atoms_representing_chis_[ dof_id.atomno() ];
-			//assert( chi != 0 || nonideal_);  //fpd  with nonideality we may have a case where theta or d is movable but chi is not
+		//debug_assert( chi != 0 || nonideal_);  //fpd  with nonideality we may have a case where theta or d is movable but chi is not
 			if (chi != 0) {
 				dofind = dof_start_for_focused_residue_ + chi - 1;
-				assert( dofind <= n_active_dof_nodes_ );
+			debug_assert( dofind <= n_active_dof_nodes_ );
 				/// add the atom, but give it the correct residue id, since the input atom_id will be 1.
 				dof_nodes_[ dofind ]->add_atom( id::AtomID( atom_id.atomno(), focused_residue_ ) );
 			}
@@ -226,7 +226,7 @@ AtomTreeSCMinMinimizerMap::setup( AtomTreeCollectionOP trees )
 	atom_tree_collection_ = trees;
 	for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {
 		Size iiresid = active_residues_[ ii ];
-		//assert( atcs_for_residues_[ iiresid ] == 0 );
+	//debug_assert( atcs_for_residues_[ iiresid ] == 0 );
 		atcs_for_residues_[ iiresid ] = trees->residue_atomtree_collection_op( iiresid );
 		active_residue_atom_to_dofnode_index_[ ii ].resize( atcs_for_residues_[ iiresid ]->active_residue().natoms(), 0 );
 
@@ -235,7 +235,7 @@ AtomTreeSCMinMinimizerMap::setup( AtomTreeCollectionOP trees )
 		conformation::Residue const & iires( atcs_for_residues_[ iiresid ]->active_residue() );
 
 		/// mark the DOFs in the DOF_ID_Mask for the chi in this residue as being free
-		assert( dof_mask_.n_atom( 1 ) == ((nonideal_) ?
+	debug_assert( dof_mask_.n_atom( 1 ) == ((nonideal_) ?
 		        atoms_representing_chis_.size()+atoms_representing_ds_.size()+atoms_representing_thetas_.size() : atoms_representing_chis_.size()) );
 		if ( dof_mask_.n_atom( 1 ) < ((nonideal_?3:1)*iires.natoms()) ) {
 			atoms_representing_chis_.resize( iires.natoms(), 0 );
@@ -322,7 +322,7 @@ AtomTreeSCMinMinimizerMap::starting_dofs( optimization::Multivec & dof ) const
 
 		if (iinode.type() == core::id::PHI) {
 			Size const iichi = atcs_for_residues_[ iirsd ]->active_restype().last_controlling_chi( iinode.atomno() );
-			assert( atcs_for_residues_[ iirsd ]->active_restype().chi_atoms( iichi )[ 4 ] == (Size) iinode.atomno() );
+		debug_assert( atcs_for_residues_[ iirsd ]->active_restype().chi_atoms( iichi )[ 4 ] == (Size) iinode.atomno() );
 			dof[ ii ] = atcs_for_residues_[ iirsd ]->active_residue().chi( iichi );
 		} else if (iinode.type() == core::id::D) {
 			dof[ ii ] = atcs_for_residues_[ iirsd ]->dof( new_torsion_uncorrected );
@@ -341,7 +341,7 @@ AtomTreeSCMinMinimizerMap::starting_dofs( optimization::Multivec & dof ) const
 	//	DOF_Node const & iinode( * dof_nodes_[ ii ] );
 	//	Size const iirsd = iinode.rsd();
 	//	Size const iichi = atcs_for_residues_[ iirsd ]->active_restype().last_controlling_chi( iinode.atomno() );
-	//	assert( atcs_for_residues_[ iirsd ]->active_restype().chi_atoms( iichi )[ 4 ] == (Size) iinode.atomno() );
+	//debug_assert( atcs_for_residues_[ iirsd ]->active_restype().chi_atoms( iichi )[ 4 ] == (Size) iinode.atomno() );
 	//	dof[ ii ] = atcs_for_residues_[ iirsd ]->active_residue().chi( iichi );
 	//}
 }
@@ -349,7 +349,7 @@ AtomTreeSCMinMinimizerMap::starting_dofs( optimization::Multivec & dof ) const
 void
 AtomTreeSCMinMinimizerMap::assign_dofs_to_mobile_residues( optimization::Multivec const & dofs )
 {
-	assert( dofs.size() == n_active_dof_nodes_ );
+debug_assert( dofs.size() == n_active_dof_nodes_ );
 
 	for ( Size ii = 1; ii <= n_active_dof_nodes_; ++ii ) {
 		DOF_Node const & iinode( * dof_nodes_[ ii ] );
@@ -360,7 +360,7 @@ AtomTreeSCMinMinimizerMap::assign_dofs_to_mobile_residues( optimization::Multive
 		//     so we'll treat chi==0 in ResidueAtomTreeCollection::set_d/set_theta
 		//         as the dist/angle completed by atoms 2 & 3 of chi 1
 		Size const iichi = atcs_for_residues_[ iirsd ]->active_restype().last_controlling_chi( iinode.atomno() );
-		assert( atcs_for_residues_[ iirsd ]->active_restype().chi_atoms( iichi==0?1:iichi )[ iichi==0?3:4 ] == (Size) iinode.atomno() );
+	debug_assert( atcs_for_residues_[ iirsd ]->active_restype().chi_atoms( iichi==0?1:iichi )[ iichi==0?3:4 ] == (Size) iinode.atomno() );
 
 		if (iinode.type() == core::id::PHI) {
 			atcs_for_residues_[ iirsd ]->set_chi( iichi, dofs[ ii ] );
@@ -379,7 +379,7 @@ AtomTreeSCMinMinimizerMap::assign_dofs_to_mobile_residues( optimization::Multive
 	//	DOF_Node const & iinode( * dof_nodes_[ ii ] );
 	//	Size const iirsd = iinode.rsd();
 	//	Size const iichi = atcs_for_residues_[ iirsd ]->active_restype().last_controlling_chi( iinode.atomno() );
-	//	assert( atcs_for_residues_[ iirsd ]->active_restype().chi_atoms( iichi )[ 4 ] == (Size) iinode.atomno() );
+	//debug_assert( atcs_for_residues_[ iirsd ]->active_restype().chi_atoms( iichi )[ 4 ] == (Size) iinode.atomno() );
 	//	atcs_for_residues_[ iirsd ]->set_chi( iichi, chi[ ii ] );
 	//}
 

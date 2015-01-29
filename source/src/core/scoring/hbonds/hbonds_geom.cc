@@ -116,7 +116,7 @@ get_hb_don_chem_type(
 			if (aname == " ND1"){
 				return hbdon_IMD;
 			} else {
-				assert( aname == " NE2");
+			debug_assert( aname == " NE2");
 				return hbdon_IME;
 			} break;
 		case aa_trp: case aa_dtr: case aa_b3w:
@@ -127,7 +127,7 @@ get_hb_don_chem_type(
 			if (aname == " NE "){
 				return hbdon_GDE;
 			} else {
-				assert(aname == " NH1" || aname == " NH2");
+			debug_assert(aname == " NH1" || aname == " NH2");
 				return hbdon_GDH;
 			} break;
 		case aa_tyr: case aa_dty: case aa_b3y:
@@ -637,10 +637,10 @@ hbond_compute_energy(
 	}
 
 	// add these checks, of course, to the hbeval reading
-	assert( database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == database.cosAHD_long_poly_lookup(hbe)->geometric_dimension() );
+debug_assert( database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == database.cosAHD_long_poly_lookup(hbe)->geometric_dimension() );
 	bool const use_cosAHD = database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_cosAHD;
 	AHD_geometric_dimension = use_cosAHD ? hbgd_cosAHD : hbgd_AHD;
-	assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_AHD );
+debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_AHD );
 
 	Real AHD(-1234);
 	if ( ! use_cosAHD ) {
@@ -1160,7 +1160,7 @@ create_acc_orientation_vector(
 	int atom_id
 )
 {
-	assert( residue.atom_type_set()[ residue.atom(atom_id).type() ].is_acceptor() );
+debug_assert( residue.atom_type_set()[ residue.atom(atom_id).type() ].is_acceptor() );
 	chemical::Hybridization acc_hybrid(residue.atom_type(atom_id).hybridization());
 	Vector ovect, dummy;
 	make_hbBasetoAcc_unitvector(
@@ -1270,7 +1270,7 @@ create_don_orientation_vector(
 	int atom_id
 )
 {
-	assert( residue.atom_type_set()[ residue.atom( residue.atom_base(atom_id)).type() ].is_donor() );
+debug_assert( residue.atom_type_set()[ residue.atom( residue.atom_base(atom_id)).type() ].is_donor() );
 
 	Vector HDunit;
 	HDunit = residue.atom( residue.atom_base( atom_id ) ).xyz() - residue.atom( atom_id ).xyz();

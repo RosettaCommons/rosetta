@@ -55,7 +55,7 @@ NamedStubID::NamedStubID( std::string const& a1, Size rsd1, std::string const& a
 {}
 
 NamedStubID::NamedStubID( AtomList const& atoms, core::Size rsd ) {
-	assert( atoms.size() == 3 || atoms.size() == 4 );
+debug_assert( atoms.size() == 3 || atoms.size() == 4 );
 	Size ind;
 	if ( atoms.size() == 4 ) {
 		center_.atom() = atoms[ 1 ];

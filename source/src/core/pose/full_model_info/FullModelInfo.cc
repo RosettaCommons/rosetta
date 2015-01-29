@@ -354,7 +354,7 @@ FullModelInfo::remove_other_pose_at_idx( Size const idx ){
 FullModelInfo const &
 const_full_model_info( pose::Pose const & pose )
 {
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) );
+debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) );
 	return *( utility::pointer::static_pointer_cast< core::pose::full_model_info::FullModelInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO) ) );
 }
 

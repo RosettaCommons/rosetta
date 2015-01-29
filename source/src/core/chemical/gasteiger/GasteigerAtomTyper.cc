@@ -51,7 +51,7 @@ static thread_local basic::Tracer TR( "core.chemical.gasteiger.GasteigerAtomType
 
 void
 PossibleAtomTypesForAtom::gasteiger_atom_type_set( GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET ) {
-	assert( GASTEIGER_ATOM_TYPE_SET );
+debug_assert( GASTEIGER_ATOM_TYPE_SET );
 	gasteiger_atom_type_set_ = GASTEIGER_ATOM_TYPE_SET;
 }
 
@@ -900,7 +900,7 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenTwoSingle( const core::chemical::
 		RealResidueAdjacentIter iter, iter_end;
 		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
 			const ElementCOP & element_data = graph[ *iter ].element_type();
-			assert( element_data );
+		debug_assert( element_data );
 			if( element_data->element() == element::S || element_data->element() == element::N) {
 				SetToType( gasteiger_atom_type_set_->atom_type("N_Te2Te2TeTe"));
 				return;
@@ -1242,7 +1242,7 @@ bool PossibleAtomTypesForAtom::IsBondedToAHalogen( const core::chemical::RealRes
 
 void
 assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing) {
-	assert( gasteiger_atom_type_set );
+debug_assert( gasteiger_atom_type_set );
 	// This functionality was taken from AtomsCompleteStandardizer
 
 	//# RemoveObviousIonicBonds( ATOMS )

@@ -375,9 +375,9 @@ public:
 	Real4 const & chi_sd() const { return chi_sd_; }
 	Real  probability() const { return probability_; }
 
-	Real  nrchi_lower_boundary() const { assert( nrchi_sample_ ); return nrchi_lower_boundary_; }
-	Real  nrchi_upper_boundary() const { assert( nrchi_sample_ ); return nrchi_upper_boundary_; }
-	Real  nrchi_probability() const { assert( nrchi_sample_ ); return nrchi_probability_; }
+	Real  nrchi_lower_boundary() const {debug_assert( nrchi_sample_ ); return nrchi_lower_boundary_; }
+	Real  nrchi_upper_boundary() const {debug_assert( nrchi_sample_ ); return nrchi_upper_boundary_; }
+	Real  nrchi_probability() const {debug_assert( nrchi_sample_ ); return nrchi_probability_; }
 
 	void  assign_random_chi( utility::vector1< Real > & chi_angles, numeric::random::RandomGenerator & RG, core::Real factor=1.0) const;
 	Real  chi_probability( utility::vector1< Real > const & chi_angles, core::Real factor=1.0 ) const;

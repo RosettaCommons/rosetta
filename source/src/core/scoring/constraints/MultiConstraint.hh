@@ -102,7 +102,7 @@ public:
 
 	virtual
 	AtomID const & atom( Size const n ) const{
-		assert( n <= member_atoms_.size() );
+	debug_assert( n <= member_atoms_.size() );
 		return member_atoms_[n];
 	}
 

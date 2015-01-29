@@ -41,7 +41,7 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( func::FuncOP func ):
 	func_( func )
 {
 	//	init_cst_score_types();
-	assert ( member_constraints().size() == 0 );
+debug_assert ( member_constraints().size() == 0 );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
@@ -50,7 +50,7 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const& cst_in, fu
 	func_( func )
 {
 	//	init_cst_score_types();
-	assert ( member_constraints().size() > 0 );
+debug_assert ( member_constraints().size() > 0 );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // void

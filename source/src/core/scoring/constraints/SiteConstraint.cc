@@ -134,7 +134,7 @@ SiteConstraint::setup_csts(
 	core::pose::Pose const & pose,
 	func::FuncOP const & func
 ) {
-	assert(pose.total_residue() == residues.size());
+debug_assert(pose.total_residue() == residues.size());
 	id::AtomID target_atom( pose.residue_type( res ).atom_index( name ), res );
 
 	for (Size i = 1 ; i < pose.total_residue() ; ++i ) {

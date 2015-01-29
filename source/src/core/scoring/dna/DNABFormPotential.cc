@@ -136,7 +136,7 @@ DNABFormPotential::eval_dna_bform_bb_torsion_score_residue(
 {
 	using namespace numeric;
 
-	assert( rsd.is_DNA() );
+debug_assert( rsd.is_DNA() );
 
 	// Get the correct set of dihedral score components
 	utility::vector1< TorsionFourierComponentCOP > const & this_data( bb_fourier_data[ torsion_id ] );
@@ -167,7 +167,7 @@ DNABFormPotential::eval_dna_bform_chi_torsion_score_residue(
 {
 	using namespace numeric;
 
-	assert( rsd.is_DNA() );
+debug_assert( rsd.is_DNA() );
 
 	Real chi = basic::unsigned_periodic_range( (rsd.chi())[1], 360.0 );
 

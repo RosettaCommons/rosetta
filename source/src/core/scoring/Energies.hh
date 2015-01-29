@@ -235,7 +235,7 @@ public:
 	EnergyMap const &
 	residue_total_energies( int const seqpos ) const
 	{
-		assert( !use_nblist() && energies_updated() );
+	debug_assert( !use_nblist() && energies_updated() );
 //		PyAssert( (!use_nblist()) && (energies_updated()), "Energies::residue_total_energies(): the Energies object isn't ready! Has it been scored?" );
 		PyAssert( (seqpos>0) && (seqpos<=int(size())), "Energies::residue_total_energies( int const seqpos ): variable seqpos is out of range!" );
 		if ( ! residue_total_energies_uptodate_ ) accumulate_residue_total_energies();
@@ -256,7 +256,7 @@ public:
 	Real
 	residue_total_energy( int const seqpos ) const
 	{
-		assert( !use_nblist() && energies_updated() );
+	debug_assert( !use_nblist() && energies_updated() );
 //		PyAssert( (!use_nblist()) && (energies_updated()), "Energies::residue_total_energy(): the Energies object isn't ready! Has it been scored?" );
 		PyAssert( (seqpos>0) && (seqpos<=int(size())), "Energies::residue_total_energy( int const seqpos ): variable seqpos is out of range!" );
 		if ( ! residue_total_energy_uptodate_ ) accumulate_residue_total_energy();

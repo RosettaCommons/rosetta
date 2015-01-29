@@ -29,8 +29,8 @@ namespace fiber_diffraction {
 CentroidScatter &
 retrieve_centroid_scatter_from_pose( pose::Pose & pose )
 {
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING ) );
-	assert( dynamic_cast< CentroidScatter *>( &( pose.data().get( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING ))));
+debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING ) );
+debug_assert( dynamic_cast< CentroidScatter *>( &( pose.data().get( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING ))));
 	return ( static_cast< CentroidScatter &>(    pose.data().get( core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING )));
 	//return utility::pointer::static_pointer_cast< CentroidScatter > ( pose.data().get_ptr(
   //      core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING) );

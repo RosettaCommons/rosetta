@@ -84,7 +84,7 @@ SuckerEnergy::SuckerEnergy() :
 		points.push_back(point);
 	}
 
-	assert( points.size() >= 2 );
+debug_assert( points.size() >= 2 );
 
 	// std::cerr << "printing points" << std::endl;
 	// for( Size i = 1; i <= points.size(); ++i ) {
@@ -192,7 +192,7 @@ SuckerEnergy::eval_atom_derivative(
 	// id is a SUCK atom
 	if( "SUCK" == pose.residue(id.rsd()).name() ) { // loop over atom neighbors and suck
 		// conformation::Residue const & sck( pose.residue(id.rsd()) );
-		assert( 1 <= id.atomno() && id.atomno() <= 3 );
+	debug_assert( 1 <= id.atomno() && id.atomno() <= 3 );
 		if( id.atomno() > 1 ) return;
 		numeric::xyzVector<Real> suck_xyz( pose.xyz(id) );
 

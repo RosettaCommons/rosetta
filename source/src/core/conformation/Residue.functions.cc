@@ -37,7 +37,7 @@ idealize_hydrogens(
 	Conformation const & conf
 )
 {
-//	assert( res.seqpos() != -1 ); // commented out: seqpos is Size, so can number be negative
+//debug_assert( res.seqpos() != -1 ); // commented out: seqpos is Size, so can number be negative
 	utility::vector1< bool > atoms_placed( res.natoms(), false );
 	for ( Size ii = 1; ii <= res.nheavyatoms(); ++ii ) atoms_placed[ ii ] = true;
 	int n_remaining = res.natoms() - res.nheavyatoms();

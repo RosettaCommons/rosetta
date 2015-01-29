@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace core {
 namespace pack {

@@ -628,7 +628,7 @@ Etable::assign_parameters_to_full_etables(
 	ObjexxFCL::FArray1A< Real > dfasol1
 )
 {
-	assert( ljatr_.size() != 0 );
+debug_assert( ljatr_.size() != 0 );
 
 	ljatr.dimension(   etable_disbins );
 	dljatr.dimension(  etable_disbins );

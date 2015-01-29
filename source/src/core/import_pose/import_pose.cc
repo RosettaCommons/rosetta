@@ -343,7 +343,7 @@ read_all_poses(
 	using core::pose::Pose;
 	using std::string;
 	using utility::vector1;
-	assert(poses);
+debug_assert(poses);
 
 	for (vector1<string>::const_iterator i = filenames.begin(); i != filenames.end(); ++i) {
 		Pose pose;

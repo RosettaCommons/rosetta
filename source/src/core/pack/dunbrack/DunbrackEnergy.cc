@@ -144,7 +144,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	Real deriv_rot(0.0);
 	Real deriv_semi(0.0);
 	if ( tor_id.valid() ) {
-		assert( rsd.seqpos() == tor_id.rsd() );
+	debug_assert( rsd.seqpos() == tor_id.rsd() );
 		//utility::vector1< Real > dE_dbb, dE_dchi;
 		//		std::cerr << __FILE__<< ' ' << __LINE__ << ' ' << tor_id.rsd() << std::endl;
 		pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib =

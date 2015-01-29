@@ -273,7 +273,7 @@ CarbohydrateInfo::base_name() const
 core::uint
 CarbohydrateInfo::branch_point( core::uint const i ) const
 {
-	assert( ( i > 0 ) && ( i <= n_branches() ) );
+debug_assert( ( i > 0 ) && ( i <= n_branches() ) );
 	PyAssert( (i > 0) && ( i <= n_branches() ),
 			"CarbohydrateInfo::branch_point( core::uint i ): "
 			"There is no ith branch point on this carbohydrate residue.");

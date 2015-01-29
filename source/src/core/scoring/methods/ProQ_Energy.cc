@@ -1201,7 +1201,7 @@ int ProQ_Energy::res6(char const aa) const {
 char ProQ_Energy::profile_index_to_aa(int i) const {
 
 	static char aa[]={'A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V'};
-	assert(i>=1 && i<=20);
+debug_assert(i>=1 && i<=20);
 	return aa[i-1];
 }
 

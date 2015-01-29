@@ -181,7 +181,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 						rniend = lrec->const_neighbor_iterator_end( theresid );
 					(*rni) != (*rniend); ++(*rni) ) {
 			Size const neighbor_id = rni->neighbor_id();
-			assert( neighbor_id != theresid );
+		debug_assert( neighbor_id != theresid );
 			if ( task.pack_residue( neighbor_id ) ) continue;
 
 			// Residue is not interating with itself
@@ -240,7 +240,7 @@ void
 SymmetricRotamerSet_::PackerEnergyAdd( utility::vector1< core::PackerEnergy > & energies,
 								 utility::vector1< core::PackerEnergy > const & add ) const
 {
-	assert( energies.size() == add.size() );
+debug_assert( energies.size() == add.size() );
 	int const nrotamers = num_rotamers();
 	for ( int ii = 1; ii <= nrotamers; ++ii ){
 		energies[ii] = energies[ii] + add[ii];
@@ -253,7 +253,7 @@ void
 SymmetricRotamerSet_::PackerEnergySubtract( utility::vector1< core::PackerEnergy > & energies,
                  utility::vector1< core::PackerEnergy > const & subtract ) const
 {
-  assert( energies.size() == subtract.size() );
+ debug_assert( energies.size() == subtract.size() );
 	int const nrotamers = num_rotamers();
   for ( int ii = 1; ii <= nrotamers; ++ii ){
     energies[ii] = energies[ii] - subtract[ii];

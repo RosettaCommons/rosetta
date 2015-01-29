@@ -142,7 +142,7 @@ void
 OccludedHbondSolEnergy_onebody::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
 {
 	tr << "Error - no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
-	assert(false);
+debug_assert(false);
 	exit(1);
 }
 
@@ -150,7 +150,7 @@ void
 OccludedHbondSolEnergy_onebody::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
 {
 	tr << "Error - no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
-	assert(false);
+debug_assert(false);
 	exit(1);
 }
 
@@ -316,7 +316,7 @@ OccludedHbondSolEnergy_onebody::get_atom_atom_occ_solvation(
 		}
 	}
 
-	assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) ) ||
+debug_assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) ) ||
 		( ( ! polar_atom_donates ) && atom_is_acceptor( polar_rsd, polar_atom ) ) );
 
 	// If acceptor, do lookup on polar atom. If donor (ie. polar atom is a hydrogen), use the base atom instead

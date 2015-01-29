@@ -19,7 +19,7 @@
 
 // STL Headers
 #include <iostream>
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace core {
 namespace scoring {
@@ -32,8 +32,8 @@ void CountPairData_1_3::set_dist_to_connect_point(
 	Size connection_dist
 )
 {
-	assert( entry > 0 && entry <= 3 );
-	assert( connpoint == 1 );
+debug_assert( entry > 0 && entry <= 3 );
+debug_assert( connpoint == 1 );
 	connection_distances_[ entry - 1 ] = connection_dist;
 }
 
@@ -49,7 +49,7 @@ CountPairData_1_3::set_count_pair_data_to_use(
 	Size connection_id
 ) const
 {
-	assert( connection_id == 1 || connection_id == 2 || connection_id == 3 );
+debug_assert( connection_id == 1 || connection_id == 2 || connection_id == 3 );
 	connection_distance_at_hand_ = connection_distances_[ connection_id - 1 ];
 }
 */

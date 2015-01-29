@@ -1287,7 +1287,7 @@ off_rotamer_pack_optimize(
 
 					if ( curr_state.energy() < best_state.energy() ) {
 						Real totalE = ig.total_energy(); //get_total_energy_for_state( pose, bgres, sfxn, *mingraph, *scminmap, curr_state, atc, *rotsets );
-						assert( std::abs( totalE - curr_state.energy() ) < 1e-5 ); // drift does accumulate, but it should be small!
+					debug_assert( std::abs( totalE - curr_state.energy() ) < 1e-5 ); // drift does accumulate, but it should be small!
 						curr_state.assign_energy( totalE );
 						if ( totalE < best_state.energy() ) {
 							best_state = curr_state;

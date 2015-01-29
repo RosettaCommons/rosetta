@@ -210,8 +210,8 @@ FA_ElecEnergyAroAro::residue_pair_energy_aro_aro(
 	EnergyMap & emap
 ) const
 {
-	assert( rsd1.is_aromatic() );
-	assert( rsd2.is_aromatic() );
+debug_assert( rsd1.is_aromatic() );
+debug_assert( rsd2.is_aromatic() );
 
 	using namespace etable::count_pair;
 
@@ -320,7 +320,7 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 
 // 	kinematics::DomainMap const & domain_map( energies.domain_map() );
 // 	bool const pos1_fixed( !energies.res_moved( pos1 ) );
-// 	assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
+// debug_assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
 
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
 	for ( graph::Graph::EdgeListConstIter
@@ -335,7 +335,7 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
 
-		assert( pos2 != pos1 );
+	debug_assert( pos2 != pos1 );
 
 		if ( rsd2.is_aromatic() ) {
 			eval_atom_derivative_aro_aro( rsd1, i, rsd2, weights, F1, F2 );

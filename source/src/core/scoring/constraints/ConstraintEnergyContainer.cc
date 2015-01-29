@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 
 // STL Headers
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 
@@ -47,7 +47,7 @@ CstResNeighbIterator::~CstResNeighbIterator()
 ResidueNeighborIterator const &
 CstResNeighbIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
-	assert( &(dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
+debug_assert( &(dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
 	CstResNeighbIterator const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
 
 	focused_node_ = crni_rhs.focused_node_;
@@ -65,7 +65,7 @@ CstResNeighbIterator::operator ++ ()
 bool
 CstResNeighbIterator::operator == ( ResidueNeighborIterator const & rhs ) const
 {
-	assert( &( dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
+debug_assert( &( dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
 	CstResNeighbIterator const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
 
 	return ( edge_iter_ == crni_rhs.edge_iter_ );
@@ -74,7 +74,7 @@ CstResNeighbIterator::operator == ( ResidueNeighborIterator const & rhs ) const
 bool
 CstResNeighbIterator::operator != ( ResidueNeighborIterator const & rhs ) const
 {
-	assert( &( dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
+debug_assert( &( dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
 	CstResNeighbIterator const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
 	return ( edge_iter_ != crni_rhs.edge_iter_ );
 }
@@ -171,7 +171,7 @@ CstResNeighbIterator::energy_computed() const
 ConstraintEdge *
 CstResNeighbIterator::downcast_cstedge( graph::Edge * edge )
 {
-	assert( dynamic_cast< ConstraintEdge * > ( edge ) );
+debug_assert( dynamic_cast< ConstraintEdge * > ( edge ) );
 	return static_cast< ConstraintEdge * > (edge);
 }
 
@@ -194,7 +194,7 @@ CstResNeighbConstIterator::~CstResNeighbConstIterator()
 ResidueNeighborConstIterator const &
 CstResNeighbConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
 {
-	//assert( dynamic_cast< CstResNeighbConstIterator const & > ( rhs ) );
+//debug_assert( dynamic_cast< CstResNeighbConstIterator const & > ( rhs ) );
 	CstResNeighbConstIterator const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
 
 	focused_node_ = crnci_rhs.focused_node_;
@@ -213,7 +213,7 @@ CstResNeighbConstIterator::operator ++ ()
 bool
 CstResNeighbConstIterator::operator == ( ResidueNeighborConstIterator const & rhs ) const
 {
-	assert( &( dynamic_cast< CstResNeighbConstIterator const & > ( rhs )) );
+debug_assert( &( dynamic_cast< CstResNeighbConstIterator const & > ( rhs )) );
 	CstResNeighbConstIterator const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
 	return ( edge_iter_ == crnci_rhs.edge_iter_ );
 }
@@ -223,7 +223,7 @@ CstResNeighbConstIterator::operator == ( ResidueNeighborConstIterator const & rh
 bool
 CstResNeighbConstIterator::operator != ( ResidueNeighborConstIterator const & rhs ) const
 {
-	assert( &( dynamic_cast< CstResNeighbConstIterator const & > ( rhs )) );
+debug_assert( &( dynamic_cast< CstResNeighbConstIterator const & > ( rhs )) );
 	CstResNeighbConstIterator const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
 	return ( edge_iter_ != crnci_rhs.edge_iter_ );
 }
@@ -298,7 +298,7 @@ CstResNeighbConstIterator::energy_computed() const
 ConstraintEdge const *
 CstResNeighbConstIterator::downcast_cstedge( graph::Edge const * edge )
 {
-	assert( dynamic_cast< ConstraintEdge const * > ( edge ) );
+debug_assert( dynamic_cast< ConstraintEdge const * > ( edge ) );
 	return static_cast< ConstraintEdge const * > (edge);
 }
 
@@ -363,14 +363,14 @@ CstEnergyContainer::set_num_nodes( Size newsize )
 bool
 CstEnergyContainer::any_neighbors_for_residue( int resid ) const
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return cst_graph_->get_node( resid )->num_edges() != 0;
 }
 
 bool
 CstEnergyContainer::any_upper_neighbors_for_residue( int resid ) const
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return cst_graph_->get_node( resid )->get_num_edges_to_larger_indexed_nodes() != 0;
 }
 
@@ -378,63 +378,63 @@ CstEnergyContainer::any_upper_neighbors_for_residue( int resid ) const
 ResidueNeighborConstIteratorOP
 CstEnergyContainer::const_neighbor_iterator_begin( int resid ) const
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ResidueNeighborConstIteratorOP( new CstResNeighbConstIterator( resid, cst_graph_->get_node( resid )->const_edge_list_begin() ) );
 }
 
 ResidueNeighborConstIteratorOP
 CstEnergyContainer::const_neighbor_iterator_end( int resid ) const
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ResidueNeighborConstIteratorOP( new CstResNeighbConstIterator( resid, cst_graph_->get_node( resid )->const_edge_list_end() ) );
 }
 
 ResidueNeighborConstIteratorOP
 CstEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ResidueNeighborConstIteratorOP( new CstResNeighbConstIterator( resid, cst_graph_->get_node( resid )->const_upper_edge_list_begin() ) );
 }
 
 ResidueNeighborConstIteratorOP
 CstEnergyContainer::const_upper_neighbor_iterator_end( int resid ) const
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ResidueNeighborConstIteratorOP( new CstResNeighbConstIterator( resid, cst_graph_->get_node( resid )->const_upper_edge_list_end() ) );
 }
 
 ResidueNeighborIteratorOP
 CstEnergyContainer::neighbor_iterator_begin( int resid )
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ResidueNeighborIteratorOP( new CstResNeighbIterator( resid, cst_graph_->get_node( resid )->edge_list_begin() ) );
 }
 
 ResidueNeighborIteratorOP
 CstEnergyContainer::neighbor_iterator_end( int resid )
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ResidueNeighborIteratorOP( new CstResNeighbIterator( resid, cst_graph_->get_node( resid )->edge_list_end() ) );
 }
 
 ResidueNeighborIteratorOP
 CstEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ResidueNeighborIteratorOP( new CstResNeighbIterator( resid, cst_graph_->get_node( resid )->upper_edge_list_begin() ) );
 }
 
 ResidueNeighborIteratorOP
 CstEnergyContainer::upper_neighbor_iterator_end( int resid )
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ResidueNeighborIteratorOP( new CstResNeighbIterator( resid, cst_graph_->get_node( resid )->upper_edge_list_end() ) ); // pbmod
 }
 
 bool
 CstEnergyContainer::matches( ConstraintSetCOP cst_set )
 {
-	assert( !empty() );
+debug_assert( !empty() );
 	return ( cst_set.get() == constraint_set_.get() && cst_set_revision_id_ == cst_set->revision_id() );
 }
 

@@ -578,7 +578,7 @@ LK_PolarNonPolarEnergy::setup_for_minimizing_for_residue_pair(
     //TR << "setup_for_minimizing_for_residue_pair() was called..." << std::endl;
 
     etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
-    //assert( rsd1.seqpos() < rsd2.seqpos() );
+   //debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
     // update the existing nblist if it's already present in the min_data object
     ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( lk_PolarNonPolar_pair_nblist ) ));
@@ -617,9 +617,9 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
 	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
 
-    //assert( rsd1.seqpos() < rsd2.seqpos() );
+   //debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
-    //assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( lk_PolarNonPolar_pair_nblist )() ));
+   //debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( lk_PolarNonPolar_pair_nblist )() ));
     ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
     utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
@@ -922,7 +922,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 
 	//	Size const nres = pose.total_residue();
 	//static bool const update_deriv( true );
-    //assert( pose.energies().use_nblist() );
+   //debug_assert( pose.energies().use_nblist() );
 	NeighborList const & nblist
         ( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
     //TR << "checkpoint..." << std::endl;

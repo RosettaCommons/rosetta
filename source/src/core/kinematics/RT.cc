@@ -46,7 +46,7 @@ RT::fold_in_rb_deltas(
 {
 	using namespace numeric;
 
-	assert( Size(rb.size()) == 6 );
+debug_assert( Size(rb.size()) == 6 );
 	// simple: rotation gets multiplied by Rzyx,
 	// translation (t) goes to center + Rzyx(t-center) + rb_trans
 
@@ -110,7 +110,7 @@ operator <<(
 	const RT & rt
 )
 {
-	assert( rt.ortho_check() );
+debug_assert( rt.ortho_check() );
 	os << "RT "; // olange: removed whitespace before RT --> gives problem in silent files.
 	for ( int i = 1; i <= 3; ++i ) {
 		for ( int j = 1; j <= 3; ++j ) {

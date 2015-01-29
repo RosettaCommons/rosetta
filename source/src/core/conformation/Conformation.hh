@@ -362,8 +362,8 @@ public:  // Residues
 	/// @brief Returns the AA enum for position  <seqpos>
 	chemical::AA const &
 	aa( Size seqpos ) const {
-		assert( seqpos >= 1 );
-		assert( seqpos <= size() );
+	debug_assert( seqpos >= 1 );
+	debug_assert( seqpos <= size() );
 		return residues_[seqpos]->aa();
 	}
 
@@ -412,8 +412,8 @@ public:  // Residues
 	chemical::ResidueType const &
 	residue_type( Size seqpos ) const
 	{
-		assert( seqpos >=1 );
-		assert( seqpos <= size() );
+	debug_assert( seqpos >=1 );
+	debug_assert( seqpos <= size() );
 		return residues_[seqpos]->type();
 	}
 
@@ -1208,8 +1208,8 @@ private:
 	Residue const &
 	residue_( Size seqpos ) const
 	{
-		assert( seqpos >=1 );
-		assert( seqpos <= size() );
+	debug_assert( seqpos >=1 );
+	debug_assert( seqpos <= size() );
 		return *residues_[ seqpos ];
 	}
 

@@ -767,7 +767,7 @@ LK_hack::distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) cons
 					}
 				}
 			}
-			assert( count_neighbors_found == jj_nneighbs );
+		debug_assert( count_neighbors_found == jj_nneighbs );
 		}
 	}
 

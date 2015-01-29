@@ -161,7 +161,7 @@ build_lib_dna_rotamers(
 	Real const rad2deg   ( 180/pi );
 
 	Residue const & existing_residue( pose.residue( resid ) );
-	assert( existing_residue.is_NA() && concrete_residue->is_NA() );
+debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 
 	bool const simple_way( existing_residue.is_terminus() );
 
@@ -180,7 +180,7 @@ build_lib_dna_rotamers(
 		Size const seqpos(2);
 		Residue const & rsd( mini_pose.residue(seqpos  ) ), next_rsd( mini_pose.residue(seqpos+1) );
 
-		assert( rsd.is_NA() && mini_pose.residue(seqpos-1).is_NA() );
+	debug_assert( rsd.is_NA() && mini_pose.residue(seqpos-1).is_NA() );
 
 		Vector const P_O3( ( next_rsd.xyz("P") - rsd.xyz("O3'") ) );
 		Real const target_distance( P_O3.length() );
@@ -394,7 +394,7 @@ build_random_dna_rotamers(
 	}
 
 	Residue const & existing_residue( pose.residue( resid ) );
-	assert( existing_residue.is_NA() && concrete_residue->is_NA() );
+debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 
 	if ( existing_residue.is_terminus() ) nrot_to_build = 1;
 
@@ -432,7 +432,7 @@ build_random_dna_rotamers(
 					 rsd( mini_pose.residue(seqpos  ) ),
 			next_rsd( mini_pose.residue(seqpos+1) );
 
-		assert( rsd.is_DNA() && prev_rsd.is_DNA() );
+	debug_assert( rsd.is_DNA() && prev_rsd.is_DNA() );
 
 		utility::vector1< Vector > bonds, atoms;
 
@@ -492,7 +492,7 @@ build_random_dna_rotamers(
 			tmp2  += v2[i] * v2[i];
 			tmp12 += v1[i] * v2[i];
 		}
-		assert( std::abs(tmp1-1)<1e-3 && std::abs(tmp2-1)<1e-3 && std::abs(tmp12)<1e-3 );
+	debug_assert( std::abs(tmp1-1)<1e-3 && std::abs(tmp2-1)<1e-3 && std::abs(tmp12)<1e-3 );
 
 
 		// now try a bunch of moves:
@@ -519,8 +519,8 @@ build_random_dna_rotamers(
 					dot1 += e[i] * v1[i];
 					dot2 += e[i] * v2[i];
 				}
-				if ( tether_bond_distance ) assert( std::abs( dot1 ) < 1e-3 );
-				if ( tether_bond_angle    ) assert( tether_bond_distance && std::abs( dot2 ) < 1e-3 );
+				if ( tether_bond_distance )debug_assert( std::abs( dot1 ) < 1e-3 );
+				if ( tether_bond_angle    )debug_assert( tether_bond_distance && std::abs( dot2 ) < 1e-3 );
 			}
 
 
@@ -544,7 +544,7 @@ build_random_dna_rotamers(
 
 			// this is a little tricky... maybe have to do more initialization here to match the "rotamer-constructor"
 			// behavior??
-			assert( Size(rot->seqpos()) == resid );
+		debug_assert( Size(rot->seqpos()) == resid );
 			rotamers[ rotamers.size() ]->seqpos( resid );
 			rotamers[ rotamers.size() ]->chain( rot->chain() );
 			rotamers[ rotamers.size() ]->copy_residue_connections( existing_residue );
@@ -555,7 +555,7 @@ build_random_dna_rotamers(
 			//tt << "r: " << tag << F(9,3,r.length()) << F(9,3,r.dot( n1 )) << F(9,3,r.dot( n2 ) ) << std::endl;
 
 			// confirm that phosphate is in the same place
-			assert( mini_pose.residue(seqpos  ).xyz("P").distance( pose.residue(resid  ).xyz("P")) < 1e-2 &&
+		debug_assert( mini_pose.residue(seqpos  ).xyz("P").distance( pose.residue(resid  ).xyz("P")) < 1e-2 &&
 							mini_pose.residue(seqpos+1).xyz("P").distance( pose.residue(resid+1).xyz("P")) < 1e-2 );
 
 		} // r =1,nrot_to_build
@@ -745,7 +745,7 @@ create_oriented_water_rotamer(
 	kinematics::Stub const tp5_stub( tp5_O, tp5_midpoint, tp5_atom1 );
 
 	conformation::ResidueOP rot( conformation::ResidueFactory::create_residue( h2o_type ) );
-	assert( rot->natoms() == 3 );
+debug_assert( rot->natoms() == 3 );
 	rot->set_xyz(  "O", xyz_O );
 	rot->set_xyz( "H1", xyz_stub.local2global( tp5_stub.global2local( tp5.xyz("H1") ) ) );
 	rot->set_xyz( "H2", xyz_stub.local2global( tp5_stub.global2local( tp5.xyz("H2") ) ) );
@@ -770,7 +770,7 @@ build_fixed_O_water_rotamers_independent(
 	Real const max_theta( 180.0 );
 
 
-	assert( h2o_type.natoms() == 3 ); // only works for this guy now
+debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 
 	Residue const & existing_rsd( pose.residue(seqpos) );
 	Vector const & xyz_O( existing_rsd.nbr_atom_xyz() );
@@ -790,7 +790,7 @@ build_fixed_O_water_rotamers_independent(
 					ire = packer_neighbor_graph->get_node( seqpos )->const_edge_list_end();
 				ir != ire; ++ir ) {
 		Size const i( (*ir)->get_other_ind( seqpos ) );
-		assert( i != seqpos );
+	debug_assert( i != seqpos );
 		Residue const & rsd( pose.residue(i) );
 
 		// donors
@@ -976,7 +976,7 @@ build_donor_donor_waters(
 	Real const o12_dis2( o1.distance_squared( o2 ) );
 	if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) return;
 
-	assert( nstep >= 2 && nstep%2 == 0 );
+debug_assert( nstep >= 2 && nstep%2 == 0 );
 	for ( Size step=0; step<= nstep; ++step ) {
 
 		// calculate an intermediate water position
@@ -1052,7 +1052,7 @@ build_donor_acceptor_waters(
 		Real const o12_dis2( o1.distance_squared( o2 ) );
 		if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) continue;
 
-		assert( nstep>= 2 && nstep%2 == 0 );
+	debug_assert( nstep>= 2 && nstep%2 == 0 );
 
 		for ( Size step=0; step<= nstep; ++step ) {
 
@@ -1159,7 +1159,7 @@ build_acceptor_acceptor_waters(
 			Real const o12_dis2( o1.distance_squared( o2 ) );
 			if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) continue;
 
-			assert( nstep>= 2 && nstep%2 == 0 );
+		debug_assert( nstep>= 2 && nstep%2 == 0 );
 
 			for ( Size step=0; step<= nstep; ++step ) {
 
@@ -1294,7 +1294,7 @@ build_moving_O_water_rotamers_dependent(
 	using conformation::ResidueOP;
 	using numeric::conversions::degrees;
 
-	assert( h2o_type.natoms() == 3 ); // only works for this guy now
+debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 
 	Size nstep( water_info.nstep() );
 	if ( nstep < 2 ) nstep = 2;
@@ -1333,7 +1333,7 @@ build_moving_O_water_rotamers_dependent(
 					jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
 				jr != jre; ++jr ) {
 		Size const j( (*jr)->get_other_ind( i ) );
-		assert( i != j );
+	debug_assert( i != j );
 
 		//if ( !pose.residue(j).is_protein() ) continue; // first just protein-DNA bridges
 		if ( pose.residue(j).name() == "TP3" ) continue;
@@ -1382,7 +1382,7 @@ build_moving_O_water_rotamers_independent(
 	using conformation::ResidueOP;
 	using numeric::conversions::degrees;
 
-	assert( h2o_type.natoms() == 3 ); // only works for this guy now
+debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 
 	Size nstep( water_info.nstep() );
 	if ( nstep < 2 ) nstep = 2;
@@ -1411,7 +1411,7 @@ build_moving_O_water_rotamers_independent(
 					jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
 				jr != jre; ++jr ) {
 		Size const j( (*jr)->get_other_ind( i ) );
-		assert( i != j );
+	debug_assert( i != j );
 
 		//if ( !pose.residue(j).is_protein() ) continue; // first just protein-DNA bridges
 		if ( pose.residue(j).name() == "TP3" ) continue;

@@ -46,7 +46,7 @@
 #include <boost/unordered_map.hpp>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstdlib>
 #include <limits>
@@ -243,7 +243,7 @@ find_neighbors_octree(
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-	assert( side > core::Real( 0 ) );
+debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	CubeDim const cube_dim( // Cube dimensions
 		core::Size( std::ceil( ( bbu.x() - bbl.x() ) * side_inv ) ),             // Test that ceil values == core::Size values
@@ -292,9 +292,9 @@ find_neighbors_octree(
 			);
 
 			// Check that it is within the expanded bounding box
-			assert( cube_key.x() < cube_dim.x() );
-			assert( cube_key.y() < cube_dim.y() );
-			assert( cube_key.z() < cube_dim.z() );
+		debug_assert( cube_key.x() < cube_dim.x() );
+		debug_assert( cube_key.y() < cube_dim.y() );
+		debug_assert( cube_key.z() < cube_dim.z() );
 
 			// Add the point's position to the cube's collection
 			cubes[ cube_key ].push_back( i ); // Creates the cube if it doesn't exist yet
@@ -412,7 +412,7 @@ find_neighbors_3dgrid(
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-	assert( side > core::Real( 0 ) );
+debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	CubeDim const cube_dim( // Cube dimensions
 		core::Size( std::ceil( ( bbu.x() - bbl.x() ) * side_inv ) ),             // Test that ceil values == core::Size values
@@ -451,9 +451,9 @@ find_neighbors_3dgrid(
 		);
 
 		// Check that it is within the expanded bounding box
-		assert( cube_key.x() <= cube_dim.x() );
-		assert( cube_key.y() <= cube_dim.y() );
-		assert( cube_key.z() <= cube_dim.z() );
+	debug_assert( cube_key.x() <= cube_dim.x() );
+	debug_assert( cube_key.y() <= cube_dim.y() );
+	debug_assert( cube_key.z() <= cube_dim.z() );
 
 		// Add the point's position to the cube's collection
 		//cubes[ cube_key ].push_back( i ); // Creates the cube if it doesn't exist yet
@@ -640,7 +640,7 @@ find_neighbors_octree_restricted(
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-	assert( side > core::Real( 0 ) );
+debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	CubeDim const cube_dim( // Cube dimensions
 		core::Size( std::ceil( ( bbu.x() - bbl.x() ) * side_inv ) ),             // Test that ceil values == core::Size values
@@ -689,9 +689,9 @@ find_neighbors_octree_restricted(
 			);
 
 			// Check that it is within the expanded bounding box
-			assert( cube_key.x() < cube_dim.x() );
-			assert( cube_key.y() < cube_dim.y() );
-			assert( cube_key.z() < cube_dim.z() );
+		debug_assert( cube_key.x() < cube_dim.x() );
+		debug_assert( cube_key.y() < cube_dim.y() );
+		debug_assert( cube_key.z() < cube_dim.z() );
 
 			// Add the point's position to the cube's collection
 			cubes[ cube_key ].push_back( i ); // Creates the cube if it doesn't exist yet
@@ -807,7 +807,7 @@ find_neighbors_3dgrid_restricted(
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-	assert( side > core::Real( 0 ) );
+debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	CubeDim const cube_dim( // Cube dimensions
 		core::Size( std::ceil( ( bbu.x() - bbl.x() ) * side_inv ) ),             // Test that ceil values == core::Size values
@@ -846,9 +846,9 @@ find_neighbors_3dgrid_restricted(
 		);
 
 		// Check that it is within the expanded bounding box
-		assert( cube_key.x() <= cube_dim.x() );
-		assert( cube_key.y() <= cube_dim.y() );
-		assert( cube_key.z() <= cube_dim.z() );
+	debug_assert( cube_key.x() <= cube_dim.x() );
+	debug_assert( cube_key.y() <= cube_dim.y() );
+	debug_assert( cube_key.z() <= cube_dim.z() );
 
 		// Add the point's position to the cube's collection
 		//cubes[ cube_key ].push_back( i ); // Creates the cube if it doesn't exist yet

@@ -175,7 +175,7 @@ LeGrandSasa::calculate(
 			max_radius = std::max( max_radius, radii[ rsd.atom(jj).type() ] );
 			//ronj assert that the sum of the first 8 bits and the last 8 bits (or first byte and last byte) in the vector
 			//ronj of masks for this atom id is less than 0.001.  what is the point of this assertion?
-			assert( atom_masks[ AtomID(jj,ii) ][1] + atom_masks[ AtomID(jj,ii) ][num_bytes_] < 1e-3 );
+		debug_assert( atom_masks[ AtomID(jj,ii) ][1] + atom_masks[ AtomID(jj,ii) ][num_bytes_] < 1e-3 );
 		}
 	}
 

@@ -34,7 +34,7 @@
 #include <numeric/internal/RowVectors.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace numeric {

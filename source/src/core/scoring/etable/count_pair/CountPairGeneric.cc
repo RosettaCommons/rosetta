@@ -48,7 +48,7 @@ CountPairGeneric::CountPairGeneric(
 {
 	using namespace conformation;
 
-	assert( res1.seqpos() != res2.seqpos() );
+debug_assert( res1.seqpos() != res2.seqpos() );
 
 	if ( res1.is_bonded( res2 ) ) {
 		utility::vector1< Size > const & r1_connids( res1.connections_to_residue( res2 ) );
@@ -83,10 +83,10 @@ CountPairGeneric::CountPairGeneric(
 			pb_lengths_.push_back( pb_iter->nbonds() );
 		}
 	}
-	assert( n_connect_ == res1_conn_point_path_dists_.size() );
-	assert( n_connect_ == res2_conn_point_path_dists_.size() );
-	assert( n_pconnect_ == res1_pbconn_point_path_dists_.size() );
-	assert( n_pconnect_ == res2_pbconn_point_path_dists_.size() );
+debug_assert( n_connect_ == res1_conn_point_path_dists_.size() );
+debug_assert( n_connect_ == res2_conn_point_path_dists_.size() );
+debug_assert( n_pconnect_ == res1_pbconn_point_path_dists_.size() );
+debug_assert( n_pconnect_ == res2_pbconn_point_path_dists_.size() );
 }
 
 /// @brief Create a count pair object that pretends there exist

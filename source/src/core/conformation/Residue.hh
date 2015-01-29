@@ -1293,7 +1293,7 @@ public:
 	utility::vector1< Size > const &
 	connections_to_residue( Size const other_resid ) const
 	{
-		assert( connections_to_residues_.find( other_resid ) != connections_to_residues_.end() );
+	debug_assert( connections_to_residues_.find( other_resid ) != connections_to_residues_.end() );
 		return connections_to_residues_.find( other_resid )->second;
 	}
 

@@ -117,12 +117,12 @@ EnvSmoothEnergy::initialize( EnergyMethodOptions const & options )
 
 	// fill envdata_ with values from file	
 	for( core::Size ii = 0; ii < chemical::num_canonical_aas; ++ii ){
-		assert( stream );
+	debug_assert( stream );
 		getline( stream, line );
 		std::istringstream l( line );
 
 		for( core::Size jj = 0; jj < num_bins; ++jj ){
-			assert( l );
+		debug_assert( l );
 			l >> bin_value;
 			envdata_[ ii ].push_back( bin_value );
 		} 
@@ -390,7 +390,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 std::string const &
 EnvSmoothEnergy::representative_atom_name( chemical::AA const aa ) const
 {
-	// assert( aa >= 1 && aa <= chemical::num_canonical_aas );
+	//debug_assert( aa >= 1 && aa <= chemical::num_canonical_aas );
 
 	static std::string const cbeta_string(  "CB"  );
 	static std::string const sgamma_string( "SG"  );

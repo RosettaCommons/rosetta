@@ -116,7 +116,7 @@ public:
 	SparseMatrixIndex const &
 	get_sparse_mat_info_for_state( int state ) const
 	{
-		assert( state > 0 && state <= get_num_states() );
+	debug_assert( state > 0 && state <= get_num_states() );
 		return sparse_mat_info_for_state_[ state ];
 	}
 
@@ -342,7 +342,7 @@ public:
 	ScoreFunction const &
 	score_function() const
 	{
-		assert( score_function_ );
+	debug_assert( score_function_ );
 		return *score_function_;
 	}
 
@@ -466,7 +466,7 @@ inline
 OnTheFlyEdge *
 OnTheFlyNode::get_incident_otf_edge( int edge )
 {
-	assert( dynamic_cast< OnTheFlyEdge * >  (get_incident_edge( edge )) );
+debug_assert( dynamic_cast< OnTheFlyEdge * >  (get_incident_edge( edge )) );
 	return static_cast< OnTheFlyEdge * >  (get_incident_edge( edge ));
 }
 
@@ -474,7 +474,7 @@ inline
 OnTheFlyEdge const *
 OnTheFlyNode::get_incident_otf_edge( int edge ) const
 {
-	assert( dynamic_cast< OnTheFlyEdge const * >  (get_incident_edge( edge )) );
+debug_assert( dynamic_cast< OnTheFlyEdge const * >  (get_incident_edge( edge )) );
 	return static_cast< OnTheFlyEdge const * >  (get_incident_edge( edge ));
 }
 
@@ -482,7 +482,7 @@ inline
 OnTheFlyNode *
 OnTheFlyNode::get_adjacent_otf_node( int index )
 {
-	assert( dynamic_cast< OnTheFlyNode * > ( get_adjacent_node( index ) ));
+debug_assert( dynamic_cast< OnTheFlyNode * > ( get_adjacent_node( index ) ));
 	return static_cast< OnTheFlyNode * > ( get_adjacent_node( index ) );
 }
 
@@ -490,7 +490,7 @@ inline
 OnTheFlyNode const *
 OnTheFlyNode::get_adjacent_otf_node( int index ) const
 {
-	assert( dynamic_cast< OnTheFlyNode const * > ( get_adjacent_node( index ) ));
+debug_assert( dynamic_cast< OnTheFlyNode const * > ( get_adjacent_node( index ) ));
 	return static_cast< OnTheFlyNode const * > ( get_adjacent_node( index ) );
 }
 
@@ -499,7 +499,7 @@ inline
 OnTheFlyInteractionGraph *
 OnTheFlyNode::get_on_the_fly_owner()
 {
-	assert( dynamic_cast< OnTheFlyInteractionGraph * > ( get_owner() ) );
+debug_assert( dynamic_cast< OnTheFlyInteractionGraph * > ( get_owner() ) );
 	return static_cast< OnTheFlyInteractionGraph * > ( get_owner() );
 }
 
@@ -507,7 +507,7 @@ inline
 OnTheFlyInteractionGraph const *
 OnTheFlyNode::get_on_the_fly_owner() const
 {
-	assert( dynamic_cast< OnTheFlyInteractionGraph const * > ( get_owner() ) );
+debug_assert( dynamic_cast< OnTheFlyInteractionGraph const * > ( get_owner() ) );
 	return static_cast< OnTheFlyInteractionGraph const * > ( get_owner() );
 }
 

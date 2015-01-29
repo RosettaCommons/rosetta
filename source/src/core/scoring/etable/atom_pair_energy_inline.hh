@@ -158,7 +158,7 @@ inline_residue_atom_pair_energy(
 
 	//std::cout << "inline_residue_atom_pair_energy( res" << res1.seqpos() << ", res";
 	//std::cout << res2.seqpos() << ");" << std::endl;
-	//assert ( !( res1.is_DNA() && res2.is_DNA() ) ); // pb for testing, will remove
+//debug_assert ( !( res1.is_DNA() && res2.is_DNA() ) ); // pb for testing, will remove
 
 	DistanceSquared dsq;
 	Weight weight;

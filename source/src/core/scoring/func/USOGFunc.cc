@@ -103,8 +103,8 @@ void USOGFunc::read_data(std::istream& in) {
     core::Real s = readValueOrDie(in);
     core::Real w = readValueOrDie(in);
 
-    assert(s > 0);
-    assert(w > 0);
+   debug_assert(s > 0);
+   debug_assert(w > 0);
 
     means_.push_back(m);
     weights_.push_back(w);

@@ -496,7 +496,7 @@ ConstraintSetOP ConstraintIO::read_constraints(
 			/// never call this function if you have constructed an izstream
 			/// and you haven't deteremined that indeed the file format its representing
 			/// is the old style (as opposed to the new style) constraint format.
-			assert( dynamic_cast< zlib_stream::zip_istream * > ( &data ) == 0 );
+		debug_assert( dynamic_cast< zlib_stream::zip_istream * > ( &data ) == 0 );
 
 			data.seekg( original_pos );
 			return read_constraints_new( data, cset, pose );

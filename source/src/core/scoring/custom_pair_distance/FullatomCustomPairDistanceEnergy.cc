@@ -145,7 +145,7 @@ FullatomCustomPairDistanceEnergy::residue_pair_energy(
 
 	PairFuncMap::const_iterator respairiter = find( rsd1, rsd2 );
 	if ( respairiter == pair_and_func_map_.end() ) return;
-	assert( (*respairiter).second ); // there should be no null-pointing elements in the pair_and_func_map_
+debug_assert( (*respairiter).second ); // there should be no null-pointing elements in the pair_and_func_map_
 	Energy score = 0.0;
 	for (	std::list<atoms_and_func_struct>::const_iterator
 			atom_func_iter     = (*respairiter).second->ats_n_func_list().begin(),
@@ -199,8 +199,8 @@ FullatomCustomPairDistanceEnergy::residue_pair_energy_ext(
 	EnergyMap & emap
 ) const
 {
-	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
 
 	RespairInteractions const & respair_intxns( static_cast< RespairInteractions const & > (pair_data.get_data_ref( fa_custom_pair_dist_data ) ));
 	Energy score( 0.0 );
@@ -227,14 +227,14 @@ FullatomCustomPairDistanceEnergy::setup_for_minimizing_for_residue_pair(
 	ResPairMinimizationData & pair_data
 ) const
 {
-	assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	// update the existing respair_intxns object if one is already present in the pair_data object
 	RespairInteractionsOP respair_intxns = utility::pointer::static_pointer_cast< core::scoring::custom_pair_distance::RespairInteractions > ( pair_data.get_data( fa_custom_pair_dist_data ) );
 	if ( ! respair_intxns ) respair_intxns = RespairInteractionsOP( new RespairInteractions );
 
 	AtomPairFuncListCOP apfclist = find( rsd1, rsd2 )->second;
-	assert( apfclist );
+debug_assert( apfclist );
 	respair_intxns->apfc_list( apfclist );
 	pair_data.set_data( fa_custom_pair_dist_data, respair_intxns );
 }
@@ -253,9 +253,9 @@ FullatomCustomPairDistanceEnergy::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const
 {
-	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
 
 	RespairInteractions const & respair_intxns( static_cast< RespairInteractions const & > (pair_data.get_data_ref( fa_custom_pair_dist_data ) ));
 	for (	std::list< atoms_and_func_struct >::const_iterator
@@ -375,7 +375,7 @@ FullatomCustomPairDistanceEnergy::eval_atom_derivative(
 		Vector const f1( atom_a_xyz.cross( atom_b_xyz ));
 		Vector const f2( atom_a_xyz - atom_b_xyz );
 		Real const dist( f2.length() );
-		assert(dist != 0);
+	debug_assert(dist != 0);
 		Real deriv = (*iter_a).func_->dfunc(dist_sq);
 		F1 += ( deriv / dist ) * emap[ fa_cust_pair_dist ] * f1;
 		F2 += ( deriv / dist ) * emap[ fa_cust_pair_dist ] * f2;

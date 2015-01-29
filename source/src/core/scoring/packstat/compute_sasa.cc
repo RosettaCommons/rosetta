@@ -644,7 +644,7 @@ prune_cavity_balls(
 ) {
 	using namespace std;
 	//TRcs << "about to prune cavity balls" << std::endl;
-	assert( opts.prune_cavity_burial_probe_radii.size() >= 1 );
+debug_assert( opts.prune_cavity_burial_probe_radii.size() >= 1 );
 
 	PackstatReal largest_probe_radius = opts.prune_cavity_burial_probe_radii[1];
 	size_t delta_th = opts.prune_max_delta;
@@ -943,8 +943,8 @@ compute_packing_score(
 	core::Size oversample
 ) {
 
-	assert( pd.spheres.size() > 0 );
-	assert( pd.centers.size() > 0 );
+debug_assert( pd.spheres.size() > 0 );
+debug_assert( pd.centers.size() > 0 );
 
 	SasaOptions opts;
 	opts.prune_max_iters = 0;
@@ -999,8 +999,8 @@ compute_atom_packing_scores(
 	PosePackData & pd,
 	core::Size oversample
 ) {
-	assert( pd.spheres.size() > 0 );
-	assert( pd.centers.size() > 0 );
+debug_assert( pd.spheres.size() > 0 );
+debug_assert( pd.centers.size() > 0 );
 
 	SasaOptions opts;
 	opts.prune_max_iters = 0;
@@ -1066,8 +1066,8 @@ compute_residue_packing_score(
 	int const seqpos,
 	core::Size oversample
 ) {
-	assert( pd.spheres.size() > 0 );
-	assert( pd.centers.size() > 0 );
+debug_assert( pd.spheres.size() > 0 );
+debug_assert( pd.centers.size() > 0 );
 
 	SasaOptions opts;
 	opts.prune_max_iters = 0;
@@ -1110,7 +1110,7 @@ compute_atom_packing_scores(
 	core::pose::initialize_atomid_map( atom_scores, pose, 0.0 );
 	PosePackData pd( pose_to_pack_data(pose) );
 	vector1<Real> res_scores = compute_atom_packing_scores( pd, oversample );
-	assert( res_scores.size() == pose.total_residue() );
+debug_assert( res_scores.size() == pose.total_residue() );
 	for( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
 		// numeric::xyzVector<Real> center(0,0,0);
 		for( core::Size ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia ) {
@@ -1179,7 +1179,7 @@ cavity_distance_constraint(
 
 	vector1< CavityBallCluster > clusters =
 	compute_cav_ball_clusters( cavballs, opts );
-	assert(clusters.size() > 0);
+debug_assert(clusters.size() > 0);
 
 	vector1< std::map<id::AtomID,Real> > constraints_list;
 

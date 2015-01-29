@@ -157,7 +157,7 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & upper_res( r1_upper ? rsd1 : rsd2 );
 	conformation::Residue const & lower_res( r1_upper ? rsd2 : rsd1 );
 
-	assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
+debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
 	const core::Real d_multiplier = ((upper_res.aa()==chemical::aa_dpr) ? -1.0 : 1.0); //A multiplier for the derivative to invert it if this is a D-amino acid.
 
 	utility::vector1< DerivVectorPair > & upper_res_atom_derivs( r1_upper ? r1_atom_derivs : r2_atom_derivs );
@@ -319,12 +319,12 @@ ProClosureEnergy::eval_intrares_derivatives(
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
-	assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) );
+debug_assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) );
 
 	//const core::Real d_multiplier = ( (rsd.aa() == chemical::aa_dpr) ? -1.0 : 1.0 ); //Multiplier for derivatives
 
-	assert( rsd.has( scNV_ ) );
-	assert( rsd.has( bbN_ ) );
+debug_assert( rsd.has( scNV_ ) );
+debug_assert( rsd.has( bbN_ ) );
 	if ( rsd.is_virtual_residue() ) return;
 
 	Size NV_ind = rsd.atom_index( scNV_ );
@@ -356,7 +356,7 @@ ProClosureEnergy::eval_intrares_atom_derivative2(
 	Vector & F2
 ) const
 {
-	assert ( rsd.aa() == chemical::aa_pro );
+debug_assert ( rsd.aa() == chemical::aa_pro );
 
 	if ( rsd.atom_index( scNV_ ) ==  atom_index ) {
 
@@ -406,9 +406,9 @@ ProClosureEnergy::measure_chi4(
 	using namespace numeric;
 	using namespace numeric::constants::d;
 
-	assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
-	assert( lower_res.is_bonded( upper_res ) );
-	assert( lower_res.seqpos() == upper_res.seqpos() - 1 );
+debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
+debug_assert( lower_res.is_bonded( upper_res ) );
+debug_assert( lower_res.seqpos() == upper_res.seqpos() - 1 );
 
 	Real chi4 = dihedral_radians(
 		upper_res.xyz( scCD_ ),

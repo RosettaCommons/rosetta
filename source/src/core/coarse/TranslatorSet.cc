@@ -105,7 +105,7 @@ void
 
 
 conformation::ResidueOP TranslatorSet::coarsify(const conformation::Residue& fine_rsd) const {
-	assert( has(fine_rsd.name()) ); // silly check
+debug_assert( has(fine_rsd.name()) ); // silly check
 	return coarse_maps_[fine_rsd.name()]->coarsify(fine_rsd);
 }
 

@@ -15,7 +15,7 @@
 #include <core/scoring/hbonds/hbtrie/HBCPData.hh>
 
 // STL Headers
-// AUTO-REMOVED #include <cassert>
+// AUTO-REMOVED #include <utility/assert.hh>
 #include <iostream>
 
 namespace core {

@@ -30,7 +30,7 @@
 #include <list>
 #include <algorithm>
 #include <iostream>
-#include <cassert>
+#include <utility/assert.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -104,7 +104,7 @@ void FASTERNode::update_one_body_energy( int state, core::PackerEnergy energy )
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void FASTERNode::update_one_body_energies( FArray1< core::PackerEnergy > & energies )
 {
-	assert( energies.size() == (unsigned int) get_num_states() );
+debug_assert( energies.size() == (unsigned int) get_num_states() );
 	for (int ii = 1; ii <= get_num_states(); ++ii)
 	{
 		one_body_energies_[ ii ] = energies( ii );
@@ -127,7 +127,7 @@ void FASTERNode::add_to_one_body_energy( int state, core::PackerEnergy energy )
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void FASTERNode::add_to_one_body_energies( FArray1< core::PackerEnergy > & energies )
 {
-	assert( energies.size() == (unsigned int) get_num_states() );
+debug_assert( energies.size() == (unsigned int) get_num_states() );
 	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] += energies( ii );
 	}
@@ -216,7 +216,7 @@ void FASTERNode::assign_zero_state()
 /// @param new_state - [in] - the new state the node should be assigned
 void FASTERNode::assign_state(int new_state)
 {
-	assert( new_state >= 0 && new_state <= get_num_states());
+debug_assert( new_state >= 0 && new_state <= get_num_states());
 
 	if (new_state == 0) {
 		assign_zero_state();
@@ -260,7 +260,7 @@ core::PackerEnergy FASTERNode::get_one_body_energy_current_state() const
 /// leaving energy2b structure
 void FASTERNode::commit_considered_substitution()
 {
-	assert( alternate_state_is_being_considered_ );
+debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	relaxed_state_ = current_state_;
@@ -307,7 +307,7 @@ void FASTERNode::print_internal_energies() const
 /// produces
 void FASTERNode::update_internal_energy_sums()
 {
-	assert( get_edge_vector_up_to_date() );
+debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = core::PackerEnergy( 0.0 );
 	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
 		curr_state_total_energy_ += get_incident_faster_edge(ii)->get_current_two_body_energy();
@@ -806,8 +806,8 @@ void FASTEREdge::add_to_two_body_energies
 	FArray2< core::PackerEnergy > const & res_res_energy_array
 )
 {
-	assert( res_res_energy_array.size1() == two_body_energies_.size1() );
-	assert( res_res_energy_array.size2() == two_body_energies_.size2() );
+debug_assert( res_res_energy_array.size1() == two_body_energies_.size1() );
+debug_assert( res_res_energy_array.size2() == two_body_energies_.size2() );
 	for ( Size ii = 1, iie = two_body_energies_.size2(); ii <= iie; ++ii ) {
 		for ( Size jj = 1, jje = two_body_energies_.size1(); jj <= jje; ++jj ) {
 			two_body_energies_( jj, ii ) += edge_weight() * res_res_energy_array( jj, ii );
@@ -1548,7 +1548,7 @@ FASTERInteractionGraph::swap_edge_energies(
 NodeBase* FASTERInteractionGraph::create_new_node( int node_index, int num_states)
 {
 	FASTERNode* new_node = new FASTERNode(this, node_index, num_states);
-	assert( new_node != NULL );
+debug_assert( new_node != NULL );
 	return new_node;
 }
 

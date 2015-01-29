@@ -68,7 +68,7 @@ public:
 		return indent + "You Must Define string description() in Your FilterBase<T> Subclass!";
 	}
 	owning_ptr<FilterBase<T> > clone() {
-		assert( wrapped_ ); // foo!
+	debug_assert( wrapped_ ); // foo!
 		return wrapped_;
 	}
 protected:

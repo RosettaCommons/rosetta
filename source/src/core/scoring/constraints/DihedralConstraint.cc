@@ -116,9 +116,9 @@ DihedralConstraint::p1_cosine_deriv(
 	// does not affect the torsion angle
 	// ==> rotation of p1 about an axis perpendicular to this plane
 	// also does not change the torsion angle, ie deriv should be 0
-	assert( std::abs( dot( F2, v1 ) ) < 1e-3 );
-	assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
-	assert( std::abs( dot( F1, cross( v1, v2 ) ) ) < 1e-3 );
+debug_assert( std::abs( dot( F2, v1 ) ) < 1e-3 );
+debug_assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
+debug_assert( std::abs( dot( F1, cross( v1, v2 ) ) ) < 1e-3 );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ DihedralConstraint::p2_cosine_deriv(
 
 	// debugging
 	// translation of p2 along v2 does not change the torsion angle
-	assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
+debug_assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
 
 }
 
@@ -269,7 +269,7 @@ DihedralConstraint::fill_f1_f2(
 	Real const theta ( dihedral_radians( conformation.xyz( atom1_ ),conformation.xyz( atom2_ ),
 																			 conformation.xyz( atom3_ ),conformation.xyz( atom4_ ) ) );
 
-	assert( std::abs( std::abs( theta ) - thetaU ) < 1e-2 );
+debug_assert( std::abs( std::abs( theta ) - thetaU ) < 1e-2 );
 
 	Real const dE_dtheta( dfunc( theta ) );
 

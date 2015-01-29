@@ -71,7 +71,7 @@ NeighborList::NeighborList(
 	n_update_from_wide_( 0 ),
 	n_full_updates_( 0 )
 {
-	//assert( XX_cutoff_ >= XH_cutoff_ + 1e-3 &&
+//debug_assert( XX_cutoff_ >= XH_cutoff_ + 1e-3 &&
 	//	XH_cutoff_ >= HH_cutoff_ + 1e-3 ); //debug order of arguments
 }
 
@@ -127,7 +127,7 @@ NeighborList::update_from_wide_nblist( pose::Pose const & pose ) const
 	for ( Size ii = 1; ii <= natoms_moved_more_than_move_tolerance; ++ii ) {
 		id::AtomID const ii_atom( atoms_to_update_[ ii ] ); // weird bug if this is a reference...
 
-		assert( pose.residue( ii_atom.rsd() ).xyz( ii_atom.atomno()).distance_squared(
+	debug_assert( pose.residue( ii_atom.rsd() ).xyz( ii_atom.atomno()).distance_squared(
 			wide_reference_coords_[ ii_atom.rsd() ][ ii_atom.atomno() ] )
 			<= wide_move_tolerance_sqr_ );
 
@@ -209,7 +209,7 @@ NeighborList::declare_atoms_neighbors( id::AtomID at1, id::AtomID at2, Size path
 			upper_nblist_[ at2.rsd() ][ at2.atomno() ].push_back( AtomNeighbor( at1.rsd(), at1.atomno(), path_dist, weight, weight_func ));
 		}
 	} else {
-		assert( at1.atomno() != at2.atomno() ); // no atom-self interactions!
+	debug_assert( at1.atomno() != at2.atomno() ); // no atom-self interactions!
 		if ( at1.atomno() < at2.atomno() ) {
 			intrares_upper_nblist_[ at1.rsd() ][ at1.atomno() ].push_back( AtomNeighbor( at2.rsd(), at2.atomno(), path_dist, weight, weight_func ));
 		} else {
@@ -228,7 +228,7 @@ NeighborList::declare_atom_neighbor_1sided( id::AtomID at1, id::AtomID at2, Size
 			upper_nblist_[ at1.rsd() ][ at1.atomno() ].push_back( AtomNeighbor( at2.rsd(), at2.atomno(), path_dist, weight, weight_func ));
 		}
 	} else {
-		assert( at1.atomno() != at2.atomno() ); // no atom-self interactions!
+	debug_assert( at1.atomno() != at2.atomno() ); // no atom-self interactions!
 		if ( at1.atomno() < at2.atomno() ) {
 			intrares_upper_nblist_[ at1.rsd() ][ at1.atomno() ].push_back( AtomNeighbor( at2.rsd(), at2.atomno(), path_dist, weight, weight_func ));
 		}

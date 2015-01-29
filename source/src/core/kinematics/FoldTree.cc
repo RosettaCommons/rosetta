@@ -161,7 +161,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 			"FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): "
 			"input variable jump_end has a meaningless value");
 
-	assert( is_jump_point( jump_begin ) && is_jump_point( jump_end ) );
+debug_assert( is_jump_point( jump_begin ) && is_jump_point( jump_end ) );
 
 	if ( jump_begin > jump_end ) {
 		int tmp( jump_begin );
@@ -176,7 +176,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 	for ( Size i=1; i<= old_num_jump; ++i ) {
 		if ( jump_point(1,i) == jump_begin && jump_point(2,i) == jump_end ) jump_number = i;
 	}
-	assert( jump_number ); // will fail if there's no jump between jump_begin and jump_end
+debug_assert( jump_number ); // will fail if there's no jump between jump_begin and jump_end
 
 	// look for a cutpoint between
 	Size cut(0);
@@ -186,7 +186,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 			cut = i;
 		}
 	}
-	assert( cut );
+debug_assert( cut );
 
 	add_edge( cut, cut+1, Edge::PEPTIDE );
 	delete_unordered_edge( jump_begin, jump_end, jump_number );
@@ -200,7 +200,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 
 	delete_extra_vertices();
 	reorder( old_root );
-	assert( check_fold_tree() );
+debug_assert( check_fold_tree() );
 
 }
 
@@ -209,7 +209,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 void
 FoldTree::slide_cutpoint( Size const current_cut, Size const target_cut )
 {
-	assert( is_cutpoint( current_cut ) && !is_cutpoint( target_cut ) );
+debug_assert( is_cutpoint( current_cut ) && !is_cutpoint( target_cut ) );
 	PyAssert( (is_cutpoint( current_cut )) && (!is_cutpoint( target_cut )), "FoldTree::slide_cutpoint( Size const current_cut , Size const target_cut ): input variable current_cut or target_cut has a meaningless value");
 	Size const current_root( root() );
 
@@ -221,7 +221,7 @@ FoldTree::slide_cutpoint( Size const current_cut, Size const target_cut )
 	reorder( current_root );
 	delete_extra_vertices();
 	delete_self_edges();
-	assert( check_fold_tree() );
+debug_assert( check_fold_tree() );
 	TR.Trace << "slide_cutpoint: final tree= " << *this;
 }
 
@@ -289,7 +289,7 @@ FoldTree::delete_jump_seqpos( int const seqpos )
 	TR.Trace << "delete_jump_seqpos: " << seqpos << ' ' << *this << std::endl;
 
 	Size const old_nres( nres() );
-	assert( is_jump_point( seqpos ) || is_root( seqpos ) );
+debug_assert( is_jump_point( seqpos ) || is_root( seqpos ) );
 	PyAssert( ( is_jump_point( seqpos )) || ( is_root( seqpos ) ), "FoldTree::delete_jump_seqpos( int const seqpos): input variable seqpos has a meaningless value");
 
 	/// this could confuse us
@@ -310,14 +310,14 @@ FoldTree::delete_jump_seqpos( int const seqpos )
 	}
 
 	bool const is_root_rsd( is_root( seqpos ) );
-	assert( is_root_rsd == !incoming_edge.valid() );
+debug_assert( is_root_rsd == !incoming_edge.valid() );
 	bool const is_polymer_rsd( ( !is_root_rsd && incoming_edge.is_polymer() ) || !outgoing_polymer_edges.empty());
 
 	Size new_seqpos( 0 ), deleted_jump_number( 0 );
 	if ( is_polymer_rsd ) {
 		if ( !is_root_rsd && incoming_edge.is_polymer() ) {
 			// case I.1 (see comments at start)
-			assert( incoming_edge.stop() == seqpos );
+		debug_assert( incoming_edge.stop() == seqpos );
 			new_seqpos = seqpos - incoming_edge.polymer_direction();
 		} else {
 			// case I.2
@@ -335,7 +335,7 @@ FoldTree::delete_jump_seqpos( int const seqpos )
 			if ( incoming_edge.is_jump() ) deleted_jump_number = incoming_edge.label();
 		}
 	}
-	assert( new_seqpos );
+debug_assert( new_seqpos );
 
 	/// NO MODIFICATIONS TO THE TOPOLOGY OR ORDER OF THE TREE UP TO THIS POINT (except for delete_self_edges at start) ///
 	Size const old_num_jump( num_jump() );
@@ -372,7 +372,7 @@ FoldTree::delete_jump_seqpos( int const seqpos )
 		new_topology = true;
 	}
 
-	assert( check_fold_tree() );
+debug_assert( check_fold_tree() );
 
 	TR.Trace << "delete_jump_seqpos: after " << seqpos << ' ' << new_seqpos << *this << std::endl;
 }
@@ -432,7 +432,7 @@ void
 FoldTree::delete_seqpos_simple( int const seqpos )
 {
 	TR.Trace << "delete_seqpos_simple: before " << seqpos << ' ' << *this << std::endl;
-	assert( !is_jump_point( seqpos ) && !is_root( seqpos ) );
+debug_assert( !is_jump_point( seqpos ) && !is_root( seqpos ) );
 
 	Size const old_nres( nres() );
 
@@ -442,9 +442,9 @@ FoldTree::delete_seqpos_simple( int const seqpos )
 	/// first remap the edge (if it exists) that contains seqpos as a vertex
 	/// do this before renumbering everything
 	for ( iterator it = begin(), ite = end(); it != ite; ++it ) {
-		assert( it->start() != seqpos );
+	debug_assert( it->start() != seqpos );
 		if ( it->stop() == seqpos ) {
-			assert( it->is_polymer() );
+		debug_assert( it->is_polymer() );
 	 		it->stop() = it->stop() - it->polymer_direction();
 			new_topology = true;
 			break; // there should be only one incoming edge
@@ -453,7 +453,7 @@ FoldTree::delete_seqpos_simple( int const seqpos )
 
 	/// now adjust the sequence numbering of all edges to reflect deletion of seqpos
 	id::SequenceMapping old2new( id::SequenceMapping::identity( old_nres ) );
-	old2new.delete_target_residue( seqpos ); assert( !old2new[ seqpos ] );
+	old2new.delete_target_residue( seqpos );debug_assert( !old2new[ seqpos ] );
 
 	apply_sequence_mapping( old2new );
 
@@ -461,7 +461,7 @@ FoldTree::delete_seqpos_simple( int const seqpos )
 	delete_self_edges();
 
 	/// sanity
-	assert( check_fold_tree() );
+debug_assert( check_fold_tree() );
 
 	TR.Trace << "delete_seqpos_simple: after " << seqpos << ' ' << *this << std::endl;
 }
@@ -527,12 +527,12 @@ FoldTree::insert_polymer_residue(
 		if ( special_case ) {
 			if ( join_lower && it->is_polymer() && it->stop() == seqpos - 1 && !seqpos_minus_1_is_vertex ) {
 				it->stop() = seqpos; // extend this segment to include seqpos
-				assert( !add_edge_lower );
+			debug_assert( !add_edge_lower );
 				continue;
 			}
 			if ( join_upper && it->is_polymer() && it->stop() == seqpos     && !seqpos_is_vertex ) {
 				// dont remap seqpos to seqpos+1 as we would otherwise do, thereby extending this peptide edge to include seqpos
-				assert( !add_edge_upper );
+			debug_assert( !add_edge_upper );
 				continue;
 			}
 		}
@@ -548,7 +548,7 @@ FoldTree::insert_polymer_residue(
 		add_edge( seqpos+1, seqpos, Edge::PEPTIDE );
 	}
 
-	assert( join_lower == !is_cutpoint( seqpos-1 ) && join_upper == !is_cutpoint( seqpos ) );
+debug_assert( join_lower == !is_cutpoint( seqpos-1 ) && join_upper == !is_cutpoint( seqpos ) );
 }
 
 
@@ -573,7 +573,7 @@ FoldTree::insert_residue_by_chemical_bond(
                                 std::string const& root_atom
                                  )
 {
-    assert( is_cutpoint( seqpos - 1 ) );
+   debug_assert( is_cutpoint( seqpos - 1 ) );
 	int const old_size( nres() );
 	//int const new_jump_number( num_jump() + 1 );
 
@@ -590,7 +590,7 @@ FoldTree::insert_residue_by_chemical_bond(
 	}
 
 	add_edge( Edge( anchor_pos, seqpos, anchor_atom, root_atom ) ); // different from add_edge call in insert_residue_by_jump, here Edge constructor assumes it's a chemical edge
-	assert( check_fold_tree() );
+debug_assert( check_fold_tree() );
 	new_topology = true;
 }
 
@@ -609,7 +609,7 @@ FoldTree::insert_residue_by_jump(
 	std::string const& root_atom // = 0
 )
 {
-	assert( is_cutpoint( seqpos - 1 ) );
+debug_assert( is_cutpoint( seqpos - 1 ) );
 	int const old_size( nres() );
 	int const new_jump_number( num_jump() + 1 );
 
@@ -626,10 +626,10 @@ FoldTree::insert_residue_by_jump(
 	}
 
 	add_edge( anchor_pos, seqpos, new_jump_number );
-	assert( check_fold_tree() );
+debug_assert( check_fold_tree() );
 	new_topology = true;
 	if ( anchor_atom.size() ) {
-		assert( root_atom.size() );
+	debug_assert( root_atom.size() );
 		set_jump_atoms( new_jump_number, anchor_atom, root_atom );
 	}
 }
@@ -691,7 +691,7 @@ FoldTree::insert_fold_tree_by_jump(
 		int o2n( i < insert_jumppos ? i : i+insert_njump );
 		if ( o2n >= anchor_jump_number ) ++o2n;
 		if ( o2n >= insert_jumppos && o2n < insert_jumppos+insert_njump ) o2n = insert_jumppos + insert_njump;
-		assert( !labeled[ o2n ] );
+	debug_assert( !labeled[ o2n ] );
 		labeled[ o2n ] = true;
 		old2new_jump[ i ] = o2n;
 	}
@@ -726,12 +726,12 @@ FoldTree::insert_fold_tree_by_jump(
 	new_topology = true;
 
 	if ( anchor_atom.size() ) {
-		assert( root_atom.size() );
+	debug_assert( root_atom.size() );
 		set_jump_atoms( anchor_jump_number, anchor_atom, root_atom );
 	}
 
 	TR.Trace << "insert_fold_tree_by_jump: new fold_tree: " << *this;
-	assert( check_fold_tree() );
+debug_assert( check_fold_tree() );
 }
 
 
@@ -783,7 +783,7 @@ FoldTree::append_residue_by_chemical_bond(
 
 	new_topology = true;
 
-	assert( is_cutpoint( old_nres ) );
+debug_assert( is_cutpoint( old_nres ) );
 }
 
 
@@ -936,10 +936,10 @@ FoldTree::delete_segment(
 		int pos1( mapping( it->start() ) );
 		int pos2( mapping( it->stop()  ) );
 		int const dir( it->start() < it->stop() ? n2c :c2n );
-		if ( pos1 == -1 || pos2 == -1 ) assert( it->is_polymer() );
+		if ( pos1 == -1 || pos2 == -1 )debug_assert( it->is_polymer() );
 
 		if ( pos1 == -1 ) {
-			assert( (dir == n2c && it->start() == seg_begin && it->stop() > seg_end) ||
+		debug_assert( (dir == n2c && it->start() == seg_begin && it->stop() > seg_end) ||
 				(dir == c2n && it->start() == seg_end   && it->stop() < seg_begin) );
 			if ( dir == n2c ) {
 				pos1 = seg_begin; // n2c
@@ -947,7 +947,7 @@ FoldTree::delete_segment(
 				pos1 = seg_begin - 1; // c2n
 			}
 		} else if ( pos2 == -1 ) {
-			assert( (dir == c2n && it->stop() == seg_begin && it->start() > seg_end) ||
+		debug_assert( (dir == c2n && it->stop() == seg_begin && it->start() > seg_end) ||
 				(dir == n2c && it->stop() == seg_end   && it->start() < seg_begin) );
 			if ( dir == c2n ) {
 				pos2 = seg_begin; // c2n
@@ -1100,7 +1100,7 @@ int
 FoldTree::downstream_jump_residue( int const jump_number ) const
 {
 	check_order();
-	assert( jump_number >= 1 && jump_number <= num_jump_ );
+debug_assert( jump_number >= 1 && jump_number <= num_jump_ );
 	for ( const_iterator it = edge_list_.begin(),
 					it_end = edge_list_.end(); it != it_end; ++it ) {
 		if ( it->label() == jump_number ) return it->stop();
@@ -1117,7 +1117,7 @@ int
 FoldTree::upstream_jump_residue( int const jump_number ) const
 {
 	check_order();
-	assert( jump_number >= 1 && jump_number <= num_jump_ );
+debug_assert( jump_number >= 1 && jump_number <= num_jump_ );
 	for ( const_iterator it = edge_list_.begin(),
 					it_end = edge_list_.end(); it != it_end; ++it ) {
 		if ( it->label() == jump_number ) return it->start();
@@ -1265,7 +1265,7 @@ FoldTree::new_jump(
 	int const new_cutpoint
 )
 {
-	assert( !is_cutpoint( new_cutpoint ) );
+debug_assert( !is_cutpoint( new_cutpoint ) );
 	// otherwise causes an error with delete_unordered_edge
 	PyAssert( !is_cutpoint( new_cutpoint ), "FoldTree::new_jump( int const new_cutpoint ): new_cutpoint is already a cutpoint!" );
 	// Commenting out because it get in the way when building symmetry Pose
@@ -1287,7 +1287,7 @@ FoldTree::new_jump(
 	reorder( root );
 	new_topology = true;
 
-	assert( is_cutpoint( new_cutpoint ) && is_jump_point( jump_pos1 ) && is_jump_point( jump_pos2 ) );
+debug_assert( is_cutpoint( new_cutpoint ) && is_jump_point( jump_pos1 ) && is_jump_point( jump_pos2 ) );
 //	PyAssert( is_cutpoint( new_cutpoint ) && is_jump_point( jump_pos1 ) && is_jump_point( jump_pos2 ), "FoldTree::new_jump( int const jump_pos1, int const jump_pos2, int const new_cutpoint ): FAIL!" );
 
 	return new_jump_number;
@@ -1304,7 +1304,7 @@ FoldTree::new_chemical_bond(
 	int const new_cutpoint
 )
 {
-	assert( !is_cutpoint( new_cutpoint ) );
+debug_assert( !is_cutpoint( new_cutpoint ) );
 
 	int const root( edge_list_.begin()->start() );
 
@@ -1314,14 +1314,14 @@ FoldTree::new_chemical_bond(
 	add_vertex( new_cutpoint+1 );
 
 	Edge new_edge( anchor_pos, root_pos, anchor_atom, root_atom ); // not obvious that this is a chemical bond c-tor
-	assert( new_edge.is_chemical_bond() );
+debug_assert( new_edge.is_chemical_bond() );
  	add_edge( new_edge );
 	delete_unordered_edge( new_cutpoint, new_cutpoint+1, Edge::PEPTIDE );
 
 	reorder( root );
 	new_topology = true;
 
-	assert( is_cutpoint( new_cutpoint ) && is_jump_point( anchor_pos ) && is_jump_point( root_pos ) );
+debug_assert( is_cutpoint( new_cutpoint ) && is_jump_point( anchor_pos ) && is_jump_point( root_pos ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1368,7 +1368,7 @@ FoldTree::tree_from_jumps_and_cuts(
 	for ( int i = 1; i <= num_jump_in; ++i ) {
 		for ( int j = 1; j <= 2; ++j ) {
 			int const pos ( jump_point_in(j,i) );
-			//			assert( pos >= 1 && pos <= nres_in );
+			//		debug_assert( pos >= 1 && pos <= nres_in );
 			//			if ( jump_point_in( j, i ) == 1 || jump_point_in( j, i ) == nres_in ) {
 				//				if ( verbose ) TR.Warning << "attempt to create jump with residue 1 or NRES: not supported.. returning invalid tree" << std::endl;
 				//				return false;
@@ -1377,7 +1377,7 @@ FoldTree::tree_from_jumps_and_cuts(
 		}
 		runtime_assert( jump_point_in(1,i) < jump_point_in(2,i) );
 		int const cut( cuts(i) );
-		assert( cut >= 1 && cut < nres_in );
+	debug_assert( cut >= 1 && cut < nres_in );
 		is_cut( cut ) = true;
 		vertex_list.push_back( cut );
 		vertex_list.push_back( cut+1 );
@@ -1401,11 +1401,11 @@ FoldTree::tree_from_jumps_and_cuts(
 
 		int const start ( *it );
 		int const stop ( *it_next );
-		assert( start >= 1 && start < stop && stop <= nres_in );
+	debug_assert( start >= 1 && start < stop && stop <= nres_in );
 		if ( !is_cut(start) ) {
 			add_edge( start, stop, Edge::PEPTIDE );
 		} else {
-			assert( stop == start + 1 );
+		debug_assert( stop == start + 1 );
 		}
 	}
 
@@ -1415,7 +1415,7 @@ FoldTree::tree_from_jumps_and_cuts(
 	if ( jump_start < nres_in ) add_edge( jump_start, nres_in, Edge::PEPTIDE );
 
 
-// 	assert( edge_list_[0].start() == 1 &&
+// debug_assert( edge_list_[0].start() == 1 &&
 // 					edge_list_[ edge_list_.size() -1 ].stop() == nres_in );
 
 	// now add the edges corresponding to jumps
@@ -1526,7 +1526,7 @@ FoldTree::random_tree_from_jump_points(
 		int const start ( *it );
 		int const stop ( *it_next );
 		int const label ( -2 );//(start == 1 || stop == nres_in) ? Edge::PEPTIDE : -2 );
-		assert( start >= 1 && start < stop && stop <= nres_in );
+	debug_assert( start >= 1 && start < stop && stop <= nres_in );
 		add_edge( start, stop, label );
 	}
 
@@ -1535,7 +1535,7 @@ FoldTree::random_tree_from_jump_points(
 	int const jump_start( *(--last_jump_it) );
 	if (jump_start < nres_in) add_edge(  jump_start, nres_in, Edge::PEPTIDE );
 
-	assert( edge_list_[0].start() == 1 &&
+debug_assert( edge_list_[0].start() == 1 &&
 					edge_list_[ edge_list_.size()-1 ].stop() == nres_in );
 
 	// now add the edges corresponding to jumps
@@ -1583,7 +1583,7 @@ FoldTree::random_tree_from_jump_points(
 	reorder(root_in);
 
 	/// wrong behaviour:
-	//	assert( check_fold_tree() ); // tree should be valid now
+	//debug_assert( check_fold_tree() ); // tree should be valid now
 	//	return true;
 	//This assertion is out of place:
 	// the interface details that function returns false if it fails...
@@ -1603,7 +1603,7 @@ bool FoldTree::cut_edge( int const cut_point ) {
 				// you cant cut at this cutpoint
 				break;
 			} else {
-				assert( it->label() == -2 );
+			debug_assert( it->label() == -2 );
 				TR.Debug << "cutting at " << cut_point << std::endl;
 
 				int const start( std::min( it->start(), it->stop()) );
@@ -1655,7 +1655,7 @@ FoldTree::cutpoints() const
 void
 FoldTree::update_edge_labels()
 {
-	assert( Edge::PEPTIDE != -2 );
+debug_assert( Edge::PEPTIDE != -2 );
 	for ( iterator it = edge_list_.begin(), it_end = edge_list_.end();
 				it != it_end; ++it ) {
 		if ( it->label() == -2 ) { // labelled as not separating
@@ -1810,11 +1810,11 @@ FoldTree::partition_by_jump(
 		if ( edge.is_jump() && edge.label() == jump_number ) continue; // the split jump itself
 
 		if ( partner1( edge.start() ) ) {
-			assert( partner1( edge.stop() ) );
+		debug_assert( partner1( edge.stop() ) );
 
 			edge.start() = seqpos1[ edge.start() ];
 			edge.stop () = seqpos1[ edge.stop () ];
-			assert( edge.start() && edge.stop() );
+		debug_assert( edge.start() && edge.stop() );
 			if ( edge.is_jump() ) {
 				++jump1;
 				edge.label() = jump1;
@@ -1822,11 +1822,11 @@ FoldTree::partition_by_jump(
 			f1.add_edge( edge );
 
 		} else {
-			assert( !partner1( edge.stop() ) );
+		debug_assert( !partner1( edge.stop() ) );
 
 			edge.start() = seqpos2[ edge.start() ];
 			edge.stop () = seqpos2[ edge.stop () ];
-			assert( edge.start() && edge.stop() );
+		debug_assert( edge.start() && edge.stop() );
 			if ( edge.is_jump() ) {
 				++jump2;
 				edge.label() = jump2;
@@ -1852,8 +1852,8 @@ FoldTree::partition_by_jump(
 {
 	check_topology(); // update derived data if necessary
 
-	assert( jump_number <= num_jump_ );
-	assert( int(partner1.size1()) >= nres_ );
+debug_assert( jump_number <= num_jump_ );
+debug_assert( int(partner1.size1()) >= nres_ );
 
 	// find n-terminal jump vertex
 	int const pos1( jump_point_[jump_number ].first );
@@ -1964,8 +1964,8 @@ FoldTree::partition_by_residue(
 {
 	check_topology(); // update derived data if necessary
 
-	assert( seqpos <= nres_ );
-	assert( int(partner1.size1()) >= nres_ );
+debug_assert( seqpos <= nres_ );
+debug_assert( int(partner1.size1()) >= nres_ );
 
 	partner1 = false;
 
@@ -2171,7 +2171,7 @@ FoldTree::setup_edge_counts() const
 		}
 	}
 
-	for ( int i=1; i<= num_jump_; ++i ) assert( jump_edge_count[ i ] >= 1 );
+	for ( int i=1; i<= num_jump_; ++i )debug_assert( jump_edge_count[ i ] >= 1 );
 
 } // FoldTree::setup_edge_counts(...)
 
@@ -2271,7 +2271,7 @@ FoldTree::update_cutpoints() const
 			}
 		}
 	}
-	assert( is_cutpoint_( 0 ) && is_cutpoint_( nres_ ) );
+debug_assert( is_cutpoint_( 0 ) && is_cutpoint_( nres_ ) );
 
 	// count the cutpoints. note that 0,total_residue dont count as cutpoints
 	// for num_cutpoint_
@@ -2292,7 +2292,7 @@ FoldTree::update_cutpoints() const
 			cutpoint_[ ++cut ] = i;
 			cutpoint_map_[ i ] = cut;
 		}
-		assert( i<nres_-1 || cut == num_cutpoint_ );
+	debug_assert( i<nres_-1 || cut == num_cutpoint_ );
 	}
 
 }
@@ -2365,7 +2365,7 @@ FoldTree::update_jump_points() const
 				it != it_end; ++it ) {
 		if ( it->is_jump() ) {
 			int const jump_number ( it->label() );
-			assert( jump_number <= num_jump_ );
+		debug_assert( jump_number <= num_jump_ );
 
 			is_jump_point_[ it->start() ] = true;
 			is_jump_point_[ it->stop () ] = true;
@@ -2401,8 +2401,8 @@ FoldTree::update_jump_edge() const
 				it != it_end; ++it, ++jump_index ) {
 		if ( it->is_jump() ) {
 			int const jump_number ( it->label() );
-			assert( jump_number <= num_jump_ );
-			assert( edge_list_[ jump_index ] == *it );
+		debug_assert( jump_number <= num_jump_ );
+		debug_assert( edge_list_[ jump_index ] == *it );
 
 			jump_edge_[ jump_number ] = jump_index;
 		}
@@ -2563,7 +2563,7 @@ FoldTree::set_jump_atoms(
 	edge.downstream_atom() = downstream_atom;
 	edge.keep_stub_in_residue() = bKeepStubInResidue;
 	// either set both or none
-	assert( ( upstream_atom.size() && downstream_atom.size() )
+debug_assert( ( upstream_atom.size() && downstream_atom.size() )
 		|| ( !upstream_atom.size() && !downstream_atom.size() ) );
 }
 
@@ -2597,7 +2597,7 @@ FoldTree::set_jump_atoms(
 
 	edge.keep_stub_in_residue() = bKeepStubInResidue;
 	// either set both or none
-	assert( ( atom1.size() && atom2.size() )
+debug_assert( ( atom1.size() && atom2.size() )
 		|| ( !atom1.size() && !atom2.size() ) );
 }
 
@@ -2661,9 +2661,9 @@ FoldTree::count_fixed_residues(
 	// move we could possibly make. ie, its the number of fixed residues for the
 	// move with the smallest number of fixed residues
 	min_edge_count_out = min_edge_count;
-	assert( size > 0 );
+debug_assert( size > 0 );
 	Size const end_res ( begin_res + size - 1);
-	assert( begin_res >= 1 && end_res <= static_cast<Size> ( nres_ ) );
+debug_assert( begin_res >= 1 && end_res <= static_cast<Size> ( nres_ ) );
 
 	int best = 0;
 	if ( ! is_cutpoint_( begin_res-1 ) ) {
@@ -2697,7 +2697,7 @@ FoldTree::count_fixed_residues(
 }
 
 void FoldTree::reassign_atoms_for_intra_residue_stubs() {
-	assert( check_fold_tree() ); // necessary?
+debug_assert( check_fold_tree() ); // necessary?
 
 	for ( Size jump_nr = 1; jump_nr <= num_jump(); ++jump_nr ) {
 		if ( !jump_edge( jump_nr ).keep_stub_in_residue() ) continue; // do nothing
@@ -2746,7 +2746,7 @@ void FoldTree::reassign_atoms_for_intra_residue_stubs() {
 
 void FoldTree::put_jump_stubs_intra_residue() {
 	//  TR.Trace << (*this) << std::endl;
-	assert( check_fold_tree() ); // necessary?
+debug_assert( check_fold_tree() ); // necessary?
 	for ( Size jump_nr = 1; jump_nr <= num_jump(); ++jump_nr ) {
 		if ( ! jump_edge( jump_nr ).has_atom_info() ) {
 			jump_edge( jump_nr ).keep_stub_in_residue() = true;

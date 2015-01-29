@@ -108,7 +108,7 @@ ED get_bond(ResidueType const & res, VD const & source, VD const & target){
 	bool bond_there(false);
 	ED edge;
 	boost::tie(edge,bond_there) = boost::edge(source, target, res.graph() );
-	assert(bond_there);
+debug_assert(bond_there);
 	return edge;
 }
 
@@ -187,12 +187,12 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 		VD d, c(source), b(target), a;
 		if( targ_heavy >= 2 ) {
 			// Should be regular all-heavy atom chi
-			assert( first_targ_heavy != boost::graph_traits<ResidueGraph>::null_vertex() );
+		debug_assert( first_targ_heavy != boost::graph_traits<ResidueGraph>::null_vertex() );
 			a = first_targ_heavy;
 		} else {
 			// Proton chi
-			assert( targ_hydro == 1 && target_element != element::C );
-			assert( last_targ_hydro != boost::graph_traits<ResidueGraph>::null_vertex() );
+		debug_assert( targ_hydro == 1 && target_element != element::C );
+		debug_assert( last_targ_hydro != boost::graph_traits<ResidueGraph>::null_vertex() );
 			a = last_targ_hydro;
 		}
 		if( restype.icoor(source).stub_atom1().vertex() != source ) {
@@ -227,7 +227,7 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 /// @details The use case is to see if the proton chi should flat or staggered with rotamers
 bool is_sp2_proton_chi( core::Size chi, ResidueType const & restype ) {
 	VDs atoms( restype.chi_atom_vds(chi) );
-	assert( atoms.size() == 4 );
+debug_assert( atoms.size() == 4 );
 	// Note this is used in setting up proton chis, so we can't assume is_proton_chi() and associated are valid yet.
 	VD gp( atoms[2] );
 	OutEdgeIter iter, iter_end;

@@ -52,7 +52,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-#include <cassert>
+#include <utility/assert.hh>
 #include <map>
 
 

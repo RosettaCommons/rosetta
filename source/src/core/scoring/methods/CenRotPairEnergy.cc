@@ -178,7 +178,7 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 	r2_atom_derivs[rsd2.nbr_atom()+1].f2() += f2 * dE_dtheta1;
 	Real dis;
 	distance_f1_f2_deriv(atom_x, atom_y, dis, f1, f2);
-	assert( dis==cendist );
+debug_assert( dis==cendist );
 	dE_dr *= weight;
 	r1_atom_derivs[rsd1.nbr_atom()+1].f1() += f1 * dE_dr;
 	r1_atom_derivs[rsd1.nbr_atom()+1].f2() += f2 * dE_dr;
@@ -200,7 +200,7 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 	r2_atom_derivs[rsd2.nbr_atom()+1].f2() += f2 * dE_dtheta2;
 
 	distance_f1_f2_deriv(atom_x, atom_y, dis, f1, f2);
-	assert( dis==cendist );
+debug_assert( dis==cendist );
 	dE_dr *= weight;
 	r1_atom_derivs[rsd1.nbr_atom()+1].f1() += f1 * dE_dr;
 	r1_atom_derivs[rsd1.nbr_atom()+1].f2() += f2 * dE_dr;

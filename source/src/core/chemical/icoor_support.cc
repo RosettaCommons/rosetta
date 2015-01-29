@@ -72,7 +72,7 @@ public:
 		// we currently can't handle the disconnected portion of it,
 		// so raise an error if that happens.
 		// (This means the root needs to be pre-loaded into the treeatom_map
-		assert( restype_.has( u ) );
+	debug_assert( restype_.has( u ) );
 		if( u != root_ ) {
 			TR.Error << "ERROR: For ResidueType " << restype_.name() << ", atoms "
 					<< restype_.atom_name( root_ ) << " and " << restype_.atom_name( u )
@@ -84,8 +84,8 @@ public:
 	void tree_edge(Edge u, const Graph& g) {
 		core::chemical::VD parent( boost::source(u,g) );
 		core::chemical::VD child( boost::target(u,g) );
-		assert( treeatom_map_.count( parent ) );
-		assert( treeatom_map_.count( child ) );
+	debug_assert( treeatom_map_.count( parent ) );
+	debug_assert( treeatom_map_.count( child ) );
 		treeatom_map_[ parent ]->append_atom( treeatom_map_[ child ] );
 	}
 };
@@ -123,7 +123,7 @@ public:
 		} else if ( bond1.bond_name() != core::chemical::UnknownBond && bond2.bond_name() == core::chemical::UnknownBond) {
 			return true;
 		}
-		assert( boost::source(edge1,graph_) == boost::source(edge2,graph_) );
+	debug_assert( boost::source(edge1,graph_) == boost::source(edge2,graph_) );
 		//core::chemical::VD source( boost::source(edge1,graph_) );
 		core::chemical::VD target1( boost::target(edge1,graph_) );
 		core::chemical::VD target2( boost::target(edge2,graph_) );
@@ -224,7 +224,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 	core::chemical::VIter iter, iter_end;
 	for( boost::tie(iter, iter_end) = boost::vertices(graph); iter != iter_end; ++iter ) {
 		core::chemical::VD const & atomVD( *iter );
-		assert( treeatom_map.count( atomVD ) );
+	debug_assert( treeatom_map.count( atomVD ) );
 
 		core::kinematics::tree::AtomCOP atom = treeatom_map[ atomVD ];
 
@@ -233,7 +233,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 		parent = atom->parent();
 		if( parent ) {
 			// Regular, non-root atom
-			assert( utility::pointer::dynamic_pointer_cast< core::kinematics::tree::BondedAtom const >( atom ) );
+		debug_assert( utility::pointer::dynamic_pointer_cast< core::kinematics::tree::BondedAtom const >( atom ) );
 
 			// parent = atom->input_stub_atom1();
 			angle = atom->input_stub_atom2();
@@ -266,7 +266,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 		}
 
 		core::chemical::VD parentVD( revmap[parent] ), angleVD( revmap[angle] ), torsionVD( revmap[torsion] );
-		assert( restype.has( parentVD ) && restype.has( angleVD ) && restype.has( torsionVD ) );
+	debug_assert( restype.has( parentVD ) && restype.has( angleVD ) && restype.has( torsionVD ) );
 
 		// Note: set_icoor will automatically setup the atom base for us.
 		restype.set_icoor( atomVD, phi, theta, d, parentVD, angleVD, torsionVD );
@@ -276,7 +276,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 /// @brief Utility function for fill_ideal_xyz_from_icoor() -- does this ICoorAtomID have all the dependancies filled?
 bool has_assigned_coords(ICoorAtomID const & stub, std::set< VD > const & assigned, core::chemical::ResidueType const & restype) {
 	if( stub.type() == ICoorAtomID::INTERNAL ) {
-		assert( restype.has( stub.vertex() ) );
+	debug_assert( restype.has( stub.vertex() ) );
 		return assigned.count( stub.vertex() );
 	} else {
 		// For connections, they have assigned coords if all their dependancies have assigned coords.
@@ -352,7 +352,7 @@ fill_ideal_xyz_from_icoor(
 
 		ICoorAtomID parent_stub( icoor.stub_atom(1) ), angle_stub( icoor.stub_atom(2) ), torsion_stub( icoor.stub_atom(3) );
 		core::Real phi( icoor.phi() ), theta( icoor.theta() ), d( icoor.d() );
-		//assert( restype.has(parent_atom) && restype.has(angle_atom) );
+	//debug_assert( restype.has(parent_atom) && restype.has(angle_atom) );
 		if ( child_atom == parent_stub.vertex() ) { // root atom
 			restype.set_ideal_xyz( child_atom, Vector(0,0,0) );
 			assigned.insert( child_atom );

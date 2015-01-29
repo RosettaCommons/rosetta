@@ -122,7 +122,7 @@ Residue::Residue(
 				rsd_type_.atom(i).mm_atom_type_index() ));
 	}
 
-	assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
+debug_assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
 
 	// Now orient the residue.
 	place( current_rsd, conformation, preserve_c_beta );
@@ -284,7 +284,7 @@ Residue::set_xyz( std::string const & atm_name, Vector const & xyz_in )
 core::chemical::carbohydrates::CarbohydrateInfoCOP
 Residue::carbohydrate_info() const
 {
-	assert(rsd_type_.is_carbohydrate());
+debug_assert(rsd_type_.is_carbohydrate());
 	PyAssert(rsd_type_.is_carbohydrate(), "Residue::carbohydrate_info(): This residue is not a carbohydrate!");
 
 	return rsd_type_.carbohydrate_info();
@@ -482,7 +482,7 @@ Residue::orient_onto_residue( Residue const & src )
 	select_orient_atoms( center, nbr1, nbr2 );
 	//	std::cout << " CENTER " << atom_name( center ) << "   NBR1 " << atom_name( nbr1 ) << "    NBR2 " << atom_name( nbr2 ) << std::endl;
 
-	assert( center && nbr1 && nbr2 );
+debug_assert( center && nbr1 && nbr2 );
 	// this will fail if src doesnt have these atoms -- think more about this!
 	//
 	orient_onto_residue(
@@ -774,7 +774,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		// only try this when both the src and the new residue types contain both atom types
 		if ( type().has( root ) && type().has( mobile_new ) &&
 				 src.type().has( root ) && src.type().has( mobile_src ) ) {
-			assert( xyz( root ) == src.xyz( root ) ); // roots should be aligned by now
+		debug_assert( xyz( root ) == src.xyz( root ) ); // roots should be aligned by now
 			// common 'pseudoatom' vector, perpendicular to the plane defined by the two bonds
 			Vector const pseudoatom(
 				cross( xyz( mobile_new ) - xyz( root ), src.xyz( mobile_src ) - src.xyz( root ) ) + xyz( root )
@@ -1140,7 +1140,7 @@ Residue::set_d( int const chino, Real const setting ) {
 	// get the current d
 	Real const current_d( ( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).length() );
 
-	assert( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom] );
+debug_assert( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom] );
 	numeric::xyzMatrix< Real > const R(numeric::xyzMatrix<Real>::identity());
 
 	Vector const axis (( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).normalized());
@@ -1150,7 +1150,7 @@ Residue::set_d( int const chino, Real const setting ) {
 	apply_transform_downstream( chi_atoms[baseatom+1], R, v );
 
 	ASSERT_ONLY(Real const new_d( ( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).length() );)
-	assert( std::abs( new_d - setting ) < 1e-2 );
+debug_assert( std::abs( new_d - setting ) < 1e-2 );
 
 	update_actcoord();//ek added 4/28/10
 }
@@ -1173,7 +1173,7 @@ Residue::set_theta( int const chino, Real const setting ) {
 	Vector const axis	(v12.cross(v23).normalized());
 
 	// debug ordering of chi atoms
-	assert( ( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom-1]  ) &&
+debug_assert( ( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom-1]  ) &&
 		( rsd_type_.atom_base( chi_atoms[baseatom+1] ) == chi_atoms[baseatom]  ) );
 
 	numeric::xyzMatrix< Real > const R
@@ -1187,7 +1187,7 @@ Residue::set_theta( int const chino, Real const setting ) {
 
 	ASSERT_ONLY(Real const new_th(numeric::angle_degrees(
 	              atom( chi_atoms[baseatom-1] ).xyz(), atom( chi_atoms[baseatom] ).xyz(), atom( chi_atoms[baseatom+1] ).xyz() )); )
-	assert( std::abs( basic::subtract_degree_angles( new_th, setting ) ) < 1e-2 );
+debug_assert( std::abs( basic::subtract_degree_angles( new_th, setting ) ) < 1e-2 );
 
 	update_actcoord();
 }
@@ -1214,7 +1214,7 @@ Residue::set_chi( int const chino, Real const setting )
 	Vector const axis
 		(( atom(chi_atoms[3]).xyz() - atom(chi_atoms[2]).xyz() ).normalized());
 	// debug ordering of chi atoms
-	assert( ( rsd_type_.atom_base( chi_atoms[3] ) == chi_atoms[2]  ) &&
+debug_assert( ( rsd_type_.atom_base( chi_atoms[3] ) == chi_atoms[2]  ) &&
 		( rsd_type_.atom_base( chi_atoms[4] ) == chi_atoms[3]  ) );
 
 	numeric::xyzMatrix< Real > const R
@@ -1232,7 +1232,7 @@ Residue::set_chi( int const chino, Real const setting )
 				atom( chi_atoms[2] ).xyz(),
 				atom( chi_atoms[3] ).xyz(),
 				atom( chi_atoms[4] ).xyz() ) );)
-	assert( std::abs( basic::subtract_degree_angles( new_chi, setting ) ) <
+debug_assert( std::abs( basic::subtract_degree_angles( new_chi, setting ) ) <
 			1e-2 );
 
 	update_actcoord();//ek added 4/28/10

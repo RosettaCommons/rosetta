@@ -54,7 +54,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <math.h>
 #include <stdio.h>
-#include <cassert>
+#include <utility/assert.hh>
 #include <utility/assert.hh>
 
 static thread_local basic::Tracer TR( "core.scoring.FACTSPotential" );
@@ -320,12 +320,12 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 		plane_aa = basic::options::option[ basic::options::OptionKeys::score::facts_plane_aa ]();
 	}
 
-	assert( intbb_elec_scale.size() == 3 );
-	assert( intbb_solv_scale.size() == 3 );
-	assert( intsc_elec_scale.size() == 3 );
-	assert( intsc_solv_scale.size() == 3 );
-	assert( intbs_elec_scale.size() == 5 );
-	assert( intbs_solv_scale.size() == 5 );
+debug_assert( intbb_elec_scale.size() == 3 );
+debug_assert( intbb_solv_scale.size() == 3 );
+debug_assert( intsc_elec_scale.size() == 3 );
+debug_assert( intsc_solv_scale.size() == 3 );
+debug_assert( intbs_elec_scale.size() == 5 );
+debug_assert( intbs_solv_scale.size() == 5 );
 
 	bool const intrascale_by_level =
 		basic::options::option[ basic::options::OptionKeys::score::facts_intrascale_by_level ]();

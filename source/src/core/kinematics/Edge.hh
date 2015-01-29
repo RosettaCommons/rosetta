@@ -23,7 +23,7 @@
 
 
 // // C++ Headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <string>
 
 //#include <iosfwd>
@@ -238,7 +238,7 @@ public:
 	int
 	polymer_direction() const
 	{
-		assert( label_ == PEPTIDE );
+	debug_assert( label_ == PEPTIDE );
 		return ( start_ < stop_ ? 1 : -1 );
 	}
 

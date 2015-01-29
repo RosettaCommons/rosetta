@@ -210,7 +210,7 @@ ConstraintSet::remap_residue_positions(
 
 	ConstraintCOPs all_cst = get_all_constraints();
 
-	assert( all_cst.size() != 0 );
+debug_assert( all_cst.size() != 0 );
 
 	//nuke the current constraints
 	clear();

@@ -291,7 +291,7 @@ core::Real WaterWeightGridSet::fill_water_grid(
 				// Get the Hbond energy
 				core::Real curr_water_hbond;
 				core::Real dummy_chi( 0.0 );
-				assert( ! hbondoptions_->use_sp2_chi_penalty() ); // APL avoid the new sp2 chi term.
+			debug_assert( ! hbondoptions_->use_sp2_chi_penalty() ); // APL avoid the new sp2 chi term.
 				hbond_compute_energy(*hb_database_, *hbondoptions_, hbond_eval_type,
 					AHdis, xD, xH, dummy_chi, curr_water_hbond );
 
@@ -317,7 +317,7 @@ WaterWeightGridSet::get_water_weight_grid( hbonds::HBEvalType const & hbond_eval
 	if ( curr_water_weights_iter == all_water_weights_.end( ) ) {
 		TR << "Could not look up map element" << std::endl;
 		TR << "get_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
-		assert(false);
+	debug_assert(false);
 		exit(1);
 	}
 	return curr_water_weights_iter->second;
@@ -331,7 +331,7 @@ WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_
 	if ( curr_sum_water_weights_iter == sum_all_water_weights_.end( ) ) {
 		TR << "Could not look up map element" << std::endl;
 		TR << "get_sum_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
-		assert(false);
+	debug_assert(false);
 		exit(1);
 	}
 	return curr_sum_water_weights_iter->second;
@@ -444,7 +444,7 @@ void
 ExactOccludedHbondSolEnergy::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
 {
 	TR << "Error - cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
-	assert(false);
+debug_assert(false);
 	exit(1);
 }
 
@@ -452,7 +452,7 @@ void
 ExactOccludedHbondSolEnergy::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
 {
 	TR << "Error - cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
-	assert(false);
+debug_assert(false);
 	exit(1);
 }
 
@@ -630,7 +630,7 @@ Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	} else if( polar_rsd.atom_type( polar_atom).is_acceptor()){
 		curr_hbond_eval_type = HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 	} else {
-		assert( false ); // Not a donor or an acceptor, don't know what to do.
+	debug_assert( false ); // Not a donor or an acceptor, don't know what to do.
 	}
 
 	Real const grid_constant = compute_grid_constant( curr_hbond_eval_type );
@@ -740,14 +740,14 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 
 	// Double-check transformation matrix
 	core::Vector new_base_atom_location = transformation_matrix * translated_base_atom;
-	assert( std::abs(new_base_atom_location.normalized().x()) < 0.001 );
-	assert( std::abs(new_base_atom_location.normalized().y()) < 0.001 );
-	assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
+debug_assert( std::abs(new_base_atom_location.normalized().x()) < 0.001 );
+debug_assert( std::abs(new_base_atom_location.normalized().y()) < 0.001 );
+debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 
 	utility::vector1 <core::Size> neighborlist;
 	if ( restrict_to_single_occluding_residue ) {
 		// consider only a single occluding residue (for pairwise additivity)
-		assert ( single_occluding_resinx > 0 );
+	debug_assert ( single_occluding_resinx > 0 );
 		neighborlist.push_back( single_occluding_resinx );
 	} else {
 		// loop over all atoms of neighboring residues, INCLUDING SELF
@@ -775,7 +775,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 		Size atom_lastinx = occ_rsd.natoms();
 		if ( restrict_to_single_occluding_atom ) {
 			// consider only a single occluding atom (for pairwise additivity)
-			assert ( single_occluding_atominx > 0 );
+		debug_assert ( single_occluding_atominx > 0 );
 			atom_startinx = single_occluding_atominx;
 			atom_lastinx = single_occluding_atominx;
 		}
@@ -902,8 +902,8 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 			core::Vector const transformed_occ_atom_xyz = transformation_matrix * ( orig_occ_atom_xyz + translation_vector );
 
 			// Double-check transformations
-			assert( std::abs(orig_polar_atom_xyz.distance( orig_occ_atom_xyz ) - transformed_occ_atom_xyz.magnitude()) < 0.001 );
-			assert( std::abs(orig_base_atom_xyz.distance( orig_occ_atom_xyz ) - new_base_atom_location.distance( transformed_occ_atom_xyz )) < 0.001 );
+		debug_assert( std::abs(orig_polar_atom_xyz.distance( orig_occ_atom_xyz ) - transformed_occ_atom_xyz.magnitude()) < 0.001 );
+		debug_assert( std::abs(orig_base_atom_xyz.distance( orig_occ_atom_xyz ) - new_base_atom_location.distance( transformed_occ_atom_xyz )) < 0.001 );
 
 			// Loop over all water positions, mark those which are occluded by this atom
 			core::Vector water_position(grid_info.xorigin(),grid_info.yorigin(),grid_info.zorigin());

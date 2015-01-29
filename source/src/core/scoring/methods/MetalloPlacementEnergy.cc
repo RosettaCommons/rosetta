@@ -69,7 +69,7 @@ MetalloPlacementEnergy::finalize_total_energy(
 	using namespace core::conformation::symmetry;
 	core::Size mmres,nsub;
 	{
-		assert( is_symmetric( pose ) );
+	debug_assert( is_symmetric( pose ) );
 		SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 		mmres = symm_conf.Symmetry_Info().num_independent_residues();
 		nsub  = symm_conf.Symmetry_Info().subunits();

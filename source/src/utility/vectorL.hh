@@ -23,7 +23,7 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <vector>
 #include <algorithm>
 #include <memory>

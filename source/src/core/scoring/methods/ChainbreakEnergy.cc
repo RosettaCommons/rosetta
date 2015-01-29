@@ -81,7 +81,7 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 
 		// This logic restricts cutpoints from occurring at branch points, but that may be ok. ~Labonte
 		Residue const & upper_rsd( pose.residue( cutpoint + 1 ) );
-		assert( upper_rsd.has_variant_type( CUTPOINT_UPPER ) );
+	debug_assert( upper_rsd.has_variant_type( CUTPOINT_UPPER ) );
 		Size const last_mainchain_atm( lower_rsd.mainchain_atoms().size() );
 
 		DistanceSquared current_dev( 0.0 );
@@ -109,7 +109,7 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 
 		total_dev += current_dev;
 	}
-	assert( std::abs( totals[ chainbreak ] ) < 1e-3 );
+debug_assert( std::abs( totals[ chainbreak ] ) < 1e-3 );
 	totals[ chainbreak ] = total_dev;
 }
 

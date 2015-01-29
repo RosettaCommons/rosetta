@@ -437,7 +437,7 @@ void make_pose_from_sequence(
 {
 	// grab residue types
 	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, residue_set, auto_termini );
-	assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
+debug_assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
 
 	make_pose_from_sequence(
 		pose,	requested_types, auto_termini);

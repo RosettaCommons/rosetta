@@ -38,7 +38,7 @@
 #include <iostream>
 #include <sstream>
 // AUTO-REMOVED #include <fstream>
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <utility/vector1.hh>

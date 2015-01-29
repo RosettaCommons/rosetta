@@ -259,7 +259,7 @@ Atom_::insert_atom(
 {
 	atom->parent( get_self_weak_ptr() ); // Note: you cannot give "this" to the child, or the reference-count information will be lost with boost::weak_ptr
 
-	assert( index >= 0 );
+debug_assert( index >= 0 );
 	Atoms::iterator pos( atoms_.begin() + index );
 	if ( atom->is_jump() ) {
 		if ( pos > nonjump_atoms_begin() ) pos = nonjump_atoms_begin();
@@ -285,14 +285,14 @@ Atom_::replace_atom(
 	AtomOP const new_atom
 )
 {
-	assert( ( old_atom->is_jump() && new_atom->is_jump() ) ||
+debug_assert( ( old_atom->is_jump() && new_atom->is_jump() ) ||
 		( !old_atom->is_jump() && !new_atom->is_jump() ) );
 
 	Atoms::iterator iter( std::find( atoms_.begin(), atoms_.end(), old_atom ) );
 	if ( iter == atoms_.end() ) {
 		std::cout << "old_atom not present in atoms list! " <<
 			atoms_.size() << std::endl;
-		assert( false );
+	debug_assert( false );
 		utility_exit();
 	}
 	new_atom->parent( get_self_weak_ptr() ); // Note: you cannot give "this" to the child atom, or the reference-count data will be lost with boost::weak_ptr
@@ -300,7 +300,7 @@ Atom_::replace_atom(
 	// 		std::cout << (*iter == new_atom) << ' ' <<
 	// 			(*iter == old_atom) << std::endl;
 	++iter;
-	assert( *iter == old_atom );
+debug_assert( *iter == old_atom );
 	atoms_.erase( iter );
 }
 
@@ -349,7 +349,7 @@ Atom_::child( Size const k )
 Size
 Atom_::child_index( AtomCOP child ) const
 {
-	assert( child->parent().get() == this );
+debug_assert( child->parent().get() == this );
 	for ( Size k=0; k< atoms_.size(); ++k ) {
 		if ( atoms_[k] == child ) return k;
 	}
@@ -360,7 +360,7 @@ Atom_::child_index( AtomCOP child ) const
 Size
 Atom_::raw_child_index( Atom const * child ) const
 {
-	assert( child->raw_parent() == this );
+debug_assert( child->raw_parent() == this );
 	for ( Size k=0; k < atoms_.size(); ++k ) {
 		if ( atoms_[k].get() == child ) return k;
 	}
@@ -725,7 +725,7 @@ Atom_::note_dof_change(
 		changset.push_back( AtomWithDOFChange( atom_id_ ) );
 		dof_refold_index_ = changset.size();
 	} else {
-		assert( changset[ dof_refold_index_].atomid_ == atom_id_ );
+	debug_assert( changset[ dof_refold_index_].atomid_ == atom_id_ );
 	}
 }
 

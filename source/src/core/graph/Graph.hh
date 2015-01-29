@@ -26,7 +26,7 @@
 // STL Headers
 #include <iosfwd>
 // AUTO-REMOVED #include <list>
-#include <cassert>
+#include <utility/assert.hh>
 
 // Boost Headers
 #include <core/graph/unordered_object_pool.fwd.hpp>
@@ -112,9 +112,9 @@ public:
 
 	~EdgeListElement() {}
 
-	Edge * edge() { assert( edge_ ); return edge_; }
+	Edge * edge() {debug_assert( edge_ ); return edge_; }
 	void edge( Edge * setting ) { edge_ = setting; }
-	Edge const * const_edge() const { assert( edge_ ); return edge_; }
+	Edge const * const_edge() const {debug_assert( edge_ ); return edge_; }
 
 	EdgeListElement * next() { return next_; }
 	void next( EdgeListElement * setting ) { next_ = setting; }
@@ -173,18 +173,18 @@ public:
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	inline
 	EdgeListIterator const & operator ++ ()
-	{ assert( valid() ); element_ = element_->next(); return *this; }
+	{debug_assert( valid() ); element_ = element_->next(); return *this; }
 
 	/// @brief decrement operator.  Point this iterator at the previous element in the list.
 	inline
 	EdgeListIterator const & operator -- ()
-	{ assert( valid() ); element_ = element_->previous(); return *this; }
+	{debug_assert( valid() ); element_ = element_->previous(); return *this; }
 
 	/// @brief equality operator.  Do these elements point at the same list element?  Asserts
 	/// that they belong to the same list.  Never compare elements from separate lists.
 	inline
 	bool operator == ( EdgeListIterator const & rhs ) const {
-		assert( owner_ == rhs.owner_ );
+	debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
 	}
 
@@ -198,12 +198,12 @@ public:
 	/// @brief dereference operator: return the edge pointer pointed to by the list element this iterator
 	/// is hovering over.  This method returns a non-const edge pointer, which defines this class
 	/// as a non-const iterator.  There are no methods, though, to access the list element itself.
-	Edge * operator * () const { assert( valid() ); return element_->edge(); }
+	Edge * operator * () const {debug_assert( valid() ); return element_->edge(); }
 
 	/// @brief dereference operator: return the edge pointer pointed to by the list element this iterator
 	/// is hovering over.  This method returns a non-const edge pointer, which defines this class
 	/// as a non-const iterator.  There are no methods, though, to access the list element itself.
-	Edge & operator -> () const { assert( valid() ); return * (element_->edge()) ; }
+	Edge & operator -> () const {debug_assert( valid() ); return * (element_->edge()) ; }
 
 	/// @brief check that this iterator is valid.  Will not guarantee that the iterator points at an element
 	/// that has not been destroyed.
@@ -263,18 +263,18 @@ public:
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	inline
 	EdgeListConstIterator const & operator ++ ()
-	{ assert( valid() ); element_ = element_->const_next(); return *this; }
+	{debug_assert( valid() ); element_ = element_->const_next(); return *this; }
 
 	/// @brief decrement operator.  Point this iterator at the previous element in the list.
 	inline
 	EdgeListConstIterator const & operator -- ()
-	{ assert( valid() ); element_ = element_->const_previous(); return *this; }
+	{debug_assert( valid() ); element_ = element_->const_previous(); return *this; }
 
 	/// @brief equality operator.  Do these elements point at the same list element?  Asserts
 	/// that they belong to the same list.  Never compare elements from separate lists.
 	inline
 	bool operator == ( EdgeListConstIterator const & rhs ) const {
-		assert( owner_ == rhs.owner_ );
+	debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
 	}
 
@@ -282,7 +282,7 @@ public:
 	/// that they belong to the same list.  Never compare elements from separate lists.
 	inline
 	bool operator == ( EdgeListIterator const & rhs ) const {
-		assert( owner_ == rhs.owner_ );
+	debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
 	}
 
@@ -306,13 +306,13 @@ public:
 	/// @brief dereference operator: return the edge pointer pointed to by the list element this iterator
 	/// is hovering over.  This method returns a const edge pointer, which defines this class
 	/// as a const iterator.  There are no methods, of course, to access the list element itself.
-	Edge const * operator * () const { assert( valid() ); return element_->const_edge(); }
+	Edge const * operator * () const {debug_assert( valid() ); return element_->const_edge(); }
 
 
 	/// @brief dereference operator: return the edge pointer pointed to by the list element this iterator
 	/// is hovering over.  This method returns a const edge pointer, which defines this class
 	/// as a const iterator.  There are no methods, of course, to access the list element itself.
-	Edge const & operator -> () const { assert( valid() ); return * (element_->const_edge()); }
+	Edge const & operator -> () const {debug_assert( valid() ); return * (element_->const_edge()); }
 
 	/// @brief Is this a valid iterator?
 	inline
@@ -614,7 +614,7 @@ protected:
 	inline
 	platform::Size get_node_index( platform::Size index ) const
 	{
-		assert( index == 0 || index == 1 );
+	debug_assert( index == 0 || index == 1 );
 		return node_indices_[ index ];
 	}
 
@@ -624,7 +624,7 @@ protected:
 	Node const *
 	get_node( platform::Size index ) const
 	{
-		assert( index == 0 || index == 1 );
+	debug_assert( index == 0 || index == 1 );
 		return nodes_[ index ];
 	}
 
@@ -634,7 +634,7 @@ protected:
 	Node *
 	get_node( platform::Size index )
 	{
-		assert( index == 0 || index == 1 );
+	debug_assert( index == 0 || index == 1 );
 		return nodes_[ index ];
 	}
 
@@ -751,14 +751,14 @@ public:
 	inline
 	Node const * get_node( platform::Size index ) const
 	{
-		assert( index > 0 && index <= num_nodes_ );
+	debug_assert( index > 0 && index <= num_nodes_ );
 		return nodes_[ index ];
 	}
 
 	inline
 	Node* get_node( platform::Size index )
 	{
-		assert( index > 0 && index <= num_nodes_ );
+	debug_assert( index > 0 && index <= num_nodes_ );
 		return nodes_[ index ];
 	}
 

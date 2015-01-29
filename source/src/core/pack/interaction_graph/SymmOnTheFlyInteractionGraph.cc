@@ -76,10 +76,11 @@ SymmOnTheFlyNode::set_rotamers(
 	num_res_types_ = rotamers->get_n_residue_types();
 	num_restype_groups_ = rotamers->get_n_residue_groups();
 
-	num_states_for_restype_group_.resize( num_restype_groups_, 0 ),
-	state_offset_for_restype_group_.resize( num_restype_groups_, 0 ),
+	num_states_for_restype_group_.resize( num_restype_groups_, 0 );
+	state_offset_for_restype_group_.resize( num_restype_groups_, 0 );
 
-	assert( rotamers->num_rotamers() == (Size) get_num_states() );
+	debug_assert( rotamers->num_rotamers() == (Size) get_num_states() );
+
 	rotamer_set_ = rotamers;
 	for ( Size ii = 1; ii <= rotamer_set_->num_rotamers(); ++ii ) {
 		rotamers_[ ii ] = rotamer_set_->rotamer( ii );
@@ -439,7 +440,7 @@ SymmOnTheFlyNode::get_rotamer( int state, int subunit ) const
 
 	conformation::Residue & rotamer = *rotamer_representatives_[ subunit ][ state_aa ];
 	conformation::Residue const & asymm_rotamer = *rotamers_[ state ];
-	assert( &rotamer.type() == & asymm_rotamer.type() );
+debug_assert( &rotamer.type() == & asymm_rotamer.type() );
 
 	// copy torsions
 	rotamer.mainchain_torsions() = asymm_rotamer.mainchain_torsions();
@@ -676,7 +677,7 @@ SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 	// symmetric clone frames
 	Size const nsubunits = symm_info_->subunits();
 	Size const asu_size = symm_info_->num_independent_residues();
-	assert( nsubunits > 0 );
+debug_assert( nsubunits > 0 );
 	symmetric_transforms_.resize( nsubunits );
 	symmetric_transforms_[1].set_identity();
 

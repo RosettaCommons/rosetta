@@ -345,7 +345,7 @@ FaMPEnvSmoothEnergy::eval_atom_derivative(
 std::string const &
 FaMPEnvSmoothEnergy::representative_atom_name( chemical::AA const aa ) const
 {
-	assert( aa >= 1 && aa <= chemical::num_canonical_aas );
+debug_assert( aa >= 1 && aa <= chemical::num_canonical_aas );
 	
 	static std::string const cbeta_string(  "CB"  );
 	static std::string const sgamma_string( "SG"  );

@@ -438,7 +438,7 @@ public: // Properties
 	input_stub_atom1() const
 	{
 		AtomCOP p = parent();
-		assert( p != 0 );
+	debug_assert( p != 0 );
 		return p->stub_atom1();
 	}
 
@@ -449,7 +449,7 @@ public: // Properties
 	input_stub_atom2() const
 	{
 		AtomCOP p = parent();
-		assert( p != 0 );
+	debug_assert( p != 0 );
 		return p->stub_atom2();
 	}
 

@@ -195,25 +195,25 @@ protected:
 
 	utility::vector1< AtomNeighbors > &
 	narrow( int ind ) {
-		assert( ind == 0 || ind == 1 );
+	debug_assert( ind == 0 || ind == 1 );
 		return narrow_[ ind ];
 	}
 
 	utility::vector1< AtomNeighbors > const &
 	narrow( int ind ) const {
-		assert( ind == 0 || ind == 1 );
+	debug_assert( ind == 0 || ind == 1 );
 		return narrow_[ ind ];
 	}
 
 	utility::vector1< AtomNeighbors > &
 	wide( int ind ) {
-		assert( ind == 0 || ind == 1 );
+	debug_assert( ind == 0 || ind == 1 );
 		return wide_[ ind ];
 	}
 
 	utility::vector1< AtomNeighbors > const &
 	wide( int ind ) const {
-		assert( ind == 0 || ind == 1 );
+	debug_assert( ind == 0 || ind == 1 );
 		return wide_[ ind ];
 	}
 

@@ -100,7 +100,7 @@ SetPolymerConnectAtom::apply( ResidueType & rsd ) const
 		if ( upper_lower_ == -1 ) {
 			rsd.set_lower_connect_atom( atom_name_ );
 		} else {
-			assert( upper_lower_ == 1 );
+		debug_assert( upper_lower_ == 1 );
 			rsd.set_upper_connect_atom( atom_name_ );
 		}
 	} else {

@@ -175,8 +175,8 @@ DatabaseOccSolEne::compute_jumpout_diff( Real const & amp, Real const & twice_si
 {
 
 	// At what difference from mu will this gaussian (passed in) give a value less than min_occ_energy_ ?
-	assert ( amp > min_occ_energy_ );
-	assert ( twice_sigma_sq > 0. );
+debug_assert ( amp > min_occ_energy_ );
+debug_assert ( twice_sigma_sq > 0. );
 	return sqrt ( - twice_sigma_sq * log( min_occ_energy_ / amp ) );
 
 }

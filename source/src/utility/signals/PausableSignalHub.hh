@@ -26,6 +26,7 @@
 // unit headers
 #include <utility/signals/PausableSignalHub.fwd.hh>
 #include <utility/signals/BufferedSignalHub.hh>
+#include <utility/assert.hh>
 
 // boost headers
 #include <boost/bind.hpp>

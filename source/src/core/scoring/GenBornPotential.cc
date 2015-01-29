@@ -283,7 +283,7 @@ GenBornPotential::get_all_born_radii(
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd1( pose.residue( res1 ) );
 		GenBornResidueInfo & gb1( gb_info->residue_info( res1 ) );
-		assert( std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure that this has been zeroed out
+	debug_assert( std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure that this has been zeroed out
 		for ( Size res2 = 1; res2 <= nres; ++res2 ) {
 			res_res_burial( rsd1, gb1, pose.residue( res2 ), gb_info->residue_info( res2 ) );
 		}
@@ -408,13 +408,13 @@ GenBornPotential::get_template_born_radii(
 {
 	Size const nres( pose.total_residue() );
 
-	assert( gb_info.size() == nres );
+debug_assert( gb_info.size() == nres );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( gb_info.being_packed( i ) ) continue;
 		Residue const & rsd1( pose.residue( i ) );
 		GenBornResidueInfo & gb1( gb_info.residue_info( i ) );
-		assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
+	debug_assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
 		for ( Size j=1; j<= nres; ++j ) {
 
 			if ( gb_info.being_packed( j ) ) {
@@ -467,7 +467,7 @@ GenBornPotential::get_single_rotamer_born_radii(
 ) const
 {
 
-	assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
+debug_assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
 
 	for ( Size res2=1; res2<= pose.total_residue(); ++res2 ) {
 		if ( gb_info.being_packed( res2 ) ) {
@@ -751,7 +751,7 @@ GenBornPotential::eval_atom_derivative(
 			if ( cpfxn && !cpfxn->count( ii, jj, cp_weight, path_dist ) ) continue; // less than 3 bonds away
 
 			//bool const same_atom( j == i && jj == ii );
-			assert( j != i || jj != ii );
+		debug_assert( j != i || jj != ii );
 
 			Vector const & xyzj( rsd2.xyz(jj) );
 			Vector const f2( xyzi - xyzj );

@@ -44,7 +44,7 @@ SecondaryStructurePool::SecondaryStructurePool(Size total_size,std::string pool_
     utility::vector1<Size> & which_components,utility::vector1<Real> & weights,
     Real fraction,Size n_scores,Size buffer_factor = 5) : QuotaPool(pool_name,fraction) {
 
-	assert ( which_components.size() == weights.size() );
+debug_assert ( which_components.size() == weights.size() );
 	for(Size i=1;i<=which_components.size();i++) {
 	    components_.push_back( which_components[i] );
 	    weights_.push_back( weights[i] );

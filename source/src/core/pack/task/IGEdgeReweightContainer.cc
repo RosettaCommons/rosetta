@@ -47,8 +47,8 @@ IGEdgeReweightContainer::res_res_weight(
 	core::Size res2id
 ) const {
 
-	assert( res1id <= nres_ );
-	assert( res2id <= nres_ );
+debug_assert( res1id <= nres_ );
+debug_assert( res2id <= nres_ );
 
 	Real reweight = 1.0;
 	bool firstpass = true;

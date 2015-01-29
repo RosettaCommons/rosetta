@@ -170,7 +170,7 @@ SymMinimizerMap::add_torsion(
 			if ( new_torsion.type() >= id::RB1 ) { // We have a jump
 				conformation::symmetry::SymmetricConformation const & symm_conf (
 					dynamic_cast< conformation::symmetry::SymmetricConformation const & > ( pose_.conformation()) );
-				assert( conformation::symmetry::is_symmetric( symm_conf ) );
+			debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 				if ( symm_info_->get_dof_derivative_weight( new_torsion, symm_conf ) != 0.0 ) {
 					DOF_ID parent_dof( id::BOGUS_DOF_ID );
 					add_new_dof_node( new_torsion, parent_dof, true );
@@ -191,16 +191,16 @@ SymMinimizerMap::add_atom(
 	//std::cout << "add atom? atom " << atom_id << " dof " << dof_id.rsd() << " " << dof_id.atomno() << " " << dof_id.type() << std::endl;
 	//std::cout << "    last_cloned_jump_?: "<< last_cloned_jump_.rsd() << " " << last_cloned_jump_.atomno() << " " << last_cloned_jump_.type() << std::endl;
 
-	assert( dof_node_pointer_[ dof_id ] );
+debug_assert( dof_node_pointer_[ dof_id ] );
 	dof_node_pointer_[ dof_id ]->add_atom( atom_id );
 
 	/*if ( symm_info_->dof_is_independent( dof_id, pose_.conformation() ) ) {
 		dof_node_pointer_[ dof_id ]->add_atom( atom_id );
 		std::cout << "    added to independ dof" << std::endl;
 	} else if ( dof_node_pointer_[ dof_id ] ) {
-		//assert( dof_id == last_cloned_jump_ );
-		assert( ! symm_info_->dof_is_independent( dof_id, pose_.conformation() ) );
-		//assert( dof_node_pointer_[ last_cloned_jump_ ] );
+	//debug_assert( dof_id == last_cloned_jump_ );
+	debug_assert( ! symm_info_->dof_is_independent( dof_id, pose_.conformation() ) );
+	//debug_assert( dof_node_pointer_[ last_cloned_jump_ ] );
 		dof_node_pointer_[ dof_id ] ->add_atom( atom_id );
 		std::cout << "    added to last_cloned_jump_: "<< last_cloned_jump_.rsd() << " " << last_cloned_jump_.atomno() << " " << last_cloned_jump_.type() << std::endl;
 	}  */
@@ -284,7 +284,7 @@ SymMinimizerMap::link_torsion_vectors()
 	for ( const_iterator it=dof_nodes_.begin(),
 			it_end=dof_nodes_.end(); it != it_end; ++it ) {
 		DOF_Node & dof_node( **it );
-		assert( last_depth == -1 || dof_node.depth() <= last_depth );
+	debug_assert( last_depth == -1 || dof_node.depth() <= last_depth );
 #ifndef NDEBUG
 		last_depth = dof_node.depth();
 #endif
@@ -406,13 +406,13 @@ SymMinimizerMap::asymmetric_dof( DOF_ID const & cloned_dof ) const
 	if ( cloned_dof.type() >= id::RB1 ) {
 		/// we have a jump
 		Size cloned_jumpno = pose_.conformation().fold_tree().get_jump_that_builds_residue( cloned_dof.rsd() );
-		assert( symm_info_->jump_follows( cloned_jumpno ) != 0 );
+	debug_assert( symm_info_->jump_follows( cloned_jumpno ) != 0 );
 		Size asymm_jumpno = symm_info_->jump_follows( cloned_jumpno );
 		Size asymm_resno = pose_.conformation().fold_tree().jump_edge( asymm_jumpno ).stop();
 		id::AtomID asymmatom( cloned_dof.atomno(), asymm_resno );
 		return DOF_ID( asymmatom, cloned_dof.type() );
 	} else {
-		assert( symm_info_->bb_follows( cloned_dof.rsd() ) != 0 );
+	debug_assert( symm_info_->bb_follows( cloned_dof.rsd() ) != 0 );
 		id::AtomID asymmatom( cloned_dof.atomno(), symm_info_->bb_follows( cloned_dof.rsd() ) );
 
 		return DOF_ID( asymmatom, cloned_dof.type() );

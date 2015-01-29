@@ -89,8 +89,8 @@ public:
 		Real & weight,
 	  Size & path_dist)
 	{
-		assert( connection_gaps_.size() == at1dat.conn_dat( res1_cpdat_ ).size() );
-		assert( connection_gaps_.size() == at2dat.conn_dat( res2_cpdat_ ).size() );
+	debug_assert( connection_gaps_.size() == at1dat.conn_dat( res1_cpdat_ ).size() );
+	debug_assert( connection_gaps_.size() == at2dat.conn_dat( res2_cpdat_ ).size() );
 		Size minimum_distance = INFINITE_SEPARATION;
 		for ( Size ii = 1; ii <= connection_gaps_.size(); ++ii ) {
 			Size iidist = at1dat.conn_dat( res1_cpdat_ )[ ii ] + at2dat.conn_dat( res2_cpdat_ )[ ii ] + connection_gaps_[ ii ];

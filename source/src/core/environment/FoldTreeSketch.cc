@@ -412,8 +412,8 @@ FoldTreeSketch::NodeOP FoldTreeSketch::Node::newNode( Size i ) {
 }
 
 void FoldTreeSketch::Node::add_peptide_neighbor( NodeOP n ){
-  assert( n );
-  assert( n.get() != this );
+ debug_assert( n );
+ debug_assert( n.get() != this );
 
   if ( ( this->seqid() - n->seqid() ) == 1 ) {
     if ( !pep_prev_.expired() && 
@@ -422,7 +422,7 @@ void FoldTreeSketch::Node::add_peptide_neighbor( NodeOP n ){
                                 "Node already has a previous peptide member." );
     }
     pep_prev_ = n;
-    assert( n->pep_next_.expired() || utility::pointer::equal(n->pep_next_, this) );
+   debug_assert( n->pep_next_.expired() || utility::pointer::equal(n->pep_next_, this) );
     n->pep_next_ = this_weak_ptr_;
   } else if ( ( (int) this->seqid() - (int) n->seqid() ) == -1 ){
     if( !pep_next_.expired() &&
@@ -431,7 +431,7 @@ void FoldTreeSketch::Node::add_peptide_neighbor( NodeOP n ){
                                "Node already has a next peptide member." );
     }
     pep_next_ = n;
-    assert( n->pep_prev_.expired() || n->pep_prev_.lock().get() == this );
+   debug_assert( n->pep_prev_.expired() || n->pep_prev_.lock().get() == this );
     n->pep_prev_ = this_weak_ptr_;
   } else {
     throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "add_pep_neighbor",
@@ -441,20 +441,20 @@ void FoldTreeSketch::Node::add_peptide_neighbor( NodeOP n ){
 
 void FoldTreeSketch::Node::add_jump_neighbor( NodeAP _n ){
 	NodeOP n = _n.lock();
-  assert( n );
-  assert( n.get() != this );
+ debug_assert( n );
+ debug_assert( n.get() != this );
 
   jump_neighbors_.insert( _n );
   n->jump_neighbors_.insert( this_weak_ptr_ );
 }
 
 bool FoldTreeSketch::Node::has_jump_neighbor( NodeCAP n ) const {
-  assert( !n.expired() );
+ debug_assert( !n.expired() );
   return jump_neighbors_.find( n ) != jump_neighbors_.end();
 }
 
 bool FoldTreeSketch::Node::has_peptide_neighbor( NodeCAP _n ) const {
-  assert( !_n.expired() );
+ debug_assert( !_n.expired() );
   // For some reason, raw pointer comparison doesn't work here. Use id instead.
 
   NodeCOP n = _n.lock();
@@ -470,8 +470,8 @@ bool FoldTreeSketch::Node::has_neighbor( NodeCAP n ) const {
 
 void FoldTreeSketch::Node::rm_jump_neighbor( NodeAP _n ){
   NodeOP n = _n.lock();
-  assert( n );
-  assert( n.get() != this );
+ debug_assert( n );
+ debug_assert( n.get() != this );
 
   jump_neighbors_.erase( _n );
   n->jump_neighbors_.erase( this_weak_ptr_ );
@@ -483,10 +483,10 @@ void FoldTreeSketch::Node::rm_peptide_neighbor( NodeAP _n ){
   NodeOP pep_prev = pep_prev_.lock();
   NodeOP pep_next = pep_next_.lock();
 
-  assert( n );
-  assert( n.get() != this );
-  assert( pep_prev );
-  assert( pep_next );
+ debug_assert( n );
+ debug_assert( n.get() != this );
+ debug_assert( pep_prev );
+ debug_assert( pep_next );
 
   if( pep_next.get() == n.get() ){
     pep_next->pep_prev_.reset();
@@ -505,7 +505,7 @@ Size FoldTreeSketch::Node::seqid() const {
 }
 
 bool FoldTreeSketch::Node::has_cycle( std::stack< NodeCAP >& path, NodeCAP caller ) const {
-  assert( !caller.expired() );
+ debug_assert( !caller.expired() );
 
   // Base case: if we've been visited before, there's a cycle.
   if( !parent_.expired() ){

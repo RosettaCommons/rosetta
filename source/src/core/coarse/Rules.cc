@@ -51,7 +51,7 @@ void Rule::pretty_print(std::ostream &os) {
 RuleSet::RuleSet(std::string ASSERT_ONLY(tag) ) {
 	//depending on tag we could have different rulesets or load them from file...
 	// now we have only the soup-of-the-day
-	assert( tag == "coarse_two_bead" );
+debug_assert( tag == "coarse_two_bead" );
 	create_rules();
 }
 

@@ -35,7 +35,7 @@
 
 // C++ headers
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace utility {
@@ -306,7 +306,7 @@ public: // Methods
 	void
 	pop_back()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		v_.pop_back();
 	}
 
@@ -429,7 +429,7 @@ public: // Properties
 	ConstReference
 	front() const
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.front();
 	}
 
@@ -439,7 +439,7 @@ public: // Properties
 	Reference
 	front()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.front();
 	}
 
@@ -449,7 +449,7 @@ public: // Properties
 	ConstReference
 	back() const
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.back();
 	}
 
@@ -459,7 +459,7 @@ public: // Properties
 	Reference
 	back()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.back();
 	}
 
@@ -496,7 +496,7 @@ public: // Properties
 	Index const &
 	index( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return m_[ key ];
 	}
 
@@ -538,7 +538,7 @@ public: // Indexers
 	ConstReference
 	operator []( Key const & key ) const
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_[ m_[ key ] ];
 	}
 
@@ -548,7 +548,7 @@ public: // Indexers
 	Reference
 	operator []( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_[ m_[ key ] ];
 	}
 
@@ -558,7 +558,7 @@ public: // Indexers
 	ConstReference
 	at( Key const & key ) const
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_.at( m_.at( key ) );
 	}
 
@@ -568,7 +568,7 @@ public: // Indexers
 	Reference
 	at( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_.at( m_.at( key ) );
 	}
 
@@ -697,7 +697,7 @@ private: // Methods
 	Index const &
 	add_key( Key const & key )
 	{
-		assert( key > 0 );
+	debug_assert( key > 0 );
 		if ( ! m_.has( key ) ) { // Extend index map and activate key
 			m_.resize( key, Index( 0 ) );
 			m_[ key ] = ++u_;

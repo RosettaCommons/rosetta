@@ -27,6 +27,7 @@
 // package headers
 #include <utility/signals/LinkUnit.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/assert.hh>
 
 
 namespace utility {

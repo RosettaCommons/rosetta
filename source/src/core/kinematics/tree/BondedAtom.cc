@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <iostream>
 
 
@@ -59,7 +59,7 @@ BondedAtom::dfs(
 			AtomOP parent( parent_ ); // must have parent
 			Atoms_Iterator iter = parent->atoms_begin();
 			/// you had better find yourself in your parent's atom list.
-			while ( (*iter).get() != this ) { ++iter; assert( iter != parent->atoms_end() );}
+			while ( (*iter).get() != this ) { ++iter;debug_assert( iter != parent->atoms_end() );}
 			++iter; // point to your next-youngest sibling.
 			while ( iter != parent->atoms_end() ) {
 				(*iter)->dfs( changeset, res_change_list, start_atom_index );
@@ -94,7 +94,7 @@ BondedAtom::update_xyz_coords()
 		AtomOP parent( parent_ ); // must have parent
 		Atoms_Iterator iter = parent->atoms_begin();
 		/// you had better find yourself in your parent's atom list.
-		while ( (*iter).get() != this ) { ++iter; assert( iter != parent->atoms_end() );}
+		while ( (*iter).get() != this ) { ++iter;debug_assert( iter != parent->atoms_end() );}
 		++iter; // point to your next-youngest sibling.
 		while ( iter != parent->atoms_end() ) {
 			(*iter)->update_xyz_coords( stub );
@@ -120,7 +120,7 @@ BondedAtom::update_xyz_coords(
 	using numeric::constants::d::pi;
 
 	// TODO: Add PyAssert?
-	assert( stub.is_orthogonal( 1e-3 ) );
+debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	stub.M *= x_rotation_matrix_radians( phi_ ); // this gets passed out
 
@@ -164,7 +164,7 @@ BondedAtom::update_internal_coords(
 	using numeric::z_rotation_matrix_radians;
 	using numeric::constants::d::pi;
 
-	assert( stub.is_orthogonal( 1e-3 ) );
+debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	numeric::xyzVector< core::Real > w( position() - stub.v );
 
@@ -451,7 +451,7 @@ BondedAtom::keep_dof_fixed(
 	} else {
 		std::cout << "BondedAtom::keep_dof_fixed: BAD_TYPE: " <<type <<
 			std::endl;
-		assert( false );
+	debug_assert( false );
 		utility_exit();
 	}
 	return false;
@@ -473,7 +473,7 @@ BondedAtom::copy_coords( Atom const & src )
 	Super::operator= ( static_cast< Atom_ const & > ( src ));
 
 	// check for topology mismatch
-	assert( atom_id() == src.atom_id() && n_children() == src.n_children() );
+debug_assert( atom_id() == src.atom_id() && n_children() == src.n_children() );
 
 	// call recursively for my children
 	int i(0);
@@ -501,7 +501,7 @@ BondedAtom::raw_stub_atom3() const
 	//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
 	Atom const * parent_ptr = raw_parent(); // must have parent
 	if ( parent_ptr->is_jump() ) {
-		assert( parent_ptr->stub_defined() ); // weird behavior otherwise
+	debug_assert( parent_ptr->stub_defined() ); // weird behavior otherwise
 		Atom const * p_stub2( parent_ptr->raw_stub_atom2() );
 		AtomID const & p_stub2_id( p_stub2->id() );
 		if ( id() == p_stub2_id ) {

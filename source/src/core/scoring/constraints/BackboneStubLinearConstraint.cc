@@ -64,7 +64,7 @@ BackboneStubLinearConstraint::BackboneStubLinearConstraint(
 	fixed_atom_id_( fixed_atom_id )
 {
 	// store info about the target residue
-	assert( target_rsd.is_protein() );
+debug_assert( target_rsd.is_protein() );
 	if ( (target_rsd.aa() == chemical::aa_gly ) ) {
 		TR << "ERROR - Gly residues cannot be used in BackboneStubLinearConstraints." << std::endl;
 		return;
@@ -78,7 +78,7 @@ BackboneStubLinearConstraint::BackboneStubLinearConstraint(
 
 	// constraint depends on CB, CA, C coordinates
 	conformation::Residue const & rsd( pose.residue(seqpos_) );
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
 		TR << "ERROR - Gly residues cannot be used in BackboneStubLinearConstraints." << std::endl;
 		return;
@@ -169,7 +169,7 @@ void BackboneStubLinearConstraint::score( func::XYZ_Func const & xyz_func, Energ
 	if ( weights[ this->score_type() ] == 0 ) return;
 
 	core::conformation::Residue const & curr_rsd = xyz_func.residue(seqpos_);
-	assert( curr_rsd.is_protein() );
+debug_assert( curr_rsd.is_protein() );
 
 	// verify that the fixed reference point is in the same place
 	core::Vector curr_ref_location = xyz_func(fixed_atom_id_);
@@ -184,7 +184,7 @@ void BackboneStubLinearConstraint::score( func::XYZ_Func const & xyz_func, Energ
   // This bonus really does nothing. Just used to keep the same interface
 	core::Real cst_val(0.);
 	//core::Real cst_val(superposition_bonus_);
-	//assert( cst_val < 0. );
+//debug_assert( cst_val < 0. );
 
 	// apply a harmonic constraint on the CB's
 	core::Vector CB_curr,CA_curr,C_curr,N_curr;
@@ -252,7 +252,7 @@ BackboneStubLinearConstraint::fill_f1_f2(
 
 	core::conformation::Residue const & curr_rsd = xyz.residue( seqpos_ );
 
-	assert( curr_rsd.is_protein() );
+debug_assert( curr_rsd.is_protein() );
 
 	if ( ( atom != CB_atom_id_ ) && ( atom != CA_atom_id_ ) && ( atom != C_atom_id_ ) && ( atom != N_atom_id_ ) ) {
 		return;
@@ -261,7 +261,7 @@ BackboneStubLinearConstraint::fill_f1_f2(
 	// return a value between superposition_bonus_ (-ve) and zero
 	core::Real cst_val(0.);
 	//core::Real cst_val(superposition_bonus_);
-	//assert( cst_val < 0. );
+//debug_assert( cst_val < 0. );
   //TR << " cst_val1: "<< cst_val << std::endl;
 
 	// start by computing the cst value normally, collecting score components along the way. if cst_val is non-negative no derivative is computed

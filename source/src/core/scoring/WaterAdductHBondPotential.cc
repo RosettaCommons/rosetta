@@ -235,7 +235,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 	hbonds::HBondSet & hbond_set
 ) const
 {
-	assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in allow
+debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in allow
 
 	// <f1,f2> -- derivative vectors
 	hbonds::HBondDerivs deriv;

@@ -197,11 +197,11 @@ class HPatchNode : public FirstClassNode< V, E, G > {
 		RotamerDots const & get_alt_state_rotamer_dots();
 
 		InvRotamerDots const & curr_state_inv_dots() const {
-			assert( curr_state_inv_dots_.rotamer() == current_state_rotamer_dots_.rotamer() );
+		debug_assert( curr_state_inv_dots_.rotamer() == current_state_rotamer_dots_.rotamer() );
 			return curr_state_inv_dots_;
 		}
 		InvRotamerDots const & alt_state_inv_dots() const {
-			assert( alt_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
+		debug_assert( alt_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
 			return alt_state_inv_dots_;
 		}
 
@@ -343,12 +343,12 @@ class HPatchBackgroundNode : public BackgroundNode< V, E, G > {
 		RotamerDots const & get_alt_state_rotamer_dots();
 
 		InvRotamerDots const & curr_state_inv_dots() const {
-			assert( curr_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
+		debug_assert( curr_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
 			return curr_state_inv_dots_;
 		}
 
 		InvRotamerDots const & alt_state_inv_dots() const {
-			assert( alt_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
+		debug_assert( alt_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
 			return alt_state_inv_dots_;
 		}
 
@@ -928,7 +928,7 @@ HPatchNode< V, E, G >::get_rotamer( int state ) const {
 ///
 template < typename V, typename E, typename G >
 void HPatchNode< V, E, G >::set_rotamer_dots_for_state( Size state, RotamerDots const & rd ) {
-	assert( state > 0 && state <= (Size)parent::get_num_states() );
+debug_assert( state > 0 && state <= (Size)parent::get_num_states() );
 	self_and_bg_dots_for_states_[ state ] = rd;
 }
 
@@ -1360,7 +1360,7 @@ HPatchNode< V, E, G >::get_atom_atom_self_overlaps_for_state( Size state ) const
 template < typename V, typename E, typename G >
 core::PackerEnergy HPatchNode< V, E, G >::calculate_PD_deltaE_for_substitution( int alternate_state, core::PackerEnergy & prev_PDenergies_for_node ) {
 
-	assert( alternate_state > 0  && alternate_state <= parent::get_num_states() );
+debug_assert( alternate_state > 0  && alternate_state <= parent::get_num_states() );
 
 	prev_PDenergies_for_node = parent::get_curr_pd_energy_total();
 
@@ -1417,7 +1417,7 @@ Real HPatchNode< V, E, G >::consider_alternate_state() {
 	// self_and_bg_dots_for_states has the RotamerDots object for a state, with the overlap counts set for all BG nodes
 	// that overlap with that state
 	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::format::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
-	assert( alt_state_dots_matches_current_state_dots_ );
+debug_assert( alt_state_dots_matches_current_state_dots_ );
 	alt_state_dots_matches_current_state_dots_ = false;
 
 	alt_state_rotamer_dots_ = self_and_bg_dots_for_states_[ parent::get_alternate_state() ];
@@ -1539,7 +1539,7 @@ Real HPatchNode< V, E, G >::update_state_for_neighbors_substitution (
 
 	// everything has to start from the current state. then we'll update the alt state to be correct.
 	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::format::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
-	assert( alt_state_dots_matches_current_state_dots_ );
+debug_assert( alt_state_dots_matches_current_state_dots_ );
 	/// APL -- this should be unnecessary
 	/// APL TEMP alt_state_rotamer_dots_ = current_state_rotamer_dots_;
 	alt_state_dots_matches_current_state_dots_ = false;
@@ -1681,7 +1681,7 @@ void HPatchNode< V, E, G >::reset_alt_state_dots() {
 template < typename V, typename E, typename G >
 void HPatchNode< V, E, G >::commit_considered_substitution() {
 
-	assert( parent::considering_alternate_state() );
+debug_assert( parent::considering_alternate_state() );
 
 	if ( parent::get_alternate_state() == 0 ) {
 		assign_zero_state();
@@ -2515,8 +2515,8 @@ void HPatchEdge< V, E, G >::acknowledge_substitution() {
 		}
 
 		// debug
-		assert( get_hpatch_node( node_changing_ )->get_alt_state_num_atoms() <= alt_state_atom_atom_overlaps_.size() );
-		assert( get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() <= alt_state_atom_atom_overlaps_[1].size() );
+	debug_assert( get_hpatch_node( node_changing_ )->get_alt_state_num_atoms() <= alt_state_atom_atom_overlaps_.size() );
+	debug_assert( get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() <= alt_state_atom_atom_overlaps_[1].size() );
 
 		if ( current_state_atom_atom_overlaps_.size() < alt_state_atom_atom_overlaps_[1].size() ) {
 			current_state_atom_atom_overlaps_.resize( alt_state_atom_atom_overlaps_[1].size() );
@@ -2530,8 +2530,8 @@ void HPatchEdge< V, E, G >::acknowledge_substitution() {
 
 		for ( Size ii=1; ii <= alt_state_atom_atom_overlaps_.size(); ++ii ) {
 			/// strict monotone growth
-			assert( alt_state_atom_atom_overlaps_[ ii ].size() <= alt_state_atom_atom_overlaps_[ 1 ].size() );
-			assert( ii > get_hpatch_node( node_changing_ )->get_alt_state_num_atoms()  ||
+		debug_assert( alt_state_atom_atom_overlaps_[ ii ].size() <= alt_state_atom_atom_overlaps_[ 1 ].size() );
+		debug_assert( ii > get_hpatch_node( node_changing_ )->get_alt_state_num_atoms()  ||
 				get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() <= alt_state_atom_atom_overlaps_[ii].size() );
 			for ( Size jj = 1; jj <= alt_state_atom_atom_overlaps_[ ii ].size(); ++jj ) {
 				current_state_atom_atom_overlaps_[ jj ][ ii ] = alt_state_atom_atom_overlaps_[ ii ][ jj ];
@@ -2621,7 +2621,7 @@ unsigned int HPatchEdge< V, E, G >::count_dynamic_memory() const {
 
 	unsigned int total_memory = parent::count_dynamic_memory();
 
-	//assert( alt_state_atom_atom_overlaps_.size() == current_state_atom_atom_overlaps_.size() );
+//debug_assert( alt_state_atom_atom_overlaps_.size() == current_state_atom_atom_overlaps_.size() );
 	total_memory += sizeof( utility::vector1< bool > ) * alt_state_atom_atom_overlaps_.size();
 	for ( Size ii = 1; ii <= alt_state_atom_atom_overlaps_.size(); ++ii ) {
 		total_memory += sizeof( bool ) * alt_state_atom_atom_overlaps_[ii].size();
@@ -2811,7 +2811,7 @@ void HPatchBackgroundEdge< V, E, G >::acknowledge_substitution() {
 template < typename V, typename E, typename G >
 utility::vector1< utility::vector1 < bool > > const &
 HPatchBackgroundEdge< V, E, G >::get_atom_atom_overlaps_for_state( Size state ) const {
-	assert( state <= node_states_overlap_with_bg_res_.size() );
+debug_assert( state <= node_states_overlap_with_bg_res_.size() );
 	return node_states_overlap_with_bg_res_[ state ];
 }
 
@@ -3231,7 +3231,7 @@ void HPatchInteractionGraph< V, E, G >::set_num_background_residues( Size num_ba
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::set_residue_as_background_residue( int residue ) {
 
-	assert( resid_2_bgenumeration_[ residue ] == 0 );
+debug_assert( resid_2_bgenumeration_[ residue ] == 0 );
 
 	++num_residues_assigned_as_background_;
 	resid_2_bgenumeration_[ residue ] = num_residues_assigned_as_background_;
@@ -3434,7 +3434,7 @@ utility::vector1< utility::vector1< bool > > const &
 HPatchInteractionGraph< V, E, G >::get_bg_bg_atom_atom_overlaps( Size node1_index, Size node2_index ) {
 
 	// only the positions where node2_index is greater than node1_index will have atom-atom overlap information
-	assert( node1_index < node2_index );
+debug_assert( node1_index < node2_index );
 
 	return bg_bg_atom_atom_overlaps_[ node1_index ][ node2_index ];
 
@@ -4605,7 +4605,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 
 					Size atom_index = exhphobes[ exphobe_index ];
 
-					assert( rsd.atom_type( atom_index ).element() == carbon_atom || rsd.atom_type( atom_index ).element() == sulfur_atom );
+				debug_assert( rsd.atom_type( atom_index ).element() == carbon_atom || rsd.atom_type( atom_index ).element() == sulfur_atom );
 					TR_HIG << rotamer_sets().moltenres_2_resid( node_index ) << "/" << utility::trim( rsd.atom_name( atom_index ) ) << " + ";
 					patch_area += ep_sasa_for_djs_node_[ (*it).second[ ii ] ];
 
@@ -4622,7 +4622,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 
 					Size atom_index = exhphobes[ exphobe_index ];
 
-					assert( rsd.atom_type( atom_index ).element() == carbon_atom || rsd.atom_type( atom_index ).element() == sulfur_atom	);
+				debug_assert( rsd.atom_type( atom_index ).element() == carbon_atom || rsd.atom_type( atom_index ).element() == sulfur_atom	);
 					TR_HIG << bgenumeration_2_resid_[ node_index ] << "/" << utility::trim( rsd.atom_name( atom_index ) ) << " + ";
 					patch_area += ep_sasa_for_djs_node_[ (*it).second[ ii ] ];
 				}
@@ -4717,7 +4717,7 @@ void HPatchInteractionGraph< V, E, G >::reset_from_previous_deltaHpatch_comp() {
 
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) {
 		Size const ii_fc_node = fc_nodes_near_rotsub_[ ii ];
-		assert( fc_nodes_near_rotsub_bool_[ ii_fc_node ] );
+	debug_assert( fc_nodes_near_rotsub_bool_[ ii_fc_node ] );
 		get_hpatch_node( ii_fc_node )->reset_alt_state_dots();
 	}
 
@@ -4741,7 +4741,7 @@ void HPatchInteractionGraph< V, E, G >::reset_from_previous_deltaHpatch_comp() {
 
 	for ( Size ii = 1; ii <= bg_nodes_near_rotsub_.size(); ++ii ) {
 		Size const ii_bg_node = bg_nodes_near_rotsub_[ ii ];
-		assert( bg_nodes_near_rotsub_bool_[ ii_bg_node ] );
+	debug_assert( bg_nodes_near_rotsub_bool_[ ii_bg_node ] );
 		get_hpatch_bg_node( ii_bg_node )->reset_alt_state_dots();
 	}
 

@@ -44,7 +44,7 @@ using namespace numeric::interpolation::spline;
 void NVlookup::set_up_spline_from_data(core::chemical::AA const & aa_type, utility::vector1<core::Real> const & bin_centers, utility::vector1<core::Real> const & data)
 {
 
-	assert(bin_centers.size() == data.size()); //You need to have the same number of bin centers and spline points
+debug_assert(bin_centers.size() == data.size()); //You need to have the same number of bin centers and spline points
 
 	Real lower_bound_x = 0;
 	Real upper_bound_x = 1.1;
@@ -96,7 +96,7 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 	for(; spline_object_iterator != spline_objects.end();++spline_object_iterator)
 	{
 		std::string aa_name_string = spline_object_iterator->first;
-		assert(aa_name_string.size() == 1); //The key should be a single letter amino acid
+	debug_assert(aa_name_string.size() == 1); //The key should be a single letter amino acid
 		char aa_name = aa_name_string[0];
 
 		core::chemical::AA aa_type(core::chemical::aa_from_oneletter_code(aa_name));

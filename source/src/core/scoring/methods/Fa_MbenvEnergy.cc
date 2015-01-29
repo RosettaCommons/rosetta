@@ -215,7 +215,7 @@ MembraneEmbed const &
 Fa_MbenvEnergy::MembraneEmbed_from_pose( pose::Pose const & pose ) const
 {
   //using core::pose::datacache::CacheableDataType::MEMBRANE_EMBED;
-  assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) );
+ debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) );
   return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 }
 

@@ -200,14 +200,14 @@ T retrieve( Frame const& frame, core::Size frag_num ) const {
 
 	TCacheUnit const& cache( Frame const& frame ) const {
 		//    TCacheUnitAP ptr=utility::pointer::dynamic_pointer_cast< TCacheUnit >( frame.cache( tag_, new_cache_ ) );
-		// assert(ptr);
+		//debug_assert(ptr);
 		// better with refernce, throws exception automatic if it goes wrong
 		return dynamic_cast< TCacheUnit const& >( frame.cache( tag_, new_cache_ ) );
 	}
 
 	TCacheUnit& cache( Frame const& frame ) {
 		//    TCacheUnitAP ptr=utility::pointer::dynamic_pointer_cast< TCacheUnit >( frame.cache( tag_, new_cache_ ) );
-		// assert(ptr);
+		//debug_assert(ptr);
 		// better with refernce, throws exception automatic if it goes wrong
 		return dynamic_cast< TCacheUnit& >( frame.cache( tag_, new_cache_ ) );
 	}

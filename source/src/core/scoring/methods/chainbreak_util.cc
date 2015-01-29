@@ -67,7 +67,7 @@ void find_cutpoint_variants(
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
-  assert(cutpoints);
+ debug_assert(cutpoints);
   unordered_set<int> unique_cutpoints;
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {

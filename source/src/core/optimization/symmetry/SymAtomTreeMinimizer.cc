@@ -84,7 +84,7 @@ SymAtomTreeMinimizer::run(
 	else make_semisymmetric_movemap( pose, move_map, semisym_move_map );
 
 	SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-	assert( conformation::symmetry::is_symmetric( symm_conf ) );
+debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// setup the minimizer map using the semi-symetric min map
@@ -177,7 +177,7 @@ SymAtomTreeMinimizer::make_semisymmetric_movemap(
 
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-	assert( conformation::symmetry::is_symmetric( SymmConf ) );
+debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	// copy bb/chi DOFs from symm movemap
@@ -220,7 +220,7 @@ SymAtomTreeMinimizer::make_assymetric_movemap(
 
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-	assert( conformation::symmetry::is_symmetric( SymmConf ) );
+debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	for ( Size i=1; i<= pose.conformation().size(); ++i ) {

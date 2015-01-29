@@ -37,9 +37,9 @@ VirtualCoordinates::add_coordinate_from_string(
 										std::vector< std::string > coords,
                     core::Size coord_start )
 {
-		assert( coords.size() >= 3 );
+	debug_assert( coords.size() >= 3 );
 		utility::vector1< std::string> split ( utility::string_split( coords[ coord_start -1 ], ',' ) );
-		assert( split.size() == 3 );
+	debug_assert( split.size() == 3 );
     Vector x( ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
                                              ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ),
                                              ( static_cast<core::Real>( std::atof( split[3].c_str() ) ) ) );

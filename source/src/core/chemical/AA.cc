@@ -390,7 +390,7 @@ name_from_aa( AA aa ) {
 
 char
 oneletter_code_from_aa( AA aa ) {
-	assert( aa <= chemical::num_canonical_aas );
+debug_assert( aa <= chemical::num_canonical_aas );
 	return aa2oneletter()[ aa ];
 }
 

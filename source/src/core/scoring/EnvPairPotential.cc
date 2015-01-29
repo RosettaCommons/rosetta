@@ -169,7 +169,7 @@ EnvPairPotential::EnvPairPotential():
 				std::istringstream l(line);
 				Size jj;
 				l >> tag >> jj >> aa;
-				assert( Size(aa) == k );
+			debug_assert( Size(aa) == k );
 				for ( Size i=1; i<= max_aa; ++i ) {
 					l >> pair_log_(j,aa,i);
 				}
@@ -232,7 +232,7 @@ EnvPairPotential::fill_cenlist(
 ) const
 {
 
-	assert( cendist <= cen_dist12_pad_plus );
+debug_assert( cendist <= cen_dist12_pad_plus );
 
 	/*
 	// If we should ever need the integer "cenX" arrays and not

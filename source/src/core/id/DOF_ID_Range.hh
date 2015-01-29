@@ -30,7 +30,7 @@
 //#include <utility/exit.hh>
 
 // C++ header
-#include <cassert>
+#include <utility/assert.hh>
 
 #if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
 	#undef min

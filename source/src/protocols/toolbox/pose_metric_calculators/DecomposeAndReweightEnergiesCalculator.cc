@@ -34,7 +34,7 @@
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 #include <set>

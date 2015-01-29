@@ -463,8 +463,8 @@ FA_ElecEnergy::residue_pair_energy_ext(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	Real dsq, score( 0.0 );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -491,7 +491,7 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
-	assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ));
@@ -522,8 +522,8 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
 
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -583,7 +583,7 @@ FA_ElecEnergy::eval_atom_derivative(
 	Vector const & ii_xyz( irsd.xyz(ii) );
 	bool const ii_isbb( irsd.atom_is_backbone( ii ) );
 
-	assert( pose.energies().use_nblist() );
+debug_assert( pose.energies().use_nblist() );
 	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
 	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,ii) );
 
@@ -852,7 +852,7 @@ FA_ElecEnergy::finalize_total_energy(
 				conformation::Residue const & jres( *resvect[j] );
 				int jj_isbb = jres.atom_is_backbone( jj );
 
-				assert( ii_isbb + jj_isbb >= 0 && ii_isbb + jj_isbb < 3 );
+			debug_assert( ii_isbb + jj_isbb >= 0 && ii_isbb + jj_isbb < 3 );
 
 				Real score = nbr.weight() *
 					coulomb().eval_atom_atom_fa_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
@@ -878,7 +878,7 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-	assert( set1.resid() != set2.resid() );
+debug_assert( set1.resid() != set2.resid() );
 
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.

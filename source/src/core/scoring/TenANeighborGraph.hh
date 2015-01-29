@@ -105,14 +105,14 @@ private:
 	inline
 	TenANeighborNode const *
 	get_TenANode( Size node_index ) const {
-		assert( dynamic_cast< TenANeighborNode const * > ( get_node( node_index ) ) );
+	debug_assert( dynamic_cast< TenANeighborNode const * > ( get_node( node_index ) ) );
 		return static_cast< TenANeighborNode const * > ( get_node( node_index ) );
 	}
 
 	inline
 	TenANeighborNode *
 	get_TenANode( Size node_index ) {
-		assert( dynamic_cast< TenANeighborNode * > ( get_node( node_index ) ) );
+	debug_assert( dynamic_cast< TenANeighborNode * > ( get_node( node_index ) ) );
 		return static_cast< TenANeighborNode * > ( get_node( node_index ) );
 	}
 

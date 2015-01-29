@@ -23,7 +23,7 @@
 #include <platform/types.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace utility {
 
@@ -87,7 +87,7 @@ public:
 	/// to the containers begin() element.
 	bool
 	operator < ( OrderedTuple< T > const & rhs ) const {
-		assert( size() == rhs.size() );
+	debug_assert( size() == rhs.size() );
 
 		const_iterator lhs_iter( data_.begin()), lhs_iter_end( data_.end() );
 		const_iterator rhs_iter( rhs.data_.begin() );
@@ -97,7 +97,7 @@ public:
 		#endif
 
 		while ( lhs_iter != lhs_iter_end ) {
-			assert( rhs_iter != rhs_iter_end );
+		debug_assert( rhs_iter != rhs_iter_end );
 			if ( *lhs_iter == *rhs_iter ) {
 				++lhs_iter;
 				++rhs_iter;
@@ -111,7 +111,7 @@ public:
 	/// @brief Simple comparison operator for the tuple.  Sweeps from begin() to end();
 	bool
 	operator == ( OrderedTuple< T > const & rhs ) const {
-		assert( size() == rhs.size() );
+	debug_assert( size() == rhs.size() );
 
 		const_iterator lhs_iter( data_.begin()), lhs_iter_end( data_.end() );
 		const_iterator rhs_iter( rhs.data_.begin() );
@@ -121,7 +121,7 @@ public:
 		#endif
 
 		while ( lhs_iter != lhs_iter_end ) {
-			assert( rhs_iter != rhs_iter_end );
+		debug_assert( rhs_iter != rhs_iter_end );
 			if ( *lhs_iter == *rhs_iter ) {
 				++lhs_iter;
 				++rhs_iter;

@@ -136,7 +136,7 @@ public:
 
 	virtual char secstruct() const {
 		// this shouldn't be called for an SRFD that does not have secstruct
-		assert( 0 );
+	debug_assert( 0 );
 		return 'X';
 	}
 

@@ -391,7 +391,7 @@ Ramachandran::eval_rama_score_residue(
 {
 	using namespace numeric;
 
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 
 	if ( 0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1) ) ||
 			0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2) ) ||

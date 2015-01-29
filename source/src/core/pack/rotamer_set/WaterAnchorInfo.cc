@@ -49,7 +49,7 @@ const & type ) const {
 Size
 WaterAnchorInfo::anchor_atom( ResidueType const & type
 ) const {
-	assert( attaches_to_residue_type( type ) );
+debug_assert( attaches_to_residue_type( type ) );
 	return type.atom_index( anchor_atom_name_ );
 }
 

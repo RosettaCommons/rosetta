@@ -476,7 +476,7 @@ ScoreFunction::set_etable(
 {
 	// ensure that this has been done before the relevant EnergyMethod is created
 	// this needs to be fixed to be smarter
-	//	assert( weights_[ fa_atr ] == 0.0 && weights_[ fa_rep ] == 0.0 && weights_[ fa_sol ] == 0.0 );
+	//debug_assert( weights_[ fa_atr ] == 0.0 && weights_[ fa_rep ] == 0.0 && weights_[ fa_sol ] == 0.0 );
 	energy_method_options_->etable_type( etable_name );
 	reset_energy_methods();
 	score_function_info_current_ = false;
@@ -489,7 +489,7 @@ ScoreFunction::set_method_weights(
 	utility::vector1< Real > const & wts
 )
 {
-	//	assert( weights_[ t ] == 0.0 );
+	//debug_assert( weights_[ t ] == 0.0 );
 	energy_method_options_->set_method_weights( t, wts );
 	reset_energy_methods();
 	score_function_info_current_ = false;
@@ -517,7 +517,7 @@ ScoreFunction::assign( ScoreFunction const & src )
 		add_method( (*it)->clone() );
 	}
 	update_intrares_energy_status();
-	assert( check_methods() );
+debug_assert( check_methods() );
 
 	/// SL: Fri Jun 29 12:51:25 EDT 2007 @744 /Internet Time/
 	score_function_info_current_ = src.score_function_info_current_;
@@ -870,11 +870,11 @@ ScoreFunction::get_sub_score(
 	pose::Pose const & pose,
 	utility::vector1< bool > const & residue_mask
 ) const {
-	assert(residue_mask.size() == pose.total_residue());
+debug_assert(residue_mask.size() == pose.total_residue());
 
 	// retrieve cached energies object
 	Energies const & energies( pose.energies() );
-	assert(energies.energies_updated());
+debug_assert(energies.energies_updated());
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
@@ -999,11 +999,11 @@ ScoreFunction::get_sub_score(
 	utility::vector1< bool > const & residue_mask,
 	EnergyMap & emap
 ) const {
-	assert(residue_mask.size() == pose.total_residue());
+debug_assert(residue_mask.size() == pose.total_residue());
 
 	// retrieve cached energies object
 	Energies const & energies( pose.energies() );
-	assert(energies.energies_updated());
+debug_assert(energies.energies_updated());
 
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
@@ -1270,7 +1270,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 					if ( minimizing ) { // APL -- 5/18/2010 -- DEPRICATED
 						// confirm that this rsd-rsd interaction will be included
 						// in the atom pairs on the nblist:
-						//assert( ( pose.energies().domain_map(i) !=
+					//debug_assert( ( pose.energies().domain_map(i) !=
 						//					pose.energies().domain_map(j) ) ||
 						//				( pose.energies().res_moved(i) ) );
 						// ensure that these are zeroed, since we will hit them at the
@@ -1389,7 +1389,7 @@ ScoreFunction::accumulate_residue_total_energies(
 	EnergyGraph & energy_graph( energies.energy_graph() );
 
 	// debug
-	assert( !energies.use_nblist() && energies.energies_updated() );
+debug_assert( !energies.use_nblist() && energies.energies_updated() );
 
 	// zero out the scores we are going to accumulate
 	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
@@ -1411,7 +1411,7 @@ ScoreFunction::accumulate_residue_total_energies(
 			// the pair energies cached in the link
 			EnergyMap const & emap( edge->energy_map());
 
-			assert( !edge->energies_not_yet_computed() );
+		debug_assert( !edge->energies_not_yet_computed() );
 
 			// accumulate energies
 			energies.residue_total_energies(i).accumulate( emap, ci_2b_types(), 0.5 );
@@ -1429,7 +1429,7 @@ ScoreFunction::accumulate_residue_total_energies(
 		// Why is this non-const?!
 		LREnergyContainerOP lrec
 			= pose.energies().nonconst_long_range_container( (*iter)->long_range_type() );
-		assert( lrec );
+	debug_assert( lrec );
 		if ( lrec->empty() ) continue;
 		ScoreTypes const & lrec_score_types = score_types_by_method_type_[ (*iter)->method_type() ];
 
@@ -1499,7 +1499,7 @@ ScoreFunction::eval_onebody_energies( pose::Pose & pose ) const
 
 	if ( minimizing ) {
 		MinimizationGraphCOP mingraph = energies.minimization_graph();
-		assert( mingraph );
+	debug_assert( mingraph );
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			conformation::Residue const & rsd = pose.residue( ii );
 
@@ -2040,7 +2040,7 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 		if ( old_weight != Real(0.0) ) {
 
 			EnergyMethodCOP method( methods_by_score_type_[t] );
-			assert( method );
+		debug_assert( method );
 
 			// check to see if there's a non-zero weight for this method
 			bool has_nonzero_weight( false );
@@ -2067,7 +2067,7 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 					( t != python ) )  { // sheffler
 
 				score_function_info_current_ = false; // cached score_function_info_ object no longer up-to-date
-				assert( std::abs( old_weight ) < 1e-2 ); // sanity
+			debug_assert( std::abs( old_weight ) < 1e-2 ); // sanity
 
 				// get pointer to the energyfunction that evaluates this score
 				EnergyMethodOP method ( ScoringManager::get_instance()->energy_method( t, *energy_method_options_));
@@ -2078,17 +2078,17 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 		} else {
 			// only adjusted a weight that was already non-zero.  Nothing else needs doing.
 			// Early return.  Be careful of intrares status and check_methods() for early returns!!!
-			assert( old_weight != Real( 0.0 ) || weights_[ t ] != Real( 0.0 ) );
+		debug_assert( old_weight != Real( 0.0 ) || weights_[ t ] != Real( 0.0 ) );
 			return;
 		}
 	}
 
 	// arriving here, we know that a weight went either to or from zero.
 	// perform some neccessary bookkeeping.
-	assert( old_weight == Real( 0.0 ) || weights_[ t ] == Real( 0.0 ) );
+debug_assert( old_weight == Real( 0.0 ) || weights_[ t ] == Real( 0.0 ) );
 
 	update_intrares_energy_status();
-	assert( check_methods() );
+debug_assert( check_methods() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2192,7 +2192,7 @@ ScoreFunction::setup_for_scoring(
 			(*it)->setup_for_scoring( pose, *this );
 		}
 	} else {
-		assert( pose.energies().minimization_graph() );
+	debug_assert( pose.energies().minimization_graph() );
 		MinimizationGraphOP mingraph = pose.energies().minimization_graph();
 
 		/// 1. setup_for_scoring for residue singles
@@ -2273,7 +2273,7 @@ ScoreFunction::setup_for_derivatives(
 	//	(*iter)->setup_for_derivatives( pose, *this );
 	//}
 
-	assert( pose.energies().minimization_graph() );
+debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphOP mingraph = pose.energies().minimization_graph();
 
 	/// 1. setup_for_derivatives for residue singles
@@ -2367,8 +2367,8 @@ ScoreFunction::setup_for_minimizing(
 			edge_iter != edge_iter_end; ++edge_iter, ++ee_edge_iter ) {
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
-		assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
-		assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+	debug_assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+	debug_assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
 
 		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 		// domain map check here?
@@ -2612,7 +2612,7 @@ ScoreFunction::setup_for_minimizing_sr2b_enmeths_for_minedge(
 	Real const // apl -- remove this parameter edge_weight
 ) const
 {
-	assert( ! accumulate_fixed_energies || energy_edge );
+debug_assert( ! accumulate_fixed_energies || energy_edge );
 
 	/// First, the context-independent 2body energies
 	if ( res_moving_wrt_eachother ) {
@@ -2689,7 +2689,7 @@ ScoreFunction::eval_npd_atom_derivative(
 	//	(*iter)->eval_atom_derivative( atom_id, pose, domain_map, *this, weights_, F1, F2 );
 	//}
 
-	assert( pose.energies().minimization_graph() );
+debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	/// Whole-pose-context energies should have their contribution calculated here.
@@ -2718,7 +2718,7 @@ ScoreFunction::eval_dof_derivative(
 		deriv += (*iter)->eval_dof_derivative( dof_id, torsion_id, pose, *this, weights_ );
 	}*/
 
-	assert( pose.energies().minimization_graph() );
+debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	Size const rsdno = torsion_id.valid() ? torsion_id.rsd() : dof_id.atom_id().rsd();
@@ -2884,7 +2884,7 @@ inline
 void
 vector1_remove( utility::vector1< T > & v, T const & t )
 {
-	assert( std::find( v.begin(), v.end(), t ) != v.end() );
+debug_assert( std::find( v.begin(), v.end(), t ) != v.end() );
 	v.erase( std::find( v.begin(), v.end(), t ) );
 }
 

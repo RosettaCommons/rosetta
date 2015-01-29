@@ -1190,7 +1190,7 @@ IdealParametersDatabase::parameters_for_restype(
 	if ( iter == resdatamap.end() ) {
 		create_parameters_for_restype( restype, prepro );
 		std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP >::const_iterator iter2 = resdatamap.find( & restype );
-		assert ( iter2 != resdatamap.end() );
+	debug_assert ( iter2 != resdatamap.end() );
 		return *iter2->second;
 	}
 	return *iter->second;
@@ -1514,7 +1514,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 	// caprev_n bond length
 	if ( restype_params->bb_N_index() != 0 && rsd_type.lower_connect_id() != 0 ) {
 		CartBondedParametersCOP len_params = lookup_length( rsd_type, prepro, "N", "C", restype_params->bb_N_index(), -1 * ((int) rsd_type.lower_connect_id() ) );
-		assert( len_params );
+	debug_assert( len_params );
 		restype_params->cprev_n_bond_length_params( len_params );
 	}
 
@@ -1686,7 +1686,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 {
 	using namespace numeric;
 
-	assert( rsd2.seqpos() > rsd1.seqpos() );
+debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 	bool preproline = (rsd2.aa()==core::chemical::aa_pro || rsd2.aa()==core::chemical::aa_dpr); //Is rsd2 either D-proline or L-proline?
 
 	if ( rsd1.aa() == core::chemical::aa_vrt) return;
@@ -2038,7 +2038,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	using namespace numeric;
 
-	assert( rsd2.seqpos() > rsd1.seqpos() );
+debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 
 	core::Size resid = rsd1.seqpos();
 	bool preproline = pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
@@ -2099,7 +2099,7 @@ CartesianBondedEnergy::eval_singleres_energy(
 	using numeric::constants::d::pi;
 	using namespace numeric;
 
-	assert ( rsd.aa() != core::chemical::aa_vrt );
+debug_assert ( rsd.aa() != core::chemical::aa_vrt );
 
 	eval_singleres_improper_torsion_energies( rsd, resparams, pose, emap );
 	eval_singleres_torsion_energies( rsd, resparams, phi, psi, pose, emap );
@@ -2325,8 +2325,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -2384,7 +2384,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 			utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
 				rsd1.type().atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
 			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
-				assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+			debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 				Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
 
 				Real const angle = numeric::angle_radians(
@@ -2440,8 +2440,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -2500,7 +2500,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 			utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
 				rsd2.type().atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
 			for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
-				assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
+			debug_assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
 				Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
 
 				// lookup Ktheta and theta0
@@ -2559,8 +2559,8 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		/////////////
 		/// finally, compute the bondlength across the interface
@@ -2662,7 +2662,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
-	assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein()) return;
 
@@ -3069,8 +3069,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -3129,7 +3129,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 			utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
 				rsd1.type().atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
 			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
-				assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+			debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 				Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
 
 				//Real const angle = numeric::angle_radians( // why compute the angle if you're not going to use it?
@@ -3189,8 +3189,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -3248,7 +3248,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 			utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
 				rsd2.type().atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
 			for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
-				assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
+			debug_assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
 				Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
 
 				// lookup Ktheta and theta0
@@ -3304,8 +3304,8 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		// lookup Kd and d0
 		CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();
@@ -3394,7 +3394,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
-	assert ( res1.seqpos() < res2.seqpos() );
+debug_assert ( res1.seqpos() < res2.seqpos() );
 
 	//Multipliers for D-amino acids:
 	//const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(res1.aa()) ? -1.0 : 1.0 ;

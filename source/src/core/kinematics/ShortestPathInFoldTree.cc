@@ -177,7 +177,7 @@ ShortestPathInFoldTree::init_dist_map( EdgeList const& edges ) {
 
   //  Warshall algorithm
   Size const inf( 12345678 ); //assumption: fewer than 12 million nodes in the graph.
-  assert( jump_res_.size() < inf );
+ debug_assert( jump_res_.size() < inf );
   node_dist_.dimension( jump_res_.size(), jump_res_.size(), inf );
 
   // initialize distance array with jump-edges
@@ -379,7 +379,7 @@ ShortestPathInFoldTree::dist( Size pos1, Size pos2 ) const {
       if ( dist < min_dist ) min_dist = dist;
     }
   }
-  assert ( min_dist <= nres_ );
+ debug_assert ( min_dist <= nres_ );
   return min_dist;
 }
 

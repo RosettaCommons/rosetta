@@ -31,7 +31,7 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 

@@ -25,7 +25,7 @@
 #include <basic/MetricValue.hh>
 #include <core/scoring/sasa.hh>
 
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 

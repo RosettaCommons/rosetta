@@ -21,7 +21,7 @@
 
 /// C++ Headers
 #include <iostream>
-#include <cassert>
+#include <utility/assert.hh>
 
 // Numeric
 #include <numeric/xyzVector.hh>

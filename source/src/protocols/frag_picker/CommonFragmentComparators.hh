@@ -83,7 +83,7 @@ public:
 	/// from a vector of small scores (those gathered in a FragmentScoreMap object)
 	CompareByScoreCombination(utility::vector1<Size> which_components,utility::vector1<Real> weights) {
 
-		assert ( which_components.size() == weights.size() );
+	debug_assert ( which_components.size() == weights.size() );
 		for(Size i=1;i<=which_components.size();i++) {
 		    components_.push_back( which_components[i] );
 		    weights_.push_back( weights[i] );

@@ -201,7 +201,7 @@ core::Real PhenixInterface::getScoreAndDerivs (
 	// get score, r_work, and r_free
 	core::Real score = PyFloat_AsDouble( PyTuple_GetItem(result_tuple, 0) );  // borrowed object no need to deref
 	PyObject *grad_list = PyTuple_GetItem(result_tuple, 1); // borrowed object no need to deref
-  assert (grad_list != NULL);
+ debug_assert (grad_list != NULL);
 	HANDLE_PYTHON_ERROR("error getting gradients list");
 
 	// parse the python result
@@ -510,7 +510,7 @@ void PhenixInterface::pylist_to_grads(
 	using namespace core::pose::symmetry;
 	using namespace core::conformation::symmetry;
 
-	assert (pygrads != NULL);
+debug_assert (pygrads != NULL);
 
 	SymmetryInfoCOP symm_info;
 	int nres = (int)pose.total_residue();
@@ -551,7 +551,7 @@ void PhenixInterface::pylist_to_grads(
 					TR << "PyList_GetItem() failure at " << i << "," << j << "(" << listCounter << ")" << std::endl;
 					utility_exit_with_message("PhenixInterface::pylist_to_grads failed");
 				}
-				assert(! ((gx == NULL) || (gy == NULL) || (gz == NULL)));
+			debug_assert(! ((gx == NULL) || (gy == NULL) || (gz == NULL)));
 				grads[i][j][0] = PyFloat_AsDouble( gx );
 				grads[i][j][1] = PyFloat_AsDouble( gy );
 				grads[i][j][2] = PyFloat_AsDouble( gz );

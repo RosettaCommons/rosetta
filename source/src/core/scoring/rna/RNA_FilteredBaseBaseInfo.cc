@@ -109,7 +109,7 @@ RNA_FilteredBaseBaseInfo::carry_out_filtering( RNA_RawBaseBaseInfo const & raw_b
 
 	// Actually not a good idea -- sometimes the Monte Carlo
 	// wants a tally of the energy, but no recalculation of pair terms.
-	//	assert( raw_base_base_info.calculated() );
+	//debug_assert( raw_base_base_info.calculated() );
 
 	Size const total_residue = raw_base_base_info.size();
 	resize( total_residue );
@@ -178,7 +178,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 					base_pair.edge2 = found_match;
 
 					//orientations are cos( theta ) and should be symmetric!
-					assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
+				debug_assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
 					base_pair.orientation = ( raw_base_geometry_orientation_array( i, j ) + raw_base_geometry_orientation_array( j, i ) < 0.0 ? 1 : 2 );
 
 					energy_base_pair_list.push_back( std::make_pair( total_base_pair_energy, base_pair )  );
@@ -290,7 +290,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 				base_stack.res2 = j;
 
 				//orientations are cos( theta ) and should be symmetric!
-				assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
+			debug_assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
 				base_stack.orientation = ( raw_base_geometry_orientation_array( i, j ) + raw_base_geometry_orientation_array( j, i ) ) < 0.0 ? 1 : 2;
 
 				// height is not necessarily (anti)-symmetric if the planes of the two bases aren't co-planar.

@@ -92,7 +92,7 @@ Real dgaussian( Real x, Real mean, Real sd, Real weight ) {
 /// with the given mean, sd, and x values. Returns zero if the weight is less
 /// than 1e-10.
 Real gaussian_deriv( Real x, Real mean, Real sd, Real weight ) {
-	assert( weight >= 0.0 && weight <= 1.0 );
+debug_assert( weight >= 0.0 && weight <= 1.0 );
 
 	if ( weight < 1e-10 ) {
 		return 0;
@@ -108,7 +108,7 @@ Real gaussian_deriv( Real x, Real mean, Real sd, Real weight ) {
 /// evaluated with the given anchor, rate, and x values. Returns zero if the
 /// weight is less than 1e-10.
 Real dexponential( Real x, Real anchor, Real rate, Real weight ) {
-	assert( weight >= 0.0 && weight <= 1.0 );
+debug_assert( weight >= 0.0 && weight <= 1.0 );
 	if ( weight < 1e-10 ) {
 		return 0;
 	}

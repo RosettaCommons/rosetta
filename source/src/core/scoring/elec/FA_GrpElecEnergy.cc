@@ -418,7 +418,7 @@ FA_GrpElecEnergy::setup_for_minimizing_for_residue_pair(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
-	assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	/*
 	// update the existing nblist if it's already present in the min_data object
@@ -454,7 +454,7 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 
 	//TR.Debug << "eval residue pair deriv" << std::endl;
 
-	assert( utility::pointer::static_pointer_cast< FAElecContextData const >
+debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 					( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
@@ -549,7 +549,7 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 
 	//TR.Debug << "eval residue pair deriv" << std::endl;
 
-	assert( utility::pointer::static_pointer_cast< FAElecContextData const >
+debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 					( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
@@ -616,7 +616,7 @@ FA_GrpElecEnergy::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-	assert( set1.resid() != set2.resid() );
+debug_assert( set1.resid() != set2.resid() );
 
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.

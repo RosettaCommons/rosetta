@@ -223,7 +223,7 @@ add_covalent_linkage_helper(
 				con_res = mod_res->add_residue_connection( res_atom );
 
 				mod_res->name( new_name );
-				assert( ! mod_res->has_variant_type( res_varname ) );
+			debug_assert( ! mod_res->has_variant_type( res_varname ) );
 				mod_res->enable_custom_variant_types();
 				mod_res->add_variant_type( res_varname ); //necessary to restrict the packer to only use this residue variant in packing
 

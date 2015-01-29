@@ -28,7 +28,7 @@
 // Package headers
 #include <numeric/constants.hh>
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 
 

@@ -212,7 +212,7 @@ public:
 	atom_type( Size const atomno ) const
 	{
 		PyAssert((atomno > 0) && (atomno <= ordered_atoms_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
-		assert( (atomno > 0) && (atomno <= ordered_atoms_.size()) );
+	debug_assert( (atomno > 0) && (atomno <= ordered_atoms_.size()) );
 		return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
 	}
 
@@ -369,7 +369,7 @@ public:
 	AtomIndices const &
 	chi_atoms( Size const chino ) const
 	{
-		assert(chino <= chi_atoms_indices_.size());
+	debug_assert(chino <= chi_atoms_indices_.size());
 		return chi_atoms_indices_[ chino ];
 
 	}
@@ -378,7 +378,7 @@ public:
 	VDs const &
 	chi_atom_vds( Size const chino ) const
 	{
-		assert(chino <= chi_atoms_.size());
+	debug_assert(chino <= chi_atoms_.size());
 		return chi_atoms_[ chino ];
 
 	}
@@ -394,7 +394,7 @@ public:
 	AtomIndices const &
 	nu_atoms(core::uint const nu_index) const
 	{
-		assert(nu_index <= nu_atoms_indices_.size());
+	debug_assert(nu_index <= nu_atoms_indices_.size());
 		return nu_atoms_indices_[nu_index];
 	}
 
@@ -484,19 +484,19 @@ public:
 
 	bool
 	heavyatom_has_polar_hydrogens( Size atomno ) const {
-		assert( finalized_ );
+	debug_assert( finalized_ );
 		return graph_[ordered_atoms_[atomno]].heavyatom_has_polar_hydrogens();
 	}
 
 	bool
 	heavyatom_is_an_acceptor( Size atomno ) const {
-		assert( finalized_ );
+	debug_assert( finalized_ );
 		return graph_[ordered_atoms_[atomno]].is_acceptor();
 	}
 
 	bool
 	atom_is_polar_hydrogen( Size atomno ) const {
-		assert( finalized_ );
+	debug_assert( finalized_ );
 		return graph_[ordered_atoms_[atomno]].is_polar_hydrogen();
 	}
 
@@ -612,7 +612,7 @@ public:
 	Size
 	first_sidechain_hydrogen() const
 	{
-		assert( finalized_ );
+	debug_assert( finalized_ );
 		return first_sidechain_hydrogen_;
 	}
 
@@ -632,8 +632,8 @@ public:
 	bool
 	atom_is_backbone( Size const atomno ) const
 	{
-		assert( finalized_ );
-		assert( atomno <= natoms() );
+	debug_assert( finalized_ );
+	debug_assert( atomno <= natoms() );
 		return ( ( atomno <= n_backbone_heavyatoms_ ) ||
 				( atomno > nheavyatoms_ && atomno < first_sidechain_hydrogen_ ) );
 	}
@@ -643,8 +643,8 @@ public:
 	bool
 	atom_is_hydrogen( Size const atomno ) const
 	{
-		assert( finalized_ );
-		assert( atomno <= natoms() );
+	debug_assert( finalized_ );
+	debug_assert( atomno <= natoms() );
 		return atomno > nheavyatoms_;
 	}
 
@@ -909,7 +909,7 @@ public:
 	/// connection at this atom.
 	Size
 	residue_connection_id_for_atom( Size const atomid ) const {
-		assert( atom_2_residue_connection_map_[ atomid ].size() == 1 );
+	debug_assert( atom_2_residue_connection_map_[ atomid ].size() == 1 );
 		return atom_2_residue_connection_map_[ atomid ][ 1 ];
 	}
 

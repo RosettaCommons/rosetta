@@ -78,7 +78,7 @@ IdealBondLengthSet::get_bond_length( std::string const & atom_type_name1, std::s
 
 BondLength
 IdealBondLengthSet::get_bond_length(AtomTypeIndex const atom_type_index1, AtomTypeIndex const atom_type_index2) const{
-	assert(contains_bond_length(atom_type_index1, atom_type_index2));
+debug_assert(contains_bond_length(atom_type_index1, atom_type_index2));
 
 	std::pair<AtomTypeIndex,AtomTypeIndex> index_pair(atom_type_index1,atom_type_index2);
 
@@ -113,8 +113,8 @@ IdealBondLengthSet::add_bond_length(
 		AtomTypeIndex const atom_type_index2,
 		BondLength const length
 ){
-	assert(atom_type_index1 <= atom_type_index2);
-	assert(!contains_bond_length(atom_type_index1, atom_type_index2) );
+debug_assert(atom_type_index1 <= atom_type_index2);
+debug_assert(!contains_bond_length(atom_type_index1, atom_type_index2) );
 
 	std::pair<AtomTypeIndex,AtomTypeIndex> index_pair(atom_type_index1,atom_type_index2);
 	bond_lengths_[index_pair]= length;

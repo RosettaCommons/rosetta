@@ -150,7 +150,7 @@ make_symmetric_pose(
 	}
 	pose.pdb_info( pdb_info );
 
-	assert( is_symmetric( pose ) );
+debug_assert( is_symmetric( pose ) );
 
 	if (basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ]){
 		pose.conformation().detect_bonds();
@@ -186,7 +186,7 @@ make_symmetric_pose(
 	core::pose::symmetry::make_symmetric_pdb_info( pose, pdb_info_src, pdb_info );
 	pose.pdb_info( pdb_info );
 
-	assert( is_symmetric( pose ) );
+debug_assert( is_symmetric( pose ) );
 
 	pose.conformation().detect_disulfides();
 
@@ -260,7 +260,7 @@ make_asymmetric_pose(
 	energies->clear_energies();
 	pose.set_new_energies_object( energies );
 
-	assert( !is_symmetric( pose ) );
+debug_assert( !is_symmetric( pose ) );
 }
 
 // @details make a new (asymmetric) pose that contains only the master subunit from the input pose
@@ -723,7 +723,7 @@ find_symmetric_basejump_anchor( pose::Pose & pose )
 {
 	kinematics::FoldTree const & f  = pose.conformation().fold_tree();
 	kinematics::FoldTree::const_iterator it=f.begin();
-	assert ( it->is_jump() );
+debug_assert ( it->is_jump() );
 	return it->stop();
 }*/
 // @details find the anchor residue in the first subunit. This function assumes that
@@ -955,7 +955,7 @@ partition_by_symm_jumps(
 			break;
 		}
 	}
-	assert(pos1>0);
+debug_assert(pos1>0);
 
 	partner1 = true;
 	partner1( pos1 ) = false;

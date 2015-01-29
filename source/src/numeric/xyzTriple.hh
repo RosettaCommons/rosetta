@@ -30,7 +30,7 @@
 #include <numeric/trig.functions.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <stdexcept>
 

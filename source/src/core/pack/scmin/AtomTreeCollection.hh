@@ -68,7 +68,7 @@ public:
 	Vector const &
 	coord( Size ind ) const
 	{
-		assert( ind <= natoms_ );
+	debug_assert( ind <= natoms_ );
 		return coords_[ ind ];
 	}
 
@@ -120,7 +120,7 @@ public:
 	inline
 	conformation::Residue const &  active_residue() const
 	{
-		assert( residue_uptodate_ );
+	debug_assert( residue_uptodate_ );
 		return *active_residue_;
 	}
 
@@ -130,7 +130,7 @@ public:
 	/// asserts atom_tree_uptodate_ -- make sure that update_atom_tree is called first
 	kinematics::AtomTree const & active_atom_tree() const
 	{
-		assert( atom_tree_uptodate_ );
+	debug_assert( atom_tree_uptodate_ );
 		return *active_atom_tree_;
 	}
 

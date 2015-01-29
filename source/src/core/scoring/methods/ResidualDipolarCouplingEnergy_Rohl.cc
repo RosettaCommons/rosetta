@@ -53,7 +53,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -705,7 +705,7 @@ Real ResidualDipolarCouplingEnergy_Rohl::calc_dipscore(
 ) const
 {
 
-	assert( Azz != 0 );
+debug_assert( Azz != 0 );
 
 	Real score( 0.0 );
 

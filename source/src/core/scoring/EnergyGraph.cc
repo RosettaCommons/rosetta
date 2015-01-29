@@ -265,7 +265,7 @@ bool
 EnergyGraph::active_score_types( ScoreTypes const & active )
 {
 	for ( Size ii = 1; ii < active.size(); ++ii ) {
-		assert( active[ ii ] < active[ ii + 1 ] );
+	debug_assert( active[ ii ] < active[ ii + 1 ] );
 	}
 	bool clear_edges = false;
 	if ( active.size() != active_2b_score_types_.size() ) clear_edges = true;
@@ -304,7 +304,7 @@ EnergyGraph::active_score_types( ScoreTypes const & active )
 
 void EnergyGraph::delete_edge( graph::Edge * edge )
 {
-	assert( dynamic_cast< EnergyEdge* > (edge) );
+debug_assert( dynamic_cast< EnergyEdge* > (edge) );
 	energy_edge_pool_->destroy( static_cast< EnergyEdge* > (edge) );
 }
 

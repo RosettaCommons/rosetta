@@ -144,7 +144,7 @@ SymmMinimalistNode::assign_zero_state()
 void
 SymmMinimalistNode::assign_state(int new_state)
 {
-	assert( new_state >= 0 && new_state <= get_num_states());
+debug_assert( new_state >= 0 && new_state <= get_num_states());
 
 	if (new_state == 0) assign_zero_state();
 	else {
@@ -235,7 +235,7 @@ SymmMinimalistNode::project_deltaE_for_substitution
 	}
 
 //	if ( debug && ! get_owner()->any_vertex_state_unassigned() ) {
-//		assert( get_rotamer(alternate_state_).seqpos() == get_rotamer(current_state_).seqpos() );
+//	debug_assert( get_rotamer(alternate_state_).seqpos() == get_rotamer(current_state_).seqpos() );
 //		get_on_the_fly_owner()->non_const_pose().replace_residue( get_rotamer(alternate_state_).seqpos(), get_rotamer( alternate_state_ ), false);
 //		Real score_after = get_on_the_fly_owner()->score_function()( get_on_the_fly_owner()->non_const_pose() );
 //		/// Now handled automatically.  get_on_the_fly_owner()->score_function().accumulate_residue_total_energies( get_on_the_fly_owner()->non_const_pose() );
@@ -499,7 +499,7 @@ SymmMinimalistNode::project_deltaE_for_substitution
 void
 SymmMinimalistNode::commit_considered_substitution()
 {
-	assert( alternate_state_is_being_considered_ );
+debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_one_body_energy_ = alternate_state_one_body_energy_;
@@ -591,7 +591,7 @@ SymmMinimalistNode::print_internal_energies() const
 void
 SymmMinimalistNode::update_internal_energy_sums()
 {
-	assert( get_edge_vector_up_to_date() );
+debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
 	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
 		curr_state_total_energy_ += get_incident_symmin_edge(ii)->get_current_two_body_energy();

@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <iterator>
 #include <algorithm> //Required by GCC 4.3.2
 
@@ -300,7 +300,7 @@ public: // Methods
 	void
 	pop_back()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		v_.pop_back();
 	}
 
@@ -436,7 +436,7 @@ public: // Properties
 	ConstReference
 	front() const
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.front();
 	}
 
@@ -446,7 +446,7 @@ public: // Properties
 	Reference
 	front()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.front();
 	}
 
@@ -456,7 +456,7 @@ public: // Properties
 	ConstReference
 	back() const
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.back();
 	}
 
@@ -466,7 +466,7 @@ public: // Properties
 	Reference
 	back()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.back();
 	}
 
@@ -486,7 +486,7 @@ public: // Properties
 	Index const &
 	index( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return m()[ key ];
 	}
 
@@ -528,7 +528,7 @@ public: // Indexers
 	ConstReference
 	operator []( Key const & key ) const
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_[ m()[ key ] ];
 	}
 
@@ -538,7 +538,7 @@ public: // Indexers
 	Reference
 	operator []( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_[ m()[ key ] ];
 	}
 
@@ -548,7 +548,7 @@ public: // Indexers
 	ConstReference
 	at( Key const & key ) const
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_.at( m().at( key ) );
 	}
 
@@ -558,7 +558,7 @@ public: // Indexers
 	Reference
 	at( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_.at( m().at( key ) );
 	}
 
@@ -748,7 +748,7 @@ public: // Static functions
 	void
 	activate( Key const & key )
 	{
-		assert( key > 0 );
+	debug_assert( key > 0 );
 		IndexMap & imap( m() );
 		if ( ! imap.has( key ) ) { // Extend index map and activate key
 			imap.resize( key, Index( 0 ) );
@@ -767,7 +767,7 @@ private: // Methods
 	Index const &
 	add_key( Key const & key )
 	{
-		assert( key > 0 );
+	debug_assert( key > 0 );
 		Index const & i( activated_index( key ) );
 		if ( i > v_.size() ) v_.resize( i );
 		return i;

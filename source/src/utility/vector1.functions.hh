@@ -30,7 +30,7 @@ template < class T >
 T
 max( vector1< T > const & input )
 {
-	assert( input.size() > 0 );
+debug_assert( input.size() > 0 );
 
 	T largest_so_far = input[ 1 ];
 	for ( typename vector1< T >::Size ii = 2; ii <= input.size(); ++ii ) {
@@ -47,7 +47,7 @@ template < class T >
 T
 min( vector1< T > const & input )
 {
-	assert( input.size() > 0 );
+debug_assert( input.size() > 0 );
 
 	T smallest_so_far = input[ 1 ];
 	for ( typename vector1< T >::Size ii = 2; ii <= input.size(); ++ii ) {
@@ -64,7 +64,7 @@ template < class T >
 typename vector1< T >::Size
 arg_max( vector1< T > const & input )
 {
-	assert( input.size() > 0 );
+debug_assert( input.size() > 0 );
 
 	T largest_so_far = input[ 1 ];
 	typename vector1< T >::Size index_of_largest = 1;
@@ -85,7 +85,7 @@ template < class T >
 typename vector1< T >::Size
 arg_min( vector1< T > const & input )
 {
-	assert( input.size() > 0 );
+debug_assert( input.size() > 0 );
 
 	T smallest_so_far = input[ 1 ];
 	typename vector1< T >::Size index_of_smallest = 1;

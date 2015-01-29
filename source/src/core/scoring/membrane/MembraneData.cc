@@ -249,7 +249,7 @@ MembraneData::load_menv_info() {
 					std::istringstream l( line );
 					Size ii,jj;
 					l >> tag >> ii >> jj >> aa;
-					assert( Size( aa ) == k );
+				debug_assert( Size( aa ) == k );
 					for ( Size n=1; n <= max_aa; ++n )
 					{
 						l >> mem_pair_log_(i, j, aa, n );

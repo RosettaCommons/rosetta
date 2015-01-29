@@ -98,7 +98,7 @@ void FormFactorManager::register_ff(std::string atom_name,FormFactorOP new_ff) {
 /// @brief returns true if the manager has form factor function for a given atom
 bool FormFactorManager::is_known_atom(std::string atom_name) {
 
-    assert( atom_name.size() > 0 );
+   debug_assert( atom_name.size() > 0 );
     if(ff_map_.find(atom_name) != ff_map_.end()) {
 	return true;
     }

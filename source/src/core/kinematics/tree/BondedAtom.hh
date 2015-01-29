@@ -25,7 +25,7 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace core {
@@ -254,7 +254,7 @@ public: // Properties
 		//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
 		AtomCOP parent_op = parent(); // must have parent
 		if ( parent_op->is_jump() ) {
-			assert( parent_op->stub_defined() ); // weird behavior otherwise
+		debug_assert( parent_op->stub_defined() ); // weird behavior otherwise
 			AtomCOP p_stub2( parent_op->stub_atom2() );
 			AtomID const & p_stub2_id( p_stub2->id() );
 			if ( id() == p_stub2_id ) {

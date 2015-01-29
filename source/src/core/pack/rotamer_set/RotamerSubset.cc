@@ -86,7 +86,7 @@ Size
 RotamerSubset::get_residue_type_begin( Size which_restype ) const
 {
 	update_rotamer_offsets();
-	assert( which_restype <= n_residue_types_ );
+debug_assert( which_restype <= n_residue_types_ );
 	return residue_type_rotamers_begin_[ which_restype ];
 }
 
@@ -94,7 +94,7 @@ Size
 RotamerSubset::get_residue_group_begin( Size which_resgroup ) const
 {
 	update_rotamer_offsets();
-	assert( which_resgroup <= n_residue_groups_ );
+debug_assert( which_resgroup <= n_residue_groups_ );
 	return residue_group_rotamers_begin_[ which_resgroup ];
 }
 
@@ -104,7 +104,7 @@ RotamerSubset::get_n_rotamers_for_residue_type( Size which_restype ) const
 {
 	update_rotamer_offsets();
 
-	assert( which_restype <= n_residue_types_ );
+debug_assert( which_restype <= n_residue_types_ );
 	return n_rotamers_for_restype_[ which_restype ];
 }
 
@@ -113,7 +113,7 @@ RotamerSubset::get_n_rotamers_for_residue_group( Size which_resgroup ) const
 {
 	update_rotamer_offsets();
 
-	assert( which_resgroup <= n_residue_groups_ );
+debug_assert( which_resgroup <= n_residue_groups_ );
 	return n_rotamers_for_resgroup_[ which_resgroup ];
 }
 
@@ -194,7 +194,7 @@ RotamerSubset::get_trie( Size method_enum_id ) const
 void
 RotamerSubset::drop_rotamer( Size rot_id )
 {
-	assert( rot_id <= rotamers_.size() );
+debug_assert( rot_id <= rotamers_.size() );
 	utility::vector1< conformation::ResidueOP > copy_rotamers( rotamers_.size() - 1, 0 );
 	Size count_copy( 1 );
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
@@ -221,7 +221,7 @@ RotamerSubset::drop_rotamer( Size rot_id )
 void
 RotamerSubset::drop_rotamers( utility::vector1< bool > const & rotamers_to_delete )
 {
-	assert( rotamers_to_delete.size() == rotamers_.size() );
+debug_assert( rotamers_to_delete.size() == rotamers_.size() );
 
 	Size n_dropped = 0;
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {

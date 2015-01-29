@@ -61,8 +61,8 @@ CountPairFactory::create_count_pair_function(
 			break;
 			case CP_ONE_BOND: {
 				// scope for res1connat, res2connat initializations
-				assert( res1.connections_to_residue( res2 ).size() == 1 );
-				assert( res2.connections_to_residue( res1 ).size() == 1 );
+			debug_assert( res1.connections_to_residue( res2 ).size() == 1 );
+			debug_assert( res2.connections_to_residue( res1 ).size() == 1 );
 
 				Size res1connat = res1.residue_connection( res1.connections_to_residue( res2 )[ 1 ] ).atomno();
 				Size res2connat = res2.residue_connection( res2.connections_to_residue( res1 )[ 1 ] ).atomno();
@@ -112,8 +112,8 @@ CountPairFactory::create_count_pair_function_and_invoke(
 			break;
 			case CP_ONE_BOND: {
 				// scope for res1connat, res2connat initializations
-				assert( res1.connections_to_residue( res2 ).size() == 1 );
-				assert( res2.connections_to_residue( res1 ).size() == 1 );
+			debug_assert( res1.connections_to_residue( res2 ).size() == 1 );
+			debug_assert( res2.connections_to_residue( res1 ).size() == 1 );
 
 				Size res1connat = res1.residue_connection( res1.connections_to_residue( res2 )[ 1 ] ).atomno();
 				Size res2connat = res2.residue_connection( res2.connections_to_residue( res1 )[ 1 ] ).atomno();

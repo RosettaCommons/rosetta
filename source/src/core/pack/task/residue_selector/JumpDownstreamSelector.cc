@@ -29,7 +29,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace core {
@@ -51,7 +51,7 @@ JumpDownstreamSelector::~JumpDownstreamSelector() {}
 ResidueSubset
 JumpDownstreamSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( jump_ > 0 );
+debug_assert( jump_ > 0 );
 
 	ResidueSubset subset( pose.total_residue(), false );
 

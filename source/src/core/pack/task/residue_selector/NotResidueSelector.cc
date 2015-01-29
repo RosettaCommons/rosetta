@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace core {
 namespace pack {
@@ -48,7 +48,7 @@ NotResidueSelector::NotResidueSelector( ResidueSelectorCOP selector )
 ResidueSubset
 NotResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( selector_ );
+debug_assert( selector_ );
 
 	ResidueSubset subset = selector_->apply( pose );
 	subset.flip();

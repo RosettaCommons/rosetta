@@ -61,7 +61,7 @@ residue_gws_string( core::pose::Pose const & pose, core::uint const seqpos )
 	using namespace pose::carbohydrates;
 
 	Residue const & res( pose.residue( seqpos ) );
-	assert( res.is_carbohydrate() );
+debug_assert( res.is_carbohydrate() );
 
 	stringstream gws_string( stringstream::out );
 
@@ -96,7 +96,7 @@ residue_gws_string( core::pose::Pose const & pose, core::uint const seqpos )
 	} else /* is lower terminus */ {
 		gws_string << '?';
 	}
-	assert( gws_string.str().size() == 3 );  // If this fails, it probably indicates a design flaw; see above.
+debug_assert( gws_string.str().size() == 3 );  // If this fails, it probably indicates a design flaw; see above.
 
 	gws_string << info->anomer()[ 0 ];
 	gws_string << info->anomeric_carbon();
@@ -139,7 +139,7 @@ residue_range_gws_string( core::pose::Pose const & pose, core::uint const begin,
 
 		// Now, see if this residue has any branches off the main chain.
 		conformation::Residue const & res_i( pose.residue( i ) );
-		assert( res_i.is_carbohydrate() );
+	debug_assert( res_i.is_carbohydrate() );
 		Size const n_branches( res_i.carbohydrate_info()->n_branches() );
 		Size const n_non_branch_residue_connections( res_i.n_residue_connections() - n_branches );
 
@@ -178,7 +178,7 @@ chain_gws_string( core::pose::Pose const & pose, core::uint const chain_id )
 
 	Conformation const & conf( pose.conformation() );
 
-	assert( chain_id <= conf.num_chains() );
+debug_assert( chain_id <= conf.num_chains() );
 	PyAssert( chain_id <= conf.num_chains(),
 			"dump_gws_chain( core::pose::Pose const & pose, core::uint const chain_id, std::string const & filename ): "
 			"variable chain_id is out of range!" );

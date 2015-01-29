@@ -75,7 +75,7 @@ namespace packstat {
 		virtual void accumulate_area( core::id::AtomID, core::Real area, bool buried ) {
 			// std::cerr << "accumulate_area " << area << std::endl;
 			// isnan is not a standard function (not known in VC) - use the function used in hbonding for nan detection instead.
-			//assert( !std::isnan(area) );
+		//debug_assert( !std::isnan(area) );
 			total_area += area;
 			if( buried ) buried_area += area;
 		}
@@ -260,8 +260,8 @@ namespace packstat {
 			cw_angle  = acos(std::max(-1.0,std::min(1.0,(x-circle->x)/circle->r)));
 			ccw_angle = acos(std::max(-1.0,std::min(1.0,(x-ccw->x)/ccw->r)));
 				// isnan is not a standard function (not known in VC) - use the function used in hbonding for nan detection instead.
-				//assert( !std::isnan(cw_angle) );
-				//assert( !std::isnan(ccw_angle) );
+			//debug_assert( !std::isnan(cw_angle) );
+			//debug_assert( !std::isnan(ccw_angle) );
 				if( y > circle->y )  cw_angle = 2.0*numeric::constants::d::pi-cw_angle;
 				if( y >    ccw->y ) ccw_angle = 2.0*numeric::constants::d::pi-ccw_angle;
 			}
@@ -381,7 +381,7 @@ namespace packstat {
 private:
 
 		inline void finish_arc( core::Real end_angle ) {
-			// assert( fabs(angle-end_angle) * circle->dada < 1.0 );
+			//debug_assert( fabs(angle-end_angle) * circle->dada < 1.0 );
 			// accum_->accumulate_area( circle->atom, fabs(angle-end_angle) * circle->dada );
 			arcs_.push_back( Arc( circle->atom, fabs(angle-end_angle) * circle->dada ) );
 			//dz//accum_->accumulate_dz(   circle->atom, fabs(angle-end_angle) * circle->drdz );
@@ -404,9 +404,9 @@ private:
 
 		inline Circles &
 		operator() ( core::Size i, core::Size j ) {
-			assert( i < Nx_ );
-			assert( j < Ny_ );
-			assert( array_ );
+		debug_assert( i < Nx_ );
+		debug_assert( j < Ny_ );
+		debug_assert( array_ );
 			// std::cerr << Ny_*i+j << " " << Nx_*Ny_ << std::endl;
 			return array_[Ny_*i+j];
 		}

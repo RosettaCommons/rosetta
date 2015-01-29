@@ -127,7 +127,7 @@ define_mainchain_atoms( ResidueTypeOP rsd )
 						next_atom = nbr;
 					}
 				}
-				assert( next_atom != atom );
+			debug_assert( next_atom != atom );
 				atom = next_atom;
 			}
 			mainchain.push_back( upper_connect );
@@ -487,7 +487,7 @@ read_topology_file(
 )
 {
 	chemical::ResidueTypeSetCOP rsd_type_set( rsd_type_set_ap );
-	assert( rsd_type_set != 0 ); // not really needed
+debug_assert( rsd_type_set != 0 ); // not really needed
 
 	using id::AtomID;
 	using id::DOF_ID;
@@ -775,7 +775,7 @@ read_topology_file(
 			}
 
 		} else if ( tag == "IO_STRING" ) {
-			assert( line.size() >= 15 );
+		debug_assert( line.size() >= 15 );
 			std::string const three_letter_code( line.substr(10,3) ),
 							one_letter_code( line.substr(14,1) );
 			rsd->name3( three_letter_code );
@@ -1006,7 +1006,7 @@ read_topology_file(
 			for ( Size i=1; i<= natoms; ++i ) {
 				std::string name( rsd->atom_name(i) );
 				strip_whitespace( name );
-				assert( rsd_xyz.count( name ) );
+			debug_assert( rsd_xyz.count( name ) );
 				rsd->set_ideal_xyz( name, rsd_xyz[ name ] );
 				//rsd->set_xyz( rsd->atom_name(i), atom_tree.xyz( id::AtomID(i,1) ) );
 				//rsd->atom(i).xyz( atom_tree.xyz( id::AtomID(i,1) ) );

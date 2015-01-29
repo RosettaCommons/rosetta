@@ -636,7 +636,7 @@ void SingleResidueCenrotLibrary::get_phipsi_bins(
 Real SingleResidueCenrotLibrary::get_phi_from_rsd(
 	conformation::Residue const & rsd
 ) const {
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 	if ( rsd.is_lower_terminus() ) return NEUTRAL_PHI;
 	else return rsd.mainchain_torsion( RSD_PHI_INDEX );
 }
@@ -644,7 +644,7 @@ Real SingleResidueCenrotLibrary::get_phi_from_rsd(
 Real SingleResidueCenrotLibrary::get_psi_from_rsd(
 	conformation::Residue const & rsd
 ) const {
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 	if ( rsd.is_upper_terminus() ) return NEUTRAL_PSI;
 	else return rsd.mainchain_torsion( RSD_PSI_INDEX );
 }

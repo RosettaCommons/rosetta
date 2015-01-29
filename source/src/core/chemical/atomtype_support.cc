@@ -27,7 +27,7 @@ bool retype_is_aromatic(VD const & atom, ResidueGraph const & graph) {
 		if( graph[ *bonds ].bond_name() == AromaticBond ) {
 			VD const & tvd( boost::target( *bonds, graph) );
 			Atom const & t( graph[tvd] );
-			assert( t.element_type() );
+		debug_assert( t.element_type() );
 			if( t.element_type()->get_chemical_name() != "Virt" ) {
 				return true;
 			}
@@ -65,7 +65,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 			continue;
 		}
 		ElementCOP element_type( a.element_type() );
-		assert( element_type );
+	debug_assert( element_type );
 		element::Elements element( element_type->element() );
 		// H, C, O, N have complicated rules.
 		// Everything else maps to a single atom type.
@@ -81,7 +81,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph); bonds != bonds_end; ++bonds ) {
 				VD const & tvd( boost::target( *bonds, graph) );
 				Atom const & t( graph[tvd] );
-				assert( t.element_type() );
+			debug_assert( t.element_type() );
 				element::Elements t_element( t.element_type()->element() );
 				if( t_element == element::N || t_element == element::O || t_element == element::S ) { ++num_NOS; }
 				// Instead of also counting number of C's typed as aroC's here (which may depend on atom iteration ordering)
@@ -110,7 +110,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph); bonds != bonds_end; ++bonds ) {
 				VD const & tvd( boost::target( *bonds, graph) );
 				Atom const & t( graph[tvd] );
-				assert( t.element_type() );
+			debug_assert( t.element_type() );
 				if( t.element_type()->get_chemical_name() == "Virt" ) { continue; }
 				element::Elements t_element( t.element_type()->element() );
 				switch( graph[*bonds].bond_name() ) {
@@ -159,7 +159,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph); bonds != bonds_end; ++bonds ) {
 				VD const & tvd( boost::target( *bonds, graph) );
 				Atom const & t( graph[tvd] );
-				assert( t.element_type() );
+			debug_assert( t.element_type() );
 				if( t.element_type()->get_chemical_name() == "Virt" ) { continue; }
 				element::Elements t_element( t.element_type()->element() );
 				if( t_element == element::H ) { ++num_H; }
@@ -198,7 +198,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph); bonds != bonds_end; ++bonds ) {
 				VD const & tvd( boost::target( *bonds, graph) );
 				Atom const & t( graph[tvd] );
-				assert( t.element_type() );
+			debug_assert( t.element_type() );
 				if( t.element_type()->get_chemical_name() == "Virt" ) { continue; }
 				element::Elements t_element( t.element_type()->element() );
 
@@ -213,7 +213,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 					//if( boost::target( *bonds2, graph) == *itr ) { continue; }
 					VD const & tvd2( boost::target( *bonds2, graph) );
 					Atom const & t2( graph[tvd2] );
-					assert( t2.element_type() );
+				debug_assert( t2.element_type() );
 					if( t2.element_type()->get_chemical_name() == "Virt" ) { continue; }
 					element::Elements t2_element( t2.element_type()->element() );
 
@@ -298,7 +298,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 	// Make sure all the types have been set.
 	for( boost::tie(itr, itr_end) = vertices(graph); itr != itr_end; ++itr) {
 		Atom const & a( graph[*itr] );
-		assert( a.atom_type_index() != 0 );
+	debug_assert( a.atom_type_index() != 0 );
 	}
 #endif
 

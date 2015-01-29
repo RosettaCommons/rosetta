@@ -133,7 +133,7 @@ Translator::Translator(const RuleSet &rules, ResidueTypeCOP fine_res_ptr,  Resid
 	fine_res_type_=fine_res_ptr;
 	ResidueType const &fine_res=(*fine_res_ptr);
 	ResidueType const &coarse_res=(*coarse_res_ptr);
-	assert( coarse_res.name() == fine_res.name() );
+debug_assert( coarse_res.name() == fine_res.name() );
 
 	chemical::AA aa = fine_res.aa();
 	beads_.clear();
@@ -173,7 +173,7 @@ Translator::Translator(const RuleSet &rules, ResidueTypeCOP fine_res_ptr,  Resid
 	AtomList &full_atom=beads_.front();
 	for (AtomList::const_iterator ait=full_atom.begin(),eait=full_atom.end(); ait!=eait; ++ait) {
 		cerr << ait->name_ << endl;
-		assert( fine_res.has(ait->name_) && coarse_res.has(ait->name_) );
+	debug_assert( fine_res.has(ait->name_) && coarse_res.has(ait->name_) );
 	};
 
 	//fix bond lengths, angles, etc.
@@ -291,10 +291,10 @@ Translator::coarsify(
 	bool bAverage( false ); //use most frequent chi/angle for coarse rotamer
 
 	CoarseRotamerSetOP coarse_rotset = new CoarseRotamerSet;
-	assert(coarse_rotset);
+debug_assert(coarse_rotset);
 	//coarse_rotset->tag="coarse";
 	Size nchi=coarse_res_type_->nchi();
-	assert(nchi==1); //this is only correct in the current version... a debuggin' assert
+debug_assert(nchi==1); //this is only correct in the current version... a debuggin' assert
 
 	RotVector mask(4);
 	RotVector max_bins(nchi);
@@ -312,7 +312,7 @@ Translator::coarsify(
 	do { //while( update_mask(...) )
 		Real pnew;
 		int rot_freq = find_most_frequent_rotamer( fine_rotamers, mask, nchi, pnew );
-		//assert ( nchi == fine_rotamers[ rot_freq ].nchi_aa() ); //case of inequality might occur and then we need to think about it...
+	//debug_assert ( nchi == fine_rotamers[ rot_freq ].nchi_aa() ); //case of inequality might occur and then we need to think about it...
 		ChiVector new_chi( 4, 0.0 ); //initialize with 0
 		AngleVector new_angle( 4, 0.0 );
 		DunbrackRotamer< FOUR, Real > fine_high_res = increase_rotamer_precision( fine_rotamers[ rot_freq ] );

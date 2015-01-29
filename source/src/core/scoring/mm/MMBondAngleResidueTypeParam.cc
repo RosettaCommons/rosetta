@@ -94,13 +94,13 @@ MMBondAngleResidueTypeParam::init(
 		core::scoring::mm::mm_bondangle_library_citer_pair mm_pair(mm_bondangle_library.lookup(type1, type2, type3));
 
 		// make sure there is at least one set of parameters defined
-		assert(mm_pair.first != mm_pair.second);
+	debug_assert(mm_pair.first != mm_pair.second);
 
 		core::Real mm_Ktheta((mm_pair.first->second).key1());
 		core::Real mm_theta0((mm_pair.first->second).key2());
 
 		// make sure there was only one set of parameters defined
-		assert(++mm_pair.first == mm_pair.second);
+	debug_assert(++mm_pair.first == mm_pair.second);
 
 		//TR << " mm_Ktheta: " << mm_Ktheta << " mm_theta0: " << numeric::conversions::degrees(mm_theta0)
 		//   << " rt_theta0: " << numeric::conversions::degrees(residue_type_theta0);

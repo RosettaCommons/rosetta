@@ -53,7 +53,7 @@ bool CtabV2000Parser::parse(std::istream & tablein, std::string const & headerli
 	//std::string const version(line,33,6);
 
 	//Sometimes V2000 don't have appropriate version numbers.
-	//assert( std::string(line,33,6) == "V2000");
+//debug_assert( std::string(line,33,6) == "V2000");
 
 	if( utility::is_undefined(natoms) || utility::is_undefined(nbonds) ) {
 		TR.Error << "Could not read the number of atoms and bonds from header of mol/sdf Ctab." << std::endl;

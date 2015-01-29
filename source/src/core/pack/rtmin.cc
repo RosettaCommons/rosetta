@@ -304,7 +304,7 @@ RTMin::rtmin(
 		rotamer_set::RotamerSetOP iirotset = rsf.create_rotamer_set( trial_res );
 		iirotset->set_resid( iiresid );
 		iirotset->build_rotamers( pose, scfxn, *input_task, packer_neighbor_graph );
-		assert( iirotset->id_for_current_rotamer() != 0 );
+	debug_assert( iirotset->id_for_current_rotamer() != 0 );
 
 		AtomTreeCollectionOP ii_atc( new AtomTreeCollection( pose, *iirotset, iiresid ) );
 		ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( 1 ); // start at the beginning.
@@ -523,10 +523,10 @@ RTMin::rtmin(
 
 #ifdef APL_FULL_DEBUG
 		for ( Size jj = 1; jj <= bgres[ iiresid ]->natoms(); ++jj ) {
-			assert( bgres[ iiresid ]->xyz( jj ).distance( pose.residue( iiresid ).xyz( jj ) ) < 1e-5 );
+		debug_assert( bgres[ iiresid ]->xyz( jj ).distance( pose.residue( iiresid ).xyz( jj ) ) < 1e-5 );
 		}
 		Real const ii_final_score( scfxn( pose ) );
-		assert( std::abs( best_real_score - ii_final_score ) < 1e-13 );
+	debug_assert( std::abs( best_real_score - ii_final_score ) < 1e-13 );
 #endif
 		//pose.dump_pdb( "rtmin_selected_" + utility::to_string( iiresid ) + ".pdb" );
 		//std::cout << "Round " << ii << " final score: " << scfxn(pose) << std::endl;

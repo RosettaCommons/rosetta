@@ -13,7 +13,7 @@
 // Unit headers
 #include <core/scoring/rna/RNA_ScoringUtil.hh>
 #include <core/types.hh>
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace core {
 namespace scoring {
@@ -29,7 +29,7 @@ get_fade_correction(
 	 Real & fade_value,
 	 Real & fade_deriv )
 {
-	assert( fade_zone > 0 );
+debug_assert( fade_zone > 0 );
 
 	fade_value = 1.0;
 	fade_deriv = 0.0;

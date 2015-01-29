@@ -128,9 +128,9 @@ void spline_coeffs(
 
 
 void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB) {
-	assert(mapA.u1() == mapB.u1());
-	assert(mapA.u2() == mapB.u2());
-	assert(mapA.u3() == mapB.u3());
+debug_assert(mapA.u1() == mapB.u1());
+debug_assert(mapA.u2() == mapB.u2());
+debug_assert(mapA.u3() == mapB.u3());
 
 	map_product.dimension(mapA.u1(), mapA.u2(), mapA.u3());
 	for (Size i=0; i < mapA.size(); i++) {

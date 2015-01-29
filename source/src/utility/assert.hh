@@ -16,8 +16,9 @@
 #ifndef INCLUDED_utility_assert_hh
 #define INCLUDED_utility_assert_hh
 
+#include <utility/backtrace.hh> // for debug_assert()
 
-/// @brief Macro wrapper for paramters that used only in assert(...) statments.
+/// @brief Macro wrapper for paramters that used only indebug_assert(...) statments.
 ///        Intended to supress 'unused parameter' warning.
 ///        Ported from Rosetta++::Pack.cc
 ///

@@ -85,7 +85,7 @@ namespace core {
 					if(nresidue==0) continue; //Do nothing to this Parameters object if it has no residues in its residue list.
 					for(core::Size j=1; j<=nresidue; ++j) {
 						core::Size seq_pos=parameters_[i]->residue(j)->seqpos();
-						assert( seq_pos > 0 && seq_pos <= new_conf.size() );
+					debug_assert( seq_pos > 0 && seq_pos <= new_conf.size() );
 						parameters_[i]->set_residue(j, new_conf.residue_op(seq_pos));
 					}
 				}

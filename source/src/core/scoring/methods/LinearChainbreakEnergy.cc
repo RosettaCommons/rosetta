@@ -198,7 +198,7 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
       total_ovp += do_score_ovp(lower_rsd, upper_rsd, nbb, cutpoint, pose);
     }
 
-    assert(std::abs(totals[linear_chainbreak]) < 1e-3 );
+   debug_assert(std::abs(totals[linear_chainbreak]) < 1e-3 );
     totals[linear_chainbreak] = total_dev / 3.0;  // average over 3 distances
     totals[overlap_chainbreak] = total_ovp;
   }

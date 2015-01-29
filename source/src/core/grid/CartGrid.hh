@@ -191,7 +191,7 @@ public:
 		}
 
 		int index = this->get_index(ix, iy, iz);
-		assert( index >= 0 && index < npoints_ );
+	debug_assert( index >= 0 && index < npoints_ );
 		this->zones_[index] = value;
 		return true;
 	}
@@ -213,7 +213,7 @@ public:
 		if (iz < 0 || iz >= nZ_) return 0;
 
 		int index = this->get_index(ix,iy,iz);
-		assert( index >= 0 && index < npoints_ );
+	debug_assert( index >= 0 && index < npoints_ );
 		this->zones_[index] = value;
 		return true;
 	}
@@ -492,21 +492,21 @@ public:
 		std::string name = grid_data["name"].get_str();
 
 		utility::json_spirit::mArray base_data = grid_data["base"].get_array();
-		assert(base_data.size() == 3);
+	debug_assert(base_data.size() == 3);
 
 		core::Real bX = base_data[0].get_real();
 		core::Real bY = base_data[1].get_real();
 		core::Real bZ = base_data[2].get_real();
 
 		utility::json_spirit::mArray size_data = grid_data["size"].get_array();
-		assert(size_data.size() == 3);
+	debug_assert(size_data.size() == 3);
 
 		int nX = size_data[0].get_int();
 		int nY = size_data[1].get_int();
 		int nZ = size_data[2].get_int();
 
 		utility::json_spirit::mArray length_data = grid_data["length"].get_array();
-		assert(length_data.size() == 3);
+	debug_assert(length_data.size() == 3);
 
 		core::Real lX = length_data[0].get_real();
 		core::Real lY = length_data[1].get_real();
@@ -770,7 +770,7 @@ private:
 		{
 			fullyOccupied_ = false;
 		}
-		assert( index >= 0 && index < npoints_ );
+	debug_assert( index >= 0 && index < npoints_ );
 		this->zones_[index] = value;
 	}
 

@@ -467,7 +467,7 @@ void SequenceProfile::delete_position(
 
 /// @brief Returns the number of distinct values at each position in this profile.
 Size SequenceProfile::width() const {
-	assert( check_internals_() );
+debug_assert( check_internals_() );
 	return profile_[1].size();
 }
 

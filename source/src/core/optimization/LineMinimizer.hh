@@ -59,7 +59,7 @@ public:
 		_deriv_count( 0 )
 		// _search_direction_magnitude( 0.0 )
 	{
-		assert( _starting_point.size() == _search_direction.size() );
+	debug_assert( _starting_point.size() == _search_direction.size() );
 		//for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
 		//	_search_direction_magnitude += _search_direction[i] * _search_direction[i];
 		//}

@@ -78,7 +78,7 @@ DisulfMinData::CacheableDataOP DisulfMinData::clone() const { return DisulfMinDa
 /// @brief which_res should be 1 or 2
 void DisulfMinData::set_res_inds( Size which_res, DisulfideAtomIndices const & dais )
 {
-	assert( which_res == 1 || which_res == 2 );
+debug_assert( which_res == 1 || which_res == 2 );
 	if ( which_res == 1 ) res1_inds_ = dais;
 	else res2_inds_ = dais;
 }
@@ -86,7 +86,7 @@ void DisulfMinData::set_res_inds( Size which_res, DisulfideAtomIndices const & d
 DisulfideAtomIndices const &
 DisulfMinData::res_inds( Size which_res ) const
 {
-	assert( which_res == 1 || which_res == 2 );
+debug_assert( which_res == 1 || which_res == 2 );
 	return which_res == 1 ? res1_inds_ : res2_inds_;
 }
 
@@ -225,7 +225,7 @@ FullatomDisulfideEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsdl( rsd1.seqpos() < rsd2.seqpos() ? rsd1 : rsd2 );
 	conformation::Residue const & rsdu( rsd1.seqpos() < rsd2.seqpos() ? rsd2 : rsd1 );
 
-	assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
+debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
 	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *min_data.get_data( fa_dslf_respair_data ) );
 
 	//fpd old version
@@ -319,7 +319,7 @@ FullatomDisulfideEnergy::eval_residue_pair_derivatives(
 		return;
 	}
 
-	assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
+debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
 	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *min_data.get_data( fa_dslf_respair_data ) );
 
 	/// this could be substantially more efficient, but there are only ever a handful of disulfides in proteins,

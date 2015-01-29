@@ -260,7 +260,7 @@ void ResidueNblistData::update( conformation::Residue const & res )
 			}
 			narrow_[ ii ].clear();
 		} else {
-			assert( ood_status_[ ii ] == wide_ood );
+		debug_assert( ood_status_[ ii ] == wide_ood );
 			for ( Size jj = wide_[ ii ].head(), jjend = wide_[ ii ].end(); jj != jjend; jj = wide_[ ii ][ jj ].next() ) {
 				Size jjatno = wide_[ ii ][ jj ].data().atomno();
 				if ( wide_[ jjatno ][ ii ].in_list() ) { wide_[ jjatno ].remove( ii ); }
@@ -282,9 +282,9 @@ void ResidueNblistData::update( conformation::Residue const & res )
 				Size jjatno = iiwide[ jj ].data().atomno();
 				if ( ii > jjatno && ood_status_[ jjatno ] != uptodate ) continue; // we've already visited this atpair
 				if ( ood_status_[ jjatno ] == wide_ood ) continue; // wait until the wide list is up to date
-				assert( ! narrow_[ ii ][ jjatno ].in_list() );
-				assert( ! narrow_[ jjatno ][ ii ].in_list() );
-				assert( wide_[ jjatno ][ ii ].in_list() );
+			debug_assert( ! narrow_[ ii ][ jjatno ].in_list() );
+			debug_assert( ! narrow_[ jjatno ][ ii ].in_list() );
+			debug_assert( wide_[ jjatno ][ ii ].in_list() );
 				int jj_isH = is_H_[ jjatno ];
 				Real d2 = narrow_coord_[ ii ].distance_squared( narrow_coord_[ jj ] );
 				if ( d2 < ncut2_[ ii_isH + jj_isH ] ) {
@@ -298,10 +298,10 @@ void ResidueNblistData::update( conformation::Residue const & res )
 			int ii_isH = is_H_[ ii ];
 			for ( Size jj = 1; jj <= res.natoms(); ++jj ) {
 				if ( ii > jj && ood_status_[ jj ] == wide_ood ) continue; // already visited
-				assert( ! narrow_[ ii ][ jj ].in_list() );
-				assert( ! narrow_[ jj ][ ii ].in_list() );
-				assert( ! wide_[ ii ][ jj ].in_list() );
-				assert( ! wide_[ jj ][ ii ].in_list() );
+			debug_assert( ! narrow_[ ii ][ jj ].in_list() );
+			debug_assert( ! narrow_[ jj ][ ii ].in_list() );
+			debug_assert( ! wide_[ ii ][ jj ].in_list() );
+			debug_assert( ! wide_[ jj ][ ii ].in_list() );
 				Real weight( 1.0 ); Size path_dist( 0 );
 				if ( cpfxn_->count( ii, jj, weight, path_dist ) ) {
 					Real d2w = wide_coord_[ ii ].distance_squared( wide_coord_[ jj ] );
@@ -429,7 +429,7 @@ ResiduePairNeighborList::initialize_from_residues(
 	}
 #endif
 
-	//assert( accurate(
+//debug_assert( accurate(
 	//	heavy_heavy_dist_cutoff,
 	//	heavy_hydrogen_dist_cutoff,
 	//	hydrogen_hydrogen_dist_cutoff,
@@ -469,7 +469,7 @@ ResiduePairNeighborList::update(
 	//for ( Size ii = 1; ii <= r1.natoms(); ++ii ) {
 	for ( Size ii = r1dat.narrow_ood_list().head(); ii != 0; ii = r1dat.narrow_ood_list()[ ii ].next() ) {
 		//if ( r1dat.atom_status(ii) == uptodate ) continue;
-		assert( r1dat.atom_status(ii) == narrow_ood );
+	debug_assert( r1dat.atom_status(ii) == narrow_ood );
 		AtomNeighbors & iinarrow( narrow(0)[ ii ] );
 		for ( Size jj = iinarrow.head(), jjend = 0;
 				jj != jjend; jj = iinarrow[ jj ].next() ) {
@@ -480,7 +480,7 @@ ResiduePairNeighborList::update(
 		iinarrow.clear(); // O(k)
 	}
 	for ( Size ii = r1dat.wide_ood_list().head(); ii != 0; ii = r1dat.wide_ood_list()[ ii ].next() ) {
-		assert( r1dat.atom_status(ii) == wide_ood );
+	debug_assert( r1dat.atom_status(ii) == wide_ood );
 		AtomNeighbors & iiwide( wide(0)[ ii ] );
 		for ( Size jj = iiwide.head(), jjend = 0;
 				jj != jjend; jj = iiwide[ jj ].next() ) {
@@ -499,7 +499,7 @@ ResiduePairNeighborList::update(
 	//for ( Size ii = 1; ii <= r2.natoms(); ++ii ) {
 	for ( Size ii = r2dat.narrow_ood_list().head(); ii != 0; ii = r2dat.narrow_ood_list()[ ii ].next() ) {
 		//if ( r2dat.atom_status(ii) == uptodate ) continue;
-		assert( r2dat.atom_status(ii) == narrow_ood );
+	debug_assert( r2dat.atom_status(ii) == narrow_ood );
 		AtomNeighbors & iinarrow( narrow(1)[ ii ] );
 		for ( Size jj = iinarrow.head(), jjend = 0;
 				jj != jjend; jj = iinarrow[ jj ].next() ) {
@@ -510,7 +510,7 @@ ResiduePairNeighborList::update(
 		iinarrow.clear(); // O(k)
 	}
 	for ( Size ii = r2dat.wide_ood_list().head(); ii != 0; ii = r2dat.wide_ood_list()[ ii ].next() ) {
-		assert( r2dat.atom_status(ii) == wide_ood );
+	debug_assert( r2dat.atom_status(ii) == wide_ood );
 		AtomNeighbors & iiwide( wide(1)[ ii ] );
 		for ( Size jj = iiwide.head(), jjend = 0;
 				jj != jjend; jj = iiwide[ jj ].next() ) {
@@ -529,7 +529,7 @@ ResiduePairNeighborList::update(
 	for ( Size ii = r1dat.narrow_ood_list().head(); ii != 0; ii = r1dat.narrow_ood_list()[ ii ].next() ) {
 		//if ( r1dat.atom_status(ii) == uptodate ) continue;
 		int ii_isH = r1dat.is_H( ii );
-		assert( r1dat.atom_status(ii) == narrow_ood );
+	debug_assert( r1dat.atom_status(ii) == narrow_ood );
 		AtomNeighbors const & iiwide( wide(0)[ ii ] );
 		for ( Size jj = iiwide.head(), jjend = 0;
 				jj != jjend; jj = iiwide[ jj ].next() ) {
@@ -544,8 +544,8 @@ ResiduePairNeighborList::update(
 #endif
 
 			if ( d2 < ncut2_[ ii_isH + jj_isH ] ) {
-				assert( ! narrow(0)[ ii ][ jj ].in_list() );
-				assert( ! narrow(1)[ jj ][ ii ].in_list() );
+			debug_assert( ! narrow(0)[ ii ][ jj ].in_list() );
+			debug_assert( ! narrow(1)[ jj ][ ii ].in_list() );
 				//narrow(0)[ ii ][ jjatno ].data() = iiwide[ jjatno ].data();
 				narrow(0)[ ii ].move_to_back( jj );
 				//narrow(1)[ jjatno ][ ii ].data() = wide(1)[ jjatno ][ ii ].data();
@@ -556,7 +556,7 @@ ResiduePairNeighborList::update(
 	for ( Size ii = r1dat.wide_ood_list().head(); ii != 0; ii = r1dat.wide_ood_list()[ ii ].next() ) {
 		//if ( r1dat.atom_status(ii) == uptodate ) continue;
 		int ii_isH = r1dat.is_H( ii );
-		assert( r1dat.atom_status(ii) == wide_ood );
+	debug_assert( r1dat.atom_status(ii) == wide_ood );
 		for ( Size jj = 1; jj <= r2.natoms(); ++jj ) {
 			int jj_isH = r2dat.is_H( jj );
 			Real weight( 1.0 );
@@ -570,8 +570,8 @@ ResiduePairNeighborList::update(
 #endif
 				Real d2w = r1dat.wide_coord( ii ).distance_squared( r2dat.wide_coord( jj ) );
 				if ( d2w < wcut2_[ ii_isH + jj_isH ] ) {
-					assert( ! wide(0)[ ii ][ jj ].in_list() ); // should have already been removed
-					assert( ! wide(1)[ jj ][ ii ].in_list() ); // should have already been removed
+				debug_assert( ! wide(0)[ ii ][ jj ].in_list() ); // should have already been removed
+				debug_assert( ! wide(1)[ jj ][ ii ].in_list() ); // should have already been removed
 					//wide(0)[ ii ][ jj ].data() = AtomNeighbor( r2.seqpos(), jj, path_dist, weight );
 					//wide(1)[ jj ][ ii ].data() = AtomNeighbor( r1.seqpos(), ii, path_dist, weight );
 					wide(0)[ ii ].move_to_back( jj );
@@ -585,8 +585,8 @@ ResiduePairNeighborList::update(
 #endif
 
 					if ( d2n < ncut2_[ ii_isH + jj_isH ] ) {
-						assert( ! narrow(0)[ ii ][ jj ].in_list() ); // should have already been removed
-						assert( ! narrow(1)[ jj ][ ii ].in_list() ); // should have already been removed
+					debug_assert( ! narrow(0)[ ii ][ jj ].in_list() ); // should have already been removed
+					debug_assert( ! narrow(1)[ jj ][ ii ].in_list() ); // should have already been removed
 						//narrow(0)[ ii ][ jj ].data() = wide(0)[ ii ][ jj ].data();
 						//narrow(1)[ jj ][ ii ].data() = wide(1)[ jj ][ ii ].data();
 						narrow(0)[ ii ].move_to_back( jj );
@@ -601,7 +601,7 @@ ResiduePairNeighborList::update(
 	// (i.e. when an neighbor from res1 had status wide_ood)
 	for ( Size ii = r2dat.narrow_ood_list().head(); ii != 0; ii = r2dat.narrow_ood_list()[ ii ].next() ) {
 		int ii_isH = r2dat.is_H( ii );
-		assert ( r2dat.atom_status( ii ) == narrow_ood );
+	debug_assert ( r2dat.atom_status( ii ) == narrow_ood );
 		AtomNeighbors const & iiwide( wide(1)[ ii ] );
 		for ( Size jj = iiwide.head(), jjend = 0;
 				jj != jjend; jj = iiwide[ jj ].next() ) {
@@ -615,8 +615,8 @@ ResiduePairNeighborList::update(
 			++n_update_dist_evals_total;
 #endif
 			if ( d2 < ncut2_[ ii_isH + jj_isH ] ) {
-				assert( ! narrow(1)[ ii ][ jj ].in_list() );
-				assert( ! narrow(0)[ jj ][ ii ].in_list() );
+			debug_assert( ! narrow(1)[ ii ][ jj ].in_list() );
+			debug_assert( ! narrow(0)[ jj ][ ii ].in_list() );
 				//narrow(1)[ ii ][ jjatno ].data() = iiwide[ jjatno ].data();
 				narrow(1)[ ii ].move_to_back( jj );
 				//narrow(0)[ jjatno ][ ii ].data() = wide(0)[ jjatno ][ ii ].data();
@@ -625,7 +625,7 @@ ResiduePairNeighborList::update(
 		}
 	}
 	for ( Size ii = r2dat.wide_ood_list().head(); ii != 0; ii = r2dat.wide_ood_list()[ ii ].next() ) {
-		assert( r2dat.atom_status(ii) == wide_ood );
+	debug_assert( r2dat.atom_status(ii) == wide_ood );
 		int ii_isH = r2dat.is_H( ii );
 		for ( Size jj = 1; jj <= r1.natoms(); ++jj ) {
 			if ( r1dat.atom_status(jj) == wide_ood ) continue; // already updated!
@@ -641,8 +641,8 @@ ResiduePairNeighborList::update(
 				++n_update_dist_evals_total;
 #endif
 				if ( d2w < wcut2_[ ii_isH + jj_isH ] ) {
-					assert( ! wide(1)[ ii ][ jj ].in_list() ); // should have already been removed
-					assert( ! wide(0)[ jj ][ ii ].in_list() ); // should have already been removed
+				debug_assert( ! wide(1)[ ii ][ jj ].in_list() ); // should have already been removed
+				debug_assert( ! wide(0)[ jj ][ ii ].in_list() ); // should have already been removed
 					//wide(1)[ ii ][ jj ].data() = AtomNeighbor( r1.seqpos(), jj, path_dist, weight );
 					//wide(0)[ jj ][ ii ].data() = AtomNeighbor( r2.seqpos(), ii, path_dist, weight );
 					wide(1)[ ii ].move_to_back( jj );
@@ -656,8 +656,8 @@ ResiduePairNeighborList::update(
 						++n_update_dist_evals_total;
 #endif
 						if ( d2n < ncut2_[ ii_isH + jj_isH ] ) {
-							assert( ! narrow(1)[ ii ][ jj ].in_list() ); // should have already been removed
-							assert( ! narrow(0)[ jj ][ ii ].in_list() ); // should have already been removed
+						debug_assert( ! narrow(1)[ ii ][ jj ].in_list() ); // should have already been removed
+						debug_assert( ! narrow(0)[ jj ][ ii ].in_list() ); // should have already been removed
 							//narrow(1)[ ii ][ jj ].data() = wide(1)[ ii ][ jj ].data();
 							//narrow(0)[ jj ][ ii ].data() = wide(0)[ jj ][ ii ].data();
 							narrow(1)[ ii ].move_to_back( jj );
@@ -669,7 +669,7 @@ ResiduePairNeighborList::update(
 		}
 	}
 
-	//assert( accurate(
+//debug_assert( accurate(
 	//	heavy_heavy_dist_cutoff,
 	//	heavy_hydrogen_dist_cutoff,
 	//	hydrogen_hydrogen_dist_cutoff,
@@ -696,27 +696,27 @@ ResiduePairNeighborList::accurate(
 			if ( cpfxn_->count( ii, jj, weight, path_dist )) {
 				Real d2w = r1dat.wide_coord( ii ).distance_squared( r2dat.wide_coord( jj ) );
 				if ( d2w < wcut2_[ r1dat.is_H( ii ) + r2dat.is_H( jj ) ] ) {
-					assert( wide(0)[ ii ][ jj ].in_list() );
-					assert( wide(1)[ jj ][ ii ].in_list() );
+				debug_assert( wide(0)[ ii ][ jj ].in_list() );
+				debug_assert( wide(1)[ jj ][ ii ].in_list() );
 				} else {
-					assert( ! wide(0)[ ii ][ jj ].in_list() );
-					assert( ! wide(1)[ jj ][ ii ].in_list() );
+				debug_assert( ! wide(0)[ ii ][ jj ].in_list() );
+				debug_assert( ! wide(1)[ jj ][ ii ].in_list() );
 				}
 				Real d2n = r1dat.narrow_coord( ii ).distance_squared( r2dat.narrow_coord( jj ) );
 				if ( d2n < ncut2_[ r1dat.is_H( ii ) + r2dat.is_H( jj ) ] ) {
-					assert( narrow(0)[ ii ][ jj ].in_list() );
-					assert( narrow(1)[ jj ][ ii ].in_list() );
-					assert( wide(0)[ ii ][ jj ].in_list() );
-					assert( wide(1)[ jj ][ ii ].in_list() );
+				debug_assert( narrow(0)[ ii ][ jj ].in_list() );
+				debug_assert( narrow(1)[ jj ][ ii ].in_list() );
+				debug_assert( wide(0)[ ii ][ jj ].in_list() );
+				debug_assert( wide(1)[ jj ][ ii ].in_list() );
 				} else {
-					assert( ! narrow(0)[ ii ][ jj ].in_list() );
-					assert( ! narrow(1)[ jj ][ ii ].in_list() );
+				debug_assert( ! narrow(0)[ ii ][ jj ].in_list() );
+				debug_assert( ! narrow(1)[ jj ][ ii ].in_list() );
 				}
 			} else {
-				assert( ! narrow(0)[ ii ][ jj ].in_list() );
-				assert( ! narrow(1)[ jj ][ ii ].in_list() );
-				assert( ! wide(0)[ ii ][ jj ].in_list() );
-				assert( ! wide(1)[ jj ][ ii ].in_list() );
+			debug_assert( ! narrow(0)[ ii ][ jj ].in_list() );
+			debug_assert( ! narrow(1)[ jj ][ ii ].in_list() );
+			debug_assert( ! wide(0)[ ii ][ jj ].in_list() );
+			debug_assert( ! wide(1)[ jj ][ ii ].in_list() );
 			}
 		}
 	}
@@ -743,8 +743,8 @@ void ResiduePairNeighborList::add_atom_neighbor(
 	Real weight_func
 )
 {
-	assert( ind1 <= res1_neighbors_.size() );
-	assert( ind2 <= res2_neighbors_.size() );
+debug_assert( ind1 <= res1_neighbors_.size() );
+debug_assert( ind2 <= res2_neighbors_.size() );
 	AtomNeighbor at2( 1, ind2, path_distance, weight, weight_func );
 	AtomNeighbor at1( 1, ind1, path_distance, weight, weight_func );
 	res1_neighbors_[ ind1 ].push_back( at2 );

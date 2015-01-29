@@ -26,7 +26,7 @@
 #include <utility/stream_util.hh>
 #include <utility/string_util.hh>
 
-#include <cassert>
+#include <utility/assert.hh>
 
 
 // option key includes

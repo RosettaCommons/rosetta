@@ -110,7 +110,7 @@ void SOGFunc_Impl::smooth_to_zero( bool const setting ) {
 }
 
 void SOGFunc_Impl::upper_bound( Real const r ) {
-	assert( r > 0 );
+debug_assert( r > 0 );
 	upper_bound_ = r;
 	score_upper_ = -1 * std::log( prob_sum_of_gaussians(r) );
 }
@@ -188,8 +188,8 @@ void SOGFunc_Impl::check_bounds( Real const x, Real const val ) const {
 }
 
 void SOGFunc_Impl::show_definition( std::ostream & out ) const {
-	assert( weights_.size() == means_.size() );
-	assert( weights_.size() == sdevs_.size() );
+debug_assert( weights_.size() == means_.size() );
+debug_assert( weights_.size() == sdevs_.size() );
 
 	out << "SOGFUNC " << weights_.size();
 	for ( Size i = 1; i <= weights_.size(); ++i ) {

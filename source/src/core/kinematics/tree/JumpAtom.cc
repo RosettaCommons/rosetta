@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <iostream>
 
 
@@ -86,7 +86,7 @@ JumpAtom::set_dof(
 	Real const value
 )
 {
-	assert( parent().get() != 0 );
+debug_assert( parent().get() != 0 );
 	int const n2c(1);
 	int const rb_no( get_rb_number( type ) );
 	if ( rb_no == 0 ) {
@@ -183,7 +183,7 @@ JumpAtom::update_xyz_coords(
 	Stub & stub // in fact is const
 )
 {
-	assert( stub.is_orthogonal( 1e-3 ) );
+debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	Stub new_stub;
 	jump_.make_jump( stub, new_stub );
@@ -210,7 +210,7 @@ JumpAtom::update_internal_coords(
 		bool const recursive // = true
 )
 {
-	assert( stub.is_orthogonal( 1e-3 ) );
+debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	Stub new_stub( get_stub() );
 
@@ -272,7 +272,7 @@ JumpAtom::setup_min_map(
 		DOF_Type const & type( id::get_rb_type(k) );
 		DOF_ID rb_torsion( id(), type );
 		if ( allow_move[ rb_torsion ] && !keep_dof_fixed( type ) ) {
-			assert( parent().get() != 0 ); // root DOFs don't move
+		debug_assert( parent().get() != 0 ); // root DOFs don't move
 			min_map.add_torsion( rb_torsion, last_torsion_local );
 			last_torsion_local = rb_torsion;
 		}

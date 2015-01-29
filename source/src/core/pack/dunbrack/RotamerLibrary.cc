@@ -122,7 +122,7 @@ rotamer_from_chi(
 	RotVector & rot
 )
 {
-	assert( rsd.aa() <= chemical::num_canonical_aas );
+debug_assert( rsd.aa() <= chemical::num_canonical_aas );
 
 	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
 	if ( rotlib ) {
@@ -189,7 +189,7 @@ rotamer_from_chi_02(
 	using namespace chemical;
 
 	// This code assumes that we're dealing with a canonical aa - fail if not the case.
-	assert( res <= num_canonical_aas );
+debug_assert( res <= num_canonical_aas );
 
 	// default to 0
 	// right now this means 0 for rot numbers larger than dunbrack's nchi
@@ -1059,7 +1059,7 @@ RotamerLibrary::create_fa_dunbrack_libraries_02_from_binary()
 	/// END PREABMLE
 
 
-	assert( static_cast< Size > (version) == current_binary_format_version_id_02() );
+debug_assert( static_cast< Size > (version) == current_binary_format_version_id_02() );
 
 	read_from_binary( binlib );
 

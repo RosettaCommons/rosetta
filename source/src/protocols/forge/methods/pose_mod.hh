@@ -340,7 +340,7 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>

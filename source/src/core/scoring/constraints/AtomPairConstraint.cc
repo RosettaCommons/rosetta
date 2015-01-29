@@ -145,15 +145,15 @@ Real AtomPairConstraint::dist( conformation::Conformation  const& conformation )
 		fail = true;
 #endif
 	}
-	assert( conformation.atom_tree().has( atom1_ ) );
-	assert( conformation.atom_tree().has( atom2_ ) );
+debug_assert( conformation.atom_tree().has( atom1_ ) );
+debug_assert( conformation.atom_tree().has( atom2_ ) );
 	if ( !conformation.atom_tree().has( atom1_ ) ) {
 		std::cerr << "AtomPairConstraint: cannot find atom " << atom1_ << std::endl;
 	}
 	if ( !conformation.atom_tree().has( atom2_ ) ) {
 		std::cerr << "AtomPairConstraint: cannot find atom " << atom2_ << std::endl;
 	}
-	assert( !fail );
+debug_assert( !fail );
 	Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );
 	Vector const f2( xyz1 - xyz2 );
 	Real const dist( f2.length() );
@@ -161,8 +161,8 @@ Real AtomPairConstraint::dist( conformation::Conformation  const& conformation )
 }
 
 Real AtomPairConstraint::dist( func::XYZ_Func const & xyz ) const {
-	assert( atom1_.atomno() );
-	assert( atom2_.atomno() );
+debug_assert( atom1_.atomno() );
+debug_assert( atom2_.atomno() );
 	return xyz( atom1_ ).distance( xyz( atom2_ ) );
 }
 

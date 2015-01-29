@@ -35,7 +35,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <iostream>
 
 // core utilities
@@ -1470,7 +1470,7 @@ SymmetryInfo::set_score_multiply_from_subunit_factors( utility::vector1< Size > 
 void
 SymmetryInfo::set_score_multiply( Size const res, Size const factor )
 {
-	assert ( res <= score_multiply_.size() );
+debug_assert ( res <= score_multiply_.size() );
 	score_multiply_[ res ] = factor;
 }
 

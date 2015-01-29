@@ -48,7 +48,7 @@
 #include <set>
 //#include <core/pose/PDBInfo.hh> //debugging only
 
-//#include <cassert>
+//#include <utility/assert.hh>
 
 // option key includes
 

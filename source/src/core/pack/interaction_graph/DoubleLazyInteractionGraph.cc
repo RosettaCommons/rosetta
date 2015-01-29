@@ -228,7 +228,7 @@ DoubleLazyNode::assign_zero_state()
 void
 DoubleLazyNode::assign_state(int new_state)
 {
-	assert( new_state >= 0 && new_state <= get_num_states());
+debug_assert( new_state >= 0 && new_state <= get_num_states());
 
 	if (new_state == 0) {
 		assign_zero_state();
@@ -358,7 +358,7 @@ void DoubleLazyNode::complete_state_assignment()
 void
 DoubleLazyNode::commit_considered_substitution()
 {
-	assert( alternate_state_is_being_considered_ );
+debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_sparse_mat_info_ = alt_state_sparse_mat_info_;
@@ -536,7 +536,7 @@ DoubleLazyNode::print_internal_energies() const
 void
 DoubleLazyNode::update_internal_energy_sums()
 {
-	assert( get_edge_vector_up_to_date() );
+debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
 	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
 		curr_state_total_energy_ += get_incident_dlazy_edge(ii)->get_current_two_body_energy();
@@ -725,7 +725,7 @@ DoubleLazyEdge::prep_aa_submatrix(
 	int node2aa
 ) const
 {
-	assert( sparse_aa_neighbors_( node2aa, node1aa ));
+debug_assert( sparse_aa_neighbors_( node2aa, node1aa ));
 
 	if ( ! two_body_energies_( node2aa, node1aa ) ) {
 		two_body_energies_( node2aa, node1aa ) = new ObjexxFCL::FArray2D< core::PackerEnergy >(
@@ -745,7 +745,7 @@ DoubleLazyEdge::read_aa_submatrix(
 	SparseMatrixIndex node2info
 ) const
 {
-	assert( two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ) );
+debug_assert( two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ) );
 
 	return (*two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ))
 		( node2info.get_state_ind_for_this_aa_type(), node1info.get_state_ind_for_this_aa_type() );
@@ -759,7 +759,7 @@ DoubleLazyEdge::set_aa_submatrix(
 	core::PackerEnergy setting
 ) const
 {
-	assert( two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ) );
+debug_assert( two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ) );
 	(*two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ))
 		( node2info.get_state_ind_for_this_aa_type(), node1info.get_state_ind_for_this_aa_type() ) = setting;
 }
@@ -851,7 +851,7 @@ DoubleLazyEdge::set_edge_index(
 	int index
 )
 {
-	assert( index > -1 && edge_index_ == -1 ); // set this only once
+debug_assert( index > -1 && edge_index_ == -1 ); // set this only once
 	edge_index_ = index;
 }
 
@@ -861,7 +861,7 @@ DoubleLazyEdge::drop_aa_submatrix(
 ) const
 {
 	std::pair< int, int > aainds = aa_indices_from_submatrix_index( submat_ind );
-	assert( two_body_energies_( aainds.second, aainds.first ) );
+debug_assert( two_body_energies_( aainds.second, aainds.first ) );
 	delete two_body_energies_( aainds.second, aainds.first ); two_body_energies_( aainds.second, aainds.first ) = 0;
 	return submatrix_size( aainds.first, aainds.second );
 }
@@ -1177,7 +1177,7 @@ DoubleLazyEdge::get_aa_submatrix_energies(
 
 	prep_aa_submatrix( node1aa, node2aa );
 
-	assert( two_body_energies_( node2aa, node1aa ) );
+debug_assert( two_body_energies_( node2aa, node1aa ) );
 	ObjexxFCL::FArray2D< core::PackerEnergy > submat( * two_body_energies_( node2aa, node1aa ));
 	int const iioffset = get_dlazy_node(0)->get_state_offset_for_aatype( node1aa );
 	int const jjoffset = get_dlazy_node(1)->get_state_offset_for_aatype( node2aa );
@@ -1762,7 +1762,7 @@ void DoubleLazyInteractionGraph::note_submatrix_added(
 
 	while ( curr_memory_for_rpes_ > memory_max_for_rpes_ ) {
 		int global_submatrix_index = aa_submatrix_history_list_->tail();
-		assert( global_submatrix_index ); /// should never be zero if curr_memroy_for_rpes > memory_max_for_rpes_
+	debug_assert( global_submatrix_index ); /// should never be zero if curr_memroy_for_rpes > memory_max_for_rpes_
 		aa_submatrix_history_list_->remove( global_submatrix_index );
 
 		--global_submatrix_index; // convert to a 0-based index for modular arithmetic

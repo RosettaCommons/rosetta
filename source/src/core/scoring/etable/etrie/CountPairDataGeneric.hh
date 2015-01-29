@@ -36,7 +36,7 @@
 #include <utility/vectorL_bool.hh>
 #include <numeric/xyzVector.fwd.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cstddef>
 #include <limits>
 #include <vector>
@@ -61,7 +61,7 @@ public:
 	inline
 	bool operator < ( GenericResidueConnectionData const & other ) const
 	{
-		assert( size() == other.size() );
+	debug_assert( size() == other.size() );
 		for ( Size ii = 1; ii <= path_distances_to_connection_points_.size(); ++ii ) {
 			if ( path_distances_to_connection_points_[ ii ] < other.path_distances_to_connection_points_[ ii ] ) {
 				return true;
@@ -75,7 +75,7 @@ public:
 	inline
 	bool operator == ( GenericResidueConnectionData const & other ) const
 	{
-		assert( size() == other.size() );
+	debug_assert( size() == other.size() );
 		for ( Size ii = 1; ii <= path_distances_to_connection_points_.size(); ++ii ) {
 			if ( path_distances_to_connection_points_[ ii ] != other.path_distances_to_connection_points_[ ii ] ) {
 				return false;
@@ -156,7 +156,7 @@ public:
 	Size
 	conn_dist( Size which_connection ) const
 	{
-		assert ( residue_connection_data_[ which_connection+1 ].size() == 1 );
+	debug_assert ( residue_connection_data_[ which_connection+1 ].size() == 1 );
 		return residue_connection_data_[ which_connection+1 ][1];
 	}
 

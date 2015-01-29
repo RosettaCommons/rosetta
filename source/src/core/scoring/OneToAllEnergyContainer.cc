@@ -39,7 +39,7 @@ OneToAllNeighborIterator::OneToAllNeighborIterator(
 
 ResidueNeighborIterator const & OneToAllNeighborIterator::operator = ( ResidueNeighborIterator const & src )
 {
-	assert( dynamic_cast< OneToAllNeighborIterator const * >( &src ) );
+debug_assert( dynamic_cast< OneToAllNeighborIterator const * >( &src ) );
 	OneToAllNeighborIterator const & my_src( static_cast< OneToAllNeighborIterator const & >( src ) );
 	pos1_ = my_src.pos1_;
 	pos2_ = my_src.pos2_;
@@ -142,7 +142,7 @@ OneToAllNeighborConstIterator::OneToAllNeighborConstIterator(
 
 ResidueNeighborConstIterator const & OneToAllNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src )
 {
-	assert( dynamic_cast< OneToAllNeighborConstIterator const * >( &src ) );
+debug_assert( dynamic_cast< OneToAllNeighborConstIterator const * >( &src ) );
 	OneToAllNeighborConstIterator const & my_src( static_cast< OneToAllNeighborConstIterator const & >( src ) );
 	pos1_ = my_src.pos1_;
 	pos2_ = my_src.pos2_;

@@ -69,7 +69,7 @@
 #include <utility/keys/SmallKeyVector.hh>
 #include <utility/options/BooleanOption.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <complex>
 #include <cstddef>

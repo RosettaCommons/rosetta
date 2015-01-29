@@ -1152,7 +1152,7 @@ private: // Functions
 
 			if (! trie_[count_atoms_placed].is_hydrogen() ) ++num_heavyatoms_;
 
-			assert(  node_stack[jj_first_distinguished]  <= num_atoms_in_trie
+		debug_assert(  node_stack[jj_first_distinguished]  <= num_atoms_in_trie
 				&& (node_stack[jj_first_distinguished]  > 0 || num_shared_atoms[jj] == rotamers[ jj - 1 ].natoms()) );
 
 			if ( node_stack[ jj_first_distinguished] != 0 ) {
@@ -1223,7 +1223,7 @@ private: // Functions
 			}
 
 		}
-		//assert( max_branch_depth_ <= max_atoms_per_rotamer_ );
+	//debug_assert( max_branch_depth_ <= max_atoms_per_rotamer_ );
 		if( max_branch_depth_ > max_atoms_per_rotamer_+1 ) {
 			utility_exit_with_message("max_branch_depth_ should have triggered index-out-of-bounds assertion!");
 		}
@@ -1252,7 +1252,7 @@ private: // Functions
 					jj <= heavy_depth_stack[stack_top]; ++jj )
 				{
 					//apl test
-					assert ( heavyatom_stack[jj] <= num_total_atoms_ && heavyatom_stack[jj] > 0 );
+				debug_assert ( heavyatom_stack[jj] <= num_total_atoms_ && heavyatom_stack[jj] > 0 );
 
 					trie_[ heavyatom_stack[ jj ]].num_rotamers_in_subtree(
 						rotamers_in_subtree_stack[jj]);
@@ -1278,7 +1278,7 @@ private: // Functions
 			}
 		}
 		for ( Size ii = 1; ii <= heavy_depth_stack[ stack_top]; ++ii ) {
-			assert ( heavyatom_stack[ii] <= num_total_atoms_ && heavyatom_stack[ii] > 0 );
+		debug_assert ( heavyatom_stack[ii] <= num_total_atoms_ && heavyatom_stack[ii] > 0 );
 			trie_[ heavyatom_stack[ii] ].num_rotamers_in_subtree( rotamers_in_subtree_stack[ii] );
 		}
 

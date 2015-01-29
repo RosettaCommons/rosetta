@@ -26,7 +26,7 @@
 // package headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
-
+#include <utility/assert.hh>
 
 namespace utility {
 namespace signals {
@@ -90,7 +90,7 @@ public:
 	inline
 	void send( Signal s ) {
 		if ( valid && !blocked ) {
-			assert( fn );
+		debug_assert( fn );
 			fref< Function >()( s );
 		}
 	}

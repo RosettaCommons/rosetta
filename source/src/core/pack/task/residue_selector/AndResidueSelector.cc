@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace core {
 namespace pack {
@@ -53,7 +53,7 @@ AndResidueSelector::AndResidueSelector( ResidueSelectorCOP selector1, ResidueSel
 ResidueSubset
 AndResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( num_selectors() > 0 );
+debug_assert( num_selectors() > 0 );
 
 	// make subset neutral for AND operations
 	ResidueSubset subset( pose.total_residue(), true );
@@ -138,7 +138,7 @@ Size AndResidueSelector::num_selectors() const
 void
 AndResidueSelector::apply_and_to_subset(ResidueSubset const & newSubset, ResidueSubset & existingSubset) const
 {
-	assert( existingSubset.size() == newSubset.size() );
+debug_assert( existingSubset.size() == newSubset.size() );
 	for( Size ii = 1; ii <= existingSubset.size(); ++ii) {
 		existingSubset[ ii ] = existingSubset[ ii ] && newSubset[ ii ];
 	}

@@ -354,7 +354,7 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/ubyte.fwd.hh>
-#include <cassert>
+#include <utility/assert.hh>
 #include <complex>
 #include <cstddef>
 #include <cstdio>
@@ -595,7 +595,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 				success = false;
 				return success;
 			}
-			//assert( is_int( tag ) ); // this tag should represent the sequence position within the silent-file
+		//debug_assert( is_int( tag ) ); // this tag should represent the sequence position within the silent-file
 			seqpos = int_of( tag );
 			if ( seqpos <= 0 || seqpos > nres() ) {
 				pss_tr.Error << "ERROR: incorrect sequence number " << seqpos << " (nres = "

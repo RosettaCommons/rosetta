@@ -145,7 +145,7 @@ public:
 
 	inline
 	void remove( Size index ) {
-		assert( elements_[ index ].in_list() );
+	debug_assert( elements_[ index ].in_list() );
 		extract( index );
 		elements_[ index ].prev_ = 0;
 		elements_[ index ].next_ = 0;
@@ -162,21 +162,21 @@ private:
 	/// pointers of its surrounding elements.  Also update the head_ and tail_
 	/// pointers for the list, if necessary
 	void extract( Size index ) {
-		assert( elements_[ index ].in_list() );
+	debug_assert( elements_[ index ].in_list() );
 		Size prev = elements_[ index ].prev();
 		Size next = elements_[ index ].next();
 		if ( prev != 0 ) {
-			assert( elements_[ prev ].next_ == index );
+		debug_assert( elements_[ prev ].next_ == index );
 			elements_[ prev ].next_ = next;
 		} else {
-			assert( head_ == index );
+		debug_assert( head_ == index );
 			head_ = next;
 		}
 		if ( next != 0 ) {
-			assert( elements_[ next ].prev_ == index );
+		debug_assert( elements_[ next ].prev_ == index );
 			elements_[ next ].prev_ = prev;
 		} else {
-			assert( tail_ == index );
+		debug_assert( tail_ == index );
 			tail_ = prev;
 		}
 	}
@@ -186,7 +186,7 @@ private:
 	/// already a member of the list.
 	void set_head( Size index ) {
 		if ( head_ != 0 ) {
-			assert( elements_[ head_ ].prev_ == 0 );
+		debug_assert( elements_[ head_ ].prev_ == 0 );
 			elements_[ head_ ].prev_ = index;
 		}
 		elements_[ index ].next_ = head_;
@@ -204,7 +204,7 @@ private:
 	/// already a member of the list.
 	void set_tail( Size index ) {
 		if ( tail_ != 0 ) {
-			assert( elements_[ tail_ ].next_ == 0 );
+		debug_assert( elements_[ tail_ ].next_ == 0 );
 			elements_[ tail_ ].next_ = index;
 		}
 		elements_[ index ].prev_ = tail_;

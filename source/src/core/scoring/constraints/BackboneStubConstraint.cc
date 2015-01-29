@@ -166,7 +166,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 {
 
 	// store info about the target residue
-	assert( target_pose.residue(target_seqpos).is_protein() );
+debug_assert( target_pose.residue(target_seqpos).is_protein() );
 	if ( (target_pose.residue(target_seqpos).aa() == chemical::aa_gly ) ) {
 		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
@@ -189,7 +189,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 
 	conformation::Residue const & rsd( pose.residue(seqpos) );
 
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
 		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
@@ -248,7 +248,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 {
 
 	// store info about the target residue
-	assert( target_rsd.is_protein() );
+debug_assert( target_rsd.is_protein() );
 	if ( (target_rsd.aa() == chemical::aa_gly ) ) {
 		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
@@ -264,7 +264,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// constraint depends on CB, CA, C coordinates
 	conformation::Residue const & rsd( pose.residue(seqpos_) );
 
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
 		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
@@ -309,7 +309,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 {
 
 	// store info about the target residue
-	assert( target_rsd.is_protein() );
+debug_assert( target_rsd.is_protein() );
 	if ( (target_rsd.aa() == chemical::aa_gly ) ) {
 		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
@@ -326,7 +326,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// constraint depends on CB, CA, C coordinates
 	conformation::Residue const & rsd( pose.residue(seqpos_) );
 
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
 		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
@@ -419,7 +419,7 @@ BackboneStubConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const 
 	if ( weights[ this->score_type() ] == 0 ) return;
 
 	core::conformation::Residue const & curr_rsd = xyz_func.residue(seqpos_);
-	assert( curr_rsd.is_protein() );
+debug_assert( curr_rsd.is_protein() );
 
 	// verify that the fixed reference point is in the same place
 	core::Vector curr_ref_location = xyz_func(fixed_atom_id_);
@@ -432,7 +432,7 @@ BackboneStubConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const 
 
 	// return a value between superposition_bonus_ (-ve) and zero
 	core::Real cst_val(superposition_bonus_);
-	assert( cst_val < 0. );
+debug_assert( cst_val < 0. );
 
 	// apply a harmonic constraint on the CB's
 	core::Vector CB_curr;
@@ -496,7 +496,7 @@ BackboneStubConstraint::fill_f1_f2(
 
 	core::conformation::Residue const & curr_rsd = xyz.residue( seqpos_ );
 
-	assert( curr_rsd.is_protein() );
+debug_assert( curr_rsd.is_protein() );
 
 	if ( ( atom != sidechain_atom_id_ ) && ( atom != primary_atom_id_ ) && ( atom != backbone_atom2_id_ ) && ( atom != backbone_atom1_id_ ) ) {
 		return;
@@ -504,7 +504,7 @@ BackboneStubConstraint::fill_f1_f2(
 
 	// return a value between superposition_bonus_ (-ve) and zero
 	core::Real cst_val(superposition_bonus_);
-	assert( cst_val < 0. );
+debug_assert( cst_val < 0. );
 
 	// start by computing the cst value normally, collecting score components along the way. if cst_val is non-negative no derivative is computed
 

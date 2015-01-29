@@ -233,7 +233,7 @@ void RNA_IdealCoord::apply_pucker(
 
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
-	assert( pucker <= 2 );
+debug_assert( pucker <= 2 );
 
 	if ( pucker == ANY_PUCKER ) {
 		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
@@ -258,7 +258,7 @@ void RNA_IdealCoord::apply(
 	utility::vector1 < PuckerState > const & puckers,
 	bool const keep_backbone_torsion
 ) const {
-	assert ( pose.total_residue() == puckers.size() );
+debug_assert ( pose.total_residue() == puckers.size() );
 	for ( Size i = 1; i <= pose.total_residue(); ++i )
 			apply( pose, i, puckers[i], keep_backbone_torsion );
 }

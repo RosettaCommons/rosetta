@@ -179,7 +179,7 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 
 	if ( rna_data_backbone_burial.size() == 0.0 ) return;
 
-	assert( rna_data_backbone_burial.size() == pose.total_residue() );
+debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
 
 	if ( rna_data_backbone_burial( rsd1.seqpos() ) ) {
 		emap[ rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/ );
@@ -272,7 +272,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 
 	if ( rna_data_backbone_burial.size() == 0.0 ) return;
 
-	assert( rna_data_backbone_burial.size() == pose.total_residue() );
+debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
 
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 

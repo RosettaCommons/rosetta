@@ -542,7 +542,7 @@ SymmetricConformation::apply_transformation(
 
 	char compid = 'A';
 	if (symm_info_->get_num_components() >= 2) {
-		assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
+	debug_assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
 		compid = symm_info_->get_component_of_residue( residfrom );
 	}
 
@@ -574,7 +574,7 @@ SymmetricConformation::apply_transformation_norecompute(
 		bool rotationonly ) const {
 	char compid = 'A';
 	if (symm_info_->get_num_components() >= 2) {
-		assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
+	debug_assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
 		compid = symm_info_->get_component_of_residue( residfrom );
 	}
 

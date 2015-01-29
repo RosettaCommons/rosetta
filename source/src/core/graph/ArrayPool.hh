@@ -78,22 +78,22 @@ public:
 	/// Accessors and mutators.
 
 	T & operator [] ( platform::Size index ) {
-		assert( bounds_check( index ) );
+	debug_assert( bounds_check( index ) );
 		return array_[ index ];
 	}
 
 	T const & operator [] ( platform::Size index ) const {
-		assert( bounds_check( index ) );
+	debug_assert( bounds_check( index ) );
 		return array_[ index ];
 	}
 
 	T & operator [] ( int index ) {
-		assert( bounds_check( index ) );
+	debug_assert( bounds_check( index ) );
 		return array_[ index ];
 	}
 
 	T const & operator [] ( int index ) const {
-		assert( bounds_check( index ) );
+	debug_assert( bounds_check( index ) );
 		return array_[ index ];
 	}
 
@@ -193,22 +193,22 @@ public:
 	~ArrayPoolElement() {}
 
 	T const & operator [] ( platform::Size index ) const {
-		assert( neg_ptr_->allocated() );
+	debug_assert( neg_ptr_->allocated() );
 		return array_[ index ];
 	}
 
 	T & operator [] ( platform::Size index ) {
-		assert( neg_ptr_->allocated() );
+	debug_assert( neg_ptr_->allocated() );
 		return array_[ index ];
 	}
 
 	T const & operator[] ( int index ) const {
-		assert( neg_ptr_->allocated() );
+	debug_assert( neg_ptr_->allocated() );
 		return array_[ index ];
 	}
 
 	T & operator[] ( int index ) {
-		assert( neg_ptr_->allocated() );
+	debug_assert( neg_ptr_->allocated() );
 		return array_[ index ];
 	}
 
@@ -217,7 +217,7 @@ public:
 	}
 
 	void copy_array_contents( ArrayPoolElement< T > const & other ) {
-		assert( array_.size() == other.array_.size() );
+	debug_assert( array_.size() == other.array_.size() );
 		for ( platform::Size ii = 0; ii < array_.size(); ++ii ) {
 			array_[ ii ] = other.array_[ ii ];
 		}
@@ -350,8 +350,8 @@ public:
 	new_array() {
 		if ( neg_begin_.next() == 0 ) create_new_block();
 		NegSpaceElement< T > * first = neg_begin_.pop();
-		assert( first != 0 );
-		assert( first->allocated() == false );
+	debug_assert( first != 0 );
+	debug_assert( first->allocated() == false );
 
 		first->set_allocated( true );
 		--nnegative_;
@@ -366,17 +366,17 @@ public:
 		ArrayPoolElement< T > const & element
 	)
 	{
-		assert( mine( element.neg_ptr_ ) );
+	debug_assert( mine( element.neg_ptr_ ) );
 
 		NegSpaceElement< T > * neg_element = element.neg_ptr_;
-		assert( neg_element != 0 );
-		assert( neg_element->allocated() );
+	debug_assert( neg_element != 0 );
+	debug_assert( neg_element->allocated() );
 
 		neg_begin_.insert_after( neg_element );
 		neg_element->set_allocated( false );
 		++nnegative_;
 
-		assert( nnegative_ <= nallocated() );
+	debug_assert( nnegative_ <= nallocated() );
 	}
 
 private:
@@ -392,7 +392,7 @@ private:
 	/// at null, or with having an array that is never examined, and so it is supported.
 	void create_new_block()
 	{
-		assert( neg_begin_.next() == 0 );
+	debug_assert( neg_begin_.next() == 0 );
 		if ( array_size_ != 0 ) {
 
 			NegSpaceElement< T > * const neg_block = new NegSpaceElement< T >[ block_size_ ];
@@ -472,7 +472,7 @@ private:
 	/// this should be called or dangling references are likely.
 	void clear()
 	{
-		assert( empty() );
+	debug_assert( empty() );
 		for ( typename std::list< NegSpaceElement< T > * >::const_iterator
 				iter = neg_space_blocks_.begin(),
 				end_iter = neg_space_blocks_.end();

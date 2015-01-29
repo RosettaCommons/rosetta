@@ -31,7 +31,7 @@
 #include <numeric/interpolation/interpolation.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 
 

@@ -1372,7 +1372,7 @@ Real SurfaceNode< V, E, G >::get_surface_score_difference() const {
 template < typename V, typename E, typename G >
 Real SurfaceNode< V, E, G >::commit_considered_substitution_surface() {
 
-	assert( parent::considering_alternate_state() );
+debug_assert( parent::considering_alternate_state() );
 
 #ifdef DOUBLE_CHECK_COUNTS
 	int previous_state = parent::get_current_state();
@@ -3453,7 +3453,7 @@ void SurfaceInteractionGraph< V, E, G >::set_num_background_residues( int num_ba
 template < typename V, typename E, typename G >
 void SurfaceInteractionGraph< V, E, G >::set_residue_as_background_residue( int residue ) {
 
-	assert( resid_2_bgenumeration_[ residue ] == 0 );
+debug_assert( resid_2_bgenumeration_[ residue ] == 0 );
 
 #ifdef FILE_DEBUG
 	TR_SIG << "set_residue_as_background_residue: setting residue " << pose().residue( residue ).name3() << " " << residue << " as background node." << std::endl;

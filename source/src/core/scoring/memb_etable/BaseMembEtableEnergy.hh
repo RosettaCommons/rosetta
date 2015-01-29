@@ -743,7 +743,7 @@ BaseEtableEnergy< Derived>::atom_pair_energy_(
   Real & d2
 ) const
 {
-  assert( ljatr_.active() );
+ debug_assert( ljatr_.active() );
   bb = 0.0; //bead-bead interaction energy only in CoarseTable
   int disbin; Real frac;
   atr = rep = solv = bb = 0.0;
@@ -813,7 +813,7 @@ BaseEtableEnergy< Derived>::memb_atom_pair_energy_(
 	Real & d2
 ) const
 {
-	assert( ljatr_.active() );
+debug_assert( ljatr_.active() );
 	bb = 0.0; //bead-bead interaction energy only in CoarseTable
 	int disbin; Real frac;
 	atr = rep = solv = bb = 0.0;
@@ -885,7 +885,7 @@ BaseEtableEnergy< Derived >::memb_eval_dE_dR_over_r_(
   Vector & f2
 ) const
 {
-  assert( dljatr_.active() );
+ debug_assert( dljatr_.active() );
 
   f1 = atom1.xyz().cross( atom2.xyz() );
   f2 = atom1.xyz() - atom2.xyz();
@@ -957,7 +957,7 @@ BaseEtableEnergy< Derived >::eval_dE_dR_over_r_(
 	Vector & f2
 ) const
 {
-	assert( dljatr_.active() );
+debug_assert( dljatr_.active() );
 
 	f1 = atom1.xyz().cross( atom2.xyz() );
 	f2 = atom1.xyz() - atom2.xyz();
@@ -1027,7 +1027,7 @@ BaseEtableEnergy< Derived >::pair_energy_H_(
 	Real &bb
 ) const
 {
-	assert( ljrep_.active() );
+debug_assert( ljrep_.active() );
 	Real d2,frac;
 	int disbin;
 	atr = rep = solv = bb = 0.0;

@@ -19,7 +19,7 @@
 #include <iostream>
 #include <queue>
 
-#include <cassert>
+#include <utility/assert.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>

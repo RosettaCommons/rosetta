@@ -27,7 +27,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>

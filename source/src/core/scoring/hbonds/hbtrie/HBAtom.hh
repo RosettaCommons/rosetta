@@ -52,8 +52,8 @@ public:
 	Vector const & base2_xyz() const { return base2_xyz_; }
 	void base2_xyz( Vector const & xyz ) { base2_xyz_ = xyz; }
 
-	HBDonChemType hb_don_chem_type() const { assert(  is_hydrogen_ ); return HBDonChemType( hb_chem_type_ ); }
-	HBAccChemType hb_acc_chem_type() const { assert( !is_hydrogen_ ); return HBAccChemType( hb_chem_type_ ); }
+	HBDonChemType hb_don_chem_type() const {debug_assert(  is_hydrogen_ ); return HBDonChemType( hb_chem_type_ ); }
+	HBAccChemType hb_acc_chem_type() const {debug_assert( !is_hydrogen_ ); return HBAccChemType( hb_chem_type_ ); }
 	void hb_chem_type( int chemtype ) { hb_chem_type_ = chemtype; }
 
 	//int seqpos() const { return seqpos_;}

@@ -104,7 +104,7 @@ void DDPscore::residue_pair_energy(
 	core::scoring::EnergyMap & emap
 ) const
 {
-	assert (rsd1.seqpos() != rsd2.seqpos()); //only call for distinct residues
+debug_assert (rsd1.seqpos() != rsd2.seqpos()); //only call for distinct residues
 
 	if (rsd1.chain() != rsd2.chain()) // Only score contacts across the interface
 	{

@@ -25,7 +25,7 @@
 
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <iostream>
 #include <sstream>
 #include <boost/lexical_cast.hpp>

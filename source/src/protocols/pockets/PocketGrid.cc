@@ -845,7 +845,7 @@ void PocketGrid::recenter( std::vector< core::conformation::ResidueOP > const & 
   right(3)=-100000.0;
   core::Size count=0;
   int sz = central_rsds.size();
-  assert (sz>0);
+ debug_assert (sz>0);
   //this should restrict the recentering to those atoms that define the grid.
   if (sz > (int)MAX_TARGETS) sz = (int)MAX_TARGETS;
   for (int rnum = 0; rnum < sz; ++rnum){
@@ -3306,8 +3306,8 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 		oldG.get_oegrid_dimensions(espGrid_filename);
 		oldG.fill_espGrid_values(espGrid_filename);
 
-		assert (stepSize_ == oldG.espGrid_spacing_);
-		assert (spacing_  == oldG.espGrid_spacing_);
+	debug_assert (stepSize_ == oldG.espGrid_spacing_);
+	debug_assert (spacing_  == oldG.espGrid_spacing_);
 
 		ElectrostaticpotentialGrid newG;
 		newG.espGrid_.clear();
@@ -3523,8 +3523,8 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 		oldG.get_oegrid_dimensions(espGrid_filename);
 		oldG.fill_espGrid_values(espGrid_filename);
 
-		assert (stepSize_ == oldG.espGrid_spacing_);
-		assert (spacing_  == oldG.espGrid_spacing_);
+	debug_assert (stepSize_ == oldG.espGrid_spacing_);
+	debug_assert (spacing_  == oldG.espGrid_spacing_);
 
 		ElectrostaticpotentialGrid newG;
 		newG.espGrid_.clear();

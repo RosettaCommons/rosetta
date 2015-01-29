@@ -119,7 +119,7 @@ ResidueTypeKinWriter::write_restype(
     ostr << "@vectorlist {rotatable bonds} color= white width= 4\n";
     for( core::Size ii(1); ii <= restype.nchi(); ++ii ) {
     	AtomIndices const & chi( restype.chi_atoms(ii) );
-    	assert( chi.size() == 4 );
+    debug_assert( chi.size() == 4 );
 		core::chemical::Atom const & a2( restype.atom( chi[2] ) );
 		core::chemical::Atom const & a3( restype.atom( chi[3] ) );
 		ostr << "{" << a2.name() << "}P "

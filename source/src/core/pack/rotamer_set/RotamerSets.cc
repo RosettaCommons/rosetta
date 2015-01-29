@@ -134,7 +134,7 @@ RotamerSets::set_task( task::PackerTaskCOP task)
 			resid_2_moltenres_[ ii ] = 0; //sentinal value; Andrew, replace this magic number!
 		}
 	}
-	assert( count_moltenres == nmoltenres_ );
+debug_assert( count_moltenres == nmoltenres_ );
 
 }
 
@@ -770,7 +770,7 @@ RotamerSets::compute_proline_correction_energies_for_otf_graph(
 					rniend = lrec->const_neighbor_iterator_end( ii_resid );
 					(*rni) != (*rniend); ++(*rni) ) {
 				Size const neighbor_id = rni->neighbor_id();
-				assert( neighbor_id != theresid );
+			debug_assert( neighbor_id != theresid );
 				if ( resid_2_moltenres_[ neighbor_id ] != 0 ) continue;
 
 				(*lr_iter)->evaluate_rotamer_background_energies(

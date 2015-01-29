@@ -130,7 +130,7 @@ ICoorOrbitalData::build(
 		Vector stub2_xyz,
 		Vector stub3_xyz) const
 {
-	assert( kinematics::Stub( stub1_xyz,
+debug_assert( kinematics::Stub( stub1_xyz,
 			stub2_xyz,
 			stub3_xyz).is_orthogonal( 0.001 ) );
 

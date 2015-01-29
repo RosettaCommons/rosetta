@@ -32,7 +32,7 @@
 #include <utility/keys/NoClient.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace utility {
@@ -123,7 +123,7 @@ protected: // Creation
 		identifier_( key.identifier() ),
 		code_( key.code() )
 	{
-		assert( dynamic_cast< UserKey const * >( &key ) );
+	debug_assert( dynamic_cast< UserKey const * >( &key ) );
 	}
 
 
@@ -141,7 +141,7 @@ protected: // Creation
 		identifier_( identifier_a.empty() ? id_a : identifier_a ),
 		code_( code_a.empty() ? id_a : code_a )
 	{
-		assert( dynamic_cast< UserKey const * >( &key ) );
+	debug_assert( dynamic_cast< UserKey const * >( &key ) );
 	}
 
 
@@ -212,7 +212,7 @@ protected: // Assignment
 	void
 	assign_Key( Key const & key )
 	{
-		assert( comparable( key ) );
+	debug_assert( comparable( key ) );
 		index_ = key.index();
 		id_ = key.id();
 		identifier_ = key.identifier();

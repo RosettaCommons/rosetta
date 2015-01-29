@@ -255,8 +255,8 @@ MembEtable::MembEtable(
 /*void
 MembEtable::copy_from( Etable const * source )
 {
-  assert( dynamic_cast< TenANeighborNode const * > (source) );
-  assert( static_cast< TenANeighborNode const * > (source) );
+ debug_assert( dynamic_cast< TenANeighborNode const * > (source) );
+ debug_assert( static_cast< TenANeighborNode const * > (source) );
   TenANeighborNode const * tAsource( static_cast< TenANeighborNode const * > (source) );
   neighbor_mass_           = tAsource->neighbor_mass_;
   sum_of_neighbors_masses_ = tAsource->sum_of_neighbors_masses_;

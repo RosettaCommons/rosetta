@@ -176,7 +176,7 @@ SymmLinearMemNode::assign_zero_state()
 void
 SymmLinearMemNode::assign_state(int new_state)
 {
-	assert( new_state >= 0 && new_state <= get_num_states());
+debug_assert( new_state >= 0 && new_state <= get_num_states());
 
 	if (new_state == 0) {
 		assign_zero_state();
@@ -289,7 +289,7 @@ SymmLinearMemNode::project_deltaE_for_substitution
 	}
 
 	if ( debug && ! get_owner()->any_vertex_state_unassigned() ) {
-		//assert( get_rotamer(alternate_state_,1).seqpos() == get_rotamer(current_state_,1).seqpos() );
+	//debug_assert( get_rotamer(alternate_state_,1).seqpos() == get_rotamer(current_state_,1).seqpos() );
 		//get_on_the_fly_owner()->non_const_pose().replace_residue( get_rotamer(alternate_state_,1).seqpos(), get_rotamer( alternate_state_,1 ), false);
 		//Real score_after = get_on_the_fly_owner()->score_function()( get_on_the_fly_owner()->non_const_pose() );
 		///// Now handled automatically.  get_on_the_fly_owner()->score_function().accumulate_residue_total_energies( get_on_the_fly_owner()->non_const_pose() );
@@ -553,7 +553,7 @@ SymmLinearMemNode::project_deltaE_for_substitution
 void
 SymmLinearMemNode::commit_considered_substitution()
 {
-	assert( alternate_state_is_being_considered_ );
+debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_one_body_energy_ = alternate_state_one_body_energy_;
@@ -688,7 +688,7 @@ SymmLinearMemNode::print_internal_energies() const
 void
 SymmLinearMemNode::update_internal_energy_sums()
 {
-	assert( get_edge_vector_up_to_date() );
+debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
 	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
 		curr_state_total_energy_ +=
@@ -944,7 +944,7 @@ SymmLinearMemEdge::get_energy_for_alt_state
 	int other_node_state_recent_history_index
 )
 {
-	assert( other_node_curr_state != 0 );
+debug_assert( other_node_curr_state != 0 );
 
 	//T << "get_energy_for_alt_state: " << get_node_index( 0 )  << " " << get_node_index( 1 ) << " srpe: " << store_rpes;
 	//T << " chID " << changing_node_index << " alt: " << alternate_state << " altHI: " << alternate_state_recent_history_index;
@@ -1006,7 +1006,7 @@ SymmLinearMemEdge::get_energy_for_alt_state
 		stored_rpes_[ node_changing ]( other_node_curr_state, alternate_state_recent_history_index ) = alt_state_energy_;
 	}
 	if ( store_rpes_[ node_not_changing ] ) {
-		assert( other_node_state_recent_history_index );
+	debug_assert( other_node_state_recent_history_index );
 		if ( assignment_of_interest ) {
 			T << "about to write alt_state_energy_ to location: " << & ( stored_rpes_[ node_not_changing ]( alternate_state, other_node_state_recent_history_index ) ) << std::endl;
 		}

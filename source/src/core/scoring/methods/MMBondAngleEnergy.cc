@@ -315,7 +315,7 @@ MMBondAngleEnergy::residue_pair_energy(
 			utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
 				rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
 			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
-				assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+			debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 				Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
 				Size const res1_lower_mmtype = rsd1_type.atom( res1_lower_atomno ).mm_atom_type_index();
 
@@ -370,7 +370,7 @@ MMBondAngleEnergy::residue_pair_energy(
 			utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
 				rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
 			for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
-				assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
+			debug_assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
 				Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
 				Size const res2_lower_mmtype = rsd2_type.atom( res2_lower_atomno ).mm_atom_type_index();
 
@@ -577,7 +577,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 
 	for ( Size ii = 1, ii_end = angs.size(); ii <= ii_end; ++ii ) {
 		chemical::bondangle_atom_set const & ii_bangle( restype.bondangle( angs[ ii ] ) );
-		assert( ii_bangle.key1() == atomno || ii_bangle.key2() == atomno || ii_bangle.key3() == atomno );
+	debug_assert( ii_bangle.key1() == atomno || ii_bangle.key2() == atomno || ii_bangle.key3() == atomno );
 		if ( score_everything ||
 				( score_this_atom_centrally && ii_bangle.key2() == atomno ) ||
 				( score_atom_centrally( restype, ii_bangle.key2() ) ) ) {    // could be faster here
@@ -656,7 +656,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 		Size const ii_whichpair = interres_wi1_for_this_atom[ ii ].second;
 		chemical::two_atom_set const & ii_pair = restype.
 			atoms_within_one_bond_of_a_residue_connection( ii_resconn )[ ii_whichpair ];
-		assert( ii_pair.key1() == atomno || ii_pair.key2() == atomno );
+	debug_assert( ii_pair.key1() == atomno || ii_pair.key2() == atomno );
 
 		/// Find the neighbor residue and atom
 		Size const ii_neighb      = res.residue_connection_partner( ii_resconn );
@@ -749,7 +749,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 		for ( Size jj = 1; jj <= neighb_atoms_wi1.size(); ++jj ) {
 
 			chemical::two_atom_set const & neighb_pair = neighb_atoms_wi1[ jj ];
-			assert( neighb_pair.key1() == neighb_atom1 );
+		debug_assert( neighb_pair.key1() == neighb_atom1 );
 
 			Size const neighb_atom2 = neighb_pair.key2();
 			Size const mmat3 = neighb_restype.atom( neighb_atom2 ).mm_atom_type_index();

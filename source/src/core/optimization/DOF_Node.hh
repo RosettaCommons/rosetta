@@ -175,7 +175,7 @@ public:
 	void
 	set_parent( DOF_NodeOP setting )
 	{
-		assert( setting.get() != this ); // an object in an OP should never point to itself
+	debug_assert( setting.get() != this ); // an object in an OP should never point to itself
 		parent_ = setting;
 	}
 
@@ -215,7 +215,7 @@ DOF_Node::depth() const
 	} else if ( depth_ < 0 ) {
 		depth_ = parent_->depth() + 1;
 	}
-	assert( depth_ >= 0 );
+debug_assert( depth_ >= 0 );
 	return depth_;
 }
 

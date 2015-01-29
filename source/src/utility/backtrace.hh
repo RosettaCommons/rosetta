@@ -28,6 +28,8 @@
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
+#include <cassert>
+
 // C++ headers
 #if defined(__GNUC__)  &&  !defined(WIN32)  &&  !defined(__CYGWIN__)
 
@@ -111,10 +113,11 @@ print_backtrace() {
 	return false; // allows use in debug_assert
 }
 
-#define debug_assert(condition) { assert( ( condition ) || print_backtrace() ); }
+#define debug_assert(condition) {assert( ( condition ) || print_backtrace() ); }
 
 #else
 // _WIN32, etc.
+#include <assert.h>
 
 inline
 void
@@ -123,7 +126,7 @@ print_backtrace(){
 	// if someone cares, should be possible to code up a backtrace for Windows!
 }
 
-#define debug_assert(condition) { assert( condition ); }
+#define debug_assert(condition) {assert( condition ); }
 
 #endif
 

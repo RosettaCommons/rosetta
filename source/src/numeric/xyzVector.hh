@@ -34,7 +34,7 @@
 
 // C++ headers
 #include <stdexcept>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #ifdef GL_GRAPHICS
 	#include <numeric/xyz.functions.hh>

@@ -20,7 +20,7 @@
 // Unit headers
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <cstdlib>
 #include <iostream>
 #include <set>

@@ -243,7 +243,7 @@ Energies::total_energies()
 Energies::EnergyGraph const &
 Energies::energy_graph() const
 {
-	assert( graph_state_ == GOOD );
+debug_assert( graph_state_ == GOOD );
 	return *energy_graph_;
 }
 
@@ -251,7 +251,7 @@ Energies::energy_graph() const
 Energies::EnergyGraph &
 Energies::energy_graph()
 {
-	assert( graph_state_ == GOOD );
+debug_assert( graph_state_ == GOOD );
 	return *energy_graph_;
 }
 
@@ -272,13 +272,13 @@ Energies::tenA_neighbor_graph() const
 {
 	using namespace scoring;
 
-	assert( graph_state_ == GOOD );
+debug_assert( graph_state_ == GOOD );
 
 	if ( ! context_graphs_[ ten_A_neighbor_graph ] ) {
 		require_context_graph_( ten_A_neighbor_graph, true );
 	}
 
-	assert( dynamic_cast< TenANeighborGraph const * > (context_graphs_[ ten_A_neighbor_graph ].get()) );
+debug_assert( dynamic_cast< TenANeighborGraph const * > (context_graphs_[ ten_A_neighbor_graph ].get()) );
 
 	return static_cast< TenANeighborGraph const & > ( *context_graphs_[ ten_A_neighbor_graph ] );
 }
@@ -289,13 +289,13 @@ Energies::tenA_neighbor_graph()
 {
 	using namespace scoring;
 
-	assert( graph_state_ == GOOD );
+debug_assert( graph_state_ == GOOD );
 
 	if ( ! context_graphs_[ ten_A_neighbor_graph ] ) {
 		require_context_graph_( ten_A_neighbor_graph, true );
 	}
 
-	assert( dynamic_cast< TenANeighborGraph const * > (context_graphs_[ ten_A_neighbor_graph ].get()) );
+debug_assert( dynamic_cast< TenANeighborGraph const * > (context_graphs_[ ten_A_neighbor_graph ].get()) );
 
 	return static_cast< TenANeighborGraph & > ( *context_graphs_[ ten_A_neighbor_graph ] );
 }
@@ -308,13 +308,13 @@ scoring::TwelveANeighborGraph const &
 Energies::twelveA_neighbor_graph() const
 {
 	using namespace scoring;
-	assert( graph_state_ == GOOD );
+debug_assert( graph_state_ == GOOD );
 
 	if ( ! context_graphs_[ twelve_A_neighbor_graph ] ) {
 		require_context_graph_( twelve_A_neighbor_graph, true );
 	}
 
-	assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twelve_A_neighbor_graph ].get()) );
+debug_assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twelve_A_neighbor_graph ].get()) );
 
 	return static_cast< TwelveANeighborGraph const & > ( *context_graphs_[ twelve_A_neighbor_graph ] );
 }
@@ -326,13 +326,13 @@ Energies::twelveA_neighbor_graph()
 {
 	using namespace scoring;
 
-	assert( graph_state_ == GOOD );
+debug_assert( graph_state_ == GOOD );
 
 	if ( ! context_graphs_[ twelve_A_neighbor_graph ] ) {
 		require_context_graph_( twelve_A_neighbor_graph, true );
 	}
 
-	assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twelve_A_neighbor_graph ].get()) );
+debug_assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twelve_A_neighbor_graph ].get()) );
 
 	return static_cast< TwelveANeighborGraph & > ( *context_graphs_[ twelve_A_neighbor_graph ] );
 }
@@ -342,7 +342,7 @@ Energies::twelveA_neighbor_graph()
 scoring::ContextGraphOP
 Energies::context_graph( scoring::ContextGraphType type )
 {
-	assert( graph_state_ == GOOD );
+debug_assert( graph_state_ == GOOD );
 	if ( context_graphs_[ type ] == 0 ) require_context_graph_( type, true );
 	return context_graphs_[ type ];
 }
@@ -351,7 +351,7 @@ Energies::context_graph( scoring::ContextGraphType type )
 scoring::ContextGraphCOP
 Energies::context_graph( scoring::ContextGraphType type ) const
 {
-	assert( graph_state_ == GOOD );
+debug_assert( graph_state_ == GOOD );
 	if ( context_graphs_[ type ] == 0 ) require_context_graph_( type, true );
 	return context_graphs_[ type ];
 }
@@ -464,7 +464,7 @@ void
 Energies::prepare_neighbor_graphs()
 {
 	// The graph state should either be GOOD (no work requried) or MOD (correct, mod the domain map)
-	assert( graph_state_ != BAD );
+debug_assert( graph_state_ != BAD );
 	delete_graph_edges_using_domain_map( *energy_graph_ );
 
 	// Later, the absence of edges from the energy_graph_ is taken as a signal
@@ -554,7 +554,7 @@ Energies::set_minimization_graph( MinimizationGraphOP mingraph )
 scoring::NeighborList const &
 Energies::nblist( EnergiesCacheableDataType::Enum const & type ) const
 {
-	assert( use_nblist_ && nblist_.find( type ) != nblist_.end() );
+debug_assert( use_nblist_ && nblist_.find( type ) != nblist_.end() );
 	return *( nblist_.find( type )->second );
 }
 
@@ -566,7 +566,7 @@ Energies::set_nblist(
 	scoring::NeighborListOP nblist_in
 )
 {
-	assert( use_nblist_ && nblist_.find( type ) == nblist_.end() );
+debug_assert( use_nblist_ && nblist_.find( type ) == nblist_.end() );
 	nblist_[ type ] = nblist_in;
 }
 
@@ -578,8 +578,8 @@ Energies::set_use_nblist(
 	bool const use_nblist_auto_update
 )
 {
-	assert( !use_nblist_ && !scoring_ );
-	assert( energy_state_ == GOOD ); // we should have just scored
+debug_assert( !use_nblist_ && !scoring_ );
+debug_assert( energy_state_ == GOOD ); // we should have just scored
 
 	use_nblist_ = true;
 	use_nblist_auto_update_ = use_nblist_auto_update;
@@ -613,7 +613,7 @@ Energies::set_use_nblist(
 void
 Energies::show( std::ostream & out ) const
 {
- 	assert( energy_state_ == GOOD );
+ debug_assert( energy_state_ == GOOD );
 
 	if ( ! residue_total_energies_uptodate_ ) accumulate_residue_total_energies();
 
@@ -657,7 +657,7 @@ Energies::show( std::ostream & out ) const
 void
 Energies::show( std::ostream & out, Size res ) const
 {
- 	assert( energy_state_ == GOOD );
+ debug_assert( energy_state_ == GOOD );
 
 	if ( ! residue_total_energies_uptodate_ ) accumulate_residue_total_energies();
 	// show the header (names of scoretypes)
@@ -792,7 +792,7 @@ Energies::clear()
 void
 Energies::reset_nblist()
 {
-	assert( use_nblist_ && !scoring_ );
+debug_assert( use_nblist_ && !scoring_ );
 	use_nblist_ = false;
 	nblist_.clear();
 
@@ -821,7 +821,7 @@ void
 Energies::set_size( Size const new_size )
 {
 	if ( size_ == new_size ) {
-		assert( domain_map_.size() == size_ &&
+	debug_assert( domain_map_.size() == size_ &&
 			Size(energy_graph_->num_nodes()) == size_ );
 		return;
 	}
@@ -873,7 +873,7 @@ Energies::update_residue_neighbors(
 	// no updates to the neighbors during minimization
 	// the neighbors should have been calculated inside set_use_nblist
 	if ( use_nblist_ ) {
-		assert( size_ == pose.total_residue() && graph_state_ != BAD );
+	debug_assert( size_ == pose.total_residue() && graph_state_ != BAD );
 		graph_state_ = GOOD;  // pretend
 		return;
 	}
@@ -969,7 +969,7 @@ Energies::accumulate_residue_total_energies() const
 	}
 
 	// debug
-	assert( !use_nblist() && energies_updated() );
+debug_assert( !use_nblist() && energies_updated() );
 
 	// start with the one-body energies
 	for ( Size i=1, i_end = residue_total_energies_.size(); i<= i_end; ++i ) {
@@ -1095,7 +1095,7 @@ Energies::set_scorefxn_info( scoring::ScoreFunctionInfoOP info )
 		if ( scorefxn_info_->requires_context_graph( ContextGraphType( ii )) != required_context_graphs_[ ii ] ) {
 			if ( required_context_graphs_[ ii ] ) {
 				if ( ! externally_required_context_graphs_[ ii ] ) {
-					assert( context_graphs_[ ii ] );
+				debug_assert( context_graphs_[ ii ] );
 					/// The new score function does not require that the context graph be maintained, nor
 					/// did any external (non-energy-method ) peice of code.  It is safe to delete this
 					/// graph and to stop maintaining it during score evaluations.
@@ -1106,8 +1106,8 @@ Energies::set_scorefxn_info( scoring::ScoreFunctionInfoOP info )
 			} else {
 				/// Required by the score function, but not externally required, nor required by the previous
 				/// score function.
-				assert( context_graphs_[ ii ] == 0 );
-				assert( externally_required_context_graphs_[ ii ] );
+			debug_assert( context_graphs_[ ii ] == 0 );
+			debug_assert( externally_required_context_graphs_[ ii ] );
 				require_context_graph_( ContextGraphType (ii), false );
 			}
 		}
@@ -1240,7 +1240,7 @@ void Energies::copy_nblists( Energies const & other )
 
 void Energies::copy_context_graphs( Energies const & other )
 {
-	assert( other.context_graphs_.size() == context_graphs_.size() );
+debug_assert( other.context_graphs_.size() == context_graphs_.size() );
 	externally_required_context_graphs_ = other.externally_required_context_graphs_;
 	required_context_graphs_ = other.required_context_graphs_;
 	max_context_neighbor_cutoff_ = other.max_context_neighbor_cutoff_;
@@ -1270,7 +1270,7 @@ void Energies::copy_lr_energy_containers( Energies const & other )
 void
 Energies::require_context_graph_( scoring::ContextGraphType type, bool external ) const
 {
-	assert( context_graphs_[ type ] == 0 );
+debug_assert( context_graphs_[ type ] == 0 );
 	required_context_graphs_[ type ] = true;
 	context_graphs_[ type ] = ContextGraphFactory::create_context_graph( type );
 	if ( context_graphs_[ type ] == 0 ) {

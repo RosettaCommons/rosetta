@@ -304,7 +304,7 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 	{
 		core::chemical::AtomIndices const bonded_neighbors = residue->bonded_neighbor(index);
 		utility::vector1<core::chemical::BondName> const bonded_neighbor_types = residue->type().bonded_neighbor_types(index);
-		assert(bonded_neighbors.size()== bonded_neighbor_types.size());
+	debug_assert(bonded_neighbors.size()== bonded_neighbor_types.size());
 
 		for(core::Size neighbor_index = 1; neighbor_index <= bonded_neighbors.size();++neighbor_index)
 		{

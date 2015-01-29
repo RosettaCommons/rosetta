@@ -145,13 +145,13 @@ HBondTypeManager::setup_type_names()
 	name2geo_dim_type_["hbgd_AHD"] = hbgd_AHD;
 	name2geo_dim_type_["hbgd_chi"] = hbgd_chi;
 
-	assert( name2weight_type_.size() == hbw_MAX );
-	assert( name2deriv_type_.size() == hbderiv_MAX );
-	assert( name2don_chem_type_.size() == hbdon_MAX );
-	assert( name2acc_chem_type_.size() == hbacc_MAX );
-	assert( name2seq_sep_type_.size() == seq_sep_MAX );
-	assert( name2geo_dim_type_.size() == hbgd_MAX );
-	assert( name2hybridization_type_.size() == chemical::HYBRID_MAX );
+debug_assert( name2weight_type_.size() == hbw_MAX );
+debug_assert( name2deriv_type_.size() == hbderiv_MAX );
+debug_assert( name2don_chem_type_.size() == hbdon_MAX );
+debug_assert( name2acc_chem_type_.size() == hbacc_MAX );
+debug_assert( name2seq_sep_type_.size() == seq_sep_MAX );
+debug_assert( name2geo_dim_type_.size() == hbgd_MAX );
+debug_assert( name2hybridization_type_.size() == chemical::HYBRID_MAX );
 
 	weight_type2name_.resize( hbw_MAX );
 	for ( map< string, HBondWeightType >::const_iterator iter = name2weight_type_.begin(),

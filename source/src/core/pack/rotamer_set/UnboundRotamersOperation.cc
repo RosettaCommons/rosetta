@@ -131,7 +131,7 @@ UnboundRotamersOperation::alter_rotamer_set(
 )
 {
 	Size const seqnum = (Size) rotamer_set.resid();
-	assert( seqnum <= ptask.total_residue() );
+debug_assert( seqnum <= ptask.total_residue() );
 	core::pack::task::ResidueLevelTask const & rtask = ptask.residue_task(seqnum);
 	for(Size i = 1; i <= poses_.size(); ++i) {
 		core::pose::Pose const & ubr_pose = *(poses_[i]);

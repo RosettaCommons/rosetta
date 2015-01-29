@@ -92,13 +92,13 @@ public:
 	/// @brief This is why data should be private: you get to ensure it's valid when you read it.
 	Multivec const &
 	pbest() const {
-		assert( best_valid_ );
+	debug_assert( best_valid_ );
 		return pbest_;
 	}
 
 	Real
 	fitness_pbest() const {
-		assert( best_valid_ );
+	debug_assert( best_valid_ );
 		return fitness_pbest_;
 	}
 

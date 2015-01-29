@@ -113,7 +113,7 @@ bool ABEGOEval::eval_impl(
 		using namespace basic::options::OptionKeys;
 		
 		// no runtime_asserts here, will slow down Librarian operation
-	assert( extent.distance() == abego_.size() );
+debug_assert( extent.distance() == abego_.size() );
 		
 	Size pos = 0;
   Real default_A_phi = -63.8;

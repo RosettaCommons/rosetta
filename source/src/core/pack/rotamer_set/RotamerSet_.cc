@@ -147,7 +147,7 @@ Size
 RotamerSet_::get_residue_type_begin( Size which_restype ) const
 {
 	update_rotamer_offsets();
-	assert( which_restype <= n_residue_types_ );
+debug_assert( which_restype <= n_residue_types_ );
 	return residue_type_rotamers_begin_[ which_restype ];
 }
 
@@ -155,7 +155,7 @@ Size
 RotamerSet_::get_residue_group_begin( Size which_resgroup ) const
 {
 	update_rotamer_offsets();
-	assert( which_resgroup <= n_residue_groups_ );
+debug_assert( which_resgroup <= n_residue_groups_ );
 	return residue_group_rotamers_begin_[ which_resgroup ];
 }
 
@@ -163,7 +163,7 @@ Size
 RotamerSet_::get_n_rotamers_for_residue_type( Size which_restype ) const
 {
 	update_rotamer_offsets();
-	assert( which_restype <= n_residue_types_ );
+debug_assert( which_restype <= n_residue_types_ );
 	return n_rotamers_for_restype_[ which_restype ];
 }
 
@@ -171,7 +171,7 @@ Size
 RotamerSet_::get_n_rotamers_for_residue_group( Size which_resgroup ) const
 {
 	update_rotamer_offsets();
-	assert( which_resgroup <= n_residue_groups_ );
+debug_assert( which_resgroup <= n_residue_groups_ );
 	return n_rotamers_for_resgroup_[ which_resgroup ];
 }
 
@@ -238,7 +238,7 @@ RotamerSet_::build_rotamers_for_concrete(
 		}
 
 		for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
-			assert( new_rotamers[ii]->seqpos() == resid() && new_rotamers[ii]->chain() == existing_residue.chain() );
+		debug_assert( new_rotamers[ii]->seqpos() == resid() && new_rotamers[ii]->chain() == existing_residue.chain() );
 			push_back_rotamer( new_rotamers[ii] );
 		}
 
@@ -249,7 +249,7 @@ RotamerSet_::build_rotamers_for_concrete(
 		build_rna_rotamers( resid(), pose, concrete_residue, task, new_rotamers, id_for_current_rotamer_ );
 
 		for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
-			//assert( new_rotamers[ii]->seqpos() == resid() && new_rotamers[ii]->chain() == existing_residue.chain() );
+		//debug_assert( new_rotamers[ii]->seqpos() == resid() && new_rotamers[ii]->chain() == existing_residue.chain() );
 			push_back_rotamer( new_rotamers[ii] );
 		}
 
@@ -391,7 +391,7 @@ RotamerSet_::build_rotamers_for_concrete(
 						break;
 					case DELETE_PREVIOUS_ROTAMER :
 						tt.Debug << " ... replace previous" << std::endl;
-						assert ( num_rotamers() > 0 );
+					debug_assert ( num_rotamers() > 0 );
 						rotamers_[ num_rotamers() ] = rot;
 						break;
 					case DELETE_ROTAMER : // Do nothing.
@@ -734,7 +734,7 @@ RotamerSet_::compute_one_body_energies(
 				rniend = lrec->const_neighbor_iterator_end( theresid );
 				(*rni) != (*rniend); ++(*rni) ) {
 			Size const neighbor_id = rni->neighbor_id();
-			assert( neighbor_id != theresid );
+		debug_assert( neighbor_id != theresid );
 			if ( task.pack_residue( neighbor_id ) ) continue;
 
 			(*lr_iter)->evaluate_rotamer_background_energies(
@@ -825,7 +825,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 				(*rni) != (*rniend); ++(*rni) ) {
 			Size const neighbor_id = rni->neighbor_id();
 
-			//assert( neighbor_id != theresid );
+		//debug_assert( neighbor_id != theresid );
 			//if ( task.pack_residue( neighbor_id ) ) continue;
 			if (theresid == neighbor_id) continue;
 
@@ -1007,7 +1007,7 @@ RotamerSet_::get_trie( Size method_enum_id ) const
 void
 RotamerSet_::drop_rotamer( Size rot_id )
 {
-	assert( rot_id <= rotamers_.size() );
+debug_assert( rot_id <= rotamers_.size() );
 	utility::vector1< conformation::ResidueOP > copy_rotamers( rotamers_.size() - 1, 0 );
 	Size count_copy( 1 );
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
@@ -1034,7 +1034,7 @@ RotamerSet_::drop_rotamer( Size rot_id )
 void
 RotamerSet_::drop_rotamers( utility::vector1< bool > const & rotamers_to_delete )
 {
-	assert( rotamers_to_delete.size() == rotamers_.size() );
+debug_assert( rotamers_to_delete.size() == rotamers_.size() );
 
 	Size n_dropped = 0;
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {

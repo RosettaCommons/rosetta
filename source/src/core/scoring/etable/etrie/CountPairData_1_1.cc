@@ -17,7 +17,7 @@
 #include <utility/assert.hh>
 
 // STL Headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <iostream>
 
 namespace core {
@@ -31,8 +31,8 @@ void CountPairData_1_1::set_dist_to_connect_point(
 	Size connection_dist
 )
 {
-	assert( entry == 1 );
-	assert( connpoint == 1 );
+debug_assert( entry == 1 );
+debug_assert( connpoint == 1 );
 	connection_distance_ = connection_dist;
 }
 
@@ -48,7 +48,7 @@ CountPairData_1_1::set_count_pair_data_to_use(
 	Size ASSERT_ONLY(entry)
 ) const
 {
-	assert( entry == 0 );
+debug_assert( entry == 0 );
 }
 */
 

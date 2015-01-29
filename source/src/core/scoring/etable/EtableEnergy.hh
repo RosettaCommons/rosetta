@@ -906,7 +906,7 @@ TableLookupEvaluator::atom_pair_energy(
  Real & d2
 ) const
 {
-	assert( ljatr_.active() );
+debug_assert( ljatr_.active() );
 	int disbin; Real frac;
 	atr = rep = solv = 0.0;
 
@@ -948,7 +948,7 @@ TableLookupEvaluator::pair_energy_H(
 	Real &solv
 ) const
 {
-	assert( ljrep_.active() );
+debug_assert( ljrep_.active() );
 	Real d2,frac;
 	int disbin;
 	atr = rep = solv = 0.0;

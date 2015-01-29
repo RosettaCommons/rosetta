@@ -184,10 +184,10 @@ PairEPotential::pair_term_energy(
 	using numeric::abs_difference;
 	using numeric::interpolation::interpolated;
 
-	assert( res1.seqpos() != res2.seqpos() ); // Only call for distinct residues
-	assert( res1.is_polar() || res1.is_aromatic() );
-	assert( res2.is_polar() || res2.is_aromatic() ); // Only for polar amino acids: Caller does exclusion (prevents call overhead)
-	//assert( pair_corr_.I1() == pair_corr_.I2() ); // First 2 index ranges should match //this is a silly assert
+debug_assert( res1.seqpos() != res2.seqpos() ); // Only call for distinct residues
+debug_assert( res1.is_polar() || res1.is_aromatic() );
+debug_assert( res2.is_polar() || res2.is_aromatic() ); // Only for polar amino acids: Caller does exclusion (prevents call overhead)
+//debug_assert( pair_corr_.I1() == pair_corr_.I2() ); // First 2 index ranges should match //this is a silly assert
 
 //	if ( !is_protein(aa1)  ||  !is_protein(aa2) ) ) return; //dr okay for dupes but not other nnaa where we won't have this info     //! Change to an NCAA exclusion????
 
@@ -231,7 +231,7 @@ PairEPotential::pair_term_energy(
 	// (1) You're comparing a residue to itself -- don't.
 	// (2) The residues actcoords aren't being updated and are (0,0,0)
 	// -- see ResidueType.requires_actcoord() and the appropriate .params files.
-	assert( r12 > 0 );
+debug_assert( r12 > 0 );
 
 	// 1. Get the lower of the two bin averages bracketing r12 and set r12_bin to this value.
 	//    Consider 'bin average' to exist halfway through bin's range.
@@ -246,7 +246,7 @@ PairEPotential::pair_term_energy(
 	int const r12_bin( std::max( numeric::nint( r12_bin_real ), 1 ) );
 	if ( r12_bin > max_bin_ ) return Energy( 0.0 );
 	Distance const r12_alpha( r12_bin_real - ( r12_bin - Distance( 0.5 ) ) );
-	assert( ( r12_alpha >= Distance( 0.0 ) ) && ( r12_alpha <= Distance( 1.0 ) ) );
+debug_assert( ( r12_alpha >= Distance( 0.0 ) ) && ( r12_alpha <= Distance( 1.0 ) ) );
 
 	// Set the low and high bin averages for interpolation
 

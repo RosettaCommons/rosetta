@@ -145,7 +145,7 @@ AtomVDW::setup_approximate_vdw_radii(
 
 	Size const natoms_full( atom_vdw_.size() );
 	Size const natoms( atom_type_index.size() ); // # atoms in the db file
-	assert( natoms_full == Size( atom_type_set.n_atomtypes() ) );
+debug_assert( natoms_full == Size( atom_type_set.n_atomtypes() ) );
 
 	// initialize
 	utility::vector1< Real > R( natoms_full );

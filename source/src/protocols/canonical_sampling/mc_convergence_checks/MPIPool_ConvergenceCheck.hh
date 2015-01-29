@@ -124,7 +124,7 @@
 #include <ObjexxFCL/Star.hh>
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>

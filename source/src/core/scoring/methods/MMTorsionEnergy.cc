@@ -281,12 +281,12 @@ MMTorsionEnergy::residue_pair_energy(
 			rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
 
 		for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
-			assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+		debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 			Size const jj_term_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
 			Size const mmat1 = rsd1_type.atom( jj_term_atomno ).mm_atom_type_index();
 
 			for ( Size kk = 1; kk <= rsd2_atoms_wi1_bond_of_ii.size(); ++kk ) {
-				assert( rsd2_atoms_wi1_bond_of_ii[ kk ].key1() == resconn_atomno2 );
+			debug_assert( rsd2_atoms_wi1_bond_of_ii[ kk ].key1() == resconn_atomno2 );
 				Size const kk_term_atomno = rsd2_atoms_wi1_bond_of_ii[ kk ].key2();
 				Size const mmat4 = rsd2_type.atom( kk_term_atomno ).mm_atom_type_index();
 
@@ -322,7 +322,7 @@ MMTorsionEnergy::residue_pair_energy(
 			rsd1_type.atoms_within_two_bonds_of_a_residue_connection( resconn_id1 ));
 
 		for ( Size jj = 1; jj <= rsd1_atoms_wi2_bonds_of_ii.size(); ++jj ) {
-			assert( rsd1_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno1 );
+		debug_assert( rsd1_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno1 );
 
 			Size const jj_atom2 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key2();
 			Size const mmat2 = rsd1_type.atom( jj_atom2 ).mm_atom_type_index();
@@ -353,7 +353,7 @@ MMTorsionEnergy::residue_pair_energy(
 			rsd2_type.atoms_within_two_bonds_of_a_residue_connection( resconn_id2 ));
 
 		for ( Size jj = 1; jj <= rsd2_atoms_wi2_bonds_of_ii.size(); ++jj ) {
-			assert( rsd2_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno2 );
+		debug_assert( rsd2_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno2 );
 
 			Size const jj_atom3 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key2();
 			Size const mmat3 = rsd2_type.atom( jj_atom3 ).mm_atom_type_index();
@@ -466,7 +466,7 @@ MMTorsionEnergy::eval_atom_derivative(
 
 	for ( Size ii = 1, ii_end = diheds.size(); ii <= ii_end; ++ii ) {
 		chemical::dihedral_atom_set const & ii_dihed( restype.dihedral( diheds[ ii ] ) );
-		assert( ii_dihed.key1() == atomno || ii_dihed.key2() == atomno || ii_dihed.key3() == atomno  || ii_dihed.key4() == atomno );
+	debug_assert( ii_dihed.key1() == atomno || ii_dihed.key2() == atomno || ii_dihed.key3() == atomno  || ii_dihed.key4() == atomno );
 
 		//TR << "  1. Deriv for angle# " << angs[ ii ] << " between " << ii_bangle.key1() << " " << ii_bangle.key2()  << " " << ii_bangle.key3() << std::endl;
 
@@ -526,7 +526,7 @@ MMTorsionEnergy::eval_atom_derivative(
 
 		chemical::three_atom_set const & ii_triple = restype.
 			atoms_within_two_bonds_of_a_residue_connection( ii_resconn )[ ii_whichpair ];
-		assert( ii_triple.key1() == atomno || ii_triple.key2() == atomno || ii_triple.key3() == atomno );
+	debug_assert( ii_triple.key1() == atomno || ii_triple.key2() == atomno || ii_triple.key3() == atomno );
 
 		/// Find the neighbor residue and atom
 		Size const ii_neighb      = res.residue_connection_partner( ii_resconn );
@@ -591,7 +591,7 @@ MMTorsionEnergy::eval_atom_derivative(
 
 		chemical::two_atom_set const & ii_pair = restype.
 			atoms_within_one_bond_of_a_residue_connection( ii_resconn )[ ii_whichpair ];
-		assert( ii_pair.key1() == atomno || ii_pair.key2() == atomno );
+	debug_assert( ii_pair.key1() == atomno || ii_pair.key2() == atomno );
 
 
 		Size const mmat1 = restype.atom( ii_pair.key2()).mm_atom_type_index();
@@ -610,7 +610,7 @@ MMTorsionEnergy::eval_atom_derivative(
 
 		for ( Size jj = 1; jj <= neighb_atoms_wi1_bond_of_ii.size(); ++jj ) {
 			chemical::two_atom_set neighb_pair( neighb_atoms_wi1_bond_of_ii[ jj ] );
-			assert( neighb_pair.key1() == neighb_atom1 );
+		debug_assert( neighb_pair.key1() == neighb_atom1 );
 
 			Size const mmat4 = neighb_restype.atom( neighb_pair.key2() ).mm_atom_type_index();
 
@@ -665,7 +665,7 @@ MMTorsionEnergy::eval_atom_derivative(
 		for ( Size jj = 1; jj <= neighb_atoms_wi2.size(); ++jj ) {
 
 			chemical::three_atom_set const & neighb_triple = neighb_atoms_wi2[ jj ];
-			assert( neighb_triple.key1() == neighb_atom1 );
+		debug_assert( neighb_triple.key1() == neighb_atom1 );
 
 			Size const neighb_atom2 = neighb_triple.key2();
 			Size const mmat3 = neighb_restype.atom( neighb_atom2 ).mm_atom_type_index();

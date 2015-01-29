@@ -24,6 +24,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.fwd.hh>
+#include <utility/assert.hh>
 
 
 namespace core {
@@ -112,7 +113,7 @@ private:
 		GraphClass * owner
 	)
 	{
-		assert( index_ == 0 && owner_ == 0 ); // this can be called at most once
+	debug_assert( index_ == 0 && owner_ == 0 ); // this can be called at most once
 		index_ = index;
 		owner_ = owner;
 	}
@@ -270,7 +271,7 @@ private:
 				}
 			}
 
-			assert ( ii != upper_edges_.size() || (ii - shift == num_upper_edges_) );
+		debug_assert ( ii != upper_edges_.size() || (ii - shift == num_upper_edges_) );
 		}
 		upper_edges_.resize( num_upper_edges_ );
 		lazily_deleted_edges_present_ = false;
@@ -435,9 +436,9 @@ public:
 	// add an edge
 	void add_edge( platform::Size lower_vertex, platform::Size upper_vertex )
 	{
-		//assert( lower_vertex < upper_vertex );
-		assert( ! edge_exists( lower_vertex, upper_vertex ));
-		assert( ! edge_exists( upper_vertex, lower_vertex ));  //fpd
+		//debug_assert( lower_vertex < upper_vertex );
+	debug_assert( ! edge_exists( lower_vertex, upper_vertex ));
+	debug_assert( ! edge_exists( upper_vertex, lower_vertex ));  //fpd
 		vertices_[ lower_vertex ]->add_edge( upper_vertex );
 		++num_edges_;
 	}
@@ -446,9 +447,9 @@ public:
 	void
 	add_edge( platform::Size lower_vertex, platform::Size upper_vertex, E const & edge_data )
 	{
-		//assert( lower_vertex < upper_vertex );
-		assert( ! edge_exists( lower_vertex, upper_vertex ));
-		assert( ! edge_exists( upper_vertex, lower_vertex ));  //fpd
+		//debug_assert( lower_vertex < upper_vertex );
+	debug_assert( ! edge_exists( lower_vertex, upper_vertex ));
+	debug_assert( ! edge_exists( upper_vertex, lower_vertex ));  //fpd
 		vertices_[ lower_vertex ]->add_edge( upper_vertex, edge_data );
 		++num_edges_;
 	}

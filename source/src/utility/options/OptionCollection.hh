@@ -60,7 +60,7 @@
 
 // C++ headers
 #include <stdlib.h>
-#include <cassert>
+#include <utility/assert.hh>
 #include <iosfwd>
 #include <list>
 #include <string>

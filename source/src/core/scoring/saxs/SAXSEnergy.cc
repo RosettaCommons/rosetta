@@ -399,7 +399,7 @@ Real SAXSEnergy::compute_L1(utility::vector1<Real> const & saxs_scored, utility:
 
 	Real chi = -1.0;
         Real sum = 0;
-        assert( saxs_scored.size() == saxs_reference.size() );
+       debug_assert( saxs_scored.size() == saxs_reference.size() );
         for(Size i=1;i<=saxs_scored.size();++i)
     	    sum += saxs_reference[i] / saxs_scored[i];
         Real lambda = sum / ((Real) saxs_scored.size());
@@ -422,7 +422,7 @@ Real SAXSEnergy::compute_chi(utility::vector1<Real> const & saxs_scored, utility
 
 	Real chi = 0;
 	//Real sum = 0;
-        assert( saxs_scored.size() == saxs_reference.size() );
+       debug_assert( saxs_scored.size() == saxs_reference.size() );
 
 	trSAXSEnergy.Trace << "\nComputing SAXS energy:\n";
 	trSAXSEnergy.Trace << "norm(0): "<<zero_<<"\n";
@@ -448,7 +448,7 @@ Real SAXSEnergy::compute_chi_with_fit(utility::vector1<Real> const & saxs_scored
 
 	Real chi = 0;
         Real sum = 0;
-        assert( saxs_scored.size() == saxs_reference.size() );
+       debug_assert( saxs_scored.size() == saxs_reference.size() );
         for(Size i=1;i<=saxs_scored.size();++i)
     	    sum += saxs_reference[i] / saxs_scored[i];
         Real lambda = sum / ((Real) saxs_scored.size());

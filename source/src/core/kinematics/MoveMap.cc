@@ -52,9 +52,9 @@ void MoveMap::set_ranges_unmodifiable(const std::vector<std::pair<Size, Size> >&
 		Size begin = i->first;
 		Size end = i->second;
 
-		assert(begin > 0);
-		assert(end > 0);
-		assert(begin <= end);
+	debug_assert(begin > 0);
+	debug_assert(end > 0);
+	debug_assert(begin <= end);
 
 		for (Size i = begin; i <= end; ++i) set_bb(i, false);
 	}

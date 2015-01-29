@@ -288,7 +288,7 @@ SingleResidueDunbrackLibrary::mark_rotwell_exists(
 	utility::vector1< Size > const & rotwell
 )
 {
-	assert( ! packed_rotno_conversion_data_current_ );
+debug_assert( ! packed_rotno_conversion_data_current_ );
 	Size const rotno( rotwell_2_rotno( rotwell ) );
 	rotwell_exists_[ rotno ] = true;
 }
@@ -336,7 +336,7 @@ SingleResidueDunbrackLibrary::rotwell_2_rotno(
 	utility::vector1< Size > const & rotwell
 ) const
 {
-	assert( n_chi_products_.size() <= rotwell.size() );
+debug_assert( n_chi_products_.size() <= rotwell.size() );
 	Size runsum = 1;
 	for ( Size ii = 1; ii <= n_chi_products_.size(); ++ii ) {
 		runsum += n_chi_products_[ ii ]*( rotwell[ ii ] - 1 );
@@ -349,7 +349,7 @@ SingleResidueDunbrackLibrary::rotwell_2_rotno(
 Size
 SingleResidueDunbrackLibrary::rotwell_2_rotno( Size4 const & rotwell ) const
 {
-	assert( n_chi_products_.size() <= rotwell.size() );
+debug_assert( n_chi_products_.size() <= rotwell.size() );
 	Size runsum = 1;
 	for ( Size ii = 1; ii <= n_chi_products_.size(); ++ii ) {
 		runsum += n_chi_products_[ ii ]*( rotwell[ ii ] - 1 );
@@ -364,7 +364,7 @@ SingleResidueDunbrackLibrary::rotwell_2_rotno( Size4 const & rotwell ) const
 Size
 SingleResidueDunbrackLibrary::rotno_2_packed_rotno( Size const rotno ) const
 {
-	assert( packed_rotno_conversion_data_current_ );
+debug_assert( packed_rotno_conversion_data_current_ );
 	if (rotno < 1 || rotno > rotno_2_packed_rotno_.size() ) return 0;
 	return rotno_2_packed_rotno_[ rotno ];
 }
@@ -375,7 +375,7 @@ SingleResidueDunbrackLibrary::rotwell_2_packed_rotno(
 	utility::vector1< Size > const & rotwell
 ) const
 {
-	assert( packed_rotno_conversion_data_current_ );
+debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno( rotwell_2_rotno( rotwell ) );
 }
 
@@ -384,7 +384,7 @@ SingleResidueDunbrackLibrary::rotwell_2_packed_rotno(
 Size
 SingleResidueDunbrackLibrary::rotwell_2_packed_rotno( Size4 const & rotwell ) const
 {
-	assert( packed_rotno_conversion_data_current_ );
+debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno( rotwell_2_rotno( rotwell ) );
 }
 
@@ -404,7 +404,7 @@ SingleResidueDunbrackLibrary::packed_rotno_2_rotwell(
 	Size4 & rotwell
 ) const
 {
-	assert( packed_rotno_2_rotwell_[ packed_rotno ].size() <= rotwell.size() );
+debug_assert( packed_rotno_2_rotwell_[ packed_rotno ].size() <= rotwell.size() );
 	std::copy( packed_rotno_2_rotwell_[ packed_rotno ].begin(), packed_rotno_2_rotwell_[ packed_rotno ].end(), rotwell.begin() );
 }
 
@@ -717,7 +717,7 @@ Size SingleResidueDunbrackLibrary::memory_usage_dynamic() const
 void
 SingleResidueDunbrackLibrary::hokey_template_workaround()
 {
-	assert( false );
+debug_assert( false );
 	utility_exit_with_message(
 	"ERROR: SingleResidueDunbrackLibrary::hokey_template_workaround should never be called!");
 

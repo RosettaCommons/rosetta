@@ -54,7 +54,7 @@ public:
 		id      ( ident );
 		start   ( start_idx );
 
-		assert( profile().size() == length() );
+	debug_assert( profile().size() == length() );
 	}
 
 	/// @brief copy ctor

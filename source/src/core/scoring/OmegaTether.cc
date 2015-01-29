@@ -111,7 +111,7 @@ OmegaTether::eval_omega_score_residue(
 {
 	using namespace numeric;
 
-	assert( rsd.is_protein() );
+debug_assert( rsd.is_protein() );
 
 	Real const phi_angle
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));

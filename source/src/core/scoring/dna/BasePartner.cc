@@ -31,8 +31,8 @@ retrieve_base_partner_from_pose( pose::Pose const & pose )
 {
 	 //using core::pose::datacache::CacheableDataType::BASE_PARTNER;
 
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::BASE_PARTNER ) );
-	assert( dynamic_cast< BasePartner const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER ))));
+debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::BASE_PARTNER ) );
+debug_assert( dynamic_cast< BasePartner const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER ))));
 	return ( static_cast< BasePartner const &>(    pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER )));
 }
 

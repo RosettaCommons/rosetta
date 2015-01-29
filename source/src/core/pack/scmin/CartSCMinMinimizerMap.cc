@@ -87,8 +87,8 @@ void CartSCMinMinimizerMap::clear_active_dofs()
 /// @details This should be called at most once per residue between calls to "clear_active_chi"
 void CartSCMinMinimizerMap::activate_residue_dofs( Size resindex )
 {
-	assert( domain_map_( resindex ) == 1 ); // activate_residue_chi should not have already been called.
-	assert( active_residue_index_for_res_[ resindex ] == 0 ); // activate_residue_chi should not have already been called.
+debug_assert( domain_map_( resindex ) == 1 ); // activate_residue_chi should not have already been called.
+debug_assert( active_residue_index_for_res_[ resindex ] == 0 ); // activate_residue_chi should not have already been called.
 
 	domain_map_( resindex ) = 0;
 	active_residues_[ ++nactive_residues_ ] = resindex;
@@ -210,13 +210,13 @@ CartSCMinMinimizerMap::starting_dofs( optimization::Multivec & dof ) const
 		}
 	}
 
-	assert ( ctr == dof.size() );
+debug_assert ( ctr == dof.size() );
 }
 
 void
 CartSCMinMinimizerMap::assign_dofs_to_mobile_residues( optimization::Multivec const & dofs )
 {
-	assert( dofs.size() == 3*nactive_moving_atoms_total_ );
+debug_assert( dofs.size() == 3*nactive_moving_atoms_total_ );
 
 	Size ctr = 0;
 	for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {

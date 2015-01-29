@@ -25,7 +25,7 @@
 #include <platform/types.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <iostream>
 
 namespace utility {
@@ -159,7 +159,7 @@ private:
 		Size count_down = top_scorers_.size();
 		Size next_ind = worst_ind_;
 		while ( count_down > 0 ) {
-			assert( next_ind != 0 );
+		debug_assert( next_ind != 0 );
 			sorted_top_scorers_[ count_down ] = top_scorers_[ next_ind ];
 			--count_down;
 			next_ind = next_ptr_[ next_ind ];

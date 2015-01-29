@@ -229,12 +229,12 @@ ContinuousRotamerSet::baserotamer_data( Size rotblock_ind, Size rotid_for_aa ) c
 Size
 ContinuousRotamerSet::pick_baserotamer_from_rotblock( Size rotblock_ind, Real rand_btw_0_and_1 ) const
 {
-	assert( rand_btw_0_and_1 >= 0.0 && rand_btw_0_and_1 <= 1.0 );
+debug_assert( rand_btw_0_and_1 >= 0.0 && rand_btw_0_and_1 <= 1.0 );
 	Real accumulated_prob( 0.0 );
 	Size const nsamples = samples_[ rotblock_ind ].size();
 	for ( Size ii = 1; ii <= nsamples; ++ii ) {
 		accumulated_prob += samples_[ rotblock_ind ][ ii ].probability();
-		//assert( accumulated_prob <= 1.0 + 1e-5 ); // should never exceed 1
+	//debug_assert( accumulated_prob <= 1.0 + 1e-5 ); // should never exceed 1
 		if ( accumulated_prob > rand_btw_0_and_1 ) return ii;
 	}
 	return nsamples;

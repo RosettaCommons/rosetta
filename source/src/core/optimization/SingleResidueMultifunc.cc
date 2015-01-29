@@ -116,7 +116,7 @@ SingleResidueMultifunc::operator ()( Multivec const & vars ) const {
 						rniend = lrec->const_neighbor_iterator_end( rsd_id_ );
 					(*rni) != (*rniend); ++(*rni) ) {
 			Size const neighbor_id = rni->neighbor_id();
-			assert( neighbor_id != rsd_id_ );
+		debug_assert( neighbor_id != rsd_id_ );
 
 			(*lr_iter)->residue_pair_energy( rsd, pose_.residue( neighbor_id ), pose_, score_function_, emap );
 

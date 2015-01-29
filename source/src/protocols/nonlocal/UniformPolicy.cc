@@ -14,7 +14,7 @@
 #include <protocols/nonlocal/UniformPolicy.hh>
 
 // C/C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>

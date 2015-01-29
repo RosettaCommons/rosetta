@@ -491,7 +491,7 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -885,7 +885,7 @@ BaseEtableEnergy< Derived >::setup_for_scoring(
 	ScoreFunction const &scfxn
 ) const
 {
-	assert( dynamic_cast< Derived const* > (this) );
+debug_assert( dynamic_cast< Derived const* > (this) );
 	Derived const * ptr = static_cast< Derived const * > (this);
 	ptr->setup_for_scoring_(pose,scfxn);
 	if ( pose.energies().use_nblist() ) {
@@ -904,7 +904,7 @@ BaseEtableEnergy< Derived >::setup_for_derivatives(
 ) const
 {
 	//std::cout << "BaseEtable Setup for derivatives" << std::endl;
-	assert( dynamic_cast< Derived const* > (this) );
+debug_assert( dynamic_cast< Derived const* > (this) );
 	Derived const * ptr = static_cast< Derived const* > (this);
 	ptr->setup_for_scoring_(pose,scfxn);
 	if ( pose.energies().use_nblist() ) {
@@ -1182,7 +1182,7 @@ BaseEtableEnergy< Derived >::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	assert( rsd1.seqpos() != rsd2.seqpos() );
+debug_assert( rsd1.seqpos() != rsd2.seqpos() );
 	//std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
 
 	if ( ! pose.energies().use_nblist() ) {
@@ -1218,7 +1218,7 @@ BaseEtableEnergy< Derived >::residue_pair_energy_ext(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	///prepare_for_residue_pair( 1,2, pose ); // set inter-res
-	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
+debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( min_pair_data_type() ) ) );
 	Real dsq;
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -1292,7 +1292,7 @@ BaseEtableEnergy< Derived >::setup_for_scoring_for_residue(
 	ResSingleMinimizationData & // min_data
 ) const
 {}
-/*	assert( dynamic_cast< ResidueNblistData * > (min_data.get_data( min_single_data_type() )() ));
+/*debug_assert( dynamic_cast< ResidueNblistData * > (min_data.get_data( min_single_data_type() )() ));
 	ResidueNblistData & nbdata( static_cast< ResidueNblistData & > ( min_data.get_data_ref( min_single_data_type() ) ));
 	nbdata.update( rsd );
 }*/
@@ -1343,9 +1343,9 @@ BaseEtableEnergy< Derived >::setup_for_scoring_for_residue_pair(
 	ResPairMinimizationData &// data_cache
 ) const
 {
-/*	assert( dynamic_cast< ResidueNblistData const * > (minsingle_data1.get_data( min_single_data_type() )() ));
-	assert( dynamic_cast< ResidueNblistData const * > (minsingle_data2.get_data( min_single_data_type() )() ));
-	assert( dynamic_cast< ResiduePairNeighborList * > (data_cache.get_data( min_pair_data_type() )() ));
+/*debug_assert( dynamic_cast< ResidueNblistData const * > (minsingle_data1.get_data( min_single_data_type() )() ));
+debug_assert( dynamic_cast< ResidueNblistData const * > (minsingle_data2.get_data( min_single_data_type() )() ));
+debug_assert( dynamic_cast< ResiduePairNeighborList * > (data_cache.get_data( min_pair_data_type() )() ));
 
 	ResidueNblistData const & r1nbdat( static_cast< ResidueNblistData const & > ( minsingle_data1.get_data_ref( min_single_data_type() ) ));
 	ResidueNblistData const & r2nbdat( static_cast< ResidueNblistData const & > ( minsingle_data2.get_data_ref( min_single_data_type() ) ));
@@ -1401,7 +1401,7 @@ BaseEtableEnergy< Derived >::eval_atom_derivative_for_residue_pair(
 	Vector & F2
 ) const
 {
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( min_pair_data_type() )() ));
+debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( min_pair_data_type() )() ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( min_pair_data_type() )) );
 	utility::vector1< AtomNeighbor > const & atneighbs( rsd1.seqpos() < rsd2.seqpos() ?
 		nblist.r1_at_neighbors()[ atom_index ] :
@@ -1445,10 +1445,10 @@ BaseEtableEnergy< Derived >::eval_residue_pair_derivatives(
 
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-/*	assert( r1_at_derivs.size() >= rsd1.natoms() );
-	assert( r2_at_derivs.size() >= rsd2.natoms() );
+/*debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
+debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( min_pair_data_type() )() ));
+debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( min_pair_data_type() )() ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( min_pair_data_type() )) );
 
 	prepare_for_residue_pair( 1, 2, pose ); // set inter-res
@@ -1472,10 +1472,10 @@ BaseEtableEnergy< Derived >::eval_residue_pair_derivatives(
 		}
 	}*/
 
-	assert( r1_at_derivs.size() >= rsd1.natoms() );
-	assert( r2_at_derivs.size() >= rsd2.natoms() );
+debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
+debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
-	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
+debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( min_pair_data_type() )) );
 
 	//prepare_for_residue_pair( 1, 2, pose ); // set inter-res
@@ -1512,7 +1512,7 @@ BaseEtableEnergy< Derived >::backbone_backbone_energy(
 	EnergyMap & emap
 ) const
 {
-	assert( ! pose.energies().use_nblist() );
+debug_assert( ! pose.energies().use_nblist() );
 	//prepare_for_residue_pair(rsd1.seqpos(),rsd2.seqpos(),pose);
 	//count_pair::CountPairFunctionCOP cpfxn = get_count_pair_function( rsd1, rsd2, pose, sfxn );
 	//cpfxn->residue_atom_pair_energy_backbone_backbone( rsd1, rsd2, static_cast< Derived const&> (*this), emap );
@@ -1534,7 +1534,7 @@ BaseEtableEnergy< Derived >::backbone_sidechain_energy(
 	EnergyMap & emap
 ) const
 {
-	assert( ! pose.energies().use_nblist() );
+debug_assert( ! pose.energies().use_nblist() );
 	//prepare_for_residue_pair(rsd2.seqpos(),rsd1.seqpos(),pose);
 	//count_pair::CountPairFunctionCOP cpfxn = get_count_pair_function( rsd2, rsd1, pose, sfxn );
 	//cpfxn->residue_atom_pair_energy_sidechain_backbone( rsd2, rsd1, static_cast<Derived const&> (*this), emap );
@@ -1555,7 +1555,7 @@ BaseEtableEnergy< Derived >::sidechain_sidechain_energy(
 	EnergyMap & emap
 ) const
 {
-	assert( ! pose.energies().use_nblist() );
+debug_assert( ! pose.energies().use_nblist() );
 	//prepare_for_residue_pair(rsd1.seqpos(),rsd2.seqpos(),pose);
 	//count_pair::CountPairFunctionCOP cpfxn = get_count_pair_function( rsd1, rsd2, pose, sfxn );
 	//cpfxn->residue_atom_pair_energy_sidechain_sidechain( rsd1, rsd2, static_cast<Derived const&> (*this), emap );
@@ -1578,7 +1578,7 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-	assert( set1.resid() != set2.resid() );
+debug_assert( set1.resid() != set2.resid() );
 
 	using namespace methods;
 	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );
@@ -1715,7 +1715,7 @@ BaseEtableEnergy< Derived >::eval_intrares_energy_ext(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( min_single_data_type() ) ));
+debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( min_single_data_type() ) ));
 	ResidueNblistData const & nblist( static_cast< ResidueNblistData const & > ( min_data.get_data_ref( min_single_data_type() ) ) );
 
 	//prepare_for_residue_pair( 1,1, pose ); // set intra-res
@@ -1781,7 +1781,7 @@ BaseEtableEnergy< Derived >::eval_intrares_derivatives(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( min_single_data_type() ) ));
+debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( min_single_data_type() ) ));
 	ResidueNblistData const & nblist( static_cast< ResidueNblistData const & > ( min_data.get_data_ref( min_single_data_type() )) );
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );

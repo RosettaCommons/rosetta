@@ -20,7 +20,7 @@
 #include <utility/Bound.fwd.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace utility {
@@ -174,7 +174,7 @@ public: // Properties
 	Value const &
 	operator ()() const
 	{
-		assert( active_ );
+	debug_assert( active_ );
 		return value_;
 	}
 
@@ -184,7 +184,7 @@ public: // Properties
 	Value const &
 	value() const
 	{
-		assert( active_ );
+	debug_assert( active_ );
 		return value_;
 	}
 

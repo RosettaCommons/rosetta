@@ -41,7 +41,7 @@
 // AUTO-REMOVED #include <boost/unordered_map.hpp>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 // AUTO-REMOVED #include <cmath>
 // AUTO-REMOVED #include <cstdlib>
 #include <limits>

@@ -115,17 +115,17 @@ public:
 
 	/// @brief Returns the starting residue of the kinematic chunk to which res belongs
 	Size boundary_left(Size res) const {
-		assert(res > 0);
-		assert(res <= nres());
-		assert(!is_root( int(res) ) );
+	debug_assert(res > 0);
+	debug_assert(res <= nres());
+	debug_assert(!is_root( int(res) ) );
 		return get_residue_edge(int(res)).start();
 	}
 
 	/// @brief Returns the ending residue of the kinematic chunk to which res belongs
 	Size boundary_right(Size res) const {
-		assert(res > 0);
-		assert(res <= nres());
-		assert(!is_root( int(res) ) );
+	debug_assert(res > 0);
+	debug_assert(res <= nres());
+	debug_assert(!is_root( int(res) ) );
 		return get_residue_edge(int(res)).stop();
 	}
 
@@ -755,7 +755,7 @@ public:
 	int
 	root() const
 	{
-		assert( !empty() );
+	debug_assert( !empty() );
 		return edge_list_.begin()->start();
 	}
 
@@ -1120,7 +1120,7 @@ FoldTree::cutpoint_map( int const seqpos ) const
 {
 	check_topology();
 	// sanity
-	assert( (  is_cutpoint_(seqpos) && cutpoint_map_[seqpos]  > 0 &&
+debug_assert( (  is_cutpoint_(seqpos) && cutpoint_map_[seqpos]  > 0 &&
 			cutpoint_[cutpoint_map_[seqpos]] == seqpos ) ||
 			( !is_cutpoint_(seqpos) && cutpoint_map_[seqpos] == 0 ) );
 	return cutpoint_map_[seqpos];
@@ -1137,7 +1137,7 @@ FoldTree::is_cutpoint( int const seqpos ) const
 	if ( seqpos > 0 && seqpos < nres_ ) {
 		// 0 and nres count as cutpoints for is_cutpoint but they aren't internal cutpoints
 		// in the foldtree so they dont appear in cutpoint_map_
-		assert( (  is_cutpoint_(seqpos) && cutpoint_map_[seqpos]  > 0 &&
+	debug_assert( (  is_cutpoint_(seqpos) && cutpoint_map_[seqpos]  > 0 &&
 				cutpoint_[cutpoint_map_[seqpos]] == seqpos ) ||
 				( !is_cutpoint_(seqpos) && cutpoint_map_[seqpos] == 0 ) );
 	}

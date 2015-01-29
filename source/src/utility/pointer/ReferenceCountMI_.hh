@@ -29,7 +29,7 @@
 #include <utility/pointer/ReferenceCountMI.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace utility {
@@ -81,7 +81,7 @@ public: // Creation
 	virtual
 	~ReferenceCountMI_()
 	{
-		assert( count_ == 0 ); // Check for dangling references
+	debug_assert( count_ == 0 ); // Check for dangling references
 	}
 
 
@@ -106,7 +106,7 @@ private: // Methods
 	void
 	add_ref() const
 	{
-		assert( count_ < max_count_ );
+	debug_assert( count_ < max_count_ );
 		++count_;
 	}
 
@@ -116,7 +116,7 @@ private: // Methods
 	void
 	remove_ref() const
 	{
-		assert( count_ > 0 );
+	debug_assert( count_ > 0 );
 		--count_;
 		if ( count_ == 0 ) delete this;
 	}

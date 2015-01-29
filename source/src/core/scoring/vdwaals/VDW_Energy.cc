@@ -244,7 +244,7 @@ VDW_Energy::eval_atom_derivative(
 
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
 
-		assert( pos2 != pos1 );
+	debug_assert( pos2 != pos1 );
 
 		if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 			// generalizing to arbitrary topology
@@ -318,7 +318,7 @@ VDW_Energy::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-	assert( set1.resid() != set2.resid() );
+debug_assert( set1.resid() != set2.resid() );
 
 	using namespace methods;
 	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );

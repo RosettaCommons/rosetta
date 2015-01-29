@@ -28,7 +28,7 @@ static thread_local basic::Tracer trMinMultiHarmonicFunc( "fragment.picking.scor
 
 MinMultiHarmonicFunc::MinMultiHarmonicFunc( utility::vector1<Real> const & x0_in, utility::vector1<Real> const & sd_in ) {
 	n_ = x0_in.size(); //number of harmonics to consider
-	assert(x0_in.size() == sd_in.size()); //each x0 gets its own sd
+debug_assert(x0_in.size() == sd_in.size()); //each x0 gets its own sd
 	x0_.clear();
 	sd_.clear();
 	for(Size i=1;i<=n_;++i) {

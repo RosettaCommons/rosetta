@@ -21,7 +21,7 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace protocols {
 namespace forge {

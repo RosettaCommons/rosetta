@@ -251,7 +251,7 @@ private:
 	int
 	rb_index( int const dir ) const
 	{
-		assert( dir == 1 || dir == -1 );
+	debug_assert( dir == 1 || dir == -1 );
 		return ( dir == 1 ? 1 : 2 );
 	}
 
@@ -317,7 +317,7 @@ inline
 Real
 Jump::get_rb_delta( int const rb_no, int const dir ) const
 {
-	assert( dir == 1 || dir == -1 );
+debug_assert( dir == 1 || dir == -1 );
 	return rb_delta[ rb_index( dir ) ][ rb_no ] ;
 }
 
@@ -327,7 +327,7 @@ inline
 Jump::Vector const &
 Jump::get_rb_center( int const dir ) const
 {
-	assert( dir == 1 || dir == -1 );
+debug_assert( dir == 1 || dir == -1 );
 	return rb_center[ rb_index( dir ) ];
 }
 

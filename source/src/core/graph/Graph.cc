@@ -19,7 +19,7 @@
 // AUTO-REMOVED #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <cassert>
+#include <utility/assert.hh>
 
 // Boost Headers
 #include <core/graph/unordered_object_pool.hpp>
@@ -111,7 +111,7 @@ EdgeList::~EdgeList()
 void
 EdgeList::push_back( Edge * edgeptr )
 {
-	assert( edgeptr ); // Do not accept null-pointing edges
+debug_assert( edgeptr ); // Do not accept null-pointing edges
 
 	//EdgeListElement * new_node = new EdgeListElement( edgeptr, end_->previous_, end_ );
 	EdgeListElement * new_node =  edge_list_element_pool_.construct( edgeptr, end_->previous_, end_ );
@@ -123,7 +123,7 @@ EdgeList::push_back( Edge * edgeptr )
 void
 EdgeList::push_front( Edge * edgeptr )
 {
-	assert( edgeptr ); // Do not accept null-pointing edges
+debug_assert( edgeptr ); // Do not accept null-pointing edges
 
 	//EdgeListElement * new_node = new EdgeListElement( edgeptr, end_, end_->next_ );
 	EdgeListElement * new_node =  edge_list_element_pool_.construct( edgeptr, end_, end_->next_ );
@@ -140,8 +140,8 @@ EdgeList::insert(
 	Edge * edgeptr
 )
 {
-	assert( edgeptr );
-	assert( element_to_insert_before.owner_ == this );
+debug_assert( edgeptr );
+debug_assert( element_to_insert_before.owner_ == this );
 
 	EdgeListElement * next_node = element_to_insert_before.element_;
 	EdgeListElement * prev_node = element_to_insert_before.element_->previous_;
@@ -156,12 +156,12 @@ EdgeList::insert(
 
 void EdgeList::erase( EdgeListIterator to_erase )
 {
-	assert( to_erase.owner_ == this );
+debug_assert( to_erase.owner_ == this );
 	EdgeListElement * next_node = to_erase.element_->next_;
 	EdgeListElement * prev_node = to_erase.element_->previous_;
 
-	assert( next_node->previous_ == to_erase.element_ );
-	assert( prev_node->next_ == to_erase.element_ );
+debug_assert( next_node->previous_ == to_erase.element_ );
+debug_assert( prev_node->next_ == to_erase.element_ );
 
 	// deallocate the list element
 	//delete to_erase.element_;
@@ -242,7 +242,7 @@ Node::add_edge( Edge* edge_ptr, EdgeListIter & eiter )
 		} else {
 			//loop already attached; return 0 eiter/ceiter as a dummy
 			// fixing odd iterator behavior with g++ -v 4.1.1
-			assert( num_edges_to_larger_indexed_nodes_ != 0 );
+		debug_assert( num_edges_to_larger_indexed_nodes_ != 0 );
 			eiter = incident_edge_list_.end(); //eiter = 0;
 		}
 
@@ -421,7 +421,7 @@ Edge::Edge
 )
 	: owner_(owner)
 {
-	assert( first_node_ind <= second_node_ind );
+debug_assert( first_node_ind <= second_node_ind );
 	node_indices_[0]    = first_node_ind;
 	node_indices_[1]    = second_node_ind;
 	nodes_[0]           = owner->nodes_[ node_indices_[0] ];
@@ -442,14 +442,14 @@ void Edge::copy_from( Edge const * ) {}
 /// @brief returns the index of the other node that the edge is incident upon
 platform::Size Edge::get_other_ind(platform::Size node_ind) const
 {
-	assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
+debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 	return node_indices_[0] == node_ind ? node_indices_[1] : node_indices_[0];
 }
 
 /// @brief returns a pointer to the other node that the edge is incident upon
 Node * Edge::get_other_node(platform::Size node_ind)
 {
-	assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
+debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 	return node_indices_[0] == node_ind ? nodes_[1] : nodes_[0];
 }
 
@@ -462,7 +462,7 @@ Node const * Edge::get_other_node(platform::Size node_ind) const
 /// @brief sets the iterator for this edge's position in its owner's edge list
 void Edge::set_pos_in_owners_list( EdgeListIter iter )
 {
-	assert( this == *iter );
+debug_assert( this == *iter );
 	pos_in_owners_edge_list_ = iter;
 	return;
 }
@@ -637,7 +637,7 @@ void Graph::copy_connectivity( Graph const & source )
 Edge *
 Graph::add_edge(platform::Size index1, platform::Size index2)
 {
-	assert( ! get_edge_exists( index1, index2 ) );
+debug_assert( ! get_edge_exists( index1, index2 ) );
 
 	//swap so that index1 < index2
 	platform::Size temp = index1 < index2 ? index1 : index2;
@@ -660,7 +660,7 @@ Graph::add_edge(platform::Size index1, platform::Size index2)
 Edge *
 Graph::add_edge( Edge const * example_edge )
 {
-	assert( ! get_edge_exists(
+debug_assert( ! get_edge_exists(
 		example_edge->get_first_node_ind(),
 		example_edge->get_second_node_ind() ) );
 
@@ -765,7 +765,7 @@ FArray2D_int
 Graph::all_pairs_shortest_paths() const
 {
 	platform::Size const inf( 12345678 ); //assumption: fewer than 12 million nodes in the graph.
-	assert( num_nodes_ < inf );
+debug_assert( num_nodes_ < inf );
 
 	FArray2D_int distance_table( num_nodes_, num_nodes_, inf);
 	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) distance_table( ii, ii ) = 0; //nodes are 0 distance from themselves.

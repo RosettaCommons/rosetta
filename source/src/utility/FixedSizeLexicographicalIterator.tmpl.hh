@@ -50,7 +50,7 @@ void FixedSizeLexicographicalIterator< S >::set_dimension_sizes(
 {
 	dim_sizes_ = dim_sizes;
 	for( Size ii = 1; ii <= S; ++ii ) {
-		assert( dim_sizes[ ii ] > 0 );
+	debug_assert( dim_sizes[ ii ] > 0 );
 	}
 	begin();
 }

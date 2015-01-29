@@ -68,7 +68,7 @@ class TorsionSRFD : public BaseTorsionSRFD {
 public:
 	TorsionSRFD() {
 		//setup data and verify that
-		assert( data_.size() == torsion_ids_->size() );
+	debug_assert( data_.size() == torsion_ids_->size() );
 	};
 
 	bool apply ( pose::Pose& pose, Size seq_pos ) const {

@@ -26,7 +26,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <cassert>
+#include <utility/assert.hh>
 #include <iostream>
 #include <sstream>
 

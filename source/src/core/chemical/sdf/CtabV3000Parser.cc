@@ -37,7 +37,7 @@ static thread_local basic::Tracer TR( "core.chemical.sdf.CtabV3000Parser" );
 
 bool CtabV3000Parser::parse(std::istream & tablein, std::string const & headerline, MolFileIOMolecule & molecule) {
 
-	assert( headerline.compare(33,5,"V3000") == 0 );
+debug_assert( headerline.compare(33,5,"V3000") == 0 );
 
 	std::string line;
 	std::string M, V30, entry, tag;

@@ -59,10 +59,10 @@ public:
 	{
 		// note: min cos_angle can be negative
 		if ( polar_atom_donates ) {
-			assert ( donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
+		debug_assert ( donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
 			return donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param];
 		}
-		assert ( acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
+	debug_assert ( acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
 		return acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param];
 	}
 

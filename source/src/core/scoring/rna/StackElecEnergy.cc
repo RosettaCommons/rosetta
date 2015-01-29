@@ -315,7 +315,7 @@ StackElecEnergy::setup_for_minimizing_for_residue_pair(
 
     etable::count_pair::CountPairFunctionCOP count_pair =
         get_count_pair_function( rsd1, rsd2 );
-    //assert( rsd1.seqpos() < rsd2.seqpos() );
+   //debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
     // update the existing nblist if it's already present in the min_data object
     ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ) );
@@ -343,12 +343,12 @@ StackElecEnergy::residue_pair_energy_ext(
 {
     using_extended_method_ = true;
 	//return;
-	//assert( rsd1.seqpos() < rsd2.seqpos() );
+//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
     if ( pose.energies().use_nblist_auto_update() ) return;
     Real score( 0.0 ), score_base_base( 0.0 ), score_base_bb( 0.0 );
 
     if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
-        //assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
+       //debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
         ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
         utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
@@ -571,7 +571,7 @@ StackElecEnergy::eval_atom_derivative(
     kinematics::Stub stub_i = base_stubs[i];
     Matrix const M_i ( stub_i.M );
 
-    //assert( pose.energies().use_nblist() );
+   //debug_assert( pose.energies().use_nblist() );
 	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
 	AtomNeighbors const & nbrs( nblist.atom_neighbors( i, m ) );
 

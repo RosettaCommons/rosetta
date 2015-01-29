@@ -547,7 +547,7 @@ fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
 		fragset->frames( pos, frames );
 
 		// CURRENTLY ONLY WORKS FOR CONST FRAG LENGTH SETS!!!! ASSUMES ONE FRAME!!!
-		assert( frames.size() == 1 );
+	debug_assert( frames.size() == 1 );
 
 		FrameOP & frame( frames[1] );
 		FrameOP frame_new( new Frame( n, len ) );
@@ -568,8 +568,8 @@ fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
 /// @brief Finds the fold tree boundaries to the left and right of <pos>.
 void FindBoundaries(const core::kinematics::FoldTree& tree, core::Size pos, core::Size* left, core::Size* right) {
 	using core::Size;
-	assert(left);
-	assert(right);
+debug_assert(left);
+debug_assert(right);
 
 	Size lower_cut = 0;
 	Size upper_cut = tree.nres();
@@ -661,7 +661,7 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 	pose.fold_tree(tree);
 
 	// Ensure that the FoldTree is left in a consistent state
-	assert(pose.fold_tree().check_fold_tree());
+debug_assert(pose.fold_tree().check_fold_tree());
 
 	// orient the fragments in the pose based on CA fragment data
 	total_size = 0;

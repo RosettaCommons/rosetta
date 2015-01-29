@@ -424,7 +424,7 @@ DotSphere const & DotSphere::operator += ( DotSphere const & rhs ) {
 /// and converts that to 0-based for the C-style array used by this class.
 ///
 bool DotSphere::get_dot_covered( Size dot_index ) const {
-	assert( dot_index > 0 && dot_index <= NUM_DOTS_TOTAL );
+debug_assert( dot_index > 0 && dot_index <= NUM_DOTS_TOTAL );
 	return ( dots_coverage_count_[ dot_index - 1 ] != 0 );
 }
 
@@ -1137,7 +1137,7 @@ void RotamerDots::increment_from_cached( RotamerDotsCache const & cache ) {
 
 	if ( cache.atom_counts_.size() != atom_counts_.size() )
 		TR_RD << "increment_from_cached(): cache.size(): " << cache.atom_counts_.size() << ", atom_counts_.size(): " << atom_counts_.size() << std::endl;
-	assert( cache.atom_counts_.size() == atom_counts_.size() );
+debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
 	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
 		atom_counts_[ ii ] += cache.atom_counts_[ ii ];
 	}
@@ -1154,7 +1154,7 @@ void RotamerDots::increment_from_cached( RotamerDotsCache const & cache ) {
 ///
 void RotamerDots::decrement_from_cached( RotamerDotsCache const & cache ) {
 
-	assert( cache.atom_counts_.size() == atom_counts_.size() );
+debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
 	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
 		atom_counts_[ ii ] -= cache.atom_counts_[ ii ];
 	}
@@ -1802,8 +1802,8 @@ void RotamerDotsCache::increment_count( utility::vector1< utility::vector1< Obje
 
 	//TR_RDC << "increment_count(): atom_counts_.size(): " << atom_counts_.size() << ", covered.size(): " << covered.size() << std::endl;
 	// do not assert this -- let there be more entries, possibly, in covered array;
-	// assert( atom_counts_.size() == covered.size() );
-	assert( atom_counts_.size() <= covered.size() );
+	//debug_assert( atom_counts_.size() == covered.size() );
+debug_assert( atom_counts_.size() <= covered.size() );
 	for ( Size ii = 1, ii_end = atom_counts_.size(); ii <= ii_end; ++ii ) {
 		//utility::vector1< ObjexxFCL::ubyte > const & atom_mask = covered[ ii ];
 		atom_counts_[ ii ].increment_count( covered[ ii ] );
@@ -1823,7 +1823,7 @@ void RotamerDotsCache::increment_count( utility::vector1< utility::vector1< Obje
 /// exists for expanded polar atom SASA dot counts.
 ///
 void RotamerDotsCache::write_to_compact_array( utility::vector1< utility::vector1< ObjexxFCL::ubyte > > & compact ) const {
-	assert( compact.size() != 0 );
+debug_assert( compact.size() != 0 );
 	for ( Size ii = 1; ii <= atom_counts_.size(); ++ii ) {
 		atom_counts_[ ii ].write_to_compact_array( compact[ ii ] );
 	}
@@ -1921,7 +1921,7 @@ InvRotamerDots::rotamer() const
 /// @brief Is the intersection between two atoms on this inv-rotamer-dots object exposed?
 bool
 InvRotamerDots::atom_overlap_is_exposed( Size at1, Size at2 ) const {
-	assert( rotamer_ );
+debug_assert( rotamer_ );
 	return overlap_exposed( rotamer_->atom( at1 ), inv_dots_[ at1 ], rotamer_->atom( at2 ), inv_dots_[ at2 ] );
 }
 
@@ -1939,7 +1939,7 @@ InvRotamerDots::atom_overlap_is_exposed(
 
 
 bool InvRotamerDots::dot_exposed( Size atomid, Size dot_index ) const {
-	assert( dot_index > 0 && dot_index <= 162 );
+debug_assert( dot_index > 0 && dot_index <= 162 );
 	dot_index -= 1;
 	Size const which_byte = dot_index / 8;
 	Size const which_bit  = dot_index - which_byte * 8 ;
@@ -1979,7 +1979,7 @@ InvRotamerDots::write_circle_intersection_mask_to_kinemage(
 	Real const rad2 = (*radii_)[ at2.type() ] + RotamerDots::probe_radius_;
 
 	Real const dist_sq = at1.xyz().distance_squared( at2.xyz() );
-	assert( dist_sq < (rad1 + rad2) * (rad1 + rad2) );
+debug_assert( dist_sq < (rad1 + rad2) * (rad1 + rad2) );
 	Real const distance = std::sqrt( dist_sq );
 
 	Real const step_size1 = rad1 * 0.02;
@@ -2096,7 +2096,7 @@ InvRotamerDots::overlap_exposed(
 	Real const rad2 = (*radii_)[ at2.type() ] + RotamerDots::probe_radius_;
 
 	Real const dist_sq = at1.xyz().distance_squared( at2.xyz() );
-	assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
+debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
 	Real const distance = std::sqrt( dist_sq );
 
 	Real const step_size1 = rad1 * 0.02;

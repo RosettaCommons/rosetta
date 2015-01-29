@@ -411,7 +411,7 @@ RNA_FA_ElecEnergy::eval_atom_derivative_RNA(
   bool const atom1_is_base = is_base_2(rsd1, i);
   bool const atom1_is_sugar = is_sugar_2(rsd1, i);
   bool const atom1_is_phosphate = is_phosphate_2(rsd1, i);
-  assert( atom1_is_base || atom1_is_sugar || atom1_is_phosphate );
+ debug_assert( atom1_is_base || atom1_is_sugar || atom1_is_phosphate );
   
   for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
     Real const j_charge( rsd2.atomic_charge(j) );
@@ -432,7 +432,7 @@ RNA_FA_ElecEnergy::eval_atom_derivative_RNA(
         bool const atom2_is_base = is_base_2(rsd2, j);
         bool const atom2_is_sugar = is_sugar_2(rsd2, j);
         bool const atom2_is_phosphate = is_phosphate_2(rsd2, j);
-        assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
+       debug_assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
         
         if ( atom1_is_base && atom2_is_base ) {
           F1 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f1;
@@ -497,7 +497,7 @@ RNA_FA_ElecEnergy::eval_atom_derivative(
   
   // 	kinematics::DomainMap const & domain_map( energies.domain_map() );
   // 	bool const pos1_fixed( !energies.res_moved( pos1 ) );
-  // 	assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
+  // debug_assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
   
   // loop over *all* nbrs of rsd1 (not just upper or lower)
   for ( graph::Graph::EdgeListConstIter
@@ -512,7 +512,7 @@ RNA_FA_ElecEnergy::eval_atom_derivative(
     
     conformation::Residue const & rsd2( pose.residue( pos2 ) );
     
-    assert( pos2 != pos1 );
+   debug_assert( pos2 != pos1 );
     
     if ( rsd2.is_RNA() ) {
       eval_atom_derivative_RNA( rsd1, i, rsd2, weights, F1, F2 );

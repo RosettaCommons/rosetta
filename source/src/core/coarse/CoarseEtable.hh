@@ -105,7 +105,7 @@ private:
 	{
 		if ((atom1.type()<=maxType) && (atom2.type()<=maxType)) {
 			int const dist = seq_dist > maxDist ? 0 : seq_dist;
-			assert(dist>=0);
+		debug_assert(dist>=0);
 
 			/*						basic::T("coarse.scoring") << "coarse score requested for "
 																<< (*atom_set_)[atom1.type()].name() << ' '

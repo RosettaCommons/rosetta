@@ -278,7 +278,7 @@ NMerSVMEnergy::encode_aa_string( std::string const seq ) const
 vector1< Real >
 NMerSVMEnergy::encode_wtd_avg_aa_string( std::string const seq, vector1< Real > const wts ) const
 {
-	assert( seq.length() == wts.size() );
+debug_assert( seq.length() == wts.size() );
 	//get scale factors from relative wts, must sum to one!
 	Real wtsum = 0;
 	for( Size iwt = 1; iwt <= wts.size(); ++iwt ) wtsum += wts[ iwt ];
@@ -371,7 +371,7 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 	vector1< Real > & rsd_svm_energies
 ) const
 {
-	assert( rsd_svm_energies.size() == n_svms() );
+debug_assert( rsd_svm_energies.size() == n_svms() );
 	//for now, just assign all of the p1=seqpos frame's nmer_svm energy to this residue
 	//TODO: distribute frame's nmer_svm energy evenly across the nmer
 	//TODO: avoid wasting calc time by storing nmer_value, nmer_val_out_of_date in pose cacheable data

@@ -27,7 +27,7 @@
 #include <utility/tag/Tag.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace core {
@@ -51,7 +51,7 @@ NeighborhoodResidueSelector::~NeighborhoodResidueSelector() {}
 ResidueSubset
 NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( focus_set_ );
+debug_assert( focus_set_ );
 
 	ResidueSubset subset( pose.total_residue(), false );
 	std::set< Size > focus_tmp;

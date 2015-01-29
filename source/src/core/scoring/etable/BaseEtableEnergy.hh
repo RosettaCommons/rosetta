@@ -820,7 +820,7 @@ private:
 //	bb = 0;
 //	etable_evaluator_->atom_pair_energy( atom1, atom2, weight, atr, rep, solv, d2 );
 //
-//	assert( ljatr_.active() );
+//debug_assert( ljatr_.active() );
 //	bb = 0.0; //bead-bead interaction energy only in CoarseTable
 //	int disbin; Real frac;
 //	atr = rep = solv = bb = 0.0;
@@ -1024,7 +1024,7 @@ private:
 //	bb = 0;
 //	Real dis2;
 //	return etable_evaluator_->atom_pair_energy( atom1, atom2, weight, atr, rep, solv, dis2 );
-//	assert( ljrep_.active() );
+//debug_assert( ljrep_.active() );
 //	Real d2,frac;
 //	int disbin;
 //	atr = rep = solv = bb = 0.0;

@@ -39,7 +39,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 

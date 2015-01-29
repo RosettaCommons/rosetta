@@ -32,7 +32,7 @@
 
 // C++ headers
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace utility {
@@ -284,7 +284,7 @@ public: // Methods
 	void
 	pop_back()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		v_.pop_back();
 	}
 
@@ -400,7 +400,7 @@ public: // Properties
 	ConstReference
 	front() const
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.front();
 	}
 
@@ -410,7 +410,7 @@ public: // Properties
 	Reference
 	front()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.front();
 	}
 
@@ -420,7 +420,7 @@ public: // Properties
 	ConstReference
 	back() const
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.back();
 	}
 
@@ -430,7 +430,7 @@ public: // Properties
 	Reference
 	back()
 	{
-		assert( ! v_.empty() );
+	debug_assert( ! v_.empty() );
 		return v_.back();
 	}
 
@@ -635,7 +635,7 @@ private: // Methods
 	Key const &
 	add_key( Key const & key )
 	{
-		assert( key > 0 );
+	debug_assert( key > 0 );
 		if ( key > v_.size() ) v_.resize( key ); // Extend vector
 		return key;
 	}

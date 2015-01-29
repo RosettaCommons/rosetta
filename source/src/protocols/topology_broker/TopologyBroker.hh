@@ -52,7 +52,7 @@
 #include <utility/vector1.hh>
 
 // C/C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <string>
 
 #ifdef WIN32

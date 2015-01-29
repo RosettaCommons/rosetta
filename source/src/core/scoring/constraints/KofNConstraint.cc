@@ -65,7 +65,7 @@
 #include <numeric/xyzVector.fwd.hh>
 #include <numeric/random/random.fwd.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cstddef>
 #include <iosfwd>
 #include <iostream>
@@ -85,7 +85,7 @@ namespace constraints {
 KofNConstraint::KofNConstraint( core::Size K /*=0*/ ) : MultiConstraint() {
 	K_ = K;
 	init_cst_score_types();
-	assert ( member_constraints().size() == 0 );
+debug_assert ( member_constraints().size() == 0 );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ KofNConstraint::KofNConstraint( core::Size K /*=0*/ ) : MultiConstraint() {
 KofNConstraint::KofNConstraint(  ConstraintCOPs & cst_in , core::Size K /*=0*/  ) : MultiConstraint( cst_in ) {
 	K_ = K;
 	init_cst_score_types();
-	assert ( member_constraints().size() > 0 );
+debug_assert ( member_constraints().size() > 0 );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

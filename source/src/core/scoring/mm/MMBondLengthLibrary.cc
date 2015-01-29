@@ -38,7 +38,7 @@
 // AUTO-REMOVED #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <cassert>
+#include <utility/assert.hh>
 
 // AUTO-REMOVED #include <basic/options/keys/MM.OptionKeys.gen.hh>
 

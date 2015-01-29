@@ -138,7 +138,7 @@ HackAroEnergy::get_centroid( conformation::Residue const & rsd ) const
   if (numatoms > 0 ) {
 		centroid /= static_cast< Real >( numatoms );
 	} else { //Yo, is this a glycine?
-		assert( rsd.aa() == chemical::aa_gly );
+	debug_assert( rsd.aa() == chemical::aa_gly );
 		centroid = rsd.xyz( "CA" );
 	}
 
@@ -238,8 +238,8 @@ HackAroEnergy::residue_pair_energy_aro_aro(
 ) const
 {
 
-	assert( rsd1.is_aromatic() );
-	assert( rsd2.is_aromatic() );
+debug_assert( rsd1.is_aromatic() );
+debug_assert( rsd2.is_aromatic() );
 
 	Vector centroid1 = get_centroid( rsd1 );
 	kinematics::Stub stub1 = get_base_coordinate_system( rsd1, centroid1 );
@@ -314,7 +314,7 @@ HackAroEnergy::eval_atom_derivative(
 
 		if ( !rsd2.is_aromatic() ) continue;
 
-		assert( pos2 != pos1 );
+	debug_assert( pos2 != pos1 );
 
 		eval_atom_derivative_aro_aro( rsd1, rsd2, weights, F1, F2 );
 
@@ -334,8 +334,8 @@ HackAroEnergy::eval_atom_derivative_aro_aro(
  	) const
 {
 
-	assert( rsd1.is_aromatic() );
-	assert( rsd2.is_aromatic() );
+debug_assert( rsd1.is_aromatic() );
+debug_assert( rsd2.is_aromatic() );
 
 	Vector centroid1 = get_centroid( rsd1 );
 	kinematics::Stub stub1 = get_base_coordinate_system( rsd1, centroid1 );

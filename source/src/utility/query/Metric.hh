@@ -74,7 +74,7 @@ public:
 		return indent + "You Must Define string description() in Your MetricBase<T> Subclass!";
 	}
 	owning_ptr<MetricBase<T> > clone() {
-		assert( wrapped_ ); // foo!
+	debug_assert( wrapped_ ); // foo!
 		return wrapped_;
 	}
 protected:
@@ -276,7 +276,7 @@ public:
 			case LT : return (*lhs_)(arg) <  (*rhs_)(arg); break;
 			case LTE: return (*lhs_)(arg) <= (*rhs_)(arg); break;
 		}
-		assert(false);
+	debug_assert(false);
 		return false;
 	}
 	std::string description(std::string indent="") {

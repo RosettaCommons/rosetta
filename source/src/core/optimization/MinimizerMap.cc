@@ -76,7 +76,7 @@ MinimizerMap::link_torsion_vectors()
 	for ( iterator it=dof_nodes_.begin(),
 			it_end=dof_nodes_.end(); it != it_end; ++it ) {
 		DOF_Node & dof_node( **it );
-		assert( last_depth == -1 || dof_node.depth() <= last_depth );
+	debug_assert( last_depth == -1 || dof_node.depth() <= last_depth );
 #ifndef NDEBUG
 		last_depth = dof_node.depth();
 #endif

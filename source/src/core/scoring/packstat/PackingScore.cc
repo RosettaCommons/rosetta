@@ -42,7 +42,7 @@ std::ostream & operator<< ( std::ostream & out, PackingScoreResData const & dat 
 
 
 Real PackingScore::score( PackingScoreResDataCOP dat ) const {
-	assert( dat->npr() == npr() && dat->nrad() == nrad() );
+debug_assert( dat->npr() == npr() && dat->nrad() == nrad() );
 	Real score = 0;
 	for( Size i =1; i <= nrad(); ++i ) {
 		for( Size j =1; j <= npr(); ++j ) {

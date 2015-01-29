@@ -371,7 +371,7 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -515,7 +515,7 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 ) const
 {
 	//There's probably a better way to check this.
-	assert( rsd.type().backbone_aa() == aa() || ( core::chemical::is_canonical_D_aa(rsd.aa()) && core::chemical::get_L_equivalent( rsd.aa() ) == aa() ) );
+debug_assert( rsd.type().backbone_aa() == aa() || ( core::chemical::is_canonical_D_aa(rsd.aa()) && core::chemical::get_L_equivalent( rsd.aa() ) == aa() ) );
 
 	// Grab data from rsd
 	//Size const nbb ( rsd.mainchain_torsions().size() );
@@ -528,7 +528,7 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 	//Real psi( get_psi_from_rsd( rsd ) );
 
 	//Fang-Chieh Chou: Turning the assertion off so the code can be applied to beta-3-amino acids
-	//assert( nbb == 3 && chi.size() == nchi );
+//debug_assert( nbb == 3 && chi.size() == nchi );
 
 	Real4 & chimean( scratch.chimean() );
 	Real4 & chisd(   scratch.chisd()   );
@@ -1103,7 +1103,7 @@ RotamericSingleResidueDunbrackLibrary< T >::get_phi_from_rsd(
 	conformation::Residue const & rsd
 ) const
 {
-	assert( rsd.is_protein() || rsd.is_peptoid() );
+debug_assert( rsd.is_protein() || rsd.is_peptoid() );
 	static Size const RSD_PHI_INDEX = 1; // this shouldn't be here
 	if ( rsd.is_lower_terminus() ) {
 		if(core::chemical::is_canonical_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PHI;
@@ -1119,7 +1119,7 @@ RotamericSingleResidueDunbrackLibrary< T >::get_psi_from_rsd(
 	conformation::Residue const & rsd
 ) const
 {
-	assert( rsd.is_protein() || rsd.is_peptoid() );
+debug_assert( rsd.is_protein() || rsd.is_peptoid() );
 	static Size const RSD_PSI_INDEX = 2; // this shouldn't be here
 	if ( rsd.is_upper_terminus() ) {
 		if(core::chemical::is_canonical_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PSI;
@@ -1515,7 +1515,7 @@ RotamericSingleResidueDunbrackLibrary< T >::chisamples_for_rotamer_and_chi(
 	utility::vector1< Real > & chisample_prob
 ) const
 {
-	//assert( dynamic_cast< RotamericData const & > ( rotamer_data ) );
+//debug_assert( dynamic_cast< RotamericData const & > ( rotamer_data ) );
 	//RotamericData const & rotameric_data( static_cast< RotamericData const & > ( rotamer_data ) );
 
 	// setting this value to zero disables the small-standdev filter -- is that what we want?
@@ -2137,7 +2137,7 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_file(
 				}
 
 				// 4.
-				assert( count_in_this_phipsi_bin == 1 );
+			debug_assert( count_in_this_phipsi_bin == 1 );
 				Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
 				PackedDunbrackRotamer< T > rotamer( chimean, chisd, probability, packed_rotno );
 				rotamers_( phibin, psibin, count_in_this_phipsi_bin ) = rotamer;
@@ -2263,7 +2263,7 @@ RotamericSingleResidueDunbrackLibrary< T >::get_rotamer_from_chi_static(
 
 	if ( dun02() ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
 
-	assert( chi.size() >= T );
+debug_assert( chi.size() >= T );
 
 	/// compiler will unroll this loop
 	for ( Size ii = 1; ii <= T; ++ii ) {

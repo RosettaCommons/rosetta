@@ -479,7 +479,7 @@ HBondEnergy::residue_pair_energy_ext(
 	if ( rsd1.xyz( rsd1.nbr_atom() ).distance_squared( rsd2.xyz( rsd2.nbr_atom() ) )
 		> std::pow( rsd1.nbr_radius() + rsd2.nbr_radius() + atomic_interaction_cutoff(), 2 ) ) return;
 
-	assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData const > ( pairdata.get_data( hbond_respair_data ) ));
+debug_assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData const > ( pairdata.get_data( hbond_respair_data ) ));
 	HBondResPairMinData const & hb_pair_dat( static_cast< HBondResPairMinData const & > ( pairdata.get_data_ref( hbond_respair_data ) ));
 
 	// membrane dependent hbond potential hack
@@ -617,11 +617,11 @@ HBondEnergy::setup_for_minimizing_for_residue_pair(
 	if ( data_cache.get_data( hbond_respair_data ) ) {
 		// assume that hbpairdat has already been pointed at its two residues, and that it may need to update
 		// its size based on a change to the number of atoms from a previous initialization.
-		assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData > ( data_cache.get_data( hbond_respair_data ) ));
+	debug_assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData > ( data_cache.get_data( hbond_respair_data ) ));
 		hbpairdat = utility::pointer::static_pointer_cast< core::scoring::hbonds::HBondResPairMinData > ( data_cache.get_data( hbond_respair_data ) );
 	} else {
-		assert( utility::pointer::dynamic_pointer_cast< HBondResidueMinData const > ( res1_data_cache.get_data( hbond_res_data ) ));
-		assert( utility::pointer::dynamic_pointer_cast< HBondResidueMinData const > ( res2_data_cache.get_data( hbond_res_data ) ));
+	debug_assert( utility::pointer::dynamic_pointer_cast< HBondResidueMinData const > ( res1_data_cache.get_data( hbond_res_data ) ));
+	debug_assert( utility::pointer::dynamic_pointer_cast< HBondResidueMinData const > ( res2_data_cache.get_data( hbond_res_data ) ));
 
 		hbpairdat = HBondResPairMinDataOP( new HBondResPairMinData );
 		hbpairdat->set_res1_data( utility::pointer::static_pointer_cast< core::scoring::hbonds::HBondResidueMinData const > ( res1_data_cache.get_data( hbond_res_data ) ));
@@ -701,7 +701,7 @@ HBondEnergy::hbond_derivs_1way(
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-			assert( base2 > 0 && base != base2 );
+		debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( *database, *options_, hbe_type, datm_xyz, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz(),
@@ -786,7 +786,7 @@ HBondEnergy::eval_residue_pair_derivatives(
 
 	HBondSet const & hbondset = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
 
-	assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData const > ( min_data.get_data( hbond_respair_data ) ));
+debug_assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData const > ( min_data.get_data( hbond_respair_data ) ));
 	HBondResPairMinData const & hb_pair_dat = static_cast< HBondResPairMinData const & > ( min_data.get_data_ref( hbond_respair_data ) );
 
 	Size const rsd1nneighbs( hb_pair_dat.res1_data().nneighbors() );
@@ -1018,7 +1018,7 @@ HBondEnergy::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-	assert( set1.resid() != set2.resid() );
+debug_assert( set1.resid() != set2.resid() );
 
 	if ( options_->exclude_DNA_DNA() && pose.residue( set1.resid() ).is_DNA() && pose.residue( set2.resid() ).is_DNA() ) return;
 
@@ -1054,7 +1054,7 @@ HBondEnergy::evaluate_rotamer_pair_energies(
 	HBondRotamerTrieCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( hbond_method ) ));
 
 	//prepare_for_residue_pair( set1.resid(), set2.resid(), pose );
-	//assert( rep_scoretype() == fa_rep || rep_scoretype() == coarse_fa_rep );
+//debug_assert( rep_scoretype() == fa_rep || rep_scoretype() == coarse_fa_rep );
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp( new HBCountPairFunction );
@@ -1211,7 +1211,7 @@ HBondEnergy::finalize_total_energy(
 	// the important thing is that there's no double counting, which
 	// is I think true since both fill_hbond_set and get_rsd-rsd-energy
 	// use atom_is_backbone to check...
-	//assert( std::abs( bb_scE ) < 1e-3 && std::abs( scE ) < 1e-3 );
+//debug_assert( std::abs( bb_scE ) < 1e-3 && std::abs( scE ) < 1e-3 );
 
 
 	// this is to replicate buggy behavior regarding protein-backbone -- dna-backbone hbonds

@@ -422,7 +422,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 			// now let's inform the graph that, for this ii_resid / jj_resid pair that
 			// an interaction exists.
 
-			assert( ii_resid <= symm_info->num_independent_residues() || jj_resid <= symm_info->num_independent_residues() );
+		debug_assert( ii_resid <= symm_info->num_independent_residues() || jj_resid <= symm_info->num_independent_residues() );
 
 			ig->set_residues_adjacent_for_subunit_pair_for_edge( ii_master, jj_master,
 				swap ? 2 : 1,

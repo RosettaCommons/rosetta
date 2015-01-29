@@ -305,7 +305,7 @@ FragSetOP FragSet::clone_shifted( int offset ) const {
 
   newFragSet->global_offset( offset );
 
-  assert( ( newFragSet->max_pos() - newFragSet->min_pos() ) == ( this->max_pos() - this->min_pos() ) );
+ debug_assert( ( newFragSet->max_pos() - newFragSet->min_pos() ) == ( this->max_pos() - this->min_pos() ) );
 
 	return newFragSet;
 }

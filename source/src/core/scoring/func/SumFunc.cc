@@ -66,7 +66,7 @@ namespace func {
 		in >> n_funcs;
 		if ( in.fail() ) return;
 
-		assert( n_funcs >= 1 );
+	debug_assert( n_funcs >= 1 );
 
 		for ( Size i = 1; i <= n_funcs; ++i ) {
 			in >> func_type;

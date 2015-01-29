@@ -83,7 +83,7 @@
 
 // C++ headers
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <set>
 //#include <stdio.h>
 
@@ -324,7 +324,7 @@ static thread_local basic::Tracer my_tracer( "core.conformation", basic::t_warni
 						std::abs( subtract_degree_angles(rsd_dihedral,
 								atom_tree_torsion(tor_id))));)
 
-				assert( dev < 1e-3 );
+			debug_assert( dev < 1e-3 );
 
 				if ( verbose ) {
 					int width = 14;
@@ -476,7 +476,7 @@ Conformation::chain_endings( utility::vector1< Size > const & endings )
 void
 Conformation::insert_chain_ending( Size const seqpos )
 {
-	assert( seqpos >= 1 && seqpos < size() ); // dont count last residue as chain ending
+debug_assert( seqpos >= 1 && seqpos < size() ); // dont count last residue as chain ending
 
 	chain_endings_.push_back( seqpos );
 	std::sort( chain_endings_.begin(), chain_endings_.end() );
@@ -646,7 +646,7 @@ Conformation::append_residue_by_jump(
 		return;
 	}
 
-	assert( anchor_pos ); // should be set
+debug_assert( anchor_pos ); // should be set
 
 	// now call our internal append method
 	append_residue( new_rsd, true, root_atom, id::NamedAtomID( anchor_atom, anchor_pos ), start_new_chain );
@@ -666,7 +666,7 @@ Conformation::insert_residue_by_jump(
 {
 	pre_nresidue_change();
 	ASSERT_ONLY(Size const old_size( size() );) //, new_size( old_size+1 );
-	assert( old_size );
+debug_assert( old_size );
 	runtime_assert( fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	// this handles all renumbering internal to the Residues, *_moved arrays
@@ -674,7 +674,7 @@ Conformation::insert_residue_by_jump(
 
 	Residue const & new_rsd( residue_( seqpos ) );
 
-	assert( new_rsd.seqpos() == seqpos );
+debug_assert( new_rsd.seqpos() == seqpos );
 
 	fold_tree_->insert_residue_by_jump( seqpos, anchor_pos /* in the OLD numbering system */, anchor_atom, root_atom );
 
@@ -682,7 +682,7 @@ Conformation::insert_residue_by_jump(
 
 	residue_torsions_need_updating_ = true;
 
-	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
@@ -703,7 +703,7 @@ Conformation::insert_residue_by_bond(
 {
 	pre_nresidue_change();
 	Size const old_size( size() );
-	assert( old_size );
+	debug_assert( old_size );
 	runtime_assert( fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	//Size const new_size( old_size+1 );
@@ -752,7 +752,7 @@ Conformation::insert_residue_by_bond(
 	}
 
 	Residue const & new_rsd( residue_( seqpos ) );
-	assert( new_rsd.seqpos() == seqpos );
+	debug_assert( new_rsd.seqpos() == seqpos );
 
 
 	fold_tree_->insert_residue_by_chemical_bond( seqpos, anchor_pos /* in the OLD numbering system */, anchor_atom, root_atom );
@@ -761,7 +761,7 @@ Conformation::insert_residue_by_bond(
 
 	residue_torsions_need_updating_ = true;
 
-	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
@@ -785,7 +785,7 @@ Conformation::append_residue_by_bond(
 	bool const lookup_bond_length // default false
 )
 {
-	if(!build_ideal_geometry) assert(!lookup_bond_length); // lookup only possible if building ideal geometry
+	if(!build_ideal_geometry)debug_assert(!lookup_bond_length); // lookup only possible if building ideal geometry
 
 	pre_nresidue_change();
 
@@ -822,7 +822,7 @@ Conformation::append_residue_by_bond(
 		}
 	} else {
 		// if using a non-polymer connection, confirm that anchor_pos & anchor_residue_connection_index are set
-		assert( anchor_pos && anchor_residue_connection_index );
+	debug_assert( anchor_pos && anchor_residue_connection_index );
 	}
 
 	//////////////////////////////////////////////////
@@ -915,13 +915,13 @@ Conformation::append_polymer_residue_after_seqpos(
 )
 {
 	pre_nresidue_change();
-	assert( !new_rsd.is_lower_terminus() );
+debug_assert( !new_rsd.is_lower_terminus() );
 
 	ResidueOP ideal_geometry_rsd;
 	if ( build_ideal_geometry ) {
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates( seqpos );
 		Residue const & anchor_rsd( residue_( seqpos ) ); // not residue(seqpos)
-		assert( !anchor_rsd.is_upper_terminus() );
+	debug_assert( !anchor_rsd.is_upper_terminus() );
 		// this is a little wasteful, creating a new copy, but we need non-const access
 		ideal_geometry_rsd = new_rsd.clone();
 
@@ -937,7 +937,7 @@ Conformation::append_polymer_residue_after_seqpos(
 		rebuild_polymer_bond_dependent_atoms( seqpos );
 	}
 
-	assert( dof_moved_[seqpos+1].size() == new_rsd.natoms() &&
+debug_assert( dof_moved_[seqpos+1].size() == new_rsd.natoms() &&
 					xyz_moved_[seqpos+1].size() == new_rsd.natoms() );
 }
 
@@ -962,13 +962,13 @@ Conformation::prepend_polymer_residue_before_seqpos(
 )
 {
 	pre_nresidue_change();
-	assert( !new_rsd.is_upper_terminus() );
+debug_assert( !new_rsd.is_upper_terminus() );
 
 	ResidueOP ideal_geometry_rsd;
 	if ( build_ideal_geometry ) {
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates( seqpos );
 		Residue const & anchor_rsd( residue_( seqpos ) ); // not residue(seqpos)
-		assert( !anchor_rsd.is_lower_terminus() );
+	debug_assert( !anchor_rsd.is_lower_terminus() );
 		// this is a little wasteful, creating a new copy, but we need non-const access
 		ideal_geometry_rsd = new_rsd.clone();
 
@@ -985,7 +985,7 @@ Conformation::prepend_polymer_residue_before_seqpos(
 		rebuild_polymer_bond_dependent_atoms( seqpos );
 	}
 
-	assert( dof_moved_[seqpos].size() == new_rsd.natoms() &&
+debug_assert( dof_moved_[seqpos].size() == new_rsd.natoms() &&
 					xyz_moved_[seqpos].size() == new_rsd.natoms() );
 }
 
@@ -1070,7 +1070,7 @@ void
 Conformation::delete_polymer_residue( Size const seqpos )
 {
 	pre_nresidue_change();
-	assert( !fold_tree_->is_jump_point( seqpos ) );
+debug_assert( !fold_tree_->is_jump_point( seqpos ) );
 
 	residues_delete( seqpos ); // handles renumbering of residues, _moved, chains
 
@@ -1082,7 +1082,7 @@ Conformation::delete_polymer_residue( Size const seqpos )
 
 	residue_torsions_need_updating_ = true; // could reupdate before and after
 
-	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, NULL ), false );
 }
@@ -1108,7 +1108,7 @@ Conformation::delete_residue_slow( Size const seqpos )
 
 	residue_torsions_need_updating_ = true;
 
-	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 }
 
@@ -1119,7 +1119,7 @@ Conformation::delete_residue_range_slow( Size const range_begin, Size const rang
 {
 	pre_nresidue_change();
 	Size const range_size( range_end - range_begin + 1 );
-	assert( range_size >= 1);
+debug_assert( range_size >= 1);
 	for ( Size i=1; i<= range_size; ++i ) {
 		fold_tree_->delete_seqpos( range_begin );
 		residues_delete( range_begin );
@@ -1132,7 +1132,7 @@ Conformation::delete_residue_range_slow( Size const range_begin, Size const rang
 
 	residue_torsions_need_updating_ = true;
 
-	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 }
 
@@ -1740,7 +1740,7 @@ Conformation::set_noncanonical_connection(
 // Assigns disulfide bonds based on a pre-determined list
 /// @note works in centroid and full-atom modes
 void
-Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds) 
+Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds)
 {
 	typedef std::pair<Size,Size> SizePair;
 	BOOST_FOREACH(SizePair disulfide_bond, disulf_bonds){
@@ -1837,8 +1837,8 @@ Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bo
 		residues_[ l_index ]->residue_connection_partner( l_connid, u_index, u_connid);
 		residues_[ u_index ]->residue_connection_partner( u_connid, l_index, l_connid);
 
-		assert( residue(l_index).has_variant_type( chemical::DISULFIDE ));
-		assert( residue(u_index).has_variant_type( chemical::DISULFIDE ));
+	debug_assert( residue(l_index).has_variant_type( chemical::DISULFIDE ));
+	debug_assert( residue(u_index).has_variant_type( chemical::DISULFIDE ));
 
 	} //done with this disulfide
 }
@@ -1916,7 +1916,7 @@ Conformation::detect_disulfides()
 
 		//if ii already processed, continue
 		if ( processed_cys.find( ii_resid ) != processed_cys.end() ) continue;
-		
+
 		//Determine which atom makes the disulfide bond
 		Size ii_sg_atomno(0);
 		if ( ii_res.type().has( "SG" ) ) {
@@ -1929,7 +1929,7 @@ Conformation::detect_disulfides()
 			TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
 			utility_exit();
 		}
-		
+
 		Distance best_match( 0.0 );
 		Size best_neighbor( 0 );
 		//Size best_neighbor_cysid( 0 );
@@ -1941,7 +1941,7 @@ Conformation::detect_disulfides()
 			Size const jj = ii_iter->upper_vertex();
 
 			Size const jj_resid = cysid_2_resid[ jj ];
-			
+
 			//TR << "looking for valid distance to res" << jj_resid << std::endl;
 
 			Residue const & jj_res( residue( jj_resid ) );
@@ -1951,7 +1951,7 @@ Conformation::detect_disulfides()
 
 			std::string ii_distance_atom = fullatom ? ( ii_res.type().has( "SD" ) ? "SD" : "SG" ) : "CB";
 			std::string jj_distance_atom = fullatom ? ( jj_res.type().has( "SD" ) ? "SD" : "SG" ) : "CB";
-			
+
 			//TR << "distance between " << ii_distance_atom << " and " << jj_distance_atom << std::endl;
 			Distance dist = ii_res.atom( ii_res.atom_index( ii_distance_atom ) ).xyz().distance(
 				jj_res.atom( jj_res.atom_index( jj_distance_atom )).xyz() );
@@ -2062,7 +2062,7 @@ Conformation::insert_conformation_by_jump(
 	Size const old_size( size() );
 	Size const insert_size( conf.size() );
 	Size const new_size( old_size + insert_size );
-	assert( old_size );
+debug_assert( old_size );
 
 	// sanity checks
 	bool const fold_tree_polymer_bond( !fold_tree_->is_cutpoint( insert_seqpos-1 ) );
@@ -2396,7 +2396,7 @@ Conformation::set_jump(
 		Jump const & new_jump
 )
 {
-	assert( new_jump.ortho_check() );
+debug_assert( new_jump.ortho_check() );
 	AtomID const id( jump_atom_id( jump_number ) );
 	atom_tree_->set_jump( id, new_jump );
 	set_dof_moved( id );
@@ -2409,7 +2409,7 @@ Conformation::set_jump(
 		Jump const & new_jump
 )
 {
-	assert( new_jump.ortho_check() );
+debug_assert( new_jump.ortho_check() );
 	atom_tree_->set_jump( id, new_jump );
 	set_dof_moved( id );
 }
@@ -2494,7 +2494,7 @@ Conformation::insert_ideal_geometry_at_polymer_bond( Size const seqpos )
 	Real const bond_angle1( numeric::constants::d::pi - connect1.icoor().theta() );
 	Real const bond_angle2( numeric::constants::d::pi - connect2.icoor().theta() );
 
-	assert( ( connect1.icoor().stub_atom2().atomno() == Size( atom1.atomno() ) ) &&
+debug_assert( ( connect1.icoor().stub_atom2().atomno() == Size( atom1.atomno() ) ) &&
 					( connect1.icoor().stub_atom1().atomno() == Size( atom2.atomno() ) ) &&
 					( connect2.icoor().stub_atom1().atomno() == Size( atom3.atomno() ) ) &&
 					( connect2.icoor().stub_atom2().atomno() == Size( atom4.atomno() ) ) );
@@ -2591,7 +2591,7 @@ Conformation::dof_id_from_torsion_id( TorsionID const & tor_id ) const
 	if ( tor_id.type() == id::JUMP ) {
 		// jump rigid-body offset degree of freedom
 		int const rb_no( tor_id.torsion() );
-		assert( rb_no >= 1 && rb_no <= 6 );
+	debug_assert( rb_no >= 1 && rb_no <= 6 );
 		int const jump_number( tor_id.rsd() );
 		AtomID const id( jump_atom_id( jump_number ) );
 		return DOF_ID( id, id::get_rb_type( rb_no ) );
@@ -2879,8 +2879,8 @@ Conformation::insert_polymer_residue(
 {
 	pre_nresidue_change();
 	// debug termini status
-	if ( join_lower ) assert( !new_rsd_in.is_lower_terminus() );
-	if ( join_upper ) assert( !new_rsd_in.is_upper_terminus() );
+	if ( join_lower )debug_assert( !new_rsd_in.is_lower_terminus() );
+	if ( join_upper )debug_assert( !new_rsd_in.is_upper_terminus() );
 
 	// this handles all renumbering internal to the Residues, *_moved arrays
 	residues_insert( seqpos, new_rsd_in, !join_upper );
@@ -2893,7 +2893,7 @@ Conformation::insert_polymer_residue(
 
 	residue_torsions_need_updating_ = true; // could reupdate before and after
 
-	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
@@ -2916,7 +2916,7 @@ Conformation::append_residue(
 	pre_nresidue_change();
 
 	Size const seqpos( size() + 1 );
-	assert( seqpos == fold_tree_->nres() + 1 );
+debug_assert( seqpos == fold_tree_->nres() + 1 );
 
 	// is this the first residue?
 	bool const first_residue( seqpos == 1 );
@@ -2961,7 +2961,7 @@ Conformation::append_residue(
 	// good thing we set it already.
 
 	if ( first_residue ) {
-		assert( atom_tree_->empty() );
+	debug_assert( atom_tree_->empty() );
 		setup_atom_tree(); // just this once
 
 	} else {
@@ -3042,7 +3042,7 @@ Conformation::residues_insert(
 	bool const new_chain // = false
 )
 {
-	assert( ! new_chain || residues_[ seqpos-1 ]->chain() != residues_[ seqpos ]->chain() );
+debug_assert( ! new_chain || residues_[ seqpos-1 ]->chain() != residues_[ seqpos ]->chain() );
 
 	Size const old_size( residues_.size() ), new_size( old_size+1 );
 
@@ -3061,7 +3061,7 @@ Conformation::residues_insert(
 	Size const newrsd_chain( new_chain ? old_chain + 1 :old_chain );
 
 	residues_.insert( residues_.begin() + (seqpos-1), new_rsd.clone() );
-	assert( residues_[seqpos]->name() == new_rsd.name() );
+debug_assert( residues_[seqpos]->name() == new_rsd.name() );
 	residues_[ seqpos ]->seqpos( seqpos );
 	residues_[ seqpos ]->chain( newrsd_chain );
 	if ( new_chain ) {
@@ -3085,7 +3085,7 @@ Conformation::residues_insert(
 
 	utility::vector1< bool > & xyz_m( xyz_moved_[seqpos] );
 	utility::vector1< bool > & dof_m( dof_moved_[seqpos] );
-	assert( xyz_m.empty() && dof_m.empty() );
+debug_assert( xyz_m.empty() && dof_m.empty() );
 	xyz_m.resize( new_rsd.natoms(), true  );
 	dof_m.resize( new_rsd.natoms(), false );
 
@@ -3317,7 +3317,7 @@ Conformation::backbone_torsion_angle_atoms(
 	AtomIndices const & mainchain( rsd.mainchain_atoms() );
 
 	Size const ntorsions( mainchain.size() );
-	assert( torsion >= 1 && torsion <= ntorsions );
+debug_assert( torsion >= 1 && torsion <= ntorsions );
 
 	// this is hacky
 	// the ACETYLATED_NTERMINUS and METHYLATED_CTERMINUS prepend and append additional backbone atoms which is why the numbers may seem off
@@ -3482,7 +3482,7 @@ Conformation::backbone_torsion_angle_atoms(
 					id4.rsd()	= seqpos;
 					id4.atomno() = rsd.atom_index( "OVL1" );
 				} else {
-					assert( torsion == ntorsions );
+					debug_assert( torsion == ntorsions );
 					id3.rsd()	= seqpos;
 					id3.atomno() = rsd.atom_index( "OVL1" );
 					id4.rsd()	= seqpos;
@@ -3496,7 +3496,7 @@ Conformation::backbone_torsion_angle_atoms(
 					id3.atomno() = rsd.atom_index( " C  ");
 					id4.atomno() = rsd.atom_index( " NR ");
 				} else {
-					assert( torsion == 3 );
+				debug_assert( torsion == 3 );
 					id3.atomno() = rsd.atom_index( " NR ");
 					id4.atomno() = rsd.atom_index( " CS ");
 				}
@@ -3508,7 +3508,7 @@ Conformation::backbone_torsion_angle_atoms(
 					id3.atomno() = mainchain[ torsion+1 ];
 					id4.atomno() = rsd.atom_index( "YP  ");
 				} else {
-					assert( torsion == ntorsions ); /*zeta*/
+				debug_assert( torsion == ntorsions ); /*zeta*/
 					id3.atomno() = rsd.atom_index( "YP  ");
 					id4.atomno() = rsd.atom_index( "YO5'");
 				}
@@ -3523,7 +3523,7 @@ Conformation::backbone_torsion_angle_atoms(
 				id4.rsd() = seqpos;
 				id4.atomno() = rsd.atom_index( "NM" );
 			} else {
-				assert( torsion == ntorsions );
+				debug_assert( torsion == ntorsions );
 				id3.rsd()	= seqpos;
 				id3.atomno() = rsd.atom_index( "NM" );
 				id4.rsd()	= seqpos;
@@ -3547,7 +3547,7 @@ Conformation::backbone_torsion_angle_atoms(
 				id4.atomno() =  residue_(id4.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id(rsd.type().upper_connect_id()) ); //Get the atom index in the connected residue of the atom that's making a connection to THIS residue's connection #2.
 
 			} else { //If this is the last torsion angle (e.g. omega, in alpha- or beta-amino acids).
-				assert( torsion == ntorsions );
+				debug_assert( torsion == ntorsions );
 				//id3.rsd()	= seqpos+1;
 				//id3.atomno() = next_mainchain[ 1 ];
 
@@ -3614,7 +3614,7 @@ bool Conformation::atoms_are_bonded(
 			//Does the current connection id in residue 1 correspond to the correct atom index in residue 1?:
 			if(residue_(id1.rsd()).residue_connect_atom_index(connlist[i]) != id1.atomno() ) continue;
 			//Redundant check: the current connection id in residue 1 should connect to residue 2:
-			assert(residue_(id1.rsd()).connected_residue_at_resconn(connlist[i]) == id2.rsd() );
+		debug_assert(residue_(id1.rsd()).connected_residue_at_resconn(connlist[i]) == id2.rsd() );
 			//Does the current connection id in residue 1 connect to a residue id in residue 2 with the correct atom id?:
 			if(   residue_(id2.rsd()).residue_connect_atom_index( residue_(id1.rsd()).residue_connection_conn_id( connlist[i]) ) == id2.atomno() ) return true;
 		}
@@ -3691,8 +3691,8 @@ Conformation::rederive_chain_endings()
 	chain_endings_.clear();
 	for ( Size i=1, ie=size()-1; i<=ie; ++i ) {
 		if ( residues_[i+1]->chain() != residues_[i]->chain() ) {
-			assert( residues_[i+1]->chain() > residues_[i]->chain() );
-			// 			assert( residues_[i+1]->chain() == residues_[i]->chain() + 1 );
+		debug_assert( residues_[i+1]->chain() > residues_[i]->chain() );
+			// 		debug_assert( residues_[i+1]->chain() == residues_[i]->chain() + 1 );
 			chain_endings_.push_back( i );
 		}
 	}
@@ -3790,11 +3790,11 @@ Conformation::add_pseudobond(
 )
 {
 	PseudoBondCollectionOP new_pbs;
-	assert(residues_.size()>0);
-	assert(lr>0);
-	assert(lr_connid>0);//?
-	assert(ur>0);
-	assert(ur_connid>0);//?
+debug_assert(residues_.size()>0);
+debug_assert(lr>0);
+debug_assert(lr_connid>0);//?
+debug_assert(ur>0);
+debug_assert(ur_connid>0);//?
 
 	if ( residues_[ lr ]->is_pseudo_bonded( *residues_[ ur ] ) ) {
 		PseudoBondCollectionCOP existing_pbs = residues_[ lr ]->get_pseudobonds_to_residue( ur );
@@ -3817,7 +3817,7 @@ Conformation::in_place_copy(
 	Conformation const & src
 )
 {
-	assert( src.size() == size() );
+debug_assert( src.size() == size() );
 
 	/// BEGIN IN PLACE OPTIMIZATION
 

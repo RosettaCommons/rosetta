@@ -50,7 +50,7 @@
 #include <utility/exit.hh>
 #include <math.h>
 #include <stdio.h>
-#include <cassert>
+#include <utility/assert.hh>
 #include <utility/assert.hh>
 
 static thread_local basic::Tracer TR( "core.scoring.FACTSPotential" );
@@ -124,10 +124,10 @@ FACTSPotential::set_default()
 	dshift2_sc_ = dshift[3]*dshift[3];
 	dshift2_saltbridge_ = dshift[4]*dshift[4];
 
-	assert( option[score::facts_adjbb_elec_scale ]().size() == 5 );
-	assert( option[score::facts_adjbb_solv_scale ]().size() == 5 );
-	assert( option[score::facts_adjbs_elec_scale ]().size() == 5 );
-	assert( option[score::facts_adjbs_solv_scale ]().size() == 5 );
+debug_assert( option[score::facts_adjbb_elec_scale ]().size() == 5 );
+debug_assert( option[score::facts_adjbb_solv_scale ]().size() == 5 );
+debug_assert( option[score::facts_adjbs_elec_scale ]().size() == 5 );
+debug_assert( option[score::facts_adjbs_solv_scale ]().size() == 5 );
 
 	adjbb_elec_scale_.resize( 5 );
 	adjbb_elec_scale_ = option[ score::facts_adjbb_elec_scale ]();
@@ -1559,7 +1559,7 @@ void FACTSPotential::get_single_rotamer_born_radii(Residue const & rsd1,
 {
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 
-	assert( rsd1.natoms()<1 || std::fabs(facts1.Ai(1)) < 1e-3 );
+debug_assert( rsd1.natoms()<1 || std::fabs(facts1.Ai(1)) < 1e-3 );
 	for (Size res2=1; res2<= pose.total_residue(); ++res2 ) {
 		// we are not using placeholder in FACTS - this can be changed if we want to do "Design"
 		//if ( facts_info.being_packed( res2 ) ) {

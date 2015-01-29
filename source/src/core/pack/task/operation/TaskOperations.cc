@@ -107,7 +107,7 @@ RestrictResidueToRepacking::apply( pose::Pose const &, PackerTask & task ) const
 	for(utility::vector1< core::Size >::const_iterator it(residues_to_restrict_to_repacking_.begin()), end(residues_to_restrict_to_repacking_.end());
 			it != end; ++it)
 		{
-			//assert( *it ); //begin/end can't return NULL anyway?
+		//debug_assert( *it ); //begin/end can't return NULL anyway?
 			task.nonconst_residue_task(*it).restrict_to_repacking();
 		}
 	return;

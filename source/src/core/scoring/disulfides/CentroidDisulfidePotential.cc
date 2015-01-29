@@ -238,8 +238,8 @@ CentroidDisulfidePotential::disulfide_params(
 			restype_set->name_map("ALA"), res2, conformation) ) );
 	}
 	//Make sure they both have CB now
-	assert(res1_ptr->type().has("CB"));
-	assert(res2_ptr->type().has("CB"));
+debug_assert(res1_ptr->type().has("CB"));
+debug_assert(res2_ptr->type().has("CB"));
 
 	Vector const& calpha_1 ( res1_ptr->xyz("CA") );
 	Vector const& cbeta_1  ( res1_ptr->xyz("CB") );
@@ -266,11 +266,11 @@ CentroidDisulfidePotential::disulfide_params(
 		centroid_distance_sq = cen_1.distance_squared(cen_2);
 
 	//Postcondition validation
-		assert(0. <= centroid_distance_sq );
+	debug_assert(0. <= centroid_distance_sq );
 	}
-	assert(0. <= cbcb_distance_sq);
-	assert(0. <= cacbcb_angle_1); assert( cacbcb_angle_1 <= 180. );
-	assert(0. <= cacbcb_angle_2); assert( cacbcb_angle_2 <= 180. );
+debug_assert(0. <= cbcb_distance_sq);
+debug_assert(0. <= cacbcb_angle_1);debug_assert( cacbcb_angle_1 <= 180. );
+debug_assert(0. <= cacbcb_angle_2);debug_assert( cacbcb_angle_2 <= 180. );
 }
 
 Cb_Distance_FuncCOP CentroidDisulfidePotential::cb_distance_func_( Cb_Distance_FuncOP( new Cb_Distance_Func() ) );

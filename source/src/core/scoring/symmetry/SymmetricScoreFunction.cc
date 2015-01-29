@@ -280,11 +280,11 @@ SymmetricScoreFunction::setup_for_minimizing(
 			edge_iter != edge_iter_end; ++edge_iter, ++dedge_iter, ++ee_edge_iter ) {
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
-		assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
-		assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
-		assert( node1 == (*dedge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
-		assert( node2 == (*dedge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
-		assert( symm_info.bb_follows( node1 ) == 0 || symm_info.bb_follows( node2 ) == 0 );
+	debug_assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+	debug_assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+	debug_assert( node1 == (*dedge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+	debug_assert( node2 == (*dedge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+	debug_assert( symm_info.bb_follows( node1 ) == 0 || symm_info.bb_follows( node2 ) == 0 );
 
 		// domain map check here?
 		bool const res_moving_wrt_eachother(
@@ -526,7 +526,7 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies(
 					if ( minimizing ) {
 						// confirm that this rsd-rsd interaction will be included
 						// in the atom pairs on the nblist:
-						//assert( ( pose.energies().domain_map(i) !=
+					//debug_assert( ( pose.energies().domain_map(i) !=
 						//					pose.energies().domain_map(j) ) ||
 						//				( pose.energies().res_moved(i) ) );
 						// ensure that these are zeroed, since we will hit them at the
@@ -663,7 +663,7 @@ SymmetricScoreFunction::eval_onebody_energies( pose::Pose & pose ) const
 	if ( minimizing ) {
 		EnergyMap scratch_emap;
 		MinimizationGraphCOP mingraph = energies.minimization_graph();
-		assert( mingraph );
+	debug_assert( mingraph );
 		for ( Size ii = 1; ii <= symm_info->num_total_residues_without_pseudo(); ++ii ) {
 			if ( !symm_info->fa_is_independent(ii) ) continue;
 
@@ -797,7 +797,7 @@ SymmetricScoreFunction::eval_npd_atom_derivative(
 
 	SymmetricEnergies const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
 
-	assert( pose.energies().minimization_graph() );
+debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph  = symm_energies.minimization_graph();
 	//MinimizationGraphCOP dmingraph = symm_energies.derivative_graph();
 
@@ -868,7 +868,7 @@ SymmetricScoreFunction::eval_dof_derivative(
 ) const
 {
 
-	assert( pose.energies().minimization_graph() );
+debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	Size const rsdno = torsion_id.valid() ? torsion_id.rsd() : dof_id.atom_id().rsd();

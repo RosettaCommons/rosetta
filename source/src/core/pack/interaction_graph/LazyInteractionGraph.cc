@@ -286,7 +286,7 @@ LazyNode::assign_zero_state()
 void
 LazyNode::assign_state(int new_state)
 {
-	assert( new_state >= 0 && new_state <= get_num_states());
+debug_assert( new_state >= 0 && new_state <= get_num_states());
 
 	if (new_state == 0) {
 		assign_zero_state();
@@ -416,7 +416,7 @@ void LazyNode::complete_state_assignment()
 void
 LazyNode::commit_considered_substitution()
 {
-	assert( alternate_state_is_being_considered_ );
+debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_sparse_mat_info_ = alt_state_sparse_mat_info_;
@@ -592,7 +592,7 @@ LazyNode::print_internal_energies() const
 void
 LazyNode::update_internal_energy_sums()
 {
-	assert( get_edge_vector_up_to_date() );
+debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
 	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
 		curr_state_total_energy_ += get_incident_lazy_edge(ii)->get_current_two_body_energy();

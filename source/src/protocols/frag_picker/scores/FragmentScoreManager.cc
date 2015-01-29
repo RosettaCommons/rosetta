@@ -131,7 +131,7 @@ Real FragmentScoreManager::total_score(FragmentScoreMapOP f) {
 	Real total = 0;
 	utility::vector1<Real> &s = f->get_score_components();
 
-	assert (s.size() == score_weights_.size());
+debug_assert (s.size() == score_weights_.size());
 	for (Size i = 1; i <= score_weights_.size(); i++)
 		total += score_weights_[i] * s[i];
 	f->recent_total_ = total;
@@ -227,8 +227,8 @@ void FragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 		} else
 		    out << F(w[scores_.size()+1],TOTAL_PRECISION,total_score(sc));
 
-		assert ( fr->key() > 0 );
-		assert ( fr->key() < 4000000 ); // Put your Vall's size here
+	debug_assert ( fr->key() > 0 );
+	debug_assert ( fr->key() < 4000000 ); // Put your Vall's size here
 
 		out << I(10, fr->key() ) << std::endl;
 

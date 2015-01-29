@@ -130,7 +130,7 @@ public:
 	//SparseMatrixIndex const &
 	//get_sparse_mat_info_for_state( int state ) const
 	//{
-	//	assert( state > 0 && state <= get_num_states() );
+	//debug_assert( state > 0 && state <= get_num_states() );
 	//	return sparse_mat_info_for_state_[ state ];
 	//}
 
@@ -421,7 +421,7 @@ public:
 	ScoreFunction const &
 	score_function() const
 	{
-		assert( score_function_ );
+	debug_assert( score_function_ );
 		return *score_function_;
 	}
 
@@ -559,7 +559,7 @@ inline
 SymmOnTheFlyEdge *
 SymmOnTheFlyNode::get_incident_otf_edge( int edge )
 {
-	assert( dynamic_cast< SymmOnTheFlyEdge * >  (get_incident_edge( edge )) );
+debug_assert( dynamic_cast< SymmOnTheFlyEdge * >  (get_incident_edge( edge )) );
 	return static_cast< SymmOnTheFlyEdge * >  (get_incident_edge( edge ));
 }
 
@@ -567,7 +567,7 @@ inline
 SymmOnTheFlyEdge const *
 SymmOnTheFlyNode::get_incident_otf_edge( int edge ) const
 {
-	assert( dynamic_cast< SymmOnTheFlyEdge const * >  (get_incident_edge( edge )) );
+debug_assert( dynamic_cast< SymmOnTheFlyEdge const * >  (get_incident_edge( edge )) );
 	return static_cast< SymmOnTheFlyEdge const * >  (get_incident_edge( edge ));
 }
 
@@ -575,7 +575,7 @@ inline
 SymmOnTheFlyNode *
 SymmOnTheFlyNode::get_adjacent_otf_node( int index )
 {
-	assert( dynamic_cast< SymmOnTheFlyNode * > ( get_adjacent_node( index ) ));
+debug_assert( dynamic_cast< SymmOnTheFlyNode * > ( get_adjacent_node( index ) ));
 	return static_cast< SymmOnTheFlyNode * > ( get_adjacent_node( index ) );
 }
 
@@ -583,7 +583,7 @@ inline
 SymmOnTheFlyNode const *
 SymmOnTheFlyNode::get_adjacent_otf_node( int index ) const
 {
-	assert( dynamic_cast< SymmOnTheFlyNode const * > ( get_adjacent_node( index ) ));
+debug_assert( dynamic_cast< SymmOnTheFlyNode const * > ( get_adjacent_node( index ) ));
 	return static_cast< SymmOnTheFlyNode const * > ( get_adjacent_node( index ) );
 }
 
@@ -592,7 +592,7 @@ inline
 SymmOnTheFlyInteractionGraph *
 SymmOnTheFlyNode::get_on_the_fly_owner()
 {
-	assert( dynamic_cast< SymmOnTheFlyInteractionGraph * > ( get_owner() ) );
+debug_assert( dynamic_cast< SymmOnTheFlyInteractionGraph * > ( get_owner() ) );
 	return static_cast< SymmOnTheFlyInteractionGraph * > ( get_owner() );
 }
 
@@ -600,7 +600,7 @@ inline
 SymmOnTheFlyInteractionGraph const *
 SymmOnTheFlyNode::get_on_the_fly_owner() const
 {
-	assert( dynamic_cast< SymmOnTheFlyInteractionGraph const * > ( get_owner() ) );
+debug_assert( dynamic_cast< SymmOnTheFlyInteractionGraph const * > ( get_owner() ) );
 	return static_cast< SymmOnTheFlyInteractionGraph const * > ( get_owner() );
 }
 

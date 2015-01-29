@@ -261,7 +261,7 @@ Real SurfacePotential::average_residue_hASA( chemical::AA aa_type, Size num_nbs 
 		std::cout << "aatype (" << aa_type << ") outside of canonical 20 in SurfacePotential::average_residue_hASA." << std::endl;
 	}
 #endif
-	assert( num_nbs <= BURIED_RESIDUE_NO_HSASA_CUTOFF );
+debug_assert( num_nbs <= BURIED_RESIDUE_NO_HSASA_CUTOFF );
 	if ( aa_type > chemical::num_canonical_aas ) { return 0.0; }
 	return res_to_average_hASA_[ aa_type ][ num_nbs ];
 
@@ -280,7 +280,7 @@ Real SurfacePotential::hASA_patch_energy( Real patch_area, Size num_nbs ) {
 		std::cout << "patch_area (" << patch_area << ") greater than MAX_PATCH_SURFACE_AREA in SurfacePotential::hASA_patch_energy." << std::endl;
 	}
 #endif
-	assert( patch_area <= MAX_PATCH_SURFACE_AREA );
+debug_assert( patch_area <= MAX_PATCH_SURFACE_AREA );
 	return hASA_to_score_[ (Size)(patch_area / SURFACE_SCORE_BIN_SIZE ) ][ num_nbs ];
 }
 
@@ -298,7 +298,7 @@ Real SurfacePotential::hpatch_score( Real patch_area ) {
 		std::cout << "patch_area (" << patch_area << ") greater than MAX_HPATCH_AREA in SurfacePotential::hpatch_score." << std::endl;
 	}
 #endif
-	assert( patch_area <= MAX_HPATCH_AREA );
+debug_assert( patch_area <= MAX_HPATCH_AREA );
 	return patcharea_to_score_[ (Size)(patch_area / HPATCH_SCORE_BIN_SIZE) ];
 }
 

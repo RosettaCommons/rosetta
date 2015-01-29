@@ -97,8 +97,8 @@ LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & r
 			lwrg_ed_to_ED[e_added] = *ep.first;
 		}
 	}
-	assert(boost::num_vertices(lwrg) == full_residue_graph.num_vertices()); //fail if the number of vertex are not the same
-	assert(boost::num_edges(lwrg) == full_residue_graph.num_edges()); //fail if the number of edges are not the same
+debug_assert(boost::num_vertices(lwrg) == full_residue_graph.num_vertices()); //fail if the number of vertex are not the same
+debug_assert(boost::num_edges(lwrg) == full_residue_graph.num_edges()); //fail if the number of edges are not the same
 
 
 	//boost::property_map<LightWeightResidueGraph, boost::vertex_name_t>::type lwrg_vd_to_VD = boost::get(boost::vertex_name, lwrg);
@@ -133,7 +133,7 @@ rename_atoms( ResidueType & res, bool preserve/*=true*/ ) {
 			//Find the first unoccupied name Xnnn type string.
 			// Skipping values which were multiply represented in the input is deliberate
 			// There's no fair way to choose which one is the "real" one.
-			assert( atom.element_type() );
+		debug_assert( atom.element_type() );
 			std::string name;
 			core::Size ii(0);
 			do {

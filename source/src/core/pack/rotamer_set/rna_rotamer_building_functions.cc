@@ -219,7 +219,7 @@ build_rna_chi_rotamers(
 	//	bool const tether_bond_angle( false );
 
 	Residue const & existing_residue( pose.residue( resid ) );
-	assert( existing_residue.is_RNA() && concrete_residue->is_RNA() );
+debug_assert( existing_residue.is_RNA() && concrete_residue->is_RNA() );
 
 	// a residue of the correct type aligned to the existing backbone
 	ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation(), false /*true*/ /*preserve c_beta*/ );

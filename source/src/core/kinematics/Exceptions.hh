@@ -27,7 +27,7 @@
 // ObjexxFCL Headers
 
 // // C++ Headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <vector>
 
 

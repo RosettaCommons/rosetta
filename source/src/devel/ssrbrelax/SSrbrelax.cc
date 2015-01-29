@@ -221,7 +221,7 @@ namespace ssrbrelax {
 			std::cout << "dof_vec.size after " << dof_vec.size() << " " << this_dof <<  std::endl;
 			stddev = rbsegments.get_gaussian_parameters( index, this_dof );
 			std::cout << "stddev " << rbsegments.get_gaussian_parameters( index, this_dof ) << " " << stddev << std::endl;
-			assert ( stddev > 0.0 );
+		debug_assert ( stddev > 0.0 );
 
 			std::cout << "Input arguments " <<  this_dof << " " << stddev << std::endl;
 			perturb_segment( pose, this_segment, this_dof, stddev );
@@ -502,7 +502,7 @@ namespace ssrbrelax {
 		float const start_chainbreak_weight( scorefxn->get_weight ( chainbreak ) );
 		float const max_chainbreak_weight( 3.0 );
 
-		assert ( max_chainbreak_weight >= start_chainbreak_weight );
+	debug_assert ( max_chainbreak_weight >= start_chainbreak_weight );
 		float const chainbreak_wt_stepsize( ( max_chainbreak_weight - start_chainbreak_weight ) / seg_length );
 
 		(*scorefxn)(pose);

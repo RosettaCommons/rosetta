@@ -42,7 +42,7 @@ core::Real	alpha_func (
 	core::Real k2,	
 	core::Real alpha			
 ){
-	assert( k2 != 0 );
+debug_assert( k2 != 0 );
   	return alpha * exp( n * alpha ) - k1 / k2;
 }
 
@@ -57,7 +57,7 @@ void hankel_set_alpha
 (
 	Hankel *p_hankel		
 ){
-  	assert( p_hankel->n != 0);
+  debug_assert( p_hankel->n != 0);
 	core::Real X_MIN(0.0);	
 	p_hankel->alpha = NRbisafe(p_hankel->n, p_hankel->k1, p_hankel->k2, X_MIN, 30 * log(10) / p_hankel->n);
 }
@@ -153,7 +153,7 @@ void hankel_trans_no_lec (
 core::Real hankel_get_p0 (
 	Hankel *p_hankel	
 ){
-	assert( p_hankel->k1 != 0 && p_hankel->rp0 != 0 );
+debug_assert( p_hankel->k1 != 0 && p_hankel->rp0 != 0 );
   return ( p_hankel->k2 * p_hankel->alpha /
 	   ( p_hankel->k1 * p_hankel->k1 * p_hankel->rp0 ) );
 }
@@ -208,7 +208,7 @@ void hankel_make_j (
   	core::Real *j;			
   	core::Real factor;		
   	core::Real arg;			
-  	assert(p_hankel->n != 0 );
+  debug_assert(p_hankel->n != 0 );
   	j = p_hankel->j = ( core::Real * ) malloc( 4 * p_hankel->n *
 					 sizeof( core::Real ) );
   	if( p_hankel->j == NULL ) {
@@ -327,7 +327,7 @@ void set_r_array (
         core::Real alpha = NRbisafe(num_r_points, k1, k2, X_MIN , 30 * log(10) / num_r_points);
         core::Real rp0 = max_r * exp( -alpha * num_r_points );
 
-        assert( num_r_points <= rc.size() );
+       debug_assert( num_r_points <= rc.size() );
         for( core::Size count = 0 ; count < num_r_points; count++ ){
                 core::Real r = rp0 * exp( alpha * count );
                 rc(count+1) = r;
@@ -347,7 +347,7 @@ void set_r_inv_array (
         core::Real Rp0_new ( k2 * alpha /
         ( k1 * k1 * rp0 ) );
 
-        assert( num_r_points <= Rinv.size() );
+       debug_assert( num_r_points <= Rinv.size() );
         for( core::Size count = 0 ; count < num_r_points; count++ ){
                 core::Real R = Rp0_new * exp( alpha * count );
                 Rinv(count+1) = R;

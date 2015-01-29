@@ -24,7 +24,7 @@
 #include <utility/down_cast.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <iosfwd>
 
 #include <boost/weak_ptr.hpp>

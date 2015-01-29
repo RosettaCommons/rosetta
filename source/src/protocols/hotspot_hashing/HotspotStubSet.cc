@@ -89,7 +89,7 @@
 #include <sstream>
 #include <map>
 #include <set>
-#include <cassert>
+#include <utility/assert.hh>
 #include <algorithm>
 #include <cmath>
 

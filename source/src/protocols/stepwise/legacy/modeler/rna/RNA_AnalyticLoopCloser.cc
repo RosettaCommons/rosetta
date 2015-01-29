@@ -289,7 +289,7 @@ RNA_AnalyticLoopCloser::figure_out_offset (
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
-	assert ( t_ang_.size() == Size ( nsol_ ) );
+debug_assert ( t_ang_.size() == Size ( nsol_ ) );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Finally, ready to check out the solutions
@@ -352,7 +352,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 			pose.dump_pdb ( "closed.pdb" );
 		}
 	} else if ( choose_best_solution_ ) {
-		assert ( scorefxn_ != 0 );
+	debug_assert ( scorefxn_ != 0 );
 		Real best_score ( 0.0 );
 		Size best_sol ( 0 );
 
@@ -378,7 +378,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 
 		fill_solution ( pose, best_sol );
 	} else {
-		assert ( choose_random_solution_ );
+	debug_assert ( choose_random_solution_ );
 		Size const n = static_cast< int > ( nsol_ * numeric::random::rg().uniform() ) + 1;
 		fill_solution ( pose, n );
 	}
@@ -421,7 +421,7 @@ RNA_AnalyticLoopCloser::fill_solution ( core::pose::Pose & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Real >
 RNA_AnalyticLoopCloser::get_torsions ( Size const n ) {
-	assert ( n <= t_ang_.size() );
+debug_assert ( n <= t_ang_.size() );
 	utility::vector1< Real > torsions;
 	Size count ( 0 );
 

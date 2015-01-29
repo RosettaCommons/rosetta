@@ -42,7 +42,7 @@
 #include <utility/io/izstream.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 
@@ -115,9 +115,9 @@ P_AA::read_P_AA()
 		using namespace ObjexxFCL::format;
 		stream >> bite( 3, id ) >> skip( 1 ) >> bite( 9, probability ) >> skip;
 		if ( stream ) {
-			assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
+		debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
 			AA aa = aa_from_name( id );
-			assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
+		debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
 			probability_sum += probability;
 			P_AA_[ aa ] = probability;
 		} //! ADD INPUT ERROR HANDLING
@@ -125,7 +125,7 @@ P_AA::read_P_AA()
 	stream.close();
 
 	// Check probabilities sum to ~ 1
-	assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
+debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
 }
 
 
@@ -152,10 +152,10 @@ P_AA::read_P_AA_n()
 		using namespace ObjexxFCL::format;
 		stream >> bite( 3, id ) >> skip( 1 ) >> bite( 2, n ) >> skip( 1 ) >> bite( 9, probability ) >> skip;
 		if ( stream ) {
-			assert( ( n >= 1 ) && ( n <= 14 ) ); // Support n in [1,14]
-			assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
+		debug_assert( ( n >= 1 ) && ( n <= 14 ) ); // Support n in [1,14]
+		debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
 			AA aa = aa_from_name( id );
-			assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
+		debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
 			//AminoAcidKey const & key( AminoAcidKeys::key( id ) );
 			P_AA_n_[ aa ][ n ] = probability;
 		} //! ADD INPUT ERROR HANDLING
@@ -169,7 +169,7 @@ P_AA::read_P_AA_n()
 		for ( Probability_AA_n::ConstIterator i = P_AA_n_.begin(), e = P_AA_n_.end(); i != e ; ++i ) {
 			probability_sum += (*i)[ n ];
 		}
-		assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
+	debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
 	}
 #endif
 }
@@ -216,12 +216,12 @@ P_AA::read_P_AA_pp()
 		>> bite( 3, id ) >> skip( 17 ) >> bite( 7, probability ) >> skip;
 
 		if ( ( stream ) ) {
-			assert( ( phi >= Angle( -180.0 ) ) && ( phi <= Angle( 180.0 ) ) );
-			assert( ( psi >= Angle( -180.0 ) ) && ( psi <= Angle( 180.0 ) ) );
-			assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
+		debug_assert( ( phi >= Angle( -180.0 ) ) && ( phi <= Angle( 180.0 ) ) );
+		debug_assert( ( psi >= Angle( -180.0 ) ) && ( psi <= Angle( 180.0 ) ) );
+		debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
 
 			AA aa = aa_from_name( id );
-			assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
+		debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
 
 			if ( option[ p_aa_pp_nogridshift ] ) {
 				int const i_phi( numeric::mod( 36 + numeric::nint(  phi / Angle( 10.0 ) ), 36 ) );
@@ -252,7 +252,7 @@ P_AA::read_P_AA_pp()
 //			for ( Probability_AA_pp::ConstIterator i = P_AA_pp.begin(), e = P_AA_pp.end(); i != e ; ++i ) {
 //				probability_sum += (*i)( i_phi, i_psi );
 //			}
-//			assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .001 ), Probability( .001 ) ) );
+//		debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .001 ), Probability( .001 ) ) );
 //		}
 //	}
 //#endif

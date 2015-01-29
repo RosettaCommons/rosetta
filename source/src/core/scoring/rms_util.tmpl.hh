@@ -352,7 +352,7 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -396,7 +396,7 @@ rmsd_with_super(
 {
 	ASSERT_ONLY(core::Size const nres1 = pose1.total_residue();)
 	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
-	assert( nres1 == nres2 );
+debug_assert( nres1 == nres2 );
 
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
@@ -406,7 +406,7 @@ rmsd_with_super(
 	    if ( predicate == is_ligand_heavyatom ||
 		 predicate == is_polymer_heavyatom ||
 		 predicate == is_heavyatom ) {
-	      //			assert( pose1.residue(i).nheavyatoms() == pose2.residue(i).nheavyatoms() );
+	      //		debug_assert( pose1.residue(i).nheavyatoms() == pose2.residue(i).nheavyatoms() );
 	    } else if ( num_atoms > pose2.residue(i).natoms() ){
 	      num_atoms = pose2.residue(i).natoms();
 	    }
@@ -420,7 +420,7 @@ rmsd_with_super(
 	      }
 	    }
 	  }
-	assert( p1_coords.size() == p2_coords.size() );
+debug_assert( p1_coords.size() == p2_coords.size() );
 
 	int const natoms = p1_coords.size();
 	ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
@@ -487,7 +487,7 @@ rmsd_with_super_subset(
 {
 	core::Size const nres1 = pose1.total_residue();
 	//core::Size const nres2 = pose2.total_residue();
-	//assert( nres1 == nres2 );
+//debug_assert( nres1 == nres2 );
 
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
@@ -498,7 +498,7 @@ rmsd_with_super_subset(
 			if ( predicate == is_ligand_heavyatom ||
 				predicate == is_polymer_heavyatom ||
 				predicate == is_heavyatom ) {
-				assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
+			debug_assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
 			} else if ( num_atoms > pose2.residue(i).natoms() ){
 				num_atoms = pose2.residue(i).natoms();
 			}
@@ -510,7 +510,7 @@ rmsd_with_super_subset(
 			}
 		}
 	}
-	assert( p1_coords.size() == p2_coords.size() );
+debug_assert( p1_coords.size() == p2_coords.size() );
 
 	int const natoms = p1_coords.size();
 	ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
@@ -548,7 +548,7 @@ rmsd_no_super(
 {
 	core::Size const nres1 = pose1.total_residue();
 	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
-	assert( nres1 == nres2 );
+debug_assert( nres1 == nres2 );
 
 	core::Real sum2( 0.0 );
 	core::Size natoms( 0 );
@@ -557,7 +557,7 @@ rmsd_no_super(
 		if ( predicate == is_ligand_heavyatom ||
 			predicate == is_polymer_heavyatom ||
 			predicate == is_heavyatom ) {
-			assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
+		debug_assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
 		} else if ( num_atoms > pose2.residue(i).natoms() ){
 			num_atoms = pose2.residue(i).natoms();
 		}
@@ -582,7 +582,7 @@ rmsd_no_super(
 {
 	core::Size const nres1 = residues1.size();
 	ASSERT_ONLY(core::Size const nres2 = residues2.size();)
-	assert( nres1 == nres2 );
+debug_assert( nres1 == nres2 );
 
 	core::Real sum2( 0.0 );
 	core::Size natoms( 0 );
@@ -591,7 +591,7 @@ rmsd_no_super(
 		if (  predicate == is_ligand_heavyatom_residues
 			/* predicate == is_polymer_heavyatom || */
 			/* predicate == is_heavyatom */) { // for Rotate.cc
-			assert( residues1[i]->natoms() == residues2[i]->natoms() );
+		debug_assert( residues1[i]->natoms() == residues2[i]->natoms() );
 		} else if ( num_atoms > residues2[i]->natoms() ){
 			num_atoms = residues2[i]->natoms();
 		}
@@ -632,7 +632,7 @@ rmsd_no_super_subset(
 {
 	core::Size const nres1 = pose1.total_residue();
 	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
-	assert( nres1 == nres2 );
+debug_assert( nres1 == nres2 );
 
 	core::Real sum2( 0.0 );
 	core::Size natoms( 0 );
@@ -642,7 +642,7 @@ rmsd_no_super_subset(
 			if ( predicate == is_ligand_heavyatom ||
 				predicate == is_polymer_heavyatom ||
 				predicate == is_heavyatom ) {
-				assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
+			debug_assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
 			} else if ( num_atoms > pose2.residue(i).natoms() ){
 				num_atoms = pose2.residue(i).natoms();
 			}
@@ -685,7 +685,7 @@ rmsd_no_super_subset(
       if ( predicate == is_ligand_heavyatom ||
 	predicate == is_polymer_heavyatom ||
 	predicate == is_heavyatom ) {
-	assert( pose1.residue(i).natoms() == pose2.residue(res2).natoms() );
+debug_assert( pose1.residue(i).natoms() == pose2.residue(res2).natoms() );
       } else if ( num_atoms > pose2.residue(res2).natoms() ){
 	num_atoms = pose2.residue(res2).natoms();
       }
@@ -713,7 +713,7 @@ biggest_residue_deviation_no_super(
 
 	core::Size const nres1 = pose1.total_residue();
 	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
-	assert( nres1 == nres2 );
+debug_assert( nres1 == nres2 );
 
 	core::Real biggest_dev2( 0.0 );
 	for ( core::Size i = 1; i <= nres1; ++i ) {
@@ -724,7 +724,7 @@ biggest_residue_deviation_no_super(
 		if ( predicate == is_ligand_heavyatom ||
 			predicate == is_polymer_heavyatom ||
 			predicate == is_heavyatom ) {
-			assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
+		debug_assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
 		} else if ( num_atoms > pose2.residue(i).natoms() ){
 			num_atoms = pose2.residue(i).natoms();
 		}
@@ -755,7 +755,7 @@ biggest_residue_deviation_no_super_subset(
 
 	core::Size const nres1 = pose1.total_residue();
 	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue());
-	assert( nres1 == nres2 );
+debug_assert( nres1 == nres2 );
 
 	core::Real biggest_dev2( 0.0 );
 	for ( core::Size i = 1; i <= nres1; ++i ) {
@@ -766,7 +766,7 @@ biggest_residue_deviation_no_super_subset(
 			if ( predicate == is_ligand_heavyatom ||
 				predicate == is_polymer_heavyatom ||
 				predicate == is_heavyatom ) {
-				assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
+			debug_assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
 			} else if ( num_atoms > pose2.residue(i).natoms() ){
 				num_atoms = pose2.residue(i).natoms();
 			}
@@ -797,14 +797,14 @@ fill_rmsd_coordinates(
 {
 	core::Size const nres1 = pose1.total_residue();
 	core::Size const nres2 = pose2.total_residue();
-	//assert( nres1 == nres2 );
+//debug_assert( nres1 == nres2 );
 
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
 
 	for ( core::Size i = 1; i <= std::min( nres1, nres2 ); ++i ) {
 		if( pose1.residue(i).is_virtual_residue() || pose2.residue(i).is_virtual_residue() ) continue;
-		//assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
+	//debug_assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
 		for ( core::Size j = 1; j <= pose1.residue(i).natoms(); ++j ) {
 			if ( (*predicate)( pose1, pose2, i, j ) ) {
 				p1_coords.push_back( pose1.residue(i).xyz(j) );
@@ -812,7 +812,7 @@ fill_rmsd_coordinates(
 			}
 		}
 	}
-	assert( p1_coords.size() == p2_coords.size() );
+debug_assert( p1_coords.size() == p2_coords.size() );
 
 	natoms = p1_coords.size();
 	p1a.dimension( 3, natoms );
@@ -839,7 +839,7 @@ sym_rmsd_with_super_subset(
 {
 	core::Size const nres1 = native_pose.total_residue();
 	//core::Size const nres2 = pose2.total_residue();
-	//assert( nres1 == nres2 );
+//debug_assert( nres1 == nres2 );
 
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
@@ -850,7 +850,7 @@ sym_rmsd_with_super_subset(
 			if ( predicate == is_ligand_heavyatom ||
 				predicate == is_polymer_heavyatom ||
 				predicate == is_heavyatom ) {
-				assert( native_pose.residue(i).natoms() == pose2.residue(i).natoms() );
+			debug_assert( native_pose.residue(i).natoms() == pose2.residue(i).natoms() );
 			} else if ( num_atoms > pose2.residue(i).natoms() ){
 				num_atoms = pose2.residue(i).natoms();
 			}
@@ -862,7 +862,7 @@ sym_rmsd_with_super_subset(
 			}
 		}
 	}
-	assert( p1_coords.size() == p2_coords.size() );
+debug_assert( p1_coords.size() == p2_coords.size() );
 
 	int const natoms = p1_coords.size();
 	ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
@@ -875,7 +875,7 @@ sym_rmsd_with_super_subset(
 	}
 
 
-	assert( dynamic_cast< core::conformation::symmetry::SymmetricConformation const * >( &pose2.conformation() ) );
+debug_assert( dynamic_cast< core::conformation::symmetry::SymmetricConformation const * >( &pose2.conformation() ) );
 
 	core::conformation::symmetry::SymmetricConformation const & symm_conf (
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose2.conformation()) );

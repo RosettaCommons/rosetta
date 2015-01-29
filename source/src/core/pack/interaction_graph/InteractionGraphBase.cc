@@ -22,7 +22,7 @@
 // AUTO-REMOVED #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <cassert>
+#include <utility/assert.hh>
 
 //ObjexxFCL Headers
 #include <ObjexxFCL/FArray1A.hh>
@@ -354,7 +354,7 @@ void NodeBase::update_edge_vector()
 		incident_edge_vector_[ii]->set_pos_in_node_edgevector( node_index_, ii );
 		adjacent_node_ind_[ ii ] = incident_edge_vector_[ii]->get_other_ind( node_index_);
 
-		assert( (adjacent_node_ind_[ii] < node_index_ &&
+	debug_assert( (adjacent_node_ind_[ii] < node_index_ &&
 			ii <= num_edges_to_smaller_indexed_nodes_)
 			||
 			( adjacent_node_ind_[ii] > node_index_ &&
@@ -435,7 +435,7 @@ EdgeBase::~EdgeBase()
 	//std::cerr << "~EdgeBase(): " << this << " node 1 " << node_indices_[0]
 	//<< " node 2 " << node_indices_[1] << " owner " <<
 	//*pos_in_owners_edge_list_ << " ";
-	//assert( this == *pos_in_owners_edge_list_);
+//debug_assert( this == *pos_in_owners_edge_list_);
 	nodes_[0]->drop_edge(pos_in_nodes_edge_list_[0]);
 	nodes_[1]->drop_edge(pos_in_nodes_edge_list_[1]);
 	owner_->drop_edge(pos_in_owners_edge_list_);
@@ -513,7 +513,7 @@ EdgeBase::EdgeBase
 /// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int EdgeBase::get_other_ind(int node_ind) const
-{       assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
+{      debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 	return node_indices_[0] == node_ind ? node_indices_[1] : node_indices_[0];
 }
 
@@ -540,7 +540,7 @@ int EdgeBase::get_other_ind(int node_ind) const
 /// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 NodeBase* EdgeBase::get_other_node(int node_ind) const
-{  assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
+{ debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 	return node_indices_[0] == node_ind ? nodes_[1] : nodes_[0];
 }
 
@@ -615,7 +615,7 @@ int EdgeBase::get_second_node_ind() const
 ////////////////////////////////////////////////////////////////////////////////
 void EdgeBase::set_pos_in_owners_list( std::list< EdgeBase* >::iterator iter )
 {
-	assert( this == *iter);
+debug_assert( this == *iter);
 	pos_in_owners_edge_list_ = iter;
 	return;
 }
@@ -646,7 +646,7 @@ void EdgeBase::set_pos_in_owners_list( std::list< EdgeBase* >::iterator iter )
 ////////////////////////////////////////////////////////////////////////////////
 void EdgeBase::set_pos_in_node_edgevector(int node_ind, int vect_position)
 {
-	assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
+debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 	int node_pos = (node_ind == node_indices_[0] ? 0 : 1 );
 	pos_in_nodes_edge_vector_[node_pos] = vect_position;
 	return;
@@ -808,7 +808,7 @@ void InteractionGraphBase::set_num_states_for_node
 	int num_states
 )
 {
-	assert (ig_nodes_[node_index] == NULL);
+debug_assert (ig_nodes_[node_index] == NULL);
 	ig_nodes_[node_index] = create_new_node( node_index, num_states);
 	num_total_states_ += num_states;
 	if ( node_index != num_ig_nodes_ )
@@ -843,7 +843,7 @@ void InteractionGraphBase::set_num_states_for_node
 ////////////////////////////////////////////////////////////////////////////////
 int  InteractionGraphBase::get_num_states_for_node(int node_index) const
 {
-	assert( ig_nodes_[node_index] );
+debug_assert( ig_nodes_[node_index] );
 	return ig_nodes_[node_index]->get_num_states();
 }
 
@@ -880,7 +880,7 @@ void InteractionGraphBase::add_edge(int index1, int index2)
 	index2 = index1 < index2 ? index2 : index1;
 	index1 = temp;
 
-	assert( index1 != index2 );
+debug_assert( index1 != index2 );
 
 	EdgeBase* new_edge = create_new_edge(index1, index2);
 	ig_edge_list_.push_front( new_edge );
@@ -1327,7 +1327,7 @@ void InteractionGraphBase::reset_edge_list_iterator_for_node( int node_index ) c
 /// @brief increment the (single) edge list iterator to the next element
 void InteractionGraphBase::increment_edge_list_iterator() const
 {
-	assert( focused_edge_iterator_ != focused_edge_iterator_end_ );
+debug_assert( focused_edge_iterator_ != focused_edge_iterator_end_ );
 	++focused_edge_iterator_;
 }
 
@@ -1402,7 +1402,7 @@ InteractionGraphBase::count_dynamic_memory() const
 void
 InteractionGraphBase::set_number_of_energy_sum_vertex_groups( int num_groups )
 {
-	assert( num_energy_sum_groups_ == -1 && num_groups > 0 );
+debug_assert( num_energy_sum_groups_ == -1 && num_groups > 0 );
 	num_energy_sum_groups_ = num_groups;
 	energy_sum_group_membership_.dimension(
 			num_ig_nodes_, num_energy_sum_groups_ );
@@ -1488,7 +1488,7 @@ InteractionGraphBase::count_connected_components_and_initialize_vertex_groups()
 void
 InteractionGraphBase::note_vertex_reached( int node_index )
 {
-	assert( component_membership_( node_index ) == 0 );
+debug_assert( component_membership_( node_index ) == 0 );
 	component_membership_( node_index ) = num_energy_sum_groups_;
 	//std::cerr << "Marked node " << node_index << " in group " << num_energy_sum_groups_ << std::endl;
 }

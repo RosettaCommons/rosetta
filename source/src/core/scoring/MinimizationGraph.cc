@@ -720,7 +720,7 @@ MinimizationGraph::operator = ( MinimizationGraph const & rhs )
 
 void MinimizationGraph::delete_edge( graph::Edge * edge )
 {
-	assert( dynamic_cast< MinimizationEdge* > (edge) );
+debug_assert( dynamic_cast< MinimizationEdge* > (edge) );
 	minimization_edge_pool_->destroy( static_cast< MinimizationEdge* > (edge) );
 }
 
@@ -797,7 +797,7 @@ reinitialize_minedge_for_respair(
 )
 {
 
-	//assert( rsd1.seqpos() < rsd2.seqpos() );
+//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	for ( MinimizationEdge::TwoBodyEnergiesIterator
 			iter = min_edge.active_2benmeths_begin(),
 			iter_end = min_edge.active_2benmeths_end();
@@ -847,7 +847,7 @@ setup_for_scoring_for_minedge(
 	ResSingleMinimizationData const & res2_ressingle_min_data
 )
 {
-	//assert( rsd1.seqpos() < rsd2.seqpos() );
+//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	for ( MinimizationEdge::TwoBodyEnergiesIterator
 			iter = min_edge.sfd_req_2benmeths_begin(),
 			iter_end = min_edge.sfd_req_2benmeths_end();
@@ -892,7 +892,7 @@ setup_for_derivatives_for_minedge(
 	ResSingleMinimizationData const & res2_min_data
 )
 {
-	//assert( rsd1.seqpos() < rsd2.seqpos() );
+//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	for ( MinimizationEdge::TwoBodyEnergiesIterator
 			iter = min_edge.sfd_req_2benmeths_begin(),
 			iter_end = min_edge.sfd_req_2benmeths_end();

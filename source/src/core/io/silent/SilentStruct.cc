@@ -458,7 +458,7 @@ std::string const & SilentStruct::get_string_value(
 SilentEnergy const & SilentStruct::get_silent_energy(
 	std::string const & scorename
 ) const {
-	assert( has_energy( scorename ) );
+debug_assert( has_energy( scorename ) );
 	using utility::vector1;
 	for ( vector1< SilentEnergy >::const_iterator it = silent_energies_.begin(),
 				end = silent_energies_.end();

@@ -41,7 +41,7 @@
 #include <map>
 #include <sstream>
 #include <fstream>
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace core {

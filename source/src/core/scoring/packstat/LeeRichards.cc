@@ -100,12 +100,12 @@ LeeRichards::compute(
 	xunit -= plane * xunit.dot(plane);
 	xunit.normalize();
 	yunit = plane.cross(xunit);
-	assert( std::abs( 0.0 - xunit.dot(yunit) ) < 1e-9 );
-	assert( std::abs( 0.0 - xunit.dot(plane) ) < 1e-9 );
-	assert( std::abs( 0.0 - plane.dot(yunit) ) < 1e-9 );
-	assert( std::abs( 1.0 - xunit.length()   ) < 1e-9 );
-	assert( std::abs( 1.0 - yunit.length()   ) < 1e-9 );
-	assert( std::abs( 1.0 - plane.length()   ) < 1e-9 );
+debug_assert( std::abs( 0.0 - xunit.dot(yunit) ) < 1e-9 );
+debug_assert( std::abs( 0.0 - xunit.dot(plane) ) < 1e-9 );
+debug_assert( std::abs( 0.0 - plane.dot(yunit) ) < 1e-9 );
+debug_assert( std::abs( 1.0 - xunit.length()   ) < 1e-9 );
+debug_assert( std::abs( 1.0 - yunit.length()   ) < 1e-9 );
+debug_assert( std::abs( 1.0 - plane.length()   ) < 1e-9 );
 	// std::cerr << xunit << std::endl;
 	// std::cerr << yunit << std::endl;
 	// std::cerr << plane << std::endl;
@@ -396,7 +396,7 @@ Slice::compute_derivatives()
 		// Real mg1 = mg * ( e->circle->dada / e->circle->r );
 		// Real mg2 = mg * ( e->ccw->dada / e->ccw->r );
 		// std::cerr << "mg1/mg2 " << mg1 << " " << mg2 << std::endl;
-		// assert( fabs(mg) < 100.0 );
+		//debug_assert( fabs(mg) < 100.0 );
 		Real dir = (e->cw_angle + e->ccw_angle) / 2.0 + numeric::constants::d::pi/2.0;
 		accum_->accumulate_dxdy( e->circle->atom,  mg*cos(dir), -mg*sin(dir), is_internal );
 		accum_->accumulate_dxdy( e->ccw   ->atom, -mg*cos(dir),  mg*sin(dir), is_internal );

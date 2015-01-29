@@ -80,7 +80,7 @@
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cstddef>
 #include <cstdlib>
 #include <iosfwd>

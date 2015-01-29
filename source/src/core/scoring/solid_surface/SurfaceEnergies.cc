@@ -63,7 +63,7 @@ SurfaceEnergies::SurfaceEnergies( SurfaceEnergies const & other ) :
 Energies const &
 SurfaceEnergies::operator = ( Energies const & rhs )
 {
-	assert( dynamic_cast< SurfaceEnergies const * > ( & rhs ) );
+debug_assert( dynamic_cast< SurfaceEnergies const * > ( & rhs ) );
 	if ( this == &rhs ) return *this;
 
 	SurfaceEnergies const & surf_rhs( static_cast< SurfaceEnergies const & > ( rhs ) );
@@ -133,15 +133,15 @@ SurfaceEnergies::reset_surface_residue_information() {
 void
 SurfaceEnergies::set_residue_range_not_surface( Size seqpos_begin, Size seqpos_end ) {
 	// 1. make sure the input is valid:
-	assert( seqpos_begin <= seqpos_end );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-	assert( seqpos_begin <= total_residue_ );
-	assert( seqpos_end   <= total_residue_ );
+debug_assert( seqpos_begin <= seqpos_end );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+debug_assert( seqpos_begin <= total_residue_ );
+debug_assert( seqpos_end   <= total_residue_ );
 	for ( Size ii = 1; ii <= non_surface_ranges_.size(); ++ii ) {
-		assert( non_surface_ranges_[ ii ].first < seqpos_end || non_surface_ranges_[ ii ].second > seqpos_begin );
+	debug_assert( non_surface_ranges_[ ii ].first < seqpos_end || non_surface_ranges_[ ii ].second > seqpos_begin );
 	}
 	non_surface_ranges_.push_back( std::make_pair( seqpos_begin, seqpos_end ));
 	for ( Size ii = seqpos_begin; ii <= seqpos_end; ++ii ) {
-		assert( is_surface_[ ii ] );
+	debug_assert( is_surface_[ ii ] );
 		is_surface_[ ii ] = false;
 	}
 }
@@ -212,7 +212,7 @@ SurfaceEnergies::prepare_surface_grid( conformation::PointGraphOP pg, Real neigh
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-	assert( side > core::Real( 0 ) );
+debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	surf_dim_ = core::conformation::CubeKey(
 		core::Size( std::ceil( ( surf_bb_.upper().x() - surf_bb_.lower().x() ) * side_inv ) ),
@@ -231,9 +231,9 @@ SurfaceEnergies::prepare_surface_grid( conformation::PointGraphOP pg, Real neigh
 		);
 
 		// Check that it is within the expanded bounding box
-		assert( cube_key.x() < surf_dim_.x() );
-		assert( cube_key.y() < surf_dim_.y() );
-		assert( cube_key.z() < surf_dim_.z() );
+	debug_assert( cube_key.x() < surf_dim_.x() );
+	debug_assert( cube_key.y() < surf_dim_.y() );
+	debug_assert( cube_key.z() < surf_dim_.z() );
 
 		// Add the point's position to the cube's collection
 		surface_grid_[ cube_key ].push_back( ii ); // Creates the cube if it doesn't exist yet

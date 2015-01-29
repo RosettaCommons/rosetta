@@ -111,7 +111,7 @@ fill_hbond_set(
 	bool const exclude_sc  /* default false */
 )
 {
-	assert( pose.energies().residue_neighbors_updated() );
+debug_assert( pose.energies().residue_neighbors_updated() );
 
 	// clear old data
 	hbond_set.clear();
@@ -329,7 +329,7 @@ identify_hbonds_1way(
 	Real ssdep_weight_factor
 )
 {
-	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
@@ -376,7 +376,7 @@ identify_hbonds_1way(
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-			assert( base2 > 0 && base != base2 );
+		debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, hbond_set.hbond_options(),
 				hbe_type, datm_xyz, hatm_xyz,
@@ -422,7 +422,7 @@ identify_hbonds_1way(
 	Real ssdep_weight_factor
 )
 {
-	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
@@ -469,7 +469,7 @@ identify_hbonds_1way(
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-			assert( base2 > 0 && base != base2 );
+		debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, options, hbe_type, datm_xyz, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz(),
@@ -535,7 +535,7 @@ identify_hbonds_1way(
 					 Real ssdep_weight_factor
 					 )
 {
-	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
@@ -583,7 +583,7 @@ identify_hbonds_1way(
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-			assert( base2 > 0 && base != base2 );
+		debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, options, hbe_type, datm_xyz, hatm_xyz,
 							acc_rsd.atom(aatm ).xyz(),
@@ -802,7 +802,7 @@ identify_hbonds_1way_membrane(
 	HBondSet & hbond_set,
 	pose::Pose const & pose
 ){
-	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
         //pbadebug
         //std::cout << "entered in identify_hbonds_1way_membrane() " << std::endl;
@@ -853,7 +853,7 @@ identify_hbonds_1way_membrane(
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-			assert( base2 > 0 && base != base2 );
+		debug_assert( base2 > 0 && base != base2 );
 
 
 			hb_energy_deriv( database, hbond_set.hbond_options(),
@@ -900,7 +900,7 @@ identify_hbonds_1way_membrane(
 	pose::Pose const & pose
 )
 {
-	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
@@ -948,7 +948,7 @@ identify_hbonds_1way_membrane(
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-			assert( base2 > 0 && base != base2 );
+		debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, options,
 				hbe_type, datm_xyz, hatm_xyz,

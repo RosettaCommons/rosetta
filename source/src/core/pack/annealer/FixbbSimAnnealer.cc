@@ -285,7 +285,7 @@ void FixbbSimAnnealer::run()
 				std::cout << " ) assigned state 0 despite having " << nstates_for_moltenres( ii ) << " states to choose from" << std::endl;
 			}
 		}
-		assert( ! ig_->any_vertex_state_unassigned() );
+	debug_assert( ! ig_->any_vertex_state_unassigned() );
 		utility_exit();
 
 

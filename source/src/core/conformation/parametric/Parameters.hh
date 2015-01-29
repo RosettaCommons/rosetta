@@ -74,7 +74,7 @@ namespace core {
 					///
 					virtual
 					core::conformation::ResidueOP residue( core::Size const index ) {
-						assert(index <= residue_list_.size());
+					debug_assert(index <= residue_list_.size());
 						return residue_list_[index];
 					}
 
@@ -82,7 +82,7 @@ namespace core {
 					///
 					virtual
 					core::conformation::ResidueCOP residue_cop( core::Size const index ) const {
-						assert(index <= residue_list_.size());
+					debug_assert(index <= residue_list_.size());
 						return residue_list_[index];
 					}
 
@@ -91,7 +91,7 @@ namespace core {
 					/// sequential order or the residue numbering has changed.
 					virtual
 					core::conformation::ResidueOP first_residue() const {
-						assert( residue_list_.size() >= 1);
+					debug_assert( residue_list_.size() >= 1);
 						return residue_list_[1];
 					}
 
@@ -100,7 +100,7 @@ namespace core {
 					/// sequential order or the residue numbering has changed.
 					virtual
 					core::conformation::ResidueOP last_residue() const {
-						assert( residue_list_.size() >= 1);
+					debug_assert( residue_list_.size() >= 1);
 						return residue_list_[residue_list_.size()];
 					}
 
@@ -120,7 +120,7 @@ namespace core {
 					///
 					virtual
 					void set_residue( core::Size const index, core::conformation::ResidueOP existing_residue ) {
-						assert( index > 0 && index <= residue_list_.size() );
+					debug_assert( index > 0 && index <= residue_list_.size() );
 						residue_list_[index] = existing_residue;
 						return;
 					}

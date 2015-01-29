@@ -316,7 +316,7 @@ GoapEnergy::read_angle_definitions( std::string const connection_file )
 			if( read_type == 1 ) { // Atom order definition
 				std::string s2("");
 				linestream >> s2;
-				assert( rsdtype.has( s2 ) );
+			debug_assert( rsdtype.has( s2 ) );
 
 				Size const atmno( rsdtype.atom_index( s2 ) );
 
@@ -679,7 +679,7 @@ GoapEnergy::calculate_dipoles( pose::Pose const &pose,
 
 		} else {
 			conformation::Residue const &rsd_prv( pose.residue( i_prv ) );
-			assert( rsd_prv.has(" C  ") );
+		debug_assert( rsd_prv.has(" C  ") );
 			Size const iatm = rsd_prv.atom_index(" C  ");
 			xyz2 = rsd_prv.xyz( iatm );
 		}

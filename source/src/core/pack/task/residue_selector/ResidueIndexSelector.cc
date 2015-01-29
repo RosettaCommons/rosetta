@@ -26,7 +26,7 @@
 #include <utility/tag/Tag.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace core {
@@ -48,7 +48,7 @@ ResidueIndexSelector::~ResidueIndexSelector() {}
 ResidueSubset
 ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( !index_str_.empty() );
+debug_assert( !index_str_.empty() );
 
 	ResidueSubset subset( pose.total_residue(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );

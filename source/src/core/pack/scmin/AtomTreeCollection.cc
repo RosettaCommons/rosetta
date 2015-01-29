@@ -155,7 +155,7 @@ ResidueAtomTreeCollection::~ResidueAtomTreeCollection()
 
 void ResidueAtomTreeCollection::set_active_restype_index( Size restype_index )
 {
-	assert( restype_index > 0 && restype_index <= atom_tree_representatives_.size() );
+debug_assert( restype_index > 0 && restype_index <= atom_tree_representatives_.size() );
 	active_restype_ = restype_index;
 	active_atom_tree_ = atom_tree_representatives_[ active_restype_ ];
 	active_residue_ = residue_representatives_[ active_restype_ ];
@@ -188,7 +188,7 @@ void ResidueAtomTreeCollection::update_residue()
 	AtomTree const & tree( * atom_tree_representatives_[ active_restype_ ] );
 	Residue & rsd( *residue_representatives_[ active_restype_ ] );
 	if ( tree.residue_xyz_change_list_begin() != tree.residue_xyz_change_list_end() ) {
-		assert( *( tree.residue_xyz_change_list_begin() ) == 1 );
+	debug_assert( *( tree.residue_xyz_change_list_begin() ) == 1 );
 		for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 			rsd.set_xyz( ii, tree.xyz( id::AtomID( ii, 1 ) ));
 		}
@@ -232,7 +232,7 @@ core::Real ResidueAtomTreeCollection::dof( core::id::DOF_ID const &dofid )
 /// update_residue() before the next call to active_residue()
 void ResidueAtomTreeCollection::set_chi( Size chi_index, Real value )
 {
-	assert( chi_index > 0 && chi_index <= residue_representatives_[ active_restype_ ]->nchi() );
+debug_assert( chi_index > 0 && chi_index <= residue_representatives_[ active_restype_ ]->nchi() );
 	residue_uptodate_ = false;
 	atom_tree_representatives_[ active_restype_ ]->set_dof(
 		id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( chi_index )[ 4 ], 1 ), id::PHI ),
@@ -244,7 +244,7 @@ void ResidueAtomTreeCollection::set_d( Size chi_index, Real value )
 	Size const effchi = (chi_index==0)? 1 : chi_index;
 	Size const baseatom = (chi_index==0)? 3 : 4;
 
-	assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
+debug_assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
 	residue_uptodate_ = false;
 	atom_tree_representatives_[ active_restype_ ]->set_dof(
 			id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( effchi )[ baseatom ], 1 ), id::D ),
@@ -256,7 +256,7 @@ void ResidueAtomTreeCollection::set_theta( Size chi_index, Real value )
 	Size const effchi = (chi_index==0)? 1 : chi_index;
 	Size const baseatom = (chi_index==0)? 3 : 4;
 
-	assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
+debug_assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
 	residue_uptodate_ = false;
 	atom_tree_representatives_[ active_restype_ ]->set_dof(
 		id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( effchi )[ baseatom ], 1 ), id::THETA ),
@@ -268,7 +268,7 @@ void ResidueAtomTreeCollection::set_theta( Size chi_index, Real value )
 void ResidueAtomTreeCollection::set_rescoords( conformation::Residue const & res )
 {
 	/// trust the the input residue's chi angles are correct
-	assert( & res.type() == & residue_representatives_[ active_restype_ ]->type() );
+debug_assert( & res.type() == & residue_representatives_[ active_restype_ ]->type() );
 	for ( Size ii = 1; ii <= res.natoms(); ++ii ) {
 		residue_representatives_[ active_restype_ ]->set_xyz( ii, res.xyz( ii ) );
 	}
@@ -284,7 +284,7 @@ void
 ResidueAtomTreeCollection::set_rescoords( utility::vector1< Vector > const & coords )
 {
 	/// trust the the input residue's chi angles are correct
-	assert( coords.size() == residue_representatives_[ active_restype_ ]->natoms() );
+debug_assert( coords.size() == residue_representatives_[ active_restype_ ]->natoms() );
 	for ( Size ii = 1; ii <= residue_representatives_[ active_restype_ ]->natoms(); ++ii ) {
 		residue_representatives_[ active_restype_ ]->set_xyz( ii, coords[ ii ] );
 	}
@@ -298,7 +298,7 @@ void
 ResidueAtomTreeCollection::set_rescoords(
 	utility::vector1< id::AtomID > const & atms, utility::vector1< Vector > const & coords )
 {
-	assert( atms.size() == coords.size() );
+debug_assert( atms.size() == coords.size() );
 	Size natoms = atms.size();
 
 	/// trust the the input residue's chi angles are correct
@@ -313,7 +313,7 @@ ResidueAtomTreeCollection::set_rescoords(
 void
 ResidueAtomTreeCollection::save_momento( ResidueAtomTreeCollectionMomento & momento ) const
 {
-	assert( residue_uptodate_ && atom_tree_uptodate_ );
+debug_assert( residue_uptodate_ && atom_tree_uptodate_ );
 	momento.set_restype_index( active_restype_ );
 	momento.copy_coords( *residue_representatives_[ active_restype_ ] );
 }
@@ -327,7 +327,7 @@ void ResidueAtomTreeCollection::update_from_momento( ResidueAtomTreeCollectionMo
 	update_atom_tree();
 	//update_residue();
 	for ( Size ii = 1; ii <= active_residue_->natoms(); ++ii ) {
-		assert( active_residue_->xyz( ii ).distance_squared( momento.coord( ii ) ) < 1e-6 );
+	debug_assert( active_residue_->xyz( ii ).distance_squared( momento.coord( ii ) ) < 1e-6 );
 	}
 	using namespace id;
 	for ( Size ii = 1, ii_end = active_residue_->nchi(); ii <= ii_end; ++ii ) {
@@ -339,7 +339,7 @@ void ResidueAtomTreeCollection::update_from_momento( ResidueAtomTreeCollectionMo
 																						active_residue_->xyz( active_residue_->chi_atoms(ii)[ 3 ] ),
 																						active_residue_->xyz( active_residue_->chi_atoms(ii)[ 4 ] ) );
 		std::cout << std::endl;
-		assert( std::abs( active_residue_->chi()[ ii ] -
+	debug_assert( std::abs( active_residue_->chi()[ ii ] -
 			numeric::dihedral_degrees( active_residue_->xyz( active_residue_->chi_atoms(ii)[ 1 ] ),
 				active_residue_->xyz( active_residue_->chi_atoms(ii)[ 2 ] ),
 				active_residue_->xyz( active_residue_->chi_atoms(ii)[ 3 ] ),
@@ -426,10 +426,10 @@ ResidueAtomTreeCollectionOP
 AtomTreeCollection::residue_atomtree_collection_op( Size resid )
 {
 	if ( resid_2_moltenresid_.size() != 0 ) {
-		assert( resid_2_moltenresid_[ resid ] != 0 );
+	debug_assert( resid_2_moltenresid_[ resid ] != 0 );
 		return res_collections_[ resid_2_moltenresid_[ resid ] ];
 	} else {
-		assert( res_collections_.size() == 1 );
+	debug_assert( res_collections_.size() == 1 );
 		return res_collections_[ 1 ];
 	}
 }

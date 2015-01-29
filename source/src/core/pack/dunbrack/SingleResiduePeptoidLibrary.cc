@@ -278,7 +278,7 @@ SingleResiduePeptoidLibrary::mark_rotwell_exists(
 	utility::vector1< Size > const & rotwell
 )
 {
-	assert( ! packed_rotno_conversion_data_current_ );
+debug_assert( ! packed_rotno_conversion_data_current_ );
 	Size const rotno( rotwell_2_rotno( rotwell ) );
 	rotwell_exists_[ rotno ] = true;
 }
@@ -326,7 +326,7 @@ SingleResiduePeptoidLibrary::rotwell_2_rotno(
 	utility::vector1< Size > const & rotwell
 ) const
 {
-	assert( n_chi_products_.size() <= rotwell.size() );
+debug_assert( n_chi_products_.size() <= rotwell.size() );
 	Size runsum = 1;
 	for ( Size ii = 1; ii <= n_chi_products_.size(); ++ii ) {
 		runsum += n_chi_products_[ ii ]*( rotwell[ ii ] - 1 );
@@ -339,7 +339,7 @@ SingleResiduePeptoidLibrary::rotwell_2_rotno(
 Size
 SingleResiduePeptoidLibrary::rotwell_2_rotno( Size4 const & rotwell ) const
 {
-	assert( n_chi_products_.size() <= rotwell.size() );
+debug_assert( n_chi_products_.size() <= rotwell.size() );
 	Size runsum = 1;
 	for ( Size ii = 1; ii <= n_chi_products_.size(); ++ii ) {
 		runsum += n_chi_products_[ ii ]*( rotwell[ ii ] - 1 );
@@ -354,7 +354,7 @@ SingleResiduePeptoidLibrary::rotwell_2_rotno( Size4 const & rotwell ) const
 Size
 SingleResiduePeptoidLibrary::rotno_2_packed_rotno( Size const rotno ) const
 {
-	assert( packed_rotno_conversion_data_current_ );
+debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno_[ rotno ];
 }
 
@@ -364,7 +364,7 @@ SingleResiduePeptoidLibrary::rotwell_2_packed_rotno(
 	utility::vector1< Size > const & rotwell
 ) const
 {
-	assert( packed_rotno_conversion_data_current_ );
+debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno( rotwell_2_rotno( rotwell ) );
 }
 
@@ -373,7 +373,7 @@ SingleResiduePeptoidLibrary::rotwell_2_packed_rotno(
 Size
 SingleResiduePeptoidLibrary::rotwell_2_packed_rotno( Size4 const & rotwell ) const
 {
-	assert( packed_rotno_conversion_data_current_ );
+debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno( rotwell_2_rotno( rotwell ) );
 }
 
@@ -393,7 +393,7 @@ SingleResiduePeptoidLibrary::packed_rotno_2_rotwell(
 	Size4 & rotwell
 ) const
 {
-	assert( packed_rotno_2_rotwell_[ packed_rotno ].size() <= rotwell.size() );
+debug_assert( packed_rotno_2_rotwell_[ packed_rotno ].size() <= rotwell.size() );
 	std::copy( packed_rotno_2_rotwell_[ packed_rotno ].begin(), packed_rotno_2_rotwell_[ packed_rotno ].end(), rotwell.begin() );
 }
 
@@ -573,7 +573,7 @@ Size SingleResiduePeptoidLibrary::memory_usage_dynamic() const
 void
 SingleResiduePeptoidLibrary::hokey_template_workaround()
 {
-	assert( false );
+debug_assert( false );
 	utility_exit_with_message(
 	"ERROR: SingleResiduePeptoidLibrary::hokey_template_workaround should never be called!");
 

@@ -66,7 +66,7 @@ rna_scoring_info_from_pose( pose::Pose const & pose )
 {
 	//using core::pose::datacache::CacheableDataType::RNA_SCORING_INFO;
 
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO ) );
+debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO ) );
 	return *( utility::pointer::static_pointer_cast< core::scoring::rna::RNA_ScoringInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO ) ) );
 }
 

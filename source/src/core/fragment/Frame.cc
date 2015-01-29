@@ -319,7 +319,7 @@ void Frame::init_length( core::Size start, core::Size end, core::Size length ) {
 ////////////////////////////////////////// I M P L E M E N T A T I O N S ///////////////////////////////////////////////
 
 core::Size Frame::add_fragment( FragDataCOP new_frag ) {
-	assert( new_frag );
+debug_assert( new_frag );
 	bool success ( is_compatible( new_frag ) );
 	if ( success ) frag_list_.push_back( new_frag );
 	return frag_list_.size();
@@ -379,7 +379,7 @@ void Frame::shift_to( core::Size setting ) {
 	}
 	// set start second
 	start_ = setting;
-	assert( nr_res_ == ( end_ - start_ + 1 ) ); //OL: changed assert to use == instead of "=",  much better now
+debug_assert( nr_res_ == ( end_ - start_ + 1 ) ); //OL: changed assert to use == instead of "=",  much better now
 }
 
 void Frame::shift_by( int offset ) {

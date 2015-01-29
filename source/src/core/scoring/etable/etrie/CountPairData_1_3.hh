@@ -22,7 +22,7 @@
 
 // STL Headers
 #include <iosfwd>
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace core {
 namespace scoring {
@@ -69,7 +69,7 @@ public:
 	Size
 	conn_dist( Size which_connection ) const
 	{
-		assert( which_connection == 0 || which_connection == 1 || which_connection == 2 );
+	debug_assert( which_connection == 0 || which_connection == 1 || which_connection == 2 );
 		return connection_distances_[ which_connection ];
 	}
 

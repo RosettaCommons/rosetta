@@ -225,7 +225,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 
 		// switch to the state's pb
 		poisson_boltzmann_potential_ = cached_data->get_pbp(energy_state);
-		assert(poisson_boltzmann_potential_ != 0);
+	debug_assert(poisson_boltzmann_potential_ != 0);
 
 		TR << "Found cached pose for state: " << energy_state << std::endl;
 

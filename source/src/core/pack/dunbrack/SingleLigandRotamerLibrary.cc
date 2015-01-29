@@ -260,7 +260,7 @@ SingleLigandRotamerLibrary::best_rotamer_energy(
 //		e_ctr +=  existing.xyz(e_atom);
 //		c_ctr += conformer.xyz(c_atom);
 //	}
-//	assert(natoms > 0);
+//debug_assert(natoms > 0);
 //	e_ctr /= natoms;
 //	c_ctr /= natoms;
 //
@@ -361,8 +361,8 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	// Fill new_rotamers with new Residues, including proton_chi expansions
 	for(Size i = 1; i <= rotamers_.size(); ++i)
 	{
-		assert( concrete_residue->name() == rotamers_[i]->name() );
-		assert( concrete_residue->residue_type_set().name() == rotamers_[i]->residue_type_set().name() ); // fa_standard / centroid
+	debug_assert( concrete_residue->name() == rotamers_[i]->name() );
+	debug_assert( concrete_residue->residue_type_set().name() == rotamers_[i]->residue_type_set().name() ); // fa_standard / centroid
 		if ( expand_proton_chi ) {
 			for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {
 				conformation::ResidueOP newrsd = dup_residue( existing_residue, *rotamers_[i] );
@@ -426,8 +426,8 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 void
 SingleLigandRotamerLibrary::fill_missing_atoms( utility::vector1< bool > missing, conformation::ResidueOP rsd, utility::vector1< bool > & missed ) const
 {
-	assert( rsd );
-	assert( missing.size() == rsd->natoms() );
+debug_assert( rsd );
+debug_assert( missing.size() == rsd->natoms() );
 	//Unlike Residue::fill_missing_atoms(), only do a single pass -
 	// The residue should be constructed so that any atoms which would be typically missing
 	// (i.e. hydrogens and virtual atoms) are either built from present atoms, or can be built
@@ -488,7 +488,7 @@ SingleLigandRotamerLibrary::write_to_file( utility::io::ozstream & /*out*/ ) con
 //{
 //	for(core::Size i = 1, i_end = restype->nchi(); i <= i_end; ++i) {
 //		chemical::AtomIndices chi = restype->chi_atoms(i);
-//		assert( chi.size() == 4 );
+//	debug_assert( chi.size() == 4 );
 //		if( (chi[2] == a1 && chi[3] == a2) || (chi[2] == a2 && chi[3] == a1) ) return true;
 //	}
 //	return false;
@@ -537,7 +537,7 @@ SingleLigandRotamerLibrary::write_to_file( utility::io::ozstream & /*out*/ ) con
 //		// Only keep frags with 3+ atoms -- can't superimpose on less.
 //		if( the_frag.size() >= 3 ) rigid_frags_.push_back(the_frag);
 //	}
-//	assert( rigid_frags_.size() <= restype->nchi()+1 );
+//debug_assert( rigid_frags_.size() <= restype->nchi()+1 );
 //
 //	for(Size i = 1; i <= rigid_frags_.size(); ++i) {
 //		TR << "Fragment " << i << ":";
@@ -557,7 +557,7 @@ SingleLigandRotamerLibrary::write_to_file( utility::io::ozstream & /*out*/ ) con
 //		if( a.empty() ) break;
 //		automorphs_.push_back( a );
 //	}
-//	assert( automorphs_.size() > 0 );
+//debug_assert( automorphs_.size() > 0 );
 //	TR << "Ligand has " << automorphs_.size() << " automorphisms" << std::endl;
 //}
 
@@ -578,7 +578,7 @@ SingleLigandRotamerLibrary::write_to_file( utility::io::ozstream & /*out*/ ) con
 //			// And add it if it's not equivalent to some other one we already added.
 //			for(Size k = 1, k_end = frag_morphs.size(); k <= k_end && !already_have_it; ++k) {
 //				Automorphism const & old_morph = *(frag_morphs[k]);
-//				assert( new_morph.size() == old_morph.size() );
+//			debug_assert( new_morph.size() == old_morph.size() );
 //				bool are_same = true;
 //				// Two automorphisms are the same from a fragment's point of view
 //				// if they contain the same mapping for all fragment atom positions.
@@ -597,7 +597,7 @@ SingleLigandRotamerLibrary::write_to_file( utility::io::ozstream & /*out*/ ) con
 //			}
 //		} // end search over whole-molecule automorphisms
 //	} // end search over fragments
-//	assert( total_superpos_ > 0 );
+//debug_assert( total_superpos_ > 0 );
 //	TR << total_superpos_ << " unique possible rotamer-substitution superpositions" << std::endl;
 //}
 

@@ -33,7 +33,7 @@
 
 // C++ headers
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <utility>
 
 
@@ -380,7 +380,7 @@ public: // Properties
 	Index const &
 	index( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return m_[ key ];
 	}
 
@@ -422,7 +422,7 @@ public: // Indexers
 	MappedConstReference
 	operator []( Key const & key ) const
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_[ m_[ key ] ].second;
 	}
 
@@ -432,7 +432,7 @@ public: // Indexers
 	MappedReference
 	operator []( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_[ m_[ key ] ].second;
 	}
 
@@ -579,7 +579,7 @@ private: // Methods
 	Index const &
 	add_key( Key const & key )
 	{
-		assert( key > 0 );
+	debug_assert( key > 0 );
 		if ( ! m_.has( key ) ) { // Extend index map and activate key
 			m_.resize( key, Index( 0 ) );
 			m_[ key ] = ++u_;

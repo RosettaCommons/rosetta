@@ -39,7 +39,7 @@ static thread_local basic::Tracer TR( "core.io.sdf.MolFileIOData" );
 void dump_graph(MolFileIOGraph const & graph) {
 	MolFileIOGraph::vertex_iterator aiter, aiter_end;
 	for( boost::tie( aiter, aiter_end ) = boost::vertices( graph ); aiter != aiter_end; ++aiter ) {
-		assert( has( graph, *aiter ) );
+	debug_assert( has( graph, *aiter ) );
 		MolFileIOAtomCOP atom( graph[*aiter] );
 		if( atom ) {
 			TR << "Atom " << *aiter << " " << atom->element() << std::endl;
@@ -106,8 +106,8 @@ MolFileIOMolecule::atom_index( core::Size index ) {
 	if( index_atom_map_.count(index) == 0 ) {
 		return 0; // If not found return default constructor of OP == null pointer
 	}
-	assert( has(molgraph_, index_atom_map_[index] ) );
-	assert( molgraph_[ index_atom_map_[index] ] );
+debug_assert( has(molgraph_, index_atom_map_[index] ) );
+debug_assert( molgraph_[ index_atom_map_[index] ] );
 	return molgraph_[ index_atom_map_[index] ];
 }
 
@@ -139,7 +139,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCOP
 		chemical::ElementSetCOP elements,
 		chemical::MMAtomTypeSetCOP mm_atom_types
 	) {
-	assert( elements );
+debug_assert( elements );
 
 	// Make sure we're up to date first.
 	normalize();
@@ -160,8 +160,8 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCOP
 	std::map< mioAD, VD > restype_from_mio; // A map of atoms in the input graph to the restype graph
 	MolFileIOGraph::vertex_iterator aiter, aiter_end;
 	for( boost::tie( aiter, aiter_end ) = boost::vertices( molgraph_ ); aiter != aiter_end; ++aiter ) {
-		assert( has( molgraph_, *aiter ) );
-		assert( molgraph_[*aiter] );
+	debug_assert( has( molgraph_, *aiter ) );
+	debug_assert( molgraph_[*aiter] );
 		MolFileIOAtom const & atom( *(molgraph_[*aiter]) );
 		VD vd = restype->add_atom();
 		restype_from_mio[ *aiter ] = vd;
@@ -185,7 +185,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCOP
 		MolFileIOBond const & bond( *(molgraph_[*eiter]) );
 		mioAD source( boost::source(*eiter, molgraph_) );
 		mioAD target( boost::target(*eiter, molgraph_) );
-		assert( restype_from_mio.count(source) && restype_from_mio.count(target) );
+	debug_assert( restype_from_mio.count(source) && restype_from_mio.count(target) );
 		core::Size bond_type( bond.sdf_type() );
 		if( bond_type > 4 ) { bond_type = 0; };
 		restype->add_bond( restype_from_mio[source], restype_from_mio[target], BondName(bond_type) );

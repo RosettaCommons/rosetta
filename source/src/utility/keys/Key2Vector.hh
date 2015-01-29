@@ -23,7 +23,7 @@
 #include <utility/keys/Key2Vector.fwd.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace utility {
@@ -116,7 +116,7 @@ public: // Indexers
 	Key const &
 	operator []( int const i ) const
 	{
-		assert( ( i >= 0 ) && ( i < 2 ) );
+	debug_assert( ( i >= 0 ) && ( i < 2 ) );
 		return ( i == 0 ? key1_ : key2_ );
 	}
 
@@ -126,7 +126,7 @@ public: // Indexers
 	Key &
 	operator []( int const i )
 	{
-		assert( ( i >= 0 ) && ( i < 2 ) );
+	debug_assert( ( i >= 0 ) && ( i < 2 ) );
 		return ( i == 0 ? key1_ : key2_ );
 	}
 
@@ -136,7 +136,7 @@ public: // Indexers
 	Key const &
 	operator ()( int const i ) const
 	{
-		assert( ( i > 0 ) && ( i <= 2 ) );
+	debug_assert( ( i > 0 ) && ( i <= 2 ) );
 		return ( i == 1 ? key1_ : key2_ );
 	}
 
@@ -146,7 +146,7 @@ public: // Indexers
 	Key &
 	operator ()( int const i )
 	{
-		assert( ( i > 0 ) && ( i <= 2 ) );
+	debug_assert( ( i > 0 ) && ( i <= 2 ) );
 		return ( i == 1 ? key1_ : key2_ );
 	}
 

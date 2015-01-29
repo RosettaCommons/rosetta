@@ -400,7 +400,7 @@ RNA_SuiteAssignment
 RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in,
 											 utility::vector1<Real> & deriv )	const {
 	using namespace chemical::rna;
-	assert( torsions_in.size() == 7 );
+debug_assert( torsions_in.size() == 7 );
 
 	utility::vector1<Real> torsions = torsions_in;
 	for ( Size i = 1; i <= torsions.size(); ++i ) {

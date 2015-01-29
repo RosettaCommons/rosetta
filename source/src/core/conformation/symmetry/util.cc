@@ -547,7 +547,7 @@ set_fold_tree_from_symm_data(
 			if ( pos_id2 == "SUBUNIT" ) continue;
 			++njumps;
 			++pos;
-			assert( virtual_id_to_num.find( pos_id1 ) != virtual_id_to_num.end() && virtual_id_to_num.find( pos_id2 ) != virtual_id_to_num.end() );
+		debug_assert( virtual_id_to_num.find( pos_id1 ) != virtual_id_to_num.end() && virtual_id_to_num.find( pos_id2 ) != virtual_id_to_num.end() );
 			Size pos1 ( virtual_id_to_num.find( pos_id1 )->second );
 			Size pos2 ( virtual_id_to_num.find( pos_id2 )->second );
 	     	cuts( njumps ) = num_res_real + pos;
@@ -707,7 +707,7 @@ set_fold_tree_from_symm_data(
 			if ( pos_id2 == "SUBUNIT" ) continue;
 			++njumps;
 			++pos;
-			assert( virtual_id_to_num.find( pos_id1 ) != virtual_id_to_num.end() && virtual_id_to_num.find( pos_id2 ) != virtual_id_to_num.end() );
+		debug_assert( virtual_id_to_num.find( pos_id1 ) != virtual_id_to_num.end() && virtual_id_to_num.find( pos_id2 ) != virtual_id_to_num.end() );
 			Size pos1 ( virtual_id_to_num.find( pos_id1 )->second );
 			Size pos2 ( virtual_id_to_num.find( pos_id2 )->second );
 			jumps(1, njumps ) = num_res_real + std::min(pos1,pos2);

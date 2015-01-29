@@ -57,7 +57,7 @@ using namespace core;
 /// the branch occurs or zero if N/A, i.e., if this is the lower terminus.
 core::uint
 find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue ) {
-	assert( residue.is_carbohydrate() );
+debug_assert( residue.is_carbohydrate() );
 
 	if ( ! residue.is_lower_terminus() ) {
 		uint const id_of_connection_to_parent(

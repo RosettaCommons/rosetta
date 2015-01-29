@@ -374,7 +374,7 @@ void MultiCoolAnnealer::run()
 			}
 		}
 		std::cout << "num_top_kept_: " << num_top_kept_ << std::endl;
-		assert( ! ig_->any_vertex_state_unassigned() );
+	debug_assert( ! ig_->any_vertex_state_unassigned() );
 		utility_exit();
 	}
 

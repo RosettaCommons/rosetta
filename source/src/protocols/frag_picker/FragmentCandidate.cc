@@ -313,8 +313,8 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
   } else {
 		core::pose::setPoseExtraScore( pose, "TOTAL", ms->total_score(sc));
   }
-	assert ( key() > 0 );
-	assert ( key() < 40000000 );
+debug_assert ( key() > 0 );
+debug_assert ( key() < 40000000 );
 	core::pose::add_score_line_string( pose, "FRAG_ID", string_of(key()));
 
 	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose );

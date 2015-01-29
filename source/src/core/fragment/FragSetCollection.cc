@@ -87,28 +87,28 @@ void FragSetCollection::add_fragset( FragSetOP fragset ) {
 
 ConstFrameIterator FragSetCollection::begin() const {
 	std::cout << "iterator of FragSetCollection has stubbed out " << std::endl;
-	assert( 0 );
+debug_assert( 0 );
 	utility_exit_with_message( "iterator of FragSetCollection has stubbed out " );
 	return ConstFrameIterator(); //too make compiler happy
 }
 
 ConstFrameIterator FragSetCollection::end() const {
 	std::cout << "iterator of FragSetCollection has stubbed out " << std::endl;
-	assert( 0 );
+debug_assert( 0 );
 	utility_exit_with_message( "iterator of FragSetCollection has stubbed out " );
 	return ConstFrameIterator(); //too make compiler happy
 }
 
 FrameIterator FragSetCollection::nonconst_begin() {
 	std::cout << "iterator of FragSetCollection has stubbed out " << std::endl;
-	assert( 0 );
+debug_assert( 0 );
 	utility_exit_with_message( "iterator of FragSetCollection has stubbed out " );
 	return FrameIterator(); //too make compiler happy
 }
 
 FrameIterator FragSetCollection::nonconst_end() {
 	std::cout << "iterator of FragSetCollection has stubbed out " << std::endl;
-	assert( 0 );
+debug_assert( 0 );
 	utility_exit_with_message( "iterator of FragSetCollection has stubbed out " );
 	return FrameIterator(); //too make compiler happy
 }
@@ -123,7 +123,7 @@ bool FragSetCollection::empty() const {
 void FragSetCollection::add_( FrameOP ) {
 	//tricky which FragSet should it add the frame to? needs a way to determine this
 	std::cout << "add Frame to FragSetCollection has stubbed out " << std::endl;
-	assert( 0 );
+debug_assert( 0 );
 	utility_exit_with_message( "add Frame to FragSetCollection has stubbed out " );
 }
 

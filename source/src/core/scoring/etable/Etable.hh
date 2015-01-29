@@ -1038,7 +1038,7 @@ Etable::analytic_etable_derivatives(
 		dfasolE_ddis *= p.fasol_final_weight;
 	} else if ( dis < fasol_cubic_poly_far_xlo_ ) {
 		/// exponential evaluation
-		/// assert( atype1 <= atype2 ), which is accomplished at the top of this function.
+		///debug_assert( atype1 <= atype2 ), which is accomplished at the top of this function.
 		Real const dis_rad1 = dis - lj_radius(atype1);
 		Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
 		Real const dis_rad2 = dis - lj_radius(atype2);
@@ -1127,7 +1127,7 @@ Etable::analytic_lk_derivatives(
 //	Real & fa_solE
 //) const
 //{
-//	assert( dis2 <= p.maxd2 );
+//debug_assert( dis2 <= p.maxd2 );
 //  if ( dis2  < p.ljrep_linear_ramp_d2_cutoff ) {
 //    //  ctsa - use linear ramp instead of lj when the dis/sigma
 //    //    ratio drops below theshold
@@ -1147,7 +1147,7 @@ Etable::analytic_ljrep_linearized(
 	EtableParamsOnePair const & p
 ) const
 {
-	assert( dis * dis < p.ljrep_linear_ramp_d2_cutoff );
+debug_assert( dis * dis < p.ljrep_linear_ramp_d2_cutoff );
 	return  dis*p.lj_switch_slope + p.lj_switch_intercept;
 }
 
@@ -1162,8 +1162,8 @@ Etable::analytic_lj_generic_form(
 	EtableParamsOnePair const & p
 ) const
 {
-	assert( dis2 >= p.ljrep_linear_ramp_d2_cutoff );
-	assert( dis2 <= p.ljatr_cubic_poly_xhi * p.ljatr_cubic_poly_xhi );
+debug_assert( dis2 >= p.ljrep_linear_ramp_d2_cutoff );
+debug_assert( dis2 <= p.ljatr_cubic_poly_xhi * p.ljatr_cubic_poly_xhi );
 	Real const inv_dis6  = inv_dis2 * inv_dis2 * inv_dis2;
 	//Real const inv_dis12 = inv_dis6 * inv_dis6;
 
@@ -1201,8 +1201,8 @@ Etable::analytic_ljatr_cubic_poly_ramp_to_zero(
 	EtableParamsOnePair const & p
 ) const
 {
-	assert( dis >= p.ljatr_cubic_poly_xlo );
-	assert( dis <= p.ljatr_cubic_poly_xhi );
+debug_assert( dis >= p.ljatr_cubic_poly_xlo );
+debug_assert( dis <= p.ljatr_cubic_poly_xhi );
 	return eval_cubic_polynomial( dis, p.ljatr_cubic_poly_parameters );
 }
 
@@ -1217,8 +1217,8 @@ Etable::analytic_ljatr_cubic_poly_ramp_to_zero_deriv(
 	EtableParamsOnePair const & p
 ) const
 {
-	assert( dis >= p.ljatr_cubic_poly_xlo );
-	assert( dis <= p.ljatr_cubic_poly_xhi );
+debug_assert( dis >= p.ljatr_cubic_poly_xlo );
+debug_assert( dis <= p.ljatr_cubic_poly_xhi );
 	return cubic_polynomial_deriv( dis, p.ljatr_cubic_poly_parameters );
 }
 
@@ -1234,7 +1234,7 @@ Etable::analytic_lk_evaluation(
 	Real & fa_solE
 ) const
 {
-	assert( atype1 <= atype2 );
+debug_assert( atype1 <= atype2 );
 
 	/// a) At distances below p.fasol_cubic_poly_close_start, the value of fasol is held constant.
 	/// b) Then there's a cubic_poly to smooth between this constant region and the exponential region.
@@ -1247,7 +1247,7 @@ Etable::analytic_lk_evaluation(
 		fa_solE *= p.fasol_final_weight;
 	} else if ( dis < fasol_cubic_poly_far_xlo_ ) {
 		/// exponential evaluation
-		/// assert( atype1 <= atype2 ), which is accomplished at the top of this function.
+		///debug_assert( atype1 <= atype2 ), which is accomplished at the top of this function.
 		Real const dis_rad1 = dis - lj_radius(atype1);
 		Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
 		Real const dis_rad2 = dis - lj_radius(atype2);
@@ -1279,7 +1279,7 @@ Etable::analytic_lk_evaluation_individual(
 	Real & fa_solE2
 ) const
 {
-	assert( atype1 <= atype2 );
+debug_assert( atype1 <= atype2 );
 
 	/// a) At distances below p.fasol_cubic_poly_close_start, the value of fasol is held constant.
 	/// b) Then there's a cubic_poly to smooth between this constant region and the exponential region.

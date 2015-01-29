@@ -100,8 +100,8 @@ void bicubic_interpolation(
 	//std::cout << "  binwy " <<  binwy << std::endl;
 	//std::cout << std::endl;
 
-	assert( dxp >= 0 && dxp < 1.0 );
-	assert( dyp >= 0 && dyp < 1.0 );
+debug_assert( dxp >= 0 && dxp < 1.0 );
+debug_assert( dyp >= 0 && dyp < 1.0 );
 	Real dxm = 1-dxp;
 	Real dym = 1-dyp;
 	Real binwx_over6 = binwx/6;
@@ -501,7 +501,7 @@ expand_proton_chi_oldversion(
 		}
 	}
 
-	assert( count - 1 == nsamples * chi_set_vector.size() );
+debug_assert( count - 1 == nsamples * chi_set_vector.size() );
 	chi_set_vector = newchi_vect;
 }
 
@@ -524,7 +524,7 @@ expand_proton_chi(
 	utility::vector1< Real > const & samples = concrete_residue->proton_chi_samples( proton_chi );
 
 	// i.e., -60, 60, 180
-	assert( samples.size() > 0 ); // or less harsh and just a return ?
+debug_assert( samples.size() > 0 ); // or less harsh and just a return ?
 
 	// i.e., 10, 20  to model -40 -50 -60 -70 -80 etc.
 	utility::vector1< Real > const & extra_samples = concrete_residue->proton_chi_extra_samples( proton_chi );
@@ -561,7 +561,7 @@ expand_proton_chi(
 		} // for sample.size()
 	} // for jj (chi_set_vector)
 
-	assert( chi_set_vector.size()  == nsamples * nr_of_old_elem );
+debug_assert( chi_set_vector.size()  == nsamples * nr_of_old_elem );
 }
 
 
@@ -592,32 +592,32 @@ void DunbrackRotamerSampleData::set_nrchi_sample( bool setting )
 }
 
 void DunbrackRotamerSampleData::set_nchi( Size nchi ) {
-	assert( nchi_ <= DUNBRACK_MAX_SCTOR );
+debug_assert( nchi_ <= DUNBRACK_MAX_SCTOR );
 	nchi_ = nchi;
 }
 
 void DunbrackRotamerSampleData::set_rotwell(  Size chi_index, Size rotwell )
 {
-	assert( chi_index > 0 && chi_index <= nchi_ );
+debug_assert( chi_index > 0 && chi_index <= nchi_ );
 	rot_well_[ chi_index ] = rotwell;
 }
 
 void DunbrackRotamerSampleData::set_rotwell( utility::vector1< Size > const & rotwell )
 {
-	assert( ( ! nrchi_sample_ && rotwell.size() == nchi_ ) ||
+debug_assert( ( ! nrchi_sample_ && rotwell.size() == nchi_ ) ||
 		( nrchi_sample_ && rotwell.size() == nchi_ - 1 ) );
 	std::copy( rotwell.begin(), rotwell.end(), rot_well_.begin() );
 }
 
 void DunbrackRotamerSampleData::set_chi_mean( Size chi_index, Real mean )
 {
-	assert( chi_index > 0 && chi_index <= nchi_ );
+debug_assert( chi_index > 0 && chi_index <= nchi_ );
 	chi_mean_[ chi_index ] = mean;
 }
 
 void DunbrackRotamerSampleData::set_chi_sd( Size chi_index, Real sd )
 {
-	assert( chi_index > 0 && chi_index <= nchi_ );
+debug_assert( chi_index > 0 && chi_index <= nchi_ );
 	chi_sd_[ chi_index ] = sd;
 }
 
@@ -628,19 +628,19 @@ void DunbrackRotamerSampleData::set_prob( Real probability )
 
 void DunbrackRotamerSampleData::set_nrchi_lower_boundary( Real low )
 {
-	assert( nrchi_sample_ );
+debug_assert( nrchi_sample_ );
 	nrchi_lower_boundary_ = low;
 }
 
 void DunbrackRotamerSampleData::set_nrchi_upper_boundary( Real high )
 {
-	assert( nrchi_sample_ );
+debug_assert( nrchi_sample_ );
 	nrchi_upper_boundary_ = high;
 }
 
 void DunbrackRotamerSampleData::set_nrchi_probability( Real nrchi_prob )
 {
-	assert( nrchi_sample_ );
+debug_assert( nrchi_sample_ );
 	nrchi_probability_ = nrchi_prob;
 }
 
@@ -651,7 +651,7 @@ DunbrackRotamerSampleData::assign_random_chi(
 	core::Real temperature /* scale distributions like a temperature,  default 1.0 = is xray temperature */
 ) const
 {
-	assert( chi_angles.size() >= nchi() );
+debug_assert( chi_angles.size() >= nchi() );
 
 	for ( core::Size ii = 1; ii <= nchi(); ++ii ) {
 		//if ( chi_is_nonrotameric( ii ) ) {
@@ -674,7 +674,7 @@ DunbrackRotamerSampleData::chi_probability(
 	core::Real temperature /* scale distributions like a temperature, default 1.0 = is xray temperature */
 ) const
 {
-	assert( chi_angles.size() >= nchi() );
+debug_assert( chi_angles.size() >= nchi() );
 	Real const norm_gauss( std::sqrt( numeric::constants::r::pi_2 ) );
 	Real prob(1);
 

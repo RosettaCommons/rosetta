@@ -78,10 +78,10 @@ ICoorAtomID::ICoorAtomID(
 		vd_ = rsd_type.atom_vertex(atomno_);
 	} else if ( name.substr(0,4) == "CONN" ) {
 		type_ = CONNECT;
-		assert( is_int( name.substr(4) ) );
+	debug_assert( is_int( name.substr(4) ) );
 		atomno_ = int_of( name.substr(4) );
 		vd_ = ResidueType::null_vertex;
-		assert( atomno_ > 0 && atomno_ <= rsd_type.n_residue_connections() );
+	debug_assert( atomno_ > 0 && atomno_ <= rsd_type.n_residue_connections() );
 		if ( atomno_ > rsd_type.n_residue_connections() ) { // using > is not a great check but it is better than !=
 			tw.Warning << "The record for CONN" << atomno_ << " in the topology file for " << rsd_type.name() <<
 					" either has an incorrect index or is listed out of order in the file." << std::endl;
@@ -110,7 +110,7 @@ ICoorAtomID::ICoorAtomID(
 		ResidueType const & rsd_type
 )
 {
-	assert( rsd_type.has(vd) );
+debug_assert( rsd_type.has(vd) );
 	type_ = INTERNAL;
 	atomno_ = rsd_type.atom_index( vd );
 	vd_ = vd;
@@ -136,9 +136,9 @@ ICoorAtomID::xyz(
 	} else if ( type_ == POLYMER_LOWER ) {
 		//Changed by VKM on 9 April 2014: we no longer assume that the residue connected at the POLYMER_LOWER connection is the i-1 residue in sequence; nor
 		//do we assume that that residue is connected via its upper terminus.
-		assert(!rsd.is_lower_terminus());
+	debug_assert(!rsd.is_lower_terminus());
 		core::Size const lowerID = rsd.type().lower_connect_id(); //The index of the lower connection of THIS residue.
-		//assert(!rsd.connection_incomplete( lowerID ));
+	//debug_assert(!rsd.connection_incomplete( lowerID ));
 		core::Size const seqpos( rsd.connect_map( lowerID ).resid() ); //Get the index of the residue connected to this one at the lower connection.
 		if (seqpos == 0) {
 			tw << "Warning from IcoorAtomID::xyz(): Cannot get xyz for POLYMER_LOWER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS coords (null vector)." << std::endl;
@@ -153,9 +153,9 @@ ICoorAtomID::xyz(
 	} else if ( type_ == POLYMER_UPPER ) {
 		//Changed by VKM on 9 April 2014: we no longer assume that the residue connected at the POLYMER_UPPER connection is the i+1 residue in sequence; nor
 		//do we assume that that residue is connected via its lower terminus.
-		assert(!rsd.is_upper_terminus());
+	debug_assert(!rsd.is_upper_terminus());
 		core::Size const upperID = rsd.type().upper_connect_id(); //The index of the upper connection of THIS residue.
-		//assert(!rsd.connection_incomplete( upperID ));
+	//debug_assert(!rsd.connection_incomplete( upperID ));
 		core::Size const seqpos( rsd.connect_map( upperID ).resid() ); //Get the index of the residue connected to this one at the upper connection.
 		if (seqpos == 0 ) {
 			tw << "Warning from IcoorAtomID::xyz(): Cannot get xyz for POLYMER_UPPER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS coords (null vector)." << std::endl;
@@ -173,7 +173,7 @@ ICoorAtomID::xyz(
 		if(rsd.is_lower_terminus()) --connid;
 		if(rsd.is_upper_terminus()) --connid;
 		//tw << "conid=" << connid << std::endl; tw.flush(); //DELETE ME
-		//assert(!rsd.connection_incomplete( connid ) );
+	//debug_assert(!rsd.connection_incomplete( connid ) );
 		int const  partner_seqpos( rsd.residue_connection_partner( connid ) );
 		if ( partner_seqpos < 1 || partner_seqpos > int( conformation.size() ) ) {
 			tw << "Warning from IcoorAtomID::xyz(): ICoorAtomID xyz depends on invalid residue connection, returning BOGUS coords (null vector): this_rsd= " << rsd.name() <<
@@ -322,7 +322,7 @@ AtomICoor::build(
 		conformation::Conformation const & conformation
 ) const
 {
-	assert( kinematics::Stub( stub_atom1_.xyz( rsd, conformation ),
+debug_assert( kinematics::Stub( stub_atom1_.xyz( rsd, conformation ),
 			stub_atom2_.xyz( rsd, conformation ),
 			stub_atom3_.xyz( rsd, conformation ) ).is_orthogonal( 0.001 ) );
 
@@ -336,7 +336,7 @@ AtomICoor::build(
 		ResidueType const & rsd_type
 ) const
 {
-	assert( kinematics::Stub( stub_atom1_.xyz( rsd_type ),
+debug_assert( kinematics::Stub( stub_atom1_.xyz( rsd_type ),
 			stub_atom2_.xyz( rsd_type ),
 			stub_atom3_.xyz( rsd_type ) ).is_orthogonal( 0.001 ) );
 
@@ -359,7 +359,7 @@ AtomICoor::build(
 		stub_atom2_.xyz( rsd ),
 		stub_atom3_.xyz( rsd ));
 
-	assert( built_stub.is_orthogonal( 0.001 ) );
+debug_assert( built_stub.is_orthogonal( 0.001 ) );
 
 	return built_stub.spherical( phi_, theta_, d_ );
 }

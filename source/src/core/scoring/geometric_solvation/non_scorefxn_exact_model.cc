@@ -162,9 +162,9 @@ void add_to_individual_sol_energies(
 
 	// Double-check transformation matrix
 	core::Vector new_base_atom_location = transformation_matrix * translated_base_atom;
-	assert( std::abs(new_base_atom_location.normalized().x()) < 0.001 );
-	assert( std::abs(new_base_atom_location.normalized().y()) < 0.001 );
-	assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
+debug_assert( std::abs(new_base_atom_location.normalized().x()) < 0.001 );
+debug_assert( std::abs(new_base_atom_location.normalized().y()) < 0.001 );
+debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 
 	// Loop over all atoms of neighboring residues, INCLUDING SELF
 	core::scoring::TenANeighborGraph const & graph = input_pose.energies().tenA_neighbor_graph();
@@ -210,8 +210,8 @@ void add_to_individual_sol_energies(
 			core::Vector const transformed_occ_atom_xyz = transformation_matrix * ( orig_occ_atom_xyz + translation_vector );
 
 			// Double-check transformations
-			assert( std::abs(orig_polar_atom_xyz.distance( orig_occ_atom_xyz ) - transformed_occ_atom_xyz.magnitude()) < 0.001 );
-			assert( std::abs(orig_base_atom_xyz.distance( orig_occ_atom_xyz ) - new_base_atom_location.distance( transformed_occ_atom_xyz )) < 0.001 );
+		debug_assert( std::abs(orig_polar_atom_xyz.distance( orig_occ_atom_xyz ) - transformed_occ_atom_xyz.magnitude()) < 0.001 );
+		debug_assert( std::abs(orig_base_atom_xyz.distance( orig_occ_atom_xyz ) - new_base_atom_location.distance( transformed_occ_atom_xyz )) < 0.001 );
 			// Find sites occluded by this atom, set these to true
 			core::Real const occ_radius = etable_ptr->lj_radius( occ_rsd.atom_type_index( occ_atomno ) );
 			core::Real const sq_dist_cut = ( occ_radius + water_radius ) * ( occ_radius + water_radius );

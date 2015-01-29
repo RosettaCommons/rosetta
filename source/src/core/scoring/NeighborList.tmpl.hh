@@ -379,7 +379,7 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -465,16 +465,16 @@ NeighborList::setup(
 				//atom_has_been_updated_from_wide_[ ii ].resize( ii_natoms, 0 );
 			}
 		}
-		assert( reference_coords_.size() == nres );
+	debug_assert( reference_coords_.size() == nres );
 		for ( Size ii = 1; ii <= nres; ++ii ) {
-			assert( reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
-			assert( wide_reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
+		debug_assert( reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
+		debug_assert( wide_reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
 			for ( Size jj = 1; jj <= reference_coords_[ ii ].size(); ++jj ) {
 				reference_coords_[ ii ][ jj ] = pose.residue( ii ).xyz( jj );
 				wide_reference_coords_[ ii ][ jj ] = pose.residue( ii ).xyz( jj );
 				/// if these aren't zero, then the logic for updating atom nblists from the wide-nblists has failed
-				assert( atom_needs_update_from_wide_[ ii ][ jj ] == 0 );
-				//assert( atom_has_been_updated_from_wide_[ ii ][ jj ] == 0 );
+			debug_assert( atom_needs_update_from_wide_[ ii ][ jj ] == 0 );
+			//debug_assert( atom_has_been_updated_from_wide_[ ii ][ jj ] == 0 );
 			}
 		}
 	}
@@ -483,7 +483,7 @@ NeighborList::setup(
 	// dimension the nblists, or on a subsquenct setup, remove the stale data from
 	// the nblists
 	bool const first_time_setup( nblist_.size() == 0 );
-	assert( first_time_setup || nblist_.size() == pose.total_residue() );
+debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
 	if ( first_time_setup ) { nblist_.resize( nres ); upper_nblist_.resize( nres ); intrares_upper_nblist_.resize( nres ); }
 	if ( auto_update_ && first_time_setup ) wide_nblist_.resize( nres );
 	for ( Size i=1; i<= nres; ++i ) {
@@ -653,10 +653,10 @@ NeighborList::prepare_for_scoring(
 	bool update_narrow = false; // true if any atom has moved > sqrt( move_tolerance_sqr_ ) from reference_coords_
 	bool update_wide = false; // true if any atom has moved > sqrt( wide_move_tolerance_sqr_ ) from wide_reference_coords_
 
-	assert( atom_needs_update_from_wide_.size() == nres );
+debug_assert( atom_needs_update_from_wide_.size() == nres );
 	for ( Size ii = 1; ii <= nres; ++ii ) {
-		assert( reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
-		assert( atom_needs_update_from_wide_[ ii ].size() ==  pose.residue( ii ).natoms() );
+	debug_assert( reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
+	debug_assert( atom_needs_update_from_wide_[ ii ].size() ==  pose.residue( ii ).natoms() );
 		for ( Size jj = 1; jj <= reference_coords_[ ii ].size(); ++jj ) {
 			DistanceSquared dsqr_from_ref = reference_coords_[ ii ][ jj ].distance_squared( pose.residue( ii ).xyz( jj ));
 			if ( dsqr_from_ref > move_tolerance_sqr_ ) {

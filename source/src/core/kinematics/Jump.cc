@@ -379,22 +379,22 @@ Jump::from_bond_cst(
 	utility::vector1< Real > const & csts
 )
 {
-	assert( atoms.size() == 6 && csts.size() == 6 );
+debug_assert( atoms.size() == 6 && csts.size() == 6 );
 	// make sure A3-A2-A1 or B3-B2-B1 is not linear (i.e., a stub can be defined)
 	Stub stubA(atoms[1], atoms[2], atoms[3]); // a1, a2, a3
 	Stub stubB(atoms[4], atoms[5], atoms[6]); // b1, b2, b3
-	assert( stubA.is_orthogonal(1e-3) && stubB.is_orthogonal(1e-3) );
+debug_assert( stubA.is_orthogonal(1e-3) && stubB.is_orthogonal(1e-3) );
 	// udpate B1, B2, B3 positions
 	Vector b1 = stubA.spherical( csts[4]/*dihedralA*/, csts[2]/*angleA*/, csts[1]/*disAB*/ );
 	Stub stub_b1( b1, atoms[1], atoms[2]); // b1, a1, a2
-	assert(stub_b1.is_orthogonal(1e-3));
+debug_assert(stub_b1.is_orthogonal(1e-3));
 	Vector b2 = stub_b1.spherical( csts[5]/*dihedralAB*/, csts[3]/*angleB*/, atoms[4].distance(atoms[5]) );
 	Stub stub_b2( b2, b1, atoms[1]); // b2, b1, a1
-	assert(stub_b2.is_orthogonal(1e-3));
+debug_assert(stub_b2.is_orthogonal(1e-3));
 	Vector b3 = stub_b2.spherical( csts[6]/*dihedralB*/, angle_of(atoms[4], atoms[5], atoms[6]), atoms[5].distance( atoms[6] ) );
 	// update new b1, b2, b3 and get new  RT
 	Stub new_stubB(b1,b2,b3);
-	assert( new_stubB.is_orthogonal(1e-3) );
+debug_assert( new_stubB.is_orthogonal(1e-3) );
 	rt_.from_stubs( stubA, new_stubB );
 	rb_delta[1] = rb_delta[2] = ZERO;
 	atoms[4] = b1;

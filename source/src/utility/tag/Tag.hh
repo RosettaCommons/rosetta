@@ -22,7 +22,7 @@
 #include <map>
 #include <sstream>
 #include <string>
-#include <cassert>
+#include <utility/assert.hh>
 #include <iostream>
 
 // Utility headers

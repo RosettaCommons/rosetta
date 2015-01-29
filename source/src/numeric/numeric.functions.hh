@@ -23,7 +23,7 @@
 
 // C++ headers
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <limits>
 

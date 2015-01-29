@@ -99,7 +99,7 @@ public:
 	// for UpJumpSRFD these functions should never be called
 	// might obsolet these completely and only use SRFDs via the func (pose, ipos, Frame ) variant
 	virtual bool apply(pose::Pose &, Size) const {
-		assert( 0 );
+	debug_assert( 0 );
 		return false;
 	}
 
@@ -113,13 +113,13 @@ public:
 
 	// insert fragment_data sec-struct into ss-string at position seq_pos
 	virtual bool apply_ss( std::string&, Size) const {
-		assert( 0 );
+	debug_assert( 0 );
 		return false;
 	}
 
 	// insert fragment_data into pose at position seq_pos
 	virtual bool steal(pose::Pose const&, Size)  {
-		assert( 0 );
+	debug_assert( 0 );
 		return false;
 	}
 
@@ -143,8 +143,8 @@ public:
 		downstream_stub_atoms_( downstream_stub_atoms ),
 		upstream_stub_atoms_( upstream_stub_atoms )
 	{
-		assert( downstream_stub_atoms.size() == 3 || downstream_stub_atoms.size() == 4 );
-		assert( upstream_stub_atoms.size() == 3 || upstream_stub_atoms.size() == 4 );
+	debug_assert( downstream_stub_atoms.size() == 3 || downstream_stub_atoms.size() == 4 );
+	debug_assert( upstream_stub_atoms.size() == 3 || upstream_stub_atoms.size() == 4 );
 	};
 
 	/// @brief clone
@@ -185,7 +185,7 @@ public:
 	// for DownJumpSRFD these functions should never be called
 	// might obsolet these completely and only use SRFDs via the func (pose, ipos, Frame ) variant
 	virtual bool apply(pose::Pose &, Size) const {
-		assert( 0 );
+	debug_assert( 0 );
 		return false;
 	}
 
@@ -196,20 +196,20 @@ public:
 
 	// insert fragment_data sec-struct into ss-string at position seq_pos
 	virtual bool apply_ss( std::string&, Size) const {
-		assert( 0 );
+	debug_assert( 0 );
 		return false;
 	}
 
 	// insert fragment_data into pose at position seq_pos
 	virtual bool steal(pose::Pose const&, Size)  {
-		assert( 0 );
+	debug_assert( 0 );
 		return false;
 	}
 
 	//
 	virtual bool
 	is_applicable( kinematics::MoveMap const&, Size ) const {
-		assert( 0 );
+	debug_assert( 0 );
 		return false;
 	}
 

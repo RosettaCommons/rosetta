@@ -60,7 +60,7 @@
 #include <basic/MetricValue.hh>
 
 
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>

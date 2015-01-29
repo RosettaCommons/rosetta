@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <utility>
 
 
@@ -353,7 +353,7 @@ public: // Properties
 	Index const &
 	index( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return m()[ key ];
 	}
 
@@ -395,7 +395,7 @@ public: // Indexers
 	MappedConstReference
 	operator []( Key const & key ) const
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_[ m()[ key ] ].second;
 	}
 
@@ -405,7 +405,7 @@ public: // Indexers
 	MappedReference
 	operator []( Key const & key )
 	{
-		assert( active( key ) );
+	debug_assert( active( key ) );
 		return v_[ m()[ key ] ].second;
 	}
 
@@ -613,7 +613,7 @@ public: // Static functions
 	void
 	activate( Key const & key )
 	{
-		assert( key > 0 );
+	debug_assert( key > 0 );
 		IndexMap & imap( m() );
 		if ( ! imap.has( key ) ) { // Extend index map and activate key
 			imap.resize( key, Index( 0 ) );
@@ -632,7 +632,7 @@ private: // Methods
 	Index const &
 	add_key( Key const & key )
 	{
-		assert( key > 0 );
+	debug_assert( key > 0 );
 		Index const & i( activated_index( key ) );
 		if ( i > v_.size() ) v_.resize( i );
 		return i;

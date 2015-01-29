@@ -31,7 +31,7 @@
 // #include "triplet/triplet.h"
 
 // // C++ Headers
-// #include <cassert>
+// #include <utility/assert.hh>
 // #include <cmath>
 // #include <cstdlib>
 // #include <iostream>

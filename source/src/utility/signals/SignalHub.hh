@@ -24,6 +24,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/signals/Link.hh>
 #include <utility/signals/LinkUnit.hh>
+#include <utility/assert.hh>
 
 // boost headers
 #include <boost/bind.hpp>

@@ -303,7 +303,7 @@ MembraneTopology_from_pose( pose::Pose const & pose )
 {
   // ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 
-  assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) );
+ debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) );
   return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
 

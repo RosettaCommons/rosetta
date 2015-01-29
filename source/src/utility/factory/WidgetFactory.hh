@@ -24,7 +24,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <map>
 #include <string>
 

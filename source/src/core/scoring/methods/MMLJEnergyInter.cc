@@ -410,7 +410,7 @@ MMLJEnergyInter::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-	assert( set1.resid() != set2.resid() );
+debug_assert( set1.resid() != set2.resid() );
 
 	using namespace methods;
 	using namespace trie;

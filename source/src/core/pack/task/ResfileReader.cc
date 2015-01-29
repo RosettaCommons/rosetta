@@ -503,7 +503,7 @@ NATRO::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -525,7 +525,7 @@ NATAA::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -547,7 +547,7 @@ ALLAA::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -581,7 +581,7 @@ ALLAAxc::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -607,7 +607,7 @@ ALLAAwc::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() || get_token( which_token, tokens ) == ALLAA::name() );
+debug_assert( get_token( which_token, tokens ) == name() || get_token( which_token, tokens ) == ALLAA::name() );
 	++which_token;
 }
 
@@ -635,7 +635,7 @@ PIKAA::initialize_from_tokens(
 	using namespace chemical;
 	using utility::vector1;
 
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	keep_canonical_aas_.resize( chemical::num_canonical_aas, false );
 
 	if ( which_token == tokens.size() ) {
@@ -700,7 +700,7 @@ PIKNA::initialize_from_tokens(
 	using namespace chemical;
 	using utility::vector1;
 
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 
 	if ( which_token == tokens.size() ) {
 		std::stringstream err_msg;
@@ -752,7 +752,7 @@ PIKRNA::initialize_from_tokens(
 	using namespace chemical;
 	using utility::vector1;
 
-	assert( tokens[ which_token ] == name() );
+debug_assert( tokens[ which_token ] == name() );
 	if ( which_token == tokens.size() ) {
 		TR.Error << "RESFILE ERROR: PIKRNA must be followed by a string of allowed "
 		        << "nucleic acids in single-letter format" << std::endl;
@@ -805,7 +805,7 @@ NOTAA::initialize_from_tokens(
 {
 	using namespace chemical;
 
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	keep_aas_.resize( chemical::num_canonical_aas, true );
 
 	++which_token;
@@ -847,7 +847,7 @@ EMPTY::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -875,7 +875,7 @@ RESET::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -902,7 +902,7 @@ POLAR::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -945,7 +945,7 @@ APOLAR::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 
 }
@@ -991,7 +991,7 @@ APOLA::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	TR << "RESFILE NOTE: APOLA command deprecated.  Use APOLAR command instead.  Treating as APOLAR command." << std::endl;
 	++which_token;
 }
@@ -1019,7 +1019,7 @@ EX::initialize_from_tokens(
 	Size resid
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 
 	if ( which_token == tokens.size() ) {
 		std::stringstream err_msg;
@@ -1105,7 +1105,7 @@ NC::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 	nc_to_include_ = get_token( which_token, tokens );
 	++which_token;
@@ -1136,7 +1136,7 @@ EX_CUTOFF::initialize_from_tokens(
 	Size resid
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 
 	//check that next token is an integer value
 	//stringstreams provide type safety!  yay!
@@ -1170,7 +1170,7 @@ USE_INPUT_SC::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }//end USE_INPUT_SC
 
@@ -1192,7 +1192,7 @@ AUTO::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -1214,7 +1214,7 @@ SCAN::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -1237,7 +1237,7 @@ TARGET::initialize_from_tokens(
 	Size resid
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 
 	if ( which_token == tokens.size() ) {
 		std::stringstream err_msg;
@@ -1284,7 +1284,7 @@ NO_ADDUCTS::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( get_token( which_token, tokens ) == name() );
+debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -1307,7 +1307,7 @@ FIX_HIS_TAUTOMER::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-	assert( tokens[ which_token ] == name() );
+debug_assert( tokens[ which_token ] == name() );
 	++which_token;
 }
 

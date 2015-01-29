@@ -989,7 +989,7 @@ public: // residue mutators en masse
 
 		for ( CharIterator i = begin; i < end; ++i, ++rr ) {
 			rr->chainID = *i;
-			assert( rr < residue_rec_.end() );
+		debug_assert( rr < residue_rec_.end() );
 		}
 
 		rebuild_pdb2pose();
@@ -1007,7 +1007,7 @@ public: // residue mutators en masse
 	void
 	set_chains( CharContainer const & c )
 	{
-		assert( residue_rec_.size() == c.size() );
+	debug_assert( residue_rec_.size() == c.size() );
 		check_residue_records_size( c.size() ); // run-time check
 
 		set_chains( c.begin(), c.end() );
@@ -1030,7 +1030,7 @@ public: // residue mutators en masse
 
 		for ( IntIterator i = begin; i < end; ++i, ++rr ) {
 			rr->resSeq = *i;
-			assert( rr < residue_rec_.end() );
+		debug_assert( rr < residue_rec_.end() );
 		}
 
 		rebuild_pdb2pose();
@@ -1048,7 +1048,7 @@ public: // residue mutators en masse
 	void
 	set_numbering( IntContainer const & c )
 	{
-		assert( residue_rec_.size() == c.size() );
+	debug_assert( residue_rec_.size() == c.size() );
 		check_residue_records_size( c.size() ); // run-time check
 
 		set_numbering( c.begin(), c.end() );
@@ -1071,7 +1071,7 @@ public: // residue mutators en masse
 
 		for ( CharIterator i = begin; i < end; ++i, ++rr ) {
 			rr->iCode = *i;
-			assert( rr < residue_rec_.end() );
+		debug_assert( rr < residue_rec_.end() );
 		}
 
 		rebuild_pdb2pose();
@@ -1089,7 +1089,7 @@ public: // residue mutators en masse
 	void
 	set_icodes( CharContainer const & c )
 	{
-		assert( residue_rec_.size() == c.size() );
+	debug_assert( residue_rec_.size() == c.size() );
 		check_residue_records_size( c.size() ); // run-time check
 
 		set_icodes( c.begin(), c.end() );

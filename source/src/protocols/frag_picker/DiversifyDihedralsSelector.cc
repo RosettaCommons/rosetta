@@ -69,7 +69,7 @@ void DiversifyDihedralsSelector::select_fragments(
 Real DiversifyDihedralsSelector::dihedral_rmsd(FragmentCandidateOP f1,FragmentCandidateOP f2) {
 
     Real rms = 0.0;
-    assert ( f1->get_length() == f2->get_length() );
+   debug_assert ( f1->get_length() == f2->get_length() );
     for(Size k=1;k<=f1->get_length();k++) {
 	Real d = f1->get_residue(k)->phi() - f2->get_residue(k)->phi();
 	rms += d*d;

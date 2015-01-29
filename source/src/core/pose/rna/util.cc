@@ -507,7 +507,7 @@ apply_pucker(
 	bool const skip_same_state,
 	bool const idealize_coord
 ) {
-	assert( pucker_state <= 2 );
+debug_assert( pucker_state <= 2 );
 
 	static const RNA_IdealCoord ideal_coord;
 	Real delta, nu1, nu2;
@@ -677,7 +677,7 @@ apply_pucker(
 		// (Since these torsions will contain virtual atom(s),
 		// but want to score these torsions
 		bool const is_cutpoint_closed1 = is_cutpoint_closed_torsion( pose, torsion_id );
-		assert( is_cutpoint_closed1 == is_cutpoint_closed_by_atom_name( rsd_1, rsd_2, rsd_3, rsd_4, id1, id2, id3, id4) ); // takes time
+	debug_assert( is_cutpoint_closed1 == is_cutpoint_closed_by_atom_name( rsd_1, rsd_2, rsd_3, rsd_4, id1, id2, id3, id4) ); // takes time
 
 		if ( is_cutpoint_closed1 && !is_virtual_torsion ){
 			print_torsion_info( pose, torsion_id );

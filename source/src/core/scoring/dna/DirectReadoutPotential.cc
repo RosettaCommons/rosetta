@@ -122,7 +122,7 @@ DirectReadoutPotential::DirectReadoutPotential()
 Real
 DirectReadoutPotential::rsd_rsd_energy(conformation::Residue const & rsd1,conformation::Residue const & rsd2) const
 {
-	assert( rsd1.is_protein() && rsd2.is_DNA() );
+debug_assert( rsd1.is_protein() && rsd2.is_DNA() );
 
 	// define coordinate frame
 	bool const AG( rsd2.aa() == chemical::na_ade || rsd2.aa() == chemical::na_gua );
@@ -146,7 +146,7 @@ DirectReadoutPotential::rsd_rsd_energy(conformation::Residue const & rsd1,confor
 		int x_bin = get_xy_bin(xx);
 		int y_bin = get_xy_bin(yy);
 		int z_bin = get_z_bin(zz);
-		assert( aa_bin >= 0 && aa_bin < 20 && na_bin >= 0 && na_bin < 4 );
+	debug_assert( aa_bin >= 0 && aa_bin < 20 && na_bin >= 0 && na_bin < 4 );
 		return score[x_bin][y_bin][z_bin][aa_bin][na_bin];
 	} else {
 		return 0.0;
@@ -174,7 +174,7 @@ DirectReadoutPotential::fill_bins(string (&my_array)[9][9][4], char const base )
 				getline( myfile, line );
 				std::istringstream l( line );
 				l >> x >> y >> z >> aas;
-				assert( x == i && y == j && z == k );
+			debug_assert( x == i && y == j && z == k );
 				if ( aas == "-" ) {
 					my_array[x][y][z]= "";
 				} else {
@@ -202,7 +202,7 @@ DirectReadoutPotential::get_pairs()
 			std::istringstream l(line );
 			Size itmp, jtmp;
 			l >> itmp >> jtmp >> num_pairs[i][j];
-			assert( itmp == i && jtmp == j && !l.fail() );
+		debug_assert( itmp == i && jtmp == j && !l.fail() );
 		}
 	}
 	myfile.close();

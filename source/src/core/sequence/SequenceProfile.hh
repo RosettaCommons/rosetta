@@ -62,7 +62,7 @@ public:
 		negative_better_(negative_better)
 	{
 		profile( prof );
-		assert( profile().size() == length() );
+	debug_assert( profile().size() == length() );
 	}
 
 	/// @brief copy ctor

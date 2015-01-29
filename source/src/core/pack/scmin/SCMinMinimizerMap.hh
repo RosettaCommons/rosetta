@@ -116,7 +116,7 @@ public:
 
 	/// Accessors
 	Size nactive_residues() const { return nactive_residues_; }
-	Size active_residue( Size index ) const { assert( index <= nactive_residues_ ); return active_residues_[ index ]; }
+	Size active_residue( Size index ) const {debug_assert( index <= nactive_residues_ ); return active_residues_[ index ]; }
 
 	/// @brief MinimizerMapBase class virtual accessor
 	virtual kinematics::DomainMap const & domain_map() const { return domain_map_; }

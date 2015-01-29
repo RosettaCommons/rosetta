@@ -374,7 +374,7 @@ PDBInfo::resize_atom_records( Pose const & pose )
 {
 	using core::conformation::Residue;
 
-	assert( residue_rec_.size() == pose.n_residue() );
+debug_assert( residue_rec_.size() == pose.n_residue() );
 
 	for ( Size r = 1, re = pose.n_residue(); r <= re; ++r ) {
 		residue_rec_[ r ].atomRec.resize( pose.residue( r ).natoms() );
@@ -615,9 +615,9 @@ PDBInfo::copy(
 	Size const start_from
 )
 {
-	assert( copy_from <= input_info.residue_rec_.size() );
-	assert( copy_to <= input_info.residue_rec_.size() );
-	assert( start_from <= residue_rec_.size() );
+debug_assert( copy_from <= input_info.residue_rec_.size() );
+debug_assert( copy_to <= input_info.residue_rec_.size() );
+debug_assert( start_from <= residue_rec_.size() );
 
 	// force erase data from map
 	Size idx = start_from;

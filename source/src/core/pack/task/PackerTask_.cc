@@ -2046,7 +2046,7 @@ PackerTask_::residue_task( Size resid ) const
 {
 	// packer has no need to read residue-level task for a residue that has been disabled
 	//This makes the assumption that ONLY the packer is allowed to use this function
-	//assert( pack_residue_[ resid ] );
+//debug_assert( pack_residue_[ resid ] );
 	return residue_tasks_[ resid ];
 }
 

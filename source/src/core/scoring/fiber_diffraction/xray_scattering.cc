@@ -232,12 +232,12 @@ KromerMann get_km( std::string elt ) {
 // 	fpart[1] = idxX[1]-floor(idxX[1]); neg_fpart[1] = 1-fpart[1];
 // 	fpart[2] = idxX[2]-floor(idxX[2]); neg_fpart[2] = 1-fpart[2];
 //
-// 	assert( pt000[0] >= 1 && pt000[0] <= data.u1() );
-// 	assert( pt000[1] >= 1 && pt000[1] <= data.u2() );
-// 	assert( pt000[2] >= 1 && pt000[2] <= data.u3() );
-// 	assert( pt111[0] >= 1 && pt111[0] <= data.u1() );
-// 	assert( pt111[1] >= 1 && pt111[1] <= data.u2() );
-// 	assert( pt111[2] >= 1 && pt111[2] <= data.u3() );
+// debug_assert( pt000[0] >= 1 && pt000[0] <= data.u1() );
+// debug_assert( pt000[1] >= 1 && pt000[1] <= data.u2() );
+// debug_assert( pt000[2] >= 1 && pt000[2] <= data.u3() );
+// debug_assert( pt111[0] >= 1 && pt111[0] <= data.u1() );
+// debug_assert( pt111[1] >= 1 && pt111[1] <= data.u2() );
+// debug_assert( pt111[2] >= 1 && pt111[2] <= data.u3() );
 //
 //
 // 	// interpolate

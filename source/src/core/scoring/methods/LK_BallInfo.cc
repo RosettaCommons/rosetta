@@ -304,7 +304,7 @@ LKB_ResidueInfo::initialize_residue_type( ResidueType const & rsd_type ) const
 	using namespace conformation;
 	using namespace chemical;
 
-	//assert( residue_type_has_waters( rsd_type ) );
+//debug_assert( residue_type_has_waters( rsd_type ) );
 
 	TR.Trace << "initialize_residue_type: " << rsd_type.name() << std::endl;
 
@@ -312,7 +312,7 @@ LKB_ResidueInfo::initialize_residue_type( ResidueType const & rsd_type ) const
 	// bool const sidechain_only( ! basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ] );
 
 	ResidueTypeCOP const address( rsd_type.get_self_ptr() );
-	assert( ! water_builder_map_.count( address ) );
+debug_assert( ! water_builder_map_.count( address ) );
 
 	water_builder_map_[ address ]; // create entry in map
 	utility::vector1< WaterBuilders > & rsd_water_builders( water_builder_map_.find( address )->second );

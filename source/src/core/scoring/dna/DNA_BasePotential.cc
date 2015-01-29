@@ -179,7 +179,7 @@ DNA_BasePotential::load_score_tables()
 			int param_index;
 			Real mean, stddev;
 			l >> type_name >> bases >> param_name >> param_index >> mean >> stddev;
-			assert( type_name == "BS" || type_name == "BP" );
+		debug_assert( type_name == "BS" || type_name == "BP" );
 			InteractionType const type( type_name == "BS" ? BS_type : BP_type );
 			if ( l.fail() || param_index < 1 || param_index > 6 ) {
 				std::cout << "failline:" << line << std::endl;
@@ -194,7 +194,7 @@ DNA_BasePotential::load_score_tables()
 			Real Fij;
 			std::string tmp;
 			l >> type_name >> bases >> tmp >> i;
-			assert( type_name == "BS" || type_name == "BP" );
+		debug_assert( type_name == "BS" || type_name == "BP" );
 			InteractionType const type( type_name == "BS" ? BS_type : BP_type );
 			for ( int j=1; j<= 6; ++j ) {
 				l >> Fij;
@@ -223,7 +223,7 @@ DNA_BasePotential::base_score(
 	utility::vector1< Real > const & params
 ) const
 {
-	assert( params.size() == 6 );
+debug_assert( params.size() == 6 );
 
 	// max allowed deviation from average beyond which the score is capped
 	// PB -- this seems very large! it's in standard deviations, right?
@@ -268,7 +268,7 @@ DNA_BasePotential::base_step_score(
 ) const
 {
 	utility::vector1< Real > params(6);
-	assert( rsd2.seqpos() == rsd1.seqpos() + 1 );
+debug_assert( rsd2.seqpos() == rsd1.seqpos() + 1 );
 
 	get_base_step_params( rsd1, rsd2, params );
 
@@ -285,7 +285,7 @@ DNA_BasePotential::eval_base_step_Z_scores(
 {
 	utility::vector1< Real > params(6);
 	z_scores.resize(6);
-	assert( rsd2.seqpos() == rsd1.seqpos() + 1 );
+debug_assert( rsd2.seqpos() == rsd1.seqpos() + 1 );
 
 	get_base_step_params( rsd1, rsd2, params );
 
@@ -323,7 +323,7 @@ DNA_BasePotential::base_pair_score(
 ) const
 {
 	utility::vector1< Real > params(6);
-	//assert( rsd1.seqpos() < rsd2.seqpos() );
+//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	get_base_pair_params( rsd1, rsd2, params );
 	std::string const bpstr( base_string(rsd1) + base_string(rsd2) );
 
@@ -350,15 +350,15 @@ DNA_BasePotential::eval_base_step_derivative(
 
 	bool const debug( true ), verbose( false );
 
-	assert( rsd1.seqpos() + 1 == rsd2.seqpos() );
+debug_assert( rsd1.seqpos() + 1 == rsd2.seqpos() );
 
 	kinematics::Stub const stub1( get_base_stub( rsd1, 1 ) ), stub2( get_base_stub( rsd2, 1 ) );
 
 	// copy matrices
 	Matrix M1( stub1.M ), M2( stub2.M );
 
-	assert( is_orthonormal( M1, 1e-3 ) );
-	assert( is_orthonormal( M2, 1e-3 ) );
+debug_assert( is_orthonormal( M1, 1e-3 ) );
+debug_assert( is_orthonormal( M2, 1e-3 ) );
 
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
 		std::cout << "dna_bs_deriv: base flip!" << std::endl;
@@ -375,26 +375,26 @@ DNA_BasePotential::eval_base_step_derivative(
 	M2 = R_gamma_2 * M2;
 	M1 = R_gamma_2.transposed() * M1;
 
-	assert( is_orthonormal( M1, 1e-3 ) );
-	assert( is_orthonormal( M2, 1e-3 ) );
+debug_assert( is_orthonormal( M1, 1e-3 ) );
+debug_assert( is_orthonormal( M2, 1e-3 ) );
 
 	// build mid-base-pair triad
-	assert( M1.col_z().distance( M2.col_z() ) < 1e-3 );
-	assert( std::abs( dot( rt, M1.col_z() ) ) < 1e-3 );
+debug_assert( M1.col_z().distance( M2.col_z() ) < 1e-3 );
+debug_assert( std::abs( dot( rt, M1.col_z() ) ) < 1e-3 );
 
 	Matrix MBT;
 	MBT.col_z( M1.col_z() );
 
-	assert( std::abs( dot( M1.col_x(), MBT.col_z() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_x(), MBT.col_z() ) ) < 1e-3 );
-	assert( std::abs( dot( M1.col_y(), MBT.col_z() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_y(), MBT.col_z() ) ) < 1e-3 );
+debug_assert( std::abs( dot( M1.col_x(), MBT.col_z() ) ) < 1e-3 );
+debug_assert( std::abs( dot( M2.col_x(), MBT.col_z() ) ) < 1e-3 );
+debug_assert( std::abs( dot( M1.col_y(), MBT.col_z() ) ) < 1e-3 );
+debug_assert( std::abs( dot( M2.col_y(), MBT.col_z() ) ) < 1e-3 );
 
 	// get
 	MBT.col_y( ( 0.5f * ( M1.col_y() + M2.col_y() ) ).normalized() );
 	MBT.col_x( ( 0.5f * ( M1.col_x() + M2.col_x() ) ).normalized() );
 
-	assert( is_orthonormal( MBT, 1e-3 ) );
+debug_assert( is_orthonormal( MBT, 1e-3 ) );
 
 	// angular params
 
@@ -418,7 +418,7 @@ DNA_BasePotential::eval_base_step_derivative(
 	params[6] = dot( displacement, MBT.col_z() ); // RISE
 
 	// check sign conventions
-	assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 0);
+debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 0);
 
 	// convert to degrees
 	Real const twist( params[1] );
@@ -435,7 +435,7 @@ DNA_BasePotential::eval_base_step_derivative(
 		utility::vector1< Real > new_params;
 		get_base_step_params( rsd1, rsd2, new_params );
 		for ( Size i=1; i<= 6; ++i ) {
-			assert( std::abs( params[i] - new_params[i] ) < 1e-2 );
+		debug_assert( std::abs( params[i] - new_params[i] ) < 1e-2 );
 		}
 	}
 
@@ -526,10 +526,10 @@ DNA_BasePotential::eval_base_step_derivative(
 		Vector x1( stub1.M.col_x() );
 		Vector R_gamma_x2( rotation_matrix( rt, gamma) * Vector(stub2.M.col_x()) );
 
-		assert( Vector(stub1.M.col_z()).distance( rotation_matrix(rt,gamma) * Vector(stub2.M.col_z())) <1e-2);
+	debug_assert( Vector(stub1.M.col_z()).distance( rotation_matrix(rt,gamma) * Vector(stub2.M.col_z())) <1e-2);
 
 		Real c( std::cos( twist ) );
-		assert( std::abs( c - dot( x1,R_gamma_x2 ) ) < 1e-2 );
+	debug_assert( std::abs( c - dot( x1,R_gamma_x2 ) ) < 1e-2 );
 		c = std::min( std::max( min_c, c ), max_c );
 
 		Real const dtwist_dc = -1 / std::sqrt( 1 - c * c );
@@ -643,7 +643,7 @@ DNA_BasePotential::eval_base_pair_derivative(
 
 	bool const debug( true );
 
-	assert( rsd1.seqpos() < rsd2.seqpos() );
+debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	utility::vector1< Real > params( 6, 0.0 );
 	Real const MAX_SCORE_DEV = 100.0; // should be same as in dna_bp_score
@@ -654,8 +654,8 @@ DNA_BasePotential::eval_base_pair_derivative(
 	// copy matrices
 	Matrix M1( stub1.M ), M2( stub2.M );
 
-	assert( is_orthonormal( M1, 1e-3 ) );
-	assert( is_orthonormal( M2, 1e-3 ) );
+debug_assert( is_orthonormal( M1, 1e-3 ) );
+debug_assert( is_orthonormal( M2, 1e-3 ) );
 
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
 		std::cout << "dna_bp_deriv: base flip!" << std::endl;
@@ -672,10 +672,10 @@ DNA_BasePotential::eval_base_pair_derivative(
 	M2 = R_gamma_2 * M2;
 	M1 = R_gamma_2.transposed() * M1;
 
-	assert( is_orthonormal( M1, 1e-3 ) );
-	assert( is_orthonormal( M2, 1e-3 ) );
-	assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
-	assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
+debug_assert( is_orthonormal( M1, 1e-3 ) );
+debug_assert( is_orthonormal( M2, 1e-3 ) );
+debug_assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
+debug_assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
 
 	// build mid-base-pair triad
 	Matrix MBT;
@@ -691,7 +691,7 @@ DNA_BasePotential::eval_base_pair_derivative(
 	Real const omega = std::atan2( dot( M1.col_z(), M2.col_x() ),
 																	dot( M1.col_z(), M2.col_z() ) );
 
-	assert( ( std::abs( std::abs( omega ) -
+debug_assert( ( std::abs( std::abs( omega ) -
 											arccos( dot( M1.col_z(), M2.col_z() ) ) )<1e-2 ) &&
 					( std::abs( std::abs( omega ) -
 											arccos( dot( M1.col_x(), M2.col_x() ) ) )<1e-2 ) );
@@ -712,7 +712,7 @@ DNA_BasePotential::eval_base_pair_derivative(
 
 	/////////////
 	// check sign conventions
-	assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
+debug_assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
 
 	// convert to degrees
 	params[1] = degrees( omega );
@@ -724,7 +724,7 @@ DNA_BasePotential::eval_base_pair_derivative(
 		utility::vector1< Real > new_params;
 		get_base_pair_params( rsd1, rsd2, new_params );
 		for ( Size i=1; i<= 6; ++i ) {
-			assert( std::abs( params[i] - new_params[i] ) < 1e-2 );
+		debug_assert( std::abs( params[i] - new_params[i] ) < 1e-2 );
 		}
 	}
 
@@ -813,10 +813,10 @@ DNA_BasePotential::eval_base_pair_derivative(
 		Vector x1( stub1.M.col_x() );
 		Vector R_gamma_x2( rotation_matrix( bo, gamma) * Vector(stub2.M.col_x()) );
 
-		assert( Vector(stub1.M.col_y()).distance( rotation_matrix(bo,gamma) * Vector(stub2.M.col_y())) <1e-2);
+	debug_assert( Vector(stub1.M.col_y()).distance( rotation_matrix(bo,gamma) * Vector(stub2.M.col_y())) <1e-2);
 
 		Real c( std::cos( omega ) );
-		assert( std::abs( c - dot( x1,R_gamma_x2 ) ) < 1e-2 );
+	debug_assert( std::abs( c - dot( x1,R_gamma_x2 ) ) < 1e-2 );
 		c = std::min( std::max( min_c, c ), max_c );
 
 		Real const domega_dc = -1 / std::sqrt( 1 - c * c );

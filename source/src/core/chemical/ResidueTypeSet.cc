@@ -376,7 +376,7 @@ ResidueTypeSet::interchangeability_group_map( std::string const & name ) const
 ResidueTypeCOPs const &
 ResidueTypeSet::name3_map( std::string const & name ) const
 {
-	assert( name.size() == 3 );
+debug_assert( name.size() == 3 );
 	std::map< std::string, ResidueTypeCOPs >::const_iterator iter = name3_map_.find( name );
 	if ( iter == name3_map_.end() ) {
 		return empty_residue_list_;
@@ -461,7 +461,7 @@ ResidueTypeSet::update_residue_maps()
 {
 	clear_residue_maps();
 
-	assert( residue_types_const_.empty() );
+debug_assert( residue_types_const_.empty() );
 
 	for ( ResidueTypeOPs::iterator rsdtype_it(residue_types_.begin() ), rsdtype_end( residue_types_.end() );
 			rsdtype_it != rsdtype_end; ++rsdtype_it ) {
@@ -516,7 +516,7 @@ void
 ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeOP rsd )
 {
 	//Assert rather than utility exit, because this should have been called by remove residue, which utility exits
-	assert(has_name(rsd->name()));
+debug_assert(has_name(rsd->name()));
 	ResidueTypeCOPs::iterator const_res_it(std::find(residue_types_const_.begin(),residue_types_const_.end(),rsd));
 	residue_types_const_.erase(const_res_it);
 

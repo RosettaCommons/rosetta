@@ -83,7 +83,7 @@ DistanceChainbreakEnergy::finalize_total_energy(
     if ( !lower_rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) continue;
 		tr.Trace << "cutpoint " << n << "has CUTPOINT variant" << std::endl;
     Residue const & upper_rsd( pose.residue( cutpoint+1 ) );
-    assert( upper_rsd.has_variant_type( chemical::CUTPOINT_UPPER ) );
+   debug_assert( upper_rsd.has_variant_type( chemical::CUTPOINT_UPPER ) );
 		//    Size const nbb( lower_rsd.mainchain_atoms().size() );
 
 		total_dev +=
@@ -96,7 +96,7 @@ DistanceChainbreakEnergy::finalize_total_energy(
 		//'N' of cutpoint + 1
 	}
 
-  assert( std::abs( totals[ distance_chainbreak ] ) < 1e-3 );
+ debug_assert( std::abs( totals[ distance_chainbreak ] ) < 1e-3 );
   totals[ distance_chainbreak ] = total_dev;
 }
 

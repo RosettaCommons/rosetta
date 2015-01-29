@@ -234,7 +234,7 @@ trie_vs_path(
 		//		break;
 		//	}
 		//}
-		//assert( r_class_masks );
+	//debug_assert( r_class_masks );
 
 		s_heavy_depth = 0;
 		if ( r.is_hydrogen() ) {

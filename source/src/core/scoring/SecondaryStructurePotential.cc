@@ -90,8 +90,8 @@ SS_Info const &
 retrieve_const_ss_info_from_pose( pose::Pose const & pose )
 {
 	// ////using core::pose::datacache::CacheableDataType::SS_INFO;
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::SS_INFO ) );
-	assert( dynamic_cast< SS_Info const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO ))));
+debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::SS_INFO ) );
+debug_assert( dynamic_cast< SS_Info const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO ))));
 	return ( static_cast< SS_Info const &>(    pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO )));
 }
 
@@ -106,8 +106,8 @@ retrieve_nonconst_ss_info_from_pose( pose::Pose & pose )
 		using basic::datacache::DataCache_CacheableData;
 		pose.data().set( core::pose::datacache::CacheableDataType::SS_INFO, DataCache_CacheableData::DataOP( new SS_Info() ) );
 	}
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::SS_INFO ) );
-	assert( dynamic_cast< SS_Info *>( &( pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO ))));
+debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::SS_INFO ) );
+debug_assert( dynamic_cast< SS_Info *>( &( pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO ))));
 	return ( static_cast< SS_Info &>(    pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO )));
 }
 
@@ -876,7 +876,7 @@ SecondaryStructurePotential::sspair(
 		int const sign1( pairing.sign1() );
 		int const sign2( pairing.sign2() );
 
-		assert( dimer1 < dimer2 );
+	debug_assert( dimer1 < dimer2 );
 
 //		std::cout << "ss_dimer: " << strands.SS_resnum(dimer1) << ' ' << strands.SS_resnum(dimer2) << ' ' <<
 //			pairing.score() << std::endl;

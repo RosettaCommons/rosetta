@@ -47,7 +47,7 @@
 // C++ headers
 #include <math.h>
 #include <iostream>
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace numeric{
 template<typename T>

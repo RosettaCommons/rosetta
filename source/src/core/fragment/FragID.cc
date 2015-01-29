@@ -32,7 +32,7 @@ FragID::FragID() : first( /* 0 */ ), second( 0 ) {}
 FragID::FragID( FrameCOP frame, Size frag_id )
 	: first( frame ), second( frag_id )
 {
-	assert( frame->nr_frags() >= frag_id );
+debug_assert( frame->nr_frags() >= frag_id );
 }
 
 FragID::FragID( FragID const & src ) :

@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace core {
 namespace pack {
@@ -49,7 +49,7 @@ OrResidueSelector::OrResidueSelector( ResidueSelectorCOP selector1, ResidueSelec
 ResidueSubset
 OrResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( num_selectors() > 0 );
+debug_assert( num_selectors() > 0 );
 
 	// make subset neutral for OR operations
 	ResidueSubset subset( pose.total_residue(), false );
@@ -134,7 +134,7 @@ Size OrResidueSelector::num_selectors() const
 void
 OrResidueSelector::apply_or_to_subset(ResidueSubset const & newSubset, ResidueSubset & existingSubset) const
 {
-	assert( existingSubset.size() == newSubset.size() );
+debug_assert( existingSubset.size() == newSubset.size() );
 	for( Size ii = 1; ii <= existingSubset.size(); ++ii) {
 		existingSubset[ ii ] = existingSubset[ ii ] || newSubset[ ii ];
 	}

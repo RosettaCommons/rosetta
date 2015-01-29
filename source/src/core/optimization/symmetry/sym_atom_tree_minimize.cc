@@ -134,7 +134,7 @@ atom_tree_dfunc(
 {
 	using namespace conformation::symmetry;
 	// Initialize symmetry
-	assert (pose::symmetry::is_symmetric( pose ) );
+debug_assert (pose::symmetry::is_symmetric( pose ) );
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
@@ -251,14 +251,14 @@ atom_tree_get_atompairE_deriv(
 
 	SymmetricConformation const & symm_conf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-	assert( conformation::symmetry::is_symmetric( symm_conf ) );
+debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 
 	SymmetricEnergies const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
 
-	assert( symm_energies.minimization_graph() );
-	assert( symm_energies.derivative_graph() );
+debug_assert( symm_energies.minimization_graph() );
+debug_assert( symm_energies.derivative_graph() );
 
 	MinimizationGraphCOP mingraph  = symm_energies.minimization_graph();
 	MinimizationGraphCOP dmingraph = symm_energies.derivative_graph();

@@ -618,7 +618,7 @@ LazyEdge::store_interaction_energy_first_node(
 )
 {
 
-	//assert(first_node_alt_state != 0 && second_node_orig_state != 0);
+//debug_assert(first_node_alt_state != 0 && second_node_orig_state != 0);
 	AminoAcidNeighborSparseMatrix< core::PackerEnergy >::set(
 		second_node_orig_state_sparse_info,
 		first_node_state_offset_minus_1,
@@ -660,7 +660,7 @@ LazyEdge::store_interaction_energy_second_node(
 	core::PackerEnergy interaction_energy
 )
 {
-	//assert(first_node_orig_state != 0 && second_node_alt_state != 0);
+//debug_assert(first_node_orig_state != 0 && second_node_alt_state != 0);
 	AminoAcidNeighborSparseMatrix< core::PackerEnergy >::set(
 		first_node_orig_state_sparse_info,
 		second_node_alternate_state_sparse_info,

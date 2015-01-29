@@ -111,7 +111,7 @@ void SequenceAnnotation::rm_seq_label( std::string const& label ){
   vector1_size& pose_numbers = label_to_pose_numbers_.find( label )->second;
 
   for( Size pose_num = 1; pose_num <= pose_numbers.size(); ++pose_num ){
-    assert( pose_num <= length_ );
+   debug_assert( pose_num <= length_ );
     pose_to_local_numbers_[pose_num].erase( label );
   }
 

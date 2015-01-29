@@ -64,7 +64,7 @@ operator <<( std::ostream & os, const Edge & e )
 	if ( e.is_jump() && e.has_atom_info() ) {
 		if ( e.keep_stub_in_residue() ) {
 			os << " INTRA_RES_STUB ";
-			assert( e.start_atom().size() );
+		debug_assert( e.start_atom().size() );
 		} else {
 			os << " END ";
 		}
@@ -98,13 +98,13 @@ operator >>( std::istream & is, Edge & e )
 	if ( e.stop_atom_ == "X" ) e.stop_atom_ = "";
 
 	// allow either both atoms set or both unset
-	assert( ( (e.start_atom_.size() && e.stop_atom_.size()) )
+debug_assert( ( (e.start_atom_.size() && e.stop_atom_.size()) )
 		|| (( e.start_atom_.size() == 0) && (e.stop_atom_.size() ==0 )));
 
 	is >> tag;
 	e.bKeepStubInResidue_ = false;
 	if ( tag == "END" ) return is;
-	assert( tag == "INTRA_RES_STUB" ); //only allowed if also atoms are specified;
+debug_assert( tag == "INTRA_RES_STUB" ); //only allowed if also atoms are specified;
 	e.bKeepStubInResidue_ = true;
 	return is;
 }

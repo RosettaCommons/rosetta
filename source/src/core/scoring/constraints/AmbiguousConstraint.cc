@@ -41,7 +41,7 @@ AmbiguousConstraint::AmbiguousConstraint():
 
 	init_cst_score_types();
 
-	assert ( member_constraints().size() == 0 );
+debug_assert ( member_constraints().size() == 0 );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
@@ -52,7 +52,7 @@ AmbiguousConstraint::AmbiguousConstraint( ConstraintCOPs & cst_in ):
 
 	init_cst_score_types();
 
-	assert ( member_constraints().size() > 0 );
+debug_assert ( member_constraints().size() > 0 );
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ AmbiguousConstraint::fill_f1_f2(
 	EnergyMap const & weights
 ) const
 {
-	//assert( active_constraint_ );
+//debug_assert( active_constraint_ );
 	//std::cerr << "Error: attempted minimization of an ambiguous constraint before the lowest scoring member constraint has been determined. Was the pose not scored?" << std::endl;
 	//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 

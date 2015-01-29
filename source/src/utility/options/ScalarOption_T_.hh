@@ -29,7 +29,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <cstdlib>
 #include <iostream>
 #include <set>
@@ -930,7 +930,7 @@ protected: // Methods
 	void
 	default_inactive_error() const
 	{
-		assert( default_state_ == INACTIVE ); // Or else why are we here
+	debug_assert( default_state_ == INACTIVE ); // Or else why are we here
 		std::cerr << "ERROR: Inactive default value of option accessed: -" << key_.id() << std::endl;
 		std::exit( EXIT_FAILURE );
 	}
@@ -942,7 +942,7 @@ protected: // Methods
 	void
 	inactive_error() const
 	{
-		assert( state_ == INACTIVE ); // Or else why are we here
+	debug_assert( state_ == INACTIVE ); // Or else why are we here
 		std::cerr << "ERROR: Value of inactive option accessed: -" << key_.id() << std::endl;
 		std::exit( EXIT_FAILURE );
 	}

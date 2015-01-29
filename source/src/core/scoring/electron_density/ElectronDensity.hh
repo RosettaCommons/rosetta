@@ -425,9 +425,9 @@ public:
 	// raw data pointer
 	inline ObjexxFCL::FArray3D< float > const & data() const { return density; };
 	inline void set_data(ObjexxFCL::FArray3D< double > const & density_in) {
-		assert(density.u1() == density_in.u1());
-		assert(density.u2() == density_in.u2());
-		assert(density.u3() == density_in.u3());
+	debug_assert(density.u1() == density_in.u1());
+	debug_assert(density.u2() == density_in.u2());
+	debug_assert(density.u3() == density_in.u3());
 		for (Size i=0;i<density_in.size(); ++i) density[i] = density_in[i];
 	};
 

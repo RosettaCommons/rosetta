@@ -18,7 +18,7 @@
 
 // C++ headers
 #include <iterator>
-#include <cassert>
+#include <utility/assert.hh>
 
 // #ifdef USEBOOSTSERIALIZE
 // #include ???
@@ -59,13 +59,13 @@ public:
 	}
 
 	T & operator * () {
-		assert( valid() );
+	debug_assert( valid() );
 		return * position_;
 	}
 
 	fixedsizearray1iterator< T, S >
 	operator ++ () {
-		assert( valid() );
+	debug_assert( valid() );
 		position_ += 1;
 		return *this;
 	}
@@ -73,14 +73,14 @@ public:
 	/// @brief random access iterator jump by d
 	fixedsizearray1iterator< T, S >
 	operator + ( distance d ) {
-		assert( valid() );
+	debug_assert( valid() );
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ + d );
 	}
 
 	/// @brief random access iterator jump by -d
 	fixedsizearray1iterator< T, S >
 	operator - ( distance d ) {
-		assert( valid() );
+	debug_assert( valid() );
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ - d );
 	}
 
@@ -94,7 +94,7 @@ public:
 	/// @brief random access increment
 	fixedsizearray1iterator< T, S > const &
 	operator += ( distance d ) {
-		assert( valid() );
+	debug_assert( valid() );
 		position_ += d;
 		return this;
 	}
@@ -102,7 +102,7 @@ public:
 	/// @brief random access decrement
 	fixedsizearray1iterator< T, S > const &
 	operator -= ( distance d ) {
-		assert( valid() );
+	debug_assert( valid() );
 		position_ -= d;
 		return this;
 	}
@@ -199,13 +199,13 @@ public:
 	}
 
 	T const & operator * () {
-		assert( valid() );
+	debug_assert( valid() );
 		return * position_;
 	}
 
 	fixedsizearray1const_iterator< T, S >
 	operator ++ () {
-		assert( valid() );
+	debug_assert( valid() );
 		position_ += 1;
 		return *this;
 	}
@@ -213,14 +213,14 @@ public:
 	/// @brief random access iterator jump by d
 	fixedsizearray1const_iterator< T, S >
 	operator + ( distance d ) {
-		assert( valid() );
+	debug_assert( valid() );
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ + d );
 	}
 
 	/// @brief random access iterator jump by -d
 	fixedsizearray1const_iterator< T, S >
 	operator - ( distance d ) {
-		assert( valid() );
+	debug_assert( valid() );
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ - d );
 	}
 
@@ -249,7 +249,7 @@ public:
 	/// @brief random access increment
 	fixedsizearray1const_iterator< T, S > const &
 	operator += ( distance d ) {
-		assert( valid() );
+	debug_assert( valid() );
 		position_ += d;
 		return this;
 	}
@@ -257,7 +257,7 @@ public:
 	/// @brief random access decrement
 	fixedsizearray1const_iterator< T, S > const &
 	operator -= ( distance d ) {
-		assert( valid() );
+	debug_assert( valid() );
 		position_ -= d;
 		return this;
 	}
@@ -368,13 +368,13 @@ public:
 
 	value_type &
 	operator [] ( Size index ) {
-		assert( range( index ) );
+	debug_assert( range( index ) );
 		return array_[ index - 1 ];
 	}
 
 	value_type const &
 	operator [] ( Size index ) const  {
-		assert( range( index ) );
+	debug_assert( range( index ) );
 		return array_[ index - 1 ];
 	}
 

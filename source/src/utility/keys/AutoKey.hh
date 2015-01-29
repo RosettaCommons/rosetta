@@ -39,7 +39,7 @@
 #include <utility/keys/NoClient.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 
 namespace utility {
@@ -122,7 +122,7 @@ protected: // Creation
 		identifier_( key.identifier() ),
 		code_( key.code() )
 	{
-		assert( dynamic_cast< AutoKey const * >( &key ) );
+	debug_assert( dynamic_cast< AutoKey const * >( &key ) );
 	}
 
 
@@ -140,7 +140,7 @@ protected: // Creation
 		identifier_( identifier_a.empty() ? id_a : identifier_a ),
 		code_( code_a.empty() ? id_a : code_a )
 	{
-		assert( dynamic_cast< AutoKey const * >( &key ) );
+	debug_assert( dynamic_cast< AutoKey const * >( &key ) );
 	}
 
 
@@ -210,7 +210,7 @@ protected: // Assignment
 	void
 	assign_Key( Key const & key )
 	{
-		assert( comparable( key ) );
+	debug_assert( comparable( key ) );
 		index_ = key.index();
 		id_ = key.id();
 		identifier_ = key.identifier();
@@ -504,7 +504,7 @@ private: // Static functions
 	Size
 	next_index()
 	{
-		assert( n_key_() < Size( -1 ) ); // Check for overflow
+	debug_assert( n_key_() < Size( -1 ) ); // Check for overflow
 		return ++n_key_();
 	}
 

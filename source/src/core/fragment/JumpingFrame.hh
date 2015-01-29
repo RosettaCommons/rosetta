@@ -91,7 +91,7 @@ public:
 
   /// @brief assign sequence position or jump_nr to internal position pos
   void set_pos( Size intra_pos, Size setting ) {
-    assert( intra_pos <= length() );
+   debug_assert( intra_pos <= length() );
     pos_[ intra_pos ] = setting;
   }
 

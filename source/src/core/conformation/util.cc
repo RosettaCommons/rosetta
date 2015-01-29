@@ -64,7 +64,7 @@
 
 // C++ headers
 // #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <basic/Tracer.hh>
 
@@ -750,7 +750,7 @@ build_jump_edge(
 	kinematics::AtomPointer2D & atom_pointer
 	)
 {
-	assert( edge.is_jump() );
+debug_assert( edge.is_jump() );
 
 	int const estart	 ( edge.start() );
 	int const estop	  ( edge.stop () );
@@ -761,7 +761,7 @@ build_jump_edge(
 
 	// get the anchor atom
 	kinematics::tree::AtomOP anchor_atom( atom_pointer( id::AtomID( anchor_atomno, estart ) ) );
-	assert( anchor_atom );
+debug_assert( anchor_atom );
 
 	// build the new residue
 	build_residue_tree( root_atomno, *residues[ estop ], atom_pointer[ estop ], true /*Jump*/ );
@@ -775,7 +775,7 @@ build_jump_edge(
 
 	// 	std::cout << "TREE AFTER BEGIN: " << edge << std::endl;
 	// 	anchor_atom->show();
-	// 	assert( anchor_atom->id() == AtomID( anchor_atomno, estart ) );
+	// debug_assert( anchor_atom->id() == AtomID( anchor_atomno, estart ) );
 	// 	std::cout << "TREE AFTER END: " << edge << std::endl;
 
 }
@@ -797,7 +797,7 @@ build_polymer_edge(
 	int const stop ( edge.stop() );
 	int const dir  ( edge.polymer_direction() );
 
-	assert( dir == 1 || dir == -1 );
+debug_assert( dir == 1 || dir == -1 );
 
 	id::AtomID first_anchor;
 	for ( int pos=start+dir; pos != stop + dir; pos += dir ) {
@@ -812,7 +812,7 @@ build_polymer_edge(
 
 		kinematics::tree::AtomOP anchor_atom( atom_pointer( id::AtomID( anchor_atomno, anchor_pos ) ) );
 		kinematics::tree::AtomOP   root_atom( atom_pointer( id::AtomID(   root_atomno,		pos ) ) );
-		assert( anchor_atom && root_atom );
+		debug_assert( anchor_atom && root_atom );
 		anchor_atom->insert_atom( root_atom );
 		//std::cout << "build_polymer_edge: " << edge << ' ' <<  pos << ' ' << root_atomno << ' ' <<
 		//			anchor_pos << ' ' << anchor_atomno << std::endl;
@@ -850,7 +850,7 @@ build_chemical_edge(
 	// get the anchor atom
 	kinematics::tree::AtomOP anchor_atom( atom_pointer( id::AtomID( anchor_atomno, estart ) ) );
 	kinematics::tree::AtomOP   root_atom( atom_pointer( id::AtomID(   root_atomno, estop  ) ) );
-	assert( anchor_atom && root_atom );
+debug_assert( anchor_atom && root_atom );
 
 	anchor_atom->insert_atom( root_atom );
 }
@@ -895,7 +895,7 @@ get_root_atomno(
 			return get_root_atomno( rsd, kinematics::dir_jump );
 		}
 	} else {
-		assert( dir == kinematics::dir_jump );
+	debug_assert( dir == kinematics::dir_jump );
 		// default for jumps, use the N-terminal attachment?
 		if ( rsd.mainchain_atoms().empty() ) {
 			// For non-polymeric ligands, match the ICOOR root.
@@ -930,7 +930,7 @@ get_root_residue_root_atomno(
 							 )
 {
 	Size const seqpos( rsd.seqpos() );
-	assert( seqpos == Size( fold_tree.root() ) ); // need to refactor foldtree to use Size instead of int
+debug_assert( seqpos == Size( fold_tree.root() ) ); // need to refactor foldtree to use Size instead of int
 
 	Size root_atomno = get_root_atomno( rsd, kinematics::dir_jump ); // the default setting
 
@@ -989,7 +989,7 @@ build_residue_tree(
 			}
 		} else {
 			//// chemical edge -- atomnumbers of connections should be programmed in
-			//assert( edge.has_atom_info() );
+		//debug_assert( edge.has_atom_info() );
 			//root_atomno = rsd.atom_index( edge.downstream_atom() );
 			// Connection atoms are not always present in the edge, but might be;  else use defaults.
 			int const estart	 ( edge.start() );
@@ -999,7 +999,7 @@ build_residue_tree(
 			root_atomno = (int) root_atno; // stupid Size/int confusion...
 		}
 	}
-	assert( root_atomno );
+debug_assert( root_atomno );
 
 	// now call the main build_residue_tree function
 	build_residue_tree( root_atomno, rsd, atom_ptr, root_atom_is_jump_atom );
@@ -1146,7 +1146,7 @@ setup_atom_links(
 	utility::vector1< Size > const & full_l( full_links[atom1] );
 	utility::vector1< Size >	   &  new_l(  new_links[atom1] );
 
-	assert( new_l.empty() );
+debug_assert( new_l.empty() );
 
 	Size const n_nbrs( full_l.size() );
 
@@ -1445,7 +1445,7 @@ insert_residue_into_atom_tree(
 	Size const seqpos( new_rsd.seqpos() );
 	Size const nres( fold_tree.nres() );
 	Size const old_nres( atom_tree.size() );
-	assert( nres == residues.size() && seqpos <= nres && old_nres == nres-1 );
+debug_assert( nres == residues.size() && seqpos <= nres && old_nres == nres-1 );
 
 	/////////////////////////////////
 	// setup for renumbering atomtree
@@ -1457,7 +1457,7 @@ insert_residue_into_atom_tree(
 
 	// renumber the atomtree, fold_tree
 	atom_tree.update_sequence_numbering( nres, old2new );
-	assert( atom_tree.size() == nres );
+debug_assert( atom_tree.size() == nres );
 
 	replace_residue_in_atom_tree( new_rsd, fold_tree, residues, atom_tree );
 
@@ -1471,13 +1471,13 @@ int
 get_anchor_atomno( conformation::Residue const & anchor_rsd, Size const seqpos, kinematics::FoldTree const & fold_tree )
 {
 	int anchor_atomno(0);
-	assert( seqpos != (Size)fold_tree.root() );
+debug_assert( seqpos != (Size)fold_tree.root() );
 
 	kinematics::Edge const & edge( fold_tree.get_residue_edge( seqpos ) );
 
 	if ( edge.is_jump() ) {
 		// jump edge
-		assert( (seqpos == (Size)edge.stop()) && ((Size)anchor_rsd.seqpos() == (Size)edge.start()) );
+	debug_assert( (seqpos == (Size)edge.stop()) && ((Size)anchor_rsd.seqpos() == (Size)edge.start()) );
 		if ( edge.has_atom_info() ) {
 			anchor_atomno = anchor_rsd.atom_index( edge.upstream_atom() );
 		} else {
@@ -1486,14 +1486,14 @@ get_anchor_atomno( conformation::Residue const & anchor_rsd, Size const seqpos, 
 	} else if ( edge.is_peptide() ) {
 		// peptide edge
 		int const dir( edge.polymer_direction() );
-		assert( anchor_rsd.seqpos() == seqpos-dir );
+	debug_assert( anchor_rsd.seqpos() == seqpos-dir );
 		anchor_atomno = get_anchor_atomno( anchor_rsd, dir );
 	} else {
 		// chemical edge
-		assert( seqpos == static_cast< Size >( edge.stop() ) && anchor_rsd.seqpos() == static_cast< Size >( edge.start() ) && edge.has_atom_info() );
+	debug_assert( seqpos == static_cast< Size >( edge.stop() ) && anchor_rsd.seqpos() == static_cast< Size >( edge.start() ) && edge.has_atom_info() );
 		anchor_atomno = anchor_rsd.atom_index( edge.upstream_atom() );
 	}
-	assert( anchor_atomno );
+debug_assert( anchor_atomno );
 	return anchor_atomno;
 }
 
@@ -1536,7 +1536,7 @@ get_anchor_atomno(
 		}
 
 	} else {
-		assert( dir == kinematics::dir_jump );
+	debug_assert( dir == kinematics::dir_jump );
 		// default for jumps, use the N-terminal attachment?
 		if ( rsd.mainchain_atoms().empty() ) {
 			// SHORT TERM HACK -- need to add some logic for root atomno
@@ -1568,12 +1568,12 @@ get_anchor_and_root_atoms(
 	if ( edge.is_polymer() ) {
 		// POLYMER EDGE
 		int const dir( edge.polymer_direction() );
-		assert( dir == 1 || dir == -1 );
-		assert( root_pos == anchor_pos + dir );
+	debug_assert( dir == 1 || dir == -1 );
+	debug_assert( root_pos == anchor_pos + dir );
 		anchor_atomno = get_anchor_atomno( anchor_rsd, dir );
 		root_atomno   = get_root_atomno  (   root_rsd, dir );
 	} else {
-		assert( anchor_pos == Size(edge.start()) && root_pos == Size(edge.stop()) );
+	debug_assert( anchor_pos == Size(edge.start()) && root_pos == Size(edge.stop()) );
 		if ( edge.has_atom_info() ) {
 			// JUMP OR CHEMICAL W/ ATOM INFO
 			anchor_atomno = anchor_rsd.atom_index( edge.upstream_atom() );
@@ -1601,9 +1601,9 @@ get_anchor_and_root_atoms(
 	BondID old_rsd_in;
 	vector1< BondID > old_rsd_out;
 	get_residue_connections( old_rsd, fold_tree, residues, old_rsd_in, old_rsd_out );
-	assert( new_rsd_in.atom1 == old_rsd_in.atom1 && new_rsd_out.size() == old_rsd_out.size() );
+debug_assert( new_rsd_in.atom1 == old_rsd_in.atom1 && new_rsd_out.size() == old_rsd_out.size() );
 	for ( Size i=1; i<= new_rsd_out.size(); ++i ) {
-		assert( new_rsd_out[i].atom2 == old_rsd_out[i].atom2 );
+	debug_assert( new_rsd_out[i].atom2 == old_rsd_out[i].atom2 );
 	}
 }**/
 
@@ -1617,7 +1617,7 @@ promote_sameresidue_child_of_jump_atom(
 	kinematics::AtomTree & atom_tree
 )
 {
-	assert( edge.is_jump() );
+debug_assert( edge.is_jump() );
 	Size root_pos( edge.stop() ), anchor_atomno, root_atomno;
 	get_anchor_and_root_atoms( *residues[ edge.start() ], *residues[ root_pos ], edge, anchor_atomno, root_atomno );
 	atom_tree.promote_sameresidue_nonjump_child( id::AtomID( root_atomno, root_pos ) );
@@ -1631,11 +1631,11 @@ promote_sameresidue_child_of_jump_atom(
 	kinematics::AtomPointer2D const & atom_pointer
 )
 {
-	assert( edge.is_jump() );
+debug_assert( edge.is_jump() );
 	Size root_pos( edge.stop() ), anchor_atomno, root_atomno;
 	get_anchor_and_root_atoms( *residues[ edge.start() ], *residues[ root_pos ], edge, anchor_atomno, root_atomno );
 	kinematics::tree::AtomOP root_atom( atom_pointer[ id::AtomID( root_atomno, root_pos ) ] );
-	assert( root_atom->is_jump() );
+debug_assert( root_atom->is_jump() );
 	kinematics::tree::AtomOP same_residue_child( 0 );
 	for ( Size i=0; i< root_atom->n_nonjump_children(); ++i ) {
 		kinematics::tree::AtomOP child( atom_pointer[ root_atom->get_nonjump_atom( i )->id() ] ); // want nonconst, use atom_pointer
@@ -1645,7 +1645,7 @@ promote_sameresidue_child_of_jump_atom(
 		}
 	}
 	if ( same_residue_child ) {
-		assert( !same_residue_child->is_jump() );
+	debug_assert( !same_residue_child->is_jump() );
 		root_atom->delete_atom( same_residue_child );
 		root_atom->insert_atom( same_residue_child );
 	} else {
@@ -1661,7 +1661,7 @@ get_chemical_root_and_anchor_atomnos(
 	Size & root_atom_no
 	)
 {
-	assert( rsd_anchor.is_bonded( rsd_root ) );
+debug_assert( rsd_anchor.is_bonded( rsd_root ) );
 
 	Size first_connection_id = rsd_anchor.connections_to_residue( rsd_root )[ 1 ];
 	chemical::ResConnID first_connection = rsd_anchor.connect_map( first_connection_id );
@@ -1704,12 +1704,12 @@ setup_corresponding_atoms(
 	mainchain1( rsd1.mainchain_atoms() ),
 	mainchain2( rsd2.mainchain_atoms() );
 
-	assert( mainchain1.size() == mainchain2.size() );
+debug_assert( mainchain1.size() == mainchain2.size() );
 
 	// special case for virtual residues -- fpd
 	if ( mainchain1.size() == 0 &&
 		rsd1.type().name3() == "XXX" && rsd2.type().name3() == "XXX") {
-		assert( rsd1.atoms().size() == rsd2.atoms().size() );
+	debug_assert( rsd1.atoms().size() == rsd2.atoms().size() );
 
 		for ( Size i=1, i_end = rsd1.atoms().size(); i<= i_end; ++i ) {
 			atom_map.set( id::AtomID( i, seqpos1 ), id::AtomID( i, seqpos2 ) );
@@ -1798,13 +1798,13 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 		else if (rn == "HCYD") dest_name = "C26";
 		else if (rn == "DHCYD") dest_name = "F26";
 		//TR << "So our destination name is " << dest_name << std::endl;
-		
+
 	} else if (! res.has_variant_type( chemical::DISULFIDE ) && cys_type_name3 == "CYD" ){
 		if (rn == "CYS") dest_name = "CYD";
 		else if (rn == "DCYS") dest_name = "DCS";
 		else if (rn == "HCYS") dest_name = "C26";
 		else if (rn == "DHCYS") dest_name = "F26";
-		
+
 		variant_types.push_back( "DISULFIDE" ); //chemical::DISULFIDE );	// creating a disulfide
 	}  else dest_name = res.type().name3();
 	//TR << "After the conditional, our destination name is " << dest_name << std::endl;
@@ -1819,7 +1819,7 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 	return true;
 	*/
 	chemical::ResidueTypeCOPs possible_types = residue_type_set.name3_map(dest_name);
-	
+
 	// Run through all possible new residue types.
 	for ( chemical::ResidueTypeCOPs::const_iterator
 		type_iter = possible_types.begin(), type_end = possible_types.end();
@@ -1845,7 +1845,7 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 			return true;
 		}
 	}
-	
+
 
 	// If we are here then a residue type match wasn't found; issue error message.
 	TR.Error << "ERROR: Couldn't find a " << cys_type_name3 << " equivalent for residue " << index << "." <<std::endl;
@@ -2017,7 +2017,7 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 	}	else {
 		std::string upper_name = conformation.residue(upper_res).name();
 		core::chemical::ResidueType upper_type = restype_set->name_map("CYD");
-		//awatkins: TODO	
+		//awatkins: TODO
 		//if (conformation.residue(upper_res).type().name() == "DCYS") upper_type = restype_set->name_map("DCYD");
 		//else if (conformation.residue(upper_res).type().name() == "C26") upper_type = restype_set->name_map("HCYD");
 		//else if (conformation.residue(upper_res).type().name() == "F26") upper_type = restype_set->name_map("DHCYD");
@@ -2061,12 +2061,12 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 	std::string n1 = A.type().name3(); std::string n2 = B.type().name3();
 	if ( ( n1 != "CYS" && n1 != "CYD" && n1 != "DCS" && n1 != "C26" && n1 != "F26" )
 	  || ( n2 != "CYS" && n2 != "CYD" && n2 != "DCS" && n2 != "C26" && n2 != "F26" ) ) return false;
-	
+
 	//bonded
 	Size a_connect_atom;
 	if( A.type().has( "SG" ) )
 		a_connect_atom = A.atom_index( "SG" );
-	else if ( A.type().has( "SD" ) ) 
+	else if ( A.type().has( "SD" ) )
 		a_connect_atom = A.atom_index( "SD" );
 	else {
 		runtime_assert( A.type().has( "CEN" ) ); //should be fa or centroid

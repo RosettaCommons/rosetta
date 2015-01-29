@@ -87,7 +87,7 @@ class VirtualCoordinates
 	numeric::xyzVector< core::Real> &
 	get_x( core::Size num )
 	{
-		assert( axis_y_.size() >= num );
+	debug_assert( axis_y_.size() >= num );
   	return axis_x_[num-1];
 
 	}
@@ -95,14 +95,14 @@ class VirtualCoordinates
 	numeric::xyzVector< core::Real> &
 	get_y( core::Size num )
 	{
-		assert( axis_y_.size() >= num );
+	debug_assert( axis_y_.size() >= num );
   	return axis_y_[num-1];
 	}
 
 	numeric::xyzVector< core::Real> &
 	get_origin( core::Size num )
 	{
-	  assert( axis_y_.size() >= num );
+	 debug_assert( axis_y_.size() >= num );
   	return axis_origin_[num-1];
 	}
 
@@ -116,7 +116,7 @@ class VirtualCoordinates
 	Size
 	size()
 	{
-		assert( kosher() );
+	debug_assert( kosher() );
 		return axis_x_.size();
 	}
 

@@ -188,9 +188,9 @@ AtomTreeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
 			(ScoringManager::get_instance()->energy_method( fa_atr, score_function_.energy_method_options() )).get() );
 		EnergyMap const & w( score_function_.weights() );
 
-		assert( pose1.energies().minimization_graph() );
+	debug_assert( pose1.energies().minimization_graph() );
 		MinimizationGraphCOP g1 = pose1.energies().minimization_graph();
-		assert( pose2.energies().minimization_graph() );
+	debug_assert( pose2.energies().minimization_graph() );
 		MinimizationGraphCOP g2 = pose2.energies().minimization_graph();
 		for ( graph::Graph::EdgeListConstIter
 				me1_iter = g1->const_edge_list_begin(), me1_iter_end = g1->const_edge_list_end(),
@@ -198,8 +198,8 @@ AtomTreeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
 				me1_iter != me1_iter_end && me2_iter != me2_iter_end; ++me1_iter, ++me2_iter ) {
 			Size const r1( (*me1_iter)->get_first_node_ind() );
 			Size const r2( (*me1_iter)->get_second_node_ind() );
-			assert( r1 == (*me2_iter)->get_first_node_ind() );
-			assert( r2 == (*me2_iter)->get_second_node_ind() );
+		debug_assert( r1 == (*me2_iter)->get_first_node_ind() );
+		debug_assert( r2 == (*me2_iter)->get_second_node_ind() );
 			MinimizationEdge const & me1( static_cast< MinimizationEdge const & > ( ** me1_iter ));
 			MinimizationEdge const & me2( static_cast< MinimizationEdge const & > ( ** me2_iter ));
 

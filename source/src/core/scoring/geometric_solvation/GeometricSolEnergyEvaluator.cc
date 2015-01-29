@@ -663,7 +663,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	TenANeighborGraph const & tenA_neighbor_graph
 		( pose.energies().tenA_neighbor_graph() );
 
-	assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
+debug_assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
 
 	Size const don_base_atm( don_rsd.atom_base( don_h_atm ) );
 
@@ -794,7 +794,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	TenANeighborGraph const & tenA_neighbor_graph
 		( pose.energies().tenA_neighbor_graph() );
 
-	assert(  acc_rsd.heavyatom_is_an_acceptor( acc_atm ) );
+debug_assert(  acc_rsd.heavyatom_is_an_acceptor( acc_atm ) );
 
 	bool const acc_atm_is_protein_backbone
 		( acc_rsd.is_protein() && acc_rsd.atom_is_backbone( acc_atm ) );

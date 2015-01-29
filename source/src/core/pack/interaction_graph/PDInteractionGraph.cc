@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <iostream>
 // AUTO-REMOVED #include <fstream>
-#include <cassert>
+#include <utility/assert.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -92,10 +92,10 @@ void PDNode::print() const
 /// @param aatypes_for_state - [in] - amino acid type for each state in the node
 void PDNode::set_amino_acid_types( std::vector< int > const & aatypes_for_state)
 {
-	assert(aatypes_for_state.size() == (Size)(get_num_states() + 1) );
+debug_assert(aatypes_for_state.size() == (Size)(get_num_states() + 1) );
 
 	for (int ii = 1; ii <= get_num_states(); ++ii) {
-		assert( aatypes_for_state[ii] > 0 && aatypes_for_state[ii] <= (int)num_states_for_aatype_.size());
+	debug_assert( aatypes_for_state[ii] > 0 && aatypes_for_state[ii] <= (int)num_states_for_aatype_.size());
 
 		sparse_mat_info_for_state_[ii].set_aa_type( aatypes_for_state[ii] );
 
@@ -135,7 +135,7 @@ void PDNode::update_one_body_energy( int state, core::PackerEnergy energy )
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void PDNode::update_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies )
 {
-	assert( energies.size() == (unsigned int) get_num_states() );
+debug_assert( energies.size() == (unsigned int) get_num_states() );
 	for (int ii = 1; ii <= get_num_states(); ++ii) {
 		one_body_energies_[ ii ] = energies( ii );
 	}
@@ -155,7 +155,7 @@ void PDNode::add_to_one_body_energy( int state, core::PackerEnergy energy )
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void PDNode::add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies )
 {
-	assert( energies.size() == (unsigned int) get_num_states() );
+debug_assert( energies.size() == (unsigned int) get_num_states() );
 	for (int ii = 1; ii <= get_num_states(); ++ii) {
 		one_body_energies_[ ii ] += energies( ii );
 	}
@@ -254,7 +254,7 @@ void PDNode::assign_zero_state()
 ///
 void PDNode::assign_state(int new_state)
 {
-	assert( new_state >= 0 && new_state <= get_num_states());
+debug_assert( new_state >= 0 && new_state <= get_num_states());
 
 	if (new_state == 0) {
 		assign_zero_state();
@@ -303,7 +303,7 @@ float PDNode::get_one_body_energy_current_state() const
 /// leaving energy2b structure
 void PDNode::commit_considered_substitution()
 {
-	assert( alternate_state_is_being_considered_ );
+debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_sparse_mat_info_ = alt_state_sparse_mat_info_;
@@ -430,7 +430,7 @@ PDNode::calc_deltaEpd( int alternate_state )
 SparseMatrixIndex const &
 PDNode::get_sparse_mat_info_for_state(int state) const
 {
-	assert( state > 0 && state <= get_num_states());
+debug_assert( state > 0 && state <= get_num_states());
 	return sparse_mat_info_for_state_[ state ];
 }
 
@@ -477,7 +477,7 @@ void PDNode::print_internal_energies() const
 ///
 void PDNode::update_internal_energy_sums()
 {
-	assert( get_edge_vector_up_to_date() );
+debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
 	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
 		curr_state_total_energy_ +=
@@ -1207,7 +1207,7 @@ void PDEdge::read_edge_energies_from_file( std::ifstream & infile )
 	//std::cerr << "square file aa: " << sqr_file_aa << std::endl;
 	infile.read( (char*) aa_neighbor_buffer, sizeof( bool ) * sqr_file_aa );
 	//int num_bools_read = infile.gcount();
-	//assert( num_bools_read == sizeof( bool ) * sqr_file_aa );
+//debug_assert( num_bools_read == sizeof( bool ) * sqr_file_aa );
 
 	int buffer_index = 0;
 	int num_pair_energies = 0;
@@ -1244,7 +1244,7 @@ void PDEdge::read_edge_energies_from_file( std::ifstream & infile )
 
 			if ( ! aa_neighbors(jj_aa, ii_aa ) ) continue;
 
-			assert( buffer_index < num_pair_energies );
+		debug_assert( buffer_index < num_pair_energies );
 			float energy = energies_buffer[ buffer_index ];
 			++buffer_index;
 
@@ -1391,7 +1391,7 @@ void PDEdge::prepare_for_simulated_annealing_no_deletion() //hook for derived cl
 ///   prepare_for_simulated_annealing_no_deletion() has been called first.
 bool PDEdge::pd_edge_table_all_zeros() const
 {
-	assert( ! energies_updated_since_last_prep_for_simA_ );
+debug_assert( ! energies_updated_since_last_prep_for_simA_ );
 	return ( two_body_energies_.get_table_size() == 0);
 }
 
@@ -1500,7 +1500,7 @@ PDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_ba
 /// @param num_aa_types - [in] - the number of amino acid types
 /*void PDInteractionGraph::set_num_aatypes(int num_aa_types)
 {
-	assert( num_aa_types_ == -1 && num_aa_types > 0 );
+debug_assert( num_aa_types_ == -1 && num_aa_types > 0 );
 	num_aa_types_ = num_aa_types;
 	return;
 }*/
@@ -2063,7 +2063,7 @@ PDInteractionGraph::get_aa_submatrix_energies_for_edge(
 NodeBase* PDInteractionGraph::create_new_node( int node_index, int num_states)
 {
 	PDNode* new_node = new PDNode(this, node_index, num_states);
-	assert( new_node != NULL );
+debug_assert( new_node != NULL );
 	return new_node;
 }
 
@@ -2142,7 +2142,7 @@ namespace {
 			return edge_base->get_first_node_ind();
 		}
 		else {
-			assert( false );
+		debug_assert( false );
 			utility_exit_with_message("et_other_index(const EdgeBase* edge_base, const int index)  failed");
 			return -1;
 		}

@@ -93,7 +93,7 @@
 #include <numeric/interpolation/spline/Interpolator.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 // AUTO-REMOVED #include <cmath>
 #include <cstddef>
 // AUTO-REMOVED #include <cstdlib>

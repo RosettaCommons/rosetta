@@ -247,7 +247,7 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 	//utility::vector1< ContextGraphOP >  cgraphs( context_graphs() );
 	utility::vector1< ContextGraphOP >& cgraphs( context_graphs() );
 	utility::vector1< bool >& required_cgraphs( required_context_graphs() );
-	assert( cgraphs[type] == 0 );
+debug_assert( cgraphs[type] == 0 );
 	required_cgraphs[type] = true;
 	cgraphs[type] = ContextGraphFactory::create_context_graph( type );
 	if ( cgraphs[type] == 0 ) {

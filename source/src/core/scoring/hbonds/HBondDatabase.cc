@@ -482,7 +482,7 @@ HBondDatabase::initialize_HBEval()
 			buf >> AHdist_short_fade_name;
 			AHdist_short_fade = HBFadeInterval_from_name(AHdist_short_fade_name);
 			if(AHdist_short_fade_lookup_[hbe_type]){
-				assert(AHdist_short_fade_lookup_[hbe_type] == AHdist_short_fade);
+			debug_assert(AHdist_short_fade_lookup_[hbe_type] == AHdist_short_fade);
 			} else {
 				AHdist_short_fade_lookup_[hbe_type] = AHdist_short_fade;
 			}
@@ -493,7 +493,7 @@ HBondDatabase::initialize_HBEval()
 			buf >> AHdist_long_fade_name;
 			AHdist_long_fade = HBFadeInterval_from_name(AHdist_long_fade_name);
 			if(AHdist_long_fade_lookup_[hbe_type]){
-				assert(AHdist_long_fade_lookup_[hbe_type] == AHdist_long_fade);
+			debug_assert(AHdist_long_fade_lookup_[hbe_type] == AHdist_long_fade);
 			} else {
 				AHdist_long_fade_lookup_[hbe_type] = AHdist_long_fade;
 			}
@@ -504,7 +504,7 @@ HBondDatabase::initialize_HBEval()
 			buf >> cosBAH_fade_name;
 			cosBAH_fade = HBFadeInterval_from_name(cosBAH_fade_name);
 			if(cosBAH_fade_lookup_[hbe_type]){
-				assert(cosBAH_fade_lookup_[hbe_type] == cosBAH_fade);
+			debug_assert(cosBAH_fade_lookup_[hbe_type] == cosBAH_fade);
 			} else {
 				cosBAH_fade_lookup_[hbe_type] = cosBAH_fade;
 			}
@@ -515,7 +515,7 @@ HBondDatabase::initialize_HBEval()
 			buf >> cosAHD_fade_name;
 			cosAHD_fade = HBFadeInterval_from_name(cosAHD_fade_name);
 			if(cosAHD_fade_lookup_[hbe_type]){
-				assert(cosAHD_fade_lookup_[hbe_type] == cosAHD_fade);
+			debug_assert(cosAHD_fade_lookup_[hbe_type] == cosAHD_fade);
 			} else {
 				cosAHD_fade_lookup_[hbe_type] = cosAHD_fade;
 			}
@@ -531,7 +531,7 @@ HBondDatabase::initialize_HBEval()
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a distance polynomial (i.e. geometric_dimension == hbgd_AHdist), but instead, found " + AHdist_poly_name + " of geometric dimension " + utility::to_string(AHdist_poly->geometric_dimension()) );
 			}
 			if(AHdist_poly_lookup_[hbe_type]){
-				assert(AHdist_poly_lookup_[hbe_type] == AHdist_poly);
+			debug_assert(AHdist_poly_lookup_[hbe_type] == AHdist_poly);
 			} else {
 				AHdist_poly_lookup_[hbe_type] = AHdist_poly;
 			}
@@ -546,7 +546,7 @@ HBondDatabase::initialize_HBEval()
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a short-range cosBAH polynomial (i.e. geometric_dimension == hbgd_cosBAH), but instead, found " + cosBAH_short_poly_name + " of geometric dimension " + utility::to_string(cosBAH_short_poly->geometric_dimension()) );
 			}
 			if(cosBAH_short_poly_lookup_[hbe_type]){
-				assert(cosBAH_short_poly_lookup_[hbe_type] == cosBAH_short_poly);
+			debug_assert(cosBAH_short_poly_lookup_[hbe_type] == cosBAH_short_poly);
 			} else {
 				cosBAH_short_poly_lookup_[hbe_type] = cosBAH_short_poly;
 			}
@@ -561,7 +561,7 @@ HBondDatabase::initialize_HBEval()
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a long-range cosBAH polynomial (i.e. geometric_dimension == hbgd_cosBAH), but instead, found " + cosBAH_long_poly_name + " of geometric dimension " + utility::to_string(cosBAH_long_poly->geometric_dimension()) );
 			}
 			if(cosBAH_long_poly_lookup_[hbe_type]){
-				assert(cosBAH_long_poly_lookup_[hbe_type] == cosBAH_long_poly);
+			debug_assert(cosBAH_long_poly_lookup_[hbe_type] == cosBAH_long_poly);
 			} else {
 				cosBAH_long_poly_lookup_[hbe_type] = cosBAH_long_poly;
 			}
@@ -576,7 +576,7 @@ HBondDatabase::initialize_HBEval()
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a short-range cosAHD or AHD polynomial (i.e. geometric_dimension == hbgd_cosAHD or hbgd_AHD), but instead, found " + cosAHD_short_poly_name + " of geometric dimension " + utility::to_string(cosAHD_short_poly->geometric_dimension()) );
 			}
 			if(cosAHD_short_poly_lookup_[hbe_type]){
-				assert(cosAHD_short_poly_lookup_[hbe_type]);
+			debug_assert(cosAHD_short_poly_lookup_[hbe_type]);
 			} else {
 				cosAHD_short_poly_lookup_[hbe_type] = cosAHD_short_poly;
 			}
@@ -595,7 +595,7 @@ HBondDatabase::initialize_HBEval()
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", found that the short- and long-range polynomials for the AHD angle are of different geometric types: one of hbgd_cosAHD and the other of hbgd_AHD.  These types cannot be mixed" );
 			}
 			if(cosAHD_long_poly_lookup_[hbe_type]){
-				assert(cosAHD_long_poly_lookup_[hbe_type] == cosAHD_long_poly);
+			debug_assert(cosAHD_long_poly_lookup_[hbe_type] == cosAHD_long_poly);
 			} else {
 				cosAHD_long_poly_lookup_[hbe_type] = cosAHD_long_poly;
 			}
@@ -606,7 +606,7 @@ HBondDatabase::initialize_HBEval()
 //	buf >> chi_poly_name;
 //	chi_poly = HBPoly1D_from_name(chi_poly_name);
 //	if(chi_poly_lookup_[hbe_type]){
-//		assert(chi_poly_lookup_[hbe_type] == chi_poly);
+//	debug_assert(chi_poly_lookup_[hbe_type] == chi_poly);
 //	} else {
 //		chi_poly_lookup_[hbe_type] = chi_poly;
 //	}
@@ -618,7 +618,7 @@ HBondDatabase::initialize_HBEval()
 			buf >> weight_type_name;
 			weight_type = HBondWeightType(HBondTypeManager::weight_type_from_name(weight_type_name));
 			if(weight_type_lookup_[hbe_type] != hbw_NONE){
-				assert(weight_type_lookup_[hbe_type] == weight_type);
+			debug_assert(weight_type_lookup_[hbe_type] == weight_type);
 			} else {
 				weight_type_lookup_[hbe_type] = weight_type;
 			}
@@ -992,7 +992,7 @@ Real
 HBondDatabase::don_strength(
 	HBDonChemType const don_chem_type
 ) const {
-	assert(don_chem_type >= 1 && don_chem_type <= hbdon_MAX );
+debug_assert(don_chem_type >= 1 && don_chem_type <= hbdon_MAX );
 
 	return don_strength_lookup_[don_chem_type];
 }
@@ -1001,7 +1001,7 @@ Real
 HBondDatabase::acc_strength(
 	HBAccChemType const acc_chem_type
 ) const {
-	assert(acc_chem_type >= 1 && acc_chem_type <= hbacc_MAX );
+debug_assert(acc_chem_type >= 1 && acc_chem_type <= hbacc_MAX );
 
 	return acc_strength_lookup_[acc_chem_type];
 }

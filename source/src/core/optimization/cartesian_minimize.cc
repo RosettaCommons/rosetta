@@ -119,7 +119,7 @@ cartesian_collect_atompairE_deriv(
 	using namespace scoring::symmetry;
 	using namespace conformation::symmetry;
 
-	assert( pose.energies().minimization_graph() );
+debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {

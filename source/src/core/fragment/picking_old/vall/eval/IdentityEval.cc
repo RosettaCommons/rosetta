@@ -130,13 +130,13 @@ bool IdentityEval::eval_impl(
 )
 {
 	// no runtime_asserts here, will slow down Librarian operation
-	assert( extent.distance() == ss_.length() );
-	assert( ss_.length() == aa_.length() );
+debug_assert( extent.distance() == ss_.length() );
+debug_assert( ss_.length() == aa_.length() );
 
 	Size str_idx = 0;
 	for ( VallResidueConstIterator i = extent.begin; i != extent.end; ++i, ++str_idx ) {
-		assert( str_idx != ss_.length() );
-		assert( str_idx != aa_.length() );
+	debug_assert( str_idx != ss_.length() );
+	debug_assert( str_idx != aa_.length() );
 
 		switch ( ss_.at( str_idx ) ) {
 			case 'D': {

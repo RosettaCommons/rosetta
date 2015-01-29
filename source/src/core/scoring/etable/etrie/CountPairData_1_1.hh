@@ -22,7 +22,7 @@
 
 // STL Headers
 #include <iosfwd>
-#include <cassert>
+#include <utility/assert.hh>
 
 // Utility headers
 #include <utility/assert.hh>
@@ -62,7 +62,7 @@ public:
 	Size
 	conn_dist( Size ASSERT_ONLY( which_connection) ) const
 	{
-		assert( which_connection == 0 );
+	debug_assert( which_connection == 0 );
 		return connection_distance_;
 	}
 

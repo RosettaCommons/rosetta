@@ -64,8 +64,8 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 		side2_chains.insert(pose::get_chain_id_from_chain(sides[2][i], pose));
 	}
 	
-	assert (side1_chains.size() >= 1);
-	assert (side2_chains.size() >= 1);
+debug_assert (side1_chains.size() >= 1);
+debug_assert (side2_chains.size() >= 1);
 	
 	std::set<Size> side1_residues, side2_residues;
 	

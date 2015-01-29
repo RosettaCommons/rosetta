@@ -28,7 +28,7 @@
 #include <utility/factory/Factory.fwd.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <map>
 #include <utility>
 
@@ -153,7 +153,7 @@ public: // Static methods
 	create( Key const & key )
 	{
 		Registry & reg( registry() );
-		assert( reg.find( key ) != reg.end() );
+	debug_assert( reg.find( key ) != reg.end() );
 		return reg.find( key )->second();
 	}
 
@@ -165,7 +165,7 @@ public: // Static methods
 	create( Key const & key, Arg & arg )
 	{
 		Registry & reg( registry() );
-		assert( reg.find( key ) != reg.end() );
+	debug_assert( reg.find( key ) != reg.end() );
 		return reg.find( key )->second( arg );
 	}
 

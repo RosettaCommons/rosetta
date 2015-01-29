@@ -87,7 +87,7 @@ AtomTreeDiff::AtomTreeDiff(std::string filename):
 }
 
 void AtomTreeDiff::read_file(std::string filename){
-	assert( ! file_read_ ); // only read file once, by constructor or elsewhere. can't read multiple files yet
+debug_assert( ! file_read_ ); // only read file once, by constructor or elsewhere. can't read multiple files yet
 	in_.open(filename.c_str());
 	core::pose::PoseOP ref_pose;
 	std::set<std::string> used_tags;

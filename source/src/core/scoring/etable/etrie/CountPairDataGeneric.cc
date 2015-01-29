@@ -42,7 +42,7 @@ GenericResidueConnectionData::set_dist_to_connect_point(
 	Size connection_dist
 )
 {
-	assert( connpoint > 0 );
+debug_assert( connpoint > 0 );
 	if ( connpoint > path_distances_to_connection_points_.size()) {
 		path_distances_to_connection_points_.resize( connpoint );
 	}
@@ -56,7 +56,7 @@ void CountPairDataGeneric::set_dist_to_connect_point(
 	Size connection_dist
 )
 {
-	assert( entry > 0);
+debug_assert( entry > 0);
 	if ( entry > residue_connection_data_.size() ) {
 		residue_connection_data_.resize(entry);
 	}
@@ -86,7 +86,7 @@ CountPairDataGeneric::set_count_pair_data_to_use(
 	Size connection_id
 ) const
 {
-	assert( connection_id > 0 && connection_id <= residue_connection_data_.size());
+debug_assert( connection_id > 0 && connection_id <= residue_connection_data_.size());
 	data_at_hand_ = &residue_connection_data_[ connection_id  ];
 }
 */

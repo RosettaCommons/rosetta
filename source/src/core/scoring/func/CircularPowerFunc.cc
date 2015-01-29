@@ -14,6 +14,7 @@
 #include <core/scoring/func/CircularPowerFunc.hh>
 #include <core/types.hh>
 #include <numeric/angle.functions.hh>
+#include <utility/assert.hh>
 
 // C++ Headers
 
@@ -32,8 +33,8 @@ CircularPowerFunc::CircularPowerFunc(
 	power_( power ),
 	weight_( weight )
 {
-	assert( std::abs( std::pow(3.0,2) - 9.0 ) < 1e-3 );
-	assert( power_ != 1 && power_ != 0 );
+debug_assert( std::abs( std::pow(3.0,2) - 9.0 ) < 1e-3 );
+debug_assert( power_ != 1 && power_ != 0 );
 }
 
 FuncOP

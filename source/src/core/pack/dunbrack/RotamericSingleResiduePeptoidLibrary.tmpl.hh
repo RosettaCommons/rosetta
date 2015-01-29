@@ -215,7 +215,7 @@
 #include <ObjexxFCL/StaticIndexRange.fwd.hh>
 #include <ObjexxFCL/StaticIndexRange.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -344,14 +344,14 @@ RotamericSingleResiduePeptoidLibrary< T >::eval_rotameric_energy_deriv(
 	return 0.0;
 
 	/*
-	assert( rsd.aa() == aa() );
+debug_assert( rsd.aa() == aa() );
 
 	// Grab data from rsd
 	Size const nbb ( rsd.mainchain_torsions().size() );
 	Size const nchi( rsd.nchi() );
 	ChiVector const & chi( rsd.chi() );
 
-	assert( nbb == 3 && chi.size() == nchi );
+debug_assert( nbb == 3 && chi.size() == nchi );
 
 	Real4 & chimean( scratch.chimean() );
 	Real4 & chisd(   scratch.chisd()   );
@@ -970,17 +970,17 @@ RotamericSingleResiduePeptoidLibrary< T >::get_omg_from_rsd(
 	pose::Pose const & pose
 ) const
 {
-	assert( rsd.is_peptoid() || rsd.is_protein() );
+debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
 	if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.conformation().chain_end( rsd.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
-		assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
+	debug_assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
 		return pose.residue( pose.conformation().chain_end( rsd.chain() ) ).mainchain_torsion( RSD_OMG_INDEX );
 
 	} else if ( rsd.is_lower_terminus() ) {
 		return parent::NEUTRAL_OMG;
 
 	}	else {
-		assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
+	debug_assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
 		return pose.residue( rsd.seqpos() - 1 ).mainchain_torsion( RSD_OMG_INDEX );
 	}
 
@@ -994,10 +994,10 @@ RotamericSingleResiduePeptoidLibrary< T >::get_phi_from_rsd(
 	pose::Pose const & pose
 ) const
 {
-	assert( rsd.is_peptoid() || rsd.is_protein() );
+debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
 	if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.conformation().chain_end( rsd.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
-		assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
+	debug_assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
 		return rsd.mainchain_torsion( RSD_PHI_INDEX );
 
 	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
@@ -1020,10 +1020,10 @@ RotamericSingleResiduePeptoidLibrary< T >::get_psi_from_rsd(
 	pose::Pose const & pose
 ) const
 {
-	assert( rsd.is_peptoid() || rsd.is_protein() );
+debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
 	if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).has_variant_type( chemical::NTERM_CONNECT ) ) {
-		assert( pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_peptoid() );
+	debug_assert( pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_peptoid() );
 		return rsd.mainchain_torsion( RSD_PSI_INDEX );
 
 	} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
@@ -1487,7 +1487,7 @@ RotamericSingleResiduePeptoidLibrary< T >::chisamples_for_rotamer_and_chi(
 	utility::vector1< Real > & chisample_prob
 ) const
 {
-	//assert( dynamic_cast< RotamericData const & > ( rotamer_data ) );
+//debug_assert( dynamic_cast< RotamericData const & > ( rotamer_data ) );
 	//RotamericData const & rotameric_data( static_cast< RotamericData const & > ( rotamer_data ) );
 
 	// setting this value to zero disables the small-standdev filter -- is that what we want?
@@ -1937,7 +1937,7 @@ RotamericSingleResiduePeptoidLibrary< T >::read_from_file(
 				}
 
 				// 4.
-				assert( count_in_this_omgphipsi_bin == 1 );
+			debug_assert( count_in_this_omgphipsi_bin == 1 );
 				Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
 				PackedDunbrackRotamer< T > rotamer( chimean, chisd, probability, packed_rotno );
 				if ( is_trans_omg( omg ) ) {
@@ -2027,7 +2027,7 @@ RotamericSingleResiduePeptoidLibrary< T >::get_rotamer_from_chi_static(
 {
 	if ( dun02() ) { rotamer_from_chi_02( chi, aa(), T, rot ); return; }
 
-	assert( chi.size() >= T );
+debug_assert( chi.size() >= T );
 
 	/// compiler will unroll this loop
 	for ( Size ii = 1; ii <= T; ++ii ) {

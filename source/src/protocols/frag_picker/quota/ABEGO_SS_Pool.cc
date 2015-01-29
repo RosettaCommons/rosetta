@@ -48,7 +48,7 @@ ABEGO_SS_Pool::ABEGO_SS_Pool(Size total_size,std::string pool_name,
 	ss_abego_types_ = ABEGO_SS_MapOP( new ABEGO_SS_Map(ss_abego_types) );
 
 	buffer_factor_ = buffer_factor;
-	assert ( which_components.size() == weights.size() );
+debug_assert ( which_components.size() == weights.size() );
 	for(Size i=1;i<=which_components.size();i++) {
 	    components_.push_back( which_components[i] );
 	    weights_.push_back( weights[i] );

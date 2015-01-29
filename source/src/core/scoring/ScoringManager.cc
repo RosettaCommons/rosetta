@@ -771,7 +771,7 @@ using namespace basic::options::OptionKeys;
 void
 ScoringManager::add_etable( std::string const & name, etable::EtableOP etable )
 {
-	assert( etables_by_string_.count(name) == 0 );
+debug_assert( etables_by_string_.count(name) == 0 );
 	etables_by_string_[ name ] = etable;
 }
 
@@ -789,7 +789,7 @@ ScoringManager::make_partially_soft_etable( std::string const & table_id, etable
 	using namespace etable;
 	using namespace utility;
 
-	assert( utility::startswith( table_id, "FA_STANDARD_SOFT" ) );
+debug_assert( utility::startswith( table_id, "FA_STANDARD_SOFT" ) );
 	std::string table_name( string_split( table_id, '_').back() );
 	std::string table_value( trim( table_id, "FA_STANDARD_SOFT" ) );
 	if ( string2float( table_value ) != -1 ) {
@@ -817,7 +817,7 @@ ScoringManager::make_partially_soft_etable( std::string const & table_id, etable
 void
 ScoringManager::add_coarse_etable( std::string const &name, coarse::CoarseEtableOP etable )
 {
-	assert( coarse_etables_.count(name) == 0);
+debug_assert( coarse_etables_.count(name) == 0);
 	coarse_etables_ [name] = etable;
 }
 */
@@ -827,7 +827,7 @@ ScoringManager::add_coarse_etable( std::string const &name, coarse::CoarseEtable
 void
 ScoringManager::add_memb_etable( std::string const & name, etable::MembEtableOP etable ) //pba
 {
-  assert( memb_etables_.count(name) == 0 );
+ debug_assert( memb_etables_.count(name) == 0 );
   memb_etables_[ name ] = etable;
 }
 

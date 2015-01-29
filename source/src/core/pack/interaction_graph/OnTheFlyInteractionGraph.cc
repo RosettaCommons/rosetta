@@ -72,7 +72,7 @@ OnTheFlyNode::set_rotamers(
 	rotamer_set::RotamerSetCOP rotamers
 )
 {
-	assert( rotamers->num_rotamers() == (Size) get_num_states() );
+debug_assert( rotamers->num_rotamers() == (Size) get_num_states() );
 	rotamer_set_ = rotamers;
 	for ( Size ii = 1; ii <= rotamer_set_->num_rotamers(); ++ii ) {
 		rotamers_[ ii ] = rotamer_set_->rotamer( ii );

@@ -80,19 +80,19 @@ class FirstClassNode : public V {
 
 		inline
 		BackgroundToFirstClassEdge< V, E, G >* get_edge_to_bg_node( int index ) const {
-			assert( bg_edge_vector_up_to_date_ );
+		debug_assert( bg_edge_vector_up_to_date_ );
 			return bg_edge_vector_[ index ];
 		}
 
 		inline
 		int get_index_of_adjacent_background_node( int index ) const {
-			assert( bg_edge_vector_up_to_date_ );
+		debug_assert( bg_edge_vector_up_to_date_ );
 			return adjacent_bg_node_indices_[ index ];
 		}
 
 		inline
 		BackgroundNode< V, E, G >* get_adjacent_background_node( int index ) const {
-			assert( bg_edge_vector_up_to_date_ );
+		debug_assert( bg_edge_vector_up_to_date_ );
 			return bg_node_vector_[ index ];
 		}
 
@@ -204,19 +204,19 @@ class BackgroundNode {
 
 		inline
 		BackgroundToFirstClassEdge< V, E, G >* get_incident_edge( int index ) const {
-			assert( edge_vector_up_to_date_ );
+		debug_assert( edge_vector_up_to_date_ );
 			return edge_vector_[ index ];
 		}
 
 		inline
 		int get_index_of_adjacent_first_class_node( int index ) const {
-			assert( edge_vector_up_to_date_ );
+		debug_assert( edge_vector_up_to_date_ );
 			return adjacent_first_class_node_indices_[ index ];
 		}
 
 		inline
 		FirstClassNode< V, E, G>* get_adjacent_first_class_node( int index ) const {
-			assert( edge_vector_up_to_date_ );
+		debug_assert( edge_vector_up_to_date_ );
 			return adjacent_nodes_[ index ];
 		}
 
@@ -379,7 +379,7 @@ class AdditionalBackgroundNodesInteractionGraph : public G {
 
 		inline
 		BackgroundNode< V, E, G >* get_background_node( int index ) const {
-			assert( index > 0 && index <= num_bg_nodes_ );
+		debug_assert( index > 0 && index <= num_bg_nodes_ );
 			return bg_nodes_[ index ];
 		}
 
@@ -1043,7 +1043,7 @@ void AdditionalBackgroundNodesInteractionGraph< V, E, G > ::drop_background_edge
 template < typename V, typename E, typename G >
 void AdditionalBackgroundNodesInteractionGraph< V, E, G >::set_num_background_nodes( int num_bg_nodes ) {
 
-	assert( num_bg_nodes_ == -1 && num_bg_nodes >= 0); //call this method at most once
+debug_assert( num_bg_nodes_ == -1 && num_bg_nodes >= 0); //call this method at most once
 	num_bg_nodes_ = num_bg_nodes;
 
 	if ( num_bg_nodes_ == 0 )

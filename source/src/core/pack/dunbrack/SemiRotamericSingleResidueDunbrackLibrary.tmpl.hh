@@ -377,7 +377,7 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
-#include <cassert>
+#include <utility/assert.hh>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -587,7 +587,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbdep(
 	bool eval_deriv
 ) const
 {
-	assert( ! bbind_nrchi_scoring_ );
+debug_assert( ! bbind_nrchi_scoring_ );
 
 	//Multiplier for D-amino acids:
 	const core::Real d_multiplier = (core::chemical::is_canonical_D_aa(rsd.aa()) ) ? -1.0 : 1.0;
@@ -679,7 +679,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbind(
 	bool eval_deriv
 ) const
 {
-	assert( bbind_nrchi_scoring_ );
+debug_assert( bbind_nrchi_scoring_ );
 
 	Real rotameric_score = parent::eval_rotameric_energy_deriv( rsd, scratch, eval_deriv );
 
@@ -744,7 +744,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbind_nrchi_score(
 	Real & dnrchi_score_dnrchi
 ) const
 {
-	assert( bbind_nrchi_scoring_ );
+debug_assert( bbind_nrchi_scoring_ );
 
 	Size const packed_rotno( grandparent::rotwell_2_packed_rotno( scratch.rotwell() ));
 
@@ -776,7 +776,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 	Real & dnrchi_score_dpsi
 ) const
 {
-	assert( ! bbind_nrchi_scoring_ );
+debug_assert( ! bbind_nrchi_scoring_ );
 
 	Size const packed_rotno( parent::rotwell_2_packed_rotno( scratch.rotwell() ));
 
@@ -803,8 +803,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 		phibin_next, psibin_next,
 		phi_alpha, psi_alpha );
 
-	assert( phibin >= 1 && phibin <= parent::N_PHIPSI_BINS );
-	assert( psibin >= 1 && psibin <= parent::N_PHIPSI_BINS );
+debug_assert( phibin >= 1 && phibin <= parent::N_PHIPSI_BINS );
+debug_assert( psibin >= 1 && psibin <= parent::N_PHIPSI_BINS );
 
 	BBDepScoreInterpData const & d000( bbdep_nrc_interpdata_[ packed_rotno ]( phibin	 , psibin	 , nrchi_bin	  ));
 	BBDepScoreInterpData const & d001( bbdep_nrc_interpdata_[ packed_rotno ]( phibin	 , psibin	 , nrchi_bin_next ));
@@ -911,7 +911,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::best_rotamer_energy(
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	assert( rsd.nchi() == T+1 );
+debug_assert( rsd.nchi() == T+1 );
   Real nrchi_score( 0 );
 	if ( curr_rotamer_only ) {
 		Real dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi;
@@ -1024,7 +1024,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::assign_random_rotamer_with_bias_
 		Real nrchi_prob = RG.uniform();
 		Real left( bbind_rotamers_to_sample_( nrchi_bin, packed_rotno ).left_ );
 		Real right( bbind_rotamers_to_sample_( nrchi_bin, packed_rotno ).right_ );
-		assert( left < right ); // I'm 99% this is true, that bins don't wrap around the center divide.
+	debug_assert( left < right ); // I'm 99% this is true, that bins don't wrap around the center divide.
 
 		new_chi_angles[ T + 1 ] = left + (left-right) * nrchi_prob;
 	} else {
@@ -1901,9 +1901,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbind_chisamples_for_rotamer_chi
 ) const
 {
 	using namespace pack::task;
-	assert( chi_index == T + 1 );
+debug_assert( chi_index == T + 1 );
 
-	assert( dynamic_cast< BBIndSemiRotamericData< T > const * > ( & rotamer_data ) );
+debug_assert( dynamic_cast< BBIndSemiRotamericData< T > const * > ( & rotamer_data ) );
 	BBIndSemiRotamericData< T > const & bbind_rotameric_data(
 		static_cast< BBIndSemiRotamericData< T > const & > ( rotamer_data ) );
 
@@ -1960,9 +1960,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_chisamples_for_rotamer_chi
 ) const
 {
 	using namespace pack::task;
-	assert( chi_index == T + 1 );
+debug_assert( chi_index == T + 1 );
 
-	assert( dynamic_cast< BBDepSemiRotamericData< T > const * > ( & rotamer_data ) );
+debug_assert( dynamic_cast< BBDepSemiRotamericData< T > const * > ( & rotamer_data ) );
 	BBDepSemiRotamericData< T > const & bbdep_rotameric_data(
 		static_cast< BBDepSemiRotamericData< T > const & > ( rotamer_data ) );
 
@@ -2586,8 +2586,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::set_nonrotameric_chi_bbdep_scori
 	Real step_size_in_degrees
 )
 {
-	assert( nrchi_periodicity_ != 0.0 );
-	assert( step_size_in_degrees != 0.0 );
+debug_assert( nrchi_periodicity_ != 0.0 );
+debug_assert( step_size_in_degrees != 0.0 );
 	bbdep_nrchi_binsize_ = step_size_in_degrees;
 	bbdep_nrchi_nbins_ = static_cast< Size > (nrchi_periodicity_ / step_size_in_degrees);
 }
@@ -2599,8 +2599,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::set_nonrotameric_chi_bbind_scori
 	Real step_size_in_degrees
 )
 {
-	assert( nrchi_periodicity_ != 0.0 );
-	assert( step_size_in_degrees != 0.0 );
+debug_assert( nrchi_periodicity_ != 0.0 );
+debug_assert( step_size_in_degrees != 0.0 );
 	bbind_nrchi_binsize_ = step_size_in_degrees;
 	bbind_nrchi_nbins_ = static_cast< Size > (nrchi_periodicity_ / step_size_in_degrees);
 }
@@ -2666,7 +2666,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_from_files(
 	utility::io::izstream & in_continmin_bbdep
 )
 {
-	assert( ! bbind_nrchi_scoring_ ); // make sure you're not actually trying to use backbone-independent scoring.
+debug_assert( ! bbind_nrchi_scoring_ ); // make sure you're not actually trying to use backbone-independent scoring.
 
 	read_rotamer_definitions( in_rotdef );
 	read_rotameric_data( in_rotameric );
@@ -3089,11 +3089,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_rotamer_definitions(
 	}
 
 	if ( bbind_nrchi_scoring_ ) {
-		assert( bbind_nrchi_nbins_ != 0 );
+	debug_assert( bbind_nrchi_nbins_ != 0 );
 		bbind_non_rotameric_chi_scores_.dimension( bbind_nrchi_nbins_, grandparent::n_packed_rots() );
 		bbind_non_rotameric_chi_scores_ = 0;
 	} else {
-		assert( bbdep_nrchi_nbins_ != 0 );
+	debug_assert( bbdep_nrchi_nbins_ != 0 );
 		bbdep_nrc_interpdata_.resize( grandparent::n_packed_rots() );
 		for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
 			bbdep_nrc_interpdata_[ ii ].dimension( parent::N_PHIPSI_BINS, parent::N_PHIPSI_BINS, bbdep_nrchi_nbins_ );

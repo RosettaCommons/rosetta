@@ -135,8 +135,8 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	rna_backbone_backbone_potential_.dimension( backbone_backbone_num_bins_ );
 	rna_repulsive_weight_.dimension( num_RNA_backbone_oxygen_atoms_ );
 
-	assert( Size( basepair_xy_bin_width_   * basepair_xy_num_bins_/ 2.0 )   == basepair_xy_table_size_ );
-	assert( Size( base_backbone_bin_width_ * base_backbone_num_bins_/ 2.0 ) == base_backbone_table_size_ );
+debug_assert( Size( basepair_xy_bin_width_   * basepair_xy_num_bins_/ 2.0 )   == basepair_xy_table_size_ );
+debug_assert( Size( base_backbone_bin_width_ * base_backbone_num_bins_/ 2.0 ) == base_backbone_table_size_ );
 
 	rna_basepair_xy_ = 0.0;
 	rna_axis_ = 0.0;
@@ -346,14 +346,14 @@ RNA_LowResolutionPotential::get_rna_basepair_xy(
 {
 	Size const theta_bin = ( cos_theta < 0 ) ?  1 : 2;
 
-	assert( res_i.is_RNA() );
-	assert( res_j.is_RNA() );
+debug_assert( res_i.is_RNA() );
+debug_assert( res_j.is_RNA() );
 
 	Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
 	Size const res_j_bin = core::chemical::rna::convert_acgu_to_1234( res_j.name1() );
 
-	assert( res_i_bin > 0 );
-	assert( res_j_bin > 0 );
+debug_assert( res_i_bin > 0 );
+debug_assert( res_j_bin > 0 );
 
 	Real value( 0.0 );
 	deriv_x = 0.0;
@@ -508,7 +508,7 @@ RNA_LowResolutionPotential::get_rna_axis_score(
 		value = interpolate_value;
 		//std::cout << "AXIS: " << F(8,3,cos_theta) << " " << F(8,3,value) << "  vs. " << F(8,3,interpolate_value ) << std::endl;
 	} else {
-		assert( cos_theta_bin > 0 && cos_theta_bin <= axis_num_bins_ );
+	debug_assert( cos_theta_bin > 0 && cos_theta_bin <= axis_num_bins_ );
 		value = rna_axis_( cos_theta_bin );
 	}
 	return value;
@@ -567,8 +567,8 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 
 	Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
 
-	assert( res_i_bin > 0 );
-	assert( atom_num_j_bin > 0 );
+debug_assert( res_i_bin > 0 );
+debug_assert( atom_num_j_bin > 0 );
 
 	if ( interpolate_ ) {
 		//		Real interpolate_value( 0.0 );
@@ -1148,11 +1148,11 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 	//	rna::RNA_RawBaseBaseInfo const & raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
 	rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 
-	//	assert( rna_filtered_base_base_info.calculated()  );
+	//debug_assert( rna_filtered_base_base_info.calculated()  );
 
 	// Axis and stagger terms will have hard boundaries unless they're
 	// multiplied by base pair (x,y) or base stack (z) terms.
-	assert( rna_filtered_base_base_info.scale_axis_stagger() );
+debug_assert( rna_filtered_base_base_info.scale_axis_stagger() );
 
 	// Yea, this is what we need...
   ObjexxFCL::FArray2D < Real > const & filtered_base_pair_array ( rna_filtered_base_base_info.filtered_base_pair_array() );
@@ -1162,7 +1162,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
   ObjexxFCL::FArray2D < Real > const & filtered_base_stack_axis_array( rna_filtered_base_base_info.filtered_base_stack_axis_array() );
 
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-	//	assert( rna_centroid_info.calculated()  );
+	//debug_assert( rna_centroid_info.calculated()  );
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
   utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
@@ -1414,7 +1414,7 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 
 	//	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	//	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-	//	assert( rna_centroid_info.calculated() ); //This needs to all be calculated earlier, dude.
+	//debug_assert( rna_centroid_info.calculated() ); //This needs to all be calculated earlier, dude.
 
 	//	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
 	//  utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
@@ -1505,7 +1505,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 	F2 = 0.0;
 
 	if ( !rsd1.is_RNA() ) return;
-	assert( interpolate_ );
+debug_assert( interpolate_ );
 
 	//For speed, a cached set of atom numbers that go with RNA_backbone_oxygen_atoms_ (which is a bunch of strings)
 	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
@@ -1803,7 +1803,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 
 	if ( !rsd1.is_RNA() ) return;
 
-	assert( interpolate_ );
+debug_assert( interpolate_ );
 
 	//For speed, a cached set of atom numbers that go with RNA_backbone_oxygen_atoms_ (which is a bunch of strings)
 	//	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
@@ -2163,9 +2163,9 @@ RNA_LowResolutionPotential::initialize_atom_numbers_for_backbone_score_calculati
 	//	std::cout << "HELLO? " << check_atom_numbers_for_backbone_oxygens( rsd_set, na_rcy ) << std::endl;
 	//	std::cout << "HELLO? " << check_atom_numbers_for_backbone_oxygens( rsd_set, na_ura ) << std::endl;
 
-	assert( check_atom_numbers_for_backbone_oxygens( rsd_set, na_rad ) );
-	assert( check_atom_numbers_for_backbone_oxygens( rsd_set, na_rcy ) );
-	assert( check_atom_numbers_for_backbone_oxygens( rsd_set, na_ura ) );
+debug_assert( check_atom_numbers_for_backbone_oxygens( rsd_set, na_rad ) );
+debug_assert( check_atom_numbers_for_backbone_oxygens( rsd_set, na_rcy ) );
+debug_assert( check_atom_numbers_for_backbone_oxygens( rsd_set, na_ura ) );
 
 }
 

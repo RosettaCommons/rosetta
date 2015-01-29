@@ -136,7 +136,7 @@ RotamerConstraint::~RotamerConstraint() {}
 void
 RotamerConstraint::add_residue( conformation::Residue const & rsd )
 {
-	assert( rsd.type().name() == rsd_type_name_ );
+debug_assert( rsd.type().name() == rsd_type_name_ );
 	favored_rotamers_.push_back( rsd.chi() );
 	pack::dunbrack::RotVector rot;
 	pack::dunbrack::rotamer_from_chi( rsd, rot );
@@ -183,7 +183,7 @@ RotamerConstraint::score(
 			pack::dunbrack::RotamerLibraryScratchSpace scratch;
 			Real const best_rotE = rotlib->best_rotamer_energy(rsd, false /* => global min */, scratch);
 			Real const this_rotE = rotlib->best_rotamer_energy(rsd, true /* => local min */, scratch);
-			assert( best_rotE <= this_rotE );
+		debug_assert( best_rotE <= this_rotE );
 			TR << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
 			emap[ this->score_type() ] +=  ( best_rotE - this_rotE );
 			return; // quit once we find a match

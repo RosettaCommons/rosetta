@@ -1225,13 +1225,13 @@ build_pose_as_is1(
 		// Map the atom names.
 		fill_name_map(rinfo_name_map[i], rinfo, rsd_type, options);
 
-		assert( rsd_type.natoms() >= rinfo_name_map[i].left.size() );
+	debug_assert( rsd_type.natoms() >= rinfo_name_map[i].left.size() );
 		core::Size missing_atoms( rsd_type.natoms() - rinfo_name_map[i].left.size() );
 		if( missing_atoms > 0 ) {
 			TR.Debug << "Match: '" << rsd_type.name() << "'; missing " << missing_atoms << " coordinates" << std::endl;
 		}
 
-		assert( rinfo.xyz.size() >= rinfo_name_map[i].left.size() );
+	debug_assert( rinfo.xyz.size() >= rinfo_name_map[i].left.size() );
 		core::Size discarded_atoms( rinfo.xyz.size() - rinfo_name_map[i].left.size() );
 		if( is_lower_terminus && rinfo.xyz.count(" H  ") && ! rinfo_name_map[i].left.count(" H  ") ) {
 			// Don't worry about missing BB H if Nterm

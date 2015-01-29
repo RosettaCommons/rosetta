@@ -40,7 +40,7 @@
 #include <numeric/random/random.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <string>
 
 

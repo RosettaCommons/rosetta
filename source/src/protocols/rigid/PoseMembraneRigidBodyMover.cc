@@ -314,7 +314,7 @@ rotation_m_ = R_in;
 
 void WholeBodyRotationMover::apply( core::pose::Pose & pose )
 {
-	assert (! core::pose::symmetry::is_symmetric( pose ) );
+debug_assert (! core::pose::symmetry::is_symmetric( pose ) );
 	core::kinematics::Jump first_jump = pose.jump( 1 );
 
 	//TR << "Rotate: " << "Jump (before): " << first_jump << std::endl;

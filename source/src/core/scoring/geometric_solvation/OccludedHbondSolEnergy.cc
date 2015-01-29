@@ -149,7 +149,7 @@ OccludedHbondSolEnergy::residue_pair_energy(
 	// Note: no count-pair stuff, these will just be computed normally
 	// jk is there double-counting with other stuff, eg. backbone-dependent Dunbrack when we include self-terms like this?
 
-	assert ( rsd1.seqpos() != rsd2.seqpos() ); // this should be computed via eval_intrares_energy
+debug_assert ( rsd1.seqpos() != rsd2.seqpos() ); // this should be computed via eval_intrares_energy
 
 	Real occ_solE =
 		res_res_occ_sol_one_way( rsd1, rsd2 ) +
@@ -379,11 +379,11 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 	//bool update_deriv = false;
 	//if ( update_deriv_polar || update_deriv_base || update_deriv_occ) update_deriv = true;
 	// only one at a time
-	//assert( ! ( update_deriv_polar && update_deriv_base ) );
-	//assert( ! ( update_deriv_polar && update_deriv_occ ) );
-	//assert( ! ( update_deriv_base && update_deriv_occ ) );
+//debug_assert( ! ( update_deriv_polar && update_deriv_base ) );
+//debug_assert( ! ( update_deriv_polar && update_deriv_occ ) );
+//debug_assert( ! ( update_deriv_base && update_deriv_occ ) );
 
-	assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) ) ||
+debug_assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) ) ||
 		( ( ! polar_atom_donates ) && atom_is_acceptor( polar_rsd, polar_atom ) ) );
 
 	// If acceptor, do lookup on polar atom. If donor (ie. polar atom is a hydrogen), use the base atom instead

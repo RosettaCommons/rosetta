@@ -99,14 +99,14 @@ public:
 	/// @brief [] operator for getting a non-const reference to the energy for a ScoreType
 	Real & operator[] ( ScoreType st )
 	{
-		assert( st > 0 && st <= n_score_types );
+	debug_assert( st > 0 && st <= n_score_types );
 		return map_[ st-1 ];
 	}
 
 	/// @brief [] operator for getting the value for a ScoreType
 	Real operator[] ( ScoreType st ) const
 	{
-		assert( st > 0 && st <= n_score_types );
+	debug_assert( st > 0 && st <= n_score_types );
 		return map_[ st-1 ];
 	}
 

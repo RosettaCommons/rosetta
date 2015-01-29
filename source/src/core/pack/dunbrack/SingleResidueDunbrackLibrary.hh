@@ -239,8 +239,8 @@ public:
 		Real chi,
 		Size which_chi
 	) const {
-		assert( ! dun02_ );
-		assert( -180.0 <= chi && chi <= 180.0 );
+	debug_assert( ! dun02_ );
+	debug_assert( -180.0 <= chi && chi <= 180.0 );
 
 		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/) {
 			if ( which_chi == 1 ) {
@@ -271,8 +271,8 @@ public:
 	) const {
 		/// very, very rarely, periodic_range( angle, 360 ) will return 180 instead of -180.
 		/// though it is supposed to return values in the range [-180, 180).
-		assert( angle_start <= ang && ang <= angle_start + angle_range );
-		assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
+	debug_assert( angle_start <= ang && ang <= angle_start + angle_range );
+	debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
 
 		Real real_bin_lower = ( ang - angle_start ) / angle_step;
 		Size bin_prev = static_cast< Size > ( real_bin_lower );

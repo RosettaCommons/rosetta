@@ -270,7 +270,7 @@ SimpleNode::update_current_one_body_energy()
 void
 SimpleNode::update_alternate_one_body_energy()
 {
-	assert( dynamic_cast< SimpleInteractionGraph const * >(Node::get_owner()) );
+debug_assert( dynamic_cast< SimpleInteractionGraph const * >(Node::get_owner()) );
 
 	SimpleInteractionGraph const * ig( static_cast< SimpleInteractionGraph const * >(Node::get_owner()));
 	EnergyMap emap;
@@ -387,7 +387,7 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 	//  TR.Debug << "num nodes " << (this->get_owner())->num_nodes() << std::endl;
 	SimpleNode * node1( static_cast< SimpleNode * > (this->get_node( (platform::Size) 0 )));
 	SimpleNode * node2( static_cast< SimpleNode * > (this->get_node( (platform::Size) 1 )));
-	assert( node1 && node2 );
+debug_assert( node1 && node2 );
 	conformation::ResidueCOP res1;
 	conformation::ResidueCOP res2;
 	Vector r1bb_centroid( node1->bb_centroid() ), r2bb_centroid( node2->bb_centroid() );
@@ -429,7 +429,7 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 
 	// TR.Debug << res1->seqpos() << " using " << node1_used << " " << res2->seqpos() << " " << node2_used << std::endl;
 
-	assert( dynamic_cast< SimpleInteractionGraph const * >(this->get_owner()) );
+debug_assert( dynamic_cast< SimpleInteractionGraph const * >(this->get_owner()) );
 	SimpleInteractionGraph const * ig( static_cast< SimpleInteractionGraph const * >(this->get_owner()));
 	pose::Pose const & pose = ig->pose();
 	scoring::ScoreFunction const & sfxn = ig->scorefunction();
@@ -496,21 +496,21 @@ SimpleEdge::bb_bb_boundaries( Size ind1, Size ind2 ) const
 bool
 SimpleEdge::bb_bbE_calced( Size ind1, Size ind2 ) const
 {
-	assert( bb_bb_boundaries( ind1, ind2 ));
+debug_assert( bb_bb_boundaries( ind1, ind2 ));
 	return bb_bbE_calced_[ ind1 ][ ind2 ];
 }
 
 void
 SimpleEdge::set_bb_bbE_calced( Size ind1, Size ind2 )
 {
-	assert( bb_bb_boundaries( ind1, ind2 ));
+debug_assert( bb_bb_boundaries( ind1, ind2 ));
 	bb_bbE_calced_[ ind1 ][ ind2 ] = true;
 }
 
 void
 SimpleEdge::set_bb_bbE( Size ind1, Size ind2, Real val )
 {
-	assert( bb_bb_boundaries( ind1, ind2 ));
+debug_assert( bb_bb_boundaries( ind1, ind2 ));
 	bb_bbE_[ ind1 ][ ind2 ] = val;
 }
 
@@ -518,7 +518,7 @@ SimpleEdge::set_bb_bbE( Size ind1, Size ind2, Real val )
 Real
 SimpleEdge::bb_bbE( Size ind1, Size ind2 ) const
 {
-	assert( bb_bb_boundaries( ind1, ind2 ));
+debug_assert( bb_bb_boundaries( ind1, ind2 ));
 	return bb_bbE_[ ind1 ][ ind2 ];
 }
 

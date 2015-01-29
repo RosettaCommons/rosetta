@@ -126,14 +126,14 @@ append_subpose_to_pose(
 }
 
 void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) {
-	assert(jumps);
+debug_assert(jumps);
 	for (Size i = 1; i <= pose.num_jump(); ++i) {
 		jumps->insert(i);
 	}
 }
 
 void remove_virtual_residues(core::pose::Pose* pose) {
-  assert(pose);
+ debug_assert(pose);
   for (core::Size i = 1; i <= pose->total_residue(); ++i) {
     if (pose->residue_type(i).name() == "VRT")
       pose->conformation().delete_residue_slow(i);
@@ -141,8 +141,8 @@ void remove_virtual_residues(core::pose::Pose* pose) {
 }
 
 void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose) {
-  assert(pose);
-  assert(jump_num <= pose->num_jump());
+ debug_assert(pose);
+ debug_assert(jump_num <= pose->num_jump());
 
   const kinematics::FoldTree& tree = pose->fold_tree();
 
@@ -168,8 +168,8 @@ void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose) {
       id::AtomID(1, downstream_res.atom_index("CA")),
       id::AtomID(2, downstream_res.atom_index("C")));
 
-  assert(upstream_stub.valid());
-  assert(downstream_stub.valid());
+ debug_assert(upstream_stub.valid());
+ debug_assert(downstream_stub.valid());
 
   pose->conformation().set_stub_transform(
       upstream_stub,
@@ -182,8 +182,8 @@ bool is_position_conserved_residue(const Pose& pose, core::Size residue) {
   using core::pose::datacache::PositionConservedResiduesStore;
   using core::pose::datacache::PositionConservedResiduesStoreCOP;
 
-  assert(residue > 0);
-  assert(residue <= pose.total_residue());
+ debug_assert(residue > 0);
+ debug_assert(residue <= pose.total_residue());
 
   const BasicDataCache& cache = pose.data();
   if (!cache.has(core::pose::datacache::CacheableDataType::POSITION_CONSERVED_RESIDUES))
@@ -206,7 +206,7 @@ create_subpose(
 )
 {
 	Size const nres( f.nres() );
-	assert( nres == positions.size() );
+debug_assert( nres == positions.size() );
 
 	pose.clear();
 
@@ -223,7 +223,7 @@ create_subpose(
 			// check if this residue should be in a new chain. not a perfect check...
 			conformation::Residue const & prev_rsd( src.residue( positions[i-1] ) );
 			if ( prev_rsd.is_upper_terminus() || rsd.is_lower_terminus() || prev_rsd.chain() != rsd.chain() ) {
-				assert( pose.total_residue() == i );
+			debug_assert( pose.total_residue() == i );
 				pose.conformation().insert_chain_ending( i-1 );
 			}
 		}
@@ -593,7 +593,7 @@ bool getPoseExtraScore(
 	CacheableStringFloatMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-	assert( data.get() != NULL );
+debug_assert( data.get() != NULL );
 
 	std::map< std::string, float >::const_iterator it = data->map().find( name );
 	if ( it == data->map().end() ) {
@@ -620,7 +620,7 @@ bool getPoseExtraScore(
 	CacheableStringMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-	assert( data.get() != NULL );
+debug_assert( data.get() != NULL );
 
 	std::map< std::string, std::string >::const_iterator it = data->map().find( name );
 	if ( it == data->map().end() ) {
@@ -794,7 +794,7 @@ void clearPoseExtraScore(
 		CacheableStringFloatMapOP data
 			= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap >
 				( pose.data().get_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		assert( data.get() != NULL );
+	debug_assert( data.get() != NULL );
 
 		if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
 	}
@@ -803,7 +803,7 @@ void clearPoseExtraScore(
 		CacheableStringMapOP data
 			= utility::pointer::dynamic_pointer_cast< CacheableStringMap >
 				( pose.data().get_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		assert( data.get() != NULL );
+	debug_assert( data.get() != NULL );
 
 		if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
 	}
@@ -940,7 +940,7 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose ) {
 		if ( pose.residue(i).is_protein() ) nres++;
 	}
 
-	assert( secstructs.size() == nres);
+debug_assert( secstructs.size() == nres);
 	if( secstructs.size() != nres )
 		secstructs.clear();
 
@@ -1014,7 +1014,7 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 
 	} // foreach residue
 
-	assert( conf2pdb.size() == pose.conformation().num_chains() );
+debug_assert( conf2pdb.size() == pose.conformation().num_chains() );
 	return conf2pdb;
 }
 
@@ -1122,7 +1122,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 		// find the corresponding pdb chain
 		Conf2PDB::const_iterator c2p = conf2pdb.find( pose.chain( chain_end ) );
-		assert( ( fix_chains && c2p != conf2pdb.end() ) || !fix_chains ); // otherwise something's very wrong
+	debug_assert( ( fix_chains && c2p != conf2pdb.end() ) || !fix_chains ); // otherwise something's very wrong
 
 		for ( ; res <= chain_end; ++res ) {
 			// handle the pdb chain only if necessary
@@ -1154,7 +1154,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 	// no point updating pdb_info if it's just thrown away
 	pose.pdb_info()->obsolete( false );
 
-	assert( res == pose.n_residue() + 1 );
+debug_assert( res == pose.n_residue() + 1 );
 
 	return true;
 }
@@ -1815,7 +1815,7 @@ setup_dof_mask_from_move_map(
 
 bool
 has_chain(std::string const & chain, core::pose::Pose const & pose){
-	assert(chain.size()==1);// chain is one char
+debug_assert(chain.size()==1);// chain is one char
 	char chain_char= chain[0];
 	return has_chain(chain_char, pose);
 }
@@ -1867,7 +1867,7 @@ get_jump_id_from_chain_id(core::Size const & chain_id,const core::pose::Pose & p
 
 core::Size
 get_chain_id_from_chain(std::string const & chain, core::pose::Pose const & pose){
-	assert(chain.size()==1);// chain is one char
+debug_assert(chain.size()==1);// chain is one char
 	if( chain.size() > 1) utility_exit_with_message("Multiple chain_ids per chain! Are you using '-treat_residues_in_these_chains_as_separate_chemical_entities', and not using compatible movers?" );
 	char chain_char= chain[0];
 	return get_chain_id_from_chain(chain_char, pose);
@@ -1886,7 +1886,7 @@ get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose){
 
 utility::vector1<core::Size>
 get_chain_ids_from_chain(std::string const & chain, core::pose::Pose const & pose){
-	assert(chain.size()==1);// chain is one char
+debug_assert(chain.size()==1);// chain is one char
 	char chain_char= chain[0];
 	return get_chain_ids_from_chain(chain_char, pose);
 
@@ -1928,7 +1928,7 @@ get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 
 utility::vector1<core::Size>
 get_jump_ids_from_chain(std::string const & chain, core::pose::Pose const & pose){
-	assert(chain.size()==1);// chain is one char
+debug_assert(chain.size()==1);// chain is one char
 	char chain_char= chain[0];
 	return get_jump_ids_from_chain(chain_char, pose);
 }

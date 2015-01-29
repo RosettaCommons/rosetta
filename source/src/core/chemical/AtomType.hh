@@ -176,7 +176,7 @@ public:
 
 	///@brief is atom type virtual?
 	bool is_virtual() const {
-		assert( (name_ == "VIRT") ? atom_is_virtual_ : true ); // Raise an error if an atom type named VIRT is not virtual.
+	debug_assert( (name_ == "VIRT") ? atom_is_virtual_ : true ); // Raise an error if an atom type named VIRT is not virtual.
 		return atom_is_virtual_;
 	}
 

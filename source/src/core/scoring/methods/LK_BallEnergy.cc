@@ -111,7 +111,7 @@ retrieve_lkb_rotamer_set_info( conformation::RotamerSetBase const & set ) {
 inline
 LKB_ResidueInfo const &
 retrieve_lkb_residue_info( pose::Pose const & pose, Size const seqpos ) {
-	assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
+debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
 																( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
 	return ( static_cast< LKB_PoseInfo const & >
 					 ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
@@ -120,7 +120,7 @@ retrieve_lkb_residue_info( pose::Pose const & pose, Size const seqpos ) {
 inline
 LKB_ResidueInfo &
 retrieve_nonconst_lkb_residue_info( pose::Pose & pose, Size const seqpos ) {
-	assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
+debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
 																( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
 	return ( static_cast< LKB_PoseInfo & >
 					 ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
@@ -191,7 +191,7 @@ retrieve_nonconst_lkb_pairdata(
 {
 	LKB_ResPairMinDataOP lkb_pairdata(0);
 	if ( pairdata.get_data( lkb_respair_data ) ) {
-		assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) ));
+	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) ));
 		lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) );
 	} else {
 		lkb_pairdata = LKB_ResPairMinDataOP( new LKB_ResPairMinData );
@@ -207,7 +207,7 @@ retrieve_lkb_pairdata(
 											ResPairMinimizationData const & pairdata
 											)
 {
-	assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data ) ) );
+debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data ) ) );
 	return ( static_cast< LKB_ResPairMinData const & > ( pairdata.get_data_ref( lkb_respair_data ) ) );
 }
 /////////////////////////////////////// mindata retrieval functions
@@ -219,7 +219,7 @@ retrieve_nonconst_lkb_resdata(
 {
 	LKB_ResidueInfoOP lkb_resdata( 0 );
 	if ( resdata.get_data( lkb_res_data ) ) {
-		assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) ) );
 		lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
 	} else {
 		lkb_resdata = LKB_ResidueInfoOP( new LKB_ResidueInfo );
@@ -234,7 +234,7 @@ retrieve_lkb_resdata(
 										ResSingleMinimizationData const & resdata
 										)
 {
-	assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
+debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 	return ( static_cast< LKB_ResidueInfo const & > ( resdata.get_data_ref( lkb_res_data ) ) );
 }
 /////////////////////////////////////// mindata retrieval functions
@@ -244,7 +244,7 @@ retrieve_lkb_resdata_ptr(
 												ResSingleMinimizationData const & resdata
 												)
 {
-	assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
+debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 	return ( utility::pointer::static_pointer_cast< core::scoring::methods::LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 }
 
@@ -537,7 +537,7 @@ LK_BallEnergy::setup_d2_bounds()
 	atom_type_is_charged_.resize( atom_set.n_atomtypes() );
 	for ( Size i=1; i<= atom_set.n_atomtypes(); ++i ) {
 		std::string const & name( atom_set[ i ].name() );
-		assert( Size( atom_set.atom_type_index( name ) ) == i ); // sanity
+	debug_assert( Size( atom_set.atom_type_index( name ) ) == i ); // sanity
 		if ( name == "Narg" || name == "Nlys" || name == "OOC" ) atom_type_is_charged_[ i ] = true;
 		else atom_type_is_charged_[ i ] = false;
 		TR.Trace << "atom_type_is_charged_: " << name << ' ' << atom_type_is_charged_[i] << std::endl;
@@ -566,7 +566,7 @@ LK_BallEnergy::setup_d2_bounds()
 Real
 LK_BallEnergy::eval_lk_fraction( Real const d2_delta ) const
 {
-	assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
+debug_assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
 	static Real const inv_range( 1.0 / ramp_width_A2_ );
 	Real const xprime( inv_range * d2_delta );
 	return ( 1 - xprime*xprime ) * ( 1 - xprime*xprime );
@@ -575,7 +575,7 @@ LK_BallEnergy::eval_lk_fraction( Real const d2_delta ) const
 Real
 LK_BallEnergy::eval_d_lk_fraction_dr_over_r( Real const d2_delta ) const
 {
-	assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
+debug_assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
 	static Real const inv_range( 1.0 / ramp_width_A2_ );
 	Real const xprime( inv_range * d2_delta );
 	return -8.0 * inv_range * ( 1 - xprime * xprime ) * xprime;
@@ -923,7 +923,7 @@ determine_crossover_behavior(
 {
 	using namespace scoring::etable::count_pair;
 	// maybe should ask "are these two residues polymers and do they share a polymeric bond"
-	//assert( !sfxn.has_zero_weight( mm_twist ) );
+//debug_assert( !sfxn.has_zero_weight( mm_twist ) );
 	if ( res1.polymeric_sequence_distance(res2) == 1 ) {
 		if ( ( !( res1.is_protein() && res2.is_protein() ) ) &&
 				 ( !( use_intra_dna_cp_crossover_4 && res1.is_DNA() && res2.is_DNA() ) ) &&
@@ -1284,7 +1284,7 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair(
 
 //  	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, idresid ) );
 
-// 	assert( pose.energies().use_nblist() );
+// debug_assert( pose.energies().use_nblist() );
 
 // 	scoring::AtomNeighbors const & nbrs
 // 		( pose.energies().nblist( basic::ETABLE_NBLIST ).atom_neighbors( id ) );
@@ -1391,7 +1391,7 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 				residue_pair_energy( *set.rotamer( kk_rot_id ), info1_redo.waters(),
 														 rsd, info2_redo.waters(),
 														 lk_ball_energy_redo, lk_ball_iso_energy_redo );
-				assert( std::abs( lk_ball_energy - lk_ball_energy_redo ) +
+			debug_assert( std::abs( lk_ball_energy - lk_ball_energy_redo ) +
 								std::abs( lk_ball_iso_energy - lk_ball_iso_energy_redo ) < 1e-3 );
 
 								}**/
@@ -1418,8 +1418,8 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 ) const
 {
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-	assert( r1_at_derivs.size() >= rsd1.natoms() );
-	assert( r2_at_derivs.size() >= rsd2.natoms() );
+debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
+debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
 	// retrieve some info
  	// LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
@@ -1427,7 +1427,7 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( res1data ) );
 	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( res2data ) );
 
-	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( etab_pair_nblist ) ));
+debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( etab_pair_nblist ) ));
 	ResiduePairNeighborList const & nblist
 		( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist )) );
 
@@ -1456,7 +1456,7 @@ get_parallel_h_for_arg(
 )
 {
 	using namespace chemical;
-	assert( rsd_type.aa() == aa_arg );
+debug_assert( rsd_type.aa() == aa_arg );
 	typedef std::map< ResidueTypeCOP, utility::vector1< Size > > H_Map;
 	static H_Map hmap;
 	ResidueTypeCOP rsd_type_ptr( rsd_type.get_self_ptr() );
@@ -1553,7 +1553,7 @@ apply_lk_ball_fraction_weight_for_hbonds(
 			don_fraction = lk_ball_energy.eval_lk_ball_fraction_deriv( acc_rsd.xyz( aatm ),acc_rsd.atom( aatm ).type(),
 																																 waters, evaluate_derivative, f1_don, f2_don );
 		} else {
-			assert( don_rsd.aa() == chemical::aa_arg );
+		debug_assert( don_rsd.aa() == chemical::aa_arg );
 		}
 	}
 
@@ -1574,7 +1574,7 @@ apply_lk_ball_fraction_weight_for_hbonds(
 				Vector const n1( ( aatm_xyz - abase_xyz ).normalized_any() );
 				Vector n2( ( abase2_xyz - abase_xyz ) );
 				n2 = ( n2 - n1.dot( n2 ) * n1 ).normalized_any();
-				assert( std::abs( n1.dot( n2 ) ) < 1e-3 );
+			debug_assert( std::abs( n1.dot( n2 ) ) < 1e-3 );
 				waters.push_back( aatm_xyz + n1_coeff_SP2 * n1 + n2_coeff_SP2 * n2 );
 				waters.push_back( aatm_xyz + n1_coeff_SP2 * n1 - n2_coeff_SP2 * n2 );
 				//dump_waters_pdb( acc_rsd, waters, "acc_sp2" );

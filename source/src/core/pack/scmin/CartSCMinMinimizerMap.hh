@@ -102,7 +102,7 @@ public:
 
 	/// Accessors
 	Size nactive_residues() const { return nactive_residues_; }
-	Size active_residue( Size index ) const { assert( index <= nactive_residues_ ); return active_residues_[ index ]; }
+	Size active_residue( Size index ) const {debug_assert( index <= nactive_residues_ ); return active_residues_[ index ]; }
 
 	/// @brief MinimizerMapBase class virtual accessor
 	virtual kinematics::DomainMap const & domain_map() const { return domain_map_; }
@@ -142,13 +142,13 @@ public:
 	void set_natoms_for_residue( Size resid, Size natoms );
 
 	Size get_atom_index( id::AtomID const & atm ) {
-		assert (atm.rsd()>0 && atm.rsd()<=atoms_to_dofid_.size());
-		assert (atm.atomno()>0 && atm.atomno()<=atoms_to_dofid_[atm.rsd()].size());
+	debug_assert (atm.rsd()>0 && atm.rsd()<=atoms_to_dofid_.size());
+	debug_assert (atm.atomno()>0 && atm.atomno()<=atoms_to_dofid_[atm.rsd()].size());
 		return atoms_to_dofid_[atm.rsd()][atm.atomno()];
 	}
 
 	id::AtomID const & get_atom( Size idx ) {
-		assert (idx>0 && idx<dofid_to_atoms_.size());
+	debug_assert (idx>0 && idx<dofid_to_atoms_.size());
 		return dofid_to_atoms_[idx];
 	}
 

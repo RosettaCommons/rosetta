@@ -108,7 +108,7 @@ bool AtomPairConstraintsScore::cached_score(FragmentCandidateOP fragment,
 			if (!has_atom(secondVallResidueIndex, r->get_second_atom()))
 				continue;
 
-			assert (fragment->get_chunk()->size() >=secondVallResidueIndex);
+		debug_assert (fragment->get_chunk()->size() >=secondVallResidueIndex);
 
 			numeric::xyzVector<Real> v1 = get_atom_coordinates(
 					firstVallResidueIndex, r->get_first_atom());

@@ -227,7 +227,7 @@ case_from_lines(
 		std::string const tag( tag_from_line( lines[i] ) );
 
 		if ( tag == "BEGIN_SELECTOR" ) {
-			assert( !in_selector );
+		debug_assert( !in_selector );
 			in_selector = true;
 		} else if ( tag == "END_SELECTOR" ) {
 			in_selector = false;
@@ -317,10 +317,10 @@ Patch::read_file( std::string const & filename )
 			if ( tag == "BEGIN_CASE" ) {
 				break;
 			} else if ( tag == "BEGIN_SELECTOR" ) {
-				assert( !in_selector );
+			debug_assert( !in_selector );
 				in_selector = true;
 			} else if ( tag == "END_SELECTOR" ) {
-				assert( in_selector );
+			debug_assert( in_selector );
 				in_selector = false;
 			} else if ( in_selector ) {
 				selector_.add_line( lines[i] );
@@ -335,8 +335,8 @@ Patch::read_file( std::string const & filename )
 		// look for a case
 		std::string tag( tag_from_line( lines[1] ) );
 		if ( tag == "BEGIN_CASE" ) {
-			assert( case_lines.empty() );
-			assert( !in_case );
+		debug_assert( case_lines.empty() );
+		debug_assert( !in_case );
 			in_case = true;
 		} else if ( tag == "END_CASE" ) {
 			PatchCaseOP new_case( case_from_lines( case_lines ) );

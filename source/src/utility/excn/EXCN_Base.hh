@@ -18,7 +18,7 @@
 // Unit Headers
 
 // Package Headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <cstdlib>
 #include <ostream>
 #include <sstream>
@@ -56,7 +56,7 @@ protected:
 
 
 		//* THE ASSERT MACRO is here that one can find the origin of the EXCEPTION in gdb */
-		//		assert( false );
+		//	debug_assert( false );
 		// a better method for this is to issue the command
 		// catch throw
 		// in the gdb command line... now gdb will stop execution when an Exception

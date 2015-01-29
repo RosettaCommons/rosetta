@@ -69,9 +69,9 @@ SidechainStateAssignment::assign_state(
 	Size orig_rotid
 )
 {
-	assert( orig_rotid != 0 );
+debug_assert( orig_rotid != 0 );
 	if ( original_rotamer_id_[ moltenresid ] == 0 ) {
-		assert( n_unassigned_ > 0 );
+	debug_assert( n_unassigned_ > 0 );
 		--n_unassigned_;
 	}
 	original_rotamer_id_[ moltenresid ] = orig_rotid;

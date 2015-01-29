@@ -46,14 +46,14 @@ void CPDataCorrespondence::n_entries( Size nentries )
 
 void CPDataCorrespondence::resid_for_entry( Size entry, Size resid )
 {
-	assert( entry > 0 && entry <= n_entries_ );
+debug_assert( entry > 0 && entry <= n_entries_ );
 	entry_2_resid_[ entry ] = resid;
 }
 
 void CPDataCorrespondence::n_connpoints_for_entry( Size entry, Size nconnections )
 {
-	assert( entry > 0 && entry <= n_entries_ );
-	assert( nconnections_for_entry_[ entry ] == 0 );// call this function at most once for input value of entry
+debug_assert( entry > 0 && entry <= n_entries_ );
+debug_assert( nconnections_for_entry_[ entry ] == 0 );// call this function at most once for input value of entry
 	nconnections_for_entry_[ entry ] = nconnections;
 	residue_connid_for_entry_connid_[ entry ].resize( nconnections );
 	std::fill(
@@ -68,8 +68,8 @@ void CPDataCorrespondence::n_connpoints_for_entry( Size entry, Size nconnections
 
 void CPDataCorrespondence::connid_for_entry_connpoint( Size entry, Size connpoint, Size residue_connid )
 {
-	assert( entry > 0 && entry <= n_entries_ );
-	assert( connpoint > 0 && connpoint <= nconnections_for_entry_[ entry ] );
+debug_assert( entry > 0 && entry <= n_entries_ );
+debug_assert( connpoint > 0 && connpoint <= nconnections_for_entry_[ entry ] );
 	residue_connid_for_entry_connid_[ entry ][ connpoint ] = residue_connid;
 }
 
@@ -81,22 +81,22 @@ Size CPDataCorrespondence::n_entries() const
 
 Size CPDataCorrespondence::resid_for_entry( Size entry ) const
 {
-	assert( entry > 0 && entry <= n_entries_ );
-	assert( entry_2_resid_[ entry ] != 0 );
+debug_assert( entry > 0 && entry <= n_entries_ );
+debug_assert( entry_2_resid_[ entry ] != 0 );
 	return entry_2_resid_[ entry ];
 }
 
 Size CPDataCorrespondence::n_connpoints_for_entry( Size entry ) const
 {
-	assert( entry > 0 && entry <= n_entries_ );
-	assert( nconnections_for_entry_[ entry ] != 0 );
+debug_assert( entry > 0 && entry <= n_entries_ );
+debug_assert( nconnections_for_entry_[ entry ] != 0 );
 	return nconnections_for_entry_[ entry ];
 }
 
 Size CPDataCorrespondence::connid_for_entry_connpoint( Size entry, Size connpoint ) const
 {
-	assert( entry > 0 && entry <= n_entries_ );
-	assert( connpoint > 0 && connpoint <= nconnections_for_entry_[ entry ] );
+debug_assert( entry > 0 && entry <= n_entries_ );
+debug_assert( connpoint > 0 && connpoint <= nconnections_for_entry_[ entry ] );
 	return residue_connid_for_entry_connid_[ entry ][ connpoint ];
 }
 

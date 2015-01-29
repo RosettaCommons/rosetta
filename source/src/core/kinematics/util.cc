@@ -40,7 +40,7 @@
 #include <numeric/random/random.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 
@@ -81,7 +81,7 @@ add_atom(
 	AtomOP const atom_p( add_jump_atom ? static_cast< Atom* >( new JumpAtom()) : static_cast< Atom* >(new BondedAtom()));
 
 	// fill in the atom_ptr data
-	assert( atom_ptr[ atomno ] == 0 );
+debug_assert( atom_ptr[ atomno ] == 0 );
 	atom_ptr[ atomno ] = atom_p;
 
 	// set the atom_id information
@@ -209,7 +209,7 @@ setup_backrub_atom_tree(
 
 	Size const nbb( mainchain.size() );
 	mainchain.push_back( downstream_id ); // so that we dont clone this guy
-	assert( edges[1].first == 1 && edges[1].second == nbb );
+debug_assert( edges[1].first == 1 && edges[1].second == nbb );
 
 	/// we're going to add pseudo residues, one for each edge in the edges vector
 	Size n(0);
@@ -235,7 +235,7 @@ setup_backrub_atom_tree(
 
 		Size const a( edge.first );
 		Size const b( edge.second );
-		assert( seen[a] );
+	debug_assert( seen[a] );
 
 		// what should our anchor atom be?
 		// look at all pseudo rsds associated to a
@@ -244,7 +244,7 @@ setup_backrub_atom_tree(
 		vector1< Size > const & pseudo_a( mainchain_to_pseudo[a] );
 		for ( Size i=1; i<= pseudo_a.size(); ++i ) {
 			Size const nn( pseudo_a[i] );
-			assert( edges[nn].second == a );
+		debug_assert( edges[nn].second == a );
 			if ( ( edges[nn].first < b && b < a ) || ( edges[nn].first > b && b > a ) ) {
 				anchor = nn; // dont break -- want the smallest segment containing a,b
 			}
@@ -301,7 +301,7 @@ setup_backrub_atom_tree(
 				int const dir( b<a ? 1 : -1 );
 				AtomOP parent_atom( pseudo_b_atom );
 				for ( int c=b+dir; c != (int)a; c += dir ) {
-					assert( !seen[c] );
+				debug_assert( !seen[c] );
 
 					// add c and c's non-mainchain children
 					AtomCOP old_c_atom( old_atom_pointer[ mainchain[c] ] );
@@ -323,7 +323,7 @@ setup_backrub_atom_tree(
 
 	// confirm that all mainchain atoms have been seen
 	for ( Size i=1; i<= nbb; ++i ) {
-		assert( seen[i] );
+	debug_assert( seen[i] );
 	}
 	return root;
 	*/

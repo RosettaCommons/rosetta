@@ -22,7 +22,7 @@
 #include <ostream>
 #include <string>
 
-#include <assert.h>
+#include <utility/assert.hh>
 
 namespace core {
 namespace scoring {
@@ -64,7 +64,7 @@ FadeInterval::FadeInterval(
 	dfade_max_(1.0/static_cast<double>(max0-fmax)),
 	smooth_(smooth)
 {
-	assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
+debug_assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
 }
 
 FadeInterval::FadeInterval(
@@ -83,7 +83,7 @@ FadeInterval::FadeInterval(
 	dfade_max_(1.0/static_cast<double>(max0-fmax)),
 	smooth_(smooth)
 {
-	assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
+debug_assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
 }
 
 void

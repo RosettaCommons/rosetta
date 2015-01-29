@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <cassert>
+#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 

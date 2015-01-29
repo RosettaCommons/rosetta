@@ -407,7 +407,7 @@ void RNA_SilentStruct::fill_pose(
 		pose.set_jump( nr, jump( nr ) );
 	}
 
-	assert( nres() == sequence().length() );
+debug_assert( nres() == sequence().length() );
 
 	for ( Size seqpos = 1; seqpos <= nres(); ++seqpos ) {
 

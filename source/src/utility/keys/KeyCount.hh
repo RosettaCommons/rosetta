@@ -22,7 +22,7 @@
 #include <utility/keys/KeyCount.fwd.hh>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 #include <cstddef>
 
 
@@ -65,7 +65,7 @@ public: // Creation
 	KeyCount( Size const count_a, Size const expected_count ) :
 		count_( count_a )
 	{
-		assert( count_ == expected_count );
+	debug_assert( count_ == expected_count );
 		if ( this ); // Silly if to suppress unused variable warnings
 	}
 

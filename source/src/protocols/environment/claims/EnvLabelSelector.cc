@@ -32,7 +32,7 @@
 #include <boost/foreach.hpp>
 
 // C++ headers
-#include <cassert>
+#include <utility/assert.hh>
 
 namespace protocols {
 namespace environment {

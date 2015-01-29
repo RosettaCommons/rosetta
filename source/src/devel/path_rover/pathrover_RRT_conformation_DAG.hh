@@ -370,7 +370,7 @@ public:
 
    core::pose::Pose const& get_root_template(int root_id) const
      {
-       assert ((root_id < (int)_roots.size()) && (root_id >= 0));
+      debug_assert ((root_id < (int)_roots.size()) && (root_id >= 0));
        return _roots[root_id]->_template_pose;
      }
 
