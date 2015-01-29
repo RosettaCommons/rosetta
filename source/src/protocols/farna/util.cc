@@ -1529,7 +1529,7 @@ virtualize_bulges( core::pose::Pose & input_pose,
 			if ( allow_bulge_res_list.has_value( seq_num ) == false ) continue;
 
 			if ( input_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
-				if ( ! input_pose.residue( seq_num + 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) ) { //consistency_check
+				if ( ! input_pose.residue( seq_num + 1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) { //consistency_check
 					utility_exit_with_message( "seq_num = " + string_of( seq_num ) + "  is a virtual res but seq_num + 1 is not a virtual_res_upper!" );
 				}
 

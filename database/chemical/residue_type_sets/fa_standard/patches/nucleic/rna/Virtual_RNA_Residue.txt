@@ -1,5 +1,3 @@
-## this patch turns all protein residue backbone atoms (N,H,C,O, [1H, 2H, OXT]) into virtual atoms
-## can be useful if you want sidechain-only energy terms, while still allowing residue repacking
 NAME Virtual_RNA_Residue
 TYPES  VIRTUAL_RNA_RESIDUE
 

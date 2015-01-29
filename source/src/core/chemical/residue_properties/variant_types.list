@@ -75,7 +75,6 @@ VIRTUAL_BASE             # not in wide use, may deprecated in future
 VIRTUAL_BASE_HEAVY_ATOM  # not in use, may deprecated along with old swa_rna_main in 2015
 VIRTUAL_RNA_RESIDUE      # not in use, may deprecated along with old swa_rna_main in 2015
 VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE  # not in use, may deprecated along with old swa_rna_main in 2015
-VIRTUAL_RNA_RESIDUE_UPPER  # not in use, may deprecated along with old swa_rna_main in 2015
 BULGE   # not in use, may deprecated along with old swa_rna_main in 2015
 
 VIRTUAL_O2PRIME_HYDROGEN # important for stepwise RNA code

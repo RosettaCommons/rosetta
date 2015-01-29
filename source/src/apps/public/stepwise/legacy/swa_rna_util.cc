@@ -371,14 +371,14 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 
 		if ( ( seq_num_one + 1 ) <= pose_one.total_residue() ){
 			if ( pose_one.residue( seq_num_one ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
-				if ( ! pose_one.residue( seq_num_one + 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) ) { //consistency_check
+				if ( ! pose_one.residue( seq_num_one + 1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) { //consistency_check
 					utility_exit_with_message( "pose_one's seq_num_one = " + string_of( seq_num_one ) +
 							" is a virtual res but seq_num_one + 1 is not a virtual_res_upper!" );
 				}
 			}
 
 			if ( pose_two.residue( seq_num_two ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
-				if ( ! pose_two.residue( seq_num_two + 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) ) { //consistency_check
+				if ( ! pose_two.residue( seq_num_two + 1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) { //consistency_check
 					utility_exit_with_message( "pose_two's seq_num_two = " + string_of( seq_num_two ) +
 							" is a virtual res but seq_num_two + 1 is not a virtual_res_upper!" );
 				}
@@ -1615,7 +1615,7 @@ try {
 	option[ OptionKeys::chemical::include_patches ].push_back( "VIRTUAL_RIBOSE" );
 	option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
 	option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Virtual_RNA_Residue.txt" );
-	option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Virtual_RNA_Residue_Upper.txt" );
+	option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Virtual_Phosphate.txt" );
 	option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Protonated_H1_Adenosine.txt" );
 	option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt" );
 

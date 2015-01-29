@@ -217,12 +217,12 @@ namespace rna {
 			if ( ( full_seq_num + 1 ) <= total_res ){
 				if ( pose1.residue( full_seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 					runtime_assert ( pose1.residue( full_seq_num + 1 ).has_variant_type(
-							core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) );
+							core::chemical::VIRTUAL_PHOSPHATE ) );
 				}
 
 				if ( pose2.residue( full_seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 					runtime_assert ( pose2.residue( full_seq_num + 1 ).has_variant_type(
-							core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) );
+							core::chemical::VIRTUAL_PHOSPHATE ) );
 				}
 			}
 

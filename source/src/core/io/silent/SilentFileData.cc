@@ -186,7 +186,7 @@ SilentFileData::setup_extra_patches( utility::vector1< std::string > & all_patch
 	cmdline_selector_tag[ "3PrimePhos" ] = "TERMINAL_PHOSPHATE";
 	cmdline_selector_tag[ "Virtual_Ribose" ] = "VIRTUAL_RIBOSE";
 	cmdline_selector_tag[ "Virtual_RNA_Residue" ] = "VIRTUAL_RNA_RESIDUE";
-	cmdline_selector_tag[ "Virtual_RNA_Residue_Upper" ] = "VIRTUAL_RNA_RESIDUE_UPPER";
+	cmdline_selector_tag[ "Virtual_Phosphate" ] = "VIRTUAL_PHOSPHATE";
 
 	StringVectorOption & patch_selectors = option[ OptionKeys::chemical::patch_selectors ];
 	for ( Size n = 1; n <= all_patches.size(); n++ ) {

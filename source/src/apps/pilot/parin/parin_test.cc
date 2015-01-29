@@ -263,17 +263,6 @@ multiple_variant_type_test(){
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
-		std::cout << "ADD VIRTUAL_RNA_RESIDUE_UPPER" << std::endl;
-		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num);
-		output_pose_name+="iAU";
-		dump_pdb( pose, output_pose_name+ ".pdb" );
-
-		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
-		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
-		std::cout << std::endl;
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////
-
 		std::cout << "ADD VIRTUAL_PHOSPHATE" << std::endl;
 		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", seq_num);
 		output_pose_name+="iAP";
@@ -281,7 +270,6 @@ multiple_variant_type_test(){
 
 
 		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
-		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 
@@ -292,16 +280,6 @@ multiple_variant_type_test(){
 		dump_pdb( pose, output_pose_name+ ".pdb" );
 
 		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
-		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
-		std::cout << std::endl;
-
-		std::cout << "REMOVE VIRTUAL_RNA_RESIDUE_UPPER " << std::endl;
-		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num);
-		output_pose_name+="iRU";
-		dump_pdb( pose, output_pose_name+ ".pdb" );
-
-		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
-		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -525,9 +503,9 @@ copy_virtual_variant_type(pose::Pose & full_pose, pose::Pose const & start_pose_
 				utility_exit_with_message( "(n+1)>start_pose_with_variant.total_residue()!" );
 			}
 
-			if(start_pose_with_variant.residue(n+1).has_variant_type("VIRTUAL_RNA_RESIDUE_UPPER")==false){
+			if(start_pose_with_variant.residue(n+1).has_variant_type("VIRTUAL_PHOSPHATE")==false){
 				std::cout << "n= " << n << std::endl;
-				utility_exit_with_message("res n has_variant_type VIRTUAL_RNA_RESIDUE but res n+1 does not have variant_type VIRTUAL_RNA_RESIDUE_UPPER");
+				utility_exit_with_message("res n has_variant_type VIRTUAL_RNA_RESIDUE but res n+1 does not have variant_type VIRTUAL_PHOSPHATE");
 			}
 
 			apply_virtual_rna_residue_variant_type( full_pose, input_res_map[n] , false /*apply_check*/ ) ;
@@ -554,7 +532,6 @@ remove_all_variant_types(pose::Pose & pose){
 		remove_variant_type_from_pose_residue( pose, "CUTPOINT_LOWER", n );
 		remove_variant_type_from_pose_residue( pose, "CUTPOINT_UPPER", n );
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", n );
-		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", n );
 		remove_variant_type_from_pose_residue( pose, "BULGE", n );
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 	}
@@ -1026,7 +1003,6 @@ hermann_phase_two_minimize(){
 				remove_variant_type_from_pose_residue( full_pose, "CUTPOINT_LOWER", n );
 				remove_variant_type_from_pose_residue( full_pose, "CUTPOINT_UPPER", n );
 				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_RNA_RESIDUE", n );
-				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_RNA_RESIDUE_UPPER", n );
 				remove_variant_type_from_pose_residue( full_pose, "BULGE", n );
 				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_RIBOSE", n );
 			}

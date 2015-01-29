@@ -387,7 +387,6 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		variant_type_list.push_back( core::chemical::CUTPOINT_LOWER );
 		variant_type_list.push_back( core::chemical::CUTPOINT_UPPER );
 		variant_type_list.push_back( core::chemical::VIRTUAL_RNA_RESIDUE );
-		variant_type_list.push_back( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER );
 		variant_type_list.push_back( core::chemical::BULGE );
 		variant_type_list.push_back( core::chemical::VIRTUAL_RIBOSE );
 		variant_type_list.push_back( core::chemical::PROTONATED_H1_ADENOSINE );

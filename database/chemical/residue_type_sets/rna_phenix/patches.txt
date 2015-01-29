@@ -9,7 +9,6 @@
 # Following are under command-line selection 
 # Use flag -chemical:patch_selectors [VIRTUAL_RIBOSE ...] to activate.
 ../fa_standard/patches/nucleic/rna/Virtual_RNA_Residue.txt       # VIRTUAL_RNA_RESIDUE
-../fa_standard/patches/nucleic/rna/Virtual_RNA_Residue_Upper.txt # VIRTUAL_RNA_RESIDUE_UPPER
 ../fa_standard/patches/nucleic/rna/Virtual_Ribose.txt   # VIRTUAL_RIBOSE
 ../fa_standard/patches/nucleic/rna/VirtualBase.txt      # VIRTUAL_BASE
 ../fa_standard/patches/nucleic/rna/5prime_phosphate.txt # TERMINAL_PHOSPHATE

@@ -731,8 +731,7 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 
 	// moving residues's phosphate could be part of distal partition...
 	moving_phosphate_virtualized_ = false;
-	if ( !pose.residue( sugar_modeling_.moving_res ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) &&
-			 !pose.residue( sugar_modeling_.moving_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER /*same as virtual phosphate*/ ) ){
+	if ( !pose.residue( sugar_modeling_.moving_res ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
 		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.moving_res );
 		// If phosphate instantiated, I thought there should always be a connection to a distal 5' residue..
 		// but that's not the case at a cutpoint_closed. -- rhiju.

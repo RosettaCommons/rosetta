@@ -904,9 +904,8 @@ debug_assert( pucker_state <= 2 );
 
 		pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
 
-		// what? why not just use virtual phosphate? --rd2013
 		if ( ( pose.total_residue() != seq_num ) &&  ( !is_cutpoint_open ) ) { //April 6, 2011
-			pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RNA_RESIDUE_UPPER, seq_num + 1 );
+			pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, seq_num + 1 );
 		}
 	}
 
@@ -919,7 +918,7 @@ debug_assert( pucker_state <= 2 );
 
 		runtime_assert( seq_num < pose.total_residue() );
 		pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
-		pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_RNA_RESIDUE_UPPER, seq_num + 1 );
+		pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, seq_num + 1 );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -935,11 +934,11 @@ debug_assert( pucker_state <= 2 );
 			utility_exit_with_message( "( seq_num + 1 ) > pose.total_residue()!" );
 		}
 
-		if ( ! pose.residue( seq_num + 1 ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE_UPPER ) ){
+		if ( ! pose.residue( seq_num + 1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ){
 			TR << "Problem seq_num = " << seq_num << std::endl;
 			utility_exit_with_message( "res ( " + string_of( seq_num ) +
 					" ) has_variant_type VIRTUAL_RNA_RESIDUE but res seq_num + 1 ( " + string_of( seq_num + 1 ) +
-					" )does not have variant_type VIRTUAL_RNA_RESIDUE_UPPER" );
+					" )does not have variant_type VIRTUAL_PHOSPHATE" );
 		}
 
 		return true;

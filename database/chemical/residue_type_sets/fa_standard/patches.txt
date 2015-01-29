@@ -36,7 +36,6 @@ patches/nucleic/rna/3prime_phosphate.txt # TERMINAL_PHOSPHATE
 patches/nucleic/rna/Virtual_Ribose.txt   # VIRTUAL_RIBOSE
 patches/nucleic/rna/VirtualBase.txt # VIRTUAL_BASE
 patches/nucleic/rna/Virtual_RNA_Residue.txt       # VIRTUAL_RNA_RESIDUE
-patches/nucleic/rna/Virtual_RNA_Residue_Upper.txt # VIRTUAL_RNA_RESIDUE_UPPER
 
 # Special
 patches/SpecialRotamer.txt

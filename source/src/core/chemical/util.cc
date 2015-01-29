@@ -250,7 +250,10 @@ print_chis( std::ostream & out, ResidueType const & res )
 std::string
 fixup_patches( std::string string_in )
 {
-	std::string const string_out = utility::replace_in( string_in, "_p:", PATCH_LINKER );
+	std::string string_out = string_in;
+	string_out = utility::replace_in( string_out, "_p:", PATCH_LINKER );
+	string_out = utility::replace_in( string_out, "Virtual_RNA_Residue_Upper", "Virtual_Phosphate" );
+	string_out = utility::replace_in( string_out, "Virtual_Phosphate"+PATCH_LINKER+"Virtual_Phosphate", "Virtual_Phosphate" );
 	return string_out;
 }
 

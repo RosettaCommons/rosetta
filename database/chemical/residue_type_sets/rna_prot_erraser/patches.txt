@@ -6,7 +6,6 @@
 ../rna_phenix/patches/Virtual_O2prime_hydrogen.txt
 ../rna_phenix/patches/BulgeRNA.txt
 ../rna_phenix/patches/Virtual_RNA_Residue.txt
-../rna_phenix/patches/Virtual_RNA_Residue_Upper.txt
 ../rna_phenix/patches/Virtual_Ribose.txt
 ../rna_phenix/patches/Protonated_H1_Adenosine.txt
 ../rna_phenix/patches/Virtual_Backbone_Except_C1prime.txt
