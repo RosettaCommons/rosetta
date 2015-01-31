@@ -595,170 +595,183 @@ Minimizer::lbfgs(
 	int const ITMAX,
 	bool w_rescore /*= false*/
 ) const {
-	 int const N( X.size() );
-	 static int M( basic::options::option[ basic::options::OptionKeys::optimization::lbfgs_M ]() );
-	 int const PAST( line_min->nonmonotone() ? 3 : 1 );
-	 //Real const EPS( 1.E-5 );
+	int const N( X.size() );
+	static int M( basic::options::option[ basic::options::OptionKeys::optimization::lbfgs_M ]() );
+	int const PAST( line_min->nonmonotone() ? 3 : 1 );
+	//Real const EPS( 1.E-5 );
 
-	 int K = 1; // number of func evaluations
+	int K = 1; // number of func evaluations
 
-	 // Allocate working space.
-	 Multivec XP( N );
-	 Multivec G( N );
-	 Multivec GP( N );
-	 Multivec D( N );
-	 Multivec W( N );
+	// Allocate working space.
+	Multivec XP( N );
+	Multivec G( N );
+	Multivec GP( N );
+	Multivec D( N );
+	Multivec W( N );
 
-	 // Allocate & initialize limited memory storage
-	 int CURPOS = 1; // pointer to current location in lm
-	 utility::vector1< lbfgs_iteration_data > lm(M);
-	 for (int i=1; i<=M; ++i) {
-			lm[i].alpha = 0;
-			lm[i].ys = 0;
-			lm[i].s.resize(N,0.0);
-			lm[i].y.resize(N,0.0);
-	 }
+	// Allocate & initialize limited memory storage
+	int CURPOS = 1; // pointer to current location in lm
+	utility::vector1< lbfgs_iteration_data > lm(M);
+	for (int i=1; i<=M; ++i) {
+		lm[i].alpha = 0;
+		lm[i].ys = 0;
+		lm[i].s.resize(N,0.0);
+		lm[i].y.resize(N,0.0);
+	}
 
-	 // Allocate space for storing previous values of the objective function
-	 Multivec pf(PAST);
+	// Allocate space for storing previous values of the objective function
+	Multivec pf(PAST);
 
-	 // Evaluate the function value and its gradient
-	 int func_memory_filled( 1 );
-	 Real prior_func_value = func_(X);
-	 pf[1] = prior_func_value;
-	 func_.dfunc(X,G);
+	// Evaluate the function value and its gradient
+	int func_memory_filled( 1 );
+	Real prior_func_value = func_(X);
+	pf[1] = prior_func_value;
+	func_.dfunc(X,G);
 
 	if (w_rescore) {  //fpd   reevaluate score after gradient computation
 		pf[1] = prior_func_value = func_(X);
 	}
 
-	 // Compute the direction
-	 // we assume the initial hessian matrix H_0 as the identity matrix.
-	 Real invdnorm = 0.0;
-	 for ( int i = 1; i <= N; ++i ) {
-			D[i] = -G[i];
-			invdnorm += D[i]*D[i];
-	 }
-	 invdnorm = 1.0/sqrt( invdnorm );
+	// Compute the direction
+	// we assume the initial hessian matrix H_0 as the identity matrix.
+	Real invdnorm = 0.0;
+	for ( int i = 1; i <= N; ++i ) {
+		D[i] = -G[i];
+		invdnorm += D[i]*D[i];
+	}
+	invdnorm = 1.0/sqrt( invdnorm );
 
-	 //if( line_min->nonmonotone() ) line_min->_last_accepted_step = 0.005;
-	 // initial stepsize = 1/sqrt ( dot(D,D) )
-	 line_min->_last_accepted_step = 2*invdnorm;
+	if( line_min->nonmonotone() ) line_min->_last_accepted_step = 0.005;
 
-	 for ( int ITER = 1; ITER <= ITMAX; ++ITER ) {
-			// Store the current position and gradient vectors
-			XP = X;
-			GP = G;
 
-			// line min
-			line_min->_deriv_sum = 0.0;
-			Real Gmax = 0.0;
-			Real Gnorm = 0.0;
-			for ( int i = 1; i <= N; ++i ) {
-				 line_min->_deriv_sum += D[i]*G[i];
-				 Gnorm += G[i]*G[i];
-				 if ( std::abs( G[i] ) > Gmax ) {
-						Gmax=std::abs( G[i] );
-				 }
-			}
-			Gnorm = std::sqrt(Gnorm);
+	// initial stepsize = 1/sqrt ( dot(D,D) )
+	//line_min->_last_accepted_step = 2*invdnorm;
 
-			line_min->_func_to_beat = pf[ 1 ];
-			for( int i = 2 ; i <= func_memory_filled ; ++i ) {
-				 if( line_min->_func_to_beat < pf[ i ] )
-						line_min->_func_to_beat = pf[ i ];
-			}
+	for ( int ITER = 1; ITER <= ITMAX; ++ITER ) {
+		// Store the current position and gradient vectors
+		XP = X;
+		GP = G;
 
-			// X is returned as new pt, and D is returned as the change
-			FRET = (*line_min)( X, D );
+		// line min
+		line_min->_deriv_sum = 0.0;
+		Real Gmax = 0.0;
+		Real Gnorm = 0.0;
+		for ( int i = 1; i <= N; ++i ) {
+			 line_min->_deriv_sum += D[i]*G[i];
+			 Gnorm += G[i]*G[i];
+			 if ( std::abs( G[i] ) > Gmax ) {
+					Gmax=std::abs( G[i] );
+			 }
+		}
+		Gnorm = std::sqrt(Gnorm);
 
-			if ( converge_test( FRET, prior_func_value ) || line_min->_last_accepted_step == 0) {
-				 if (Gmax<=options_.gmax_cutoff_for_convergence()) {
+		line_min->_func_to_beat = pf[ 1 ];
+		for( int i = 2 ; i <= func_memory_filled ; ++i ) {
+			if( line_min->_func_to_beat < pf[ i ] )
+				line_min->_func_to_beat = pf[ i ];
+		}
+
+		// X is returned as new pt, and D is returned as the change
+		FRET = (*line_min)( X, D );
+
+		if ( converge_test( FRET, prior_func_value ) || line_min->_last_accepted_step == 0) {
+			if (Gmax<=options_.gmax_cutoff_for_convergence()) {
+				return;
+			} else {
+				if (line_min->_last_accepted_step == 0) { // failed line search
+					//Real Dnorm = 0.0;
+					//for ( int i = 1; i <= N; ++i ) {
+					//	Dnorm += D[i]*D[i];
+					//}
+					//Dnorm = std::sqrt(Dnorm);
+
+					//TR << "    deriv_sum " << line_min->_deriv_sum << "     -1e-3*Gnorm*Dnorm " << -1e-3*Gnorm*Dnorm << std::endl;
+					//if ( line_min->_last_accepted_step != 0 && line_min->_deriv_sum < -1e-3*Gnorm*Dnorm ) {
+					//	TR << "Failed line search while large _deriv_sum, quit! N= " << N << " ITER= " << ITER << std::endl;
+					//	return;
+					//}
+
+					// Reset Hessian
+					CURPOS = 1;
+					K = 1;
+
+					// reset line minimizer
+					line_min->_deriv_sum = 0.0;
+					for ( int i = 1; i <= N; ++i ) {
+						D[i] = -G[i];
+						line_min->_deriv_sum += D[i]*G[i];
+					}
+
+					if ( sqrt( -line_min->_deriv_sum ) > 1e-6 ) {
+						invdnorm = 1.0/sqrt( -line_min->_deriv_sum );
+
+						// delete prior function memory
+						line_min->_last_accepted_step = 0.1*invdnorm;  // start with a smaller initial step???
+						func_memory_filled = 1;
+						prior_func_value = FRET;
+						pf[1] = prior_func_value;
+
+						// line search in the direction of the gradient
+						FRET = (*line_min)( X, D );
+					} else {
 						return;
-				 } else {
-						if (line_min->_last_accepted_step == 0) { // failed line search
-							//Real Dnorm = 0.0;
-							//for ( int i = 1; i <= N; ++i ) {
-							//	Dnorm += D[i]*D[i];
-							//}
-							//Dnorm = std::sqrt(Dnorm);
+					}
 
-							//TR << "    deriv_sum " << line_min->_deriv_sum << "     -1e-3*Gnorm*Dnorm " << -1e-3*Gnorm*Dnorm << std::endl;
-							//if ( line_min->_last_accepted_step != 0 && line_min->_deriv_sum < -1e-3*Gnorm*Dnorm ) {
-							//	TR << "Failed line search while large _deriv_sum, quit! N= " << N << " ITER= " << ITER << std::endl;
-							//	return;
-							//}
-
-							// Reset Hessian
-							CURPOS = 1;
-							K = 1;
-
-							// reset line minimizer
-							line_min->_deriv_sum = 0.0;
-							for ( int i = 1; i <= N; ++i ) {
-								D[i] = -G[i];
-								line_min->_deriv_sum += D[i]*G[i];
-							}
-
-							if ( sqrt( -line_min->_deriv_sum ) > 1e-6 ) {
-								invdnorm = 1.0/sqrt( -line_min->_deriv_sum );
-
-								// delete prior function memory
-								line_min->_last_accepted_step = 0.1*invdnorm;  // start with a smaller initial step???
-								func_memory_filled = 1;
-								prior_func_value = FRET;
-								pf[1] = prior_func_value;
-
-								// line search in the direction of the gradient
-								FRET = (*line_min)( X, D );
-							} else {
-								return;
-							}
-
-							// if the line minimzer fails again, abort
-							if (line_min->_last_accepted_step == 0) {
-								if (!options_.silent())
-									TR << "Line search failed even after resetting Hessian; aborting at iter#" << ITER << std::endl;
-								return;
-							}
-						}
-				 }
-			}
-
-			prior_func_value = FRET;
-
-			// Update memory of function calls
-			if ( func_memory_filled < PAST ) {
-				 func_memory_filled++;
-			} else {
-				 for( int i = 1 ; i < PAST ; ++ i ) {
-						pf[ i ] = pf[ i + 1 ];
-				 }
-			}
-			pf[ func_memory_filled ] = prior_func_value;
-
-			// Some line minimization algorithms require a curvature
-			// check that involves the derivative before they accept a
-			// move - in these cases we don't need to recalculate
-			if ( line_min->provide_stored_derivatives() ) {
-				 line_min->fetch_stored_derivatives( G );
-			} else {
-				func_.dfunc(X,G);
-
-				if (w_rescore) {  //fpd   reevaluate score after gradient computation
-					FRET = func_(X);
+					// if the line minimzer fails again, abort
+					if (line_min->_last_accepted_step == 0) {
+						if (!options_.silent())
+							TR << "Line search failed even after resetting Hessian; aborting at iter#" << ITER << std::endl;
+						return;
+					}
 				}
 			}
+		}
 
-			// LBFGS updates
-			//
-			// Update vectors s and y:
-			// 		s_{k+1} = x_{k+1} - x_{k} = \step * d_{k}.
-			// 		y_{k+1} = g_{k+1} - g_{k}.
-			// Compute scalars ys and yy:
-			// 		ys = y^t \cdot s = 1 / \rho.
-			// 		yy = y^t \cdot y.
-			// Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor).
+		prior_func_value = FRET;
+
+		// Update memory of function calls
+		if ( func_memory_filled < PAST ) {
+			 func_memory_filled++;
+		} else {
+			 for( int i = 1 ; i < PAST ; ++ i ) {
+					pf[ i ] = pf[ i + 1 ];
+			 }
+		}
+		pf[ func_memory_filled ] = prior_func_value;
+
+		for ( int i = 1; i <= N; ++i ) {
+			GP[i] = G[i];
+		}
+
+		// Some line minimization algorithms require a curvature
+		// check that involves the derivative before they accept a
+		// move - in these cases we don't need to recalculate
+		if ( line_min->provide_stored_derivatives() ) {
+			line_min->fetch_stored_derivatives( G );
+		} else {
+			func_.dfunc(X,G);
+			if (w_rescore) {  //fpd   reevaluate score after gradient computation
+				FRET = func_(X);
+			}
+		}
+
+		line_min->_deriv_sum = 0.0;
+		core::Real DRVNEW = 0.0;
+		for ( int i = 1; i <= N; ++i ) {
+			line_min->_deriv_sum += D[i]*GP[i];
+			DRVNEW += D[i]*G[i];
+		}
+
+		// LBFGS updates
+		//
+		// Update vectors s and y:
+		// 		s_{k+1} = x_{k+1} - x_{k} = \step * d_{k}.
+		// 		y_{k+1} = g_{k+1} - g_{k}.
+		// Compute scalars ys and yy:
+		// 		ys = y^t \cdot s = 1 / \rho.
+		// 		yy = y^t \cdot y.
+		// Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor).
+		if ( DRVNEW > 0.95*line_min->_deriv_sum ) {
 			core::Real ys=0, yy=0;
 			for ( int i = 1; i <= N; ++i ) {
 				 lm[CURPOS].s[i] = X[i] - XP[i];
@@ -767,69 +780,69 @@ Minimizer::lbfgs(
 				 yy += lm[CURPOS].y[i]*lm[CURPOS].y[i];
 			}
 			lm[CURPOS].ys = ys;
-
-
-			// Recursive formula to compute dir = -(H \cdot g).
-			// 		This is described in page 779 of:
-			// 		Jorge Nocedal.
-			// 		Updating Quasi-Newton Matrices with Limited Storage.
-			// 		Mathematics of Computation, Vol. 35, No. 151,
-			// 		pp. 773--782, 1980.
-			int bound = std::min( M,K );
 			CURPOS++;
-			K++;
 			if (CURPOS > M) CURPOS = 1;
+		}
 
-			// Compute the negative of gradients
+		// Recursive formula to compute dir = -(H \cdot g).
+		// 		This is described in page 779 of:
+		// 		Jorge Nocedal.
+		// 		Updating Quasi-Newton Matrices with Limited Storage.
+		// 		Mathematics of Computation, Vol. 35, No. 151,
+		// 		pp. 773--782, 1980.
+		int bound = std::min( M,K );
+		K++;
+
+		// Compute the negative of gradients
+		for ( int i = 1; i <= N; ++i ) {
+			 D[i] = -G[i];
+		}
+
+		int j = CURPOS;
+		for ( int pts=0; pts<bound; ++pts ) {
+			j--;
+			if (j<=0) j=M; // wrap around
+			if (std::fabs(lm[j].ys) < 1e-6) continue;
+
+			// \alpha_{j} = \rho_{j} s^{t}_{j} \cdot q_{k+1}
+			lm[j].alpha = 0;
 			for ( int i = 1; i <= N; ++i ) {
-				 D[i] = -G[i];
+				lm[j].alpha += lm[j].s[i] * D[i];
+			}
+			lm[j].alpha /= lm[j].ys;
+
+			// q_{i} = q_{i+1} - \alpha_{i} y_{i}
+			for ( int i = 1; i <= N; ++i ) {
+				D[i] += -lm[j].alpha * lm[j].y[i];
+			}
+		}
+
+		//for ( int i = 1; i <= N; ++i ) {
+		//	D[i] *= ys / yy;
+		//}
+
+		for ( int pts=0; pts<bound; ++pts ) {
+			if (std::fabs(lm[j].ys) < 1e-4) continue;
+
+			// \beta_{j} = \rho_{j} y^t_{j} \cdot \gamma_{i}
+			core::Real beta=0.0;
+			for ( int i = 1; i <= N; ++i ) {
+				beta += lm[j].y[i] * D[i];
+			}
+			beta /= lm[j].ys;
+
+			// \gamma_{i+1} = \gamma_{i} + (\alpha_{j} - \beta_{j}) s_{j}
+			for ( int i = 1; i <= N; ++i ) {
+				D[i] += (lm[j].alpha - beta) * lm[j].s[i];
 			}
 
-			int j = CURPOS;
-			for ( int pts=0; pts<bound; ++pts ) {
-				 j--;
-				 if (j<=0) j=M; // wrap around
-			   if (std::fabs(lm[j].ys) < 1e-4) continue;
+			j++;
+			if (j>M) j=1; // wrap around
+		}
+	}
 
-				 // \alpha_{j} = \rho_{j} s^{t}_{j} \cdot q_{k+1}
-				 lm[j].alpha = 0;
-				 for ( int i = 1; i <= N; ++i ) {
-						lm[j].alpha += lm[j].s[i] * D[i];
-				 }
-				 lm[j].alpha /= lm[j].ys;
-
-				 // q_{i} = q_{i+1} - \alpha_{i} y_{i}
-				 for ( int i = 1; i <= N; ++i ) {
-						D[i] += -lm[j].alpha * lm[j].y[i];
-				 }
-			}
-
-			//for ( int i = 1; i <= N; ++i ) {
-			//	D[i] *= ys / yy;
-			//}
-
-			for ( int pts=0; pts<bound; ++pts ) {
-			   if (std::fabs(lm[j].ys) < 1e-4) continue;
-
-				 // \beta_{j} = \rho_{j} y^t_{j} \cdot \gamma_{i}
-				 core::Real beta=0.0;
-				 for ( int i = 1; i <= N; ++i ) {
-						beta += lm[j].y[i] * D[i];
-				 }
-				 beta /= lm[j].ys;
-
-				 // \gamma_{i+1} = \gamma_{i} + (\alpha_{j} - \beta_{j}) s_{j}
-				 for ( int i = 1; i <= N; ++i ) {
-						D[i] += (lm[j].alpha - beta) * lm[j].s[i];
-				 }
-
-				 j++;
-				 if (j>M) j=1; // wrap around
-			}
-	 }
-
-	 if (!options_.silent())
-		 TR.Warning << "WARNING: LBFGS MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
+	if (!options_.silent())
+		TR.Warning << "WARNING: LBFGS MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
 
 	 return;
 }
