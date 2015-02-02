@@ -115,8 +115,8 @@ residue_types/water/TP5.params
 #residue_types/d-caa/DARG.params
 #residue_types/d-caa/DASN.params
 #residue_types/d-caa/DASP.params
-residue_types/d-caa/DCYD.params
-residue_types/d-caa/DCYS.params
+#residue_types/d-caa/DCYD.params
+#residue_types/d-caa/DCYS.params
 #residue_types/d-caa/DGLN.params
 #residue_types/d-caa/DGLU.params
 #residue_types/d-caa/DHIS_D.params

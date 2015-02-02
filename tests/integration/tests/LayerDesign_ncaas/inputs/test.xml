@@ -1,0 +1,64 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+
+      <LayerDesign name=layerdes layer=core_boundary_surface use_sidechain_neighbors=1 core=2 surface=1 >
+         <core>
+           <all append="FMILYVWP" ncaa_append="DVA,DIL" />
+           <all exclude="ACDEGHKNQRST" />
+         </core>
+         <boundary>
+           <all aa="DEHIKLNPQRSTV" ncaa="DTH"/>
+         </boundary>
+         <surface>
+           <all append="DEHKNPQRS" ncaa="DLY,DAS"/>
+           <all exclude="ACFGILMTVWY" />
+         </surface>
+      </LayerDesign>
+
+      <LayerDesign name=layerdes2 layer=core_boundary_surface use_sidechain_neighbors=1 core=2 surface=1 >
+         <core>
+           <all append="FMILYVWP"  />
+           <all exclude="ACDEGHKNQRST" />
+         </core>
+         <boundary>
+           <all aa="DEHIKLNPQRSTV" />
+         </boundary>
+         <surface>
+           <all append="DEHKNPQRS" />
+           <all exclude="ACFGILMTVWY" />
+         </surface>
+      </LayerDesign>
+
+		<ReadResfile name=resfile1 filename="inputs/resfile1.txt" />
+		<ReadResfile name=resfile2 filename="inputs/resfile2.txt" />
+
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<MakeBundle name=mkbundle r0=5.25 omega0=0.15 delta_omega0=0 delta_omega1=0 delta_t=0
+			set_dihedrals=true set_bondlengths=true set_bondangles=true
+			residue_name=ALA crick_params_file=alpha_helix helix_length=12>
+			<Helix />
+			<Helix residue_name=GLY crick_params_file=L_alpha_helix delta_omega0=3.141592654 />
+		</MakeBundle>
+
+		<FastDesign name=fdes repeats=1 scorefxn=tala task_operations=resfile1,layerdes,resfile2,layerdes2 >
+			<MoveMap name=fdes_mm>
+				<Span begin=1 end=24 bb=0 chi=1 />
+				<Jump number=1 setting=0 />
+			</MoveMap>
+		</FastDesign>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=mkbundle />
+		<Add mover=fdes />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

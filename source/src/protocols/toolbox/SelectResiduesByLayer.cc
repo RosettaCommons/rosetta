@@ -250,14 +250,18 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 		Real my_neighbors(0.0);
 		
 		numeric::xyzVector< Real > my_sc_coordinates;
+		numeric::xyzVector< Real > my_bb_coordinates;
 
 		if ( pose.residue( i ).name3() == "GLY" ) {
 			my_sc_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("2HA")).xyz() ;
+			my_bb_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("CA")).xyz() ;
 		} else {
-			my_sc_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("CB")).xyz() ;
+			my_sc_coordinates = pose.residue(i).atom(pose.residue(i).first_sidechain_atom()).xyz() ;
+			core::Size parent_atom_index = pose.residue(i).icoor( pose.residue(i).first_sidechain_atom() ).stub_atom1().atomno();
+			my_bb_coordinates = pose.residue(i).atom( parent_atom_index ).xyz() ;
 		}
 
-		numeric::xyzVector< Real > my_sc_vector = (my_sc_coordinates - pose.residue(i).atom(pose.residue(i).atom_index("CA")).xyz()).normalize() ;
+		numeric::xyzVector< Real > my_sc_vector = (my_sc_coordinates - my_bb_coordinates).normalize() ;
 
 		for ( Size j = 1; j <= pose.total_residue(); ++j ) {
 		

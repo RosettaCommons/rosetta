@@ -95,6 +95,16 @@ public:
 	typedef std::map< std::string,  LayerDefinitions > LayerResidues;
 	typedef std::pair< std::string, LayerDefinitions > Layer;
 
+	/// @brief List of noncanonicals that can be used in each secondary structure type.
+	/// @details This maps secondary structure string ("L","E","H") to allowed NCAAs (vector of strings of three-letter codes).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	typedef std::map < std::string, utility::vector1 <std::string> > LayerNCDefinitions;
+	/// @brief List of LayerNCDefinitions that can be used in each layer.
+	/// @details This maps layer string ("core","boundary","surface") to LayerNCDefinitions (which in turn map secondary structure
+	/// strings to vectors of noncanonical residue three-letter codes).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	typedef std::map < std::string, LayerNCDefinitions > LayerNCResidues;
+
 public:
 
 
@@ -148,6 +158,14 @@ public:
 
 	void parse_tag( TagCOP tag , DataMap & );
 
+	/// @brief Sets whether residues set with PIKAA and NATRO in previously-applied resfiles are ignored.
+	/// @brief Default behaviour is now FALSE to preserve commutativity.
+	void set_ignore_pikaa_natro( bool const val ) { ignore_pikaa_natro_ = val; return; }
+
+	/// @brief Returns whether residues set with PIKAA and NATRO in previously-applied resfiles are ignored.
+	/// @brief Default behaviour is now FALSE to preserve commutativity.
+	bool ignore_pikaa_natro( ) const { return ignore_pikaa_natro_; }
+
 
 public:
 
@@ -159,6 +177,24 @@ private:
 	utility::vector1<bool> get_restrictions(std::string const & layer, std::string const & default_layer, std::string const &  ss_type) const;
 	void set_default_layer_residues();
 
+	/// @brief Take a string consisting of comma-separated three-letter codes and parse it, storing separate three-letter codes in a given
+	/// utility::vector1 of strings.
+	void parse_ncaa_list( std::string const &str, utility::vector1<std::string> &storage_vect );
+
+	/// @brief Remove a list of residue types from another list.
+	///
+	void exclude_ncaas( utility::vector1<std::string> const &aas_to_exclude, utility::vector1<std::string> &storage_vect );
+
+	/// @brief Utility function to convert a string vector into a comma-separated list of strings.
+	///
+	std::string print_string_vector( utility::vector1<std::string> const &vect ) const {
+		std::string outstring("");
+		for(core::Size i=1, imax=vect.size(); i<=imax; ++i) {
+			if(i>1) outstring+=",";
+			outstring+=vect[i];
+		}
+		return outstring;
+	}
 
 private:
 
@@ -183,6 +219,15 @@ private:
 	bool make_pymol_script_;
 
 	LayerResidues layer_residues_;
+
+	/// @brief Map of string for layer ("core", "boundary", "surface") to LayerNCDefinitions map (which in turn maps secondary structure to list of allowed noncanonicals).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	LayerNCResidues layer_nc_residues_;
+
+	/// @brief Should residues for which PIKAA or NATRO information was defined in a previously-applied resfile
+	/// be ignored by LayerDesign?  Default is now FALSE.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool ignore_pikaa_natro_;
 
 	std::map< std::string, bool > design_layer_;
 	std::map< std::string, LayerSpecificationType > layer_specification_;
