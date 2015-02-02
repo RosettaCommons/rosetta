@@ -8,9 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/LK_BallEnergy.hh
-/// @brief  LK Solvation using hemisphere culling class declaration
-/// @author David Baker
-/// @author Andrew Leaver-Fay
+/// @brief  Orientation dependent variant of the LK Solvation using
+/// @author Phil Bradley
 
 
 #ifndef INCLUDED_core_scoring_methods_LK_BALLENERGY_HH
@@ -196,6 +195,17 @@ public:
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
+
+
+	/// @brief  Just used in packing, currently.
+	void
+	sidechain_sidechain_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
 		EnergyMap & emap
 	) const;
 
@@ -398,6 +408,7 @@ public:
 																								Size const atom1,
 																								conformation::Residue const & rsd1,
 																								Vectors const & atom1_waters,
+																								Vectors const & heavyatom1_waters,
 																								utility::vector1< Real > const & atom1_wts,
 																								Size const atom2,
 																								conformation::Residue const & rsd2,
@@ -410,6 +421,7 @@ public:
 
 	void
 	sum_deriv_contributions_for_atom_pair(
+																				Real const d2,
 																				Size const atom1,
 																				conformation::Residue const & rsd1,
 																				LKB_ResidueInfo const & rsd1_info,
@@ -437,7 +449,10 @@ public:
 // 	bool
 // 	include_residue( conformation::Residue const & rsd ) const;
 
-
+// private:
+// 	etable::Etable const &
+// 	etable() const
+// 	{ return *( etable_.lock() ); } // segfault danger here
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -445,8 +460,7 @@ public:
 private:
 /////////////////////////////////////////////////////////////////////////////
 
-	etable::EtableCAP etable_;
-
+	etable::EtableCOP etable_;
 
 	/// these guys are taken from the etable
 	ObjexxFCL::FArray3D< Real > const & solv1_;
@@ -456,7 +470,7 @@ private:
 
 	Real const safe_max_dis2_;
 	Real const etable_bins_per_A2_;
-
+	bool const slim_etable_;
 	bool const use_intra_dna_cp_crossover_4_;
 
 	static Real const ramp_width_A2_;
@@ -472,22 +486,6 @@ private:
 	core::Size version() const;
 
 };
-
-/// this is a  helper function for hbonds
-void
-apply_lk_ball_fraction_weight_for_hbonds(
-																				 Size const hatm,
-																				 conformation::Residue const & don_rsd,
-																				 Size const aatm,
-																				 conformation::Residue const & acc_rsd,
-																				 Vector const & hatm_xyz,
-																				 Vector const & datm_xyz,
-																				 Real & unweighted_energy,
-																				 bool const evaluate_derivative,
-																				 hbonds::HBondDerivs & hbderivs,
-																				 Real & don_lk_fraction,
-																				 Real & acc_lk_fraction
-																				 );
 
 }
 }

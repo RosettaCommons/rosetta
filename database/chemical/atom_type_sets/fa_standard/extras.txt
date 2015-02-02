@@ -7,4 +7,6 @@ extras/memb_fa_params.txt
 extras/std_charges.txt
 extras/atom_orbital_hybridization.txt
 extras/facts_born_params.epm1.txt
-extras/lk_ball_wtd.txt
+extras/lk_ball_wtd_RATIO2.0_DEFAULT.txt
+extras/lk_ball_wtd_RATIO3.0_DEFAULT.txt
+extras/lk_ball_wtd_RATIO23.0_DEFAULT.txt

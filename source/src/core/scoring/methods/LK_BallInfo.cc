@@ -7,11 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/LK_BallEnergy.hh
-/// @brief  LK Solvation using hemisphere culling class declaration
-/// @author David Baker
-/// @author Andrew Leaver-Fay
-
+/// @file   core/scoring/methods/LK_BallInfo.cc
+/// @brief  Orientation dependent variant of the LK Solvation using
+/// @author Phil Bradley
 
 // Unit headers
 #include <core/scoring/methods/LK_BallInfo.hh>
@@ -75,7 +73,7 @@ namespace methods {
 LKB_ResidueInfo::~LKB_ResidueInfo() {}
 
 
-static thread_local basic::Tracer TR( "core.scoring.methods.LK_BallInfo" );
+static thread_local basic::Tracer TR("core.scoring.methods.LK_BallInfo" );
 
 
 /// LAZY
@@ -96,6 +94,15 @@ using namespace conformation;
 
 LKB_ResidueInfo::WaterBuilderMap LKB_ResidueInfo::water_builder_map_;
 LKB_ResidueInfo::AtomWeightsMap LKB_ResidueInfo::atom_weights_map_;
+
+
+
+void
+LKB_ResidueInfo::reset_arrays_danger_expert_only()
+{
+	water_builder_map_.clear();
+	atom_weights_map_.clear();
+}
 /////////////////////////////////////////////////////////////////////////////
 
 WaterBuilder::WaterBuilder(
@@ -109,7 +116,9 @@ WaterBuilder::WaterBuilder(
 	atom2_( atom2 ),
 	atom3_( atom3 ),
 	xyz_local_( kinematics::Stub( rsd.xyz( atom1 ), rsd.xyz( atom2 ), rsd.xyz( atom3 ) ).global2local( water ) )
-{}
+{
+	runtime_assert( atom1 != atom2 && atom1 != atom3 && atom2 != atom3 );
+}
 
 Vector
 WaterBuilder::build( conformation::Residue const & rsd ) const
@@ -203,8 +212,17 @@ setup_water_builders_for_residue_type(
 	using namespace chemical;
 
 	//bool const no_lk_ball_for_SP2( options::option[ options::OptionKeys::dna::specificity::no_lk_ball_for_SP2 ] );
-	bool const no_SP3_acceptor_waters( false );
-	//( basic::options::option[ basic::options::OptionKeys::dna::specificity::no_SP3_acceptor_waters ] );
+	bool const no_SP3_acceptor_waters
+		( false );//basic::options::option[ basic::options::OptionKeys::dna::specificity::no_SP3_acceptor_waters ] );
+
+	bool no_acceptor_waters
+		( false );//basic::options::option[ basic::options::OptionKeys::dna::specificity::no_acceptor_waters ] );
+
+	bool const no_acceptor_waters_except_OH
+		( false );//basic::options::option[ basic::options::OptionKeys::dna::specificity::no_acceptor_waters_except_OH ] );
+
+	bool const lk_ball_subset1
+		( false );//basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_subset1 ] );
 
 	bool const dump_waters_pdb( false ); // for debugging purposes
 
@@ -212,6 +230,14 @@ setup_water_builders_for_residue_type(
 
 	rsd_water_builders.clear();
 	rsd_water_builders.resize( rsd_type.natoms() ); // initialize to empty vector1s
+
+	if ( lk_ball_subset1 ) { // only ARG ASN GLN sidechain donors
+		if ( rsd->aa() != chemical::aa_arg &&
+				 rsd->aa() != chemical::aa_asn &&
+				 rsd->aa() != chemical::aa_gln ) return;
+		no_acceptor_waters = true;
+		runtime_assert( sidechain_only ); // sanity
+	}
 
 	utility::vector1< Vector > all_waters; // for debugging
 
@@ -223,7 +249,16 @@ setup_water_builders_for_residue_type(
 		if ( sidechain_only && rsd_type.atom_is_backbone( hatm ) ) continue;
 
 		Size const datm( rsd->atom_base( hatm ) );
-		Size const datm_base( rsd->atom_base( datm ) );
+		Size datm_base( rsd->atom_base( datm ) );
+		if ( datm_base == hatm ) { // could happen with water
+			datm_base = 0;
+			chemical::AtomIndices const & datm_nbrs( rsd_type.nbrs( datm ) );
+			for ( Size ii=1; ii<= datm_nbrs.size(); ++ii ) {
+				if ( datm_nbrs[ii] == hatm ) continue;
+				else datm_base = datm_nbrs[ii];
+			}
+			runtime_assert( datm_base );
+		}
 
 		Vector const water( build_optimal_water_O_on_donor( rsd->xyz( hatm ), rsd->xyz( datm ) ) );
 		rsd_water_builders[ datm ].push_back( WaterBuilder( water, *rsd, hatm, datm, datm_base ) );
@@ -233,28 +268,58 @@ setup_water_builders_for_residue_type(
 	}
 
 	// acceptors
-	for ( chemical::AtomIndices::const_iterator
-					anum  = rsd->accpt_pos().begin(),
-					anume = rsd->accpt_pos().end(); anum != anume; ++anum ) {
-		Size const aatm( *anum );
-		if ( sidechain_only && rsd_type.atom_is_backbone( aatm ) ) continue;
-		if ( rsd_type.atom_type( aatm ).hybridization() == chemical::SP3_HYBRID &&
-				 no_SP3_acceptor_waters ) {
-			TR.Trace << "not adding acceptor waters on atom: " << rsd->atom_name( aatm ) << ' ' <<
-				rsd->name() << std::endl;
-			continue;
+	if ( !no_acceptor_waters ) {
+		for ( chemical::AtomIndices::const_iterator
+						anum  = rsd->accpt_pos().begin(),
+						anume = rsd->accpt_pos().end(); anum != anume; ++anum ) {
+			Size const aatm( *anum );
+			if ( sidechain_only && rsd_type.atom_is_backbone( aatm ) ) continue;
+			if ( rsd_type.atom_type( aatm ).hybridization() == chemical::SP3_HYBRID &&
+					 no_SP3_acceptor_waters ) {
+				TR.Trace << "not adding acceptor waters on atom: " << rsd->atom_name( aatm ) << ' ' <<
+					rsd->name() << std::endl;
+				continue;
+			}
+			if ( no_acceptor_waters_except_OH && rsd_type.atom_type( aatm ).name() != "OH" ) continue;
+			Size const abase1( rsd->atom_base( aatm ) ), abase2( rsd->abase2( aatm ) );
+			utility::vector1< Vector > const waters
+				( build_optimal_water_Os_on_acceptor( aatm, *rsd,
+																							rsd->xyz( aatm ), rsd->xyz( abase1 ), rsd->xyz( abase2 ),
+																							rsd->atom_type( aatm ).hybridization() ) );
+			for ( Size i=1; i<= waters.size(); ++i ) {
+				rsd_water_builders[ aatm ].push_back( WaterBuilder( waters[i], *rsd, aatm, abase1, abase2 ) );
+				TR.Trace << "adding ideal water to rsd_type= " << rsd_type.name() << " anchored to atom " <<
+					rsd_type.atom_name( aatm ) << " abase1= " << rsd_type.atom_name( abase1 ) <<
+					" abase2= " << rsd_type.atom_name( abase2 ) << std::endl;
+				all_waters.push_back( waters[i] );
+			}
 		}
-		Size const abase1( rsd->atom_base( aatm ) ), abase2( rsd->abase2( aatm ) );
-		utility::vector1< Vector > const waters
-			( build_optimal_water_Os_on_acceptor( aatm, *rsd,
-																						rsd->xyz( aatm ), rsd->xyz( abase1 ), rsd->xyz( abase2 ),
-																						rsd->atom_type( aatm ).hybridization() ) );
-		for ( Size i=1; i<= waters.size(); ++i ) {
-			rsd_water_builders[ aatm ].push_back( WaterBuilder( waters[i], *rsd, aatm, abase1, abase2 ) );
-			TR.Trace << "adding ideal water to rsd_type= " << rsd_type.name() << " anchored to atom " <<
-				rsd_type.atom_name( aatm ) << " abase1= " << rsd_type.atom_name( abase1 ) <<
-				" abase2= " << rsd_type.atom_name( abase2 ) << std::endl;
-			all_waters.push_back( waters[i] );
+	}
+
+	/// let's do a sanity check on something we assume down below
+	if ( rsd_type.aa() != aa_h2o ) {
+		for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
+			if ( rsd_type.heavyatom_has_polar_hydrogens(i) ) { //want to confirm that all waters are matched to a hydrogen
+				WaterBuilders const & water_builders( rsd_water_builders[i] );
+				for ( Size j=1; j<= water_builders.size(); ++j ) {
+					// look for a polar hydrogen that matches to this guy
+					Size hpos(0);
+					if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom1() )) {
+						hpos = water_builders[j].atom1();
+					}
+					if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom2() )) {
+						runtime_assert( !hpos );
+						hpos = water_builders[j].atom2();
+					}
+					if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom3() )) {
+						runtime_assert( !hpos );
+						hpos = water_builders[j].atom3();
+					}
+					runtime_assert( hpos );
+					TR.Trace << "donor-water-anchor: " << j << ' ' << rsd_type.name() << ' ' << rsd_type.atom_name(hpos ) <<
+						std::endl;
+				}
+			}
 		}
 	}
 
@@ -283,7 +348,7 @@ setup_water_builders_for_residue_type(
 }
 
 LKB_ResidueInfo::LKB_ResidueInfo(
-																 pose::Pose const &,
+																 // pose::Pose const &,
 																 conformation::Residue const & rsd
 																 )
 {
@@ -304,15 +369,15 @@ LKB_ResidueInfo::initialize_residue_type( ResidueType const & rsd_type ) const
 	using namespace conformation;
 	using namespace chemical;
 
-//debug_assert( residue_type_has_waters( rsd_type ) );
+	//debug_assert( residue_type_has_waters( rsd_type ) );
 
 	TR.Trace << "initialize_residue_type: " << rsd_type.name() << std::endl;
 
-	bool const sidechain_only( true ); // consider making this option-configurable
-	// bool const sidechain_only( ! basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ] );
+	bool const sidechain_only( true );
+	//! basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ] );
 
-	ResidueTypeCOP const address( rsd_type.get_self_ptr() );
-debug_assert( ! water_builder_map_.count( address ) );
+	ResidueType const * const address( &rsd_type );
+	debug_assert( ! water_builder_map_.count( address ) );
 
 	water_builder_map_[ address ]; // create entry in map
 	utility::vector1< WaterBuilders > & rsd_water_builders( water_builder_map_.find( address )->second );
@@ -335,7 +400,31 @@ LKB_ResidueInfo::setup_atom_weights(
 	using utility::vector1;
 	using ObjexxFCL::stripped;
 
-	if ( true ) { // new way
+	if ( true ) { // new new way
+
+		chemical::AtomTypeSet const & atom_set( rsd_type.atom_type_set() );
+		std::string atom_wts_tag( "_RATIO23.0_DEFAULT" );
+		if ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_tag ].user() ) {
+			atom_wts_tag = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_wtd_tag ]();
+		}
+
+		Size const lkbi_atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ISO_ATOM_WEIGHT"+atom_wts_tag ) );
+		Size const  lkb_atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ATOM_WEIGHT"+atom_wts_tag ) );
+
+		atom_wts.clear(); atom_wts.resize( rsd_type.natoms() );
+		for ( Size i=1; i<= rsd_type.natoms(); ++i ) atom_wts[i] = utility::tools::make_vector1( Real(0.0), Real(0.0) );
+
+		for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
+			atom_wts[i][1] = rsd_type.atom_type(i).extra_parameter( lkbi_atom_wt_index );
+			atom_wts[i][2] = rsd_type.atom_type(i).extra_parameter(  lkb_atom_wt_index );
+			if ( !rsd_water_builders[i].empty() ) {
+				TR.Trace << "lk_ball_wtd atom_wts: " <<
+					ObjexxFCL::format::F(9,3,atom_wts[i][1]) << ObjexxFCL::format::F(9,3,atom_wts[i][2]) << ' ' <<
+					rsd_type.atom_name(i) << ' ' << rsd_type.name() << std::endl;
+			}
+		}
+
+	} else if ( false ) { // new way
 
 		chemical::AtomTypeSet const & atom_set( rsd_type.atom_type_set() );
 		Size const atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ATOM_WEIGHT" ) );
@@ -452,14 +541,17 @@ LKB_ResidueInfo::setup_atom_weights(
 	}
 }
 
-
 void
 LKB_ResidueInfo::build_waters( Residue const & rsd )
 {
+	if( !this->matches_residue_type( rsd.type() ) ) {
+		utility_exit_with_message("LKB_ResidueInfo::build_waters: mismatch: "+rsd_type_->name()+" "+rsd.type().name() );
+	}
+
 	if ( !has_waters_ ) return;
 
 	// waters_ array has already been dimensioned properly
-	ResidueTypeCOP const address( rsd.type().get_self_ptr() );
+	ResidueType const * const address( &( rsd.type() ) );
 
 	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
 	if ( it == water_builder_map_.end() ) {
@@ -481,10 +573,12 @@ LKB_ResidueInfo::build_waters( Residue const & rsd )
 void
 LKB_ResidueInfo::initialize( ResidueType const & rsd )
 {
+	rsd_type_ = &rsd;
+
 	waters_.clear(); waters_.resize( rsd.nheavyatoms() );
 	has_waters_ = false;
 
-	ResidueTypeCOP const address( rsd.get_self_ptr() );
+	ResidueType const * const address( &rsd );
 
 	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
 	if ( it == water_builder_map_.end() ) {
@@ -507,7 +601,8 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 }
 
 LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & src ):
-	CacheableData(),
+	basic::datacache::CacheableData( src ),
+	rsd_type_( src.rsd_type_ ),
 	waters_( src.waters_ ),
 	atom_weights_( src.atom_weights_ ), // added 5/20/13
 	has_waters_( src.has_waters_ )
@@ -535,6 +630,36 @@ LKB_ResiduesInfo::clone() const
 	return basic::datacache::CacheableDataOP( new LKB_ResiduesInfo( *this ) );
 }
 
+void
+LKB_ResidueInfo::remove_irrelevant_waters(
+																					Size const atom,
+																					chemical::ResidueType const & rsd_type,
+																					utility::vector1< Vector > & waters
+																					) const
+{
+	runtime_assert( rsd_type.atom_is_hydrogen( atom ) );
+
+	Size const heavyatom( rsd_type.atom_base( atom ) );
+
+	ResidueType const * const address( &rsd_type );
+
+	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
+	runtime_assert( it != water_builder_map_.end() );
+
+	WaterBuilders const & water_builders( it->second[ heavyatom ] );
+	runtime_assert( water_builders.size() == waters.size() );
+
+	for ( Size k= water_builders.size(); k>= 1; --k ) {
+		if ( atom == water_builders[k].atom1() ||
+				 atom == water_builders[k].atom2() ||
+				 atom == water_builders[k].atom3() ) continue;
+		waters.erase( waters.begin() + k-1 );
+	}
+
+	// TR.Trace << "remove_irrelevant_waters: "<< rsd_type.name() << ' '<< rsd_type.atom_name(atom) <<
+	// 	" before: " << water_builders.size() << " after: " << waters.size() << std::endl;
+
+}
 
 
 }

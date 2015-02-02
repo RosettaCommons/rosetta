@@ -2964,8 +2964,8 @@ main( int argc, char * argv [] )
 	}
 	/////////////////////////////////////
 
-	atom_types_test();
-	exit(0);
+	// atom_types_test();
+	// exit(0);
 
 	lk_ball_wtd_deriv_test();
 	exit(0);

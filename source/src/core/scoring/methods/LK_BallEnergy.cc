@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/LK_BallEnergy.hh
-/// @brief  LK Solvation using hemisphere culling class declaration
-/// @author David Baker
-/// @author Andrew Leaver-Fay
+/// @file   core/scoring/methods/LK_BallEnergy.cc
+/// @brief  Orientation dependent variant of the LK Solvation using
+/// @author Phil Bradley
+
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
-#include <core/scoring/GenBornPotential.fwd.hh>
+// #include <core/scoring/GenBornPotential.fwd.hh>
 
 
 // Unit headers
@@ -37,6 +37,7 @@
 #include <core/pose/Pose.hh>
 //#include <core/pack/rotamer_set/RotamerSet.hh>
 //#include <core/pack/rotamer_set/WaterPackingInfo.hh>
+#include <core/conformation/residue_datacache.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/chemical/AtomType.hh>
@@ -53,6 +54,7 @@
 
 #include <basic/options/util.hh> // HACK
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <basic/prof.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -95,7 +97,7 @@ LK_BallEnergyCreator::score_types_for_method() const {
 
 
 
-static thread_local basic::Tracer TR( "core.scoring.methods.LK_BallEnergy" );
+static thread_local basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
 
 Real const LK_BallEnergy::ramp_width_A2_( 5.0 );
 
@@ -111,8 +113,8 @@ retrieve_lkb_rotamer_set_info( conformation::RotamerSetBase const & set ) {
 inline
 LKB_ResidueInfo const &
 retrieve_lkb_residue_info( pose::Pose const & pose, Size const seqpos ) {
-debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
-																( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
+	debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
+																			( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
 	return ( static_cast< LKB_PoseInfo const & >
 					 ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
 }
@@ -120,8 +122,8 @@ debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
 inline
 LKB_ResidueInfo &
 retrieve_nonconst_lkb_residue_info( pose::Pose & pose, Size const seqpos ) {
-debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
-																( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
+	debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
+																			( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
 	return ( static_cast< LKB_PoseInfo & >
 					 ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
 }
@@ -191,8 +193,8 @@ retrieve_nonconst_lkb_pairdata(
 {
 	LKB_ResPairMinDataOP lkb_pairdata(0);
 	if ( pairdata.get_data( lkb_respair_data ) ) {
-	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) ));
-		lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) );
+		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data )));
+		lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ));
 	} else {
 		lkb_pairdata = LKB_ResPairMinDataOP( new LKB_ResPairMinData );
 		pairdata.set_data( lkb_respair_data, lkb_pairdata );
@@ -207,7 +209,7 @@ retrieve_lkb_pairdata(
 											ResPairMinimizationData const & pairdata
 											)
 {
-debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data )));
 	return ( static_cast< LKB_ResPairMinData const & > ( pairdata.get_data_ref( lkb_respair_data ) ) );
 }
 /////////////////////////////////////// mindata retrieval functions
@@ -219,7 +221,7 @@ retrieve_nonconst_lkb_resdata(
 {
 	LKB_ResidueInfoOP lkb_resdata( 0 );
 	if ( resdata.get_data( lkb_res_data ) ) {
-	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) ) );
+		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data )));
 		lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
 	} else {
 		lkb_resdata = LKB_ResidueInfoOP( new LKB_ResidueInfo );
@@ -234,7 +236,7 @@ retrieve_lkb_resdata(
 										ResSingleMinimizationData const & resdata
 										)
 {
-debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
 	return ( static_cast< LKB_ResidueInfo const & > ( resdata.get_data_ref( lkb_res_data ) ) );
 }
 /////////////////////////////////////// mindata retrieval functions
@@ -244,8 +246,8 @@ retrieve_lkb_resdata_ptr(
 												ResSingleMinimizationData const & resdata
 												)
 {
-debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
-	return ( utility::pointer::static_pointer_cast< core::scoring::methods::LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
+	return ( utility::pointer::static_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 }
 
 
@@ -293,17 +295,18 @@ debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( 
 // }
 
 LK_BallEnergy::LK_BallEnergy( EnergyMethodOptions const & options ):
-	parent             ( methods::EnergyMethodCreatorOP( new LK_BallEnergyCreator ) ),
-	etable_            (  ScoringManager::get_instance()->etable( options.etable_type() ) ),
-	// TODO: locking once of casting to etable::EtableCOP would be better
-	solv1_             (  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->solv1()),
-	solv2_             (  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->solv2()),
-	dsolv1_            (  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->dsolv1()),
-	safe_max_dis2_     (  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->get_safe_max_dis2() ),
-	etable_bins_per_A2_(  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->get_bins_per_A2() ),
+	parent             ( EnergyMethodCreatorOP( new LK_BallEnergyCreator ) ),
+	etable_            ( ScoringManager::get_instance()->etable( options.etable_type() ).lock() ),
+	solv1_             ( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->solv1()),
+	solv2_             ( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->solv2()),
+	dsolv1_            ( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->dsolv1()),
+	safe_max_dis2_     ( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->get_safe_max_dis2() ),
+	etable_bins_per_A2_( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->get_bins_per_A2() ),
+	slim_etable_       ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ),
 	use_intra_dna_cp_crossover_4_( true )
 {
 	setup_d2_bounds();
+	if ( !slim_etable_ ) { runtime_assert( solv1_.size()>0 ); }
 }
 
 // LK_BallEnergy::LK_BallEnergy( etable::Etable const & etable_in):
@@ -328,8 +331,7 @@ LK_BallEnergy::LK_BallEnergy( EnergyMethodOptions const & options ):
 Distance
 LK_BallEnergy::atomic_interaction_cutoff() const
 {
-	etable::EtableCOP etable_op( etable_ );
-	return etable_op->max_dis();
+	return etable_->max_dis();
 }
 
 
@@ -349,6 +351,7 @@ LK_BallEnergy::LK_BallEnergy( LK_BallEnergy const & src ):
 	dsolv1_( src.dsolv1_ ),
 	safe_max_dis2_( src.safe_max_dis2_ ),
 	etable_bins_per_A2_( src.etable_bins_per_A2_ ),
+	slim_etable_( src.slim_etable_ ),
 	use_intra_dna_cp_crossover_4_( src.use_intra_dna_cp_crossover_4_ )
 {
 	setup_d2_bounds();
@@ -364,7 +367,9 @@ compute_and_store_pose_waters(
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 //	using namespace core::pack::rotamer_set; // WaterPackingInfo
 	LKB_PoseInfoOP info( new LKB_PoseInfo() );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose, pose.residue(i) ) ) );
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose.residue(i) ) ) );
+	}
 	pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 }
@@ -432,6 +437,11 @@ LK_BallEnergy::setup_for_scoring_for_residue(
 																						 ) const
 {
 	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
+	if ( !info.matches_residue_type( rsd.type() ) ) {
+		std::cout << "LK_BallEnergy::setup_for_scoring_for_residue:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
+			rsd.type().name() << std::endl;
+		info.initialize( rsd.type() );
+	}
 	info.build_waters( rsd ); // already initialized in setup for minimizing for rsd
 }
 
@@ -472,7 +482,15 @@ LK_BallEnergy::update_residue_for_packing(
 {
 	/// update waters for residue that has changed during packing, eg in rotamer trials
 	/// need to double-check the current logic on this...
-	retrieve_nonconst_lkb_residue_info( pose, resid ).build_waters( pose.residue( resid ) );
+	// retrieve_nonconst_lkb_residue_info( pose, resid ).build_waters( pose.residue( resid ) );
+	LKB_ResidueInfo & info( retrieve_nonconst_lkb_residue_info( pose, resid ) );
+	conformation::Residue const & rsd( pose.residue( resid ) );
+	if ( !info.matches_residue_type( rsd.type() ) ) {
+		std::cout << "LK_BallEnergy::update_residue_for_packing:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
+			rsd.type().name() << std::endl;
+		info.initialize( rsd.type() );
+	}
+	info.build_waters( rsd );
 }
 
 ///
@@ -493,18 +511,20 @@ LK_BallEnergy::setup_for_scoring(
 
 void
 LK_BallEnergy::prepare_rotamers_for_packing(
-																						pose::Pose const & pose,
+																						pose::Pose const &, //pose,
 																						conformation::RotamerSetBase & rotamer_set
 																						) const
 {
-//	using namespace pack::rotamer_set;
 	//TR.Trace << "prepare_rotamers_for_packing: " << rotamer_set.num_rotamers() << std::endl;
 
 	/// create a rotamer set info object
 	LKB_RotamerSetInfoOP info( new LKB_RotamerSetInfo );
 
 	for ( Size n=1; n<= rotamer_set.num_rotamers(); ++n ) {
-		info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose, *( rotamer_set.rotamer( n ) ) ) ) );
+		conformation::ResidueOP rot( rotamer_set.nonconst_rotamer(n) );
+		LKB_ResidueInfoOP rotinfo( new LKB_ResidueInfo( *rot ) );
+		rot->nonconst_data_ptr()->set( conformation::residue_datacache::LK_BALL_INFO, rotinfo->clone() ); // DataCache::set() does not clone
+		info->append( rotinfo );
 	}
 
 	rotamer_set.data().set( conformation::RotamerSetCacheableDataType::LK_BALL_ROTAMER_SET_INFO, info );
@@ -520,9 +540,7 @@ void
 LK_BallEnergy::setup_d2_bounds()
 {
 	Real const h2o_radius( 1.4 );
-	etable::EtableCOP etable_op( etable_ );
-	chemical::AtomTypeSetCOP atom_set_op( etable_op->atom_set() );
-	chemical::AtomTypeSet const & atom_set( *atom_set_op );
+	chemical::AtomTypeSet const & atom_set( *(etable_->atom_set().lock() ) );
 	d2_low_.resize( atom_set.n_atomtypes() );
 	for ( Size i=1; i<= atom_set.n_atomtypes(); ++i ) {
 		chemical::AtomType const & atype( atom_set[ i ] );
@@ -537,7 +555,7 @@ LK_BallEnergy::setup_d2_bounds()
 	atom_type_is_charged_.resize( atom_set.n_atomtypes() );
 	for ( Size i=1; i<= atom_set.n_atomtypes(); ++i ) {
 		std::string const & name( atom_set[ i ].name() );
-	debug_assert( Size( atom_set.atom_type_index( name ) ) == i ); // sanity
+		debug_assert( Size( atom_set.atom_type_index( name ) ) == i ); // sanity
 		if ( name == "Narg" || name == "Nlys" || name == "OOC" ) atom_type_is_charged_[ i ] = true;
 		else atom_type_is_charged_[ i ] = false;
 		TR.Trace << "atom_type_is_charged_: " << name << ' ' << atom_type_is_charged_[i] << std::endl;
@@ -566,7 +584,7 @@ LK_BallEnergy::setup_d2_bounds()
 Real
 LK_BallEnergy::eval_lk_fraction( Real const d2_delta ) const
 {
-debug_assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
+	debug_assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
 	static Real const inv_range( 1.0 / ramp_width_A2_ );
 	Real const xprime( inv_range * d2_delta );
 	return ( 1 - xprime*xprime ) * ( 1 - xprime*xprime );
@@ -575,7 +593,7 @@ debug_assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
 Real
 LK_BallEnergy::eval_d_lk_fraction_dr_over_r( Real const d2_delta ) const
 {
-debug_assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
+	debug_assert( d2_delta >= -0.001 && d2_delta <= ramp_width_A2_ + 0.001 );
 	static Real const inv_range( 1.0 / ramp_width_A2_ );
 	Real const xprime( inv_range * d2_delta );
 	return -8.0 * inv_range * ( 1 - xprime * xprime ) * xprime;
@@ -664,12 +682,41 @@ LK_BallEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
+	/// there shouldn't be any data stashed in these residues....
+	debug_assert( rsd1.data_ptr() == 0 ||
+								!rsd1.data_ptr()->has( conformation::residue_datacache::LK_BALL_INFO ) );
+	debug_assert( rsd2.data_ptr() == 0 ||
+								!rsd2.data_ptr()->has( conformation::residue_datacache::LK_BALL_INFO ) );
 	LKB_ResidueInfo const & info1( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
 	LKB_ResidueInfo const & info2( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
 	residue_pair_energy( rsd1, info1, rsd2, info2, emap );
 	//residue_pair_energy( rsd1, info1.waters(), rsd2, info2.waters(), emap );
 }
 
+void
+LK_BallEnergy::sidechain_sidechain_energy(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const &, // pose,
+	ScoreFunction const &, // sfxn,
+	EnergyMap & emap
+) const
+{
+	using conformation::residue_datacache::LK_BALL_INFO;
+	/// if we got here we should have come through packing...
+	debug_assert( rsd1.data_ptr() != 0 &&
+								rsd1.data_ptr()->get_const_ptr( LK_BALL_INFO ) != 0 &&
+								dynamic_cast< LKB_ResidueInfo const * > ( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO )));
+	debug_assert( rsd2.data_ptr() != 0 &&
+								rsd2.data_ptr()->get_const_ptr( LK_BALL_INFO ) != 0 &&
+								dynamic_cast< LKB_ResidueInfo const * > ( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO )));
+
+	residue_pair_energy( rsd1,
+											 *( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
+											 rsd2,
+											 *( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
+											 emap );
+}
 
 // this guy is used during minimization
 bool
@@ -720,16 +767,23 @@ LK_BallEnergy::calculate_lk_desolvation_of_single_atom_by_residue(
 
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
 
-			// setup for solvation Etable lookups
-			Size const atom2_type_index( rsd2.atom( atom2 ).type() );
-			Real const d2_bin = d2 * etable_bins_per_A2_;
-			int	disbin = static_cast< int >( d2_bin ) + 1;
-			Real	frac = d2_bin - ( disbin - 1 );
-			int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
+			Real lk_desolvation_of_atom1_by_atom2;
+			if ( slim_etable_ ) {
+				Real lk_desolvation_of_atom2_by_atom1;
+				// not sure the order is correct here:
+				etable_->analytic_lk_energy( rsd1.atom( atom1 ), rsd2.atom( atom2 ), lk_desolvation_of_atom1_by_atom2,
+																		lk_desolvation_of_atom2_by_atom1 );
+				lk_desolvation_of_atom1_by_atom2 *= cp_weight;
+			} else {
+				// setup for solvation Etable lookups
+				Size const atom2_type_index( rsd2.atom( atom2 ).type() );
+				Real const d2_bin = d2 * etable_bins_per_A2_;
+				int	disbin = static_cast< int >( d2_bin ) + 1;
+				Real	frac = d2_bin - ( disbin - 1 );
+				int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
 
-			Real const lk_desolvation_of_atom1_by_atom2
-				( cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] ) );
-
+				lk_desolvation_of_atom1_by_atom2 = cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] );
+			}
 			total_desolvation += lk_desolvation_of_atom1_by_atom2;
 		}
 	}
@@ -768,17 +822,24 @@ LK_BallEnergy::calculate_lk_ball_atom_energies(
 
 	if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) return; // TOO FARAWAY (OR SAME ATOM?)
 
-	// setup for solvation Etable lookups
-	Size const atom1_type_index( rsd1.atom( atom1 ).type() );
 	Size const atom2_type_index( rsd2.atom( atom2 ).type() );
+	if ( slim_etable_ ) {
+		Real lk_desolvation_of_atom2_by_atom1;
+		// note sure the order is correct here:
+		etable_->analytic_lk_energy( rsd1.atom( atom1 ), rsd2.atom( atom2 ), lk_desolvation_of_atom1_by_atom2,
+																lk_desolvation_of_atom2_by_atom1 );
+		lk_desolvation_of_atom1_by_atom2 *= cp_weight;
+	} else {
+		// setup for solvation Etable lookups
+		Size const atom1_type_index( rsd1.atom( atom1 ).type() );
 
-	Real const d2_bin = d2 * etable_bins_per_A2_;
-	int	disbin = static_cast< int >( d2_bin ) + 1;
-	Real	frac = d2_bin - ( disbin - 1 );
-	int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
+		Real const d2_bin = d2 * etable_bins_per_A2_;
+		int	disbin = static_cast< int >( d2_bin ) + 1;
+		Real	frac = d2_bin - ( disbin - 1 );
+		int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
 
-	lk_desolvation_of_atom1_by_atom2 = ( cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] ) );
-
+		lk_desolvation_of_atom1_by_atom2 = ( cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] ) );
+	}
 	Real dummy_real;
 	Size dummy_size;
 	lk_ball_desolvation_of_atom1_by_atom2 = lk_desolvation_of_atom1_by_atom2 *
@@ -822,16 +883,24 @@ LK_BallEnergy::calculate_lk_ball_atom_energies_cp(
 
 	if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) return; // TOO FARAWAY (OR SAME ATOM?)
 
-	// setup for solvation Etable lookups
-	Size const atom1_type_index( rsd1.atom( atom1 ).type() );
 	Size const atom2_type_index( rsd2.atom( atom2 ).type() );
+	if ( slim_etable_ ) {
+		Real lk_desolvation_of_atom2_by_atom1;
+		// note sure the order is correct here:
+		etable_->analytic_lk_energy( rsd1.atom( atom1 ), rsd2.atom( atom2 ), lk_desolvation_of_atom1_by_atom2,
+																lk_desolvation_of_atom2_by_atom1 );
+		lk_desolvation_of_atom1_by_atom2 *= cp_weight;
+	} else {
+		// setup for solvation Etable lookups
+		Size const atom1_type_index( rsd1.atom( atom1 ).type() );
 
-	Real const d2_bin = d2 * etable_bins_per_A2_;
-	int	disbin = static_cast< int >( d2_bin ) + 1;
-	Real	frac = d2_bin - ( disbin - 1 );
-	int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
+		Real const d2_bin = d2 * etable_bins_per_A2_;
+		int	disbin = static_cast< int >( d2_bin ) + 1;
+		Real	frac = d2_bin - ( disbin - 1 );
+		int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
 
-	lk_desolvation_of_atom1_by_atom2 = ( cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] ) );
+		lk_desolvation_of_atom1_by_atom2 = ( cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] ) );
+	}
 
 	Real dummy_real;
 	Size dummy_size;
@@ -862,16 +931,22 @@ LK_BallEnergy::calculate_lk_desolvation_of_single_atom_by_residue_no_count_pair(
 
 		if ( ( d2 >= safe_max_dis2_) || ( d2 < 1e-3 ) ) continue; // exclude self...
 
-		// setup for solvation Etable lookups
-		Size const atom2_type_index( rsd2.atom( atom2 ).type() );
-		Real const d2_bin = d2 * etable_bins_per_A2_;
-		int	disbin = static_cast< int >( d2_bin ) + 1;
-		Real	frac = d2_bin - ( disbin - 1 );
-		int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
+		Real lk_desolvation_of_atom1_by_atom2;
+		if ( slim_etable_ ) {
+			Real lk_desolvation_of_atom2_by_atom1;
+			// note sure the order is correct here:
+			etable_->analytic_lk_energy( rsd1.atom( atom1 ), rsd2.atom( atom2 ), lk_desolvation_of_atom1_by_atom2,
+																	lk_desolvation_of_atom2_by_atom1 );
+		} else {
+			// setup for solvation Etable lookups
+			Size const atom2_type_index( rsd2.atom( atom2 ).type() );
+			Real const d2_bin = d2 * etable_bins_per_A2_;
+			int	disbin = static_cast< int >( d2_bin ) + 1;
+			Real	frac = d2_bin - ( disbin - 1 );
+			int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
 
-		Real const lk_desolvation_of_atom1_by_atom2
-			( ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] ) );
-
+			lk_desolvation_of_atom1_by_atom2 = ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ];
+		}
 		total_desolvation += lk_desolvation_of_atom1_by_atom2;
 
 	}
@@ -895,18 +970,23 @@ LK_BallEnergy::eval_desolvation_derivs_no_count_pair(
 		return;
 	}
 
-	Real const d2_bin( d2 * etable_bins_per_A2_ );
-	Size const disbin( static_cast< int >( d2_bin ) + 1 );
-	Real const frac( d2_bin - ( disbin - 1 ) );
+	if ( slim_etable_ ) {
+		Real inv_dis;
+		etable_->analytic_lk_derivatives( rsd1.atom( atom1 ), rsd2.atom( atom2 ),
+																		 atom1_lk_desolvation_by_atom2_deriv, atom2_lk_desolvation_by_atom1_deriv, inv_dis );
+	} else {
+		Real const d2_bin( d2 * etable_bins_per_A2_ );
+		Size const disbin( static_cast< int >( d2_bin ) + 1 );
+		Real const frac( d2_bin - ( disbin - 1 ) );
 
-	/// this index into solv1 or dsolv1 should represent desolvation of atom1 by atom2
-	int const linear_index12( dsolv1_.index( disbin, rsd2.atom( atom2 ).type(), rsd1.atom( atom1 ).type() ) );
-	/// this index into solv1 or dsolv1 should represent desolvation of atom2 by atom1
-	int const linear_index21( dsolv1_.index( disbin, rsd1.atom( atom1 ).type(), rsd2.atom( atom2 ).type() ) );
+		/// this index into solv1 or dsolv1 should represent desolvation of atom1 by atom2
+		int const linear_index12( dsolv1_.index( disbin, rsd2.atom( atom2 ).type(), rsd1.atom( atom1 ).type() ) );
+		/// this index into solv1 or dsolv1 should represent desolvation of atom2 by atom1
+		int const linear_index21( dsolv1_.index( disbin, rsd1.atom( atom1 ).type(), rsd2.atom( atom2 ).type() ) );
 
-	atom1_lk_desolvation_by_atom2_deriv = dsolv1_[ linear_index12 ] * ( 1-frac ) + dsolv1_[ linear_index12 + 1 ] * frac;
-	atom2_lk_desolvation_by_atom1_deriv = dsolv1_[ linear_index21 ] * ( 1-frac ) + dsolv1_[ linear_index21 + 1 ] * frac;
-
+		atom1_lk_desolvation_by_atom2_deriv = dsolv1_[ linear_index12 ] * ( 1-frac ) + dsolv1_[ linear_index12 + 1 ] * frac;
+		atom2_lk_desolvation_by_atom1_deriv = dsolv1_[ linear_index21 ] * ( 1-frac ) + dsolv1_[ linear_index21 + 1 ] * frac;
+	}
 }
 
 /// HACKY HELPER FXN TAKEN DIRECTLY FROM BaseEtableEnergy.tmpl.hh
@@ -923,7 +1003,7 @@ determine_crossover_behavior(
 {
 	using namespace scoring::etable::count_pair;
 	// maybe should ask "are these two residues polymers and do they share a polymeric bond"
-//debug_assert( !sfxn.has_zero_weight( mm_twist ) );
+	//debug_assert( !sfxn.has_zero_weight( mm_twist ) );
 	if ( res1.polymeric_sequence_distance(res2) == 1 ) {
 		if ( ( !( res1.is_protein() && res2.is_protein() ) ) &&
 				 ( !( use_intra_dna_cp_crossover_4 && res1.is_DNA() && res2.is_DNA() ) ) &&
@@ -989,6 +1069,35 @@ LK_BallEnergy::residue_pair_energy(
 	utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( rsd1_info.atom_weights() );
 	utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( rsd2_info.atom_weights() );
 
+
+	static Size counter(0);
+	++counter;
+#ifndef NDEBUG // every time
+	counter=0;
+#endif
+	if ( counter%10000 == 0 ) { // total hack
+		LKB_ResidueInfo info1b( rsd1 );
+		utility::vector1< Vectors > const & rsd1_waters_new( info1b.waters() );
+
+		runtime_assert( rsd1_waters.size() == rsd1_waters_new.size() );
+
+		for ( Size i=1; i<= rsd1.nheavyatoms(); ++i ) {
+			if ( !rsd1_waters[i].empty() ) {
+				runtime_assert( rsd1_waters[i].size() == rsd1_waters_new[i].size() );
+				for ( Size j=1; j<= rsd1_waters[i].size(); ++j ) {
+					Real const dis2( rsd1_waters[i][j].distance_squared( rsd1_waters_new[i][j] ) );
+					if ( dis2>1e-3 ) {
+						std::cout << "LKB-bigdis2: " << rsd1.name() << ' ' << rsd2.name() << ' ' << std::sqrt( dis2 ) << std::endl;
+						std::cerr << "LKB-bigdis2: " << rsd1.name() << ' ' << rsd2.name() << ' ' << std::sqrt( dis2 ) << std::endl;
+						debug_assert(dis2<1e-3);
+						utility_exit();
+					}
+				}
+			}
+		}
+	}
+
+
 	// the old way:
 	//
 	//CountPairFunctionOP cpfxn =
@@ -1020,19 +1129,24 @@ LK_BallEnergy::residue_pair_energy(
 
 				if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
 
-				// setup for solvation Etable lookups
+				Real lk_desolvation_of_atom1_by_atom2, lk_desolvation_of_atom2_by_atom1;
 				Size const atom2_type_index( rsd2.atom( atom2 ).type() );
-				Real const d2_bin = d2 * etable_bins_per_A2_;
-				int	disbin = static_cast< int >( d2_bin ) + 1;
-				Real	frac = d2_bin - ( disbin - 1 );
-				int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
+				if ( slim_etable_ ) {
+					etable_->analytic_lk_energy( rsd1.atom( atom1 ), rsd2.atom( atom2 ), lk_desolvation_of_atom1_by_atom2,
+																			lk_desolvation_of_atom2_by_atom1 );
+					lk_desolvation_of_atom1_by_atom2 *= cp_weight;
+					lk_desolvation_of_atom2_by_atom1 *= cp_weight;
 
-				Real lk_desolvation_of_atom1_by_atom2
-					( cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] ) );
+				} else {
+					// setup for solvation Etable lookups
+					Real const d2_bin = d2 * etable_bins_per_A2_;
+					int	disbin = static_cast< int >( d2_bin ) + 1;
+					Real	frac = d2_bin - ( disbin - 1 );
+					int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
 
-				Real lk_desolvation_of_atom2_by_atom1
-					( cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] ) );
-
+					lk_desolvation_of_atom1_by_atom2 = cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] );
+					lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] );
+				}
 				accumulate_single_atom_contributions( atom1, atom1_type_index, atom1_waters, atom1_weights,
 																							rsd1, atom2_type_index, atom2_xyz,
 																							lk_desolvation_of_atom1_by_atom2, emap );
@@ -1145,6 +1259,7 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair_one_way(
 																														 Size const atom1,
 																														 conformation::Residue const & rsd1,
 																														 Vectors const & atom1_waters,
+																														 Vectors const & heavyatom1_waters,
 																														 utility::vector1< Real > const & atom1_wts,
 																														 Size const atom2,
 																														 conformation::Residue const & rsd2,
@@ -1155,6 +1270,7 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair_one_way(
 																														 Vector & F2
 																														 ) const
 {
+	if ( rsd2.atom_is_hydrogen(atom2) ) return;
 	if ( atom1_waters.empty() ) return;
 	if ( atom1_wts.size() != 2 ) {
 		std::cerr << "LK_BallEnergy: bad atom1_wts " << rsd1.name() << ' ' << rsd1.atom_name( atom1 ) << ' ' <<
@@ -1162,34 +1278,39 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair_one_way(
 		utility_exit_with_message("bad atom1_wts: "+rsd1.name()+" "+rsd1.atom_name(atom1));
 	}
 
+	bool const atom1_is_hydrogen( rsd1.atom_is_hydrogen( atom1 ) );
+	Size const heavyatom1( atom1_is_hydrogen ? rsd1.atom_base( atom1 ) : atom1 );
 
-	Real const d2_bin( d2 * etable_bins_per_A2_ );
-	Size const disbin( static_cast< int >( d2_bin ) + 1 );
-	Real const frac( d2_bin - ( disbin - 1 ) );
+	Real lk_deriv, lk_score;
 
-	/// this index into solv1 or dsolv1 should represent desolvation of atom1 by atom2
-	Size const atom1_type_index( rsd1.atom( atom1 ).type() );
-	int const linear_index( dsolv1_.index( disbin, rsd2.atom( atom2 ).type(), atom1_type_index ) );
+	if ( slim_etable_ ) {
+		Real other_lk_score, other_lk_deriv, inv_dis;
+		etable_->analytic_lk_energy( rsd1.atom( heavyatom1 ), rsd2.atom( atom2 ), lk_score, other_lk_score );
+		etable_->analytic_lk_derivatives( rsd1.atom( heavyatom1 ), rsd2.atom( atom2 ), lk_deriv, other_lk_deriv, inv_dis );
 
-	Real const lk_deriv( dsolv1_[ linear_index ] * ( 1-frac ) + dsolv1_[ linear_index+1 ] * frac );
-	Real const lk_score(  solv1_[ linear_index ] * ( 1-frac ) +  solv1_[ linear_index+1 ] * frac );
+	} else {
+		Real const d2_bin( d2 * etable_bins_per_A2_ );
+		Size const disbin( static_cast< int >( d2_bin ) + 1 );
+		Real const frac( d2_bin - ( disbin - 1 ) );
+
+		/// this index into solv1 or dsolv1 should represent desolvation of heavyatom1 by atom2
+		Size const heavyatom1_type_index( rsd1.atom( heavyatom1 ).type() );
+		int const linear_index( dsolv1_.index( disbin, rsd2.atom( atom2 ).type(), heavyatom1_type_index ) );
+
+		lk_deriv = dsolv1_[ linear_index ] * ( 1-frac ) + dsolv1_[ linear_index+1 ] * frac;
+		lk_score =  solv1_[ linear_index ] * ( 1-frac ) +  solv1_[ linear_index+1 ] * frac;
+	}
 
 	//// first for the direct lk interaction between atom1 and atom2 /////////////////////////////////////////////
-	Vector const & atom1_xyz( rsd1.xyz( atom1 ) );
+	Vector const & heavyatom1_xyz( rsd1.xyz( heavyatom1 ) );
 	Vector const & atom2_xyz( rsd2.xyz( atom2 ) );
-	Vector f1( atom1_xyz.cross( atom2_xyz ) ), f2( atom1_xyz - atom2_xyz );
+	Vector f1( heavyatom1_xyz.cross( atom2_xyz ) ), f2( heavyatom1_xyz - atom2_xyz );
 
 	Real const inv_dis( 1.0 / std::sqrt( d2 ) );
 
 	Real const // include contributions from 3 score types:  lk_ball_iso, lk_ball, and lk_ball_wtd
 		lk_ball_iso_weight  ( weights[ lk_ball_iso ] + atom1_wts[1] * weights[ lk_ball_wtd ] ), // HACKING
 		lk_ball_aniso_weight( weights[ lk_ball     ] + atom1_wts[2] * weights[ lk_ball_wtd ] );
-
-	{ // the derivs for the parts that don't involve waters:
-		Real const dE_dr_over_r( weight_factor * lk_ball_iso_weight * lk_deriv * inv_dis );
-		F1 += dE_dr_over_r * f1;
-		F2 += dE_dr_over_r * f2;
-	}
 
 
 	// now the lk_ball deriv
@@ -1202,25 +1323,76 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair_one_way(
 	Real const lk_fraction( get_lk_fractional_contribution( atom2_xyz, rsd2.atom( atom2 ).type(), atom1_waters,
 																													closest_water, closest_water_d2_delta ) );
 
-	// 1st term -- atom1-atom2 interaction
-	{
-		Real const dE_dr_over_r( weight_factor * lk_ball_aniso_weight * lk_fraction * lk_deriv * inv_dis );
-		F1 += dE_dr_over_r * f1;
-		F2 += dE_dr_over_r * f2;
-	}
 
-	// 2nd term -- water1-atom2 interaction
-	// note that there's no derivative unless we're in the ramping zone:
-	if ( closest_water_d2_delta < ramp_width_A2_ && closest_water_d2_delta > 0.0 ) {
-		Vector const & atom1_water_xyz( atom1_waters[ closest_water ] );
-		// update f1 and f2 to reflect water-atom2 as the interaction
-		f1 = atom1_water_xyz.cross( atom2_xyz );
-		f2 = atom1_water_xyz - atom2_xyz;
-		// what is the derivative of the lk_fraction term wrt r?
-		Real const dE_dr_over_r
-			( weight_factor * lk_ball_aniso_weight * lk_score * eval_d_lk_fraction_dr_over_r( closest_water_d2_delta ) );
-		F1 += dE_dr_over_r * f1;
-		F2 += dE_dr_over_r * f2;
+
+	if ( atom1_is_hydrogen ) { // all we want to include here is the derivative involving the lk-fraction term
+		// and only if one of our waters is the closest water
+		Size closest_water_allwaters(0);
+		Real closest_water_d2_delta_allwaters( 100.0 );
+		get_lk_fractional_contribution( atom2_xyz, rsd2.atom( atom2 ).type(),
+																		heavyatom1_waters,
+																		closest_water_allwaters,
+																		closest_water_d2_delta_allwaters );
+
+		if ( closest_water_d2_delta_allwaters < closest_water_d2_delta ) return; //// EARLY RETURN -- no derivs, not closest
+
+
+		// now the lk_ball deriv
+		//
+		// lk_ball = fraction * lk
+		// so d lk_ball = fraction * ( d lk ) + ( d fraction ) * lk
+		//
+		// we are only considering here the
+		//
+		// 2nd term -- water1-atom2 interaction
+		// note that there's no derivative unless we're in the ramping zone:
+		if ( closest_water_d2_delta < ramp_width_A2_ && closest_water_d2_delta > 0.0 ) {
+			Vector const & atom1_water_xyz( atom1_waters[ closest_water ] );
+			// update f1 and f2 to reflect water-atom2 as the interaction
+			f1 = atom1_water_xyz.cross( atom2_xyz );
+			f2 = atom1_water_xyz - atom2_xyz;
+			// what is the derivative of the lk_fraction term wrt r?
+			Real const dE_dr_over_r
+				( weight_factor * lk_ball_aniso_weight * lk_score * eval_d_lk_fraction_dr_over_r( closest_water_d2_delta ) );
+			F1 += dE_dr_over_r * f1;
+			F2 += dE_dr_over_r * f2;
+		}
+
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	} else { /// atom1 is a heavyatom //////////////////////////////////////////////////////////////////////////////
+
+		{ // the derivs for the parts that don't involve waters:
+			Real const dE_dr_over_r( weight_factor * lk_ball_iso_weight * lk_deriv * inv_dis );
+			F1 += dE_dr_over_r * f1;
+			F2 += dE_dr_over_r * f2;
+		}
+
+
+		// 1st term -- atom1-atom2 interaction
+		{
+			Real const dE_dr_over_r( weight_factor * lk_ball_aniso_weight * lk_fraction * lk_deriv * inv_dis );
+			F1 += dE_dr_over_r * f1;
+			F2 += dE_dr_over_r * f2;
+		}
+
+		// 2nd term -- water1-atom2 interaction
+		// note that there's no derivative unless we're in the ramping zone:
+		// we only do this if this term hasn't already been captured by one of our dependent hydrogens
+		// we assume that for heavyatoms with dependent polar hydrogens, every water belongs to one of the hydrogens
+		if ( !rsd1.type().heavyatom_has_polar_hydrogens( atom1 ) ) {
+			if ( closest_water_d2_delta < ramp_width_A2_ && closest_water_d2_delta > 0.0 ) {
+				Vector const & atom1_water_xyz( atom1_waters[ closest_water ] );
+				// update f1 and f2 to reflect water-atom2 as the interaction
+				f1 = atom1_water_xyz.cross( atom2_xyz );
+				f2 = atom1_water_xyz - atom2_xyz;
+				// what is the derivative of the lk_fraction term wrt r?
+				Real const dE_dr_over_r
+					( weight_factor * lk_ball_aniso_weight * lk_score * eval_d_lk_fraction_dr_over_r( closest_water_d2_delta ) );
+				F1 += dE_dr_over_r * f1;
+				F2 += dE_dr_over_r * f2;
+			}
+		}
 	}
 }
 
@@ -1228,6 +1400,7 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair_one_way(
 /// @note  Calculates the water positions for atom2 if d2 < safe_max_dis2
 void
 LK_BallEnergy::sum_deriv_contributions_for_atom_pair(
+																										 Real const d2,
 																										 Size const atom1,
 																										 conformation::Residue const & rsd1,
 																										 LKB_ResidueInfo const & rsd1_info,
@@ -1241,19 +1414,26 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair(
 																										 Vector & F2
 																										 ) const
 {
-	Real const d2( rsd1.xyz( atom1 ).distance_squared( rsd2.xyz( atom2 ) ) );
+	/// reworking this to handle waters anchored on hydrogens properly
+	///
+	bool const atom1_is_hydrogen( rsd1.atom_is_hydrogen(atom1) );
+	bool const atom2_is_hydrogen( rsd2.atom_is_hydrogen(atom2) );
+	Size const heavyatom1( atom1_is_hydrogen ? rsd1.atom_base( atom1 ) : atom1 );
+	Size const heavyatom2( atom2_is_hydrogen ? rsd2.atom_base( atom2 ) : atom2 );
 
-	if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real(0.0) ) ) return; // no contribution
+	Vectors const & heavyatom1_waters( rsd1_info.waters()[ heavyatom1 ] );
+	Vectors atom1_waters( heavyatom1_waters );
+	Vectors const & heavyatom2_waters( rsd2_info.waters()[ heavyatom2 ] );
+	Vectors atom2_waters( heavyatom2_waters );
+	if ( atom1_is_hydrogen ) rsd1_info.remove_irrelevant_waters( atom1, rsd1.type(), atom1_waters );
+	if ( atom2_is_hydrogen ) rsd2_info.remove_irrelevant_waters( atom2, rsd2.type(), atom2_waters );
 
-	Vectors const & atom1_waters( rsd1_info.waters()[ atom1 ] );
-	Vectors const & atom2_waters( rsd2_info.waters()[ atom2 ] );
-	utility::vector1< Real > const & atom1_wts( rsd1_info.atom_weights()[ atom1 ] );
-	utility::vector1< Real > const & atom2_wts( rsd2_info.atom_weights()[ atom2 ] );
-
-	sum_deriv_contributions_for_atom_pair_one_way( atom1, rsd1, atom1_waters, atom1_wts, atom2, rsd2, weights,
+	sum_deriv_contributions_for_atom_pair_one_way( atom1, rsd1, atom1_waters, heavyatom1_waters,
+																								 rsd1_info.atom_weights()[ heavyatom1 ], atom2, rsd2, weights,
 																								 cp_weight, d2, F1, F2 );
 
-	sum_deriv_contributions_for_atom_pair_one_way( atom2, rsd2, atom2_waters, atom2_wts, atom1, rsd1, weights,
+	sum_deriv_contributions_for_atom_pair_one_way( atom2, rsd2, atom2_waters, heavyatom2_waters,
+																								 rsd2_info.atom_weights()[ heavyatom2 ], atom1, rsd1, weights,
 																								 -1.0 * cp_weight, d2, F1, F2 );
 
 }
@@ -1284,7 +1464,7 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair(
 
 //  	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, idresid ) );
 
-// debug_assert( pose.energies().use_nblist() );
+// 	debug_assert( pose.energies().use_nblist() );
 
 // 	scoring::AtomNeighbors const & nbrs
 // 		( pose.energies().nblist( basic::ETABLE_NBLIST ).atom_neighbors( id ) );
@@ -1391,7 +1571,7 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 				residue_pair_energy( *set.rotamer( kk_rot_id ), info1_redo.waters(),
 														 rsd, info2_redo.waters(),
 														 lk_ball_energy_redo, lk_ball_iso_energy_redo );
-			debug_assert( std::abs( lk_ball_energy - lk_ball_energy_redo ) +
+				debug_assert( std::abs( lk_ball_energy - lk_ball_energy_redo ) +
 								std::abs( lk_ball_iso_energy - lk_ball_iso_energy_redo ) < 1e-3 );
 
 								}**/
@@ -1418,8 +1598,8 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 ) const
 {
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
-debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
+	debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
+	debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
 	// retrieve some info
  	// LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
@@ -1427,234 +1607,56 @@ debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( res1data ) );
 	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( res2data ) );
 
-debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( etab_pair_nblist ) ));
+	debug_assert( dynamic_cast< ResiduePairNeighborList const * > (&*min_data.get_data( etab_pair_nblist )));
 	ResiduePairNeighborList const & nblist
 		( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist )) );
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
-		Size const atom1( neighbs[ ii ].atomno1() ), atom2( neighbs[ ii ].atomno2() );
-		if ( rsd1.atom_is_hydrogen( atom1 ) || rsd2.atom_is_hydrogen( atom2 ) ) continue; // NO HYDROGEN INTXNS
+		Size const heavyatom1( neighbs[ ii ].atomno1() ), heavyatom2( neighbs[ ii ].atomno2() );
+		if ( rsd1.atom_is_hydrogen( heavyatom1 ) || rsd2.atom_is_hydrogen( heavyatom2 ) ) continue;
 		Real const cp_weight( neighbs[ ii ].weight() );
 
-		Vector f1(0,0,0),f2(0,0,0);
-		sum_deriv_contributions_for_atom_pair( atom1, rsd1, rsd1_info, atom2, rsd2, rsd2_info, pose, weights,
-																					 cp_weight, f1, f2 );
+		Real const d2( rsd1.xyz( heavyatom1 ).distance_squared( rsd2.xyz( heavyatom2 ) ) );
 
-		r1_at_derivs[ neighbs[ ii ].atomno1() ].f1() += f1;
-		r1_at_derivs[ neighbs[ ii ].atomno1() ].f2() += f2;
-		r2_at_derivs[ neighbs[ ii ].atomno2() ].f1() += -1*f1;
-		r2_at_derivs[ neighbs[ ii ].atomno2() ].f2() += -1*f2;
-	}
-	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-}
+		if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real(0.0) ) ) continue; // no contribution
 
-Size
-get_parallel_h_for_arg(
-	chemical::ResidueType const & rsd_type,
-	Size const hatm
-)
-{
-	using namespace chemical;
-debug_assert( rsd_type.aa() == aa_arg );
-	typedef std::map< ResidueTypeCOP, utility::vector1< Size > > H_Map;
-	static H_Map hmap;
-	ResidueTypeCOP rsd_type_ptr( rsd_type.get_self_ptr() );
-	H_Map::const_iterator iter = hmap.find( rsd_type_ptr );
-	if ( iter == hmap.end() ) {
-		// first time seeing this arginine residue type
-		utility::vector1< Size > parallel_h( rsd_type.natoms(), 0 );
-		parallel_h[ rsd_type.atom_index(  "HE"  ) ] = rsd_type.atom_index( "1HH2" );
-		parallel_h[ rsd_type.atom_index( "1HH2" ) ] = rsd_type.atom_index(  "HE"  );
-		parallel_h[ rsd_type.atom_index( "2HH1" ) ] = rsd_type.atom_index( "2HH2" );
-		parallel_h[ rsd_type.atom_index( "2HH2" ) ] = rsd_type.atom_index( "2HH1" );
-		hmap.insert( std::make_pair( rsd_type_ptr, parallel_h ) );
-		iter = hmap.find( rsd_type_ptr );
-	}
-	return iter->second[ hatm ];
-}
+		Size const n1( rsd1.heavyatom_has_polar_hydrogens(heavyatom1) ?
+									 1 + rsd1.type().number_bonded_hydrogens(heavyatom1) : 1 );
+		Size const n2( rsd2.heavyatom_has_polar_hydrogens(heavyatom2) ?
+									 1 + rsd2.type().number_bonded_hydrogens(heavyatom2) : 1 );
 
-
-/// hack to improve geometries of hbonds:
-/// apply an additional weighting factor which is used in LK_BallEnergy
-/// Do this for sidechain SP2 or Ring acceptors
-/// Do this for all sidechain donors
-///
-/// NOTE: also excluding multiple parallel Arg hbonds
-///
-/// @note  For the deriv calculation, we assume that the deriv passed in has already been evaluated by hb_energy_deriv
-/// and thus represents the deriv of the unweighted energy considering the donor as the moving atom.
-void
-apply_lk_ball_fraction_weight_for_hbonds(
-																				 Size const hatm,
-																				 conformation::Residue const & don_rsd,
-																				 Size const aatm,
-																				 conformation::Residue const & acc_rsd,
-																				 Vector const & hatm_xyz,
-																				 Vector const & datm_xyz,
-																				 Real & unweighted_energy,
-																				 bool const evaluate_derivative,
-																				 hbonds::HBondDerivs & hbderivs,
-																				 Real & don_fraction,
-																				 Real & acc_fraction
-																				 )
-{
-	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-	// params
-	bool const no_lk_ball_for_SP2( false ); //option[ OKDS::no_lk_ball_for_SP2 ] );
-	bool const exclude_arg_double_parallel_hbonds( true );
-
-// not considering these next two for the time being:
-// 	bool const use_soft_lk_fraction_for_hbond_acceptors( false );
-// 	bool const use_soft_lk_fraction_for_hbond_acceptors_from_water( false );
-
-
-	Size const datm( don_rsd.atom_base( hatm ) );
-
-	// static for efficiency
-	static Real const optimal_acceptor_water_distance( 2.85 ); /// these should agree with LK_BallInfo.cc, right ??
-	static Real const optimal_donor_water_distance   ( 2.85 ); /// the values there are 2.65 !!
-	static Real const optimal_acceptor_angle_SP2( numeric::conversions::radians( 120.0 ) );
-	static Real const n1_coeff_SP2( -1.0 * optimal_acceptor_water_distance * std::cos( optimal_acceptor_angle_SP2 ) );
-	static Real const n2_coeff_SP2(        optimal_acceptor_water_distance * std::sin( optimal_acceptor_angle_SP2 ) );
-	static methods::EnergyMethodOptions energy_method_options;
-	static methods::LK_BallEnergy lk_ball_energy( energy_method_options );
-
-	Vector f1_don( 0.0 ), f2_don( 0.0 ), f1_acc( 0.0 ), f2_acc( 0.0 );
-	don_fraction = acc_fraction = 1.0;
-
-	if ( !don_rsd.atom_is_backbone( datm ) ) {
-		/// get ideal water location
-		utility::vector1< Vector > waters;
-		waters.push_back( datm_xyz + optimal_donor_water_distance * ( hatm_xyz - datm_xyz ).normalized_any() );
-		if ( don_rsd.aa() == chemical::aa_arg && exclude_arg_double_parallel_hbonds ) {
-			Size const other_hatm( get_parallel_h_for_arg( don_rsd.type(), hatm ) );
-			if ( other_hatm ) {
-				Vector const & other_datm_xyz( don_rsd.xyz( don_rsd.atom_base( other_hatm ) ) ),
-					& other_hatm_xyz( don_rsd.xyz( other_hatm ) ), & aatm_xyz( acc_rsd.xyz( aatm ) );
-				Vector const other_water( other_datm_xyz + optimal_donor_water_distance *
-																	( other_hatm_xyz - other_datm_xyz ).normalized_any() );
-				if ( aatm_xyz.distance_squared( other_water ) < aatm_xyz.distance_squared( waters.front() ) ) {
-					// closer to the other hydrogen's water!
-//  					std::cout << "excluding arg hbond: " << acc_rsd.name1() << ' ' << acc_rsd.seqpos() << ' ' <<
-//  						acc_rsd.atom_name( aatm ) << " is closer to ARG " << don_rsd.seqpos() << ' ' <<
-//  						don_rsd.atom_name( other_hatm ) << " than to " << don_rsd.atom_name( hatm ) << std::endl;
-					don_fraction = acc_fraction = 0.0;
-					waters.clear(); // prevent re-evaluation of don_fraction
-					if ( evaluate_derivative ) {
-						f1_don.zero();
-						f2_don.zero();
-					}
+		for ( Size iii=1; iii<= n1; ++iii ) {
+			Size atom1( heavyatom1 );
+			if ( iii >= 2 ) {
+				atom1 = rsd1.attached_H_begin(heavyatom1)+iii-2;
+				runtime_assert( rsd1.atom_is_hydrogen(atom1) && rsd1.atom_base(atom1) == heavyatom1 );
+				if ( !rsd1.atom_is_polar_hydrogen(atom1)) continue;
+			}
+			for ( Size jjj=1; jjj<= n2; ++jjj ) {
+				Size atom2( heavyatom2 );
+				if ( jjj >= 2 ) {
+					atom2 = rsd2.attached_H_begin(heavyatom2)+jjj-2;
+					runtime_assert( rsd2.atom_is_hydrogen(atom2) && rsd2.atom_base(atom2) == heavyatom2 );
+					if ( !rsd2.atom_is_polar_hydrogen(atom2)) continue;
 				}
+
+				Vector f1(0,0,0),f2(0,0,0);
+				sum_deriv_contributions_for_atom_pair( d2, atom1, rsd1, rsd1_info, atom2, rsd2, rsd2_info, pose, weights,
+																							 cp_weight, f1, f2 );
+
+				r1_at_derivs[ atom1 ].f1() += f1;
+				r1_at_derivs[ atom1 ].f2() += f2;
+				r2_at_derivs[ atom2 ].f1() += -1*f1;
+				r2_at_derivs[ atom2 ].f2() += -1*f2;
 			}
 		}
-		if ( !waters.empty() ) {
-			// otherwise donor is an arginine with wrong water closer
-			don_fraction = lk_ball_energy.eval_lk_ball_fraction_deriv( acc_rsd.xyz( aatm ),acc_rsd.atom( aatm ).type(),
-																																 waters, evaluate_derivative, f1_don, f2_don );
-		} else {
-		debug_assert( don_rsd.aa() == chemical::aa_arg );
-		}
 	}
-
-
-	if ( !acc_rsd.atom_is_backbone( aatm ) ) {
-		using namespace chemical;
-		Hybridization const & hybrid( acc_rsd.atom_type( aatm ).hybridization() );
-		if ( hybrid == SP2_HYBRID && no_lk_ball_for_SP2 && acc_rsd.is_protein() ) {
-			//TR.Trace << "Not computing acc_fraction " << acc_rsd.atom_name( aatm ) << std::endl;
-		} else if ( hybrid == SP2_HYBRID || hybrid == RING_HYBRID ) {
-			/// only cases for which we do this:
-			Vector const &   aatm_xyz( acc_rsd.xyz( aatm ) );
-			Vector const &  abase_xyz( acc_rsd.xyz( acc_rsd.atom_base( aatm ) ) );
-			Vector const & abase2_xyz( acc_rsd.xyz( acc_rsd.abase2( aatm ) ) );
-			utility::vector1< Vector > waters;
-
-			if ( hybrid == SP2_HYBRID ) {
-				Vector const n1( ( aatm_xyz - abase_xyz ).normalized_any() );
-				Vector n2( ( abase2_xyz - abase_xyz ) );
-				n2 = ( n2 - n1.dot( n2 ) * n1 ).normalized_any();
-			debug_assert( std::abs( n1.dot( n2 ) ) < 1e-3 );
-				waters.push_back( aatm_xyz + n1_coeff_SP2 * n1 + n2_coeff_SP2 * n2 );
-				waters.push_back( aatm_xyz + n1_coeff_SP2 * n1 - n2_coeff_SP2 * n2 );
-				//dump_waters_pdb( acc_rsd, waters, "acc_sp2" );
-				//dumped[2] = true;
-			} else if ( hybrid == RING_HYBRID ) {
-				Vector const n1( ( aatm_xyz - 0.5 * abase_xyz - 0.5 * abase2_xyz ).normalized_any() );
-				waters.push_back( aatm_xyz + optimal_acceptor_water_distance * n1 );
-				//dump_waters_pdb( acc_rsd, waters, "acc_ring" );
-				//dumped[3] = true;
-			} else {
-				utility_exit_with_message("dont do this hybridization state!");
-			}
-
-			/// note that this function thinks that the acceptor is the "moving" atom, hence -1.0 in deriv calcs below
-			acc_fraction = lk_ball_energy.eval_lk_ball_fraction_deriv( datm_xyz, don_rsd.atom( datm ).type(), waters,
-																																 evaluate_derivative, f1_acc, f2_acc );
-		}
-	}
-
-	if ( acc_fraction < 0.99 || don_fraction < 0.99 ) {
-		// debugging
-		using namespace ObjexxFCL::format;
-// 		std::cout << "apply_lk_ball_fraction_weight_for_hbonds: " <<
-// 			F(9,3,don_fraction) << I(4,don_rsd.seqpos()) << ' ' << don_rsd.name1() << ' '<< don_rsd.atom_name( hatm ) <<
-// 			F(9,3,acc_fraction) << I(4,acc_rsd.seqpos()) << ' ' << acc_rsd.name1() << ' '<< acc_rsd.atom_name( aatm ) <<
-// 			std::endl;
-	}
-
-
-	{ // we used to have an option to soften the dependence, but that was taken out in porting to trunk to get derivs
-		// correctly first
-
-		/// do this BEFORE we multiply unweighted_energy by don_fraction and acc_fraction
-		if ( evaluate_derivative ) {
-			/// note that don_derivs should probably be attached to h_deriv instead, need to think more about this...
-			/// also note that f12_don think the donor is the moving atom, while f12_acc think the acceptor is moving
-			/// this is the chain rule, baby:
-			hbderivs.don_deriv.f1() =  ( hbderivs.don_deriv.f1() * don_fraction * acc_fraction +
-																	 unweighted_energy       * f1_don       * acc_fraction +
-																	 unweighted_energy       * don_fraction * -1 * f1_acc   );
-
-			hbderivs.don_deriv.f2() =  ( hbderivs.don_deriv.f2() * don_fraction * acc_fraction +
-																	 unweighted_energy       * f2_don       * acc_fraction +
-																	 unweighted_energy       * don_fraction * -1 * f2_acc   );
-
-			hbderivs.acc_deriv.f1() =  ( hbderivs.acc_deriv.f1() * don_fraction * acc_fraction +
-																	 unweighted_energy       * -1 * f1_don  * acc_fraction +
-																	 unweighted_energy       * don_fraction * f1_acc   );
-
-			hbderivs.acc_deriv.f2() =  ( hbderivs.acc_deriv.f2() * don_fraction * acc_fraction +
-																	 unweighted_energy       * -1 * f2_don  * acc_fraction +
-																	 unweighted_energy       * don_fraction * f2_acc   );
-
-			hbderivs.h_deriv.f1() =  ( hbderivs.h_deriv.f1() * don_fraction * acc_fraction );
-			hbderivs.h_deriv.f2() =  ( hbderivs.h_deriv.f2() * don_fraction * acc_fraction );
-
-			hbderivs.abase_deriv.f1() =  ( hbderivs.abase_deriv.f1() * don_fraction * acc_fraction );
-			hbderivs.abase_deriv.f2() =  ( hbderivs.abase_deriv.f2() * don_fraction * acc_fraction );
-
-			hbderivs.abase2_deriv.f1() =  ( hbderivs.abase2_deriv.f1() * don_fraction * acc_fraction );
-			hbderivs.abase2_deriv.f2() =  ( hbderivs.abase2_deriv.f2() * don_fraction * acc_fraction );
-
-			// the old way: (this was just wrt the donor; we had already negated f1_acc,f2_acc)
-			//
-			// 			deriv.first  =  ( deriv.first       * don_fraction * acc_fraction +
-			// 												unweighted_energy * f1_don       * acc_fraction +
-			// 												unweighted_energy * don_fraction * f1_acc       );
-
-			// 			deriv.second =  ( deriv.second      * don_fraction * acc_fraction +
-			// 												unweighted_energy * f2_don       * acc_fraction +
-			// 												unweighted_energy * don_fraction * f2_acc       );
-
-		}
-
-		/// now apply the new weighting factor
-		unweighted_energy = unweighted_energy * don_fraction * acc_fraction;
-
-	} // use a softer damping scheme
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 }
+
+
+
 
 
 

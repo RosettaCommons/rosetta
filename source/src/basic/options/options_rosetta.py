@@ -3907,6 +3907,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'motif_size', 'Integer', default='0'),
 			Option( 'pdb_pos', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb, eg: -pdb_pos 125:A 127:A 4:C'),
 			Option( 'methylate', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb to be methylated, eg: -methylate 125:A 127:A 4:C'),
+			Option( 'lk_ball_wtd_tag', 'String'),
 		), # -dna:specificity
 
 		# ashworth

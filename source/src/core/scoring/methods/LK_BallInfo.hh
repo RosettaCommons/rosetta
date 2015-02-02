@@ -7,10 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/LK_BallEnergy.hh
-/// @brief  LK Solvation using hemisphere culling class declaration
-/// @author David Baker
-/// @author Andrew Leaver-Fay
+/// @file   core/scoring/methods/LK_BallInfo.hh
+/// @brief  Orientation dependent variant of the LK Solvation using
+/// @author Phil Bradley
 
 #ifndef INCLUDED_core_scoring_methods_LK_BallInfo_HH
 #define INCLUDED_core_scoring_methods_LK_BallInfo_HH
@@ -45,6 +44,7 @@
 // #include <core/util/prof.hh>
 // #include <core/util/tracer.hh>
 #include <basic/datacache/CacheableData.hh>
+// #include <core/conformation/residue_datacache.hh>
 
 // #include <numeric/constants.hh>
 // #include <numeric/xyz.functions.hh>
@@ -53,6 +53,10 @@
 namespace core {
 namespace scoring {
 namespace methods {
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @details  Stores the internal coordinates of an ideal water position
 class WaterBuilder {
@@ -68,6 +72,10 @@ public:
 	Vector
 	build( conformation::Residue const & rsd ) const;
 
+	Size atom1() const { return atom1_; }
+	Size atom2() const { return atom2_; }
+	Size atom3() const { return atom3_; }
+
 private:
 	Size atom1_;
 	Size atom2_;
@@ -77,6 +85,13 @@ private:
 
 typedef utility::vector1< WaterBuilder > WaterBuilders;
 
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @details  Holds the locations of ideal waters attached to the atoms of a Residue
 class LKB_ResidueInfo; // fwd
@@ -90,7 +105,7 @@ public:
 
 public:
 
-	LKB_ResidueInfo( pose::Pose const & pose, conformation::Residue const & rsd );
+	LKB_ResidueInfo( conformation::Residue const & rsd );
 
 	LKB_ResidueInfo( LKB_ResidueInfo const & src );
 
@@ -99,8 +114,8 @@ public:
 	void
 	initialize( chemical::ResidueType const & rsd );
 
+	virtual
 	basic::datacache::CacheableDataOP
-	//LKB_ResidueInfoOP
 	clone() const;
 
 	void
@@ -116,17 +131,34 @@ public:
 	atom_weights() const { return atom_weights_; }
 
 
+	void
+	remove_irrelevant_waters(
+													 Size const atom,
+													 chemical::ResidueType const & rsd_type,
+													 utility::vector1< Vector > & waters
+													 ) const;
 
+
+	/// danger
+	static
+	void
+	reset_arrays_danger_expert_only();
+
+	bool
+	matches_residue_type( chemical::ResidueType const & rsd_type ) { return ( rsd_type_ == &(rsd_type) ); }
+
+	chemical::ResidueType const &
+	residue_type() const { return *rsd_type_; }
 
 /////////////////////////////////////////////////////////////////////////////
 // STATIC data
 private:
 /////////////////////////////////////////////////////////////////////////////
 
-	typedef std::map< chemical::ResidueTypeCOP, utility::vector1< WaterBuilders > > WaterBuilderMap;
+	typedef std::map< chemical::ResidueType const *, utility::vector1< WaterBuilders > > WaterBuilderMap;
 	static WaterBuilderMap water_builder_map_;
 
-	typedef std::map< chemical::ResidueTypeCOP, utility::vector1< utility::vector1< Real > > > AtomWeightsMap;
+	typedef std::map< chemical::ResidueType const *, utility::vector1< utility::vector1< Real > > > AtomWeightsMap;
 	static AtomWeightsMap atom_weights_map_;
 
 	void
@@ -140,6 +172,7 @@ private:
 										 ) const;
 
 private:
+	chemical::ResidueType const * rsd_type_; // bad form
 	utility::vector1< Vectors > waters_;
 	utility::vector1< utility::vector1< Real > > atom_weights_;
 	bool has_waters_;
@@ -148,6 +181,13 @@ private:
 
 typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 typedef utility::pointer::shared_ptr< const LKB_ResidueInfo > LKB_ResidueInfoCOP;
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class LKB_ResiduesInfo : public basic::datacache::CacheableData {
 public:
@@ -180,7 +220,6 @@ typedef LKB_ResiduesInfo LKB_RotamerSetInfo;
 
 typedef utility::pointer::shared_ptr< LKB_PoseInfo > LKB_PoseInfoOP;
 typedef utility::pointer::shared_ptr< LKB_RotamerSetInfo > LKB_RotamerSetInfoOP;
-
 
 
 }
