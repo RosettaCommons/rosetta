@@ -2562,11 +2562,21 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		# Setup Options
 		Option_Group( 'setup',
 			Option( 'spanfiles', 'StringVector', desc="Spanning topology file from Octopus" ),
+			Option( 'spans_from_structure', 'Boolean', desc="Uses spanning topology computed from the PDB; requires the protein to be transformed into the membrane coordinate frame!" ),
 			Option( 'lipsfile', 'String', desc="List of lips files by chain", default='mypdb.lips4' ),
 			Option( 'center', 'RealVector', desc="membrane center x,y,z" ),
 			Option( 'normal', 'RealVector', desc="membrane normal x,y,z" ),
 			Option( 'membrane_rsd', 'Real', desc="membrane residue number" ),
 		),
+
+	),
+
+	#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
+	Option_Group( 'mpdock',
+
+		#Scoring options
+		Option( 'weights_cen', 'String', desc='Scorefunction for low-resolution step.'),
+		Option( 'weights_fa', 'String', desc='Scorefunction for high-resolution step.'),
 
 	),
 

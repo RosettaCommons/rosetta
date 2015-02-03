@@ -79,15 +79,15 @@ public: // getters
 
 	/// @brief Show This Span
 	/// @details Show the information in this span. TODO: Should override base method
-	void show();
+	void show() const;
 
 	/// @brief Check that this Span is Valid
 	/// @details Check that this span describes a consecutive transmembrane span
 	/// of nonzero length.
-	bool is_valid();
+	bool is_valid() const;
 
 	// TODO: get rid of this guy
-	void not_valid();
+	void not_valid() const;
 
 private: // data
 

@@ -1,3 +1,4 @@
+#currently not used - JKLeman 01/21/2015
 #SHARED embedding parameters for both individual chains and whole pose
 #starting point for center search
 center_start 0 0 0

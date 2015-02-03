@@ -115,13 +115,13 @@ void
 pdbslice( pose::Pose & pose,
 					utility::vector1< Size > const & slice_res );
 
-
+// for partition_by_jump: both new poses start residue numbering from 1 and don't keep the original numbering!
 void
 partition_pose_by_jump(
 	pose::Pose const & src,
 	int const jump_number,
-	pose::Pose & partner1,
-	pose::Pose & partner2
+	pose::Pose & partner1, // partner upstream in foldtree
+	pose::Pose & partner2  // partner downstream in foldtree
 );
 
 /// @brief Analyzes  <pose>  residue phi/psi sets and guesses the secondary
@@ -644,6 +644,10 @@ core::Size noncanonical_atom_count(core::pose::Pose const & pose);
 
 /// @brief count the number of non-canonical chi angles in the pose
 core::Size noncanonical_chi_count(core::pose::Pose const & pose);
+
+/// @brief Number of protein residues in the pose
+/// @details No virtuals, membrane residues or embedding residues counted
+core::Size nres_protein( core::pose::Pose const & pose );
 
 numeric::xyzVector< core::Real>
 center_of_mass(

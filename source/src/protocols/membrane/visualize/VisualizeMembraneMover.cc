@@ -8,13 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file	    protocols/membrane/VisualizeMembraneMover.hh
-///
-/// @brief      Visualize Membrane Planes with Virtual Residues
-/// @details    Add a set of virtual residues as a third chain to the
-///				membrane pose. This tool is strictly for visualization of
-///				the implicit membrane and should not be present in modeling.
+/// @brief      Visualize Membrane Planes by many atoms
+/// @details    This does not represent the membrane planes as planes but rather
+///				as a large number of additional HETATOMs in the PDB file.
+///				IF YOU USE PYMOL, IT'S BETTER TO USE THE PYMOLMOVER INSTEAD!
+///				If you use Chimera or alternate methods for visualization, it
+///				it is still useful.
 ///				Last Modified: 6/19/14
-///
 /// @author		Rebecca Alford (rflaford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_visualize_VisualizeMembraneMover_cc

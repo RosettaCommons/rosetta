@@ -77,7 +77,7 @@ public: // test functions
         pose_from_pdb( *pose, "core/conformation/membrane/1AFO_AB.pdb" );
 		
 		// get info from pose
-		std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));
+		std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( *pose ));
 		zcoord_ = pose_info.first;
 		chainID_ = pose_info.second;
 		Real thickness = 12.5;
@@ -142,29 +142,29 @@ public: // test functions
 		
 		// check specific spans for first helix
 		SpanOP span1( new Span(  1, 10 ) );
-		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span1 ), 0 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, *span1 ), 0 );
 		
 		SpanOP span2( new Span( 10, 20 ) );
-		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span2 ), 0 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, *span2 ), 0 );
 
 		SpanOP span3( new Span( 15, 27 ) );
-		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span3 ), 1 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, *span3 ), 1 );
 
 		SpanOP span4( new Span( 27, 40 ) );
-		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span4 ), 0 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, *span4 ), 0 );
 		
 		// check specific spans for second helix
 		SpanOP span5( new Span( 40, 41 ) );
-		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span5 ), 1 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, *span5 ), 1 );
 		
 		SpanOP span6( new Span( 41, 56 ) );
-		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span6 ), 0 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, *span6 ), 0 );
 		
 		SpanOP span7( new Span( 57, 68 ) );
-		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span7 ), 1 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, *span7 ), 1 );
 		
 		SpanOP span8( new Span( 66, 80 ) );
-		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span8 ), 0 );
+		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, *span8 ), 0 );
 		
 		TS_TRACE("Finished testing whether span crosses the membrane.");
 	}

@@ -43,6 +43,7 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -114,8 +115,8 @@ residue_center_of_mass(
 				   core::SSize const stop
 				   )
 {
-	Vector center = center_of_mass( pose, start, stop );
-	return return_nearest_residue( pose, start, stop, center );
+	Vector center = protocols::membrane::geometry::center_of_mass( pose, start, stop );
+	return protocols::membrane::geometry::return_nearest_residue( pose, start, stop, center );
 }
 
 /// @brief      Return nearest residue
@@ -159,7 +160,7 @@ return_nearest_residue(
 ///				vector1 is z-coord of CA atoms of the pose
 ///				vector2 is chainID of CA atoms of the pose
 std::pair< utility::vector1< Real >, utility::vector1< Real > >
-get_chain_and_z( pose::PoseOP pose ) {
+get_chain_and_z( pose::Pose const & pose ) {
 	
 	TR.Debug << "get_pose_info" << std::endl;
 	using namespace core::pose;
@@ -169,11 +170,11 @@ get_chain_and_z( pose::PoseOP pose ) {
 	utility::vector1< Size > chain_info;
 	
 	// loop over residues, get chain info and z_coord
-	for ( Size i = 1; i <= pose->total_residue(); ++i ){
+	for ( Size i = 1; i <= pose.total_residue(); ++i ){
 		
 		// get info
-		z_coord.push_back( static_cast< Real >(pose->residue(i).atom(2).xyz().z()) );
-		chain_info.push_back( pose->chain(i) );
+		z_coord.push_back( static_cast< Real >(pose.residue(i).atom(2).xyz().z()) );
+		chain_info.push_back( pose.chain(i) );
 	}
 	
 	// put the data in a pair
@@ -186,13 +187,14 @@ get_chain_and_z( pose::PoseOP pose ) {
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
-void compute_structure_based_membrane_position(
-										pose::Pose & pose,
+void compute_structure_based_embedding(
+										pose::Pose const & pose,
+										SpanningTopology const & topology,
 										Vector & center,
 										Vector & normal
 										) {
 	// create EmbeddingDef to return
-	EmbeddingDefOP embed = compute_structure_based_membrane_position( pose );
+	EmbeddingDefOP embed = compute_structure_based_embedding( pose, topology );
 
 	// set new center and normal
 	center = embed->center();
@@ -202,26 +204,54 @@ void compute_structure_based_membrane_position(
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
+/// topology, uses topology from MembraneInfo
+void compute_structure_based_embedding(
+								   pose::Pose const & pose,
+								   Vector & center,
+								   Vector & normal
+								   ) {
+	
+	// get topology from MembraneInfo
+	SpanningTopology topo( *pose.conformation().membrane_info()->spanning_topology() );
+
+	// create EmbeddingDef to return
+	compute_structure_based_embedding( pose, topo, center, normal );
+
+}// compute structure-based position
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
-EmbeddingDefOP compute_structure_based_membrane_position( pose::Pose & pose ){
+EmbeddingDefOP compute_structure_based_embedding( pose::Pose const & pose, SpanningTopology const & topo ){
 
 	using namespace protocols::membrane::geometry;
 	using namespace core::conformation::membrane;
-	
-	// get SpanningTopology
-	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
-	
-	if ( topo->nspans() == 0 ) {
+
+	if ( topo.nspans() == 0 ) {
 		utility_exit_with_message("The SpanningTopology object in MembraneInfo is empty!" );
 	}
 	
-	// get create Embedding object
-	EmbeddingOP embeddings( new Embedding( topo, pose ) );
+	// create Embedding object
+	Embedding embeddings = Embedding( topo, pose );
 	
 	// return total embedding
-	return embeddings->total_embed();
+	return embeddings.total_embed();
 			
 }// compute structure based membrane position
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Compute Membrane Center/Normal from Membrane Spanning
+/// topology, uses topology from MembraneInfo
+EmbeddingDefOP compute_structure_based_embedding( pose::Pose const & pose ){
+
+	// get topology from MembraneInfo
+	SpanningTopology topo( *pose.conformation().membrane_info()->spanning_topology() );
+
+	return compute_structure_based_embedding( pose, topo );
+
+}// compute structure based membrane position
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Check reasonable range of vector
 void check_vector( core::Vector const vector ) {
@@ -244,7 +274,7 @@ void check_vector( core::Vector const vector ) {
 
 /// @brief Average EmbeddingDefs as they are without vector inversion accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
-EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts ) {
+EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > const parts ) {
 
     // Initialize vars
     core::Vector center(0, 0, 0);
@@ -267,7 +297,7 @@ EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > parts ) {
 
 /// @brief Average EmbeddingDefs after first inverting some vectors accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
-EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP > parts ) {
+EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP > const parts ) {
 
 	// Initialize vars
 	core::Vector center(0, 0, 0);
@@ -369,7 +399,53 @@ core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
 	return trans_axis;
 }// membrane axis
 
+/// @brief Splits the SpanningTopology object into two objects, depending on
+///			given jump number
+/// @details This is useful for calculating an embedding for parts of the
+///			structure: this can now easily be accomplished by creating two
+///			empty topology objects, call this function, and then use both topology
+///			objects and subposes to call compute_structure_based_membrane_embedding
+void split_topology_by_jump(
+		Pose const & pose,					// full pose
+		Size const jumpnum,					// jump number to split on
+		SpanningTopology const & topo,		// topology to split
+		Pose & pose_up,						// upstream partner after pose splitting
+		Pose & pose_down,					// downstream partner after pose splitting
+		SpanningTopology & topo_up,			// topology of upstream pose
+		SpanningTopology & topo_down		// topology of downstream pose
+) {
 
+	// split pose at jump, both new poses have residue numbering starting at 1!!!
+	partition_pose_by_jump( pose, jumpnum, pose_up, pose_down );
+
+	// go through TMspans
+	for ( Size i = 1; i <= topo.nspans(); ++i ) {
+		
+		// get start and end residues
+		Size start = topo.span( i )->start();
+		Size end = topo.span( i )->end();
+		
+		// if span is not in upstream partner, add to downstream topology
+		if ( start > pose_up.total_residue() ) {
+			
+			Size new_start = start - nres_protein( pose_up );
+			Size new_end = end - nres_protein( pose_up );
+			
+			// add to downstream topology
+			topo_down.add_span( new_start, new_end, 0 );
+		}
+		
+		// else add to upstream topology
+		else {
+			topo_up.add_span( start, end, 0 );
+		}
+	}
+	
+	TR << "topology of upward partner" << std::endl;
+	topo_up.show();
+	TR << "topology of downward partner" << std::endl;
+	topo_down.show();
+}// split topology by jump
 
 } // geometry
 } // membrane

@@ -12,7 +12,6 @@
 /// @brief		Membrane Framework Application: Real-Time Visualization of Membrane Proteins
 /// @details	The PyMOL mover currently includes methods for visualizing the membrane
 ///				planes. This can be turned on using the flags -show_simulation_in_pymol
-///				and -membrane_new:view_in_pymol.
 ///				Last Modified: 7/26/14
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)

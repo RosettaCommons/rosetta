@@ -81,7 +81,7 @@ public: // test functions
 		Real radius(10);
 
 		// create object using constructor
-		EmbeddingOP embed( new Embedding( topology, radius ) );
+		EmbeddingOP embed( new Embedding( *topology, radius ) );
 		embed->show();
 
 		// create vectors for centers and normal
@@ -124,7 +124,7 @@ public: // test functions
 		SpanningTopologyOP topology( new SpanningTopology("protocols/membrane/geometry/1AFO_AB.span") );
 
 		// create object using constructor
-		EmbeddingOP embed( new Embedding( topology, pose ) );
+		EmbeddingOP embed( new Embedding( *topology, pose ) );
 		embed->show();
 
 		// create vectors for centers and normals

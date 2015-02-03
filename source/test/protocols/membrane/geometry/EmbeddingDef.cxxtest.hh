@@ -138,7 +138,7 @@ public: // test functions
 		Vector new_center(7, 7, 7);
 		Vector new_normal(9, 9, 9);
 
-		embed->translate_by( translation );
+		embed->translate_by( *translation );
 
 		// check positions
 		TS_ASSERT( position_equal_within_delta( embed->center(), new_center, 0.001 ) );
