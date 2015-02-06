@@ -1273,11 +1273,11 @@ if ($helix_mode == 1) {
 	my $subunits_per_turn = 1;
 
 	# spcial case for fold and dock .. COM is on anchor res
-	if ($fndCompatible == 1) {
-		$COM_0 = vadd( $COM_0, $chains{ $primary_chain }->[$minRes-1]);
-		$COM_i = vadd( $COM_i, mapply( minv($R), $chains{ $primary_chain }->[$minRes-1]) );
-		$del_COM = vsub ($COM_i, $COM_0);
-	}
+	#if ($fndCompatible == 1) {
+	#	$COM_0 = vadd( $COM_0, $chains{ $primary_chain }->[$minRes-1]);
+	#	$COM_i = vadd( $COM_i, mapply( minv($R), $chains{ $primary_chain }->[$minRes-1]) );
+	#	$del_COM = vsub ($COM_i, $COM_0);
+	#}
 
 	# special case for identity (fiber symmetry)
 	# set helical axis == translation axis
@@ -1917,7 +1917,11 @@ if ($helix_mode == 1) {
 			my $id1 = $sec_shift."_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
 			foreach my $i (1..$sym_order_ncs-1) {
 				my $id2 = $sec_shift."_".$subunit."_".$i; $id2 =~ s/-(\d)/n\1/g;
-				print "connect_virtual JUMP_pt_$id2 VRT_$id1 VRT_$id2\n";
+				if ($fndCompatible == 1) {
+					print "connect_virtual JUMP_pt_$id2 VRT_".$id1."_base VRT_".$id2."_base\n";
+				} else {
+					print "connect_virtual JUMP_pt_$id2 VRT_$id1 VRT_$id2\n";
+				}
 			}
 		}
 	}
