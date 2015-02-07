@@ -79,6 +79,7 @@ namespace protocols {
 		///@brief Creator for BundleGridSampler mover.
 		BundleGridSampler::BundleGridSampler():
 			Mover("BundleGridSampler"),
+			reset_mode_(true),
 			select_low_(true),
 			n_helices_(0),
 			max_samples_( 10000 ),
@@ -107,6 +108,7 @@ namespace protocols {
 		/// @brief Copy constructor for BundleGridSampler mover.
 		BundleGridSampler::BundleGridSampler( BundleGridSampler const & src ):
 			protocols::moves::Mover( src ),
+			reset_mode_(src.reset_mode_),
 			select_low_(src.select_low_),
 			n_helices_(src.n_helices_),
 			max_samples_(src.max_samples_),
@@ -485,8 +487,11 @@ namespace protocols {
 			//Set minor helix default parameters for the MakeBundle mover (crick_params_file, omega1, and z1):
 			make_bundle_->set_minorhelix_defaults_from_tag( tag );
 
-			//Set reset to true for the MakeBundle mover:
-			make_bundle_->set_reset_pose( true );
+			//Set reset mode for the MakeBundle mover:
+			bool resetmode = tag->getOption<bool>("reset", true);
+			if(TR.visible()) TR << "Setting reset mode to " << (resetmode ? "true." : "false.") << std::endl;
+			set_reset_mode(resetmode);
+			make_bundle_->set_reset_pose( reset_mode() );
 
 			// Default options applied to all helices, unless overrides are provided:
 			if( tag->hasOption("r0") ) {

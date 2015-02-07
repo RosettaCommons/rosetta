@@ -102,6 +102,14 @@ namespace protocols {
 		////////////////////////////////////////////////////////////////////////////////
 		//          PUBLIC FUNCTIONS                                                  //
 		////////////////////////////////////////////////////////////////////////////////
+		
+			/// @brief Set the reset mode.
+			/// @brief If true (default), the pose is reset before generating bundles.  If false, it is not.
+			void set_reset_mode( bool const val) { reset_mode_=val; return; }
+			
+			/// @brief Get the reset mode.
+			/// @brief If true (default), the pose is reset before generating bundles.  If false, it is not.
+			bool reset_mode() const { return reset_mode_; }
 
 			/// @brief Access the r0_ BundleOptions object, by index.
 			/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
@@ -293,6 +301,10 @@ namespace protocols {
 		////////////////////////////////////////////////////////////////////////////////
 		//          PRIVATE DATA                                                      //
 		////////////////////////////////////////////////////////////////////////////////
+
+			/// @brief Should the pose be reset before applying the GridSampler?  Default true.
+			///
+			bool reset_mode_;
 
 			/// @brief The selection type.
 			/// @default If false, the pose with the highest score value is selected.  If true,
