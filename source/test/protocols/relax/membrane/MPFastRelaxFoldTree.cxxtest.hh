@@ -64,16 +64,14 @@ public: // test functions
         pose_1c3w_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *pose_1c3w_, "protocols/membrane/1C3W_TR_A.pdb" );
         std::string spanfile = "protocols/membrane/1C3W_A.span";
-        Vector center( 0, 0, 0 );
-        Vector normal( 0, 0, 1 );
-        AddMembraneMoverOP add_memb1( new AddMembraneMover( center, normal, spanfile ) );
+        AddMembraneMoverOP add_memb1( new AddMembraneMover( spanfile ) );
         add_memb1->apply( *pose_1c3w_ );
         
         // Load in 2mpn (Inner membrane protein YgaP) Test case: two chains (docking...?)
         pose_2mpn_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *pose_2mpn_, "protocols/relax/membrane/2mpn_tr_native.pdb" );
         std::string spanfile2 = "protocols/relax/membrane/2mpn_tr.span";
-        AddMembraneMoverOP add_memb2( new AddMembraneMover( center, normal, spanfile2 ) );
+        AddMembraneMoverOP add_memb2( new AddMembraneMover( spanfile2 ) );
         add_memb2->apply( *pose_2mpn_ );
         
         // TODO: Add symmetric, asymmetric test cases. Will also get expanded if there

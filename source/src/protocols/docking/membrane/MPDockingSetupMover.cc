@@ -174,7 +174,7 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	core::pose::append_pose_to_pose( pose1_cp, pose2_cp, true );
 
 	// add membrane, setup membrane object using known topology
-	AddMembraneMoverOP add_membrane3( new AddMembraneMover( center, normal, topo1 ) );
+	AddMembraneMoverOP add_membrane3( new AddMembraneMover( topo1 ) );
 	add_membrane3->apply( pose1_cp );
 
 	// reorder foldtree
@@ -235,7 +235,7 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 	using namespace protocols::membrane;
 
 	// attach MEM to pose
-	AddMembraneMoverOP add_membrane( new AddMembraneMover( center, normal, spanfile ) );
+	AddMembraneMoverOP add_membrane( new AddMembraneMover( spanfile ) );
 	add_membrane->apply( pose );
 
 	// reorder foldtree such that MEM is at root

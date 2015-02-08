@@ -71,12 +71,8 @@ public:
 		pose_ = core::import_pose::pose_from_pdb( "protocols/membrane/1AFO_AB.pdb" );
 		std::string spanfile = "protocols/membrane/1AFO_AB.span";
 
-		// initialize variables for AddMembraneMover
-		Vector center( mem_center );
-		Vector normal( mem_normal );
-
 		// Add Membrane to pose
-		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, 1 ) );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile, 1 ) );
 		add_memb->apply( *pose_ );
 
 		// reorder the foldtree to have membrane residue at the root

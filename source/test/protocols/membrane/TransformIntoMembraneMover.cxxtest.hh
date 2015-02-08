@@ -68,12 +68,8 @@ public:
 		// Load span object from spanfile
 		spanfile_ = "protocols/membrane/1AFO_AB.span";
 
-		// center and normal
-		Vector center( mem_center );
-		Vector normal( mem_normal );
-
 		// Add Membrane to pose
-		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile_, 0 ) );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile_, 0 ) );
 		add_memb->apply( *pose_ );
 
 		// reorder foldtree

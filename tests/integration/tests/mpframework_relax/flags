@@ -1,9 +1,9 @@
 -parser:protocol membrane_relax.xml
 -in:file:s inputs/1afo_tr_native.pdb
--in:ignore_unrecognized_res
 -membrane_new:setup:spanfiles inputs/1afo_tr.span
--membrane_new:scoring:hbond
+-nstruct 1
 -relax:fast
+-relax:jump_move true
 -out:pdb
--out:file:scorefile 2bs2_scored.sc
--packing:pack_missing_sidechains false 
+-out:file:scorefile relax_scores_1afo.sc
+-packing:pack_missing_sidechains 0

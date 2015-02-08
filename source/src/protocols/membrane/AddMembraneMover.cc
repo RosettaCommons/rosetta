@@ -18,7 +18,7 @@
 ///				return true.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (7/10/14)
+/// @note       Last Modified (2/7/14)
 
 #ifndef INCLUDED_protocols_membrane_AddMembraneMover_cc
 #define INCLUDED_protocols_membrane_AddMembraneMover_cc
@@ -101,14 +101,10 @@ using namespace protocols::moves;
 /// and lips from the command line interface.
 AddMembraneMover::AddMembraneMover() :
 	protocols::moves::Mover(),
-	fullatom_( true ), 
 	include_lips_( false ),
-	center_( mem_center ),
-	normal_( mem_normal ),
 	spanfile_(),
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
-	anchor_rsd_( 1 ),
 	membrane_rsd_( 0 )
 {
 	register_options();
@@ -120,14 +116,10 @@ AddMembraneMover::AddMembraneMover() :
 /// membrane residue number (application is symmetry)
 AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	include_lips_( false ),
-	center_( mem_center ),
-	normal_( mem_normal ),
 	spanfile_(),
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
-	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd )
 {
 	register_options();
@@ -139,50 +131,37 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 /// center at emb_center and normal at emb_normal and will load
 /// in spanning regions from list of spanfile provided
 AddMembraneMover::AddMembraneMover(
-	 Vector center,
-	 Vector normal,
-	 std::string spanfile,
-	 core::Size membrane_rsd
-	 ) :
-	 protocols::moves::Mover(),
-	fullatom_( true ),
-	include_lips_( false ),
-	center_( center ),
-	normal_( normal ),
-	spanfile_( spanfile ),
-	topology_( new SpanningTopology() ),
-	lipsfile_(),
-	anchor_rsd_( 1 ),
-	membrane_rsd_( membrane_rsd )
+    std::string spanfile,
+    core::Size membrane_rsd
+    ) :
+    protocols::moves::Mover(),
+    include_lips_( false ),
+    spanfile_( spanfile ),
+    topology_( new SpanningTopology() ),
+    lipsfile_(),
+    membrane_rsd_( membrane_rsd )
 {
 	register_options();
 	init_from_cmd();
 }
-
-/// @brief Custom Constructor - for PyRosetta
+    
+/// @brief Custom Constructor - mainly for PyRosetta
 /// @details Creates a membrane pose setting the membrane
 /// center at emb_center and normal at emb_normal and will load
-/// in spanning regions from topology object
+/// in spanning regions from list of spanfiles provided
 AddMembraneMover::AddMembraneMover(
-	Vector center,
-	Vector normal,
-	SpanningTopologyOP topology,
-	core::Size anchor_residue,
-	core::Size membrane_rsd
-	) :
-	protocols::moves::Mover(),
-	fullatom_( true ),
-	include_lips_( false ),
-	center_( center ),
-	normal_( normal ),
-	spanfile_(),
-	topology_( topology ),
-	lipsfile_(),
-	anchor_rsd_( anchor_residue ),
-	membrane_rsd_( membrane_rsd )
+     SpanningTopologyOP topology,
+     core::Size membrane_rsd
+    ) :
+    protocols::moves::Mover(),
+    include_lips_( false ),
+    spanfile_( "" ),
+    topology_( topology ),
+    lipsfile_(),
+    membrane_rsd_( membrane_rsd )
 {
-	register_options();
-	init_from_cmd();
+    register_options();
+    init_from_cmd();
 }
 
 /// @brief Custorm Constructur with lips info - for PyRosetta
@@ -191,21 +170,15 @@ AddMembraneMover::AddMembraneMover(
 /// in spanning regions from list of spanfile provided. Will also
 /// load in lips info from lips_acc info provided
 AddMembraneMover::AddMembraneMover(
-	Vector center,
-	Vector normal,
 	std::string spanfile,
 	std::string lips_acc,
 	core::Size membrane_rsd
 	) :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	include_lips_( true ),
-	center_( center ),
-	normal_( normal ),
 	spanfile_( spanfile ),
 	topology_( new SpanningTopology() ),
 	lipsfile_( lips_acc ),
-	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd )
 {
 	register_options();
@@ -215,15 +188,11 @@ AddMembraneMover::AddMembraneMover(
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
-	protocols::moves::Mover( src ), 
-	fullatom_( src.fullatom_ ), 
+	protocols::moves::Mover( src ),
 	include_lips_( src.include_lips_ ),
-	center_( src.center_ ),
-	normal_( src.normal_ ),
 	spanfile_( src.spanfile_ ),
 	topology_( src.topology_ ),
 	lipsfile_( src.lipsfile_ ),
-	anchor_rsd_( src.anchor_rsd_ ),
 	membrane_rsd_( src.membrane_rsd_ )
 {}
 
@@ -256,11 +225,6 @@ AddMembraneMover::parse_my_tag(
 	 core::pose::Pose const &
 	 ) {
 	
-	// Read in boolean fulltom
-	if ( tag->hasOption( "fullatom" ) ) {
-		fullatom_ = tag->getOption< bool >( "fullatom" );
-	}
-	
 	// Read in include lips option (boolean)
 	if ( tag->hasOption( "include_lips" ) ) {
 		include_lips_ = tag->getOption< bool >( "include_lips" );
@@ -279,33 +243,6 @@ AddMembraneMover::parse_my_tag(
 	// Read in membrane residue position where applicable
 	if ( tag->hasOption( "membrane_rsd" ) ) {
 		membrane_rsd_ = tag->getOption< core::Size >( "membrane_rsd" );
-	}
-	
-	// Read in membrane center & normal
-	if ( tag->hasOption( "center" ) ) {
-		std::string center = tag->getOption< std::string >( "center" );
-		utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
-		
-		if ( str_cen.size() != 3 ) {
-			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-		} else {
-			center_.x() = std::atof( str_cen[1].c_str() );
-			center_.y() = std::atof( str_cen[2].c_str() );
-			center_.z() = std::atof( str_cen[3].c_str() );
-		}
-	}
-
-	if ( tag->hasOption( "normal" ) ) {
-		std::string normal = tag->getOption< std::string >( "normal" );
-		utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
-		
-		if ( str_norm.size() != 3 ) {
-			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-		} else {
-			normal_.x() = std::atof( str_norm[1].c_str() );
-			normal_.y() = std::atof( str_norm[2].c_str() );
-			normal_.z() = std::atof( str_norm[3].c_str() );
-		}
 	}
 }
 
@@ -361,7 +298,6 @@ AddMembraneMover::apply( Pose & pose ) {
 	// search for MEM in PDB
 	utility::vector1< core::SSize > mem_rsd_in_pdb = check_pdb_for_mem( pose );
 	
-
 	// go through found MEM residues, if there are multiple
 	for ( core::Size i = 1; i <= mem_rsd_in_pdb.size(); ++i ) {
 
@@ -436,8 +372,6 @@ AddMembraneMover::register_options() {
 	
 	using namespace basic::options;
 
-	option.add_relevant( OptionKeys::membrane_new::setup::center );
-	option.add_relevant( OptionKeys::membrane_new::setup::normal );
 	option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
 	option.add_relevant( OptionKeys::membrane_new::setup::spans_from_structure );
 	option.add_relevant( OptionKeys::membrane_new::setup::lipsfile );
@@ -453,11 +387,6 @@ void
 AddMembraneMover::init_from_cmd() {
 	
 	using namespace basic::options;
-	
-	// Set user-defined fullatom param
-	if ( option[ OptionKeys::in::file::fullatom ].user() ) {
-		fullatom_ = option[ OptionKeys::in::file::fullatom ]();
-	}
 	
 	// Read in User-Provided spanfile
 	if ( spanfile_.size() == 0 && option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
@@ -482,23 +411,6 @@ AddMembraneMover::init_from_cmd() {
 	if ( option[ OptionKeys::membrane_new::setup::membrane_rsd ].user() ) {
 		membrane_rsd_ = option[ OptionKeys::membrane_new::setup::membrane_rsd ]();
 	}
-	
-	// Read in Center Parameter
-	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::center ].user() ) {
-		center_.x() = option[ OptionKeys::membrane_new::setup::center ]()[1];
-		center_.y() = option[ OptionKeys::membrane_new::setup::center ]()[2];
-		center_.z() = option[ OptionKeys::membrane_new::setup::center ]()[3];
-	}
-	
-	// Read in Normal Parameter
-	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::normal ].user() ) {
-		normal_.x() = option[ OptionKeys::membrane_new::setup::normal ]()[1];
-		normal_.y() = option[ OptionKeys::membrane_new::setup::normal ]()[2];
-		normal_.z() = option[ OptionKeys::membrane_new::setup::normal ]()[3];
-	}
-
 }
 
 /// @brief Helper Method - Setup Membrane Virtual
@@ -517,7 +429,7 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	
 	// Grab the current residue typeset and create a new residue
 	ResidueTypeSetCOP const & residue_set(
-		ChemicalManager::get_instance()->residue_type_set( fullatom_ ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
+		ChemicalManager::get_instance()->residue_type_set( pose.is_fullatom() ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 		);
 		
 	// Create a new Residue from rsd typeset of type MEM
@@ -526,7 +438,7 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	ResidueOP rsd( ResidueFactory::create_residue( membrane ) );
 	
 	// Append residue by jump, creating a new chain
-	pose.append_residue_by_jump( *rsd, anchor_rsd_ , "", "", true );
+	pose.append_residue_by_jump( *rsd, 1, "", "", true );
 	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
 
 	// Reorder to be the membrane root
@@ -572,51 +484,6 @@ AddMembraneMover::check_pdb_for_mem( Pose & pose ) {
 	}
 
 	return mem_rsd;
-
-//	// if exactly one
-//	else if ( mem_rsd.size() == 1 ) {
-//		
-//		// if they agree, return
-//		if ( mem_rsd[1] == membrane_rsd_ ){
-//			TR << "User defined membrane residue " << membrane_rsd_ << " agrees with found one." << std::endl;
-//			return membrane_rsd_;
-//		}
-//		// if they don't agree
-//		else {
-//			utility_exit_with_message("User provided membrane residue doesn't agree with found one!");
-//		}
-//	}
-//	// if more than one
-//	else if ( mem_rsd.size() > 1 ) {
-//		
-//		bool found(0);
-//		// go through ones found in PDB
-//		for ( core::Size i = 1; i <= mem_rsd.size(); ++i ) {
-//
-//			// if they agree, return the first one only
-//			// TODO: if for symmetry there are more, this should be smarter, ie
-//			// return a vector; not sure if this is needed and whether there isn't
-//			// an even smarter way, ie EMB residues instead of MEM residues???
-//			if ( mem_rsd[i] == membrane_rsd_ ){
-//				TR << "User defined membrane residue agrees with found one." << std::endl;
-//				return membrane_rsd_;
-//			}
-//		}
-//		// if none found, return 0
-//		if ( found == 0 ) {
-//			return 0;
-//		}
-//	}
-//	return 0;
-	
-//	// Uses the invarant that the membrane residue is always located in the n+1 chain
-//	// when initialized (not always true...?)
-//	core::Size rsdnum = pose.conformation().chain_end( 1 );
-//	if ( pose.residue( rsdnum ).name3() == "MEM" &&
-//		pose.residue( rsdnum ).has_property( "MEMBRANE" ) ) {
-//		return true;
-//	}
-//	return false;
 	
 } // check pdb for mem
 

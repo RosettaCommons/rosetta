@@ -72,12 +72,8 @@ public:
 		// Load span object from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
 
-		// Define a starting membrane position
-		Vector center( mem_center );
-		Vector normal( mem_normal );
-
 		// Add Membrane to pose!
-		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, 1 ) );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile, 1 ) );
 		add_memb->apply( *pose_ );
 
     }

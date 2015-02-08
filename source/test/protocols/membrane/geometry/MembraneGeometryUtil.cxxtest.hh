@@ -80,9 +80,7 @@ public: // test functions
 		core::import_pose::pose_from_pdb( pose1, "protocols/membrane/geometry/1AFO_.pdb" );
 
 		// create membrane pose
-		Vector center( mem_center );
-		Vector normal( mem_normal );
-		AddMembraneMoverOP addmem1( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1AFO__tr.span" ) );
+		AddMembraneMoverOP addmem1( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
 		addmem1->apply( pose1 );
 
 		// define vectors and object
@@ -100,7 +98,7 @@ public: // test functions
 		TS_TRACE("1BL8");
 		Pose pose2;
 		core::import_pose::pose_from_pdb( pose2, "protocols/membrane/geometry/1BL8_.pdb" );
-		AddMembraneMoverOP addmem2( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1BL8__tr.span" ) );
+		AddMembraneMoverOP addmem2( new AddMembraneMover( "protocols/membrane/geometry/1BL8__tr.span" ) );
 		addmem2->apply(pose2);
 		Vector center2(73.9421, 26.7549, 24.4493);
 		Vector normal2(5.7604, -0.605734, 13.8366);
@@ -112,7 +110,7 @@ public: // test functions
 		TS_TRACE("1QJP");
 		Pose pose3;
 		core::import_pose::pose_from_pdb( pose3, "protocols/membrane/geometry/1QJP_.pdb" );
-		AddMembraneMoverOP addmem3( new AddMembraneMover( center, normal, "protocols/membrane/geometry/1QJP__tr.span" ) );
+		AddMembraneMoverOP addmem3( new AddMembraneMover( "protocols/membrane/geometry/1QJP__tr.span" ) );
 		addmem3->apply(pose3);
 		Vector center3(31.2161, 16.9685, 37.6119);
 		Vector normal3(13.1689, -7.07507, 1.23442);
@@ -124,7 +122,7 @@ public: // test functions
 		TS_TRACE("2BS2");
 		Pose pose4;
 		core::import_pose::pose_from_pdb( pose4, "protocols/membrane/geometry/2BS2_CF.pdb" );
-		AddMembraneMoverOP addmem4( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
+		AddMembraneMoverOP addmem4( new AddMembraneMover( "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
 		addmem4->apply(pose4);
 		Vector center4(21.4326, 6.0464, -41.0573);
 		Vector normal4(0.0900585, 0.176022, 14.9987);
@@ -136,7 +134,7 @@ public: // test functions
 		TS_TRACE("2MPN");
 		Pose pose5;
 		core::import_pose::pose_from_pdb( pose5, "protocols/membrane/geometry/2MPN_.pdb" );
-		AddMembraneMoverOP addmem5( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2MPN__tr.span" ) );
+		AddMembraneMoverOP addmem5( new AddMembraneMover( "protocols/membrane/geometry/2MPN__tr.span" ) );
 		addmem5->apply(pose5);
 		Vector center5(0.3645, 3.66025, 41.345);
 		Vector normal5(0.104341, 14.9499, 1.221);
@@ -148,7 +146,7 @@ public: // test functions
 		TS_TRACE("2OAR");
 		Pose pose6;
 		core::import_pose::pose_from_pdb( pose6, "protocols/membrane/geometry/2OAR_.pdb" );
-		AddMembraneMoverOP addmem6( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2OAR__tr.span" ) );
+		AddMembraneMoverOP addmem6( new AddMembraneMover( "protocols/membrane/geometry/2OAR__tr.span" ) );
 		addmem6->apply(pose6);
 		Vector center6(18.8453, 122.117, 1.079);
 		Vector normal6(-11.3264, -9.83365, 0.106647);
@@ -160,7 +158,7 @@ public: // test functions
 		TS_TRACE("2UUH");
 		Pose pose7;
 		core::import_pose::pose_from_pdb( pose7, "protocols/membrane/geometry/2UUH__tr.pdb" );
-		AddMembraneMoverOP addmem7( new AddMembraneMover( center, normal, "protocols/membrane/geometry/2UUH__tr.span" ) );
+		AddMembraneMoverOP addmem7( new AddMembraneMover( "protocols/membrane/geometry/2UUH__tr.span" ) );
 		addmem7->apply(pose7);
 		Vector center7(-0.000166667, -0.000125, 0.295625);
 		Vector normal7(1.19923e-05, 2.70232e-05, 15);
@@ -172,7 +170,7 @@ public: // test functions
 		TS_TRACE("3PXO");
 		Pose pose8;
 		core::import_pose::pose_from_pdb( pose8, "protocols/membrane/geometry/3PXO_.pdb" );
-		AddMembraneMoverOP addmem8( new AddMembraneMover( center, normal, "protocols/membrane/geometry/3PXO__tr.span" ) );
+		AddMembraneMoverOP addmem8( new AddMembraneMover( "protocols/membrane/geometry/3PXO__tr.span" ) );
 		addmem8->apply(pose8);
 		Vector center8(-36.1201, -7.59636, 37.6713);
 		Vector normal8(-14.793, -2.47196, 0.237567);

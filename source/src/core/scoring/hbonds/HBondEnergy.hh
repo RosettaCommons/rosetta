@@ -469,7 +469,7 @@ private:
 	HBondOptionsCOP options_;
 	HBondDatabaseCOP database_;
 
-	//pba FA membrane potential for membrane object initialization
+	// 2007 based membrane potentials or new membrane framework initialization
 	mutable Vector normal_;
 	mutable Vector center_;
 	mutable Real thickness_;

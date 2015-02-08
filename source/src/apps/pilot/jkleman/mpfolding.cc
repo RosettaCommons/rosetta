@@ -303,7 +303,7 @@ MPFoldingMover::apply( Pose & pose ) {
 	TR << "8: anchor1: " << anchor1 << std::endl;
 
 	// add MEM to root of foldtree
-	AddMembraneMoverOP add_mem( new AddMembraneMover( center, normal, topo, anchor1 ) );
+	AddMembraneMoverOP add_mem( new AddMembraneMover( topo, anchor1 ) );
 	add_mem->apply( pose );
 	TR << "5" << std::endl;
 	

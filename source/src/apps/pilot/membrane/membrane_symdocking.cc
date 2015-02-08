@@ -25,6 +25,7 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh> 
+#include <protocols/membrane/TransformIntoMembraneMover.hh> 
 #include <protocols/membrane/symmetry/util.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
@@ -134,7 +135,7 @@ public:
         // Setup a docking protocol, don't apply filters during docking runs
         // for now
         SymDockProtocolOP symdock( new SymDockProtocol( true, false, false, sfxn_low, sfxn_high ) );
-        symdock->hurry( true ); 
+        //symdock->hurry( true ); 
         symdock->apply( pose );  
 
         // Done!

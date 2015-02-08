@@ -42,9 +42,10 @@
 #include <core/scoring/Membrane_FAPotential.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/membrane.OptionKeys.gen.hh>
+
+// Hydrogen bonding for membrane proteins - using membrane framework
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -111,7 +112,7 @@ fill_hbond_set(
 	bool const exclude_sc  /* default false */
 )
 {
-debug_assert( pose.energies().residue_neighbors_updated() );
+    debug_assert( pose.energies().residue_neighbors_updated() );
 
 	// clear old data
 	hbond_set.clear();
@@ -140,12 +141,12 @@ debug_assert( pose.energies().residue_neighbors_updated() );
 
 			int const nb2 = tenA_neighbor_graph.get_node( res2 )->num_neighbors_counting_self_static();
 
-			//pba membrane specific hbond
+			// membrane specific hbond
 			if ( hbond_set.hbond_options().Mbhbond() ) {
 				identify_hbonds_1way_membrane(
 					database,
 					rsd1, rsd2, nb1, nb2, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose);
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose );
 
 				identify_hbonds_1way_membrane(
 					database,
@@ -168,7 +169,7 @@ debug_assert( pose.energies().residue_neighbors_updated() );
 		} // nbrs of res1
 		if(!hbond_set.hbond_options().exclude_self_hbonds() && hbond_set.hbond_options().exclude_DNA_DNA() && rsd1.is_DNA() ){
 			//pba membrane specific hbond
-			if ( hbond_set.hbond_options().Mbhbond() ) {
+			if ( pose.conformation().is_membrane() || hbond_set.hbond_options().Mbhbond() ) {
 				identify_hbonds_1way_membrane(
 					database,
 					rsd1, rsd1, nb1, nb1, calculate_derivative,
@@ -802,14 +803,9 @@ identify_hbonds_1way_membrane(
 	HBondSet & hbond_set,
 	pose::Pose const & pose
 ){
-debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+    debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
-        //pbadebug
-        //std::cout << "entered in identify_hbonds_1way_membrane() " << std::endl;
-
-	// <f1,f2> -- derivative vectors
-	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
-        HBondDerivs derivs;
+    HBondDerivs derivs;
 
 	for ( chemical::AtomIndices::const_iterator
 			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
@@ -853,7 +849,7 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-		debug_assert( base2 > 0 && base != base2 );
+            debug_assert( base2 > 0 && base != base2 );
 
 
 			hb_energy_deriv( database, hbond_set.hbond_options(),
@@ -864,15 +860,25 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 				unweighted_energy, evaluate_derivative, derivs);
 
 			if (unweighted_energy >= MAX_HB_ENERGY) continue;
-
-			//pba membrane depth dependent correction to the environmental_weight
-			Real environmental_weight(
-				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
-				acc_rsd.atom(aatm ).xyz()));
+            
+            Real environmental_weight(0);
+            
+            // if membrane framework - use data from the framework to correct hydrogen bonds
+            if ( !pose.conformation().is_membrane() ) {
+                Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
+                Vector const center( pose.conformation().membrane_info()->membrane_center() );
+                Real const thickness( pose.conformation().membrane_info()->membrane_thickness() );
+                Real const steepness( pose.conformation().membrane_info()->membrane_steepness() );
+                
+                environmental_weight = get_membrane_depth_dependent_weight( normal, center, thickness, steepness, don_nb, acc_nb, hatm_xyz, acc_rsd.atom( aatm ).xyz() );
+            // Make the hydrogen bonding correction using the old data
+            } else {
+                environmental_weight = get_membrane_depth_dependent_weight( pose, don_nb, acc_nb, hatm_xyz,
+                                                                           acc_rsd.atom(aatm ).xyz() );
+            }
 
 			//////
 			// now we have identified a hbond -> put it into the hbond_set
-
 			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
 				hbe_type, unweighted_energy, environmental_weight, derivs );
 
@@ -900,7 +906,7 @@ identify_hbonds_1way_membrane(
 	pose::Pose const & pose
 )
 {
-debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+    debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
@@ -959,11 +965,20 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 			if (unweighted_energy >= MAX_HB_ENERGY) continue;
 
-			//pba membrane depth dependent weight
-
-			Real environmental_weight(
-				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
-				acc_rsd.atom(aatm ).xyz()));
+            Real environmental_weight(0);
+            // if membrane framework - use data from the framework to correct hydrogen bonds
+            if ( pose.conformation().is_membrane() ) {
+                Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
+                Vector const center( pose.conformation().membrane_info()->membrane_center() );
+                Real const thickness( pose.conformation().membrane_info()->membrane_thickness() );
+                Real const steepness( pose.conformation().membrane_info()->membrane_steepness() );
+                
+                environmental_weight = get_membrane_depth_dependent_weight( normal, center, thickness, steepness, don_nb, acc_nb, hatm_xyz, acc_rsd.atom( aatm ).xyz() );
+                // Make the hydrogen bonding correction using the old data
+            } else {
+                environmental_weight = get_membrane_depth_dependent_weight( pose, don_nb, acc_nb, hatm_xyz,
+                                                                           acc_rsd.atom(aatm ).xyz() );
+            }
 
 			////////
 			// now we have identified an hbond -> accumulate its energy
@@ -1196,12 +1211,11 @@ get_membrane_depth_dependent_weight(
 
 	// water phase smooth_hb_env_dep
 	wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
-
-	// membrane phase dependent weight
-	Vector const normal(MembraneEmbed_from_pose( pose ).normal());
-	Vector const center(MembraneEmbed_from_pose( pose ).center());
-	Real const thickness(Membrane_FAEmbed_from_pose( pose ).thickness());
-	Real const steepness(Membrane_FAEmbed_from_pose( pose ).steepness());
+    
+    Vector const normal(MembraneEmbed_from_pose( pose ).normal());
+    Vector const center(MembraneEmbed_from_pose( pose ).center());
+    Real const thickness(Membrane_FAEmbed_from_pose( pose ).thickness());
+    Real const steepness(Membrane_FAEmbed_from_pose( pose ).steepness());
 
 	// Hdonor depth
 	Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position

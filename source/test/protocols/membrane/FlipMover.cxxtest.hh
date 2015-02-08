@@ -67,13 +67,9 @@ public: // test functions
 		
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/geometry/1AFO_AB.span";
-		
-		// Setup membrane info object from add membrane mover
-		Vector center( mem_center );
-		Vector normal( mem_normal );
 
 		// AddMembraneMover
-		AddMembraneMoverOP add_mem( new AddMembraneMover( center, normal, spanfile ) );
+		AddMembraneMoverOP add_mem( new AddMembraneMover( spanfile ) );
 		add_mem->apply( *pose_ );
 
 	}

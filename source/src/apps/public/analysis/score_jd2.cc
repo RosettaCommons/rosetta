@@ -7,8 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file Oliver Lange, Mike Tyka
-/// @brief
+/// @file score_jd2.cc
+///
+/// @brief Score a pose!
+///
+/// @authors (Original) Oliver Lange, Mike Tyka
+/// @author Adjusted for Membranes - Rebecca Alford
 
 
 // libRosetta headers

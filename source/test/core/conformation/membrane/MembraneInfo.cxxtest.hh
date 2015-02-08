@@ -70,11 +70,7 @@ public: // test functions
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
 		
-		// Center/normal
-		Vector center( mem_center );
-		Vector normal( mem_normal );
-		
-		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile ) );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile ) );
 		add_memb->apply( *pose_ );
 		
 	}

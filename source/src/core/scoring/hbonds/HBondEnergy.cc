@@ -74,6 +74,9 @@
 #include <utility/vector1.hh>
 #include <boost/unordered_map.hpp>
 
+#include <basic/Tracer.hh> 
+static basic::Tracer TR( "core.scoring.hbonds.HBondEnergy" );
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -212,17 +215,16 @@ HBondEnergy::setup_for_packing(
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( *options_ ) );
 
 	// membrane object initialization
-	if (options_->Mbhbond()) {
+	if ( options_->Mbhbond() ) {
 		Membrane_FAPotential const & memb_potential_ = ScoringManager::get_instance()->get_Membrane_FAPotential();
 		memb_potential_.compute_fa_projection( pose );
 		normal_ = MembraneEmbed_from_pose( pose ).normal();
 		center_ = MembraneEmbed_from_pose( pose ).center();
 		thickness_ = Membrane_FAEmbed_from_pose( pose ).thickness();
 		steepness_ = Membrane_FAEmbed_from_pose( pose ).steepness();
-	}
-
-	// membrane framework object initialization
-	if ( options_->mphbond() ) {
+    
+    // membrane framework object initialization
+    } else if ( pose.conformation().is_membrane() || options_->mphbond() ) {
 
 		// Initialize membrane specific parameters
 		normal_ = pose.conformation().membrane_info()->membrane_normal();
@@ -230,7 +232,9 @@ HBondEnergy::setup_for_packing(
 		thickness_ = pose.conformation().membrane_info()->membrane_thickness();
 		steepness_ = pose.conformation().membrane_info()->membrane_steepness();
 
-	}
+    } else {
+        thickness_ = 0; // No membrane hydrogen bonding correction
+    }
 
 	hbond_set->setup_for_residue_pair_energies( pose );
 	pose.energies().data().set( HBOND_SET, hbond_set );
@@ -299,10 +303,9 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 		center_ = MembraneEmbed_from_pose( pose ).center();
 		thickness_ = Membrane_FAEmbed_from_pose( pose ).thickness();
 		steepness_ = Membrane_FAEmbed_from_pose( pose ).steepness();
-	}
 
-	// membrane framework supported membrane object initialization
-	if ( options_->mphbond() ) {
+    // membrane framework supported membrane object initialization
+    } else if ( pose.conformation().is_membrane() || options_->mphbond() ) {
 
 		// Initialize membrane parameters
 		normal_ = pose.conformation().membrane_info()->membrane_normal();
@@ -310,7 +313,9 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 		thickness_ = pose.conformation().membrane_info()->membrane_thickness();
 		steepness_ = pose.conformation().membrane_info()->membrane_steepness();
 
-	}
+    } else {
+        thickness_ = 0; // no membrane hydrogen bonding correction
+    }
 
 	//fpd  we need secstruct info in some cases ... don't change while minimizing
 	//fpd      MUST be called before setup_for_residue_pair_energies
@@ -381,8 +386,9 @@ HBondEnergy::residue_pair_energy(
 	if (rsd1.is_protein()) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(rsd1.seqpos());
 	if (rsd2.is_protein()) exclude_bsc = options_->bb_donor_acceptor_check() && hbond_set.acc_bbg_in_bb_bb_hbond(rsd2.seqpos());
 
-	//pba membrane dependent hbond potential hack
-	if ( options_->Mbhbond() && options_->mphbond() ) {
+    // Adjust hydrogen bonding potential to accomodate stronger hbonding in the
+    // membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
+	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
 
 		identify_hbonds_1way_membrane(
 			*database_,
@@ -482,8 +488,9 @@ HBondEnergy::residue_pair_energy_ext(
 debug_assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData const > ( pairdata.get_data( hbond_respair_data ) ));
 	HBondResPairMinData const & hb_pair_dat( static_cast< HBondResPairMinData const & > ( pairdata.get_data_ref( hbond_respair_data ) ));
 
-	// membrane dependent hbond potential hack
-	if ( options_->Mbhbond() && options_->mphbond() ) {
+    // Adjust hydrogen bonding potential to accomodate stronger hbonding in the
+    // membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
+	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
 
 		{ // scope        /// 1st == evaluate hbonds with donor atoms on rsd1
 		/// case A: sc is acceptor, bb is donor && res2 is the acceptor residue -> look at the donor availability of residue 1
@@ -718,8 +725,9 @@ HBondEnergy::hbond_derivs_1way(
 				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res, hbond_set.hbond_options().put_intra_into_total() );
 			weighted_energy *= ssdep_weight_factor;
 
-			// membrane specific correction
-			if ( options_->Mbhbond() && options_->mphbond()  ) {
+            // Readjust hydrogen bonding depth dependent weight based on z positions
+            // Relying on nonzero thickness which should really be true here!!!
+			if ( thickness_ != 0 || options_->Mbhbond() || options_->mphbond()  ) {
 				weighted_energy = get_membrane_depth_dependent_weight(normal_, center_, thickness_,
 				steepness_, don_nb, acc_nb, hatm_xyz, acc_rsd.atom(aatm ).xyz()) *
 					hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res, hbond_set.hbond_options().put_intra_into_total() );
@@ -848,9 +856,10 @@ HBondEnergy::backbone_backbone_energy(
 	hbonds::HBondSet const & hbond_set
 		( static_cast< hbonds::HBondSet const & >( pose.energies().data().get( HBOND_SET )));
 
-	// membrane dependent hbond potential hack
-	if ( options_->Mbhbond() && options_->mphbond() ) {
-
+    // Adjust hydrogen bonding potential to accomodate stronger hbonding in the
+    // membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
+	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
+        
 		identify_hbonds_1way_membrane(
 			*database_,
 			rsd1, rsd2, hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd1.seqpos()),
@@ -909,8 +918,9 @@ HBondEnergy::backbone_sidechain_energy(
 	// this only works because we have already called
 	// hbond_set->setup_for_residue_pair_energies( pose )
 
-	// membrane dependent hbond potential hack
-	if ( options_->Mbhbond() && options_->mphbond() ) {
+    // Adjust hydrogen bonding potential to accomodate stronger hbonding in the
+    // membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
+	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
 
 		/// If we're enforcing the bb/sc exclusion rule, and residue1 is a protein residue, and if residue 1's backbone-donor group
 		/// is already participating in a bb/bb hbond, then do not evaluate the identify_hbonds_1way_membrane function
@@ -975,8 +985,9 @@ HBondEnergy::sidechain_sidechain_energy(
 	Size nbrs1 = pose.energies().tenA_neighbor_graph().get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
 	Size nbrs2 = pose.energies().tenA_neighbor_graph().get_node( rsd2.seqpos() )->num_neighbors_counting_self_static();
 
-	// membrane dependent hbond potential hack
-	if ( options_->Mbhbond() && options_->mphbond() ) {
+    // Adjust hydrogen bonding potential to accomodate stronger hbonding in the
+    // membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
+	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
 
 		identify_hbonds_1way_membrane(
 			*database_,

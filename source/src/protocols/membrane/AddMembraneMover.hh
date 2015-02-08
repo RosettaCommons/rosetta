@@ -79,32 +79,26 @@ public:
 	/// center at emb_center and normal at emb_normal and will load
 	/// in spanning regions from list of spanfiles provided
 	AddMembraneMover(
-		Vector mem_center,
-		Vector mem_normal,
 		std::string spanfile,
 		core::Size membrane_rsd=0
 	);
-
-	/// @brief Custom Constructor - mainly for PyRosetta
-	/// @details Creates a membrane pose setting the membrane
-	/// center at emb_center and normal at emb_normal and from a
-	/// topology object
-	AddMembraneMover(
-        Vector mem_center,
-        Vector mem_normal,
+		
+    /// @brief Custom Constructor - mainly for PyRosetta
+    /// @details Creates a membrane pose setting the membrane
+    /// center at emb_center and normal at emb_normal and will load
+    /// in spanning regions from list of spanfiles provided
+    AddMembraneMover(
         SpanningTopologyOP topology,
-		core::Size anchor_residue=1,
         core::Size membrane_rsd=0
-	);
-				
-	/// @brief Custorm Constructur with lips info - mainly for PyRosetta
+        );
+    
+    
+    /// @brief Custorm Constructur with lips info - mainly for PyRosetta
 	/// @details Creates a membrane pose setting the membrane
 	/// center at emb_center and normal at emb_normal and will load
 	/// in spanning regions from list of spanfiles provided. Will also
 	/// load in lips info from lips_acc info provided
 	AddMembraneMover(
-		Vector emb_center,
-		Vector emb_normal,
 		std::string spanfile,
 		std::string lipsfile,
 		core::Size membrane_rsd=0
@@ -183,13 +177,8 @@ private:
 private:
 
 	// Pose residye typeset & include lips
-	bool fullatom_;
 	bool include_lips_;
 	
-	// Membrane Center/Normal pair used for setup
-	Vector center_;
-	Vector normal_;
-
 	// SpanningTopology
 	std::string spanfile_;
 	SpanningTopologyOP topology_;
@@ -198,7 +187,6 @@ private:
 	std::string lipsfile_;
 	
 	// Membrane residue number (when applicable)
-	core::Size anchor_rsd_;
 	core::Size membrane_rsd_;
 };
 
