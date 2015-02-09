@@ -48,6 +48,7 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
+#include <utility/backtrace.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/LexicographicalIterator.hh>
 
@@ -476,7 +477,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 	Real const rotprob( scratch.rotprob() );
 	Real const invp( ( rotprob == Real( 0.0 ) ) ? 0.0 : -1.0 / rotprob );
 
-	for ( Size bbi = 1; bbii <= N; ++bbii ) {
+	for ( Size bbi = 1; bbi <= N; ++bbi ) {
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 			dE_dbb[ bbi ]	  = d_multiplier * ( scratch.dneglnrotprob_dbb()[ bbi ] + scratch.dchidevpen_dbb()[ bbi ] );
 			dE_dbb_dev[ bbi ] = d_multiplier * scratch.dchidevpen_dbb()[ bbi ];

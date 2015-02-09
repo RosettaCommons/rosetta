@@ -42,6 +42,7 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/vector1.functions.hh>
+#include <utility/backtrace.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
@@ -1392,8 +1393,33 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer_b
 	Size last_rchi_rotno( 0 );
 	
 	/// Recover the rotamers in order, stop at the rot_ind rotamer.
-	recover_rotamers_in_order( rot_ind, probs_of_next_rotamers, last_prob, last_nrchi_rotno, last_rchi_rotno );
-
+	for ( Size ii = 1; ii <= rot_ind; ++ii ) {
+		/// Build the most probable rotamer of those remaining
+		Size const which_packedrotno_to_build = utility::arg_max( probs_of_next_rotamers );
+		last_prob = probs_of_next_rotamers[ which_packedrotno_to_build ];
+		last_rchi_rotno = which_packedrotno_to_build;
+	 
+		Size const count = next_nrchi_rotamer_to_take[ which_packedrotno_to_build ];
+		Size const next_count = ++next_nrchi_rotamer_to_take[ which_packedrotno_to_build ];
+	 
+		Size const nrchi_rotno = bbind_rotamers_sorted_by_probability_( count, which_packedrotno_to_build );
+		last_nrchi_rotno = nrchi_rotno;
+		Size const next_nrchi_rotno = count < n_nrchi_sample_bins_ ?
+		bbind_rotamers_sorted_by_probability_( next_count, which_packedrotno_to_build ) : 0 ;
+	 
+		last_prob = probs_of_next_rotamers[ which_packedrotno_to_build ];
+	 
+		if ( probs_of_next_rotamers[ which_packedrotno_to_build ] <= 0 ) break; // this should never happen.
+	 
+		if ( next_nrchi_rotno == 0 ) {
+			probs_of_next_rotamers[ which_packedrotno_to_build ] = 0;
+		} else {
+			probs_of_next_rotamers[ which_packedrotno_to_build ] =
+			probability_of_rotameric_chi[ which_packedrotno_to_build ] *
+			bbind_rotamers_to_sample_( next_nrchi_rotno, which_packedrotno_to_build ).prob_;
+		}
+	}
+	
 	return last_prob;
 }
 
@@ -1436,44 +1462,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer_b
 	return nrchi_prob;
 }
 
-void
-recover_rotamers_in_order(
-	Size rot_ind,
-	utility::vector1< Real > probs_of_next_rotamers,
-	Real & last_prob,
-	Size & last_nrchi_rotno,
-	Size & last_rchi_rotno
-)
-{
-	for ( Size ii = 1; ii <= rot_ind; ++ii ) {
-		/// Build the most probable rotamer of those remaining
-		Size const which_packedrotno_to_build = utility::arg_max( probs_of_next_rotamers );
-		last_prob = probs_of_next_rotamers[ which_packedrotno_to_build ];
-		last_rchi_rotno = which_packedrotno_to_build;
-	 
-		Size const count = next_nrchi_rotamer_to_take[ which_packedrotno_to_build ];
-		Size const next_count = ++next_nrchi_rotamer_to_take[ which_packedrotno_to_build ];
-	 
-		Size const nrchi_rotno = bbind_rotamers_sorted_by_probability_( count, which_packedrotno_to_build );
-		last_nrchi_rotno = nrchi_rotno;
-		Size const next_nrchi_rotno = count < n_nrchi_sample_bins_ ?
-			bbind_rotamers_sorted_by_probability_( next_count, which_packedrotno_to_build ) : 0 ;
-	 
-		last_prob = probs_of_next_rotamers[ which_packedrotno_to_build ];
-	 
-		if ( probs_of_next_rotamers[ which_packedrotno_to_build ] <= 0 ) break; // this should never happen.
-	 
-		if ( next_nrchi_rotno == 0 ) {
-			probs_of_next_rotamers[ which_packedrotno_to_build ] = 0;
-		} else {
-			probs_of_next_rotamers[ which_packedrotno_to_build ] =
-			probability_of_rotameric_chi[ which_packedrotno_to_build ] *
-			bbind_rotamers_to_sample_( next_nrchi_rotno, which_packedrotno_to_build ).prob_;
-		}
-	}
-}
-
-	
 template < Size T, Size N >
 DunbrackRotamerSampleData
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_bbind(
@@ -1528,36 +1516,34 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_bbind(
 	Real last_prob( 0 );
 	Size last_nrchi_rotno( 0 );
 	Size last_rchi_rotno( 0 );
+	
 	/// Recover the rotamers in order, stop at the rot_ind rotamer.
-	
-	recover_rotamers_in_order( rot_ind, probs_of_next_rotamers, last_prob, last_nrchi_rotno, last_rchi_rotno );
-	
-	/*for ( Size ii = 1; ii <= rot_ind; ++ii ) {
+	for ( Size ii = 1; ii <= rot_ind; ++ii ) {
 		/// Build the most probable rotamer of those remaining
 		Size const which_packedrotno_to_build = utility::arg_max( probs_of_next_rotamers );
 		last_prob = probs_of_next_rotamers[ which_packedrotno_to_build ];
 		last_rchi_rotno = which_packedrotno_to_build;
-
+	 
 		Size const count = next_nrchi_rotamer_to_take[ which_packedrotno_to_build ];
 		Size const next_count = ++next_nrchi_rotamer_to_take[ which_packedrotno_to_build ];
-
+	 
 		Size const nrchi_rotno = bbind_rotamers_sorted_by_probability_( count, which_packedrotno_to_build );
 		last_nrchi_rotno = nrchi_rotno;
 		Size const next_nrchi_rotno = count < n_nrchi_sample_bins_ ?
-			bbind_rotamers_sorted_by_probability_( next_count, which_packedrotno_to_build ) : 0 ;
-
+		bbind_rotamers_sorted_by_probability_( next_count, which_packedrotno_to_build ) : 0 ;
+	 
 		last_prob = probs_of_next_rotamers[ which_packedrotno_to_build ];
-
+	 
 		if ( probs_of_next_rotamers[ which_packedrotno_to_build ] <= 0 ) break; // this should never happen.
-
+	 
 		if ( next_nrchi_rotno == 0 ) {
 			probs_of_next_rotamers[ which_packedrotno_to_build ] = 0;
 		} else {
 			probs_of_next_rotamers[ which_packedrotno_to_build ] =
-				probability_of_rotameric_chi[ which_packedrotno_to_build ] *
-				bbind_rotamers_to_sample_( next_nrchi_rotno, which_packedrotno_to_build ).prob_;
+			probability_of_rotameric_chi[ which_packedrotno_to_build ] *
+			bbind_rotamers_to_sample_( next_nrchi_rotno, which_packedrotno_to_build ).prob_;
 		}
-	}*/
+	}
 
 	RotamerLibraryScratchSpace scratch;
 
@@ -1732,9 +1718,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::bbind_chisamples_for_rotamer_
 {
 	using namespace pack::task;
 	debug_assert( chi_index == T + 1 );
-	// amw have to kill this assert for now
-	debug_assert( dynamic_cast< BBIndSemiRotamericData< T, N > const * > ( & rotamer_data ) );
-
+	
 	BBIndSemiRotamericData< T, N > const & bbind_rotameric_data( static_cast< BBIndSemiRotamericData< T, N > const & > ( rotamer_data ) );
 
 	BBIndNRChiSample<> const & nrsample = bbind_rotameric_data.bbind_nrchi_sample();
@@ -1790,8 +1774,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::bbdep_chisamples_for_rotamer_
 {
 	using namespace pack::task;
 	debug_assert( chi_index == T + 1 );
-	// amw have to kill this assert for now
-	debug_assert( dynamic_cast< BBDepSemiRotamericData< T, N > const * > ( & rotamer_data ) );
 	
 	BBDepSemiRotamericData< T, N > const & bbdep_rotameric_data(
 		static_cast< BBDepSemiRotamericData< T, N > const & > ( rotamer_data ) );

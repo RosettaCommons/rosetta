@@ -518,14 +518,6 @@ protected:
 
 
 private:
-	void
-	recover_rotamers_in_order(
-		Size rot_ind,
-		utility::vector1< Real > probs_of_next_rotamers,
-		Real & last_prob,
-		Size & last_nrchi_rotno,
-		Size & last_rchi_rotno
-	);
 	
 	void
 	read_rotamer_definitions( utility::io::izstream & in_rotdef );
