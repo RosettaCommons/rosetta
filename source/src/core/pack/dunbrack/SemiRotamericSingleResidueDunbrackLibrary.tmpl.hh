@@ -1389,21 +1389,21 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer_b
 
 	Real last_prob( 0 );
 	
-	Size last_nrchi_rotno( 0 );
-	Size last_rchi_rotno( 0 );
+	//Size last_nrchi_rotno( 0 );
+	//Size last_rchi_rotno( 0 );
 	
 	/// Recover the rotamers in order, stop at the rot_ind rotamer.
 	for ( Size ii = 1; ii <= rot_ind; ++ii ) {
 		/// Build the most probable rotamer of those remaining
 		Size const which_packedrotno_to_build = utility::arg_max( probs_of_next_rotamers );
 		last_prob = probs_of_next_rotamers[ which_packedrotno_to_build ];
-		last_rchi_rotno = which_packedrotno_to_build;
+		//last_rchi_rotno = which_packedrotno_to_build;
 	 
 		Size const count = next_nrchi_rotamer_to_take[ which_packedrotno_to_build ];
 		Size const next_count = ++next_nrchi_rotamer_to_take[ which_packedrotno_to_build ];
 	 
 		Size const nrchi_rotno = bbind_rotamers_sorted_by_probability_( count, which_packedrotno_to_build );
-		last_nrchi_rotno = nrchi_rotno;
+		//last_nrchi_rotno = nrchi_rotno;
 		Size const next_nrchi_rotno = count < n_nrchi_sample_bins_ ?
 		bbind_rotamers_sorted_by_probability_( next_count, which_packedrotno_to_build ) : 0 ;
 	 
