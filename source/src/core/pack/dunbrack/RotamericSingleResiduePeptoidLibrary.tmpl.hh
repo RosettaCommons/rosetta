@@ -244,39 +244,39 @@ namespace pack {
 namespace dunbrack {
 
 /// DOUG DOUG DOUG This use to be PHIPSI_BINRANGE
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::OMG_BINRANGE = 10.0;
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::PHI_BINRANGE = 10.0;
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::PSI_BINRANGE = 10.0;
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::CIS_OMG_LOWER_RANGE = -30.0;
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::CIS_OMG_UPPER_RANGE =  30.0;
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::TRANS_OMG_LOWER_RANGE =  150.0;
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::TRANS_OMG_UPPER_RANGE = -150.0;
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::CIS_UPPER_TRANS_LOWER_SPLIT = 90.0;
-template < Size T >
-Real const RotamericSingleResiduePeptoidLibrary< T >::TRANS_UPPER_CIS_LOWER_SPLIT = -90.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::OMG_BINRANGE = 10.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::PHI_BINRANGE = 10.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::PSI_BINRANGE = 10.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::CIS_OMG_LOWER_RANGE = -30.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::CIS_OMG_UPPER_RANGE =  30.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::TRANS_OMG_LOWER_RANGE =  150.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::TRANS_OMG_UPPER_RANGE = -150.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::CIS_UPPER_TRANS_LOWER_SPLIT = 90.0;
+template < Size T, Size N >
+Real const RotamericSingleResiduePeptoidLibrary< T, N >::TRANS_UPPER_CIS_LOWER_SPLIT = -90.0;
 
-template < Size T >
-RotamericSingleResiduePeptoidLibrary< T >::RotamericSingleResiduePeptoidLibrary() :
+template < Size T, Size N >
+RotamericSingleResiduePeptoidLibrary< T, N >::RotamericSingleResiduePeptoidLibrary() :
 	parent( T )
 	//max_rotprob_( N_PHIPSI_BINS, N_PHIPSI_BINS, 0.0 )
 {}
 
-template < Size T >
-RotamericSingleResiduePeptoidLibrary< T >::~RotamericSingleResiduePeptoidLibrary()
+template < Size T, Size N >
+RotamericSingleResiduePeptoidLibrary< T, N >::~RotamericSingleResiduePeptoidLibrary()
 {}
 
 
-template < Size T >
+template < Size T, Size N >
 Real
-RotamericSingleResiduePeptoidLibrary< T >::rotamer_energy(
+RotamericSingleResiduePeptoidLibrary< T, N >::rotamer_energy(
 	conformation::Residue const & rsd,
 	RotamerLibraryScratchSpace & scratch
 ) const
@@ -285,9 +285,9 @@ RotamericSingleResiduePeptoidLibrary< T >::rotamer_energy(
 }
 
 
-template < Size T >
+template < Size T, Size N >
 Real
-RotamericSingleResiduePeptoidLibrary< T >::rotamer_energy_deriv(
+RotamericSingleResiduePeptoidLibrary< T, N >::rotamer_energy_deriv(
 	conformation::Residue const & rsd,
 	RotamerLibraryScratchSpace & scratch
 ) const
@@ -307,14 +307,15 @@ RotamericSingleResiduePeptoidLibrary< T >::rotamer_energy_deriv(
 
 
 	/// sum derivatives.
-	Real3 & dE_dbb(  scratch.dE_dbb() );
+    Real4 & dE_dbb(  scratch.dE_dbb() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
 
 	// p0 - the base probability -- not modified by the chi-dev penalty
 	Real const rotprob( scratch.rotprob() );
 
 	Size const nbb( numeric::min( rsd.mainchain_torsions().size(), DUNBRACK_MAX_BBTOR) );
-
+    //Size const nbb( parent::bb_indices().size() );
+    
 	Real const invp( ( rotprob == Real( 0.0 ) ) ? 0.0 : -1.0 / rotprob );
 
 	for ( Size i=1; i<= nbb; ++i ) {
@@ -331,9 +332,9 @@ RotamericSingleResiduePeptoidLibrary< T >::rotamer_energy_deriv(
 }
 
 /// DOUG DOUG DOUG this function will need to be modified
-template < Size T >
+template < Size T, Size N >
 Real
-RotamericSingleResiduePeptoidLibrary< T >::eval_rotameric_energy_deriv(
+RotamericSingleResiduePeptoidLibrary< T, N >::eval_rotameric_energy_deriv(
 	conformation::Residue const & /*rsd*/,
 	RotamerLibraryScratchSpace & /*scratch*/,
 	bool /*eval_deriv*/
@@ -388,7 +389,7 @@ debug_assert( nbb == 3 && chi.size() == nchi );
 
 	/// Don't use derived class's version of this function.
 	//std::cout << "RSD " << rsd.seqpos() << " ";
-	RotamericSingleResiduePeptoidLibrary< T >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
+	RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
 
 	Size packed_rotno( rotwell_2_packed_rotno( rotwell ));
 	if ( packed_rotno == 0 ) {
@@ -398,7 +399,7 @@ debug_assert( nbb == 3 && chi.size() == nchi );
 		packed_rotno = find_another_representative_for_unlikely_rotamer( rsd, rotwell );
 	}
 
-	PackedDunbrackRotamer< T, Real > interpolated_rotamer;
+	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 	interpolate_rotamers( rsd, scratch, packed_rotno, interpolated_rotamer );
 
 	if ( dun02() ) {
@@ -460,9 +461,9 @@ debug_assert( nbb == 3 && chi.size() == nchi );
 	*/
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::assign_random_rotamer_with_bias(
+RotamericSingleResiduePeptoidLibrary< T, N >::assign_random_rotamer_with_bias(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch,
@@ -476,9 +477,9 @@ RotamericSingleResiduePeptoidLibrary< T >::assign_random_rotamer_with_bias(
 }
 
 /// DOUG DOUG DOUG this function will need to be modified
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::assign_random_rotamer(
+RotamericSingleResiduePeptoidLibrary< T, N >::assign_random_rotamer(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch,
@@ -499,10 +500,10 @@ RotamericSingleResiduePeptoidLibrary< T >::assign_random_rotamer(
 	Real omg_alpha, phi_alpha, psi_alpha;
 	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers_array( rotamers( omg ) );
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( rotamers( omg ) );
 	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( omg ) );
 
-	PackedDunbrackRotamer< T, Real > interpolated_rotamer;
+	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 
 	/// Go through rotamers in decreasing order by probability and stop when the
 	Size count = 0;
@@ -515,7 +516,7 @@ RotamericSingleResiduePeptoidLibrary< T >::assign_random_rotamer(
 			omg_alpha, phi_alpha, psi_alpha,
 			interpolated_rotamer );
 		random_prob -= interpolated_rotamer.rotamer_probability();
-		PackedDunbrackRotamer< T, Real > interpolated_rotamer;
+		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		//loop condition might end up satisfied even if we've walked through all possible rotamers
 		// if the chosen random number was nearly 1
 		// (and interpolation introduced a tiny bit of numerical noise).
@@ -525,10 +526,10 @@ RotamericSingleResiduePeptoidLibrary< T >::assign_random_rotamer(
 
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::assign_chi_for_interpolated_rotamer(
-	PackedDunbrackRotamer< T, Real > const & interpolated_rotamer,
+RotamericSingleResiduePeptoidLibrary< T, N >::assign_chi_for_interpolated_rotamer(
+	PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 	conformation::Residue const & rsd,
 	numeric::random::RandomGenerator & RG,
 	ChiVector & new_chi_angles,
@@ -566,9 +567,9 @@ RotamericSingleResiduePeptoidLibrary< T >::assign_chi_for_interpolated_rotamer(
 ///
 /// This function modifies the "rotwell" assigned to this rotamer so that later code that relies
 /// on the consistency of the rotwell and packed_rotno information will behave correctly.
-template < Size T >
+template < Size T, Size N >
 Size
-RotamericSingleResiduePeptoidLibrary< T >::find_another_representative_for_unlikely_rotamer(
+RotamericSingleResiduePeptoidLibrary< T, N >::find_another_representative_for_unlikely_rotamer(
 	conformation::Residue const & rsd,
 	Size4 & rotwell
 ) const
@@ -599,7 +600,7 @@ RotamericSingleResiduePeptoidLibrary< T >::find_another_representative_for_unlik
 		get_omg_from_rsd( rsd ), get_phi_from_rsd( rsd ), get_psi_from_rsd( rsd ),
 		omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers_array( rotamers( 	get_omg_from_rsd( rsd ) ) );
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( rotamers( 	get_omg_from_rsd( rsd ) ) );
 	//ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( get_omg_from_rsd( rsd ) ) );
 
 	Size packed_rotno = rotamers_array( omgbin, phibin, psibin, 1 ).packed_rotno();
@@ -609,9 +610,9 @@ RotamericSingleResiduePeptoidLibrary< T >::find_another_representative_for_unlik
 }
 
 /// DOUG DOUG DOUG this function will need to be modified
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::correct_termini_derivatives(
+RotamericSingleResiduePeptoidLibrary< T, N >::correct_termini_derivatives(
 	conformation::Residue const & rsd,
 	RotamerLibraryScratchSpace & scratch
 ) const
@@ -632,9 +633,9 @@ RotamericSingleResiduePeptoidLibrary< T >::correct_termini_derivatives(
 /// (based on e.g. its current omega, phi and psi values).
 /// If curr_rotamer_only is true, then consider only the idealized version of the
 /// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
-template < Size T >
+template < Size T, Size N >
 Real
-RotamericSingleResiduePeptoidLibrary< T >::best_rotamer_energy(
+RotamericSingleResiduePeptoidLibrary< T, N >::best_rotamer_energy(
 	conformation::Residue const & /*rsd*/,
 	bool /*curr_rotamer_only*/,
 	RotamerLibraryScratchSpace & /*scratch*/
@@ -647,10 +648,10 @@ RotamericSingleResiduePeptoidLibrary< T >::best_rotamer_energy(
 	Real maxprob( 0 );
 	if ( curr_rotamer_only ) {
 		Size4 & rotwell( scratch.rotwell() );
-		RotamericSingleResiduePeptoidLibrary< T >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
+		RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
 		Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
 
-		PackedDunbrackRotamer< T, Real > interpolated_rotamer;
+		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		interpolate_rotamers( rsd, pose, scratch, packed_rotno, interpolated_rotamer );
 
 		maxprob = interpolated_rotamer.rotamer_probability();
@@ -676,7 +677,7 @@ RotamericSingleResiduePeptoidLibrary< T >::best_rotamer_energy(
 		packed_rotnos[ 7 ] = rotamers_( omgbin_next, phibin, psibin_next, 1 ).packed_rotno();
 		packed_rotnos[ 8 ] = rotamers_( omgbin_next, phibin_next, psibin_next, 1 ).packed_rotno();
 
-		PackedDunbrackRotamer< T, Real > interpolated_rotamer;
+		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		for ( Size ii = 1; ii <= n_packed_rotnos; ++ii ) {
 			interpolate_rotamers( rsd, pose, scratch, packed_rotnos[ ii ], interpolated_rotamer );
 			maxprob = ( maxprob < interpolated_rotamer.rotamer_probability() ?
@@ -714,9 +715,9 @@ RotamericSingleResiduePeptoidLibrary< T >::best_rotamer_energy(
 /// The alpha fraction is the distance along each axis that the interpolation point
 /// has progressed from the lower grid point toward the upper grid point; it ranges
 /// from 0 to 1.
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::get_omgphipsi_bins(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_omgphipsi_bins(
 	Real omg,
 	Real phi,
 	Real psi,
@@ -763,9 +764,9 @@ RotamericSingleResiduePeptoidLibrary< T >::get_omgphipsi_bins(
 	//verify_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next );
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::get_omgphipsi_bins(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_omgphipsi_bins(
 	Real omg,
 	Real phi,
 	Real psi,
@@ -779,14 +780,14 @@ RotamericSingleResiduePeptoidLibrary< T >::get_omgphipsi_bins(
 	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
+RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch,
 	Size const packed_rotno,
-	PackedDunbrackRotamer< T, Real > & interpolated_rotamer
+	PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 ) const
 {
 	Real omg( get_omg_from_rsd( rsd, pose ) );
@@ -797,7 +798,7 @@ RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
 	Real omg_alpha, phi_alpha, psi_alpha;
 	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers_array( rotamers( omg ) );
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( rotamers( omg ) );
 	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( omg ) );
 
 	interpolate_rotamers( rotamers_array, packed_rotno_2_sorted_rotno_array,
@@ -809,10 +810,10 @@ RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
 /// DOUG DOUG DOUG
 /// DOUG DOUG DOUG The interface has been changed but the definition has not
 /// DOUG DOUG DOUG
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers,
+RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers,
 	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno,
 	RotamerLibraryScratchSpace & scratch,
 	Size const packed_rotno,
@@ -825,7 +826,7 @@ RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
 	Real const omg_alpha,
 	Real const phi_alpha,
 	Real const psi_alpha,
-	PackedDunbrackRotamer< T, Real > & interpolated_rotamer
+	PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 ) const
 {
 	using namespace basic;
@@ -841,7 +842,7 @@ RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
 		sorted_rotno_110( packed_rotno_2_sorted_rotno( omgbin_next, phibin_next, psibin     , packed_rotno )),
 		sorted_rotno_111( packed_rotno_2_sorted_rotno( omgbin_next, phibin_next, psibin_next, packed_rotno ));
 
-	PackedDunbrackRotamer< T > const
+	PackedDunbrackRotamer< T, N > const
 		rot000( rotamers( omgbin,      phibin     , psibin     , sorted_rotno_000 ) ),
 		rot001( rotamers( omgbin,      phibin     , psibin_next, sorted_rotno_001 ) ),
 		rot010( rotamers( omgbin,      phibin_next, psibin     , sorted_rotno_010 ) ),
@@ -882,7 +883,7 @@ RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
 			static_cast< Real >  ( rot011.chi_mean(ii)),
 			static_cast< Real >  ( rot111.chi_mean(ii)),
 			omg_alpha, phi_alpha, psi_alpha, PHI_BINRANGE, true /*treat_as_angles*/,
-			scratch.chimean()[ii], scratch.dchimean_domg()[ii], scratch.dchimean_dphi()[ii], scratch.dchimean_dpsi()[ii] );
+			scratch.chimean()[ii], scratch.dchimean_domg()[ii], scratch.dchimean_dbb()[1][ii], scratch.dchimean_dbb()[2][ii] );
 
 		// // DOUG DOUG DOUG DEBUG OUTPUT
 		// std::cout << std::setprecision(2) << std::fixed
@@ -912,7 +913,7 @@ RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
 			static_cast< Real >  ( rot011.chi_sd(ii)),
 			static_cast< Real >  ( rot111.chi_sd(ii)),
 			omg_alpha, phi_alpha, psi_alpha, PHI_BINRANGE, false /*treat_as_angles*/,
-			scratch.chisd()[ii], scratch.dchisd_domg()[ii], scratch.dchisd_dphi()[ii], scratch.dchisd_dpsi()[ii] );
+			scratch.chisd()[ii], scratch.dchisd_domg()[ii], scratch.dchisd_dbb()[1][ii], scratch.dchisd_dbb()[2][ii] );
 		interpolated_rotamer.chi_sd( ii ) = scratch.chisd()[ii];
 
 	}
@@ -963,9 +964,9 @@ RotamericSingleResiduePeptoidLibrary< T >::interpolate_rotamers(
  */
 
 /// @details Returns the preceeding omg.
-template < Size T >
+template < Size T, Size N >
 Real
-RotamericSingleResiduePeptoidLibrary< T >::get_omg_from_rsd(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_omg_from_rsd(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose
 ) const
@@ -987,9 +988,9 @@ debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 }
 
 /// @details Handle lower-term residues by returning a "neutral" phi value
-template < Size T >
+template < Size T, Size N >
 Real
-RotamericSingleResiduePeptoidLibrary< T >::get_phi_from_rsd(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_phi_from_rsd(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose
 ) const
@@ -1013,9 +1014,9 @@ debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 }
 
 /// @details Handle upper-term residues by returning a "neutral" psi value
-template < Size T >
+template < Size T, Size N >
 Real
-RotamericSingleResiduePeptoidLibrary< T >::get_psi_from_rsd(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_psi_from_rsd(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose
 ) const
@@ -1038,9 +1039,9 @@ debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::fill_rotamer_vector(
+RotamericSingleResiduePeptoidLibrary< T, N >::fill_rotamer_vector(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
@@ -1065,7 +1066,7 @@ RotamericSingleResiduePeptoidLibrary< T >::fill_rotamer_vector(
 	Real omg_alpha, phi_alpha, psi_alpha;
 	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers_array( RotamericSingleResiduePeptoidLibrary::rotamers( omg ) );
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( RotamericSingleResiduePeptoidLibrary::rotamers( omg ) );
 	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( omg ) );
 
 	Real const requisit_probability = probability_to_accumulate_while_building_rotamers( buried ); // ( buried  ? 0.98 : 0.95 )
@@ -1086,7 +1087,7 @@ RotamericSingleResiduePeptoidLibrary< T >::fill_rotamer_vector(
 
 		Size const packed_rotno00 = rotamers_array( omgbin, phibin, psibin, count_rotamers_built ).packed_rotno();
 
-		PackedDunbrackRotamer< T, Real > interpolated_rotamer;
+		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		interpolate_rotamers(
 			rotamers_array, packed_rotno_2_sorted_rotno_array,
 			scratch, packed_rotno00,
@@ -1112,9 +1113,9 @@ RotamericSingleResiduePeptoidLibrary< T >::fill_rotamer_vector(
 
 }
 
-template < Size T >
+template < Size T, Size N >
 utility::vector1< DunbrackRotamerSampleData >
-RotamericSingleResiduePeptoidLibrary< T >::get_all_rotamer_samples(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_all_rotamer_samples(
 	Real omg,
 	Real phi,
 	Real psi
@@ -1126,7 +1127,7 @@ RotamericSingleResiduePeptoidLibrary< T >::get_all_rotamer_samples(
 	Real omg_alpha, phi_alpha, psi_alpha;
 	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers_array( rotamers( omg ) );
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( rotamers( omg ) );
 	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( omg ) );
 
 	Size const n_rots = n_packed_rots();
@@ -1137,7 +1138,7 @@ RotamericSingleResiduePeptoidLibrary< T >::get_all_rotamer_samples(
 		// Iterate through rotamaers in decreasing order of probabilities
 		Size const packed_rotno00 = rotamers_array( omgbin, phibin, psibin, ii ).packed_rotno();
 
-		PackedDunbrackRotamer< T, Real > interpolated_rotamer;
+		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		interpolate_rotamers(
 			rotamers_array, packed_rotno_2_sorted_rotno_array,
 			scratch, packed_rotno00,
@@ -1160,9 +1161,9 @@ RotamericSingleResiduePeptoidLibrary< T >::get_all_rotamer_samples(
 }
 
 /// DOUG DOUG DOUG The interface of this function has beeen changed but the definition needs more work specifically  the interpolation
-template < Size T >
+template < Size T, Size N >
 Real
-RotamericSingleResiduePeptoidLibrary< T >::get_probability_for_rotamer(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_probability_for_rotamer(
 	Real omg,
 	Real phi,
 	Real psi,
@@ -1173,10 +1174,10 @@ RotamericSingleResiduePeptoidLibrary< T >::get_probability_for_rotamer(
 	Real omg_alpha, phi_alpha, psi_alpha;
 	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers_array( rotamers( omg ) );
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( rotamers( omg ) );
 	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( omg ) );
 
-	PackedDunbrackRotamer< T > const & rot000( rotamers_array( omgbin, phibin, psibin, rot_ind ) );
+	PackedDunbrackRotamer< T, N > const & rot000( rotamers_array( omgbin, phibin, psibin, rot_ind ) );
 	Size const packed_rotno000 = rot000.packed_rotno();
 
 	Size const
@@ -1188,7 +1189,7 @@ RotamericSingleResiduePeptoidLibrary< T >::get_probability_for_rotamer(
 		sorted_rotno_110( packed_rotno_2_sorted_rotno_array( omgbin_next, phibin_next, psibin     , packed_rotno000 )),
 		sorted_rotno_111( packed_rotno_2_sorted_rotno_array( omgbin_next, phibin_next, psibin_next, packed_rotno000 ));
 
-	PackedDunbrackRotamer< T > const &
+	PackedDunbrackRotamer< T, N > const &
 		rot001( rotamers_array( omgbin,      phibin     , psibin_next, sorted_rotno_001 ) ),
 		rot010( rotamers_array( omgbin,      phibin_next, psibin     , sorted_rotno_010 ) ),
 		rot011( rotamers_array( omgbin,      phibin_next, psibin_next, sorted_rotno_011 ) ),
@@ -1214,9 +1215,9 @@ RotamericSingleResiduePeptoidLibrary< T >::get_probability_for_rotamer(
 	return rot_prob;
 }
 
-template < Size T >
+template < Size T, Size N >
 DunbrackRotamerSampleData
-RotamericSingleResiduePeptoidLibrary< T >::get_rotamer(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer(
 	Real omg,
 	Real phi,
 	Real psi,
@@ -1229,12 +1230,12 @@ RotamericSingleResiduePeptoidLibrary< T >::get_rotamer(
 	Real omg_alpha, phi_alpha, psi_alpha;
 	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers_array( rotamers( omg ) );
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( rotamers( omg ) );
 	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( omg ) );
 
-	PackedDunbrackRotamer< T > const & rot00( rotamers_array( omgbin, phibin, psibin, rot_ind ) );
+	PackedDunbrackRotamer< T, N > const & rot00( rotamers_array( omgbin, phibin, psibin, rot_ind ) );
 	Size const packed_rotno00 = rot00.packed_rotno();
-	PackedDunbrackRotamer< T, Real > interpolated_rotamer;
+	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 	interpolate_rotamers(
 		rotamers_array, packed_rotno_2_sorted_rotno_array,
 		scratch, packed_rotno00,
@@ -1254,16 +1255,16 @@ RotamericSingleResiduePeptoidLibrary< T >::get_rotamer(
 }
 
 
-template < Size T >
+template < Size T, Size N >
 Size
-RotamericSingleResiduePeptoidLibrary< T >::nchi() const
+RotamericSingleResiduePeptoidLibrary< T, N >::nchi() const
 {
 	return T;
 }
 
-template < Size T >
+template < Size T, Size N >
 Size
-RotamericSingleResiduePeptoidLibrary< T >::n_rotamer_bins() const
+RotamericSingleResiduePeptoidLibrary< T, N >::n_rotamer_bins() const
 {
 	return parent::n_possible_rots();
 }
@@ -1277,9 +1278,9 @@ RotamericSingleResiduePeptoidLibrary< T >::n_rotamer_bins() const
 /// "template method" is a design pattern where a base class calls a polymorphic method
 /// that can be overloaded by a derived class, usually in the middle of a function that
 /// does a lot of work.  See "Design Patterns," Gamma et al.
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::build_rotamers(
+RotamericSingleResiduePeptoidLibrary< T, N >::build_rotamers(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
@@ -1289,11 +1290,11 @@ RotamericSingleResiduePeptoidLibrary< T >::build_rotamers(
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 	bool buried,
 	RotamerVector & rotamers,
-	PackedDunbrackRotamer< T, Real > const & interpolated_rotamer
+	PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
 ) const
 {
-	DunbrackRotamer< T, Real > interpolated_rot( packed_rotamer_2_regular_rotamer( interpolated_rotamer ));
-	RotamericData< T > rotameric_rotamer_building_data( interpolated_rot );
+	DunbrackRotamer< T, N, Real > interpolated_rot( packed_rotamer_2_regular_rotamer( interpolated_rotamer ));
+	RotamericData< T, N > rotameric_rotamer_building_data( interpolated_rot );
 
 
 	/// DOUG DOUG DOUG DEBUG OUTPUT
@@ -1321,9 +1322,9 @@ RotamericSingleResiduePeptoidLibrary< T >::build_rotamers(
 		chi_set_vector, rotamers );
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::verify_omgphipsi_bins(
+RotamericSingleResiduePeptoidLibrary< T, N >::verify_omgphipsi_bins(
 	Real omg,
 	Real phi,
 	Real psi,
@@ -1344,9 +1345,9 @@ RotamericSingleResiduePeptoidLibrary< T >::verify_omgphipsi_bins(
 
 /// @details once a list of chi samples has been enumerated, this function
 /// instantiates Residue objectes and give them the correct geometry.
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::create_rotamers_from_chisets(
+RotamericSingleResiduePeptoidLibrary< T, N >::create_rotamers_from_chisets(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
@@ -1379,14 +1380,14 @@ RotamericSingleResiduePeptoidLibrary< T >::create_rotamers_from_chisets(
 	}
 }
 
-template< Size T >
+template< Size T, Size N >
 template< class P >
-DunbrackRotamer< T, P >
-RotamericSingleResiduePeptoidLibrary< T >::packed_rotamer_2_regular_rotamer(
-	PackedDunbrackRotamer< T, P > const & packedrot
+DunbrackRotamer< T, N, P >
+RotamericSingleResiduePeptoidLibrary< T, N >::packed_rotamer_2_regular_rotamer(
+	PackedDunbrackRotamer< T, N, P > const & packedrot
 ) const
 {
-	DunbrackRotamer< T, P > dunrot;
+	DunbrackRotamer< T, N, P > dunrot;
 	for ( Size ii = 1; ii <= T; ++ii ) {
 		dunrot.chi_mean( ii ) = packedrot.chi_mean( ii );
 		dunrot.chi_sd(   ii ) = packedrot.chi_sd( ii );
@@ -1397,14 +1398,14 @@ RotamericSingleResiduePeptoidLibrary< T >::packed_rotamer_2_regular_rotamer(
 }
 
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::enumerate_chi_sets(
+RotamericSingleResiduePeptoidLibrary< T, N >::enumerate_chi_sets(
 	chemical::ResidueType const & rsd_type,
 	pack::task::PackerTask const & task,
 	Size const seqpos,
 	bool buried,
-	RotamericData< T > const & rotamer_data,
+	RotamericData< T, N > const & rotamer_data,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 	utility::vector1< ChiSetOP > & chi_set_vector
 ) const
@@ -1472,14 +1473,14 @@ RotamericSingleResiduePeptoidLibrary< T >::enumerate_chi_sets(
 
 
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::chisamples_for_rotamer_and_chi(
+RotamericSingleResiduePeptoidLibrary< T, N >::chisamples_for_rotamer_and_chi(
 	chemical::ResidueType const & rsd_type,
 	pack::task::ResidueLevelTask const & rtask,
 	bool buried,
 	Size const chi_index,
-	RotamericData< T > const & rotamer_data,
+	RotamericData< T, N > const & rotamer_data,
 	utility::vector1< Real > const & extra_steps,
 	utility::vector1< Real > & total_chi,
 	utility::vector1< int  > & total_rot,
@@ -1582,9 +1583,9 @@ RotamericSingleResiduePeptoidLibrary< T >::chisamples_for_rotamer_and_chi(
 }
 
 // Basically write_to_binary but to a file instead
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::write_to_file( utility::io::ozstream & /*out*/ ) const
+RotamericSingleResiduePeptoidLibrary< T, N >::write_to_file( utility::io::ozstream & /*out*/ ) const
 {
 	using namespace boost;
 	/*
@@ -1648,9 +1649,9 @@ RotamericSingleResiduePeptoidLibrary< T >::write_to_file( utility::io::ozstream 
 }
 
 /// DOUG DOUG DOUG This function needs more updating to use omega
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::write_to_binary( utility::io::ozstream & /*out*/ ) const
+RotamericSingleResiduePeptoidLibrary< T, N >::write_to_binary( utility::io::ozstream & /*out*/ ) const
 {
 	std::cout << "Called write_to_binary() but it is not yet implimented!!! " << std::endl;
 	/* DOUG DOUG DOUG Commenting out for now
@@ -1717,9 +1718,9 @@ RotamericSingleResiduePeptoidLibrary< T >::write_to_binary( utility::io::ozstrea
 }
 
 /// DOUG DOUG DOUG This function needs more updating to use omega
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::read_from_binary( utility::io::izstream & /*in*/ )
+RotamericSingleResiduePeptoidLibrary< T, N >::read_from_binary( utility::io::izstream & /*in*/ )
 {
 	std::cout << "Called write_to_binary() but it is not yet implimented!!! " << std::endl;
 	/* DOUG DOUG DOUG Commenting out for now
@@ -1788,9 +1789,9 @@ RotamericSingleResiduePeptoidLibrary< T >::read_from_binary( utility::io::izstre
 /// DOUG DOUG DOUG WORKING ON THIS FUNCTION
 /// @details Returns the three letter string of the next amino acid specified in the
 /// input library.
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::read_from_file(
+RotamericSingleResiduePeptoidLibrary< T, N >::read_from_file(
 	utility::io::izstream & infile
 )
 {
@@ -1800,7 +1801,7 @@ RotamericSingleResiduePeptoidLibrary< T >::read_from_file(
 	/// Read all the data from the first phi/psi bin and keep it temporarily.
 	/// Note all the rotamer wells encountered along the way; then declare_all_rotwells_encountered,
 	/// allocate the big tables, transfer the data in the temporary arrays into the big table,
-	typename utility::vector1< DunbrackRotamer< T > > first_omgphipsibin_data;
+	typename utility::vector1< DunbrackRotamer< T, N > > first_omgphipsibin_data;
 	first_omgphipsibin_data.reserve( n_possible_rots() );
 
 	DunbrackReal omg(0.0), phi(0.0), psi(0.0), probability(0.0);
@@ -1872,7 +1873,7 @@ RotamericSingleResiduePeptoidLibrary< T >::read_from_file(
 				std::cerr << " " << packed_rotno << std::endl;
 				utility_exit();
 			}
-			PackedDunbrackRotamer< T > rotamer( chimean, chisd, probability, packed_rotno );
+			PackedDunbrackRotamer< T, N > rotamer( chimean, chisd, probability, packed_rotno );
 
 			if ( omgbin != lastomgbin || phibin != lastphibin || psibin != lastpsibin ) {
 				count_in_this_omgphipsi_bin = 1;
@@ -1927,10 +1928,10 @@ RotamericSingleResiduePeptoidLibrary< T >::read_from_file(
 
 					// decide if cis or trans rotamer or packed_rotno_2_sorted_rotno arrays
 					if ( is_trans_omg( omg ) ) {
-						trans_rotamers_( lastomgbin, lastphibin, lastpsibin, ii ) = PackedDunbrackRotamer< T >( first_omgphipsibin_data[ ii ], packed_rotno );
+						trans_rotamers_( lastomgbin, lastphibin, lastpsibin, ii ) = PackedDunbrackRotamer< T, N >( first_omgphipsibin_data[ ii ], packed_rotno );
 						trans_packed_rotno_2_sorted_rotno_( lastomgbin, lastphibin, lastpsibin, packed_rotno ) = ii;
 					} else if ( is_cis_omg( omg ) ) {
-						cis_rotamers_( lastomgbin, lastphibin, lastpsibin, ii ) = PackedDunbrackRotamer< T >( first_omgphipsibin_data[ ii ], packed_rotno );
+						cis_rotamers_( lastomgbin, lastphibin, lastpsibin, ii ) = PackedDunbrackRotamer< T, N >( first_omgphipsibin_data[ ii ], packed_rotno );
 						cis_packed_rotno_2_sorted_rotno_( lastomgbin, lastphibin, lastpsibin, packed_rotno ) = ii;
 					}
 
@@ -1939,7 +1940,7 @@ RotamericSingleResiduePeptoidLibrary< T >::read_from_file(
 				// 4.
 			debug_assert( count_in_this_omgphipsi_bin == 1 );
 				Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
-				PackedDunbrackRotamer< T > rotamer( chimean, chisd, probability, packed_rotno );
+				PackedDunbrackRotamer< T, N > rotamer( chimean, chisd, probability, packed_rotno );
 				if ( is_trans_omg( omg ) ) {
 					trans_rotamers_( omgbin, phibin, psibin, count_in_this_omgphipsi_bin ) = rotamer;
 					trans_packed_rotno_2_sorted_rotno_( omgbin, phibin, psibin, packed_rotno ) = count_in_this_omgphipsi_bin;
@@ -1955,7 +1956,7 @@ RotamericSingleResiduePeptoidLibrary< T >::read_from_file(
 			} else {
 				very_first_rotamer = false;
 				mark_rotwell_exists( rotwell );
-				first_omgphipsibin_data.push_back( DunbrackRotamer< T >( chimean, chisd, probability, rotwell ) );
+				first_omgphipsibin_data.push_back( DunbrackRotamer< T, N >( chimean, chisd, probability, rotwell ) );
 				lastomgbin = omgbin; lastphibin = phibin; lastpsibin = psibin;
 			}
 		}
@@ -1965,36 +1966,36 @@ RotamericSingleResiduePeptoidLibrary< T >::read_from_file(
 /// @details called only if the library is actually an RSRDL<T> object.  Derived classes
 /// should not call this function or recurse.  Accounts for the statically allocated data
 /// that's part of this class.
-template < Size T >
-Size RotamericSingleResiduePeptoidLibrary< T >::memory_usage_static() const
+template < Size T, Size N >
+Size RotamericSingleResiduePeptoidLibrary< T, N >::memory_usage_static() const
 {
-	return sizeof( RotamericSingleResiduePeptoidLibrary< T > );
+	return sizeof( RotamericSingleResiduePeptoidLibrary< T, N > );
 }
 
 /// @details Measures the amount of dynamically allocated data in this class.  Must recurse to parent
 /// to count parent's dynamically allocated data.
-template < Size T >
-Size RotamericSingleResiduePeptoidLibrary< T >::memory_usage_dynamic() const
+template < Size T, Size N >
+Size RotamericSingleResiduePeptoidLibrary< T, N >::memory_usage_dynamic() const
 {
 	Size total = parent::memory_usage_dynamic(); // recurse to parent.
-	total += trans_rotamers_.size() * sizeof( PackedDunbrackRotamer< T > );
-	total += cis_rotamers_.size() * sizeof( PackedDunbrackRotamer< T > );
+	total += trans_rotamers_.size() * sizeof( PackedDunbrackRotamer< T, N > );
+	total += cis_rotamers_.size() * sizeof( PackedDunbrackRotamer< T, N > );
 	total += trans_packed_rotno_2_sorted_rotno_.size() * sizeof( Size ); // could make these shorts or chars!
 	total += cis_packed_rotno_2_sorted_rotno_.size() * sizeof( Size ); // could make these shorts or chars!
 	//total += max_rotprob_.size() * sizeof( DunbrackReal );
 
 	// DOUG DOUG DOUG DEBUG
-	//std::cout << trans_rotamers_.size() * sizeof( PackedDunbrackRotamer< T > ) << "\t"
-	//<< cis_rotamers_.size() * sizeof( PackedDunbrackRotamer< T > ) << "\t"
+	//std::cout << trans_rotamers_.size() * sizeof( PackedDunbrackRotamer< T, N > ) << "\t"
+	//<< cis_rotamers_.size() * sizeof( PackedDunbrackRotamer< T, N > ) << "\t"
 	//<< trans_packed_rotno_2_sorted_rotno_.size() * sizeof( Size ) << "\t"
 	//<< cis_packed_rotno_2_sorted_rotno_.size() * sizeof( Size ) << std::endl;
 
 	return total;
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::get_rotamer_from_chi(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi(
 	ChiVector const & chi,
 	RotVector & rot
 ) const
@@ -2006,9 +2007,9 @@ RotamericSingleResiduePeptoidLibrary< T >::get_rotamer_from_chi(
 	for ( Size ii = T+1; ii <= chi.size(); ++ii ) rot[ ii ] = 0;
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::get_rotamer_from_chi_static(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static(
 	ChiVector const & chi,
 	Size4 & rot
 ) const
@@ -2018,9 +2019,9 @@ RotamericSingleResiduePeptoidLibrary< T >::get_rotamer_from_chi_static(
 	get_rotamer_from_chi_static( chi4, rot );
 }
 
-template < Size T >
+template < Size T, Size N >
 void
-RotamericSingleResiduePeptoidLibrary< T >::get_rotamer_from_chi_static(
+RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static(
 	Real4 const & chi,
 	Size4 & rot
 ) const
@@ -2035,36 +2036,36 @@ debug_assert( chi.size() >= T );
 	}
 }
 
-template < Size T >
-typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const &
-RotamericSingleResiduePeptoidLibrary< T >::rotamers( Real omg_angle ) const {
+template < Size T, Size N >
+typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const &
+RotamericSingleResiduePeptoidLibrary< T, N >::rotamers( Real omg_angle ) const {
 	if ( is_trans_omg( omg_angle) ) return trans_rotamers_;
 	else if ( is_cis_omg( omg_angle ) ) return cis_rotamers_;
 	utility_exit_with_message("ERROR: Peptoid backbone is not in range of rotamer library");
 	return trans_rotamers_; // we should never get here
 }
 
-template < Size T >
-typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > &
-RotamericSingleResiduePeptoidLibrary< T >::rotamers( Real omg_angle ) {
+template < Size T, Size N >
+typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > &
+RotamericSingleResiduePeptoidLibrary< T, N >::rotamers( Real omg_angle ) {
 	if ( is_trans_omg( omg_angle) ) return trans_rotamers_;
 	else if ( is_cis_omg( omg_angle ) ) return cis_rotamers_;
 	utility_exit_with_message("ERROR: Peptoid backbone is not in range of rotamer library");
 	return trans_rotamers_; // we should never get here
 }
 
-template < Size T >
+template < Size T, Size N >
 ObjexxFCL::FArray4D< Size > const &
-RotamericSingleResiduePeptoidLibrary< T >::packed_rotno_2_sorted_rotno( Real omg_angle ) const {
+RotamericSingleResiduePeptoidLibrary< T, N >::packed_rotno_2_sorted_rotno( Real omg_angle ) const {
 	if ( is_trans_omg( omg_angle) ) return trans_packed_rotno_2_sorted_rotno_;
 	else if ( is_cis_omg( omg_angle ) ) return cis_packed_rotno_2_sorted_rotno_;
 	utility_exit_with_message("ERROR: Peptoid backbone is not in range of rotamer library");
 	return trans_packed_rotno_2_sorted_rotno_; // we should never get here
 }
 
-template < Size T >
+template < Size T, Size N >
 ObjexxFCL::FArray4D< Size > &
-RotamericSingleResiduePeptoidLibrary< T >::packed_rotno_2_sorted_rotno( Real omg_angle ) {
+RotamericSingleResiduePeptoidLibrary< T, N >::packed_rotno_2_sorted_rotno( Real omg_angle ) {
 	if ( is_trans_omg( omg_angle) ) return trans_packed_rotno_2_sorted_rotno_;
 	else if ( is_cis_omg( omg_angle ) ) return cis_packed_rotno_2_sorted_rotno_;
 	utility_exit_with_message("ERROR: Peptoid backbone is not in range of rotamer library");

@@ -712,6 +712,7 @@ build_tree(
 	// traverse tree, build edges
 	for ( kinematics::FoldTree::const_iterator it = fold_tree.begin(),
 			it_end = fold_tree.end(); it != it_end; ++it ) {
+
 		if ( it->is_jump() ) {
 			build_jump_edge( *it, residues, atom_pointer );
 

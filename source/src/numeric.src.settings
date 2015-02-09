@@ -51,6 +51,7 @@ sources = {
 		"spline_functions",
 		"SplineGenerator",
 		"TricubicSpline",
+		"PolycubicSpline",
 	],
 	"numeric/kdtree": [
 		"calc_distance",

@@ -97,8 +97,8 @@ void do_rotamer_trials(bool with_minimization, test::UTracer & UT)
 	using namespace pose;
 
 	// init/reset seeds in all RG objects we have to do this inside the test it self function since
-	// user could request to run just one singel test.
-	core::init::init_random_generators(1101, "mt19937");
+	// user could request to run just one single test.
+	core::init::init_random_generators( 1101, "mt19937" );
 
 	ScoreFunction scorefxn;
 	scorefxn.set_weight( fa_atr, 0.80 );
@@ -120,15 +120,14 @@ void do_rotamer_trials(bool with_minimization, test::UTracer & UT)
 	Energy score_orig = scorefxn( pose );
 
 	// create paker task for rotamer trials
-	pack::task::PackerTaskOP task
-		( pack::task::TaskFactory::create_packer_task( pose ));
+	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ) );
 	task->initialize_from_command_line().restrict_to_repacking();
 
 	// run rotamer trials given our pose, score function and packer task
-	if(with_minimization) {
+	if ( with_minimization ) {
 		// Just run RTMIN on a few residues, because it's slow
-		for(Size i = 1; i < 100; ++i) task->nonconst_residue_task(i).prevent_repacking();
-		for(Size i = 115; i <= pose.total_residue(); ++i) task->nonconst_residue_task(i).prevent_repacking();
+		for ( Size i = 1; i < 100; ++i ) task->nonconst_residue_task(i).prevent_repacking();
+		for ( Size i = 115; i <= pose.total_residue(); ++i ) task->nonconst_residue_task( i ).prevent_repacking();
 		pack::RTMin rtmin;
 		rtmin.rtmin( pose, scorefxn, task );
 	}
@@ -138,7 +137,7 @@ void do_rotamer_trials(bool with_minimization, test::UTracer & UT)
 	Energy score_rt = scorefxn( pose );
 
 	// test that scores are lower after running rotamer trials
-	TS_ASSERT_LESS_THAN(score_rt, score_orig);
+	TS_ASSERT_LESS_THAN( score_rt, score_orig );
 
 	// test that the score are the same as when the test was created
 	// note: last update will sheffler (willsheffler@gmail.com) march 24 2008
@@ -147,7 +146,7 @@ void do_rotamer_trials(bool with_minimization, test::UTracer & UT)
 	//TS_ASSERT_DELTA( precomputed_score_orig, score_orig, delta );
 	//TS_ASSERT_DELTA( precomputed_score_rt, score_rt, delta );
 
-	UT.abs_tolerance(delta);
+	UT.abs_tolerance( delta );
 	UT << "score_orig = " << score_orig << std::endl;
 	UT << "score_rt = " << score_rt << std::endl;
 
@@ -155,25 +154,23 @@ void do_rotamer_trials(bool with_minimization, test::UTracer & UT)
 	// note: last update will sheffler (willsheffler@gmail.com) march 24 2008
 
 	Size nres = pose.n_residue();
-	for ( Size i = 1; i <= nres; ++i )
-		{
-			 // get chi angles
-			utility::vector1< Real > res_chi = pose.residue( i ).chi();
+	for ( Size i = 1; i <= nres; ++i ) {
+        // get chi angles
+        utility::vector1< Real > res_chi = pose.residue( i ).chi();
+        
+        // compares values to those in the list
+        for ( Size j = 1; j <= res_chi.size(); ++j ) {
+            //Real chi = numeric::nonnegative_principal_angle_degrees( res_chi[ j ] );
+            //TR << std::setprecision(3) << std::fixed << std::setw(7) << chi << ", ";
+            // std::cerr << "FOOCHI " << chi << std::endl;
 
-			// compares values to those in the list
-			for ( Size j = 1; j <= res_chi.size(); ++j )
-				{
-					//Real chi = numeric::nonnegative_principal_angle_degrees( res_chi[ j ] );
-					//TR << std::setprecision(3) << std::fixed << std::setw(7) << chi << ", ";
-					// std::cerr << "FOOCHI " << chi << std::endl;
+            UT << std::setprecision(15);
+            //TS_ASSERT_DELTA( precomputed_chi_angles[precompute_counter], chi, delta );
 
-					UT << std::setprecision(15);
-					//TS_ASSERT_DELTA( precomputed_chi_angles[precompute_counter], chi, delta );
-
-					// fpd
-					UT << "residue = " << i << " sin (chi) = " << sin( res_chi[ j ] ) << " cos(chi) = " << cos( res_chi[ j ] ) << std::endl;
-				}
-		}
+            // fpd
+            UT << "residue = " << i << " sin (chi) = " << sin( res_chi[ j ] ) << " cos(chi) = " << cos( res_chi[ j ] ) << std::endl;
+        }
+    }
 };
 
 };

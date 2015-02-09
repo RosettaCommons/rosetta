@@ -159,12 +159,12 @@ public:
 		include_terms += fixed_parameters;
 
 		TR << "setting up ScoreTypes variables, list of ScoreType objects that denote what terms are in use" << std::endl;
-		for ( int ii=1 ; ii <= core::scoring::n_score_types ; ++ii ) {
-			if ( include_terms[ (core::scoring::ScoreType)ii ] != 0.0 ) {
-				if ( fixed_parameters[ core::scoring::ScoreType(ii) ] == 0.0 ) {
-					free_score_list.push_back( (core::scoring::ScoreType)ii );
+		for ( int ii = 1 ; ii <= core::scoring::n_score_types ; ++ii ) {
+			if ( include_terms[ ( core::scoring::ScoreType )ii ] != 0.0 ) {
+				if ( fixed_parameters[ core::scoring::ScoreType( ii ) ] == 0.0 ) {
+					free_score_list.push_back(  ( core::scoring::ScoreType )ii );
 				} else {
-					fixed_score_list.push_back( (core::scoring::ScoreType)ii );
+					fixed_score_list.push_back( ( core::scoring::ScoreType )ii );
 				}
 			}
 		}

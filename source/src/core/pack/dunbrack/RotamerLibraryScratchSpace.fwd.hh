@@ -28,9 +28,10 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-Size const DUNBRACK_MAX_BBTOR = 3;
+Size const DUNBRACK_MAX_BBTOR = 4;
 Size const DUNBRACK_MAX_SCTOR = 4;
-
+	
+typedef utility::fixedsizearray1< utility::fixedsizearray1< Real, DUNBRACK_MAX_SCTOR >, DUNBRACK_MAX_BBTOR > FourReal4;
 typedef utility::fixedsizearray1< Real, DUNBRACK_MAX_SCTOR > Real4;
 typedef utility::fixedsizearray1< Size, DUNBRACK_MAX_SCTOR > Size4;
 

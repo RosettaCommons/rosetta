@@ -18,6 +18,8 @@
 #include <protocols/make_rot_lib/MakeRotLibJob.fwd.hh>
 #include <protocols/make_rot_lib/MakeRotLibOptionsData.hh>
 
+#include <utility/vector1.hh>
+
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.fwd.hh>
 
@@ -29,15 +31,16 @@ class MakeRotLibJob : public protocols::jd2::Job
 public:
 
   MakeRotLibJob( jd2::InnerJobOP inner_job, core::Size nstruct_index,
-    core::Real omg, core::Real phi, core::Real psi, core::Real eps,
+    core::Real omg, utility::vector1< core::Real> bbs, utility::vector1< core::Size > bb_ids, core::Real eps,
     MakeRotLibOptionsDataOP mrlod );
 
   ~MakeRotLibJob() {}
 
 	/// @brief acessors
 	core::Real get_omg() const { return omg_; }
-	core::Real get_phi() const { return phi_; }
-	core::Real get_psi() const { return psi_; }
+	core::Real get_bb(core::Size i) const { return bbs_[ i ]; }
+	utility::vector1< core::Real > get_bbs() const { return bbs_; }
+	utility::vector1< core::Size > get_bb_ids() const { return bb_ids_; }
 	core::Real get_eps() const { return eps_; }
 	MakeRotLibOptionsDataOP get_options_data() const { return mrlod_; }
 
@@ -45,8 +48,8 @@ private:
 
   /// @brief backbone torsion angle values that are unique to this job
   core::Real omg_;
-  core::Real phi_;
-  core::Real psi_;
+  utility::vector1< core::Real > bbs_;
+  utility::vector1< core::Size > bb_ids_;
   core::Real eps_;
 
   /// @breif access to the options data info that are not unique to this job

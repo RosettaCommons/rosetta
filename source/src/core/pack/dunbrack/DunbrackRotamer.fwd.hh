@@ -44,17 +44,19 @@ Size const ONE = 1;
 Size const TWO = 2;
 Size const THREE = 3;
 Size const FOUR = 4;
+Size const FIVE = 5; // adding this for 5 backbones because we can't do "any four" yet
+					 // and if you want a beta peptoid dependent on eps and omg...
 
 /// @brief forward declaration; default precision is DunbrackReal
-template < Size S, class P = DunbrackReal >
+template < Size S, Size N, class P = DunbrackReal >
 class DunbrackRotamerMeanSD;
 
 /// @brief forward declaration; default precision is DunbrackReal;
-template < Size S, class P = DunbrackReal >
+template < Size S, Size N, class P = DunbrackReal >
 class PackedDunbrackRotamer;
 
 /// @brief forward declaration; default precision is DunbrackReal
-template < Size S, class P = DunbrackReal >
+template < Size S, Size N, class P = DunbrackReal >
 class DunbrackRotamer;
 
 class RotamerBuildingData;
@@ -62,7 +64,7 @@ class RotamerBuildingData;
 class DunbrackRotamerSampleData;
 
 /// DOUG DOUG DOUG
-template < Size T >
+template < Size T, Size N >
 class RotamericData;
 
 } // dunbrack

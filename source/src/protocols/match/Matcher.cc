@@ -900,16 +900,70 @@ void Matcher::initialize_from_file(
 									bool failed_cast = false;
 									switch ( dun_rotlib->nchi() ) {
 										case 2: {
-											SemiRotamericSingleResidueDunbrackLibrary< ONE > const * sr2 =
-												dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE > const * >
-												( dun_rotlib.get() );
-											failed_cast = sr2 == 0;
+											switch ( dun_rotlib->nbb() ) {
+												case 1: {
+													SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * sr2 =
+													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * >
+													( dun_rotlib.get() );
+													failed_cast = sr2 == 0;
+												}
+												case 2: {
+													SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * sr2 =
+													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * >
+													( dun_rotlib.get() );
+													failed_cast = sr2 == 0;
+												}
+												case 3: {
+													SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * sr2 =
+													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * >
+													( dun_rotlib.get() );
+													failed_cast = sr2 == 0;
+												}
+												case 4: {
+													SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * sr2 =
+													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * >
+													( dun_rotlib.get() );
+													failed_cast = sr2 == 0;
+												}
+												default: {
+													utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
+																			  "All semi-rotameric libraries have 1 - 4 bb, but the library for "+
+																			  upres[ jj ]->name() + " has " + utility::to_string( dun_rotlib->nbb() ) + " bb." );
+												}
+											}
 										} break;
 										case 3: {
-											SemiRotamericSingleResidueDunbrackLibrary< TWO > const * sr3 =
-												dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO > const * >
-												( dun_rotlib.get() );
-											failed_cast = sr3 == 0;
+											switch ( dun_rotlib->nbb() ) {
+												case 1: {
+													SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * sr2 =
+													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * >
+													( dun_rotlib.get() );
+													failed_cast = sr2 == 0;
+												}
+												case 2: {
+													SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * sr2 =
+													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * >
+													( dun_rotlib.get() );
+													failed_cast = sr2 == 0;
+												}
+												case 3: {
+													SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * sr2 =
+													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * >
+													( dun_rotlib.get() );
+													failed_cast = sr2 == 0;
+												}
+												case 4: {
+													SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * sr2 =
+													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * >
+													( dun_rotlib.get() );
+													failed_cast = sr2 == 0;
+												}
+												default: {
+													utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
+																			  "All semi-rotameric libraries have 1 - 4 bb, but the library for "+
+																			  upres[ jj ]->name() + " has " + utility::to_string( dun_rotlib->nbb() ) + " bb." );
+												}
+											}
 										} break;
 										default: {
 											utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"

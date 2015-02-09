@@ -22,11 +22,11 @@ namespace protocols {
 namespace make_rot_lib {
 
 MakeRotLibJob::MakeRotLibJob( jd2::InnerJobOP inner_job, core::Size nstruct_index,
-  core::Real omg, core::Real phi, core::Real psi, core::Real eps, MakeRotLibOptionsDataOP mrlod ) :
+  core::Real omg, utility::vector1< core::Real > bbs, utility::vector1< core::Size > bb_ids, core::Real eps, MakeRotLibOptionsDataOP mrlod ) :
   jd2::Job( inner_job, nstruct_index ),
   omg_( omg ),
-  phi_( phi ),
-  psi_( psi ),
+  bbs_( bbs ),
+  bb_ids_( bb_ids ),
   eps_( eps ),
   mrlod_( mrlod )
 {}

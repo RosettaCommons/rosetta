@@ -296,7 +296,7 @@ static thread_local basic::Tracer my_tracer( "core.conformation", basic::t_warni
 			for ( Size j=1; j<= n; ++j ) {
 				TorsionID const tor_id( i, type, j );
 				AtomID atom1,atom2,atom3,atom4;
-				bool const fail
+                bool const fail
 					( get_torsion_angle_atom_ids( tor_id, atom1, atom2, atom3, atom4 ) );
 				if ( fail ) {
 					if ( ( r == 1 ) &&
@@ -644,7 +644,6 @@ Conformation::append_residue_by_jump(
 )
 {
 	pre_nresidue_change();
-
 	// handle first residue: special case
 	if ( size() < 1 ) {
 		append_residue( new_rsd, false, "", id::BOGUS_NAMED_ATOM_ID, start_new_chain );
@@ -2278,7 +2277,9 @@ Conformation::set_torsion(
 
 		// find out what are the four atoms that define this torsion angle
 		AtomID id1, id2, id3, id4;
+        //TR << "amw in set_torsion and about to call on " << tor_id.torsion() << std::endl;
 		bool const fail( get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 ) );
+        //TR << "amw just got atom ids for " << tor_id.torsion() << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
 
 		if ( fail ) 	return;
 
@@ -2286,7 +2287,8 @@ Conformation::set_torsion(
 		DOF_ID const dof_id( atom_tree_->set_torsion_angle( id1, id2, id3, id4, radians(setting) ) );
 
 		if ( !dof_id.valid() ) {
-			TR.Warning << "Unable to find torsion angle in atom_tree: " <<
+			//TR << "amw in set_torsion  " << tor_id.torsion() << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
+            TR.Warning << "Unable to find torsion angle in atom_tree: " <<
 				tor_id << std::endl;
 			return;
 		}
@@ -2925,7 +2927,6 @@ debug_assert( seqpos == fold_tree_->nres() + 1 );
 
 	// is this the first residue?
 	bool const first_residue( seqpos == 1 );
-
 	// append to residues
 	residues_append( new_rsd_in, start_new_chain, attach_by_jump, root_atom, anchor_id );
 
@@ -2968,8 +2969,7 @@ debug_assert( seqpos == fold_tree_->nres() + 1 );
 	if ( first_residue ) {
 	debug_assert( atom_tree_->empty() );
 		setup_atom_tree(); // just this once
-
-	} else {
+    } else {
 		insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
 	}
 
@@ -3215,6 +3215,7 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 		// bb or chi
 		// find out what are the four atoms that define this torsion angle
 		AtomID id1, id2, id3, id4;
+        //TR << "amw someone called atom_tree_torsion on " << tor_id.torsion() << std::endl;
 		bool const fail
 			( get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 ) );
 
@@ -3230,6 +3231,7 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 			//	id3.rsd(), residue_(id3.rsd()).atom_name(id3.atomno()).c_str(),
 			//	id4.rsd(), residue_(id4.rsd()).atom_name(id4.atomno()).c_str() ); fflush(stdout); //DELETE ME
 			// atomtree works in radians
+			//TR << "amw atoms " << residue_( id1.rsd() ).atom_name(id1.atomno()) << "-" << residue_( id2.rsd() ).atom_name(id2.atomno()) << "-" << residue_( id3.rsd() ).atom_name(id3.atomno()) << "-" << residue_( id4.rsd() ).atom_name(id4.atomno()) << " valid torsion id, so returning angle given by atom tree" << std::endl;
 			return degrees( atom_tree_->torsion_angle( id1, id2, id3, id4 ) );
 		} else { //If the torsion is not in the atom tree, it might still be a valid torsion angle (e.g. an C-terminus-to-N-terminus peptide bond).
 			//printf("Torsion angle %lu-%s %lu-%s %lu-%s %lu-%s is NOT valid.\n",
@@ -3238,8 +3240,10 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 			//	id3.rsd(), residue_(id3.rsd()).atom_name(id3.atomno()).c_str(),
 			//	id4.rsd(), residue_(id4.rsd()).atom_name(id4.atomno()).c_str() ); fflush(stdout); //DELETE ME
 			//Determine whether the atoms are bonded in a way that defines a dihedral angle:
+			//TR << "amw not an atom tree torsion, computing manually if bonded" << std::endl;
 			bool const bonded = atoms_are_bonded(id1, id2) && atoms_are_bonded(id2, id3) && atoms_are_bonded(id3, id4);
-			if(bonded) {
+			if ( bonded ) {
+				//TR << "amw atoms " << residue_( id1.rsd() ).atom_name(id1.atomno()) << "-" << residue_( id2.rsd() ).atom_name(id2.atomno()) << "-" << residue_( id3.rsd() ).atom_name(id3.atomno()) << "-" << residue_( id4.rsd() ).atom_name(id4.atomno()) << " are bonded as desired " << std::endl;
 				//Calculate the dihedral angle between these atoms and return it.
 				core::Real this_torsion(0.0);
 				numeric::dihedral_degrees(
@@ -3251,6 +3255,7 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 				);
 				return this_torsion;
 			}
+			//TR << "amw atoms " << residue_( id1.rsd() ).atom_name(id1.atomno()) << "-" << residue_( id2.rsd() ).atom_name(id2.atomno()) << "-" << residue_( id3.rsd() ).atom_name(id3.atomno()) << "-" << residue_( id4.rsd() ).atom_name(id4.atomno()) << " are not bonded " << std::endl;
 		}
 	}
 	return 0.0; //DEFAULT CASE, if the angle isn't in the atom tree AND the four atoms aren't bonded.
@@ -3298,6 +3303,11 @@ Conformation::setup_atom_tree()
 // hacky, sorry.
 // Love, 2012 Doug
 //
+// Dear all Dougs,
+// I am making this somewhat more elegant, maybe, at least for the ACE-X-NME case,
+// because unless torsion is 1, ntorsions, or ntorsions-1 all the atoms are part of the mainchain
+// Best, Andy
+//
 /// @note returns TRUE for FAILURE
 bool
 Conformation::backbone_torsion_angle_atoms(
@@ -3321,45 +3331,67 @@ Conformation::backbone_torsion_angle_atoms(
 
 	AtomIndices const & mainchain( rsd.mainchain_atoms() );
 
-	Size const ntorsions( mainchain.size() );
-debug_assert( torsion >= 1 && torsion <= ntorsions );
+	Size const ntorsions( mainchain.size() ); // rsd.mainchain_torsions().size() - 1?
+	if ( torsion < 1 || torsion > ntorsions ) return fail;
+    
+    debug_assert( torsion >= 1 && torsion <= ntorsions );
 
 	// this is hacky
 	// the ACETYLATED_NTERMINUS and METHYLATED_CTERMINUS prepend and append additional backbone atoms which is why the numbers may seem off
 	if( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) && rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
 		// set all id rsds to seqpos since they are all in the same residue
 		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
-
-		// torsion 1; epsilon
-		if( torsion == 1 ){
-			id1.atomno() = rsd.atom_index( "CP2" );
-			id2.atomno() = mainchain[1];
-			id3.atomno() = mainchain[2];
-			id4.atomno() = mainchain[3];
-		}
-		// torsion 2; phi
-		if( torsion == 2 ){
-			id1.atomno() = mainchain[1];
-			id2.atomno() = mainchain[2];
-			id3.atomno() = mainchain[3];
-			id4.atomno() = mainchain[4];
-		}
-		// torsion 3; psi
-		if( torsion == 3 ){
-			id1.atomno() = mainchain[2];
-			id2.atomno() = mainchain[3];
-			id3.atomno() = mainchain[4];
-			id4.atomno() = rsd.atom_index( "NM" );
-		}
-		// torsion 4; omega
-		if( torsion == 4 ){
-			id1.atomno() = mainchain[3];
-			id2.atomno() = mainchain[4];
-			id3.atomno() = rsd.atom_index( "NM" );
-			id4.atomno() = rsd.atom_index( "CN" );
-		}
-
-		// the ACETYLATED_NTERMINUS prepends an additional backbone atom which is why the numbers are increased by one
+        if (rsd.type().is_peptoid() ) {
+            // just explicit for now
+            if ( torsion == 1 ){
+                id1.atomno() = rsd.atom_index( "CP2" );
+                id2.atomno() = rsd.atom_index( "CO" );
+                id3.atomno() = rsd.atom_index( "N" );
+                id4.atomno() = rsd.atom_index( "CA" );
+            } else if ( torsion == 2 ) {
+                id1.atomno() = rsd.atom_index( "CO" );
+                id2.atomno() = rsd.atom_index( "N" );
+                id3.atomno() = rsd.atom_index( "CA" );
+                id4.atomno() = rsd.atom_index( "C" );
+            } else if ( torsion == 3 ) {
+                id1.atomno() = rsd.atom_index( "N" );
+                id2.atomno() = rsd.atom_index( "CA" );
+                id3.atomno() = rsd.atom_index( "C" );
+                id4.atomno() = rsd.atom_index( "NM" );
+            } else {
+                id1.atomno() = rsd.atom_index( "CA" );
+                id2.atomno() = rsd.atom_index( "C" );
+                id3.atomno() = rsd.atom_index( "NM" );
+                id4.atomno() = rsd.atom_index( "CN" );
+            }
+        } else {
+        if ( torsion == 1 ){
+            id1.atomno() = rsd.atom_index( "CP2" ); //CP2 0
+            id2.atomno() = mainchain[0+torsion];//CO 1
+            id3.atomno() = mainchain[1+torsion];//N 2
+            id4.atomno() = mainchain[2+torsion];//CA 3
+            //std::cout << "CP2-" << rsd.atom_name( id2.atomno() ) << "-" << rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
+        } else if ( torsion == rsd.mainchain_torsions().size() - 1 ) {
+            id1.atomno() = mainchain[-1+torsion]; //N 2
+            id2.atomno() = mainchain[0+torsion]; //CA 3
+            id3.atomno() = mainchain[1+torsion]; //C 4
+            id4.atomno() = rsd.atom_index( "NM" ); //NM 5
+            //std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" << rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
+        } else if ( torsion == rsd.mainchain_torsions().size() ) {
+            id1.atomno() = mainchain[-1+torsion]; //CA 3 or CM 4
+            id2.atomno() = mainchain[0+torsion]; //C 4 or C 5
+            id3.atomno() = rsd.atom_index( "NM" ); //NM 5
+            id4.atomno() = rsd.atom_index( "CN" ); //CN 6
+            //std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" << rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
+        } else if ( torsion < /*ntorsions*/rsd.mainchain_torsions().size() - 1 ) {
+            id1.atomno() = mainchain[-1+torsion]; //CO 1 or N 2
+            id2.atomno() = mainchain[0+torsion]; //N 2 or CA 3
+            id3.atomno() = mainchain[1+torsion]; //CA 3 or CM 4
+            id4.atomno() = mainchain[2+torsion]; //C 4 or C 5
+            //std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" << rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
+        }
+        }
+    // the ACETYLATED_NTERMINUS prepends an additional backbone atom which is why the numbers are increased by one
 	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
 		// torsion 1; phi
 		if( torsion == 1 ) {
@@ -3462,7 +3494,6 @@ debug_assert( torsion >= 1 && torsion <= ntorsions );
 		id3.atomno() = mainchain[ torsion+1 ];
 		id4.rsd()	= seqpos;
 		id4.atomno() = mainchain[ torsion+2 ];
-
 	} else {
 		if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && residues_[ chain_begin( rsd.chain() ) ]->has_variant_type( chemical::NTERM_CONNECT ) ) {
 			// assume that they are connected as a cyclic polymer. psi and omg are defined eventhough it is last residue
@@ -3543,7 +3574,7 @@ debug_assert( torsion >= 1 && torsion <= ntorsions );
 				id3.atomno() = mainchain[ torsion+1 ];
 				//id4.rsd()	= seqpos+1;
 				//id4.atomno() = next_mainchain[ 1 ];
-
+                
 				//Altered by VKM, 12 June 2014: we want to fish out whatever atom the residue is connected to.
 				id4.rsd() = rsd.residue_connection_partner(rsd.type().upper_connect_id()); //Get the residue index of the residue connected to this residue at this residue's connection #2.
 				if(residue_(id4.rsd()).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().upper_connect_id() )) {
@@ -3732,7 +3763,7 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 	using id::CHI;
 
 	Residue & rsd( *residues_[seqpos] );
-
+    
 	// mainchain
 	for ( Size j=1, j_end = rsd.mainchain_torsions().size(); j<= j_end; ++j ) {
 		// these hacks are for cyclization
@@ -3758,12 +3789,26 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 			TorsionID tid(seqpos,BB,j);
 			AtomID id1, id2, id3, id4;
 			get_torsion_angle_atom_ids( tid, id1, id2, id3, id4 );
+			//TR << "amw torsion " << j << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
 
 			rsd.mainchain_torsions()[ j ] = numeric::dihedral_degrees(
 				residues_[ id1.rsd() ]->xyz( id1.atomno() ),
 				residues_[ id2.rsd() ]->xyz( id2.atomno() ),
 				residues_[ id3.rsd() ]->xyz( id3.atomno() ),
 				residues_[ id4.rsd() ]->xyz( id4.atomno() ) );
+		}
+		// make rot lib case
+		else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) && rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ){
+			if ( j < rsd.mainchain_torsions().size() ) {
+				//TR << "amw in update_residue_torsions, considering running get_torsion_angle_atom_ids on torsion " << j << std::endl;
+                TorsionID tid(seqpos,BB,j);
+				AtomID id1, id2, id3, id4;
+    	   	    get_torsion_angle_atom_ids( tid, id1, id2, id3, id4 );
+				//TR << "amw torsion " << j << " has atoms " << residue_( id1.rsd() ).atom_name(id1.atomno()) << "-" << residue_( id2.rsd() ).atom_name(id2.atomno()) << "-" << residue_( id3.rsd() ).atom_name(id3.atomno()) << "-" << residue_( id4.rsd() ).atom_name(id4.atomno()) << "." << std::endl;
+				//TR << "amw torsion " << j << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
+				//TR << "amw about to assign torison " << j << " the value " << atom_tree_torsion( TorsionID(seqpos, BB, j)) << std::endl;
+				rsd.mainchain_torsions()[ j ] = atom_tree_torsion( TorsionID(seqpos,BB,j) );
+			}
 		}
 		// normal residue
 		else {

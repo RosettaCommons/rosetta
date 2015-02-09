@@ -86,6 +86,12 @@ public:
 		Real phi,
 		Real psi
 	) const = 0;
+	
+	/*virtual
+	utility::vector1< DunbrackRotamerSampleData >
+	get_all_rotamer_samples(
+		utility::vector1< Real > bbs
+	) const = 0;*/
 
 	/// @brief Return the probability for a particular rotamer where rotamers are
 	/// indexed in order of decreasing probability (or something very close to
@@ -97,6 +103,13 @@ public:
 		Real psi,
 		Size rot_ind
 	) const = 0;
+	
+	/*virtual
+	Real
+	get_probability_for_rotamer(
+		utility::fixedsizearray1< Real > bbs,
+		Size rot_ind
+	) const = 0;*/
 
 	virtual
 	DunbrackRotamerSampleData
@@ -105,6 +118,13 @@ public:
 		Real psi,
 		Size rot_ind
 	) const = 0;
+    
+	/*virtual
+	DunbrackRotamerSampleData
+	get_rotamer(
+		utility::vector1< Real > bbs,
+		Size rot_ind
+	) const = 0;*/
 
 	virtual
 	Real
@@ -117,6 +137,18 @@ public:
 	get_psi_from_rsd(
 		conformation::Residue const & rsd
 	) const = 0;
+    
+	//virtual
+	//Real
+	//get_bb_from_rsd(
+	//	conformation::Residue const & rsd,
+	//	Size bbn
+	//) const = 0;
+	//virtual
+	//utility::vector1< Real >
+	//get_bbs_from_rsd(
+	//	conformation::Residue const & rsd
+	//) const = 0;
 
 public:
 	/// Virtual functions the derived classes must implement
@@ -127,6 +159,10 @@ public:
 	/// @brief The number of chi represented by the library.
 	virtual
 	Size nchi() const = 0;
+    
+    /// @brief the number of backbone dihedrals represented by the library
+    virtual
+    Size nbb() const = 0;
 
 	virtual
 	Size n_rotamer_bins() const = 0;
@@ -346,7 +382,7 @@ private:
 	Size const n_rotameric_chi_;
 	utility::vector1< Size > n_chi_bins_;
 	utility::vector1< Size > n_chi_products_; // n_chi_products_[ i ] = prod( j in i+1 to nchi, n_chi_bins_[ j ] );
-
+    
 	Size n_packed_rots_;
 	Size n_possible_rots_; // prod( i in 1 to nchi, n_chi_bins_[ i ] );
 

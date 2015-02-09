@@ -28,9 +28,10 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // ObjexxFCL Headers
+#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray4D.hh>
+//#include <ObjexxFCL/FArray4D.hh>
 
 #include <utility/vector1.hh>
 
@@ -97,15 +98,15 @@ public:
 /// class itself. This option, however, is not thread safe.
 /// This data is used by the SemiRotamericSRDL class for when building
 /// backbone dependent rotamers.
-template < Size T >
-class BBDepSemiRotamericData : public RotamericData< T >
+template < Size T, Size N >
+class BBDepSemiRotamericData : public RotamericData< T, N >
 {
 public:
-	typedef RotamericData< T > parent;
+	typedef RotamericData< T, N > parent;
 
 public:
 	BBDepSemiRotamericData(
-		DunbrackRotamer< T, Real > const & rotamer_in,
+		DunbrackRotamer< T, N, Real > const & rotamer_in,
 		BBDepNRChiSample< Real > const & bbdep_nrchi_sample_in
 	)
 	:
@@ -125,31 +126,17 @@ private:
 
 };
 
+template < Size N >
 struct BBDepScoreInterpData
 {
 public:
-	BBDepScoreInterpData() :
-		value_(0.0),
-		dsecox_(0.0),
-		dsecoy_(0.0),
-		dsecoz_(0.0),
-		dsecoxy_(0.0),
-		dsecoxz_(0.0),
-		dsecoyz_(0.0),
-		dsecoxyz_(0.0)
-	{}
+    BBDepScoreInterpData()
+    {}
+	
+	inline bool operator==( BBDepScoreInterpData< N > const & other ) const;
+    
+	utility::fixedsizearray1< Real, ( 1 << (N+1) ) > n_derivs_;
 
-	bool
-	operator==( BBDepScoreInterpData const & other ) const;
-
-	DunbrackReal value_;      ///< f(x,y,z)
-	DunbrackReal dsecox_;     ///< second order derivative for x -- d**2/dx**2 f(x,y,z)
-	DunbrackReal dsecoy_;     ///< second order derivative for y
-	DunbrackReal dsecoz_;     ///< second order derivative for z
-	DunbrackReal dsecoxy_;    ///< second order derivative for x and y
-	DunbrackReal dsecoxz_;    ///< second order derivative for x and z
-	DunbrackReal dsecoyz_;    ///< second order derivative for y and z
-	DunbrackReal dsecoxyz_;   ///< second order derivative for x y and z
 };
 
 
@@ -159,14 +146,14 @@ public:
 /// class itself. This option, however, is not thread safe.
 /// This data is used by the SemiRotamericSRDL class for when building
 /// backbone independent rotamers.
-template < Size T >
-class BBIndSemiRotamericData : public RotamericData< T >
+template < Size T, Size N >
+class BBIndSemiRotamericData : public RotamericData< T, N >
 {
 public:
-	typedef RotamericData< T > parent;
+	typedef RotamericData< T, N > parent;
 public:
 	BBIndSemiRotamericData(
-		DunbrackRotamer< T, Real > const & rotamer,
+		DunbrackRotamer< T, N, Real > const & rotamer,
 		BBIndNRChiSample<> const & bbind_nrchi_sample_in,
 		Size const nrchi_bin_id_in
 	)
@@ -194,8 +181,6 @@ private:
 	Size nrchi_bin_id_;
 };
 
-
-
 class ProbSortClass {
 public:
 	Real probability_;
@@ -217,11 +202,11 @@ psc_compare( ProbSortClass left, ProbSortClass right );
 /// is sensitive to the chi3 value.  If the third diherdal switches from trans to g+, then chi1
 /// would shift in response.  Changes to the non-rotameric chi do not effect the rotameric chi.
 /// The data structure here is good for this model but no other.
-template < Size T >
-class SemiRotamericSingleResidueDunbrackLibrary : public RotamericSingleResidueDunbrackLibrary< T >
+template < Size T, Size N >
+class SemiRotamericSingleResidueDunbrackLibrary : public RotamericSingleResidueDunbrackLibrary< T, N >
 {
 public:
-	typedef RotamericSingleResidueDunbrackLibrary< T > parent;
+	typedef RotamericSingleResidueDunbrackLibrary< T, N > parent;
 	typedef SingleResidueDunbrackLibrary grandparent;
 
 public:
@@ -238,7 +223,7 @@ public:
 		bool const backbone_independent_rotamer_sampling // true uses less memory
 	);
 
-	virtual ~SemiRotamericSingleResidueDunbrackLibrary();
+	virtual ~SemiRotamericSingleResidueDunbrackLibrary() throw();
 
 	friend class SingleResidueDunbrackLibrary;
 public:
@@ -305,28 +290,28 @@ public:
 	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
-		Real phi,
-		Real psi
+		utility::fixedsizearray1< Real, N > bbs
 	) const;
 
 	virtual
 	Real
 	get_probability_for_rotamer(
-		Real phi,
-		Real psi,
+		utility::fixedsizearray1< Real, N > bbs,
 		Size rot_ind
 	) const;
 
 	virtual
 	DunbrackRotamerSampleData
 	get_rotamer(
-		Real phi,
-		Real psi,
+		utility::fixedsizearray1< Real, N > bbs,
 		Size rot_ind
 	) const;
 
 	virtual
 	Size nchi() const;
+	
+	virtual
+	Size nbb() const;
 
 	virtual
 	Size n_rotamer_bins() const;
@@ -401,7 +386,7 @@ public:
 	set_nonrotameric_chi_bbind_scoring_step_size( Real step_size_in_degrees );
 
 protected:
-
+    
 	virtual Size memory_usage_static() const;
 	virtual Size memory_usage_dynamic() const;
 
@@ -449,8 +434,7 @@ protected:
 		conformation::Residue const & rsd,
 		RotamerLibraryScratchSpace & scratch,
 		Real & dnrchi_score_dnrchi,
-		Real & dnrchi_score_dphi,
-		Real & dnrchi_score_dpsi
+        utility::fixedsizearray1< Real, N > & dnrchi_score_dbb
 	) const;
 
 
@@ -482,42 +466,36 @@ protected:
 
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples_bbind(
-		Real phi,
-		Real psi
+		utility::fixedsizearray1<Real, N> bbs
 	) const;
 
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples_bbdep(
-		Real phi,
-		Real psi
+		utility::fixedsizearray1<Real, N> bbs
 	) const;
 
 	Real
 	get_probability_for_rotamer_bbind(
-		Real phi,
-		Real psi,
+		utility::fixedsizearray1<Real, N> bbs,
 		Size rot_ind
 	) const;
 
 	Real
 	get_probability_for_rotamer_bbdep(
-		Real phi,
-		Real psi,
+		utility::fixedsizearray1<Real, N> bbs,
 		Size rot_ind
 	) const;
 
 	DunbrackRotamerSampleData
 	get_rotamer_bbind(
-		Real phi,
-		Real psi,
+		utility::fixedsizearray1<Real, N> bbs,
 		Size rot_ind
 	) const;
 
 
 	DunbrackRotamerSampleData
 	get_rotamer_bbdep(
-		Real phi,
-		Real psi,
+		utility::fixedsizearray1<Real, N> bbs,
 		Size rot_ind
 	) const;
 
@@ -530,7 +508,7 @@ protected:
 		pack::task::ResidueLevelTask const & rtask,
 		bool buried,
 		Size const chi_index,
-		RotamericData< T > const & rotamer_data,
+		RotamericData< T, N > const & rotamer_data,
 		utility::vector1< Real > const & extra_steps,
 		utility::vector1< Real > & total_chi,
 		utility::vector1< int  > & total_rot,
@@ -540,6 +518,15 @@ protected:
 
 
 private:
+	void
+	recover_rotamers_in_order(
+		Size rot_ind,
+		utility::vector1< Real > probs_of_next_rotamers,
+		Real & last_prob,
+		Size & last_nrchi_rotno,
+		Size & last_rchi_rotno
+	);
+	
 	void
 	read_rotamer_definitions( utility::io::izstream & in_rotdef );
 
@@ -562,7 +549,7 @@ private:
 		conformation::Residue const& existing_residue,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
-		PackedDunbrackRotamer< T, Real > const & interpolated_rotamer,
+		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 		BBDepNRChiSample< Real > const interpolated_sample,
 		RotamerVector & rotamers
 	) const;
@@ -577,7 +564,7 @@ private:
 		conformation::Residue const& existing_residue,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
-		PackedDunbrackRotamer< T, Real > const & interpolated_rotamer,
+		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 		Size const nrchi_rotno,
 		BBIndNRChiSample<> const & interpolated_sample,
 		RotamerVector & rotamers
@@ -589,7 +576,7 @@ private:
 		pack::task::ResidueLevelTask const & rtask,
 		bool buried,
 		Size const chi_index,
-		RotamericData< T > const & rotamer_data,
+		RotamericData< T, N > const & rotamer_data,
 		utility::vector1< Real > const & extra_steps,
 		utility::vector1< Real > & total_chi,
 		utility::vector1< int  > & total_rot,
@@ -603,7 +590,7 @@ private:
 		pack::task::ResidueLevelTask const & rtask,
 		bool buried,
 		Size const chi_index,
-		RotamericData< T > const & rotamer_data,
+		RotamericData< T, N > const & rotamer_data,
 		utility::vector1< Real > const & extra_steps,
 		utility::vector1< Real > & total_chi,
 		utility::vector1< int  > & total_rot,
@@ -626,28 +613,22 @@ private:
 		Size & bin_upper,
 		Real & nrchi_alpha
 	) const;
-
+    
+    BBDepNRChiSample< Real >
+	interpolate_bbdep_nrchi_sample(
+                                   Size const packed_rotno,
+                                   Size const nrchi_bin,
+                                   utility::fixedsizearray1< Size, N > const bb_bin,
+                                   utility::fixedsizearray1< Size, N > const bb_bin_next,
+                                   utility::fixedsizearray1< Real, N > const bb_alpha
+                                   ) const;
+    
 	BBDepNRChiSample< Real >
 	interpolate_bbdep_nrchi_sample(
-		Size const packed_rotno,
-		Size const nrchi_bin,
-		Size const phibin,
-		Size const psibin,
-		Size const phibin_next,
-		Size const psibin_next,
-		Real const phi_alpha,
-		Real const psi_alpha
-	) const;
+                                   utility::vector1< BBDepNRChiSample<> > const & nrchi_sample,
+                                   utility::fixedsizearray1< Real, N > const bb_alpha
+                                   ) const;
 
-	BBDepNRChiSample< Real >
-	interpolate_bbdep_nrchi_sample(
-		BBDepNRChiSample<> const & nrchi_sample_00,
-		BBDepNRChiSample<> const & nrchi_sample_01,
-		BBDepNRChiSample<> const & nrchi_sample_10,
-		BBDepNRChiSample<> const & nrchi_sample_11,
-		Real const phi_alpha,
-		Real const psi_alpha
-	) const;
 
 private:
 	/// @brief no default ctor
@@ -666,7 +647,8 @@ private:
 	/// parameters for tricubic interpolation are stored.  The supporting information is used to snap chi values stored in a
 	/// residue to a meaningful periodic range and to make tricubic interpolation possible.
 	/// This data is used only if bbind_nrchi_scoring is false.
-	utility::vector1< ObjexxFCL::FArray3D< BBDepScoreInterpData > > bbdep_nrc_interpdata_;
+    // amw now indexed as index, nrchi
+	utility::vector1< ObjexxFCL::FArray2D< BBDepScoreInterpData<N> > > bbdep_nrc_interpdata_;
 	Size bbdep_nrchi_nbins_;
 	Real bbdep_nrchi_binsize_;
 
@@ -695,8 +677,9 @@ private:
 
 	/// This variable is used iff bbind_nrchi_sampling_ is false;
 	/// Space is not allocated if it is true.
-	ObjexxFCL::FArray3D< BBDepNRChiSample<> > bbdep_rotamers_to_sample_;
-	ObjexxFCL::FArray4D< Size > bbdep_rotsample_sorted_order_;
+    // amw reduced
+	ObjexxFCL::FArray2D< BBDepNRChiSample<> > bbdep_rotamers_to_sample_;
+	ObjexxFCL::FArray3D< Size > bbdep_rotsample_sorted_order_;
 
 };
 

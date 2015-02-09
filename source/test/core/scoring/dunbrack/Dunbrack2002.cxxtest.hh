@@ -27,6 +27,9 @@
 
 #include <core/graph/Graph.hh>
 
+//amw
+#include <core/pose/PDBInfo.hh>
+
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -118,8 +121,8 @@ public:
 			assert( is_int(temp1) && is_int(temp2) );
 			pos  = int_of(temp1);
 			nchi = int_of(temp2);
-
-			TS_ASSERT( pose.residue( pos ).nchi() == nchi );
+            
+            TS_ASSERT( pose.residue( pos ).nchi() == nchi );
 			utility::vector1< Real > chis;
 			chi_gold.push_back( chis );
 			for ( Size ii = 1; ii <= nchi; ++ii ) {
@@ -149,8 +152,8 @@ public:
 			if (rotlib) {
 				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, residue.type().get_self_ptr(), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
 			}
-
-			bool bOut ( false  );//switch to true to produce a new test_input file
+            
+            bool bOut ( false  );//switch to true to produce a new test_input file
 			for ( utility::vector1< ResidueOP >::const_iterator it = suggested_rotamers.begin(),
 							eit = suggested_rotamers.end();
 						it!=eit;
@@ -158,13 +161,14 @@ public:
 
 				// if the number of rotamers built does not match the number in the "gold" files, quit
 				if ( ct > chi_gold.size() ) {
-					TS_ASSERT( ct <= chi_gold.size() ); // tell the user that something is wrong
+                    TS_ASSERT( ct <= chi_gold.size() ); // tell the user that something is wrong
 					break;
 				}
 
 				if ( bOut )	std::cout << pos << " " << residue.nchi() << " ";
 				else {
 					if ( chi_gold[ct].size() != residue.nchi() ) {
+                        
 						TS_ASSERT( chi_gold[ ct ].size() == residue.nchi() );
 						++ct;
 						break; // something is very wrong
@@ -230,11 +234,10 @@ public:
 
 		Real const phi_example = -59;
 		Real const psi_example =  61;
-
+        
 		for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) {
 
 			if ( AA( ii ) == aa_ala || AA( ii ) == aa_gly ) continue;
-
 			SingleResidueRotamerLibraryCOP aa_rotlib = rotlib.get_library_by_aa( (AA) ii );
 			SingleResidueDunbrackLibraryCOP aa_dunlib( utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( aa_rotlib ) );
 			TS_ASSERT( aa_dunlib );
@@ -244,11 +247,11 @@ public:
 			}
 
 			Size const ii_nrots = aa_dunlib->n_rotamer_bins();
-			utility::vector1< DunbrackRotamerSampleData > aa_samples = aa_dunlib->get_all_rotamer_samples( phi_example, psi_example );
+            utility::vector1< DunbrackRotamerSampleData > aa_samples = aa_dunlib->get_all_rotamer_samples( phi_example, psi_example );
 
 			TS_ASSERT( aa_samples.size() <= ii_nrots );
 			for ( Size jj = 1; jj <= aa_samples.size(); ++jj ) {
-				Real const jj_prob = aa_dunlib->get_probability_for_rotamer( phi_example, psi_example, jj );
+                Real const jj_prob = aa_dunlib->get_probability_for_rotamer( phi_example, psi_example, jj );
 				TS_ASSERT_DELTA( aa_samples[ jj ].probability(), jj_prob, 1e-10 );
 			}
 		}
@@ -335,6 +338,11 @@ public:
 			NumDerivCheckData const & iidata( deriv_check_result->deriv_check_result( ii ) );
 			TS_ASSERT( iidata.nsteps() >= 1 );
 			for ( Size jj = 1; jj <= iidata.nangles(); ++jj ) {
+                if ( jj % 3 == 1 ) // new res
+                    std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
+                else
+                    std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
+                
 				TS_ASSERT_DELTA( iidata.dof_step_data( jj, 1 ).num_deriv(), iidata.dof_step_data( jj, 1 ).ana_deriv(), 1e-6 );
 			}
 		}

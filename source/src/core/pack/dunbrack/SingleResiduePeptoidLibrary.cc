@@ -577,10 +577,10 @@ debug_assert( false );
 	utility_exit_with_message(
 	"ERROR: SingleResiduePeptoidLibrary::hokey_template_workaround should never be called!");
 
-	RotamericSingleResiduePeptoidLibrary< ONE >   rsrdl_1;
-	RotamericSingleResiduePeptoidLibrary< TWO >   rsrdl_2;
-	RotamericSingleResiduePeptoidLibrary< THREE > rsrdl_3;
-	RotamericSingleResiduePeptoidLibrary< FOUR >  rsrdl_4;
+	RotamericSingleResiduePeptoidLibrary< ONE, THREE >   rsrdl_1;
+	RotamericSingleResiduePeptoidLibrary< TWO, THREE >   rsrdl_2;
+	RotamericSingleResiduePeptoidLibrary< THREE, THREE > rsrdl_3;
+	RotamericSingleResiduePeptoidLibrary< FOUR, THREE >  rsrdl_4;
 
 	chemical::ResidueType rt( NULL, NULL, NULL, NULL );
 	conformation::Residue rsd( rt, true );

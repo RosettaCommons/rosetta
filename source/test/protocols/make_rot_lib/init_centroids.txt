@@ -1,45 +1,45 @@
 # Centroid 1
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 300 300 1 0
 chi 2 300 300 1 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Centroid 2
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 300 300 1 0
 chi 2 180 180 2 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Centroid 3
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 300 300 1 0
 chi 2 60 60 3 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Centroid 4
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 180 180 2 0
 chi 2 300 300 1 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Centroid 5
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 180 180 2 0
 chi 2 180 180 2 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Centroid 6
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 180 180 2 0
 chi 2 60 60 3 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Centroid 7
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 60 60 3 0
 chi 2 300 300 1 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Centroid 8
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 60 60 3 0
 chi 2 180 180 2 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Centroid 9
-RotData: 0 0 0 0 0 0 2 9 0 0 0
+RotData: 2 0 0 0 0 0 0 2 9 0 0 0
 chi 1 60 60 3 0
 chi 2 60 60 3 0
 cen_dist 0 0 0 0 0 0 0 0 0

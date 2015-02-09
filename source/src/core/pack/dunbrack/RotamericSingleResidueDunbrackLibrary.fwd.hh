@@ -21,7 +21,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-template < Size T >
+template < Size T, Size N >
 class RotamericSingleResidueDunbrackLibrary;
 
 } // namespace dunbrack

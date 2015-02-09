@@ -155,7 +155,6 @@ interpolate_trilinear_by_value(
 	double & dval_dz
 );
 
-
 void
 interpolate_2d_func_of_angles(
 	double const x,

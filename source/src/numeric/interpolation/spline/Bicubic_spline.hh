@@ -93,7 +93,12 @@ public:
 
 
 	/// get the second order derivatives of the spline
-	MathMatrix< Real> const &get_dsecox() const
+	MathMatrix< Real> const &get_values() const
+	{
+		return values_;
+	}
+    
+    MathMatrix< Real> const &get_dsecox() const
 	{
 		return dsecox_;
 	}

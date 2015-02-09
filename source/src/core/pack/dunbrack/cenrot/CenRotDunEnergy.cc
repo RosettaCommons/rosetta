@@ -101,7 +101,7 @@ void CenRotDunEnergy::residue_energy(
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
-debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
+	debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 
 	/// accumulate total energies
 	Real dun_score( 0.0 );
@@ -110,14 +110,14 @@ debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 	RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library( rsd.type() );
 
-	if (residue_rotamer_library==0) return;
+	if ( residue_rotamer_library == 0 ) return;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
-		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
+		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >( residue_rotamer_library )
 	);
 
-	RotamerLibraryScratchSpace scratch; //dummy
-	dun_score = residue_cenrot_library->rotamer_energy(rsd, scratch);
+	RotamerLibraryScratchSpace scratch;
+	dun_score = residue_cenrot_library->rotamer_energy( rsd, scratch );
 
 	emap[ cen_rot_dun ] += dun_score;
 } // residue_energy
@@ -160,7 +160,7 @@ debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 
 		if ( residue_cenrot_library != 0 && rsd.is_protein() && tor_id.type() == id::BB ) {
 			RotamerLibraryScratchSpace scratch;
-			residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(rsd, scratch);
+			residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv( rsd, scratch );
 
 			if ( tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
 				//for backbone torsion angles: phi, psi, omega?
@@ -200,7 +200,8 @@ debug_assert(pose.residue( tor_id.rsd() ).residue_type_set().name()==chemical::C
 			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 		);
 
-		if (residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB) {
+		if (residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB ) {
+			
 			RotamerLibraryScratchSpace scratch;
 			residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(pose.residue( tor_id.rsd() ), scratch);
 
@@ -249,7 +250,7 @@ debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 	Vector const rC (rsd.atom(nC).xyz());
 	Vector const rD (rsd.atom(nD).xyz());
 
-	RotamerLibraryScratchSpace scratch; //hack, save the deriv in dE_dchi
+	RotamerLibraryScratchSpace scratch;
 	residue_cenrot_library->rotamer_energy_deriv(rsd, scratch);
 	Real4 const & dE_dchi(scratch.dE_dchi());
 	Real dE_ddis(dE_dchi[1]);

@@ -88,3 +88,4 @@ dunbrack_print( RotVec &, RotVec &, std::string );
 } // namespace protocols
 
 #endif // INCLUDED_protocols_makerotlib_makerotlib_HH
+

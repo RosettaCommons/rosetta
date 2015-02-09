@@ -37,7 +37,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-template < Size T >
+template < Size T, Size N >
 class RotamericSingleResiduePeptoidLibrary : public SingleResiduePeptoidLibrary
 {
 public:
@@ -205,10 +205,10 @@ protected:
 protected:
 	/// Read and write access for derived classes
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const &
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const &
 	rotamers( Real omg_angle ) const;
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > &
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > &
 	rotamers( Real omg_angle );
 
 	ObjexxFCL::FArray4D< Size > const &
@@ -249,12 +249,12 @@ protected:
 		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		Size const packed_rotno,
-		PackedDunbrackRotamer< T, Real > & interpolated_rotamer
+		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 	) const;
 
 	void
 	interpolate_rotamers(
-		typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers,
+		typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers,
 		ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno,
 		RotamerLibraryScratchSpace & scratch,
 		Size const packed_rotno,
@@ -267,7 +267,7 @@ protected:
 		Real const omg_alpha,
 		Real const phi_alpha,
 		Real const psi_alpha,
-		PackedDunbrackRotamer< T, Real > & interpolated_rotamer
+		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 	) const;
 
 	/// @brief Assigns random chi angles and returns the packed_rotno for the chosen random rotamer.
@@ -284,7 +284,7 @@ protected:
 
 	void
 	assign_chi_for_interpolated_rotamer(
-		PackedDunbrackRotamer< T, Real > const & interpolated_rotamer,
+		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 		conformation::Residue const & rsd,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
@@ -361,7 +361,7 @@ private:
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
 		RotamerVector & rotamers,
-		PackedDunbrackRotamer< T, Real > const & interpolated_rotamer
+		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
 	) const;
 
 
@@ -380,9 +380,9 @@ private:
 protected:
 
 	template< class P >
-	DunbrackRotamer< T, P >
+	DunbrackRotamer< T, N, P >
 	packed_rotamer_2_regular_rotamer(
-		PackedDunbrackRotamer< T, P > const & packedrot
+		PackedDunbrackRotamer< T, N, P > const & packedrot
 	) const;
 
 	/// @brief This member function constructs a list of all combinations of chi angles
@@ -395,7 +395,7 @@ protected:
 		pack::task::PackerTask const & task,
 		Size const seqpos,
 		bool buried,
-		RotamericData< T > const & rotamer_data,
+		RotamericData< T, N > const & rotamer_data,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		utility::vector1< ChiSetOP > & chi_set_vector
 	) const;
@@ -413,7 +413,7 @@ protected:
 		pack::task::ResidueLevelTask const & rtask,
 		bool buried,
 		Size const chi_index,
-		RotamericData< T > const & rotamer_data,
+		RotamericData< T, N > const & rotamer_data,
 		utility::vector1< Real > const & extra_steps,
 		utility::vector1< Real > & total_chi,
 		utility::vector1< int  > & total_rot,
@@ -487,8 +487,8 @@ private:
 	/// The FArray4D is indexed into by (omg, phi, psi, sorted_index ), where
 	/// sorted index simply means the order for a particular packed_rotno in the
 	/// list of rotamers sorted by probability.
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > trans_rotamers_;
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > cis_rotamers_;
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > trans_rotamers_;
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > cis_rotamers_;
 
 	/// Quick lookup that lists the sorted position for the packed rotamer number
 	/// given a omg/phi/psi.  Indexed by (omg, phi, psi, packed_rotno ).

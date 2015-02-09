@@ -1,720 +1,720 @@
 # Rotamer 1
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 2
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 3
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 4
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 5
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 6
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 7
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 8
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 9
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 10
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 11
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 12
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 0 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 13
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 14
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 15
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 16
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 17
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 18
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 19
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 20
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 21
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 22
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 23
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 24
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 30 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 25
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 26
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 27
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 28
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 29
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 30
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 31
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 32
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 33
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 34
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 35
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 36
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 60 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 37
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 38
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 39
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 40
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 41
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 42
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 43
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 44
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 45
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 46
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 47
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 48
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 90 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 49
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 50
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 51
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 52
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 53
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 54
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 55
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 56
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 57
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 58
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 59
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 60
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 120 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 61
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 62
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 63
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 64
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 65
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 66
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 67
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 68
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 69
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 70
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 71
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 72
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 150 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 73
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 74
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 75
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 76
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 77
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 78
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 79
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 80
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 81
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 82
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 83
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 84
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 180 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 85
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 86
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 87
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 88
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 89
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 90
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 91
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 92
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 93
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 94
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 95
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 96
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 210 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 97
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 98
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 99
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 100
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 101
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 102
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 103
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 104
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 105
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 106
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 107
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 108
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 240 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 109
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 110
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 111
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 112
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 113
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 114
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 115
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 116
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 117
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 118
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 119
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 120
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 270 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 121
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 122
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 123
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 124
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 125
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 126
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 127
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 128
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 129
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 130
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 131
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 132
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 300 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 133
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 0 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 134
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 30 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 135
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 60 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 136
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 90 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 137
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 120 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 138
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 150 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 139
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 180 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 140
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 210 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 141
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 240 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 142
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 270 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 143
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 300 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0
 # Rotamer 144
-RotData: -60 -40 180 180 0 0 2 9 0 0 0
+RotData: 2 -60 -40 180 180 0 0 2 9 0 0 0
 chi 1 330 0 0 0
 chi 2 330 0 0 0
 cen_dist 0 0 0 0 0 0 0 0 0

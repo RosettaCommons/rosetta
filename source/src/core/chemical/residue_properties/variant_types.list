@@ -52,6 +52,7 @@ SPECIAL_ROT  # generic VariantType that allows for differential scoring of a set
 HYDROXYLATION1  # used specifically for hydroxylated Pro
 HYDROXYLATION2  # used specifically for hydroxylated Pro
 
+METHYLATED_NTERM_VARIANT  # N-terminal methylation
 PHOSPHORYLATION  # used for PTM patches
 ACETYLATION  # used for PTM patches
 SULFATION  # used for PTM patches

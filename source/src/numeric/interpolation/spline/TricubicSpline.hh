@@ -42,6 +42,8 @@
 namespace numeric {
 namespace interpolation {
 namespace spline {
+    
+Real sqr( Real x);
 
 class TricubicSpline
 {

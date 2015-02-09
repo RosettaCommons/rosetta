@@ -152,10 +152,10 @@ public:
 
 		calc_all_dist( rotamers, centroids );
 
-		for(core::Size ii(1); ii <= rotamers.size(); ++ii ) {
+		for ( core::Size ii( 1 ); ii <= rotamers.size(); ++ii ) {
 			UT << "# All dist Rotamer " << ii << std::endl;
-			rotamers[ii].show(UT);
-    }
+			rotamers[ ii ].show( UT );
+        }
 	}
 
 	void test_calc_rotamer_clusters() {

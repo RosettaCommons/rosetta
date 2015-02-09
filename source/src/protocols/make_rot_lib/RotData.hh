@@ -36,18 +36,21 @@ namespace make_rot_lib {
 // Define Rotamer Data class and variable
 class RotData
 {
- private:
-  core::Real phi_, psi_, omega_, min_omega_, epsilon_, min_epsilon_;
-  core::Real energy_;
-  core::Real probability_;
-  core::Size num_chi_;            // number of chi angles in AA
-	core::Size num_clusters_;       // number of clusters
-  core::Size cluster_num_;        // cluster id
-  utility::vector1<core::Real> inp_chi_;  // starting chi angles
-  utility::vector1<core::Real> min_chi_;  // minimized chi angles
-	utility::vector1<core::Size> lib_chi_val_; // rotamer number for dunbrack format
-  utility::vector1<core::Real> std_dev_;  // standard deviation of chi angles
-  utility::vector1<core::Real> cen_dst_;  // distance from each centroid
+private:
+	utility::vector1<core::Real> bbs_;
+	utility::vector1<core::Size> bb_ids_;
+	core::Size num_bbs_;
+	core::Real omega_, min_omega_, epsilon_, min_epsilon_;
+	core::Real energy_;
+	core::Real probability_;
+	core::Size num_chi_;						// number of chi angles in AA
+	core::Size num_clusters_;			 // number of clusters
+	core::Size cluster_num_;				// cluster id
+	utility::vector1< core::Real > inp_chi_;	// starting chi angles
+	utility::vector1< core::Real > min_chi_;	// minimized chi angles
+	utility::vector1< core::Size > lib_chi_val_; // rotamer number for dunbrack format
+	utility::vector1< core::Real > std_dev_;	// standard deviation of chi angles
+	utility::vector1< core::Real > cen_dst_;	// distance from each centroid
 
 	// for debuging
 	core::Real twist_;
@@ -97,34 +100,76 @@ public:
 	}
 
  public:
-  // ctor
-  RotData( core::Size NumChi, core::Size NumCluster );
+	// ctor
+	RotData( core::Size NumChi, core::Size NumCluster );
+	RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster );
 
-  // setters and getters
-  void set_phi (core::Real Phi) {
-    phi_ = Phi;
-  }
-  void set_psi (core::Real Psi) {
-    psi_ = Psi;
-  }
-  void set_omg (core::Real Omega) {
-    omega_ = Omega;
-  }
+	// setters and getters
+	void set_bb( core::Size i, core::Real BB ) {
+		bbs_[ i ] = BB;
+	}
+    
+    // setters and getters
+	void set_bb_id( core::Size i, core::Size bbid ) {
+		bb_ids_[ i ] = bbid;
+	}
+    
+    /* deprecated - implemented for the MakeRotLib unit test */
+	void set_phi (core::Real Phi) {
+		bbs_[ 1 ] = Phi;
+    }
+    
+	void set_psi (core::Real Psi) {
+		bbs_[ 2 ] = Psi;
+    }
+	///////////////////////////////////////////////////////////
+    
+    void set_omg (core::Real Omega) {
+		omega_ = Omega;
+	}
 	void set_min_omg (core::Real MinOmega) {
-    min_omega_ = MinOmega;
-  }
-  void set_eps (core::Real Epsilon) {
-    epsilon_ = Epsilon;
-  }
-  void set_min_eps (core::Real MinEpsilon) {
-    min_epsilon_ = MinEpsilon;
-  }
-  core::Real get_phi() {
-    return phi_;
-  }
-  core::Real get_psi() {
-    return psi_;
-  }
+		min_omega_ = MinOmega;
+	}
+	void set_eps (core::Real Epsilon) {
+		epsilon_ = Epsilon;
+	}
+	void set_min_eps (core::Real MinEpsilon) {
+		min_epsilon_ = MinEpsilon;
+	}
+    
+	void set_num_bbs(core::Size i) {
+		num_bbs_ = i;
+	}
+	core::Size get_num_bbs() {
+		return num_bbs_;
+	}
+	utility::vector1< core::Real > get_bbs() {
+		return bbs_;
+	}
+	void resize_bbs( core::Size i ) {
+		bbs_.resize( i );
+	}
+	void resize_bb_ids( core::Size i ) {
+		bb_ids_.resize( i );
+	}
+	core::Real get_bb( core::Size i ) {
+		return bbs_[ i ];
+	}
+	core::Size get_bb_id( core::Size i ) {
+		return bb_ids_[ i ];
+	}
+    
+    /* deprecated - implemented for the MakeRotLib unit test */
+	core::Real get_phi() {
+		return bbs_[1];
+	}
+    
+	core::Real get_psi() {
+		return bbs_[2];
+	}
+    ///////////////////////////////////////////////////////////
+    
+    
 	core::Real get_omg() {
 		return omega_;
 	}
@@ -138,29 +183,29 @@ public:
 		return min_epsilon_;
 	}
 
-  void set_energy (core::Real Energy) {
-    energy_ = Energy;
-  }
+	void set_energy (core::Real Energy) {
+		energy_ = Energy;
+	}
 
-  core::Real get_energy () {
-    return energy_;
-  }
+	core::Real get_energy () {
+		return energy_;
+	}
 
-  void set_probability (core::Real Probability) {
-    probability_ = Probability;
-  }
+	void set_probability (core::Real Probability) {
+		probability_ = Probability;
+	}
 
-  core::Real get_probability () {
-    return probability_;
-  }
+	core::Real get_probability () {
+		return probability_;
+	}
 
-  void set_num_chi(core::Size Num_Chi) {
-    num_chi_ = Num_Chi;
-  }
+	void set_num_chi(core::Size Num_Chi) {
+		num_chi_ = Num_Chi;
+	}
 
-  core::Size get_num_chi() {
-    return num_chi_;
-  }
+	core::Size get_num_chi() {
+		return num_chi_;
+	}
 
 	void set_num_clusters( core::Size num ) {
 		num_clusters_ = num;
@@ -170,56 +215,56 @@ public:
 		return num_clusters_;
 	}
 
-  void set_cluster_num (core::Size Cluster_Num) {
-    cluster_num_ = Cluster_Num;
-  }
+	void set_cluster_num (core::Size Cluster_Num) {
+		cluster_num_ = Cluster_Num;
+	}
 
-  core::Size get_cluster_num () {
-    return cluster_num_;
-  }
+	core::Size get_cluster_num () {
+		return cluster_num_;
+	}
 
-  void set_inp_chi( core::Real angle, core::Size num ) {
-    inp_chi_[ num ] =  numeric::nonnegative_principal_angle_degrees( angle );
-  }
+	void set_inp_chi( core::Real angle, core::Size num ) {
+		inp_chi_[ num ] =	numeric::nonnegative_principal_angle_degrees( angle );
+	}
 
-  core::Real get_inp_chi( core::Size num ) {
-    return inp_chi_[ num ];
-  }
+	core::Real get_inp_chi( core::Size num ) {
+		return inp_chi_[ num ];
+	}
 
-  void set_min_chi ( core::Real angle, core::Size num) {
-    min_chi_[ num ] =  numeric::nonnegative_principal_angle_degrees( angle );
-  }
+	void set_min_chi ( core::Real angle, core::Size num) {
+		min_chi_[ num ] =	numeric::nonnegative_principal_angle_degrees( angle );
+	}
 
-  core::Real get_min_chi( core::Size num ) {
-    return min_chi_[ num ];
-  }
+	core::Real get_min_chi( core::Size num ) {
+		return min_chi_[ num ];
+	}
 
-  void set_lib_chi_val ( int val, core::Size num) {
-    lib_chi_val_[ num ] =  val;
-  }
+	void set_lib_chi_val ( int val, core::Size num) {
+		lib_chi_val_[ num ] =	val;
+	}
 
-  core::Real get_lib_chi_val( core::Size num ) {
-    return lib_chi_val_[ num ];
-  }
+	core::Real get_lib_chi_val( core::Size num ) {
+		return lib_chi_val_[ num ];
+	}
 
-  void set_std_dev (core::Real STD, core::Size num) {
-    std_dev_[ num ] = STD;
-  }
+	void set_std_dev (core::Real STD, core::Size num) {
+		std_dev_[ num ] = STD;
+	}
 
-  core::Real get_std_dev( core::Size num ) {
-    return std_dev_[ num ];
-  }
+	core::Real get_std_dev( core::Size num ) {
+		return std_dev_[ num ];
+	}
 
-  void set_cen_dist(core::Real dist , core::Size num) {
-    cen_dst_[ num ]= dist;
-  }
+	void set_cen_dist(core::Real dist , core::Size num) {
+		cen_dst_[ num ]= dist;
+	}
 
-  core::Real get_cen_dist( core::Size num ) {
-    return cen_dst_[ num ];
-  }
+	core::Real get_cen_dist( core::Size num ) {
+		return cen_dst_[ num ];
+	}
 
 	core::Size get_min_cent_dist(){
-		return arg_min( cen_dst_ );  //gets index of closest centroid
+		return arg_min( cen_dst_ );	//gets index of closest centroid
 	}
 
 	void show( std::ostream & out ) const;

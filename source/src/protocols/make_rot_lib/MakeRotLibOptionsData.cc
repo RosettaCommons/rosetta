@@ -76,6 +76,11 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 			l >> n_chi_;
 		}
 
+		// get number of BB
+		else if ( tag == "NUM_BB" ) {
+			l >> n_bb_;
+		}
+
 		// get number of clusters
 		else if ( tag == "CENTROID" ) {
 			++n_centroids_;
@@ -85,12 +90,16 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 		else if ( tag == "AA_NAME" ) {
 			l >> name_;
 		}
-	}
 
+	}
+	//TR << "read first pass" << std::endl;
 	// resize arrays based on inputs
 	chi_ranges_.resize( n_chi_ );
-
+	bb_ids_.resize( n_bb_ );
+	bb_ranges_.resize( n_bb_ );
+	//TR << "resized arrays " << std::endl;
 	// second pass - get omg, phi, psi, eps torsion ranges, chi torsion ranges, and centroid data
+	core::Size bb_i = 1;
 	for ( core::Size i( 1 ); i <= lines.size(); ++i ) {
 		std::string const & line( lines[ i ] );
 		std::istringstream l( line );
@@ -100,12 +109,22 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 
 		// get phi range
 		if ( tag == "PHI_RANGE" ) {
-			l >> phi_range_.low >> phi_range_.high >> phi_range_.step;
+			//l >> phi_range_.low >> phi_range_.high >> phi_range_.step;
+			l >> bb_ranges_[bb_i].low >> bb_ranges_[bb_i].high >> bb_ranges_[bb_i].step;
+			bb_ids_[bb_i] = 2;
+			++bb_i;
 		}
 
 		// get psi range
 		else if ( tag == "PSI_RANGE" ) {
-			l >> psi_range_.low >> psi_range_.high >> psi_range_.step;
+			l >> bb_ranges_[bb_i].low >> bb_ranges_[bb_i].high >> bb_ranges_[bb_i].step;
+			bb_ids_[bb_i] = 3;
+			++bb_i;
+		}
+		
+		else if ( tag == "BB_RANGE" ) {
+			l >> bb_ranges_[bb_i].low >> bb_ranges_[bb_i].high >> bb_ranges_[bb_i].step >> bb_ids_[bb_i];
+			++bb_i;
 		}
 
 		// get omg range
@@ -129,13 +148,11 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 		else if ( tag == "CENTROID" ) {
 			CentroidRotNumVec temp_crnv;
 			temp_crnv.resize( n_chi_ );
-			for ( core::Size i(1); i <= n_chi_; ++i ) {
-				l >> temp_crnv[ i ].angle >> temp_crnv[ i ].rot_num;
-			}
+			for ( core::Size i( 1 ); i <= n_chi_; ++i ) l >> temp_crnv[ i ].angle >> temp_crnv[ i ].rot_num;
 			centroid_data_.push_back( temp_crnv );
 		}
 	}
-
+	//TR << "Second pass done "<<std::endl; 
 	// lastly get the polymer type
 	using namespace core::chemical;
 	ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );

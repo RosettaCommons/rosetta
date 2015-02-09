@@ -79,7 +79,7 @@ void BicubicSpline::train(
 	start_[ 1]  = START[ 1];
 	delta_[ 0]  = DELTA[ 0];
 	delta_[ 1]  = DELTA[ 1];
-
+    
 	values_ = RESULTS;
 	dsecox_ = RESULTS;
 	dsecoy_ = RESULTS;
@@ -89,30 +89,49 @@ void BicubicSpline::train(
 	firstbe_[ 0] = FIRSTBE[ 0];
 	firstbe_[ 1] = FIRSTBE[ 1];
 
+    /*for ( Size jj = 0; jj < 36; ++jj ) {
+        for ( Size kk = 0; kk < 36; ++kk ) {
+            std::cout << values_[ jj ][ kk ] << " ";
+        }
+        std::cout << std::endl;
+    }*/
 
-
-	//std::cout << "RESULTS.get_row(0) is: " << RESULTS.get_row( 0) << std::endl;
 	//train three times for fxx, fyy, fxxyy
 	//reduction to Spline by training only rows/columns at the same time
 	for( Size row( 0); row < dimx; ++row)
 	{
 		CubicSpline cs;
+        //std::cout << "Doing row " << row << " for dsecoy" << std::endl << "Old row is ";
+        //for ( Size i = 0; i < dimx; ++i) std::cout <<RESULTS.get_row( row)(i) << " ";
 		cs.train( BORDER[ 1], START[ 1], DELTA[ 1], RESULTS.get_row( row), FIRSTBE[ 1]);
 		dsecoy_.replace_row( row, cs.get_dsecox());
+        //std::cout << std::endl << " and new row is ";
+        //for ( Size i = 0; i < dimx; ++i) std::cout <<dsecoy_.get_row( row)(i) << " ";
+        //std::cout << std::endl;
 	}
 
 	for( Size col( 0); col < dimy; ++col)
 	{
 		CubicSpline cs;
+        //std::cout << "Doing col " << col << " for dsecox" << std::endl << "Old col is ";
+        //for ( Size i = 0; i < dimy; ++i) std::cout <<RESULTS.get_col( col)(i) << " ";
 		cs.train( BORDER[ 0], START[ 0], DELTA[ 0], RESULTS.get_col( col), FIRSTBE[ 0]);
 		dsecox_.replace_col( col, cs.get_dsecox());
+        //std::cout << std::endl << " and new col is ";
+        //for ( Size i = 0; i < dimy; ++i) std::cout <<dsecox_.get_col( col)(i) << " ";
+        //std::cout << std::endl;
 	}
 
 	for( Size row( 0); row < dimx; ++row)
 	{
 		CubicSpline cs;
+        //std::cout << "Doing row " << row << " for dsecoxy" << std::endl << "Old row is ";
+        //for ( Size i = 0; i < dimx; ++i) std::cout <<dsecox_.get_row( row)(i) << " ";
 		cs.train( BORDER[ 1], START[ 1], DELTA[ 1], dsecox_.get_row( row), FIRSTBE[ 1]);
 		dsecoxy_.replace_row( row, cs.get_dsecox());
+        //std::cout << std::endl << " and new row is ";
+        //for ( Size i = 0; i < dimx; ++i) std::cout <<dsecoxy_.get_row( row)(i) << " ";
+        //std::cout << std::endl;
 	}
 	return;
 }

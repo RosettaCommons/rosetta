@@ -83,8 +83,8 @@ DunbrackSCSampler::samples(
 		ProteinBackboneBuildPoint const & bb(
 			static_cast< ProteinBackboneBuildPoint const & >
 			( bb_conf ));
-
-		DunbrackRotamerSampleDataVector rotamers = dun_rotlib->get_all_rotamer_samples( bb.phi(), bb.psi() );
+        
+        DunbrackRotamerSampleDataVector rotamers = dun_rotlib->get_all_rotamer_samples( bb.phi(), bb.psi() );
 		if ( desymmeterize_ && rotamers.size() != 0 ) {
 			using namespace core::chemical;
 			AA aa = restype.aa();

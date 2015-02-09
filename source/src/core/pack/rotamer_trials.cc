@@ -74,8 +74,8 @@ static thread_local basic::Tracer TR( "core.pack.rotamer_trials" );
 
 utility::vector1< uint >
 symmetric_repackable_residues(
-  task::PackerTask const & the_task,
-  pose::Pose & pose
+    task::PackerTask const & the_task,
+    pose::Pose & pose
 );
 
 void
@@ -124,8 +124,7 @@ rotamer_trials(
 	bool replaced_residue( false );
 
 	Size const num_in_trials = residues_for_trials.size();
-	for (Size ii = 1; ii <= num_in_trials; ++ii)
-	{
+	for ( Size ii = 1; ii <= num_in_trials; ++ii ) {
 		pose.update_residue_neighbors(); // will return if uptodate
 
 		int resid = residues_for_trials[ ii ];
@@ -143,23 +142,20 @@ rotamer_trials(
 
 		utility::vector1< core::PackerEnergy > one_body_energies( rotset->num_rotamers() );
 
-		rotset->compute_one_body_energies(
-			pose, scfxn, *rottrial_task,
-			packer_neighbor_graph, one_body_energies );
+		rotset->compute_one_body_energies( pose, scfxn, *rottrial_task, packer_neighbor_graph, one_body_energies );
 
 		//select the best rotamer
 		Size bestrot = utility::arg_min( one_body_energies );
 
 		//don't replace if the best rotamer is the one that's already assigned
 		//		TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
-		if ( bestrot != rotset->id_for_current_rotamer() )
-		{
+		if ( bestrot != rotset->id_for_current_rotamer() ) {
 			replaced_residue = true;
-			conformation::ResidueOP newresidue(  rotset->rotamer( bestrot )->clone() );//create_residue() );
+			conformation::ResidueOP newresidue( rotset->rotamer( bestrot )->clone() );//create_residue() );
 			pose.replace_residue ( resid, *newresidue, false );
 			scfxn.update_residue_for_packing( pose, resid );
  			//TR << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
-			if( rotset->id_for_current_rotamer() != 0 ){ //more output in this case
+			if( rotset->id_for_current_rotamer() != 0 ) { //more output in this case
 				//sml this output is protected because id_for_current_rotamer is incompatible with forced mutations (eg PIKAA)
 				//TR << ' ' << one_body_energies[ rotset->id_for_current_rotamer() ] << ' ' <<
 				//	one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
@@ -208,7 +204,7 @@ symmetric_rotamer_trials(
 //clock_t starttime = clock();
 	PROF_START( basic::ROTAMER_TRIALS );
 
-	task::PackerTaskCOP input_task = make_new_symmetric_PackerTask_by_requested_method(pose,non_symmetric_task);
+	task::PackerTaskCOP input_task = make_new_symmetric_PackerTask_by_requested_method( pose, non_symmetric_task );
 
 	pack_scorefxn_pose_handshake( pose, scfxn);
 
@@ -238,8 +234,7 @@ symmetric_rotamer_trials(
 	bool replaced_residue( false );
 
 	Size const num_in_trials = residues_for_trials.size();
-	for (Size ii = 1; ii <= num_in_trials; ++ii)
-	{
+	for ( Size ii = 1; ii <= num_in_trials; ++ii ) {
 		pose.update_residue_neighbors(); // will return if uptodate
 
 		int resid = residues_for_trials[ ii ];
@@ -257,17 +252,14 @@ symmetric_rotamer_trials(
 
 		utility::vector1< core::PackerEnergy > one_body_energies( rotset->num_rotamers() );
 
-		rotset->compute_one_body_energies(
-			pose, scfxn, *rottrial_task,
-			packer_neighbor_graph, one_body_energies );
+		rotset->compute_one_body_energies( pose, scfxn, *rottrial_task, packer_neighbor_graph, one_body_energies );
 
 		//select the best rotamer
 		Size bestrot = utility::arg_min( one_body_energies );
 
 		//don't replace if the best rotamer is the one that's already assigned
 		//		TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
-		if ( bestrot != rotset->id_for_current_rotamer() )
-		{
+		if ( bestrot != rotset->id_for_current_rotamer() ) {
 			replaced_residue = true;
 			conformation::ResidueOP newresidue(  rotset->rotamer( bestrot )->clone() );//create_residue() );
 			pose.replace_residue ( resid, *newresidue, false );
@@ -280,14 +272,14 @@ symmetric_rotamer_trials(
 			for ( std::vector< Size>::const_iterator
 			    clone     = symm_info->bb_clones( resid ).begin(),
 			    clone_end = symm_info->bb_clones( resid ).end();
-			    clone != clone_end; ++clone ){
+			    clone != clone_end; ++clone ) {
 			//	  	conformation::ResidueOP sym_rsd = newresidue->clone();
 			// 		  sym_rsd->orient_onto_residue(pose.residue( *clone) );
 			//  		pose.replace_residue ( *clone, *sym_rsd, false );
-						scfxn.update_residue_for_packing( pose, *clone );
+                scfxn.update_residue_for_packing( pose, *clone );
 			}
 			//			TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
-			if( rotset->id_for_current_rotamer() != 0 ){ //more output in this case
+			if ( rotset->id_for_current_rotamer() != 0 ) { //more output in this case
 				//sml this output is protected because id_for_current_rotamer is incompatible with forced mutations (eg PIKAA)
 				// TR.Trace << ' ' << one_body_energies[ rotset->id_for_current_rotamer() ] << ' ' <<
 				//					one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
@@ -295,9 +287,7 @@ symmetric_rotamer_trials(
 			}
 			//TR.Trace << std::endl;
 		}
-
 		rottrial_task->temporarily_set_pack_residue( resid, false );
-
 	}
 	//clock_t stoptime = clock();
 	PROF_STOP ( basic::ROTAMER_TRIALS );

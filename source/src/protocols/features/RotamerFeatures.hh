@@ -46,7 +46,7 @@ namespace features{
 
 //@brief Extract from the dunbrack Energy term the model for the
 // rotamer conformation.
-template < core::Size T >
+template < core::Size T, core::Size N >
 class RotamerInitializer {
 
 public:
@@ -66,8 +66,8 @@ public:
 			return false;
 		}
 
-		RotamericSingleResidueDunbrackLibrary< T > const & rotlib(
-			dynamic_cast< RotamericSingleResidueDunbrackLibrary< T > const & >(
+		RotamericSingleResidueDunbrackLibrary< T, N > const & rotlib(
+			dynamic_cast< RotamericSingleResidueDunbrackLibrary< T, N > const & >(
 				* generic_rotlib));
 
 		RotVector rotamer_vector;
@@ -93,7 +93,7 @@ public:
 		}
 		rotamer_bin = rotlib.rotwell_2_rotno(rotamer_vector);
 
-		PackedDunbrackRotamer< T, core::Real > interpolated_rotamer;
+		PackedDunbrackRotamer< T, N, core::Real > interpolated_rotamer;
 		rotlib.interpolate_rotamers(
 			residue, scratch, packed_rotno, interpolated_rotamer);
 

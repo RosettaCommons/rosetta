@@ -270,6 +270,9 @@ residue_types/l-ncaa/YPN.params
 #residue_types/l-ncaa/MTP.params
 #residue_types/l-ncaa/NLU.params
 residue_types/l-ncaa/NVL.params
+#residue_types/l-ncaa/BZP.params
+#residue_types/l-ncaa/SAL.params
+#residue_types/l-ncaa/BCS.params
 #residue_types/l-ncaa/1-amino-cyclopentane-carboxylic_acid_puck1.params
 #residue_types/l-ncaa/1-amino-cyclopentane-carboxylic_acid_puck2.params
 #residue_types/l-ncaa/1-methyl-histidine.params

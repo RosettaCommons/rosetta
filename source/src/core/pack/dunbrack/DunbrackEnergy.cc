@@ -95,7 +95,7 @@ DunbrackEnergy::residue_energy(
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY )){
-			return;
+		return;
 	}
 
 	//
@@ -105,7 +105,7 @@ DunbrackEnergy::residue_energy(
 
 	if ( rsd.is_virtual_residue() ) return;
 
-	/* old		emap[ fa_dun ] = rot_lib_.rotamer_energy( rsd ); */
+	/* old emap[ fa_dun ] = rot_lib_.rotamer_energy( rsd ); */
 	//Returns the equivalent L-amino acid library if a D-amino acid is provided
 	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
 
@@ -118,7 +118,6 @@ DunbrackEnergy::residue_energy(
 	}
 	//--count_present;
 	//std::cout << "D" << count_present << std::flush;
-
 }
 
 bool DunbrackEnergy::defines_dof_derivatives( pose::Pose const & ) const { return true; }
@@ -135,14 +134,12 @@ DunbrackEnergy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY )){
-			return 0.0;
-	}
-
-	Real deriv(0.0);
-	Real deriv_dev(0.0);
-	Real deriv_rot(0.0);
-	Real deriv_semi(0.0);
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return 0.0;
+	
+	Real deriv( 0.0 );
+	Real deriv_dev( 0.0 );
+	Real deriv_rot( 0.0 );
+	Real deriv_semi( 0.0 );
 	if ( tor_id.valid() ) {
 	debug_assert( rsd.seqpos() == tor_id.rsd() );
 		//utility::vector1< Real > dE_dbb, dE_dchi;
@@ -152,14 +149,16 @@ DunbrackEnergy::eval_residue_dof_derivative(
 		if ( rsd.is_protein() && rotlib ) {
 			dunbrack::RotamerLibraryScratchSpace scratch;
 			rotlib->rotamer_energy_deriv( rsd, scratch );
-			if ( tor_id.type() == id::BB  && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_BBTOR ) {
-				deriv = scratch.dE_dbb()[ tor_id.torsion() ];
-				deriv_dev = scratch.dE_dbb_dev()[ tor_id.torsion() ];
-				deriv_rot = scratch.dE_dbb_rot()[ tor_id.torsion() ];
+			// amw the goal is to implement 4 possible torsions, not necessarily torsion 1
+			// through torsion 4--at the moment, this will have to do!
+			if ( tor_id.type() == id::BB && tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
+				deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
+				deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
+				deriv_rot  = scratch.dE_dbb_rot()[ tor_id.torsion() ];
 				deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
 			} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
-				deriv = scratch.dE_dchi()[ tor_id.torsion() ];
-				deriv_dev = scratch.dE_dchi_dev()[ tor_id.torsion() ];
+				deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
+				deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
 				deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
 			}
 		}
@@ -180,7 +179,7 @@ DunbrackEnergy::eval_dof_derivative(
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY )){
-			return 0.0;
+		return 0.0;
 	}
 
 	//
@@ -188,10 +187,10 @@ DunbrackEnergy::eval_dof_derivative(
 	//++count_present;
 	//std::cout << "dD" << count_present << std::flush;
 
-	Real deriv(0.0);
-	Real deriv_dev(0.0);
-	Real deriv_rot(0.0);
-  Real deriv_semi(0.0);
+	Real deriv( 0.0 );
+	Real deriv_dev( 0.0 );
+	Real deriv_rot( 0.0 );
+	Real deriv_semi( 0.0 );
 	if ( tor_id.valid() ) {
 		//utility::vector1< Real > dE_dbb, dE_dchi;
 		//		std::cerr << __FILE__<< ' ' << __LINE__ << ' ' << tor_id.rsd() << std::endl;
@@ -202,20 +201,19 @@ DunbrackEnergy::eval_dof_derivative(
 
 		if ( rotlib ) {
 			dunbrack::RotamerLibraryScratchSpace scratch;
-			rotlib->rotamer_energy_deriv
-				( pose.residue( tor_id.rsd() ), scratch );
+			rotlib->rotamer_energy_deriv( pose.residue( tor_id.rsd() ), scratch );
 
 			/// ASSUMPTION: Derivatives for amino acids only!
 			if ( pose.residue_type( tor_id.rsd() ).is_protein() ) {
 				if ( tor_id.type() == id::BB  && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_BBTOR ) {
-					deriv = scratch.dE_dbb()[ tor_id.torsion() ];
-					deriv_dev = scratch.dE_dbb_dev()[ tor_id.torsion() ];
-					deriv_rot = scratch.dE_dbb_rot()[ tor_id.torsion() ];
-        	deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
+					deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
+					deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
+					deriv_rot  = scratch.dE_dbb_rot()[ tor_id.torsion() ];
+					deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
 				} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
-					deriv = scratch.dE_dchi()[ tor_id.torsion() ];
-					deriv_dev = scratch.dE_dchi_dev()[ tor_id.torsion() ];
-        	deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
+					deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
+					deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
+					deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
 				}
 			}
 		}

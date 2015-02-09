@@ -194,7 +194,7 @@ SingleLigandRotamerLibrary::rotamer_energy_deriv(
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	Real3 & dE_dbb( scratch.dE_dbb() );
+    Real4 & dE_dbb( scratch.dE_dbb() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
 	std::fill( dE_dbb.begin(), dE_dbb.end(), 0 );
 	std::fill( dE_dchi.begin(), dE_dchi.end(), 0 );

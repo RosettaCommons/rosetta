@@ -53,7 +53,7 @@ namespace inv_kin_lig_loop_design {
 
 Mover::Mover(core::pose::Pose* pose) :
 	pose(pose),
-	scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace ) )
+	scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace() ) )
 {} // Mover::Mover
 
 /// @details DANGER DANGER DANGER Pose is not deallocated

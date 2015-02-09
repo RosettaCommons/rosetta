@@ -237,5 +237,5 @@ interpolate_trilinear_by_value(
 
 	}
 }
-
+    
 } // namespace basic

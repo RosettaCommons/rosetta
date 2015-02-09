@@ -242,10 +242,10 @@ private:
 
 	std::string random_tempname( std::string const & prefix ) const;
 
-	template < Size T >
+	template < Size T, Size N >
 	void
 	initialize_and_read_srsrdl(
-		SemiRotamericSingleResidueDunbrackLibrary< T > & srsrdl,
+		SemiRotamericSingleResidueDunbrackLibrary< T, N > & srsrdl,
 		bool const nrchi_is_symmetric,
 		Real const nrchi_start_angle,
 		utility::io::izstream & rotamer_definitions,
@@ -254,10 +254,10 @@ private:
 		// phasing out bbind sampling -- utility::io::izstream & rnchi_bbind_probabilities
 	) const;
 
-	template < Size T >
+	template < Size T, Size N >
 	void
 	initialize_srsrdl(
-		SemiRotamericSingleResidueDunbrackLibrary< T > & srsrdl,
+		SemiRotamericSingleResidueDunbrackLibrary< T, N > & srsrdl,
 		bool const nrchi_is_symmetric,
 		Real const nrchi_start_angle
 	) const;
@@ -272,6 +272,7 @@ private:
 	create_rotameric_dunlib(
 		chemical::AA aa,
 		Size const n_chi,
+        Size const n_bb,
 		utility::io::izstream & library,
 		bool dun02,
 		std::string & next_aa_in_library,
@@ -282,8 +283,16 @@ private:
 	create_rotameric_dunlib(
 		chemical::AA aa,
 		Size const n_chi,
+        Size const n_bb,
 		bool dun02
 	) const;
+    
+    SingleResidueDunbrackLibraryOP
+    create_rotameric_dunlib(
+        chemical::AA aa,
+        Size const n_chi,
+        bool dun02
+    ) const;
 
 	/// @brief Instantiate the appropriate SRSRDL< T > library given the nchi input.  nchi indicates
 	/// the number of rotameric chi -- there are nchi+1 chi described by the library, the last of which
@@ -294,6 +303,7 @@ private:
 	create_semi_rotameric_dunlib(
 		chemical::AA aa,
 		Size const nchi,
+        Size const nbb,
 		bool const use_bbind_rnchi_scoring,
 		bool const use_bbind_rnchi_sampling,
 		bool const nrchi_is_symmetric,
@@ -313,6 +323,18 @@ private:
 		bool const nrchi_is_symmetric,
 		Real const nrchi_start_angle
 	) const;
+    
+    
+    SingleResidueDunbrackLibraryOP
+    create_semi_rotameric_dunlib(
+                                 chemical::AA aa,
+                                 Size const nchi,
+                                 Size const nbb,
+                                 bool const use_bbind_rnchi_scoring,
+                                 bool const use_bbind_rnchi_sampling,
+                                 bool const nrchi_is_symmetric,
+                                 Real const nrchi_start_angle
+                                 ) const;
 
 	SingleResidueDunbrackLibraryOP
 	create_srdl(
@@ -325,8 +347,10 @@ public:
 	initialize_dun10_aa_parameters(
 		utility::vector1< chemical::AA > & rotameric_amino_acids,
 		utility::vector1< Size > & rotameric_n_chi,
+		utility::vector1< Size > & rotameric_n_bb,
 		utility::vector1< chemical::AA > & sraa,
 		utility::vector1< Size > & srnchi,
+		utility::vector1< Size > & srnbb,
 		utility::vector1< bool > & scind,
 		utility::vector1< bool > & sampind,
 		utility::vector1< bool > & sym,
@@ -337,13 +361,15 @@ public:
 	void
 	initialize_dun02_aa_parameters(
 		utility::vector1< chemical::AA > & rotameric_amino_acids,
-		utility::vector1< Size > & rotameric_n_chi
+		utility::vector1< Size > & rotameric_n_chi,
+		utility::vector1< Size > & rotameric_n_bb
 	);
 
 	static
 	void
 	initialize_dun02_aa_parameters(
 		utility::vector1< Size > & nchi_for_aa,
+		utility::vector1< Size > & nbb_for_aa,
 		Size & n_rotameric_aas
 	);
 

@@ -477,15 +477,7 @@ FullatomDisulfideEnergyContainer::other_neighbor_id( Size resid ) const
 	void
 FullatomDisulfideEnergyContainer::save_energy( Size disulfide_index, EnergyMap const & emap )
 {
-    /*std::cout << "amw storing emap values into the disulfide_info_" << std::endl;
-    std::cout << disulfide_info_[ disulfide_index ].first.dslf_ss_dst() << " += " << emap[ dslf_ss_dst ] << std::endl;
-    std::cout << disulfide_info_[ disulfide_index ].first.dslf_cs_ang() << " += " << emap[ dslf_cs_ang ] << std::endl;
-    std::cout << disulfide_info_[ disulfide_index ].first.dslf_ss_dih() << " += " << emap[ dslf_ss_dih ] << std::endl;
-    std::cout << disulfide_info_[ disulfide_index ].first.dslf_ca_dih() << " += " << emap[ dslf_ca_dih ] << std::endl;
-    std::cout << disulfide_info_[ disulfide_index ].first.dslf_cbs_ds() << " += " << emap[ dslf_cbs_ds ] << std::endl;
-    std::cout << disulfide_info_[ disulfide_index ].first.dslf_fa13()   << " += " << emap[ dslf_fa13   ] << std::endl;
-     */
-	disulfide_info_[ disulfide_index ].first.dslf_ss_dst() = emap[ dslf_ss_dst ];
+    disulfide_info_[ disulfide_index ].first.dslf_ss_dst() = emap[ dslf_ss_dst ];
 	disulfide_info_[ disulfide_index ].first.dslf_cs_ang() = emap[ dslf_cs_ang ];
 	disulfide_info_[ disulfide_index ].first.dslf_ss_dih() = emap[ dslf_ss_dih ];
 	disulfide_info_[ disulfide_index ].first.dslf_ca_dih() = emap[ dslf_ca_dih ];
@@ -553,14 +545,6 @@ debug_assert( disulfide_partners_[ disulfide_index ].first == resid ||
 
 void FullatomDisulfideEnergyContainer::accumulate_energy( Size disulfide_index, EnergyMap & emap ) const
 {
-    /*std::cout << "amw accumulating disulfide_info_ values into the emap" << std::endl;
-    std::cout << emap[ dslf_ss_dst ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_ss_dst() << std::endl;
-    std::cout << emap[ dslf_cs_ang ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_cs_ang() << std::endl;
-    std::cout << emap[ dslf_ss_dih ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_ss_dih() << std::endl;
-    std::cout << emap[ dslf_ca_dih ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_ca_dih() << std::endl;
-    std::cout << emap[ dslf_cbs_ds ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_cbs_ds() << std::endl;
-    std::cout << emap[ dslf_fa13   ] << " += " << disulfide_info_[ disulfide_index ].first.dslf_fa13()   << std::endl;
-     */
 	emap[ dslf_ss_dst ] += disulfide_info_[ disulfide_index ].first.dslf_ss_dst();
 	emap[ dslf_cs_ang ] += disulfide_info_[ disulfide_index ].first.dslf_cs_ang();
 	emap[ dslf_ss_dih ] += disulfide_info_[ disulfide_index ].first.dslf_ss_dih();
@@ -571,15 +555,7 @@ void FullatomDisulfideEnergyContainer::accumulate_energy( Size disulfide_index, 
 
 void FullatomDisulfideEnergyContainer::retrieve_energy( Size disulfide_index, EnergyMap & emap ) const
 {
-    /*std::cout << "amw storing disulfide_info_ values in the emap" << std::endl;
-    std::cout << emap[ dslf_ss_dst ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_ss_dst() << std::endl;
-    std::cout << emap[ dslf_cs_ang ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_cs_ang() << std::endl;
-    std::cout << emap[ dslf_ss_dih ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_ss_dih() << std::endl;
-    std::cout << emap[ dslf_ca_dih ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_ca_dih() << std::endl;
-    std::cout << emap[ dslf_cbs_ds ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_cbs_ds() << std::endl;
-    std::cout << emap[ dslf_fa13   ] << " = " << disulfide_info_[ disulfide_index ].first.dslf_fa13()   << std::endl;
-     */
-	emap[ dslf_ss_dst ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dst();
+    emap[ dslf_ss_dst ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dst();
 	emap[ dslf_cs_ang ] = disulfide_info_[ disulfide_index ].first.dslf_cs_ang();
 	emap[ dslf_ss_dih ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dih();
 	emap[ dslf_ca_dih ] = disulfide_info_[ disulfide_index ].first.dslf_ca_dih();

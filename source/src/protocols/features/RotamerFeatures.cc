@@ -185,9 +185,11 @@ RotamerFeatures::report_features(
 	string library_name;
 	vector1< AA > rotameric_amino_acids;
 	vector1< Size > rotameric_n_chi;
+	vector1< Size > rotameric_n_bb;
 
 	vector1< AA > sraa;
 	vector1< Size > srnchi;
+	vector1< Size > srnbb;
 	vector1< bool > scind;
 	vector1< bool > sampind;
 	vector1< bool > sym;
@@ -196,13 +198,13 @@ RotamerFeatures::report_features(
   if( option[ corrections::score::dun10 ] ){
     library_name = "dun10";
 		RotamerLibrary::initialize_dun10_aa_parameters(
-			rotameric_amino_acids, rotameric_n_chi,
-			sraa, srnchi, scind, sampind, sym, astr );
+			rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb,
+			sraa, srnchi, srnbb, scind, sampind, sym, astr );
 
   } else {
     library_name = "dun02";
 		RotamerLibrary::initialize_dun02_aa_parameters(
-			rotameric_amino_acids, rotameric_n_chi );
+			rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb);
   }
 
 	string insert_sql(
@@ -261,10 +263,12 @@ RotamerFeatures::report_features(
 
 		bool semi_rotameric(true);
 		Size nchi = 0;
+		Size n_bb = 0;
 		for(Size ii=1; ii <= rotameric_amino_acids.size(); ++ii){
 			if (rotameric_amino_acids[ii] == residue.aa()){
 				semi_rotameric = false;
 				nchi = rotameric_n_chi[ ii ];
+				n_bb = rotameric_n_bb[ ii ];
 				break;
 			}
 		}
@@ -273,6 +277,7 @@ RotamerFeatures::report_features(
 			for(Size ii=1; ii <= sraa.size(); ++ii){
 				if(sraa[ii] == residue.aa()){
 					nchi = srnchi[ii];
+					n_bb = srnbb[ ii ];
 					break;
 				}
 			}
@@ -282,17 +287,53 @@ RotamerFeatures::report_features(
 		if(nchi == 0){
 			continue;
 		} else if( nchi == ONE){
-			recognized_residue_type = RotamerInitializer<ONE>::initialize_rotamer(
-				residue, scratch, rotamer_bin);
+			if ( n_bb == ONE ){
+				recognized_residue_type = RotamerInitializer<ONE, ONE>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == TWO ) {
+				recognized_residue_type = RotamerInitializer<ONE, TWO>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == THREE ) {
+				recognized_residue_type = RotamerInitializer<ONE, THREE>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == FOUR ) {
+				recognized_residue_type = RotamerInitializer<ONE, FOUR>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else {
+				continue;
+			}
 		} else if( nchi == TWO){
-			recognized_residue_type = RotamerInitializer<TWO>::initialize_rotamer(
-				residue, scratch, rotamer_bin);
+			if ( n_bb == ONE ){
+				recognized_residue_type = RotamerInitializer<TWO, ONE>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == TWO ) {
+				recognized_residue_type = RotamerInitializer<TWO, TWO>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == THREE ) {
+				recognized_residue_type = RotamerInitializer<TWO, THREE>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == FOUR ) {
+				recognized_residue_type = RotamerInitializer<TWO, FOUR>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else {
+				continue;
+			}
 		} else if( nchi == THREE){
-			recognized_residue_type = RotamerInitializer<THREE>::initialize_rotamer(
-				residue, scratch, rotamer_bin);
+			if ( n_bb == ONE ){
+				recognized_residue_type = RotamerInitializer<THREE, ONE>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == TWO ) {
+				recognized_residue_type = RotamerInitializer<THREE, TWO>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == THREE ) {
+				recognized_residue_type = RotamerInitializer<THREE, THREE>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == FOUR ) {
+				recognized_residue_type = RotamerInitializer<THREE, FOUR>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else {
+				continue;
+			}
 		} else if( nchi == FOUR){
-			recognized_residue_type = RotamerInitializer<FOUR>::initialize_rotamer(
-				residue, scratch, rotamer_bin);
+			if ( n_bb == ONE ){
+				recognized_residue_type = RotamerInitializer<FOUR, ONE>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == TWO ) {
+				recognized_residue_type = RotamerInitializer<FOUR, TWO>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == THREE ) {
+				recognized_residue_type = RotamerInitializer<FOUR, THREE>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else if ( n_bb == FOUR ) {
+				recognized_residue_type = RotamerInitializer<FOUR, FOUR>::initialize_rotamer( residue, scratch, rotamer_bin);
+			} else {
+				continue;
+			}
 		} else {
 			continue;
 		}

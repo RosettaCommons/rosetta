@@ -977,6 +977,7 @@ CT1	CT1	NH1	CT2	1.8000	1	0.00
 CC	CT2	NH1	CT2	0.2000	1	180.00
 #awatkins: ditto
 CE1     CT2     NH1     CT1     0.2000  1       180.00
+CT2		NH1		CT2		CE1		1.8000 	1	 	0.00
 
 #CT2-NH1-CT1-CA
 CA	CT1	NH1	CT2	1.8000	1	0.00
@@ -1010,6 +1011,36 @@ CT1  CT2  ON2  P     0.65    2     0.0 #
 CT1  CT2  ON2  P     0.05    3     0.0 #
 CT2  ON2  P    ON3   0.10    3     0.0 # from ON3  P    ON2  CN8B
 HA   CT2  ON2  P     0.00    3     0.0 !from P    ON2  CN8B HN8
+
+# ADDED FOR 4-BENZOPHENONE
+CA	C	CA	CA	0.0400	3	30.00
+CA	CA	CA	C	3.10	1	180.00	#from: CC	CAP	CAP	CAP
+HP	CA	CA	C	3.10	1	0.00	
+CA	CA	C	O	3.10	2	0.00	
+
+# FOR BENZYLCYSTEINE; confirmed minima with macromodel
+CT2	S	CT2	CA	0.2400	1	180.00	#from: CT3	S	CT2	CT2
+CT2	S	CT2	CA	0.3700	3	0.00	#from: CT3	S	CT2	CT2
+S	CT2	CA	CA	0.2400	2	90.00	#macromodel
+#CT2	S	CT2	CA	1.2000	3	60.00	#from: CT3	S	CT2	CT2
+#S	CT2	CA	CA	1.5000	2	90.00	#from: CT3	S	CT2	CT2
+
+# ADDED FOR SAL; confirmed with macromodel
+C   NH1 CA	CA	0.2400	2	180.00
+H   NH1 CA	CA	0.2400	2	180.00
+CA  NH1 C   O   1.0000	2	0
+CA  NH1 C   CT3 1.0000	2	180.00
+CA  CA  CA  NH1 1000.0	1	180
+HP  CA  CA  NH1 1000.0	1	0
+NH1 C   CA	CA	0.2400	2	180.00
+CA  C   NH1 CT3 2       2	180.00
+CA  C   NH1 CT3 0.6     1	180.00
+CA  C   NH1 H   2       2	180.00
+CA  C   NH1 H   0.6     1	180.00
+CA  CA  CA  OS 1000.0	1	180
+C  CA  CA  OS 1000.0	1	0
+CA  CA  OS   CT3 0.2400	2	180.00
+OS  CA  CA  HP  1000.0  1   0
 
 # added for EDA
 HA	 CT1  NH1  C	 0.0	3	180

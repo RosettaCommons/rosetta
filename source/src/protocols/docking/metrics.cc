@@ -54,11 +54,11 @@ namespace protocols {
 namespace docking {
 
 core::Real
-calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps){
+calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ) {
 	using namespace scoring;
 	using namespace basic::options;
 
-	Real interaction_energy(0);
+	Real interaction_energy( 0 );
 
 	core::scoring::ScoreFunctionOP docking_scorefxn;
 	core::pose::Pose complex_pose = pose;
@@ -80,7 +80,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 	// calculate energy of separated pose over each movable jump
 	// ddG is the "right" way to do this, to properly penalize strained rotamers
 	// but aroop reports that I_sc yields better results for antibodies
-	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		Size const rb_jump = *it;
 		/*
 		 Real const threshold = 100000; // dummy threshold
@@ -114,15 +114,15 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		translate_away->apply( unbound_pose );
 
 		// calculate unbound energy
-		Real const unbound_energy = (*docking_scorefxn)( unbound_pose );
+		Real const unbound_energy = ( *docking_scorefxn )( unbound_pose );
 
 		// add score from this jump to total interaction energy
-		interaction_energy += (bound_energy - unbound_energy);
+		interaction_energy += ( bound_energy - unbound_energy );
 
 		TR << "unbound pose: " << std::endl;
-		docking_scorefxn->show(unbound_pose);
+		docking_scorefxn->show( unbound_pose );
 		TR << "bound pose: " << std::endl;
-		docking_scorefxn->show(complex_pose);
+		docking_scorefxn->show( complex_pose );
 		TR << "unbound energy: " << unbound_energy << std::endl;
 		TR << "bound energy: " << bound_energy << std::endl;
 		TR << "interaction energy: " << interaction_energy << std::endl;
@@ -138,7 +138,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 core::Real
 calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, DockJumps const movable_jumps ){
 	using namespace scoring;
-	Real Lrmsd(0);
+	Real Lrmsd( 0 );
 
 	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		Size const rb_jump = *it;
@@ -149,9 +149,9 @@ calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 		/// for superpositioning.  there is probably a better way to do this
 		/// need to check TODO
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
-			if (temp_part(i)) superpos_partner(i)=false;
-			else superpos_partner(i)=true;
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( temp_part( i ) ) superpos_partner( i )=false;
+			else superpos_partner( i ) = true;
 		}
 
 		//Lrmsd += rmsd_no_super_subset( native_pose, pose, superpos_partner, is_protein_CA );
@@ -162,14 +162,14 @@ calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 }
 
 core::Real
-calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ){
+calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ) {
 	using namespace scoring;
-	Real Irmsd(0);
+	Real Irmsd( 0 );
 
-	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		core::Size const rb_jump = *it;
-		if (!pose.is_fullatom() || !native_pose.is_fullatom()){
-			TR << "Irmsd calc called with non-fullatom pose!!!"<<std::endl;
+		if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
+			TR << "Irmsd calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
 
@@ -181,7 +181,7 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 		// score to set up interface object
 		// scoring only happened here to update the residue neighbors
 		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
-		(*scorefxn)( native_docking_pose );
+		( *scorefxn )( native_docking_pose );
 //		dock_scorefxn->show( TR );
 		
 //		native_docking_pose.update_residue_neighbors();
@@ -191,21 +191,21 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 		interface.calculate( native_docking_pose );
 		ObjexxFCL::FArray1D_bool is_interface ( pose.total_residue(), false );
 
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
-			if (interface.is_interface(i)) is_interface(i) = true;
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( interface.is_interface( i ) ) is_interface( i ) = true;
 		}
 
 		//Irmsd += rmsd_with_super_subset(native_docking_pose, pose, is_interface, is_heavyatom);
 		using namespace core::scoring;
-		Irmsd += core::scoring::rmsd_with_super_subset(native_docking_pose, pose, is_interface, is_protein_backbone);
+		Irmsd += core::scoring::rmsd_with_super_subset( native_docking_pose, pose, is_interface, is_protein_backbone );
 	}
 	return Irmsd;
 }
 
 core::Real
-calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ){
+calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ) {
 	using namespace scoring;
-	Real Irmsd(0);
+	Real Irmsd( 0 );
 
 	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		core::Size const rb_jump = *it;
@@ -217,50 +217,50 @@ calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_po
 		core::pose::Pose native_docking_pose = native_pose;
 		using namespace kinematics;
 		FoldTree ft( pose.fold_tree() );
-		native_docking_pose.fold_tree(ft);
+		native_docking_pose.fold_tree( ft );
 
 		//score to set up interface object
-		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
-		(*scorefxn)( native_docking_pose );
+		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone();
+		( *scorefxn )( native_docking_pose );
 
 		protocols::scoring::Interface interface( rb_jump );
 		interface.distance( 8.0 );
 		interface.calculate( native_docking_pose );
 		ObjexxFCL::FArray1D_bool is_interface ( pose.total_residue(), false );
 
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
-			if (interface.is_interface(i)) is_interface(i) = true;
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( interface.is_interface( i ) ) is_interface( i ) = true;
 		}
 
 		//Irmsd += rmsd_with_super_subset(native_docking_pose, pose, is_interface, is_heavyatom);
 		using namespace core::scoring;
-		Irmsd += core::scoring::rmsd_with_super_subset(native_docking_pose, pose, is_interface, is_protein_CA);
+		Irmsd += core::scoring::rmsd_with_super_subset( native_docking_pose, pose, is_interface, is_protein_CA );
 	}
 	return Irmsd;
 }
 
 core::Real
-calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ){
+calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ) {
 	using namespace scoring;
 	using namespace conformation;
-	Real Fnat(0);
+	Real Fnat( 0 );
 
 	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		core::Size const rb_jump = *it;
 
-		if (!pose.is_fullatom() || !native_pose.is_fullatom()){
-			TR << "Fnat calc called with non-fullatom pose!!!"<<std::endl;
+		if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
+			TR << "Fnat calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
 
 		core::pose::Pose native_docking_pose = native_pose;
 		using namespace kinematics;
 		FoldTree ft( pose.fold_tree() );
-		native_docking_pose.fold_tree(ft);
+		native_docking_pose.fold_tree( ft );
 		Real cutoff = 5.0;
 
 		//score to set up interface object
-		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
+		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone();
 		(*scorefxn)( native_docking_pose );
 
 		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
@@ -274,23 +274,23 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 		interface.calculate( native_docking_pose );
 
 		//generate list of interface residues for partner 1 and partner 2
-		for ( Size i=1; i <= pose.total_residue(); i++){
-			if (interface.is_interface(i)){
-				if (!temp_part(i)) partner1.push_back(i);
-				if (temp_part(i)) partner2.push_back(i);
+		for ( Size i = 1; i <= pose.total_residue(); i++){
+			if ( interface.is_interface( i ) ) {
+				if ( !temp_part( i ) ) partner1.push_back( i );
+				if ( temp_part( i ) ) partner2.push_back( i );
 			}
 		}
 
 		//create contact pair list
-		ObjexxFCL::FArray2D_bool contact_list(partner1.size(), partner2.size(), false);
+		ObjexxFCL::FArray2D_bool contact_list( partner1.size(), partner2.size(), false );
 
 		//identify native contacts across the interface
 		//this will probably be changed to use PoseMetrics once I figure out how to use them - Sid
-		for ( Size i=1; i<= partner1.size(); i++){
-			ResidueOP rsd1( new Residue(native_docking_pose.residue(partner1[i])) );
-			for ( Size j=1; j<=partner2.size();j++){
-				ResidueOP rsd2( new Residue(native_docking_pose.residue(partner2[j])) );
-				contact_list(i,j)=calc_res_contact(rsd1, rsd2, cutoff);
+		for ( Size i = 1; i <= partner1.size(); i++ ) {
+			ResidueOP rsd1( new Residue( native_docking_pose.residue( partner1[ i ] ) ) );
+			for ( Size j = 1; j <= partner2.size(); j++ ) {
+				ResidueOP rsd2( new Residue( native_docking_pose.residue( partner2[ j ] ) ) );
+				contact_list( i, j ) = calc_res_contact( rsd1, rsd2, cutoff );
 			}
 		}
 
@@ -298,33 +298,33 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 		Real decoy_ncontact = 0;
 		//		utility::io::ozstream out( "native_contact.txt");
 		//identify which native contacts are recovered in the decoy
-		for ( Size i=1; i<=partner1.size(); i++){
-			for ( Size j=1; j<=partner2.size(); j++){
-				if (contact_list(i,j)){
+		for ( Size i = 1; i <= partner1.size(); i++ ) {
+			for ( Size j = 1; j <= partner2.size(); j++ ) {
+				if ( contact_list( i, j ) ) {
 					//		out << partner1[i] << "  " << partner2[j] << "\n";
 					native_ncontact++;
-					ResidueOP rsd1( new Residue(pose.residue(partner1[i])) );
-					ResidueOP rsd2( new Residue(pose.residue(partner2[j])) );
-					if (calc_res_contact(rsd1, rsd2, cutoff)) decoy_ncontact++;
+					ResidueOP rsd1( new Residue( pose.residue( partner1[ i ] ) ) );
+					ResidueOP rsd2( new Residue( pose.residue( partner2[ j ] ) ) );
+					if ( calc_res_contact( rsd1, rsd2, cutoff ) ) decoy_ncontact++;
 				}
 			}
 		}
 
-		Fnat += decoy_ncontact/native_ncontact;
+		Fnat += decoy_ncontact / native_ncontact;
 	}
 	return Fnat;
 }
 
 core::Real
-calc_Fnat( const core::pose::Pose & pose, std::string const& list_file, DockJumps const movable_jumps ){
+calc_Fnat( const core::pose::Pose & pose, std::string const& list_file, DockJumps const movable_jumps ) {
 	using namespace scoring;
 	using namespace conformation;
-	Real Fnat(0);
+	Real Fnat( 0 );
 	Real cutoff = 5.0;
 
-	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		if (!pose.is_fullatom() ){
-			TR << "Fnat calc called with non-fullatom pose!!!"<<std::endl;
+	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+		if ( !pose.is_fullatom() ) {
+			TR << "Fnat calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
 		//		ObjexxFCL::FArray2D_bool contact_list(partner1.size(), partner2.size(), false);
@@ -359,11 +359,11 @@ calc_Fnat( const core::pose::Pose & pose, std::string const& list_file, DockJump
 		Real decoy_ncontact = 0;
 
 		//identify which native contacts are recovered in the decoy
-		for ( Size i=1; i<=partner1.size(); i++){
-			TR.Debug << partner1[i] << "  " << partner2[i] << std::endl;
-					ResidueOP rsd1( new Residue(pose.residue(partner1[i])) );
-					ResidueOP rsd2( new Residue(pose.residue(partner2[i])) );
-					if (calc_res_contact(rsd1, rsd2, cutoff)) decoy_ncontact++;
+		for ( Size i = 1; i <= partner1.size(); i++ ) {
+			TR.Debug << partner1[ i ] << "  " << partner2[ i ] << std::endl;
+					ResidueOP rsd1( new Residue( pose.residue( partner1[ i ] ) ) );
+					ResidueOP rsd2( new Residue( pose.residue( partner2[ i ] ) ) );
+					if ( calc_res_contact( rsd1, rsd2, cutoff ) ) decoy_ncontact++;
 		}
 
 		Fnat += decoy_ncontact/native_ncontact;
@@ -372,16 +372,16 @@ calc_Fnat( const core::pose::Pose & pose, std::string const& list_file, DockJump
 }
 
 core::Real
-calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ){
+calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ){
 	using namespace scoring;
 	using namespace conformation;
-	Real Fnonnat(0);
+	Real Fnonnat( 0 );
 
 	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		core::Size const rb_jump = *it;
 
-		if (!pose.is_fullatom() || !native_pose.is_fullatom()){
-			TR << "Fnat calc called with non-fullatom pose!!!"<<std::endl;
+		if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
+			TR << "Fnat calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
 
@@ -392,7 +392,7 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 		Real cutoff = 5.0;
 
 		//score to set up interface object
-		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
+		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone();
 		(*scorefxn)( native_docking_pose );
 
 		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
@@ -407,18 +407,18 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 
 		//generate list of interface residues for partner 1 and partner 2
 		Size cutpoint = 0;
-		for ( Size i =1; i<pose.total_residue(); i++ ) {
-			if (!temp_part(i) ) {
+		for ( Size i = 1; i < pose.total_residue(); i++ ) {
+			if ( !temp_part( i ) ) {
 				cutpoint = i;
 				break;
 			}
 		}
 		TR.Debug << "start residue id of second binding partner " << cutpoint << std::endl;
 
-		for ( Size i=1; i <= pose.total_residue(); i++){
-			if (interface.is_interface(i)){
-				if (!temp_part(i)) partner1.push_back(i);
-				if (temp_part(i)) partner2.push_back(i);
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			if ( interface.is_interface( i ) ) {
+				if ( !temp_part( i ) ) partner1.push_back( i );
+				if ( temp_part( i ) ) partner2.push_back( i );
 			}
 		}
 
@@ -426,13 +426,13 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 		std::list< std::pair< core::Size, core::Size > > contact_list;
 		//identify native contacts across the interface
 		//this will probably be changed to use PoseMetrics once I figure out how to use them - Sid
-		for ( Size i=1; i<= partner1.size(); i++){
-			ResidueOP rsd1( new Residue(native_docking_pose.residue(partner1[i])) );
-			for ( Size j=1; j<=partner2.size();j++){
-				ResidueOP rsd2( new Residue(native_docking_pose.residue(partner2[j])) );
-				if ( calc_res_contact(rsd1, rsd2, cutoff) ) {
-					std::pair< core::Size, core::Size > elem( partner1[i],partner2[j] );
-					contact_list.push_back(elem);
+		for ( Size i = 1; i <= partner1.size(); i++ ) {
+			ResidueOP rsd1( new Residue( native_docking_pose.residue( partner1[ i ] ) ) );
+			for ( Size j = 1; j <= partner2.size();j++ ) {
+				ResidueOP rsd2( new Residue( native_docking_pose.residue( partner2[ j ] ) ) );
+				if ( calc_res_contact( rsd1, rsd2, cutoff) ) {
+					std::pair< core::Size, core::Size > elem( partner1[ i ], partner2[ j ] );
+					contact_list.push_back( elem );
 				}
 			}
 		}
@@ -442,12 +442,12 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 
 		//identify which native contacts are recovered in the decoy
 
-		for ( Size i=1; i<cutpoint-1; i++) {
-			for ( Size j=cutpoint; j<=pose.total_residue(); j++ ) {
+		for ( Size i = 1; i < cutpoint-1; i++ ) {
+			for ( Size j = cutpoint; j <= pose.total_residue(); j++ ) {
 				ResidueOP rsd1( new Residue( pose.residue( i ) ) );
 				ResidueOP rsd2( new Residue( pose.residue( j ) ) );
 				if ( calc_res_contact( rsd2, rsd1, cutoff ) ) {
-					std::pair< core::Size, core::Size> elem( j, i);
+					std::pair< core::Size, core::Size > elem( j, i );
 					//					for ( std::list< std::pair< core::Size, core::Size> >::iterator it = contact_list.begin(); it != contact_list.end(); ++it ) {
 					std::list< std::pair< core::Size, core::Size > >::iterator it = std::find( contact_list.begin(), contact_list.end(), elem );
 					if ( it != contact_list.end() ) { // found in the contact list
@@ -460,32 +460,32 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 			}
 		}
 
-		Fnonnat += decoy_n_noncontact/native_ncontact;
+		Fnonnat += decoy_n_noncontact / native_ncontact;
 	}
 	return Fnonnat;
 }
 
 
 core::Real
-calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJumps const movable_jumps ){
+calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJumps const movable_jumps ) {
 	using namespace scoring;
 	using namespace conformation;
-	Real Fnonnat(0);
+	Real Fnonnat( 0 );
 	Real cutoff = 5.0;
 
 	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		core::Size const rb_jump = *it;
 
-		if (!pose.is_fullatom() ){
-			TR << "Fnonnat calc called with non-fullatom pose!!!"<<std::endl;
+		if ( !pose.is_fullatom() ){
+			TR << "Fnonnat calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
 
 		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
 		Size cutpoint = 0;
-		for ( Size i=1; i<pose.total_residue(); i++ ) {
-			if ( !temp_part(i) ) {
+		for ( Size i = 1; i < pose.total_residue(); i++ ) {
+			if ( !temp_part( i ) ) {
 				cutpoint = i;
 				break;
 			}
@@ -513,8 +513,8 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 			Size res_n2;
 			line_stream >> res_n1 >> res_n2;
 			TR.Debug << "res_n1 " << res_n1 << " res_n2 " << res_n2 << std::endl;
-			std::pair< core::Size, core::Size> elem( res_n1, res_n2);
-			contact_list.push_back(elem);
+			std::pair< core::Size, core::Size > elem( res_n1, res_n2 );
+			contact_list.push_back( elem );
 			//			contact_list( res_n1, res_n2 ) = true;
 		}
 		//create contact pair list
@@ -533,13 +533,13 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 
 		//identify which native contacts are recovered in the decoy
 
-		for ( Size i=1; i<cutpoint-1; i++) {
-			for ( Size j=cutpoint; j<=pose.total_residue(); j++ ) {
+		for ( Size i = 1; i < cutpoint - 1; i++ ) {
+			for ( Size j = cutpoint; j <= pose.total_residue(); j++ ) {
 				ResidueOP rsd1( new Residue( pose.residue( i ) ) );
 				ResidueOP rsd2( new Residue( pose.residue( j ) ) );
 				TR.Debug << "distance between residue pair " << i << " " << j << std::endl;
 				if ( calc_res_contact( rsd2, rsd1, cutoff ) ) {
-					std::pair< core::Size, core::Size> elem( j, i);
+					std::pair< core::Size, core::Size > elem( j, i );
 					//					for ( std::list< std::pair< core::Size, core::Size> >::iterator it = contact_list.begin(); it != contact_list.end(); ++it ) {
 					std::list< std::pair< core::Size, core::Size > >::iterator it = std::find( contact_list.begin(), contact_list.end(), elem );
 					if ( it != contact_list.end() ) { // found in the contact list
@@ -552,7 +552,7 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 			}
 		}
 
-		Fnonnat += decoy_n_noncontact/native_ncontact;
+		Fnonnat += decoy_n_noncontact / native_ncontact;
 	}
 	return Fnonnat;
 }
@@ -563,13 +563,13 @@ bool calc_res_contact(
 	Real dist_cutoff
 	)
 {
-	Real dist_cutoff2 = dist_cutoff*dist_cutoff;
+	Real dist_cutoff2 = dist_cutoff * dist_cutoff;
 	double dist2 = 9999.0;
 
-	for (Size m=1; m<=rsd1->nheavyatoms(); m++){
-		for (Size n=1; n<=rsd2->nheavyatoms(); n++){
-			/*	double */dist2 = rsd1->xyz(m).distance_squared( rsd2->xyz(n) );  //Is there a reason this is a double?
-			if (dist2 <= dist_cutoff2) { TR.Debug << "return true " << dist2 << std::endl; return true;}
+	for ( Size m = 1; m <= rsd1->nheavyatoms(); m++ ) {
+		for ( Size n = 1; n <= rsd2->nheavyatoms(); n++ ) {
+			/*	double */dist2 = rsd1->xyz( m ).distance_squared( rsd2->xyz( n ) );  //Is there a reason this is a double?
+			if ( dist2 <= dist_cutoff2 ) { TR.Debug << "return true " << dist2 << std::endl; return true; }
 		}
 	}
 	TR.Debug << "return false " << dist2 << std::endl;

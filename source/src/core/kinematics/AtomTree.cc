@@ -144,7 +144,6 @@ AtomTree::replace_tree(
 	clear();
 
 	atom_pointer_ = new_atom_pointer;
-
 	find_root_from_atom_pointer();
 
 	external_coordinate_residues_changed_->total_residue( atom_pointer_.size() );
@@ -152,12 +151,11 @@ AtomTree::replace_tree(
 	if ( from_xyz ) {
 		internal_coords_need_updating_ = true;
 		xyz_coords_need_updating_ = false;
-
 		update_internal_coords();
 	} else {
 		xyz_coords_need_updating_ = true;
 		internal_coords_need_updating_ = false;
-
+		
 		update_xyz_coords();
 	}
 
@@ -462,6 +460,7 @@ AtomTree::torsion_angle_dof_id(
 	using numeric::dihedral;
 	using numeric::dihedral_radians;
 
+    //TR << "Getting a torsion_angle_dof_id for " << atom1_in_id.atomno() << "-" << atom2_in_id.atomno() << "-" << atom3_in_id.atomno() << "-" << atom4_in_id.atomno() << std::endl;
 	//bool const debug( false );
 
 	// We use the internal DoFs if necessary to calculate the offset.
@@ -474,8 +473,8 @@ debug_assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) &&
 
 	// TODO: STUART -- (low priority) I'd like to be able to cache the results of this calculation
 	// to allow faster access.
-
-	Atom const * atom1_in( atom_pointer_( atom1_in_id ).get() );
+    
+	Atom const * atom1_in( atom_pointer_( atom1_in_id ).get() ); // not atom_pointer_( ).get()
 	Atom const * atom2_in( atom_pointer_( atom2_in_id ).get() );
 	Atom const * atom3_in( atom_pointer_( atom3_in_id ).get() );
 	Atom const * atom4_in( atom_pointer_( atom4_in_id ).get() );
@@ -820,6 +819,7 @@ AtomTree::set_torsion_angle(
 		bool const quiet
 )
 {
+    //TR << "amw can we get a dof for " << atom1.atomno() << "-" << atom2.atomno() << "-" << atom3.atomno() << "-" << atom4.atomno() << "?" << std::endl;
 	Real offset;
 	DOF_ID const & id( torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset, quiet ) );
 
@@ -1038,6 +1038,7 @@ AtomTree::torsion_angle(
 	//
 	// torsion(atom1,atom2,atom3,atom4) = dof(id) + offset
 	//
+    //TR << "amw in torsion_angle" << std::endl;
 
 	return atom_pointer_[ id.atom_id() ]->dof( id.type() ) + offset;
 }
@@ -1199,7 +1200,8 @@ void
 AtomTree::update_internal_coords() const
 {
 	// this would be bad:
-debug_assert( ! ( xyz_coords_need_updating_ && internal_coords_need_updating_ ) );
+
+	debug_assert( ! ( xyz_coords_need_updating_ && internal_coords_need_updating_ ) );
 
 	if ( internal_coords_need_updating_ ) {
 		if ( !root_ ) utility_exit_with_message("Attempting to update an AtomTree with no root!");

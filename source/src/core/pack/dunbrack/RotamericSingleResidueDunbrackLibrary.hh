@@ -27,8 +27,9 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // ObjexxFCL Headers
+#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+//#include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/vector1.hh>
 
@@ -59,7 +60,7 @@ namespace dunbrack {
 // 	DunbrackRotamer< T, Real > rotamer_;
 // };
 
-template < Size T >
+template < Size T, Size N >
 class RotamericSingleResidueDunbrackLibrary : public SingleResidueDunbrackLibrary
 {
 public:
@@ -75,7 +76,7 @@ public:
 		bool dun02
 	);
 
-	virtual ~RotamericSingleResidueDunbrackLibrary();
+	virtual ~RotamericSingleResidueDunbrackLibrary() throw();
 
 	friend class SingleResidueDunbrackLibrary;
 
@@ -142,6 +143,26 @@ public:
 	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
+		utility::fixedsizearray1< Real, N > bbs
+	) const;
+
+	virtual
+	Real
+	get_probability_for_rotamer(
+		utility::fixedsizearray1< Real, N > bbs,
+		Size rot_ind
+	) const;
+
+	virtual
+	DunbrackRotamerSampleData
+	get_rotamer(
+		utility::fixedsizearray1< Real, N > bbs,
+		Size rot_ind
+	) const;
+	
+	virtual
+	utility::vector1< DunbrackRotamerSampleData >
+	get_all_rotamer_samples(
 		Real phi,
 		Real psi
 	) const;
@@ -161,10 +182,13 @@ public:
 		Real psi,
 		Size rot_ind
 	) const;
-
-	virtual
+    
+    virtual
 	Size nchi() const;
-
+	
+	virtual
+	Size nbb() const;
+	
 	virtual
 	Size n_rotamer_bins() const;
 
@@ -228,30 +252,37 @@ public:
 		bool first_line_three_letter_code_already_read
 	);
 
-protected:
+public:
+    // amw I don't see a strong reason to keep these constants protected
+    // and SemiRotamericSingleResidueDunbrackLibrary needs to access them
+    // and I would sooner change their access than I would change the
+    // inheritance between the two from public to protected
 	// hard coded constants
-	static Size const N_PHIPSI_BINS = 36;
+	
+    // for some reason I can't have this static anymore, so I will now assign it in the ctor
+    // this is probably appropriate anyway because eventually this may vary!
+    Size const N_PHIPSI_BINS;
 	static Real const PHIPSI_BINRANGE;
 
 protected:
 	/// Read and write access for derived classes
 
-	typename ObjexxFCL::FArray3D< PackedDunbrackRotamer< T > > const &
+	typename ObjexxFCL::FArray2D< PackedDunbrackRotamer< T, N > > const &
 	rotamers() const {
 		return rotamers_;
 	}
 
-	typename ObjexxFCL::FArray3D< PackedDunbrackRotamer< T > > &
+	typename ObjexxFCL::FArray2D< PackedDunbrackRotamer< T, N > > &
 	rotamers() {
 		return rotamers_;
 	}
 
-	ObjexxFCL::FArray3D< Size > const &
+	ObjexxFCL::FArray2D< Size > const &
 	packed_rotno_2_sorted_rotno() const {
 		return packed_rotno_2_sorted_rotno_;
 	}
 
-	ObjexxFCL::FArray3D< Size > &
+	ObjexxFCL::FArray2D< Size > &
 	packed_rotno_2_sorted_rotno() {
 		return packed_rotno_2_sorted_rotno_;
 	}
@@ -289,11 +320,11 @@ public:
 		conformation::Residue const & rsd,
 		RotamerLibraryScratchSpace & scratch,
 		Size const packed_rotno,
-		PackedDunbrackRotamer< T, Real > & interpolated_rotamer
+		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 	) const;
 
 protected:
-	void
+	/*void
 	interpolate_rotamers(
 		RotamerLibraryScratchSpace & scratch,
 		Size const packed_rotno,
@@ -304,7 +335,17 @@ protected:
 		Real const phi_alpha,
 		Real const psi_alpha,
 		PackedDunbrackRotamer< T, Real > & interpolated_rotamer
-	) const;
+    ) const;*/
+	
+    void
+	interpolate_rotamers(
+                         RotamerLibraryScratchSpace & scratch,
+                         Size const packed_rotno,
+						 utility::fixedsizearray1< Size, N > const bb_bin,
+                         utility::fixedsizearray1< Size, N > const bb_bin_next,
+                         utility::fixedsizearray1< Real, N > const bb_alpha,
+                         PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
+                         ) const;
 
 	/// @brief Assigns random chi angles and returns the packed_rotno for the chosen random rotamer.
 	void
@@ -319,7 +360,7 @@ protected:
 
 	void
 	assign_chi_for_interpolated_rotamer(
-		PackedDunbrackRotamer< T, Real > const & interpolated_rotamer,
+		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 		conformation::Residue const & rsd,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
@@ -332,26 +373,6 @@ protected:
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
-	void
-	get_phipsi_bins(
-		Real phi,
-		Real psi,
-		Size & phibin,
-		Size & psibin,
-		Size & phibin_next,
-		Size & psibin_next,
-		Real & phi_alpha,
-		Real & psi_alpha
-	) const;
-
-	void
-	get_phipsi_bins(
-		Real phi,
-		Real psi,
-		Size & phibin,
-		Size & psibin
-	) const;
-
 	Real
 	get_phi_from_rsd(
 		conformation::Residue const & rsd
@@ -360,7 +381,33 @@ protected:
 	Real
 	get_psi_from_rsd(
 		conformation::Residue const & rsd
-	) const;
+                     ) const;
+    
+	void
+	get_bb_bins(
+				utility::fixedsizearray1< Real, N > bbs,
+                utility::fixedsizearray1< Size, N > & bb_bin,
+                utility::fixedsizearray1< Size, N > & bb_bin_next,
+                utility::fixedsizearray1< Real, N > & bb_alpha
+                    ) const;
+    
+	void
+	get_bb_bins(
+                    utility::fixedsizearray1< Real, N > bbs,
+                    utility::fixedsizearray1< Size, N > & bb_bin
+                    ) const;
+    
+	
+    utility::fixedsizearray1< Real, N >
+	get_bbs_from_rsd(
+                     conformation::Residue const & rsd
+                     ) const;
+    
+	Real
+	get_bb_from_rsd(
+                    core::Size bbn,
+					conformation::Residue const & rsd
+					) const;
 
 
 private:
@@ -378,7 +425,7 @@ private:
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
 		RotamerVector & rotamers,
-		PackedDunbrackRotamer< T, Real > const & interpolated_rotamer
+		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
 	) const;
 
 
@@ -389,14 +436,20 @@ private:
 		Size const psibin,
 		Size const phibin_next,
 		Size const psibin_next
-	) const;
+    ) const;
+    
+	void verify_bb_bins(
+                        utility::fixedsizearray1< Real, N > bbs,
+                        utility::fixedsizearray1< Size, N > const bb_bin,
+                        utility::fixedsizearray1< Size, N > const bb_bin_next
+                            ) const;
 
 protected:
 
 	template< class P >
-	DunbrackRotamer< T, P >
+	DunbrackRotamer< T, N, P >
 	packed_rotamer_2_regular_rotamer(
-		PackedDunbrackRotamer< T, P > const & packedrot
+		PackedDunbrackRotamer< T, N, P > const & packedrot
 	) const;
 
 	/// @brief This member function constructs a list of all combinations of chi angles
@@ -409,7 +462,7 @@ protected:
 		pack::task::PackerTask const & task,
 		Size const seqpos,
 		bool buried,
-		RotamericData< T > const & rotamer_data,
+		RotamericData< T, N > const & rotamer_data,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		utility::vector1< ChiSetOP > & chi_set_vector
 	) const;
@@ -427,7 +480,7 @@ protected:
 		pack::task::ResidueLevelTask const & rtask,
 		bool buried,
 		Size const chi_index,
-		RotamericData< T > const & rotamer_data,
+		RotamericData< T, N > const & rotamer_data,
 		utility::vector1< Real > const & extra_steps,
 		utility::vector1< Real > & total_chi,
 		utility::vector1< int  > & total_rot,
@@ -460,17 +513,17 @@ private:
 	/// The FArray3D is indexed into by (phi, psi, sorted_index ), where
 	/// sorted index simply means the order for a particular packed_rotno in the
 	/// list of rotamers sorted by probability.
-	typename ObjexxFCL::FArray3D< PackedDunbrackRotamer< T > > rotamers_;
-
+	// amw NOW IT IS INDEXED BY ONE NUMBER, PLUS SORTED INDEX
+    typename ObjexxFCL::FArray2D< PackedDunbrackRotamer< T, N > > rotamers_;
 	/// Quick lookup that lists the sorted position for the packed rotamer number
 	/// given a phi/psi.  Indexed by (phi, psi, packed_rotno ).
-	ObjexxFCL::FArray3D< Size > packed_rotno_2_sorted_rotno_;
+	// amw NOW IT IS INDEXED BY ONE NUMBER, PLUS PACKED INDEX
+    ObjexxFCL::FArray2D< Size > packed_rotno_2_sorted_rotno_;
 
 	// Entropy correction
-	ObjexxFCL::FArray2D< Real > ShanonEntropy_;
-	ObjexxFCL::FArray2D< Real > S_dsecophi_;
-	ObjexxFCL::FArray2D< Real > S_dsecopsi_;
-	ObjexxFCL::FArray2D< Real > S_dsecophipsi_;
+    // amw NOW 1D NOT 2D
+    // amw ALSO NOW A VECTOR OF THIS ARRAY FOR THE N DERIVS
+    utility::fixedsizearray1< ObjexxFCL::FArray1D< Real >, ( 1 << N ) > ShanonEntropy_n_derivs_;
 
 	/// Maximum probability of any rotamer, stored by phi,psi bin.
 	/// Could be derived from rotset_ but stored here for easy lookup.

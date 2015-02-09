@@ -64,7 +64,7 @@ namespace docking {
 // default constructor
 DockingHighRes::DockingHighRes() : Mover()
 {
-	init( utility::tools::make_vector1<core::SSize>(1) ); // operate on the first jump
+	init( utility::tools::make_vector1< core::SSize >( 1 ) ); // operate on the first jump
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 	scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 }
@@ -83,9 +83,9 @@ DockingHighRes::DockingHighRes(
 DockingHighRes::DockingHighRes(
 	core::Size const rb_jump,
 	core::scoring::ScoreFunctionOP scorefxn
-) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn)
+) : Mover(), scorefxn_( scorefxn ), scorefxn_pack_( scorefxn )
 {
-	init( utility::tools::make_vector1<core::SSize>(rb_jump) );
+	init( utility::tools::make_vector1< core::SSize >( rb_jump ) );
 }
 
 // constructor with arguments
@@ -94,9 +94,9 @@ DockingHighRes::DockingHighRes(
 	core::Size const rb_jump,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::ScoreFunctionOP scorefxn_pack
-) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn_pack)
+) : Mover(), scorefxn_( scorefxn ), scorefxn_pack_( scorefxn_pack )
 {
-	init( utility::tools::make_vector1<core::SSize>(rb_jump) );
+	init( utility::tools::make_vector1< core::SSize >( rb_jump ) );
 }
 
 // constructor with arguments
@@ -105,7 +105,7 @@ DockingHighRes::DockingHighRes(
 	DockJumps const movable_jumps,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::ScoreFunctionOP scorefxn_pack
-) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn_pack)
+) : Mover(), scorefxn_( scorefxn ), scorefxn_pack_( scorefxn_pack )
 {
 	init( movable_jumps );
 }
@@ -122,7 +122,7 @@ DockingHighRes::DockingHighRes( DockingHighRes const & old_instance ) :
 	scorefxn_pack_ = old_instance.scorefxn_pack_->clone();
 
 	movable_jumps_ = old_instance.movable_jumps_;
-	if( old_instance.tf_ ){
+	if ( old_instance.tf_ ) {
 		tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *old_instance.tf_ ) );
 	}
 	tf2_ = protocols::docking::DockTaskFactoryOP( new DockTaskFactory( *old_instance.tf2_ ) );

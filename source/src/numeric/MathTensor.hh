@@ -163,7 +163,7 @@ public:
 			}
 		}
 
-   }
+    }
 
 	T &
 	operator() ( Size layer, Size row, Size col ) {

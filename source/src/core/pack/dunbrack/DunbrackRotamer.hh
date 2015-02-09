@@ -33,6 +33,9 @@
 // Numeric headers
 #include <numeric/random/random.fwd.hh>
 
+#include <basic/interpolate.hh>
+#include <basic/basic.hh>
+
 // Utility headers
 #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -40,6 +43,9 @@
 // AUTO-REMOVED #include <utility/exit.hh>
 
 #include <utility/vector1_bool.hh>
+#include <cmath>
+#include <cstdlib>
+#include <iostream>
 
 
 
@@ -47,6 +53,50 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
+Size positive_pow( Size mantissa, Size exponent );
+    
+inline bool
+bit_is_set(
+    Size num,
+    Size num_len,
+    Size pos
+) {
+    return ( num - 1 ) & ( 1 << ( num_len - pos ) );
+}
+	
+template< Size N >
+inline Size make_index(
+	Size n_bb,
+    Size num_bins,
+    utility::fixedsizearray1< Size, N > bb_bin
+) {
+    Size index = 1;
+	for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
+		//std::cout << "N is " << N << " and bb_bin[ " << bbi << " ] is " << bb_bin[ bbi ];
+		//std::cout << " so I am going to add " << ( bb_bin[ bbi ] - 1 ) << " * " << positive_pow( num_bins, n_bb - bbi ) << " equals " << (( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins, n_bb - bbi )) << std::endl;
+        index += ( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins, n_bb - bbi );
+	}
+    return index;
+}
+
+template < Size N >
+inline Size make_conditional_index(
+	Size n_bb,
+    Size num_bins,
+    Size cond_i,
+    utility::fixedsizearray1< Size, N > bin_true,
+    utility::fixedsizearray1< Size, N > bin_false
+) {
+    Size index = 1;
+    for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
+        if ( ( cond_i - 1 ) & ( 1 << ( n_bb - bbi ) ) )
+            index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins, n_bb - bbi );
+        else
+            index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins, n_bb - bbi );
+    }
+    return index;
+}
+    
 /// @brief A class who's size is known at compile time.  A vector of these objects
 /// will occupy a perfectly contiguous region of memory, with no extra space
 /// allocated for pointers.  These objects may be rapidly allocated and deallocated
@@ -54,49 +104,58 @@ namespace dunbrack {
 ///
 /// @details S for Size, P for Precision.  Now incorporating the bicubic spline
 /// code from numerical recipies that was ported to Rosetta from the Meiler lab
-/// code base (biotools?) by Steven Combs.
-template < Size S, class P >
+/// code base (biotools?) by Steven Combs. Also Size N for number of backbones.
+template < Size S, Size N, class P >
 class DunbrackRotamerMeanSD {
 public:
-	DunbrackRotamerMeanSD() :
-		rotamer_probability_( P( 0.0 ) ),
-		rotE_( 0 ),
-		rotE_dsecophi_( P( 0.0 ) ),
-		rotE_dsecopsi_( P( 0.0 ) ),
-		rotE_dsecophipsi_( P( 0.0 ) )
+
+	DunbrackRotamerMeanSD( DunbrackRotamerMeanSD< S, N, P > const & rhs ) :
+    rotamer_probability_( P( 0.0 ) )
 	{
-		for ( Size ii = 1; ii <= S; ++ii ) {
-			chi_mean_[ ii ] = P( 0.0 );
-			//chi_mean_dsecophi_[ ii ] = P( 0.0 );
-			//chi_mean_dsecopsi_[ ii ] = P( 0.0 );
-			//chi_mean_dsecophipsi_[ ii ] = P( 0.0 );
-			chi_sd_[ ii ]   = P( 0.0 );
-			//chi_sd_dsecophi_[ ii ] = P( 0.0 );
-			//chi_sd_dsecopsi_[ ii ] = P( 0.0 );
-			//chi_sd_dsecophipsi_[ ii ] = P( 0.0 );
-		}
+        n_derivs_ = rhs.n_derivs();
+        for ( Size ii = 1; ii <= S; ++ii ) {
+			chi_mean_[ ii ] = rhs.chi_mean( ii );
+			chi_sd_[ ii ]   = rhs.chi_sd( ii );
+        }
 	}
+	
+	/*DunbrackRotamerMeanSD( PackedDunbrackRotamer< S, N, P > const & rhs ) :
+	rotamer_probability_( rhs.rotamer_probability() )
+	{
+		n_derivs_ = rhs.n_derivs();
+		for ( Size ii = 1; ii <= S; ++ii ) {
+			chi_mean_[ ii ] = rhs.chi_mean( ii );
+			chi_sd_[ ii ]   = rhs.chi_sd( ii );
+		}
+	}*/
 
 	DunbrackRotamerMeanSD(
-		typename utility::vector1< P > const & chimean_in,
+        typename utility::vector1< P > const & chimean_in,
 		typename utility::vector1< P > const & chisd_in,
 		P const prob_in
 	) :
-		rotamer_probability_( prob_in ),
-		rotE_( P(0.0) ),
-		rotE_dsecophi_( P( 0.0 ) ),
-		rotE_dsecopsi_( P( 0.0 ) ),
-		rotE_dsecophipsi_( P( 0.0 ) )
+		rotamer_probability_( prob_in )
 	{
+        //std::cout << "Currently sizing n_derivs_ to ";
+        for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
+            n_derivs_[ deriv_i ] = P( 0.0 );
+        }
+        //std::cout << n_derivs_.size() << std::endl;
 		for ( Size ii = 1; ii <= S; ++ii ) {
 			chi_mean_[ ii ] = chimean_in[ ii ];
-			//chi_mean_dsecophi_[ ii ] = P( 0.0 );
-			//chi_mean_dsecopsi_[ ii ] = P( 0.0 );
-			//chi_mean_dsecophipsi_[ ii ] = P( 0.0 );
 			chi_sd_  [ ii ] = chisd_in  [ ii ];
-			//chi_sd_dsecophi_[ ii ] = P( 0.0 );
-			//chi_sd_dsecopsi_[ ii ] = P( 0.0 );
-			//chi_sd_dsecophipsi_[ ii ] = P( 0.0 );
+		}
+	}
+    
+	DunbrackRotamerMeanSD():
+	rotamer_probability_( P( 0.0 ) )
+	{
+        for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
+            n_derivs_[ deriv_i ] = P( 0.0 );
+        }
+		for ( Size ii = 1; ii <= S; ++ii ) {
+			chi_mean_[ ii ] = P( 0.0 );
+			chi_sd_  [ ii ] = P( 0.0 );
 		}
 	}
 
@@ -104,116 +163,37 @@ public:
 		return chi_mean_[ which_chi ];
 	}
 
-	//P chi_mean_dsecophi( Size which_chi ) const {
-	//	return chi_mean_dsecophi_[ which_chi ];
-	//}
-
-	//P chi_mean_dsecopsi( Size which_chi ) const {
-	//	return chi_mean_dsecopsi_[ which_chi ];
-	//}
-
-	//P chi_mean_dsecophipsi( Size which_chi ) const {
-	//	return chi_mean_dsecophipsi_[ which_chi ];
-	//}
-
 	P chi_sd( Size which_chi ) const {
 		return chi_sd_[ which_chi ];
 	}
-
-	//P chi_sd_dsecophi( Size which_chi ) const {
-	//	return chi_sd_dsecophi_[ which_chi ];
-	//}
-
-	//P chi_sd_dsecopsi( Size which_chi ) const {
-	//	return chi_mean_dsecopsi_[ which_chi ];
-	//}
-
-	//P chi_sd_dsecophipsi( Size which_chi ) const {
-	//	return chi_mean_dsecophipsi_[ which_chi ];
-	//}
 
 	P
 	rotamer_probability() const {
 		return rotamer_probability_;
 	}
-
-	P
-	rotE() const {
-		return rotE_;
+    
+    utility::fixedsizearray1< P, (1<<N) >
+	n_derivs() const {
+		return n_derivs_;
 	}
-
-	P
-	rotE_dsecophi() const {
-		return rotE_dsecophi_;
-	}
-
-	P
-	rotE_dsecopsi() const {
-		return rotE_dsecopsi_;
-	}
-
-	P
-	rotE_dsecophipsi() const {
-		return rotE_dsecophipsi_;
-	}
-
 
 	P &
 	chi_mean( Size which_chi ) {
 		return chi_mean_[ which_chi ];
 	}
 
-	//P & chi_mean_dsecophi( Size which_chi ) {
-	//	return chi_mean_dsecophi_[ which_chi ];
-	//}
-
-	//P & chi_mean_dsecopsi( Size which_chi ) {
-	//	return chi_mean_dsecopsi_[ which_chi ];
-	//}
-
-	//P & chi_mean_dsecophipsi( Size which_chi ) {
-	//	return chi_mean_dsecophipsi_[ which_chi ];
-	//}
-
 	P &
 	chi_sd( Size which_chi ) {
 		return chi_sd_[ which_chi ];
 	}
 
-	//P & chi_sd_dsecophi( Size which_chi ) {
-	//	return chi_sd_dsecophi_[ which_chi ];
-	//}
-
-	//P & chi_sd_dsecopsi( Size which_chi ) {
-	//	return chi_mean_dsecopsi_[ which_chi ];
-	//}
-
-	//P & chi_sd_dsecophipsi( Size which_chi ) {
-	//	return chi_mean_dsecophipsi_[ which_chi ];
-	//}
-
 	P &
 	rotamer_probability() {
 		return rotamer_probability_;
 	}
-
-	P & rotE() {
-		return rotE_;
-	}
-
-	P &
-	rotE_dsecophi() {
-		return rotE_dsecophi_;
-	}
-
-	P &
-	rotE_dsecopsi() {
-		return rotE_dsecopsi_;
-	}
-
-	P &
-	rotE_dsecophipsi() {
-		return rotE_dsecophipsi_;
+    
+    utility::fixedsizearray1< P, (1<<N) > & n_derivs() {
+		return n_derivs_;
 	}
 
 	void chi_mean ( Size which_chi, P chi_mean_in ) {
@@ -230,24 +210,15 @@ public:
 
 private:
 	utility::fixedsizearray1< P, S > chi_mean_;
-	//utility::fixedsizearray1< P, S > chi_mean_dsecophi_; // second order derivatives for chi mean wrt phi
-	//utility::fixedsizearray1< P, S > chi_mean_dsecopsi_; // second order derivatives for chi mean wrt psi
-	//utility::fixedsizearray1< P, S > chi_mean_dsecophipsi_; // second order derivatives for chi mean wrt to both phi and psi
 	utility::fixedsizearray1< P, S > chi_sd_;
-	//utility::fixedsizearray1< P, S > chi_sd_dsecophi_; // second order derivatives for the standard deviation of chi wrt phi
-	//utility::fixedsizearray1< P, S > chi_sd_dsecopsi_; // second order derivatives for the standard deviation of chi wrt psi
-	//utility::fixedsizearray1< P, S > chi_sd_dsecophipsi_; // second order derivatives for the standard deviation of chi wrt to both phi and psi
 	P rotamer_probability_;
-	P rotE_; // -log(rotamer probability)
-	P rotE_dsecophi_; // second order derivatives for the rotamer probability wrt phi
-	P rotE_dsecopsi_; // second order derivatives for the rotamer probability wrt psi
-	P rotE_dsecophipsi_; // second order derivatives for the rotamer probability wrt phi and psi
+    utility::fixedsizearray1< P, (1<<N) > n_derivs_;
 };
 
-template < Size S, class P >
-class DunbrackRotamer : public DunbrackRotamerMeanSD< S, P > {
+template < Size S, Size N, class P >
+class DunbrackRotamer : public DunbrackRotamerMeanSD< S, N, P > {
 public:
-	typedef DunbrackRotamerMeanSD< S, P > parent;
+	typedef DunbrackRotamerMeanSD< S, N, P > parent;
 
 public:
 
@@ -267,9 +238,7 @@ public:
 	) :
 		parent( chimean_in, chisd_in, prob_in )
 	{
-		for ( Size ii = 1; ii <= S; ++ii ) {
-			rotwell_[ ii ] = rotwell_in[ ii ];
-		}
+		for ( Size ii = 1; ii <= S; ++ii ) rotwell_[ ii ] = rotwell_in[ ii ];
 	}
 
 	Size rotwell( Size which_chi ) const {
@@ -292,17 +261,12 @@ private:
 };
 
 
-template < Size S, class P >
-class PackedDunbrackRotamer : public DunbrackRotamerMeanSD< S, P > {
+template < Size S, Size N, class P >
+class PackedDunbrackRotamer : public DunbrackRotamerMeanSD< S, N, P > {
 public:
-	typedef DunbrackRotamerMeanSD< S, P > parent;
+	typedef DunbrackRotamerMeanSD< S, N, P > parent;
 
 public:
-
-	PackedDunbrackRotamer() :
-		parent(),
-		packed_rotno_( 0 )
-	{}
 
 	PackedDunbrackRotamer(
 		typename utility::vector1< P > const & chimean_in,
@@ -312,16 +276,55 @@ public:
 	) :
 		parent( chimean_in, chisd_in, prob_in ),
 		packed_rotno_( packed_rotno_in )
-	{}
+	{
+        //std::cout << "In the ctor body that is used in read_from_file " <<std::endl;
+    }
 
 	PackedDunbrackRotamer(
-		DunbrackRotamer< S, P > const & sibling,
+		DunbrackRotamer< S, N, P > const & sibling,
 		Size const packed_rotno_in
 	) :
 		parent( sibling ),
 		packed_rotno_( packed_rotno_in )
 	{}
+    
+	PackedDunbrackRotamer(
+		DunbrackRotamer< S, N, P > const & sibling
+	) :
+    parent( sibling ),
+    packed_rotno_( 0 )
+	{}
+    
+    PackedDunbrackRotamer(
+		PackedDunbrackRotamer const & rhs
+		) :
+    parent( rhs ),
+    packed_rotno_( rhs.packed_rotno() )
+	{
+		/*for ( Size ii = 1; ii <= S; ++ii ) {
+			chi_mean( ii ) = rhs.chi_mean( ii );
+			chi_sd( ii )   = rhs.chi_sd( ii );
+		}*/
+	}
+    
+    
+    PackedDunbrackRotamer(
+                          PackedDunbrackRotamer & rhs
+                          ) :
+    parent( rhs ),
+    packed_rotno_( rhs.packed_rotno() )
+	{
+		/*for ( Size ii = 1; ii <= S; ++ii ) {
+			chi_mean( ii ) = rhs.chi_mean( ii );
+			chi_sd( ii )   = rhs.chi_sd( ii );
+		}*/
+	}
 
+	
+	PackedDunbrackRotamer() :
+    parent(),
+    packed_rotno_( 0 )
+	{}
 
 	Size &
 	packed_rotno() {
@@ -411,8 +414,6 @@ public:
 	virtual ~RotamerBuildingData() = 0;
 };
 
-
-
 /// Should this be here?
 
 void
@@ -422,7 +423,6 @@ expand_proton_chi(
 	Size proton_chi,
 	utility::vector1< ChiSetOP > & chi_set_vector
 );
-
 
 void bicubic_interpolation(
 	Real v00, Real d2dx200, Real d2dy200, Real d4dx2y200,
@@ -455,51 +455,208 @@ tricubic_interpolation(
 	Real & dvaldy,
 	Real & dvaldz
 );
+	
+template < Size N >
+void
+alternate_tricubic_interpolation(
+	utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > n_derivs,
+	utility::fixedsizearray1< Real, N > dbbp,
+	utility::fixedsizearray1< Real, N > binwbb,
+	Real & val,
+	utility::fixedsizearray1< Real, N > & dvaldbb
+)
+	{
+		
+		utility::fixedsizearray1< Real, N > invbinwbb;
+		utility::fixedsizearray1< Real, N > binwbb_over_6;
+		utility::fixedsizearray1< Real, N > dbbm;
+		utility::fixedsizearray1< Real, N > dbb3p;
+		utility::fixedsizearray1< Real, N > dbb3m;
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			invbinwbb[ ii ] = 1/binwbb[ ii ];
+			binwbb_over_6[ ii ] = binwbb[ ii ] / 6 ;
+			dbbm[ ii ] = 1 - dbbp[ ii ];
+			dbb3p[ ii ] = ( dbbp[ ii ] * dbbp[ ii ] * dbbp[ ii ] - dbbp[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
+			dbb3m[ ii ] = ( dbbm[ ii ] * dbbm[ ii ] * dbbm[ ii ] - dbbm[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
+		}
+		val = 0;
+		
+		// there are 2^nbb deriv terms, i.e. value, dv/dx, dv/dy, d2v/dxy for phipsi
+		for ( Size iid = 1; iid <= (1 << N); ++iid ) {
+			for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
+				Real valterm = n_derivs[ iid ][ iiv ];
+				for ( Size jj = 1; jj <= N; ++jj ) { // each bb
+					Size two_to_the_jj_compl = 1 << ( N - jj );
+					if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
+						valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3p[ jj ] : dbbp[ jj ];
+					} else {
+						valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3m[ jj ] : dbbm[ jj ];
+					}
+				}
+				if ( valterm != valterm ) std::cout << "valterm NaN at iid " << iid << " iiv " << iiv << std::endl;
+				val += valterm;
+				//std::cout << "first valterm " << valterm << " so val now " << val << std::endl;
+			}
+		}
+		
+		for ( Size bbn = 1; bbn <= N; ++bbn ) {
+			dvaldbb[ bbn ] = 0;
+			for ( Size iid = 1; iid <= (1 << N); ++iid ) {
+				for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
+					Real valterm = n_derivs[ iid ][ iiv ]; // v000
+					for ( Size jj = 1; jj <= N; ++jj ) {
+						Size two_to_the_jj_compl = 1 << ( N - jj );
+						if ( ( iiv - 1 ) & two_to_the_jj_compl ) { // if this backbone value is from bb_bin_next
+							if ( ( iid - 1 ) & two_to_the_jj_compl ) { // if it is time for the derivative-based term for this bb angle
+								valterm *= ( bbn == jj ) ?      ( 3 * dbbp[ jj ] * dbbp[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3p[ jj ];
+							} else { // not taking the derivative for this term
+								valterm *= ( bbn == jj ) ?      invbinwbb[ jj ]                                           :  dbbp[ jj ];
+							}
+						} else { // bb_bin
+							if ( ( iid - 1 ) & two_to_the_jj_compl ) { // is derived
+								valterm *= ( bbn == jj ) ? -1 * ( 3 * dbbm[ jj ] * dbbm[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3m[ jj ];
+							} else {
+								// subtract all terms where bbn was taken from bb_bin
+								valterm *= ( jj == bbn ) ? -1 * invbinwbb[ jj ]                                           :  dbbm[ jj ];
+							}
+						}
+					}
+					dvaldbb[ bbn ] += valterm;
+				}
+			}
+		}
+	}
 
-void interpolate_rotamers(
-	DunbrackRotamer< FOUR > const & rot00,
-	DunbrackRotamer< FOUR > const & rot10,
-	DunbrackRotamer< FOUR > const & rot01,
-	DunbrackRotamer< FOUR > const & rot11,
-	Real phi_err, Real psi_err, Real binrange,
-	Size nchi_aa,
-	DunbrackRotamer< FOUR, Real > & interpolated_rotamer
-);
 
-template < Size S >
-DunbrackRotamer< S, Real >
+template < Size N >//, class P >
+void
+interpolate_polylinear_by_value(
+	utility::fixedsizearray1< double, ( 1 << N ) > const vals,
+	utility::fixedsizearray1< double, N > const bbd,
+	utility::fixedsizearray1< double, N > const binrange,
+	bool const angles,
+	double & val,
+	utility::fixedsizearray1< double, N > & dval_dbb
+)
+	{
+		assert( N != 0 );
+		
+		if ( angles ) {
+			val = 0;
+			
+			utility::vector1< double > w;
+			utility::vector1< double > a;
+			
+			Size total = vals.size();
+			
+			for ( Size ii = 1; ii <= total; ++ii ) {
+				double w_val = 1;
+				for ( Size jj = 1; jj <= N; ++jj ) {
+					w_val *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : 1.0f - bbd[ jj ];
+				}
+				w.push_back( w_val );
+			}
+			
+			for ( Size total = vals.size(); total >= 4; total /= 2 ) {
+				for ( Size ii = 1; ii <= total/2; ++ii ) {
+					double a_val = 0;
+					if ( w[ ii ] + w[ ii + total/2 ] != 0.0 )
+						a_val = ( w[ ii ] * vals[ ii ] + w[ ii + total/2 ] * ( basic::subtract_degree_angles(vals[ ii + total/2 ], vals[ ii ] ) + vals[ ii ] ) ) / ( w[ ii ] + w[ ii + total/2 ] );
+					a.push_back( a_val );
+				}
+				if ( total > 4 ) {
+					w = a;
+					a = utility::vector1< double >();
+				}
+			}
+			
+			val = ( w[ 1 ] + w[ 3 ] ) * a[ 1 ] + ( w[ 2 ] + w[ 4 ] ) * ( basic::subtract_degree_angles( a[ 2 ], a[ 1 ] ) + a[ 1 ] );
+			basic::angle_in_range(val);
+			
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				dval_dbb[ ii ] = 0.0f;
+				
+				for ( Size kk = 1; kk <= N; ++kk ) {
+					if ( kk != ii ) {
+						Size ind1 = 1;
+						Size ind2 = ind1 + (1<<N>>ii);
+						dval_dbb[ ii ] += ( 1.0f - bbd[ kk ] ) * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
+						ind1 += (1<<N>>kk); ind2 += (1<<N>>kk);
+						dval_dbb[ ii ] +=          bbd[ kk ]   * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
+					}
+				}
+				dval_dbb[ ii ] /= binrange[ii];
+			}
+			
+		} else {
+			val = 0;
+			
+			for ( Size ii = 1; ii <= vals.size(); ++ii ) {
+				double valterm = vals[ ii ];
+				for ( Size jj = 1; jj <= N; ++jj ) {
+					valterm *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : (1.0f - bbd[ jj ]);
+				}
+				val += valterm;
+			}
+			
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				dval_dbb[ ii ] = 0.0f;
+				for ( Size jj = 1; jj <= vals.size(); ++jj ) {
+					double valterm = 1;
+					
+					for ( Size kk = 1; kk <= N; ++kk ) {
+						if ( kk == ii ) {
+							valterm *= vals[ jj ];
+							valterm *= bit_is_set( jj, N, kk ) ?      1.0f : -1.0f;
+						} else {
+							valterm *= bit_is_set( jj, N, kk ) ? bbd[ kk ] :  (1.0f - bbd[ kk ]);
+						}
+					}
+					dval_dbb[ ii ] += valterm;
+				}
+				dval_dbb[ ii ] /= binrange[ii];
+			}
+			
+		}
+	}
+	
+
+template < Size S, Size N/*, class P*/ >
+DunbrackRotamer< S, N, Real >
 increase_rotamer_precision(
-	DunbrackRotamer< S, DunbrackReal > const & original_rotamer
+	DunbrackRotamer< S, N, DunbrackReal > const & original_rotamer
 )
 {
-	DunbrackRotamer< S, Real > new_rotamer;
+	DunbrackRotamer< S, N, Real > new_rotamer;
 	for ( Size ii = 1; ii <= S; ++ii ) {
 		new_rotamer.chi_mean( ii ) = static_cast< Real > ( original_rotamer.chi_mean( ii ) );
 		new_rotamer.chi_sd( ii )   = static_cast< Real > ( original_rotamer.chi_sd( ii ) );
-		new_rotamer.rotwell( ii )   = original_rotamer.rotwell( ii );
+		new_rotamer.rotwell( ii )  = original_rotamer.rotwell( ii );
 	}
 	new_rotamer.rotamer_probability() = static_cast< Real > ( original_rotamer.rotamer_probability() );
 	return new_rotamer;
 }
 
 /// DOUG DOUG DOUG
-template < Size T >
+template < Size T, Size N >
 class RotamericData : public RotamerBuildingData
 {
 public:
-	RotamericData( DunbrackRotamer< T, Real > const & rotamer_in ) :
+	RotamericData( DunbrackRotamer< T, N, Real > const & rotamer_in ) :
 		rotamer_( rotamer_in )
-	{}
+	{
+        rotamer_.rotamer_probability() = rotamer_in.rotamer_probability();
+    }
 
 	virtual ~RotamericData() {}
 
-	DunbrackRotamer< T, Real > const &
+	DunbrackRotamer< T, N, Real > const &
 	rotamer() const {
 		return rotamer_;
 	}
 
 private:
-	DunbrackRotamer< T, Real > rotamer_;
+	DunbrackRotamer< T, N, Real > rotamer_;
 };
 
 

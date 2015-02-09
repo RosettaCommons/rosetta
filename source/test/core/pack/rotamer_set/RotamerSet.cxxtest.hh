@@ -99,7 +99,6 @@ public:
 		core::Real const rad_per_deg = numeric::constants::f::degrees_to_radians;
 		core::Real const pi = numeric::constants::f::pi;
 
-
 		TR << "Beginning RotamerSets test... " << std::endl;
 
 		// init/reset seeds in all RG objects we have to do this inside the test it self function since
@@ -115,11 +114,10 @@ public:
 		//pose.dump_pdb("/Users/flo/rosetta/rosetta_source/test/1l2y_rename_H.pdb");
 
 		//score the pose just for the heck of it
-		(*scorefxn)( pose );
+		( *scorefxn )( pose );
 
 		// create paker task for rotamer trials
-		pack::task::PackerTaskOP task
-			( pack::task::TaskFactory::create_packer_task( pose ));
+		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 
 		//diversify the residue level tasks a bit
 		task->nonconst_residue_task( 2 ).restrict_to_repacking();
@@ -149,8 +147,6 @@ public:
 		task->nonconst_residue_task( 3 ).or_ex1aro( true );
 		task->nonconst_residue_task( 3 ).or_ex2aro( true );
 
-
-
 		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, true );
 		keep_aas[ core::chemical::aa_cys ] = false;
 		keep_aas[ core::chemical::aa_arg ] = false;
@@ -163,16 +159,11 @@ public:
 		//aight, let's get a rotamer set corresponding to this task
 
 		RotamerSetsOP rotsets( new RotamerSets() );
-
 		rotsets->set_task( task );
-
 		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
-
 		rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
 
 		//rotsets->dump_pdb( pose, "test_rotamer_sets.pdb");
-
-		TR << "rotamer set has " << rotsets->nrotamers() << " rotamers, should have 1283." << std::endl;
 
 		TS_ASSERT_EQUALS( rotsets->nrotamers(), 2344 );
 
@@ -185,13 +176,10 @@ public:
 		utility::vector1< ResidueCOPs > ref_rotset;
 		ref_rotset.resize( 20 );  //there are 20 residues in the test protein
 
-
-		for( Size i = 1; i <= 20; ++i){
-
-			if( ( i == 8 ) || ( i == 11 ) ) num_rotamers.push_back( 1 );
-
-			else{
-				//std::cout << rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( i ) ) << " rotamers at position " << i << std::endl;
+		for ( Size i = 1; i <= 20; ++i ) {
+			if ( ( i == 8 ) || ( i == 11 ) ) num_rotamers.push_back( 1 );
+			else {
+				std::cout << rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( i ) ) << " rotamers at position " << i << std::endl;
 				num_rotamers.push_back( rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( i ) ) );
 			}
 		}
@@ -199,58 +187,52 @@ public:
 		utility::vector1< pose::Pose > ref_poses;
 		core::import_pose::pose_from_pdb( ref_poses, "core/pack/rotamer_set/test_rotamer_sets.pdb" );
 
-		for( Size i = 1; i <= ref_poses.size(); ++i){
+		for ( Size i = 1; i <= ref_poses.size(); ++i ) {
+			for ( Size j = 1; j <= ref_poses[ i ].total_residue(); ++j ) {
 
-			for( Size j = 1; j <= ref_poses[ i ].total_residue(); ++j ){
-
-				Size pdb_res = ref_poses[i].pdb_info()->number( j );
-				char pdb_chain = ref_poses[i].pdb_info()->chain( j );
+				Size pdb_res = ref_poses[ i ].pdb_info()->number( j );
+				char pdb_chain = ref_poses[ i ].pdb_info()->chain( j );
 
 				Size this_res = pose.pdb_info()->pdb2pose( pdb_chain, pdb_res );
 
-				ResidueCOP res = ref_poses[i].residue( j ).get_self_ptr();
+				ResidueCOP res = ref_poses[ i ].residue( j ).get_self_ptr();
 				ref_rotset[ this_res ].push_back( res );
 			}
-
 		} //loop over poses
 
 		//now let's go through all the rotamers and compare them from ref to newly generated set
-		for( Size i = 1; i <= 20; ++i ){
+		for ( Size i = 1; i <= 20; ++i ) {
 
 			TS_ASSERT_EQUALS( ref_rotset[ i ].size(), num_rotamers[ i ] );
 
-			if( ( i == 8 ) || ( i == 11 ) ) continue;
+			if ( ( i == 8 ) || ( i == 11 ) ) continue;
 
 			Size this_moltenres = rotsets->resid_2_moltenres( i );
 
-			for( Size j = 1; j <= num_rotamers[ i ]; ++j){
+			for ( Size j = 1; j <= num_rotamers[ i ]; ++j ) {
 
 				Size this_rotamer_no = rotsets->nrotamer_offset_for_moltenres( this_moltenres ) + j;
 
 				//super stringent: we're making sure that the chi of every residue is correct
 
 				// first make sure that the chi arrays are the same size (ALF notes that sometimes errors occur with database updates --PDR)
-				TS_ASSERT_EQUALS( ref_rotset[i][j]->nchi(), rotsets->rotamer( this_rotamer_no )->nchi() );
+				TS_ASSERT_EQUALS( ref_rotset[ i ][ j ]->nchi(), rotsets->rotamer( this_rotamer_no )->nchi() );
 				// cxxtest doesn't seem to provide a macro to test for a condition and then stop the test based on that conditional
 				// if the two valuse tested above below are not equal it is best to just return as proceeding any further will cause
 				// a vector overrun all tests will stop
-				if( ref_rotset[i][j]->nchi() != rotsets->rotamer( this_rotamer_no )->nchi() ) {
+				if ( ref_rotset[ i ][ j ]->nchi() != rotsets->rotamer( this_rotamer_no )->nchi() ) {
 					return;
 				}
 
-				for( Size k = 1; k <= ref_rotset[i][j]->nchi(); ++k ){
-
+				for ( Size k = 1; k <= ref_rotset[ i ][ j ]->nchi(); ++k ) {
 					//have to translate chis to periodicity to avoid 179->-180 singularity of dihedrals
-
-					core::Real ref_chi = basic::periodic_range( rad_per_deg * ref_rotset[i][j]->chi( k ), pi );
+					core::Real ref_chi = basic::periodic_range( rad_per_deg * ref_rotset[ i ][ j ]->chi( k ), pi );
 					core::Real new_chi = basic::periodic_range( rad_per_deg * rotsets->rotamer( this_rotamer_no )->chi( k ), pi );
 					TS_ASSERT_DELTA( ref_chi , new_chi , 0.01 );
 				}
 			}
 		}
-
 		TR << "Done RotamerSets test... " << std::endl;
-
 	}
 
 	void test_rotamer_set_residue_type_offsets() {

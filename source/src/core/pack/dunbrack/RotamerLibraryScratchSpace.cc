@@ -13,6 +13,7 @@
 
 // Unit headers
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <utility/vector1.hh>
 
 // Package headers
 
@@ -26,12 +27,36 @@ RotamerLibraryScratchSpace::RotamerLibraryScratchSpace() :
 	utility::pointer::ReferenceCount(),
 	rotprob_( 0.0 ),
 	negln_rotprob_( 0.0 ),
+	
+//	drotprob_dbb_( utility::vector1< Real >( n_bb, 0.0 ) ),
+//	dneglnrotprob_dbb_( utility::vector1< Real >( n_bb, 0.0 ) ),
+	
+//	dchimean_dbb_( utility::vector1< Real4 >( n_bb, *new Real4 ) ),
+//	dchisd_dbb_( utility::vector1< Real4 >( n_bb, *new Real4 ) ),
+//	dchidevpen_dbb_( utility::vector1< Real >( n_bb, 0.0 ) ),
+	
+//	dE_dbb_( utility::vector1< Real >( n_bb, 0.0 ) ),
+//	dE_dbb_dev_( utility::vector1< Real >( n_bb, 0.0 ) ),
+//	dE_dbb_rot_( utility::vector1< Real >( n_bb, 0.0 ) ),
+//	dE_dbb_semi_( utility::vector1< Real >( n_bb, 0.0 ) ),
+	
+//	dE_dbb_dev_perchi_( utility::vector1< Real4 >( n_bb, *new Real4 ) ),
+	
 	fa_dun_tot_( 0.0 ),
 	fa_dun_rot_( 0.0 ),
 	fa_dun_semi_( 0.0 ),
 	fa_dun_dev_( 0.0 ),
 	entropy_( 0.0 )
-{}
+//	dentropy_dbb_( utility::vector1< Real >( n_bb, 0.0 ) )
+	
+{
+/*	for ( Size i = 1; i <= n_bb; ++i ) {
+		dchimean_dbb_.push_back( *new Real4 );
+		dchisd_dbb_.push_back( *new Real4 );
+	
+		dE_dbb_dev_perchi_.push_back( *new Real4 );
+	}*/
+}
 
 RotamerLibraryScratchSpace::~RotamerLibraryScratchSpace() {}
 

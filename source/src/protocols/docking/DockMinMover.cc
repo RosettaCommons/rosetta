@@ -49,7 +49,7 @@ DockMinMover::DockMinMover() : DockingHighRes()
 DockMinMover::DockMinMover(
 	DockJumps const movable_jumps,
 	core::scoring::ScoreFunctionOP scorefxn
-) : DockingHighRes(movable_jumps, scorefxn, scorefxn) {
+) : DockingHighRes( movable_jumps, scorefxn, scorefxn ) {
 	//need to set this up with default values;
 	set_default();
 	mc_ = moves::MonteCarloOP( new MonteCarlo( *scorefxn, 0.8 ) );
@@ -65,7 +65,7 @@ DockMinMover::DockMinMover(
 	DockJumps const movable_jumps,
 	core::scoring::ScoreFunctionOP scorefxn,
 	moves::MonteCarloOP mc
-) : DockingHighRes(movable_jumps, scorefxn, scorefxn) {
+) : DockingHighRes( movable_jumps, scorefxn, scorefxn ) {
 	//need to set this up with default values;
 	set_default();
 	mc_=mc;
@@ -86,7 +86,7 @@ DockMinMover::DockMinMover(
 	core::Real min_tolerance,
 	bool nb_list,
 	moves::MonteCarloOP mc
-): DockingHighRes(movable_jumps, scorefxn, scorefxn) {
+): DockingHighRes( movable_jumps, scorefxn, scorefxn ) {
 	movemap_=movemap;
 	min_type_=min_type;
 	min_tolerance_=min_tolerance;
@@ -108,19 +108,19 @@ void DockMinMover::set_default() {
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
-	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
+	for ( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
 		movemap_->set_jump( *it, true );
 	}
 
 
 	// perhaps call this dock_minimize_bb_res or something.
-	if ( option[ bb_min_res ].user() ){
+	if ( option[ bb_min_res ].user() ) {
 	  utility::vector1< Size > const & min_res = option[ bb_min_res ]();
-	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[n], true );
+	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[ n ], true );
 	}
-	if ( option[ sc_min_res ].user() ){
+	if ( option[ sc_min_res ].user() ) {
 	  utility::vector1< Size > const & min_res = option[ sc_min_res ]();
-	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[n], true );
+	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[ n ], true );
 	}
 
 
@@ -132,14 +132,14 @@ void DockMinMover::set_default() {
 	nb_list_ = true;
 }
 
-void DockMinMover::apply(core::pose::Pose & pose){
+void DockMinMover::apply( core::pose::Pose & pose ) {
 	( *scorefxn() )( pose );
-	if( mc_->last_accepted_pose().total_residue() == 0 ) {
+	if ( mc_->last_accepted_pose().total_residue() == 0 ) {
 		// If the mc_ object hasn't yet been initialized (the last accepted pose is the empty pose) we need to initialize it.
 		// Otherwise, if the first move is rejected, the pose will be set to the empty pose.
-		mc_->reset(pose);
+		mc_->reset( pose );
 	}
-	minimize_trial_->apply(pose);
+	minimize_trial_->apply( pose );
 }
 
 std::string DockMinMover::get_name() const {
