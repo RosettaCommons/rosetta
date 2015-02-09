@@ -215,10 +215,10 @@ GroupElec::build_groupinfo( std::string const group_file,
 
 			ElecGroup grp;
 			std::string atmname;
-		  Size n_donor( 0 ), n_acceptor( 0 ), polar_type( 0 );
+			Size n_donor( 0 ), n_acceptor( 0 ), polar_type( 0 );
 
 			linestream >> polar_type;
-			if( polar_type >= 0 && polar_type < 4 ){
+			if ( /*polar_type >= 0 && */polar_type < 4 ){
 				grp.qeps = qeps[ polar_type+1 ];
 			} else {
 				TR << "PolarType index exceeds boundary, skip! line: " << line << std::endl;
