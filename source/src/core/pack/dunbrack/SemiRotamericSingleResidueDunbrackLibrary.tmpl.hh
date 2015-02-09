@@ -1388,6 +1388,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer_b
 
 	Real last_prob( 0 );
 	
+	Size last_nrchi_rotno( 0 );
+	Size last_rchi_rotno( 0 );
+	
 	/// Recover the rotamers in order, stop at the rot_ind rotamer.
 	recover_rotamers_in_order( rot_ind, probs_of_next_rotamers, last_prob, last_nrchi_rotno, last_rchi_rotno );
 
