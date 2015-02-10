@@ -53,7 +53,7 @@ class ShapeComplementarityCalculatorException : public utility::excn::EXCN_Msg_E
 	std::string error;
 
 	ShapeComplementarityCalculatorException(const char *err, ...) :
-		utility::excn::EXCN_Msg_Exception( error )
+		utility::excn::EXCN_Msg_Exception( std::string() )
 	{
 		va_list p;
 		char buf[256];
@@ -61,6 +61,7 @@ class ShapeComplementarityCalculatorException : public utility::excn::EXCN_Msg_E
 		vsnprintf(buf, sizeof(buf), err, p);
 		va_end(p);
 		error = buf;
+		add_msg(error);
 	}
 };
 
