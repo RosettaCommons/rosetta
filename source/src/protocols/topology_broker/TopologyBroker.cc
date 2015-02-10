@@ -40,6 +40,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -785,7 +786,7 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 			break;
 		}
 	}
-	
+
 	start_pose_cuts_.clear();
 	if ( bUseJobPose_ ) {
 		for ( Size i(1), cutpoints(pose.fold_tree().num_cutpoint()); i<=cutpoints; i++ ) {
@@ -867,7 +868,7 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 		}
 	}
 
-	
+
 	if(use_fold_tree_from_claimer_==true && tmh_mode)
 	{
 		build_fold_tree_from_claimer(pose, fold_tree);
@@ -1035,33 +1036,37 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose& pose ) {
 			" before " << sequence_old << "\n after  " << sequence_new << std::endl;
 	}
 
-    // repack loop + missing-density residues
-    core::pack::task::PackerTaskOP taskstd = core::pack::task::TaskFactory::create_packer_task( pose );
+	// repack loop + missing-density residues
+	core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-5, true, false );
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
+	mm->set_bb( false );
+	mm->set_chi( true );
+
+	add_constraints( pose );
+
+	core::pack::task::PackerTaskOP taskstd = core::pack::task::TaskFactory::create_packer_task( pose );
     taskstd->restrict_to_repacking();
     taskstd->or_include_current(true);
 	taskstd->restrict_to_residues( needToRepack );
 
-	add_constraints( pose );
-
 	if ( tr.Debug.visible() ) pose.constraint_set()->show_numbers( tr.Debug );
 
-	protocols::simple_moves::PackRotamersMover pack1( repack_scorefxn_ , taskstd );
-    pack1.apply( pose );
+ 	if ( pose::symmetry::is_symmetric( pose ) ) {
+		protocols::simple_moves::symmetry::SymPackRotamersMover pack1( repack_scorefxn_ , taskstd );
+		pack1.apply( pose );
 
-    // quick SC minimization
-    core::optimization::AtomTreeMinimizer mzr;
-    core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-5, true, false );
-    core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
-    mm->set_bb( false );
-    mm->set_chi( true );
-
-	if ( pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 		core::optimization::symmetry::SymAtomTreeMinimizer smzr;
 		smzr.run( pose, *mm, *repack_scorefxn_, options );
 	} else {
+		protocols::simple_moves::PackRotamersMover pack1( repack_scorefxn_ , taskstd );
+		pack1.apply( pose );
+
+    // quick SC minimization
+    core::optimization::AtomTreeMinimizer mzr;
 		mzr.run( pose, *mm, *repack_scorefxn_, options );
 	}
+
 
 	tr.Debug << "minimized.. " << std::endl;
 }
