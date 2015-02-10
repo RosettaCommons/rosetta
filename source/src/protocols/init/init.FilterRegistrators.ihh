@@ -147,7 +147,7 @@ static FilterRegistrator< protocols::simple_filters::ShapeComplementarityFilterC
 static FilterRegistrator< protocols::simple_filters::SigmoidFilterCreator > reg_SigmoidFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SymmetricMotifFilterCreator > reg_SymmetricMotifFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SidechainRmsdFilterCreator > reg_SidechainRmsdFilterCreator;
-static FilterRegistrator< protocols::simple_filters::TaskAwareAlaScanCreator > reg_TaskAwareAlaScanCreator;
+static FilterRegistrator< protocols::simple_filters::DdGScanCreator > reg_DdGScanCreator;
 static FilterRegistrator< protocols::simple_filters::TaskAwareSASAFilterCreator > reg_TaskAwareSASAFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TaskAwareScoreTypeFilterCreator > reg_TaskAwareScoreTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TerminusDistanceFilterCreator > reg_TerminusDistanceFilterCreator;

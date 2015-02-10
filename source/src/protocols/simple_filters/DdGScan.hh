@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_filters/TaskAwareAlaScan.hh
-/// @brief definition of filter class TaskAwareAlaScan.
+/// @file protocols/simple_filters/DdGScan.hh
+/// @brief definition of filter class DdGScan.
 /// @author Neil King (neilking@uw.edu)
+/// @author Kyle Barlow (kb@kylebarlow.com)
 
-#ifndef INCLUDED_protocols_simple_filters_TaskAwareAlaScan_hh
-#define INCLUDED_protocols_simple_filters_TaskAwareAlaScan_hh
+#ifndef INCLUDED_protocols_simple_filters_DdGScan_hh
+#define INCLUDED_protocols_simple_filters_DdGScan_hh
 
-#include <protocols/simple_filters/TaskAwareAlaScan.fwd.hh>
-
+#include <protocols/simple_filters/DdGScan.fwd.hh>
 
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
@@ -28,89 +28,96 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-//#include <utility/exit.hh>
+#include <protocols/simple_moves/ddG.fwd.hh>
 
-//#include <utility/vector1.hh>
+#include <utility/vector1.hh>
+#include <boost/tuple/tuple.hpp>
 
 #include <set>
 
+typedef boost::tuples::tuple< core::Size, std::string, core::Real > ddG_data_tuple;
+
 namespace protocols {
 namespace simple_filters {
-	
-class TaskAwareAlaScan : public protocols::filters::Filter
+
+class DdGScan : public protocols::filters::Filter
 {
 public :
 	// Constructors, destructor, virtual constructors
-	TaskAwareAlaScan();
-	TaskAwareAlaScan(
+	DdGScan();
+	DdGScan(
 			core::pack::task::TaskFactoryOP task_factory,
-			core::pack::task::TaskFactoryOP ddG_task_factory,
-			bool use_custom_task,
-			core::Size const jump,
-			std::string const sym_dof_name,
 			core::Size const repeats,
 			core::scoring::ScoreFunctionCOP scorefxn,
-			bool repack,
-			bool report_diffs );
-	TaskAwareAlaScan( TaskAwareAlaScan const & rval );
+			bool report_diffs,
+			bool write2pdb
+	);
+	DdGScan( DdGScan const & rval );
 	virtual protocols::filters::FilterOP clone() const;
 	virtual protocols::filters::FilterOP fresh_instance() const;
-	virtual ~TaskAwareAlaScan();
+	virtual ~DdGScan();
+	void initialize();
 
   // @brief get name of this filter
-  virtual std::string name() const { return "TaskAwareAlaScan"; }
+  virtual std::string name() const { return "DdGScan"; }
 
 	// Setters
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
-	void ddG_task_factory( core::pack::task::TaskFactoryOP ddG_task_factory );
-	void use_custom_task( bool const uct );
-	void jump( core::Size const j );
-	void sym_dof_name( std::string const j );
 	void repeats( core::Size const r );
 	void scorefxn( core::scoring::ScoreFunctionOP const scorefxn );
-	void repack( bool const repack );
 	void report_diffs( bool const report_diffs );
 	void write2pdb( bool const write );
+	void ddG_mover( protocols::simple_moves::ddGOP const ddG_mover_op );
 
 	// Getters
 	core::pack::task::TaskFactoryOP task_factory() const;
-	core::pack::task::TaskFactoryOP ddG_task_factory() const;
-	bool use_custom_task() const;
-	core::Size jump() const;
-	std::string sym_dof_name() const;
 	core::Size repeats() const;
-	bool repack() const;
 	bool report_diffs() const;
 	bool write2pdb() const;
+	protocols::simple_moves::ddGOP ddG_mover() const;
 
 	// Dummy apply function
 	virtual bool apply( core::pose::Pose const & ) const;
 
 	// Parse xml
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	void parse_ddG_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const &
+	);
+
 	void parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 
 	// Effector functions
-	core::Real ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size const resi ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	void write_to_pdb( core::pose::Pose const & pose, core::Size const & residue, std::string const & residue_name, core::Real const & ddG ) const;
+	core::Real ddG_for_single_residue(
+		core::pose::Pose const & const_pose,
+		core::Size const resi,
+		core::pack::task::PackerTaskOP const general_task,
+		core::pose::Pose & pose_to_mutate
+	) const;
+
+	void write_to_pdb(
+		core::pose::Pose const & pose,
+		core::Size const & residue,
+		core::Size const & output_resi,
+		std::string const & residue_name,
+		core::Real const & ddG
+	) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	utility::vector1< ddG_data_tuple > calculate( std::ostream & out, core::pose::Pose const & pose ) const;
 
 private:
 
 	core::pack::task::TaskFactoryOP task_factory_;
-	core::pack::task::TaskFactoryOP ddG_task_factory_;
-	bool use_custom_task_;
-	core::Size jump_;
-	std::string sym_dof_name_;
 	core::Size repeats_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	bool repack_;
 	bool report_diffs_;
-	std::set< std::string > exempt_identities_;
 	bool write2pdb_;
+	protocols::simple_moves::ddGOP ddG_mover_;
 
 };
 

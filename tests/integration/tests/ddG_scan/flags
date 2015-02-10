@@ -1,0 +1,28 @@
+#
+# Why not use energy method corrections?
+#
+# Use as input, structures S_56 and S_73 from the collection of
+# structures stored in the binary silent file for the cluster test:
+-in
+ -file
+  -fullatom
+  -s inputs/1A22_0001.pdb
+#
+# Since the important output is the feature database,
+# ignore the job distributor output.
+-out
+ -nooutput
+-overwrite
+#
+# Select the features to be output to the features database using
+# the parser.  See for details
+# https://wiki.rosettacommons.org/index.php/Scripter_Documentation#ReportToDB
+-parser
+ -protocol parser_script.xml
+#
+# Mute some tracers...
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack
+-mute protocols.moves.RigidBodyMover

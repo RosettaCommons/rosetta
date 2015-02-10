@@ -178,10 +178,13 @@ public:
 	void push_back( core::Real value ) { values_.push_back( value); }
 	void set_pos( core::Size pos = 1) { pos_ = pos; }
 	bool apply( core::pose::Pose const & ) const { return truth_; }
-	core::Real report_sm( core::pose::Pose const & ) const {
+	core::Real get_next_value() const {
 		if ( pos_ == 0 || pos_ > values_.size() ) { pos_ = 1; }
 		++pos_; // Overflow taken care of next time around
 		return values_[ pos_ - 1 ];
+	}
+	core::Real report_sm( core::pose::Pose const & ) const {
+		return get_next_value();
 	}
 	void report( std::ostream & ostream, core::pose::Pose const & ) const {
 		ostream << "StubMultiFilter " << tag_ << ": " << truth_ << " ";

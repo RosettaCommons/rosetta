@@ -41,36 +41,38 @@ static basic::Tracer TR("protocols.simple_moves.ddG.cxxtest.hh");
 class ddG : public CxxTest::TestSuite {
 
 private:
-	core::pose::PoseOP testpose_;
+	core::pose::PoseOP test_dimer_pose_;
+	core::pose::PoseOP test_monomer_pose_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 public:
 
 	void setUp() {
 		core_init();
 
-		testpose_ = create_2res_1ten_2res_trp_cage_poseop(); //dimer structure
+		test_dimer_pose_ = create_2res_1ten_2res_trp_cage_poseop(); //dimer structure
+		test_monomer_pose_ = create_twores_1ubq_poseop();
 		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 	}
 
 	void tearDown() {
 	}
 
-	void test_use_filter() {
+	void test_use_filter_dimer() {
 		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 211.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
 		protocols::simple_moves::ddG ddg_mover(scorefxn_);
 
-		(*scorefxn_)(*testpose_);
+		(*scorefxn_)(*test_dimer_pose_);
 		ddg_mover.filter( sf );
 		ddg_mover.repeats( 1 );
 		ddg_mover.repack_bound( false );
 		ddg_mover.relax_bound( false );
-		ddg_mover.apply( *testpose_ );
+		ddg_mover.apply( *test_dimer_pose_ );
     TS_ASSERT_EQUALS( ddg_mover.sum_ddG(), 111 );
 	}
 
-  void test_filter_parsing() {
+  void test_filter_parsing_dimer() {
     basic::datacache::DataMap data;
     Filters_map filters;
     Movers_map movers;
@@ -83,9 +85,44 @@ public:
 
     protocols::simple_moves::ddG testmover;
     TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
-    testmover.parse_my_tag( tag, data, filters, movers, *testpose_ );
-		testmover.apply( *testpose_ );
+    testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
+
+		testmover.apply( *test_dimer_pose_ );
 
     TS_ASSERT_EQUALS( testmover.sum_ddG(), 99 );
+  }
+
+	void test_use_filter_monomer() {
+		StubMultiFilterOP sf( new StubMultiFilter( false ) );
+		sf->push_back( 211.0 ); // Bound
+		sf->push_back( 100 ); // Unbound
+		protocols::simple_moves::ddG ddg_mover(scorefxn_);
+
+		(*scorefxn_)(*test_monomer_pose_);
+		ddg_mover.filter( sf );
+		ddg_mover.repeats( 1 );
+		ddg_mover.repack_bound( false );
+		ddg_mover.relax_bound( false );
+		ddg_mover.apply( *test_monomer_pose_ );
+    TS_ASSERT_EQUALS( ddg_mover.sum_ddG(), 211 );
+	}
+
+  void test_filter_parsing_monomer() {
+    basic::datacache::DataMap data;
+    Filters_map filters;
+    Movers_map movers;
+
+		prime_Data( data );
+		StubMultiFilterOP sf( new StubMultiFilter( false ) );
+		sf->push_back( 199.0 ); // Bound
+		sf->push_back( 100 ); // Unbound
+    filters["sfT99"] = sf;
+
+    protocols::simple_moves::ddG testmover;
+    TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
+    testmover.parse_my_tag( tag, data, filters, movers, *test_monomer_pose_ );
+		testmover.apply( *test_monomer_pose_ );
+
+    TS_ASSERT_EQUALS( testmover.sum_ddG(), 199 );
   }
 };

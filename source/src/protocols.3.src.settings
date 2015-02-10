@@ -556,7 +556,7 @@ sources = {
 		"StructuralSimilarityEvaluator",
 		"StructureSimilarityEvaluatorCreator",
 		"SymmetricMotifFilter",
-		"TaskAwareAlaScan",
+		"DdGScan",
 		"TaskAwareSASAFilter",
 		"TaskAwareScoreTypeFilter",
 		"TerminusDistanceFilter",

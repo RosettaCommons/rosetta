@@ -22,6 +22,8 @@
 ///
 #include <core/types.hh>
 
+#include <core/kinematics/FoldTree.hh>
+
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -111,7 +113,7 @@ ddG::ddG() :
 		repeats_(0),
 		rb_jump_(0),
 		per_residue_ddg_(false),
-		repack_(false),
+		repack_unbound_(false),
 		relax_mover_( /* NULL */ ),
 		use_custom_task_(false),
 		repack_bound_(true),
@@ -133,7 +135,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		repeats_(1),
 		rb_jump_(jump),
 		per_residue_ddg_(false),
-		repack_(true),
+		repack_unbound_(true),
 		relax_mover_( /* NULL */ ),
 		use_custom_task_(false),
 		repack_bound_(true),
@@ -168,7 +170,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		repeats_(1),
 		rb_jump_(jump),
 		per_residue_ddg_(false),
-		repack_(true),
+		repack_unbound_(true),
 		relax_mover_( /* NULL */ ),
 		use_custom_task_(false),
 		repack_bound_(true),
@@ -206,7 +208,7 @@ void ddG::parse_my_tag(
 		TR << "Option 'symmetry' for ddG mover has no effect - symmetry is autodetected from pose." << std::endl;
 	}
 	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",0);
-	repack_ = tag->getOption<bool>("repack",0);
+	repack_unbound_ = tag->getOption<bool>("repack_unbound",0);
 	repeats_ = tag->getOption<Size>("repeats",1);
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	use_custom_task( tag->hasOption("task_operations") );
@@ -276,9 +278,19 @@ void ddG::parse_my_tag(
 
 ddG::~ddG() {}
 
+void ddG::scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in ) {
+	scorefxn_ = scorefxn_in->clone();
+}
+
+
 void ddG::apply(Pose & pose)
 {
 	using namespace core::scoring::methods;
+
+	// Check if jump setting is correct for monomer case
+	if ( pose.fold_tree().num_jump() == 0 ) {
+		rb_jump( 0 );
+	}
 
 	if(per_residue_ddg_)
 	{
@@ -388,10 +400,16 @@ ddG::report_ddG( std::ostream & out ) const
 	std::map< ScoreType, Real >::const_iterator unbound_it=unbound_energies_.begin();
 	for( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
 			 bound_it!=bound_energies_.end();
-			 ++bound_it ) {
-			 if( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_it->second ) > 0.001 )
+			 ++bound_it
+	) {
+		if ( unbound_it != unbound_energies_.end() ) {
+			if( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_it->second ) > 0.001 )
 				out << ' ' << LJ( 24, bound_it->first ) << ' ' << F( 9,3, bound_it->second - unbound_it->second )<<'\n';
-		++unbound_it;
+			++unbound_it;
+		} else {
+			if( std::abs( bound_it->second ) > 0.001 )
+				out << ' ' << LJ( 24, bound_it->first ) << ' ' << F( 9,3, bound_it->second )<<'\n';
+		}
 	}
 	out << "-----------------------------------------\n";
 	out << "Sum ddg: "<< sum_ddG()<<std::endl;
@@ -406,9 +424,14 @@ ddG::sum_ddG() const
 	std::map< ScoreType, Real >::const_iterator unbound_it=unbound_energies_.begin();
 	for( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
 			 bound_it!=bound_energies_.end();
-			 ++bound_it ) {
-		sum_energy += bound_it->second - unbound_it->second;
-		++unbound_it;
+			 ++bound_it
+	) {
+		if ( unbound_it != unbound_energies_.end() ) {
+			sum_energy += bound_it->second - unbound_it->second;
+			++unbound_it;
+		} else {
+			sum_energy += bound_it->second;
+		}
 	}
 	return sum_energy;
 }
@@ -456,15 +479,17 @@ ddG::calculate( pose::Pose const & pose_original )
 	//---------------------------------
 	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_bound_tag());
 
-	if( repack_ )	{
+	if( repack_unbound_ || repack_bound_ )	{
     setup_task(pose);
-		if ( repack_bound() ) {
-			pack::pack_rotamers( pose, *scorefxn_, task_ );
-		}
-		if ( relax_bound() && relax_mover() ) {
-			relax_mover()->apply( pose );
-		}
-	} // repack_
+	}
+
+	if ( repack_bound() ) {
+		pack::pack_rotamers( pose, *scorefxn_, task_ );
+	}
+
+	if ( relax_bound() && relax_mover() ) {
+		relax_mover()->apply( pose );
+	}
 
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, bound_energies_ );
@@ -475,30 +500,31 @@ ddG::calculate( pose::Pose const & pose_original )
 	//---------------------------------
 	// Unbound state
 	//---------------------------------
-	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
-	unbind(pose);
+	if ( unbind(pose) ) {
+		if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
 
-	if( repack_ ) {
-		// Use the same task which was setup in the bound state.
-		pack::pack_rotamers( pose, *scorefxn_, task_ );
-	}
-	if( relax_mover() ) {
-		relax_mover()->apply( pose );
-	}
+		if( repack_unbound_ ) {
+			// Use the same task which was setup earlier
+			pack::pack_rotamers( pose, *scorefxn_, task_ );
+		}
+		if( relax_mover() ) {
+			relax_mover()->apply( pose );
+		}
 
-	(*scorefxn_)( pose );
-	fill_energy_vector( pose, unbound_energies_ );
-	if(per_residue_ddg_) {
-		fill_per_residue_energy_vector(pose, unbound_per_residue_energies_);
-	}
+		(*scorefxn_)( pose );
+		fill_energy_vector( pose, unbound_energies_ );
+		if(per_residue_ddg_) {
+			fill_per_residue_energy_vector(pose, unbound_per_residue_energies_);
+		}
 
-	//----------------------------------
-	// Return to the original state
-	//----------------------------------
-	if( pb_enabled_ ) {
-		cached_data->set_energy_state( original_state );
-		pb_cached_data_ = cached_data;
-	}
+		//----------------------------------
+		// Return to the original state
+		//----------------------------------
+		if( pb_enabled_ ) {
+			cached_data->set_energy_state( original_state );
+			pb_cached_data_ = cached_data;
+		}
+	} // End unbind if
 }
 
 void
@@ -530,14 +556,14 @@ ddG::setup_task( pose::Pose const & pose) {
 				}
 			}
 			rti.apply(pose,*task_);
-		} else {
+		} else if ( rb_jump_ != 0 ) {
 			protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
 			rti.apply( pose, *task_ );
 		}
 	} // use_custom_task
 }
 
-void
+bool
 ddG::unbind( pose::Pose & pose ) const
 {
 	if( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -559,13 +585,18 @@ ddG::unbind( pose::Pose & pose ) const
 			translate->trans_axis(translation_axis);
 			translate->apply( pose );
 		}
-	} else {
+	} else if ( rb_jump_ != 0 ) {
 		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 
 		// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
 		translate->step_size( translate_by_ );
 		translate->apply( pose );
+	} else {
+		// We have no information about chains or jumps to move, so let's not try and unbind
+		return false;
 	}
+
+	return true;
 }
 
 void

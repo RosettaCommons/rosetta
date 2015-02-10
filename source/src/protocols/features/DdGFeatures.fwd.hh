@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/simple_filters/TaskAwareAlaScan.fwd.hh
-/// @brief
-/// @author Neil King (neilking@uw.edu)
+/// @file   protocols/features/DdGFeatures.fwd.hh
+/// @brief  report the per-residue ddG score to the features database
+/// @author Kyle Barlow (kb@kylebarlow.com)
 
-#ifndef INCLUDED_protocols_simple_filters_TaskAwareAlaScan_fwd_hh
-#define INCLUDED_protocols_simple_filters_TaskAwareAlaScan_fwd_hh
+#ifndef INCLUDED_protocols_features_DdGFeatures_fwd_hh
+#define INCLUDED_protocols_features_DdGFeatures_fwd_hh
 
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace simple_filters {
+namespace protocols{
+namespace features{
 
-class TaskAwareAlaScan;
+class DdGFeatures;
+typedef utility::pointer::shared_ptr< DdGFeatures > DdGFeaturesOP;
+typedef utility::pointer::shared_ptr< DdGFeatures const > DdGFeaturesCOP;
 
-typedef utility::pointer::shared_ptr< TaskAwareAlaScan > TaskAwareAlaScanOP;
-typedef utility::pointer::shared_ptr< TaskAwareAlaScan const > TaskAwareAlaScanCOP;
+}//features
+}//protocols
 
-}
-}
-
-#endif
+#endif //INCLUDED_protocols_features_DdGFeatures_fwd_hh

@@ -7,32 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/simple_filters/TaskAwareAlaScanCreator.hh
-/// @brief  FilterCreators for the TaskAwareAlaScanCreator
+/// @file   protocols/simple_filters/DdGScan.fwd.hh
+/// @brief
 /// @author Neil King (neilking@uw.edu)
+/// @author Kyle Barlow (kb@kylebarlow.com)
 
+#ifndef INCLUDED_protocols_simple_filters_DdGScan_fwd_hh
+#define INCLUDED_protocols_simple_filters_DdGScan_fwd_hh
 
-#ifndef INCLUDED_protocols_simple_filters_TaskAwareAlaScanCreator_hh
-#define INCLUDED_protocols_simple_filters_TaskAwareAlaScanCreator_hh
-
-// Package Headers
-#include <protocols/filters/FilterCreator.hh>
-
-// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
-
-// c++ headers
-#include <string>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_filters {
 
-class TaskAwareAlaScanCreator : public protocols::filters::FilterCreator
-{
-public:
-	virtual protocols::filters::FilterOP create_filter() const;
-	virtual std::string keyname() const;
-};
+class DdGScan;
+
+typedef utility::pointer::shared_ptr< DdGScan > DdGScanOP;
+typedef utility::pointer::shared_ptr< DdGScan const > DdGScanCOP;
 
 }
 }

@@ -49,9 +49,9 @@ public :
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1 );
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids );
 	virtual void apply (Pose & pose);
-	void calculate( Pose const & pose_in );
-	void report_ddG( std::ostream & out ) const;
-	Real sum_ddG() const;
+	virtual void calculate( Pose const & pose_in );
+	virtual void report_ddG( std::ostream & out ) const;
+	virtual Real sum_ddG() const;
 	core::Size rb_jump() const { return rb_jump_; }
 	void rb_jump( core::Size j ) { rb_jump_ = j; }
 	core::Size repeats() const { return repeats_; }
@@ -78,9 +78,11 @@ public :
 	void relax_bound( bool rlb ) { relax_bound_ = rlb; }
 	bool relax_bound() const { return relax_bound_; }
 
+	virtual void scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in );
+
 private :
-	///@brief Helper method to appropriately form unbound complex.
-	void unbind(Pose & pose) const;
+	///@brief Helper method to appropriately form unbound complex. Returns false if monomer.
+	bool unbind(Pose & pose) const;
 	void setup_task(Pose const & pose);
 
 	std::map< ScoreType, Real > bound_energies_;
@@ -98,7 +100,7 @@ private :
 	core::Size rb_jump_;
 	utility::vector1<core::Size> chain_ids_;
 	bool per_residue_ddg_;
-	bool repack_;
+	bool repack_unbound_;
 	protocols::moves::MoverOP relax_mover_; //dflt NULL
 	// Instead of score function delta, use the filter.
 	protocols::filters::FilterOP filter_; //dflt NULL

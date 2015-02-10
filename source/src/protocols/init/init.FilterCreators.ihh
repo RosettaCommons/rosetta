@@ -133,7 +133,7 @@
 #include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>
 #include <protocols/simple_filters/SymmetricMotifFilterCreator.hh>
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
-#include <protocols/simple_filters/TaskAwareAlaScanCreator.hh>
+#include <protocols/simple_filters/DdGScanCreator.hh>
 #include <protocols/simple_filters/TaskAwareSASAFilterCreator.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>
