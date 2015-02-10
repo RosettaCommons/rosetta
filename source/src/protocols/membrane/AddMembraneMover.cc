@@ -105,6 +105,7 @@ AddMembraneMover::AddMembraneMover() :
 	spanfile_(),
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
+    anchor_rsd_( 1 ),
 	membrane_rsd_( 0 )
 {
 	register_options();
@@ -120,6 +121,7 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 	spanfile_(),
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
+    anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd )
 {
 	register_options();
@@ -139,6 +141,7 @@ AddMembraneMover::AddMembraneMover(
     spanfile_( spanfile ),
     topology_( new SpanningTopology() ),
     lipsfile_(),
+    anchor_rsd_( 1 ),
     membrane_rsd_( membrane_rsd )
 {
 	register_options();
@@ -150,14 +153,16 @@ AddMembraneMover::AddMembraneMover(
 /// center at emb_center and normal at emb_normal and will load
 /// in spanning regions from list of spanfiles provided
 AddMembraneMover::AddMembraneMover(
-     SpanningTopologyOP topology,
-     core::Size membrane_rsd
+    SpanningTopologyOP topology,
+    core::Size anchor_rsd,
+    core::Size membrane_rsd
     ) :
     protocols::moves::Mover(),
     include_lips_( false ),
     spanfile_( "" ),
     topology_( topology ),
     lipsfile_(),
+    anchor_rsd_( anchor_rsd ),
     membrane_rsd_( membrane_rsd )
 {
     register_options();
@@ -193,6 +198,7 @@ AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
 	spanfile_( src.spanfile_ ),
 	topology_( src.topology_ ),
 	lipsfile_( src.lipsfile_ ),
+    anchor_rsd_( src.anchor_rsd_ ),
 	membrane_rsd_( src.membrane_rsd_ )
 {}
 
@@ -240,6 +246,11 @@ AddMembraneMover::parse_my_tag(
 		lipsfile_ = tag->getOption< std::string >( "lipsfile" );
 	}
 	
+    // Read in membrane residue anchor
+    if ( tag->hasOption( "anchor_rsd" ) ) {
+        anchor_rsd_ = tag->getOption< core::Size >( "anchor_rsd" );
+    }
+    
 	// Read in membrane residue position where applicable
 	if ( tag->hasOption( "membrane_rsd" ) ) {
 		membrane_rsd_ = tag->getOption< core::Size >( "membrane_rsd" );
@@ -438,7 +449,7 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	ResidueOP rsd( ResidueFactory::create_residue( membrane ) );
 	
 	// Append residue by jump, creating a new chain
-	pose.append_residue_by_jump( *rsd, 1, "", "", true );
+	pose.append_residue_by_jump( *rsd, anchor_rsd_, "", "", true );
 	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
 
 	// Reorder to be the membrane root

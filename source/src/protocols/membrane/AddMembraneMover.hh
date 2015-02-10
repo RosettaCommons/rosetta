@@ -89,6 +89,7 @@ public:
     /// in spanning regions from list of spanfiles provided
     AddMembraneMover(
         SpanningTopologyOP topology,
+        core::Size anchor_rsd=1,
         core::Size membrane_rsd=0
         );
     
@@ -186,7 +187,11 @@ private:
 	// Lipid Accessibility Info - Lips Files
 	std::string lipsfile_;
 	
-	// Membrane residue number (when applicable)
+    // the membrane residue is anchored to this
+    // residue position by jump
+    core::Size anchor_rsd_;
+    
+	// Membrane residue number
 	core::Size membrane_rsd_;
 };
 

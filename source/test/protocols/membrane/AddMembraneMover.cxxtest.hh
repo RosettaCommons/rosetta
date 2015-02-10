@@ -58,9 +58,13 @@ public: // test functions
         // Initialize core & options system
         core_init();
         
-        // Load in pose from pdb
+        // Load in poses from pdb (general case)
         pose_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *pose_, "protocols/membrane/1C3W_TR_A.pdb" );
+        
+        // Load in pose from pdb for specific anchor point case
+        anchored_pose_ = core::pose::PoseOP( new Pose() );
+        pose_from_pdb( *anchored_pose_, "protocols/membrane/1C3W_TR_A.pdb" );
         
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
@@ -69,8 +73,15 @@ public: // test functions
 		Vector center( mem_center );
 		Vector normal( mem_normal );
 		
+        // Setup first pose
 		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile ) );
 		add_memb->apply( *pose_ );
+        
+        // Setup second pose for anchor point - has custom topology
+        SpanningTopologyOP custom_topo( new SpanningTopology() );
+        custom_topo->fill_from_spanfile( spanfile );
+        AddMembraneMoverOP add_memb2( new AddMembraneMover( custom_topo, 50 ) );
+        add_memb2->apply( *anchored_pose_ );
 		
 	}
 	
@@ -164,9 +175,37 @@ public: // test functions
         TS_ASSERT_EQUALS( given_downstream, expected_downstream );
         
     }
+    
+    /// @brief Test for custom anchored pose setup (anchor the membrane residue to
+    /// some abitrary point on the pose
+    void test_anchored_foldtree() {
+        
+        TS_TRACE( "Check that the anchored foldtree (custom) has a correct setup to start" );
+        
+        // Check that the root of the pose is the membrane residue num
+        core::Size expected_root( 223 );
+        core::Size given_root( anchored_pose_->fold_tree().root() );
+        TS_TRACE("Check that the root of the foldtree is the membrane residue for anchored foldtree");
+        TS_ASSERT_EQUALS( given_root, expected_root );
+        
+        // Check that the membrane residue is connected to residue 50
+        // in the protein
+        core::Size jump = anchored_pose_->conformation().membrane_info()->membrane_jump();
+        core::Size expected_upstream( 223 );
+        core::Size given_upstream(  anchored_pose_->fold_tree().upstream_jump_residue( jump ) );
+        core::Size expected_downstream( 50 );
+        core::Size given_downstream( anchored_pose_->fold_tree().downstream_jump_residue( jump ) );
+        
+        // Check that the upstream and downstream resnums match
+        TS_TRACE( "Checking upstream (root) residue numbers match in the membrane jump");
+        TS_ASSERT_EQUALS( given_upstream, expected_upstream );
+        TS_TRACE( "Checking downstream (pose first residue) residue number matches in the mmebrane jump" );
+        TS_ASSERT_EQUALS( given_downstream, expected_downstream );
+    }
 	
 private:
 	
 	core::pose::PoseOP pose_;
+    core::pose::PoseOP anchored_pose_;
 	
 }; // AddMembraneMover unit test
