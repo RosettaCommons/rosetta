@@ -355,8 +355,8 @@ public:
 
 #ifdef USEBOOSTSERIALIZE
 public:
-	template<class Archive> 
-	void 
+	template<class Archive>
+	void
 	serialize(Archive & ar, const unsigned int /*version*/){
 		for( Size ii = 0; ii < S; ++ii ) ar & array_[ii];
 	}
@@ -368,13 +368,13 @@ public:
 
 	value_type &
 	operator [] ( Size index ) {
-	debug_assert( range( index ) );
+		assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
 		return array_[ index - 1 ];
 	}
 
 	value_type const &
 	operator [] ( Size index ) const  {
-	debug_assert( range( index ) );
+		assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
 		return array_[ index - 1 ];
 	}
 
