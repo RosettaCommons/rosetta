@@ -37,25 +37,18 @@ public:
 
 public:
 
-	///
+	/// constructor
 	FastDensEnergy();
 
 
 	/// clone
-	virtual
-	methods::EnergyMethodOP
-	clone() const;
+	virtual	methods::EnergyMethodOP	clone() const;
 
-	/////////////////////////////////////////////////////////////////////////////
-	// scoring
-	/////////////////////////////////////////////////////////////////////////////
-
-	methods::LongRangeEnergyType
-	long_range_type() const;
+	/// lr container name
+	methods::LongRangeEnergyType long_range_type() const;
 
 
-	virtual
-	bool
+	virtual bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
@@ -63,30 +56,14 @@ public:
 	) const;
 
 	virtual
-	void
+	bool
+	defines_intrares_energy( EnergyMap const &  ) const { return false; }
+
+	/// scoring
+	virtual void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	virtual
-	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
-
-	virtual
-	bool
-	defines_intrares_energy( EnergyMap const &  ) const { return true; }
-
-	/// @brief Evaluate the intra-residue constraint energy for a given residue
-	virtual
-	void
-	eval_intrares_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
-	) const ;
-
-	///
-	virtual
-	void
+	virtual void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -95,47 +72,53 @@ public:
 		EnergyMap & emap
 	) const;
 
-	using methods::ContextIndependentLRTwoBodyEnergy::finalize_total_energy;
+	virtual void
+	eval_intrares_energy(
+		const core::conformation::Residue&,
+		const core::pose::Pose&,
+		const core::scoring::ScoreFunction&,
+		core::scoring::EnergyMap&) const {}
 
-	/// called at the end of energy evaluation
+	/// derivatives
+	virtual void
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+
+	virtual void
+	eval_residue_pair_derivatives(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const &,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
+
+	///
 	virtual
 	void
 	finalize_total_energy(
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const {}
 
-
-	/// called during gradient-based minimization inside dfunc
-	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
-	**/
-	virtual
-	void
-	eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
-	) const;
-
+	///  use the new minimizer interface
+	virtual bool
+	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const {};
 
-	/////////////////////////////////////////////////////////////////////////////
-	// data
-	/////////////////////////////////////////////////////////////////////////////
-
-
 private:
-	mutable bool pose_is_proper;
-	mutable bool bfactors_set;
+	bool scoreSymmComplex_;
+
+	// helper function: make sure pose is setup for scoring
+	bool
+	pose_is_setup_for_density_scoring( pose::Pose const & pose) const;
+
 	virtual
 	core::Size version() const;
 };

@@ -61,6 +61,7 @@ Span::Span( Size start, Size end ) :
 /// @brief Copy Consturctor
 /// @details Make a deep copy of this object
 Span::Span( Span const & src ) :
+    utility::pointer::ReferenceCount(),
     start_( src.start_ ),
     end_( src.end_ )
 {}

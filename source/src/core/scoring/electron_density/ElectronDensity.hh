@@ -237,8 +237,7 @@ public:
 	matchResFast( int resid,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
-		bool ignoreBs=false
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL
 	);
 
 	/// @brief Computes the symmatric rotation matrices
@@ -489,6 +488,11 @@ public:
 		R = symmap[ -subunit ].second;
 	}
 
+	// get effective B factor : a global b factor based on input flags and map grid spacing
+	double getEffectiveBfactor() {
+		return effectiveB;
+	}
+
 	// accessor
 	core::Real
 	get(int i, int j, int k) { return density(i,j,k); }
@@ -505,6 +509,7 @@ public:
 		density = dens_new;
 		density_change_trigger();
 	}
+
 
 ///////////
 // PRIVATE MEMBER FUNCTIONS

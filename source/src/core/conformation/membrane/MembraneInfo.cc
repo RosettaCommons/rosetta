@@ -129,6 +129,7 @@ MembraneInfo::MembraneInfo(
 /// @brief Copy Constructor
 /// @details Create a deep copy of this object
 MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
+	utility::pointer::ReferenceCount(),
 	conformation_( src.conformation_ ),
 	thickness_( src.thickness_ ),
 	steepness_( src.steepness_ ),

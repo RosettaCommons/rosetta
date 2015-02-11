@@ -238,7 +238,7 @@ void hankel_make_rp (
 			utility_exit_with_message( "fourth malloc failed in top_hat" );
 		}
   	for( core::Size count = 0 ; count < p_hankel->n ;
-       	*rp++ = exp( p_hankel->alpha * count++ ) );
+       	*rp++ = exp( p_hankel->alpha * count++ ) ) ; // fpd is this semicolon correct?
 		/*p_hankel->rp_vec.resize(p_hankel->n);
 		for( core::Size count = 0 ; count < p_hankel->n ; count++)
 				p_hankel->rp_vec[count]=exp( p_hankel->alpha * count);*/

@@ -3818,8 +3818,7 @@ ElectronDensity::matchResFast(
 	int resid,
 	core::conformation::Residue const &rsd,
 	core::pose::Pose const &pose,
-	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
-	bool ignoreBs /*=false*/
+	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/
 ) {
 	// make sure map is loaded
 	if (!isLoaded) {
@@ -3848,8 +3847,6 @@ ElectronDensity::matchResFast(
 		core::Real B = pose.pdb_info() ? pose.pdb_info()->temperature( rsd.seqpos(), i ) : effectiveB;
 		core::Real k = sig_j.k( B );
 
-		if (ignoreBs) k = 4*M_PI*M_PI/effectiveB;
-
 		core::Real kbin = 1;
 		if (nkbins_>1)
 			kbin = (k - kmin_)/kstep_ + 1;
@@ -3873,14 +3870,14 @@ ElectronDensity::matchResFast(
 }
 
 /////////////////////////////////////
-/// Match a residue to the density map.  Use the fast version of the scoring function
+/// Match an atom to the density map.  Use the fast version of the scoring function and default atom type
 core::Real
 ElectronDensity::matchPointFast(
 	numeric::xyzVector< core::Real > X
 ) {
 	// make sure map is loaded
 	if (!isLoaded) {
-		TR << "[ ERROR ]  ElectronDensity::matchResFast called but no map is loaded!\n";
+		TR << "[ ERROR ]  ElectronDensity::matchPointFast called but no map is loaded!\n";
 		return 0.0;
 	}
 
