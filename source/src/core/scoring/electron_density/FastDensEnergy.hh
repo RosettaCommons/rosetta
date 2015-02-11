@@ -97,12 +97,11 @@ public:
 	) const;
 
 	///
-	virtual
-	void
+	virtual void
 	finalize_total_energy(
-		pose::Pose const & pose,
+		pose::Pose & ,
 		ScoreFunction const &,
-		EnergyMap & totals
+		EnergyMap & 
 	) const {}
 
 	///  use the new minimizer interface

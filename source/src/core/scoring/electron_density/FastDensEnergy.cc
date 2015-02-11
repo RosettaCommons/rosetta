@@ -150,11 +150,6 @@ FastDensEnergy::setup_for_scoring(
 		return;
 	}
 
-	// make sure the root of the FoldTree is a virtual atom and is followed by a jump
-	kinematics::Edge const &root_edge ( *pose.fold_tree().begin() );
-	int virt_res_idx = root_edge.start();
-	conformation::Residue const &root_res( pose.residue( virt_res_idx ) );
-
 	// b factor adjustment
 	if ( !pose_has_nonzero_Bs( pose ) ) {
 		Real effB = core::scoring::electron_density::getDensityMap().getEffectiveBfactor();
