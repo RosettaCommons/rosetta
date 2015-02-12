@@ -376,9 +376,17 @@
 #include <protocols/membrane/MembranePositionFromTopologyMoverCreator.hh>
 #include <protocols/membrane/SetMembranePositionMoverCreator.hh>
 #include <protocols/membrane/TransformIntoMembraneMoverCreator.hh>
-#include <protocols/membrane/symmetry/SetupForMembraneSymmetryCreator.hh>
+
+#include <protocols/membrane/symmetry/SymmetricAddMembraneMoverCreator.hh> 
 
 #include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh>
 #include <protocols/membrane/visualize/VisualizeEmbeddingMoverCreator.hh>
 
-#include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh> 
+#include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh>
+
+#include <protocols/docking/membrane/MPDockingMoverCreator.hh> 
+#include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh> 
+
+#include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh> 
+
+ 

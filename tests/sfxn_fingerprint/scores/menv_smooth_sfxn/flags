@@ -4,4 +4,3 @@
 -membrane_new:setup:normal 0 0 1
 -ignore_unrecognized_res
 -score:weights mpframework_smooth_fa_2014
--membrane_new:scoring:hbond

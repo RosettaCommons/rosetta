@@ -150,6 +150,9 @@ sources = {
 		"SymRestrictTaskForDocking",
 		"SymSidechainMinMover",
 	],
+	"protocols/symmetric_docking/membrane" : [
+		"MPSymDockMover",
+	],
 	"protocols/topology_broker": [
 		"AsymFoldandDockClaimer",
                 "BasicJumpClaimer",

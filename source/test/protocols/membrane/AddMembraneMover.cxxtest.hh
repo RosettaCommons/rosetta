@@ -65,24 +65,36 @@ public: // test functions
         // Load in pose from pdb for specific anchor point case
         anchored_pose_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *anchored_pose_, "protocols/membrane/1C3W_TR_A.pdb" );
+
+        // Load in pose from pdb for specific anchor point case
+        positioned_pose_ = core::pose::PoseOP( new Pose() );
+        pose_from_pdb( *positioned_pose_, "protocols/membrane/1C3W_TR_A.pdb" );
         
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
+
+        // Testing (3) Different setups for AddMembraneMover
+        //   (1) Default setup - read topology from spanfile
+        //   (2) First custom setup - anchor membrane residue at an
+        //       arbitrary residue in the pose and setup from a pre-defined
+        //       topology object
+        //   (3) Second custom setup - set a custom initial membrane position
 		
-		// Setup membrane info object from add membrane mover
-		Vector center( mem_center );
-		Vector normal( mem_normal );
-		
-        // Setup first pose
+        // (1) Setup pose with default setup
 		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile ) );
 		add_memb->apply( *pose_ );
         
-        // Setup second pose for anchor point - has custom topology
+        // (2) Setup pose with custom anchor point & topology object
         SpanningTopologyOP custom_topo( new SpanningTopology() );
         custom_topo->fill_from_spanfile( spanfile );
         AddMembraneMoverOP add_memb2( new AddMembraneMover( custom_topo, 50 ) );
         add_memb2->apply( *anchored_pose_ );
-		
+
+        // (3) Setup pose with custom membrane position
+        Vector test_center( 10, 10, 10 ); 
+        Vector test_normal( 0, 1, 0 ); // Normal along y axis
+        AddMembraneMoverOP add_memb3( new AddMembraneMover( test_center, test_normal, spanfile, 0 ) ); 
+		add_memb3->apply( *positioned_pose_ ); 
 	}
 	
 	/// @brief Tear Down Test
@@ -109,6 +121,24 @@ public: // test functions
 		TS_ASSERT_EQUALS( res_type.compare( "MEM" ), 0 );
 		
 	}
+
+    /// @brief Test default membrane position setup
+    void test_default_membrane_position() {
+
+        TS_TRACE( "Test correct setup of the default membrane position: center=origin, normal along z axis" );
+
+        // Grab current center/normal from the pose
+        core::Vector current_center( pose_->conformation().membrane_info()->membrane_center() ); 
+        core::Vector current_normal( pose_->conformation().membrane_info()->membrane_normal() ); 
+
+        // Define expected center/normal
+        core::Vector expected_center(0,0,0);
+        core::Vector expected_normal(0,0,15);
+
+        TS_ASSERT( position_equal_within_delta( current_center, expected_center, 0.001 ) );
+        TS_ASSERT( position_equal_within_delta( current_normal, expected_normal, 0.001 ) );
+
+    }
     
     /// @brief Double check some initial settings from the full blown inputs
     void test_initial_spans_setup() {
@@ -202,10 +232,40 @@ public: // test functions
         TS_TRACE( "Checking downstream (pose first residue) residue number matches in the mmebrane jump" );
         TS_ASSERT_EQUALS( given_downstream, expected_downstream );
     }
+
+    /// @brief Checking custom setup of initial membrane position
+    void test_user_defined_membrane_position() {
 	
+        TS_TRACE( "Test for correct setup of a user defined membrane position" );
+
+        // Grab current center/normal from the pose
+        core::Vector current_center( positioned_pose_->conformation().membrane_info()->membrane_center() ); 
+        core::Vector current_normal( positioned_pose_->conformation().membrane_info()->membrane_normal() ); 
+
+        // Define expected center/normal
+        core::Vector expected_center(10,10,10);
+        core::Vector expected_normal(0,15,0);
+
+        TS_ASSERT( position_equal_within_delta( current_center, expected_center, 0.001 ) );
+        TS_ASSERT( position_equal_within_delta( current_normal, expected_normal, 0.001 ) );
+
+
+    }
+
+    /// @brief Position equal within delta (helper method)
+    bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
+
+        TS_ASSERT_DELTA( a.x(), b.x(), delta );
+        TS_ASSERT_DELTA( a.y(), b.y(), delta );
+        TS_ASSERT_DELTA( a.z(), b.z(), delta );
+
+        return true;
+    }
+
 private:
 	
 	core::pose::PoseOP pose_;
     core::pose::PoseOP anchored_pose_;
+    core::pose::PoseOP positioned_pose_; 
 	
 }; // AddMembraneMover unit test

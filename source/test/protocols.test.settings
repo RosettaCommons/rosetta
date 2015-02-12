@@ -230,6 +230,9 @@ sources = {
 		"Embedding",
 		"MembraneGeometryUtil",
 	],
+	"membrane/symmetry" : [
+		"SymmetricAddMembraneMover",
+	],
     "membrane/io" : [
 #        "SpanFileLoader",
 #		"LipsFileLoader",
@@ -545,6 +548,9 @@ testinputfiles = [
     "membrane/1afo_in.pdb",
     "membrane/1afo_decoy.pdb",
     "membrane/1afo_tr.span",
+    "membrane/symmetry/1afo_tr.span",
+    "membrane/symmetry/1afo_tr_input.pdb",
+    "membrane/symmetry/1afo_tr.c2.symm",
 	"nonlocal/2GB3.pdb",
 	"nonlocal/alignment.filt",
 	"optimize_weights/1UAD.wt_complex.pdb",

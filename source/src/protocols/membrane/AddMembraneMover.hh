@@ -104,6 +104,18 @@ public:
 		std::string lipsfile,
 		core::Size membrane_rsd=0
 	);
+    
+    /// @brief Custorm Constructur - Center/Normal init
+    /// @details Creates a membrane protein, setting the initial
+    /// membrane center and normal to the specified values, loads
+    /// a spanfile from given path, and indicates a membrane
+    /// residue if provided.
+    AddMembraneMover(
+         Vector init_center,
+         Vector init_normal,
+         std::string spanfile = "",
+         core::Size membrane_rsd = 0
+         );
 	
 	/// @brief Copy Constructor
 	/// @details Create a deep copy of this mover
@@ -130,6 +142,31 @@ public:
 	  protocols::moves::Movers_map const &,
 	  core::pose::Pose const &
 	  );
+
+    ////////////////////////////////////////////////////
+    /// Getters - For subclasses of AddMembraneMover ///
+    ////////////////////////////////////////////////////
+
+    /// @brief Return the current path to the spanfile held
+    /// by this mover
+    std::string get_spanfile() const;
+    
+    ////////////////////////////////////////////////////
+    /// Setters - For subclasses of AddMembraneMover ///
+    ////////////////////////////////////////////////////
+    
+    /// @brief Set Spanfile path
+    /// @details Set the path to the spanfile
+    void spanfile( std::string spanfile );
+
+    /// @brief Set lipsfile path
+    /// @details Set the path to the lipsfile
+    void lipsfile( std::string lipsfile );
+
+    /// @brief Set option for including lipophilicity data
+    /// @details Incidate whether lipophilicity information should be read
+    /// and used in MembraneInfo
+    void include_lips( bool include_lips );
 	
 	/////////////////////
 	/// Mover Methods ///
@@ -144,6 +181,19 @@ public:
 	/// virtual residue describing the membrane position
 	virtual void apply( Pose & pose );
 	
+	/// @brief Helper Method - Setup Membrane Virtual
+	/// @details Create a new virtual residue of type MEM from
+	/// the pose typeset (fullatom or centroid). Add this virtual
+	/// residue by appending to the last residue of the pose. Then set
+	/// this position as the root of the fold tree.
+	virtual core::Size setup_membrane_virtual( Pose & pose );
+    
+    /// @brief Helper Method - Check for Membrane residue already in the PDB
+    /// @details If there is an MEM residue in the PDB at the end of the pose
+    /// with property MEMBRANE, return it's residue number. In the control flow of the
+    /// apply method, if this returns non-zero, a new membrane residue will not be added.
+    virtual utility::vector1< core::SSize > check_pdb_for_mem( Pose & pose );
+    
 private:
 	
 	/////////////////////
@@ -161,20 +211,7 @@ private:
 	/// mainly in the membrane_new, setup group: center, normal,
 	/// spanfiles and lipsfiles paths
 	void init_from_cmd();
-	
-	/// @brief Helper Method - Setup Membrane Virtual
-	/// @details Create a new virtual residue of type MEM from
-	/// the pose typeset (fullatom or centroid). Add this virtual
-	/// residue by appending to the last residue of the pose. Then set
-	/// this position as the root of the fold tree.
-	core::Size setup_membrane_virtual( Pose & pose );
-	
-	/// @brief Helper Method - Check for Membrane residue already in the PDB
-	/// @details If there is an MEM residue in the PDB at the end of the pose
-	/// with property MEMBRANE, return it's residue number. In the control flow of the
-	/// apply method, if this returns non-zero, a new membrane residue will not be added.
-	utility::vector1< core::SSize > check_pdb_for_mem( Pose & pose );
-	
+
 private:
 
 	// Pose residye typeset & include lips
@@ -193,6 +230,10 @@ private:
     
 	// Membrane residue number
 	core::Size membrane_rsd_;
+    
+    // Initial Center/Normal Pair
+    core::Vector center_;
+    core::Vector normal_;
 };
 
 } // membrane

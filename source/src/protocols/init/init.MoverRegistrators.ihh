@@ -393,10 +393,16 @@ static MoverRegistrator< membrane::FlipMoverCreator > reg_FlipMoverCreator;
 static MoverRegistrator< membrane::MembranePositionFromTopologyMoverCreator > reg_MembranePositionFromTopologyMoverCreator;
 static MoverRegistrator< membrane::SetMembranePositionMoverCreator > reg_SetMembranePositionMoverCreator;
 static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_TransformIntoMembraneMoverCreator;
-static MoverRegistrator< membrane::symmetry::SetupForMembraneSymmetryCreator > reg_SetupForMembraneSymmetryCreator;
+
+//static MoverRegistrator< membrane::symmetry::SymmetricAddMembraneMoverCreator > reg_SymmetricAddMembraneMembraneMoverCreator;
 
 static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
 static MoverRegistrator< membrane::visualize::VisualizeEmbeddingMoverCreator > reg_VisualizeEmbeddingMoverCreator;
+
+static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator; 
+static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator; 
+
+static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator; 
 
 static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreatorr;
 

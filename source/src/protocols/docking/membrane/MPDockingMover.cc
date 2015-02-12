@@ -17,6 +17,7 @@
 
 // Unit Headers
 #include <protocols/docking/membrane/MPDockingMover.hh>
+#include <protocols/docking/membrane/MPDockingMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
@@ -34,6 +35,9 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMolMover.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/filters/Filter.hh>
+
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -47,6 +51,10 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/mpdock.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+
+#include <utility/tag/Tag.hh>
+
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -114,6 +122,67 @@ MPDockingMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new MPDockingMover() );
 }
 
+/// @brief Pase Rosetta Scripts Options for this Mover
+void
+MPDockingMover::parse_my_tag(
+    utility::tag::TagCOP tag,
+    basic::datacache::DataMap &,
+    protocols::filters::Filters_map const &,
+    protocols::moves::Movers_map const &,
+    core::pose::Pose const &
+    ) {
+    
+    // Read in membrane center & normal
+    if ( tag->hasOption( "center" ) ) {
+        std::string center = tag->getOption< std::string >( "center" );
+        utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
+        
+        if ( str_cen.size() != 3 ) {
+            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+        } else {
+            center_.x() = std::atof( str_cen[1].c_str() );
+            center_.y() = std::atof( str_cen[2].c_str() );
+            center_.z() = std::atof( str_cen[3].c_str() );
+        }
+    }
+    
+    if ( tag->hasOption( "normal" ) ) {
+        std::string normal = tag->getOption< std::string >( "normal" );
+        utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
+        
+        if ( str_norm.size() != 3 ) {
+            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+        } else {
+            normal_.x() = std::atof( str_norm[1].c_str() );
+            normal_.y() = std::atof( str_norm[2].c_str() );
+            normal_.z() = std::atof( str_norm[3].c_str() );
+        }
+    }
+    
+    // Read in jump_num option
+    if ( tag->hasOption( "jump_num" ) ) {
+        jump_num_ = tag->getOption< core::Size >( "jump_num" );
+    }
+}
+    
+/// @brief Create a new copy of this mover
+protocols::moves::MoverOP
+MPDockingMoverCreator::create_mover() const {
+    return protocols::moves::MoverOP( new MPDockingMover );
+}
+
+/// @brief Return the Name of this mover (as seen by Rscripts)
+std::string
+MPDockingMoverCreator::keyname() const {
+    return MPDockingMoverCreator::mover_name();
+}
+
+/// @brief Mover name for Rosetta Scripts
+std::string
+MPDockingMoverCreator::mover_name() {
+    return "MPDockingMover";
+}
+    
 /////////////////////
 /// Mover Methods ///
 /////////////////////

@@ -132,11 +132,6 @@ SetMembranePositionMover::apply( Pose & pose ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
 	
-	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
-		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
-	}
-	
 	// Update coordinates
 	pose.conformation().update_membrane_position( center_, normal_ );
 	
@@ -161,14 +156,39 @@ SetMembranePositionMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 SetMembranePositionMover::parse_my_tag(
-	utility::tag::TagCOP, //tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 	) {
 	
-	// TODO: implement this
+    // Read in membrane center & normal
+    if ( tag->hasOption( "center" ) ) {
+        std::string center = tag->getOption< std::string >( "center" );
+        utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
+        
+        if ( str_cen.size() != 3 ) {
+            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+        } else {
+            center_.x() = std::atof( str_cen[1].c_str() );
+            center_.y() = std::atof( str_cen[2].c_str() );
+            center_.z() = std::atof( str_cen[3].c_str() );
+        }
+    }
+    
+    if ( tag->hasOption( "normal" ) ) {
+        std::string normal = tag->getOption< std::string >( "normal" );
+        utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
+        
+        if ( str_norm.size() != 3 ) {
+            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+        } else {
+            normal_.x() = std::atof( str_norm[1].c_str() );
+            normal_.y() = std::atof( str_norm[2].c_str() );
+            normal_.z() = std::atof( str_norm[3].c_str() );
+        }
+    }
 }
 
 /// @brief Create a new copy of this mover
@@ -259,11 +279,6 @@ SetMembraneNormalMover::apply( Pose & pose ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
 	
-	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
-		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
-	}
-	
 	// Compute Rotation Axis - CrossProd between Current & New Normal axis
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
@@ -291,14 +306,25 @@ SetMembraneNormalMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 SetMembraneNormalMover::parse_my_tag(
-	utility::tag::TagCOP, //tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 	) {
-	
-	// TODO: implement this
+    
+    if ( tag->hasOption( "normal" ) ) {
+        std::string normal = tag->getOption< std::string >( "normal" );
+        utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
+        
+        if ( str_norm.size() != 3 ) {
+            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+        } else {
+            normal_.x() = std::atof( str_norm[1].c_str() );
+            normal_.y() = std::atof( str_norm[2].c_str() );
+            normal_.z() = std::atof( str_norm[3].c_str() );
+        }
+    }
 	
 }
 
@@ -390,11 +416,6 @@ SetMembraneCenterMover::apply( Pose & pose ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
 	
-	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
-		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
-	}
-	
 	// Get current normal
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	
@@ -422,14 +443,26 @@ SetMembraneCenterMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 SetMembraneCenterMover::parse_my_tag(
-   utility::tag::TagCOP, // tag,
+   utility::tag::TagCOP tag,
    basic::datacache::DataMap &,
    protocols::filters::Filters_map const &,
    protocols::moves::Movers_map const &,
    core::pose::Pose const &
    ) {
 	
-	// TODO: implement this
+    // Read in membrane center & normal
+    if ( tag->hasOption( "center" ) ) {
+        std::string center = tag->getOption< std::string >( "center" );
+        utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
+        
+        if ( str_cen.size() != 3 ) {
+            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+        } else {
+            center_.x() = std::atof( str_cen[1].c_str() );
+            center_.y() = std::atof( str_cen[2].c_str() );
+            center_.z() = std::atof( str_cen[3].c_str() );
+        }
+    }
 }
 
 /// @brief Create a new copy of this mover

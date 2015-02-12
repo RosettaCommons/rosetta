@@ -18,7 +18,7 @@
 ///				return true.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (2/7/14)
+/// @note       Last Modified (2/9/14)
 
 #ifndef INCLUDED_protocols_membrane_AddMembraneMover_cc
 #define INCLUDED_protocols_membrane_AddMembraneMover_cc
@@ -42,6 +42,8 @@
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
+
+#include <protocols/membrane/SetMembranePositionMover.hh>
 
 // Package Headers
 #include <core/conformation/Residue.hh>
@@ -106,7 +108,9 @@ AddMembraneMover::AddMembraneMover() :
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
     anchor_rsd_( 1 ),
-	membrane_rsd_( 0 )
+	membrane_rsd_( 0 ),
+    center_( mem_center ),
+    normal_( mem_normal )
 {
 	register_options();
 	init_from_cmd();
@@ -121,8 +125,10 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 	spanfile_(),
 	topology_( new SpanningTopology() ),
 	lipsfile_(),
-    anchor_rsd_( 1 ),
-	membrane_rsd_( membrane_rsd )
+	anchor_rsd_( 1 ),
+	membrane_rsd_( membrane_rsd ),
+    center_( mem_center ),
+    normal_( mem_normal )
 {
 	register_options();
 	init_from_cmd();
@@ -142,7 +148,9 @@ AddMembraneMover::AddMembraneMover(
     topology_( new SpanningTopology() ),
     lipsfile_(),
     anchor_rsd_( 1 ),
-    membrane_rsd_( membrane_rsd )
+    membrane_rsd_( membrane_rsd ),
+    center_( mem_center ),
+    normal_( mem_normal )
 {
 	register_options();
 	init_from_cmd();
@@ -163,7 +171,9 @@ AddMembraneMover::AddMembraneMover(
     topology_( topology ),
     lipsfile_(),
     anchor_rsd_( anchor_rsd ),
-    membrane_rsd_( membrane_rsd )
+    membrane_rsd_( membrane_rsd ),
+    center_( mem_center ),
+    normal_( mem_normal )
 {
     register_options();
     init_from_cmd();
@@ -179,27 +189,54 @@ AddMembraneMover::AddMembraneMover(
 	std::string lips_acc,
 	core::Size membrane_rsd
 	) :
-	protocols::moves::Mover(),
-	include_lips_( true ),
-	spanfile_( spanfile ),
-	topology_( new SpanningTopology() ),
-	lipsfile_( lips_acc ),
-	membrane_rsd_( membrane_rsd )
+    protocols::moves::Mover(),
+    include_lips_( true ),
+    spanfile_( spanfile ),
+    topology_( new SpanningTopology() ),
+    lipsfile_( lips_acc ),
+    anchor_rsd_( 1 ),
+    membrane_rsd_( membrane_rsd ),
+    center_( mem_center ),
+    normal_( mem_normal )
 {
 	register_options();
 	init_from_cmd();
 }
 
+/// @brief Custorm Constructur - Center/Normal init
+/// @details Creates a membrane protein, setting the initial
+/// membrane center and normal to the specified values, loads
+/// a spanfile and lipsfile from given path, and indicates a membrane
+/// residue if provided.
+AddMembraneMover::AddMembraneMover(
+    Vector init_center,
+    Vector init_normal,
+    std::string spanfile,
+    core::Size membrane_rsd
+    ) :
+    protocols::moves::Mover(),
+    include_lips_( false ),
+    spanfile_( spanfile ),
+    topology_( new SpanningTopology() ),
+    lipsfile_( "" ),
+    anchor_rsd_( 1 ),
+    membrane_rsd_( membrane_rsd ),
+    center_( init_center ),
+    normal_( init_normal )
+{}
+
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
-	protocols::moves::Mover( src ),
-	include_lips_( src.include_lips_ ),
-	spanfile_( src.spanfile_ ),
-	topology_( src.topology_ ),
-	lipsfile_( src.lipsfile_ ),
+    protocols::moves::Mover( src ),
+    include_lips_( src.include_lips_ ),
+    spanfile_( src.spanfile_ ),
+    topology_( src.topology_ ),
+    lipsfile_( src.lipsfile_ ),
     anchor_rsd_( src.anchor_rsd_ ),
-	membrane_rsd_( src.membrane_rsd_ )
+    membrane_rsd_( src.membrane_rsd_ ),
+    center_( src.center_ ),
+    normal_( src.normal_ )
 {}
 
 /// @brief Destructor
@@ -255,6 +292,34 @@ AddMembraneMover::parse_my_tag(
 	if ( tag->hasOption( "membrane_rsd" ) ) {
 		membrane_rsd_ = tag->getOption< core::Size >( "membrane_rsd" );
 	}
+    
+    // Read in membrane center & normal
+    if ( tag->hasOption( "center" ) ) {
+        std::string center = tag->getOption< std::string >( "center" );
+        utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
+        
+        if ( str_cen.size() != 3 ) {
+            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+        } else {
+            center_.x() = std::atof( str_cen[1].c_str() );
+            center_.y() = std::atof( str_cen[2].c_str() );
+            center_.z() = std::atof( str_cen[3].c_str() );
+        }
+    }
+    
+    if ( tag->hasOption( "normal" ) ) {
+        std::string normal = tag->getOption< std::string >( "normal" );
+        utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
+        
+        if ( str_norm.size() != 3 ) {
+            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+        } else {
+            normal_.x() = std::atof( str_norm[1].c_str() );
+            normal_.y() = std::atof( str_norm[2].c_str() );
+            normal_.z() = std::atof( str_norm[3].c_str() );
+        }
+    }
+    
 }
 
 /// @brief Create a new copy of this mover
@@ -275,6 +340,30 @@ AddMembraneMoverCreator::mover_name() {
 	return "AddMembraneMover";
 }
 
+////////////////////////////////////////////////////
+/// Getters - For subclasses of AddMembraneMover ///
+////////////////////////////////////////////////////
+
+/// @brief Return the current path to the spanfile held
+/// by this mover
+std::string AddMembraneMover::get_spanfile() const { return spanfile_; }
+    
+////////////////////////////////////////////////////
+/// Setters - For subclasses of AddMembraneMover ///
+////////////////////////////////////////////////////
+
+/// @brief Set Spanfile path
+/// @details Set the path to the spanfile
+void AddMembraneMover::spanfile( std::string spanfile ) { spanfile_ = spanfile; }
+
+/// @brief Set lipsfile path
+/// @details Set the path to the lipsfile
+void AddMembraneMover::lipsfile( std::string lipsfile ) { lipsfile_ = lipsfile; }
+
+/// @brief Set option for including lipophilicity data
+/// @details Incidate whether lipophilicity information should be read
+/// and used in MembraneInfo
+void AddMembraneMover::include_lips( bool include_lips ) { include_lips_ = include_lips; }
 
 /////////////////////
 /// Mover Methods ///
@@ -367,6 +456,10 @@ AddMembraneMover::apply( Pose & pose ) {
 	
 	// Add Membrane Info Object to conformation
 	pose.conformation().set_membrane_info( mem_info );
+    
+    // Set initial membrane position
+    SetMembranePositionMoverOP set_position = SetMembranePositionMoverOP( new SetMembranePositionMover( center_, normal_ ) );
+    set_position->apply( pose );
 	
 }
 
@@ -381,12 +474,14 @@ AddMembraneMover::apply( Pose & pose ) {
 void
 AddMembraneMover::register_options() {
 	
-	using namespace basic::options;
+    using namespace basic::options;
 
-	option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
-	option.add_relevant( OptionKeys::membrane_new::setup::spans_from_structure );
-	option.add_relevant( OptionKeys::membrane_new::setup::lipsfile );
-	option.add_relevant( OptionKeys::membrane_new::setup::membrane_rsd );
+    option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
+    option.add_relevant( OptionKeys::membrane_new::setup::spans_from_structure );
+    option.add_relevant( OptionKeys::membrane_new::setup::lipsfile );
+    option.add_relevant( OptionKeys::membrane_new::setup::membrane_rsd );
+    option.add_relevant( OptionKeys::membrane_new::setup::center );
+    option.add_relevant( OptionKeys::membrane_new::setup::normal );
 	
 }
 
@@ -422,6 +517,28 @@ AddMembraneMover::init_from_cmd() {
 	if ( option[ OptionKeys::membrane_new::setup::membrane_rsd ].user() ) {
 		membrane_rsd_ = option[ OptionKeys::membrane_new::setup::membrane_rsd ]();
 	}
+    
+    // Read in Center Parameter
+    if ( option[ OptionKeys::membrane_new::setup::center ].user() ) {
+        if ( option[ OptionKeys::membrane_new::setup::center ]().size() == 3 ) {
+            center_.x() = option[ OptionKeys::membrane_new::setup::center ]()[1];
+            center_.y() = option[ OptionKeys::membrane_new::setup::center ]()[2];
+            center_.z() = option[ OptionKeys::membrane_new::setup::center ]()[3];
+        } else {
+            utility_exit_with_message( "Center xyz vector must have three components! Option has either too many or too few arguments!" );
+        }
+    }
+    
+    // Read in Normal Parameter
+    if ( option[ OptionKeys::membrane_new::setup::normal ].user() ) {
+        if ( option[ OptionKeys::membrane_new::setup::normal ]().size() == 3 ) {
+            normal_.x() = option[ OptionKeys::membrane_new::setup::normal ]()[1];
+            normal_.y() = option[ OptionKeys::membrane_new::setup::normal ]()[2];
+            normal_.z() = option[ OptionKeys::membrane_new::setup::normal ]()[3];
+        } else {
+            utility_exit_with_message( "Normal xyz vector must have three components! Option has either too many or too few arguments" );
+        }
+    }
 }
 
 /// @brief Helper Method - Setup Membrane Virtual

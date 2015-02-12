@@ -99,6 +99,19 @@ public: // methods
 	
 	/// @brief Create a Fresh Instance of this Mover
 	virtual MoverOP fresh_instance() const;
+    
+    ///////////////////////////////
+    /// Rosetta Scripts Methods ///
+    ///////////////////////////////
+    
+    /// @brief Pase Rosetta Scripts Options for this Mover
+    void parse_my_tag(
+      utility::tag::TagCOP tag,
+      basic::datacache::DataMap &,
+      protocols::filters::Filters_map const &,
+      protocols::moves::Movers_map const &,
+      core::pose::Pose const &
+      );
 	
 	/////////////////////
 	/// Mover Methods ///

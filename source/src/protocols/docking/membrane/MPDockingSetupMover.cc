@@ -19,6 +19,7 @@
 
 // Unit Headers
 #include <protocols/docking/membrane/MPDockingSetupMover.hh>
+#include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 //
 //// Project Headers
@@ -30,6 +31,9 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
+
+#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/filters/Filter.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -44,6 +48,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+
+#include <utility/tag/Tag.hh>
+
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -90,6 +98,35 @@ MPDockingSetupMover::clone() const {
 protocols::moves::MoverOP
 MPDockingSetupMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new MPDockingSetupMover() );
+}
+    
+/// @brief Pase Rosetta Scripts Options for this Mover
+void
+MPDockingSetupMover::parse_my_tag(
+    utility::tag::TagCOP,
+    basic::datacache::DataMap &,
+    protocols::filters::Filters_map const &,
+    protocols::moves::Movers_map const &,
+    core::pose::Pose const &
+    )
+{}
+
+/// @brief Create a new copy of this mover
+protocols::moves::MoverOP
+MPDockingSetupMoverCreator::create_mover() const {
+    return protocols::moves::MoverOP( new MPDockingSetupMover );
+}
+
+/// @brief Return the Name of this mover (as seen by Rscripts)
+std::string
+MPDockingSetupMoverCreator::keyname() const {
+    return MPDockingSetupMoverCreator::mover_name();
+}
+
+/// @brief Mover name for Rosetta Scripts
+std::string
+MPDockingSetupMoverCreator::mover_name() {
+    return "MPDockingSetupMover";
 }
 
 /////////////////////
