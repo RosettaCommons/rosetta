@@ -369,6 +369,19 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 		} else if ( tag == "FREE_SIDE_CHAIN_BONUS" ) {
 			l >> real_value;
 			energy_method_options_->free_dof_options().free_side_chain_bonus( real_value );
+		} else if ( tag == "SCALE_SIDECHAIN_DENSITY_WEIGHTS" ) {
+			utility::vector1< core::Real > scale_sc_density;
+			core::Real sc_i;
+			while ( !l.fail() ) {
+				l >> sc_i;
+				if ( l.fail() ) break;
+				scale_sc_density.push_back( sc_i );
+			}
+			if (scale_sc_density.size() == 1) scale_sc_density.resize( core::chemical::num_canonical_aas, scale_sc_density[1] );
+			if (scale_sc_density.size() != core::chemical::num_canonical_aas) {
+				utility_exit_with_message( "incorrect number of arguments to SCALE_SIDECHAIN_DENSITY_WEIGHTS: " + line );
+			}
+			energy_method_options_->set_density_sc_scale_byres( real_value );
 		} else {
 
 	// //////////// Regular Weights ///////////////////////

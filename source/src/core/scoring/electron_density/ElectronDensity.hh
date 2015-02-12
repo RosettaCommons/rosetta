@@ -237,7 +237,8 @@ public:
 	matchResFast( int resid,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		core::Real sc_scale=1.0
 	);
 
 	/// @brief Computes the symmatric rotation matrices
@@ -278,7 +279,8 @@ public:
 		numeric::xyzVector<core::Real> const &X,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
-		numeric::xyzVector<core::Real> &gradX
+		numeric::xyzVector<core::Real> &gradX,
+		core::Real sc_scale=1.0
 	);
 
 	/// @brief Gradient of CC w.r.t B factors

@@ -133,6 +133,27 @@ void ScoreFunctionLoader::load_data(
 					emoptions.pb_unbound_tag( mod_tag->getOption<std::string>("pb_unbound_tag" ) );
 					TR << "User defined unbound tag: " << emoptions.pb_unbound_tag() << std::endl;
 				}
+				if( mod_tag->hasOption( "scale_sc_dens" )) {
+					core::Real scale_sc_dens = mod_tag->getOption<core::Real>("scale_sc_dens" );
+					emoptions.set_density_sc_scale_byres( scale_sc_dens );
+					TR << "User defined sidechain density reweighing: " << scale_sc_dens << std::endl;
+				}
+				if( mod_tag->hasOption( "scale_sc_dens_byres" )) {
+					utility::vector1< std::string > scale_sc_dens_byres
+							= utility::string_split_multi_delim( mod_tag->getOption<std::string>("scale_sc_dens_byres" ), " ,");
+
+					for (int i=1; i<=(int)scale_sc_dens_byres.size(); ++i) {
+						utility::vector1< std::string > tag = utility::string_split( scale_sc_dens_byres[i] , ':');
+						core::chemical::AA aa_i = core::chemical::aa_from_oneletter_code( tag[1][0] );
+						core::Real value = std::atof( tag[2].c_str() );
+						if (aa_i<=core::chemical::num_canonical_aas)
+							emoptions.set_density_sc_scale_byres( aa_i, value );
+					}
+					TR << "User defined per-residue sidechain density reweighing: " << std::endl;
+					for (int i=1; i<=(int)core::chemical::num_canonical_aas; ++i) {
+						TR << "   " << (core::chemical::AA)i << " " << emoptions.get_density_sc_scale_byres()[i] << std::endl;
+					}
+				}
 				in_scorefxn->set_energy_method_options( emoptions );
 			}
 		} // Mod tags

@@ -29,6 +29,7 @@
 #include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 #include <core/scoring/methods/FreeDOF_Options.fwd.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
+#include <core/chemical/AA.hh>
 
 /// Utility headers
 // AUTO-REMOVED #include <utility/exit.hh>
@@ -149,17 +150,17 @@ public:
 
 	std::string
 	grpelec_fade_type() const;
-	
-	void 
+
+	void
 	grpelec_fade_type( std::string setting );
 
-	core::Real 
+	core::Real
 	grpelec_fade_param1() const;
 
 	void
 	grpelec_fade_param1( core::Real setting );
 
-	core::Real 
+	core::Real
 	grpelec_fade_param2() const;
 
 	void
@@ -170,8 +171,8 @@ public:
 
 	void
 	grpelec_fade_hbond( bool setting );
-	
-	bool 
+
+	bool
 	grp_cpfxn() const;
 
 	void
@@ -179,11 +180,11 @@ public:
 
 	std::string
 	elec_group_file() const;
-	
-	void 
+
+	void
 	elec_group_file( std::string setting );
 
-	bool 
+	bool
 	grpelec_context_dependent() const;
 
 	void
@@ -296,6 +297,11 @@ public:
 	std::string const & pb_unbound_tag() const;
 	std::string & pb_unbound_tag();
 	void pb_unbound_tag( std::string const & tag );
+
+	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
+	void set_density_sc_scale_byres(core::Real newscscale);
+	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
+
 
 	/// @brief  This is used in the construction of the VDW_Energy's AtomVDW object
 	std::string const &
@@ -460,6 +466,7 @@ private:
 	bool cartbonded_linear_;
 	std::string pb_bound_tag_;
 	std::string pb_unbound_tag_;
+	utility::vector1< core::Real > fastdens_perres_weights_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

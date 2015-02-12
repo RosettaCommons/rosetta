@@ -15,6 +15,7 @@
 #define INCLUDED_core_scoring_electron_density_FastDensEnergy_hh
 
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -38,7 +39,7 @@ public:
 public:
 
 	/// constructor
-	FastDensEnergy();
+	FastDensEnergy(	methods::EnergyMethodOptions const & opts );
 
 
 	/// clone
@@ -101,7 +102,7 @@ public:
 	finalize_total_energy(
 		pose::Pose & ,
 		ScoreFunction const &,
-		EnergyMap & 
+		EnergyMap &
 	) const {}
 
 	///  use the new minimizer interface
@@ -113,6 +114,8 @@ public:
 
 private:
 	bool scoreSymmComplex_;
+
+	utility::vector1< core::Real > sc_scale_byres_;
 
 	// helper function: make sure pose is setup for scoring
 	bool

@@ -3818,7 +3818,8 @@ ElectronDensity::matchResFast(
 	int resid,
 	core::conformation::Residue const &rsd,
 	core::pose::Pose const &pose,
-	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/
+	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
+	core::Real sc_scale /*=1.0*/
 ) {
 	// make sure map is loaded
 	if (!isLoaded) {
@@ -3863,6 +3864,7 @@ ElectronDensity::matchResFast(
 		                                       fracX[2]*fastgrid[2] - fastorigin[2] + 1);
 		core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
 		core::Real W = sig_j.a(  ) / 6.0;
+		if (i>rsd.last_backbone_atom()) W *= sc_scale;
 		score += W*score_i;
 	}
 
@@ -3938,7 +3940,8 @@ void ElectronDensity::dCCdx_fastRes(
 				numeric::xyzVector<core::Real> const &X,
         core::conformation::Residue const &rsd,
         core::pose::Pose const &pose,
-				numeric::xyzVector<core::Real> &dCCdX ){
+				numeric::xyzVector<core::Real> &dCCdX,
+				core::Real sc_scale /*=1*/ ){
 
 	// make sure map is loaded
 	if (!isLoaded) {
@@ -3974,6 +3977,7 @@ void ElectronDensity::dCCdx_fastRes(
 	core::Real dkbin;
 
 	core::Real W = sig_j.a(  ) / 6.0;
+	if (atmid > (int)rsd.last_backbone_atom()) W *= sc_scale;
 	interp_dspline( fastdens_score , idxX, kbin,  dCCdX_grid, dkbin );
 	dCCdX[0] = W*dCCdX_grid[0]*c2f(1,1)*fastgrid[0] + W*dCCdX_grid[1]*c2f(2,1)*fastgrid[1] + W*dCCdX_grid[2]*c2f(3,1)*fastgrid[2];
 	dCCdX[1] = W*dCCdX_grid[0]*c2f(1,2)*fastgrid[0] + W*dCCdX_grid[1]*c2f(2,2)*fastgrid[1] + W*dCCdX_grid[2]*c2f(3,2)*fastgrid[2];

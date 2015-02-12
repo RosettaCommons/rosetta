@@ -28,6 +28,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -113,6 +114,10 @@ void EnergyMethodOptions::initialize_from_options() {
 	geom_sol_intrares_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
 	intrares_elec_correction_scale_ = basic::options::option[ basic::options::OptionKeys::score::intrares_elec_correction_scale ]();
 	envsmooth_zero_negatives_ = basic::options::option[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
+
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ].user()) {
+		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]() );
+	}
 }
 
 /// copy constructor
@@ -170,6 +175,7 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		cartbonded_linear_ = src.cartbonded_linear_;
 		pb_bound_tag_ = src.pb_bound_tag_;
 		pb_unbound_tag_ = src.pb_unbound_tag_;
+		fastdens_perres_weights_ = src.fastdens_perres_weights_;
 	}
 	return *this;
 }
@@ -503,6 +509,24 @@ EnergyMethodOptions::pb_unbound_tag() {
 void
 EnergyMethodOptions::pb_unbound_tag( std::string const & tag ) {
 	pb_unbound_tag_ = tag;
+}
+
+utility::vector1< core::Real > const &
+EnergyMethodOptions::get_density_sc_scale_byres() const {
+	return fastdens_perres_weights_;
+}
+
+void
+EnergyMethodOptions::set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale) {
+	runtime_assert ( aa <= core::chemical::num_canonical_aas );
+	if (fastdens_perres_weights_.size() == 0)
+		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, 1.0 );
+	fastdens_perres_weights_[(int)aa] = newscscale;
+}
+
+void
+EnergyMethodOptions::set_density_sc_scale_byres(core::Real newscscale) {
+	fastdens_perres_weights_ = utility::vector1< core::Real >( core::chemical::num_canonical_aas , newscscale );
 }
 
 /// @brief  This is used in the construction of the VDW_Energy's AtomVDW object

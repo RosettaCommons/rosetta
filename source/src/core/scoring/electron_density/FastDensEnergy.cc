@@ -68,9 +68,9 @@ static thread_local basic::Tracer TR( "core.scoring.electron_density.FastDensEne
 
 methods::EnergyMethodOP
 FastDensEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	methods::EnergyMethodOptions const & opts
 ) const {
-	return methods::EnergyMethodOP( new FastDensEnergy );
+	return methods::EnergyMethodOP( new FastDensEnergy(opts) );
 }
 
 ScoreTypes
@@ -92,8 +92,14 @@ methods::LongRangeEnergyType
 FastDensEnergy::long_range_type() const { return elec_dens_fast_energy; }
 
 /// c-tor
-FastDensEnergy::FastDensEnergy() : parent( methods::EnergyMethodCreatorOP( new FastDensEnergyCreator ) ) {
+FastDensEnergy::FastDensEnergy(	methods::EnergyMethodOptions const & opts)
+		: parent( methods::EnergyMethodCreatorOP( new FastDensEnergyCreator ) ) {
 	scoreSymmComplex_ = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
+
+	sc_scale_byres_ = opts.get_density_sc_scale_byres();
+	if (sc_scale_byres_.size() < core::chemical::num_canonical_aas) {
+		sc_scale_byres_.resize(core::chemical::num_canonical_aas, 1.0);
+	}
 }
 
 
@@ -149,6 +155,9 @@ FastDensEnergy::setup_for_scoring(
 		TR.Warning << "Warning! Fold tree is not set properly for density scoring!" << std::endl;
 		return;
 	}
+
+	kinematics::Edge const &root_edge ( *pose.fold_tree().begin() );
+	int virt_res_idx = root_edge.start();
 
 	// b factor adjustment
 	if ( !pose_has_nonzero_Bs( pose ) ) {
@@ -206,6 +215,10 @@ FastDensEnergy::residue_pair_energy(
 	conformation::Residue const &rsd (rsd1.aa() == core::chemical::aa_vrt? rsd2 : rsd1 );
 	Size r = rsd.seqpos();
 
+	core::Real scalefact = 1.0;
+	if (rsd.aa() <= core::chemical::num_canonical_aas)
+		scalefact = sc_scale_byres_[(int)rsd.aa()];
+
 	// grab symminfo (if defined) from the pose
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
 	core::Size nsubunits = 1;
@@ -215,7 +228,7 @@ FastDensEnergy::residue_pair_energy(
 		if (! symminfo->bb_is_independent( r ) ) return;
 	}
 
-	core::Real cc = core::scoring::electron_density::getDensityMap().matchResFast(r, rsd, pose, symminfo );
+	core::Real cc = core::scoring::electron_density::getDensityMap().matchResFast( r, rsd, pose, symminfo, scalefact );
 	Real edensScore = -cc;
 
 	if (symminfo && scoreSymmComplex_) {
@@ -223,7 +236,7 @@ FastDensEnergy::residue_pair_energy(
 		utility::vector1< core::Size > bbclones = symminfo->bb_clones( r );
 		for (int i=1; i<=(int)bbclones.size(); ++i) {
 			cc = core::scoring::electron_density::getDensityMap().matchResFast(
-			                    bbclones[i], pose.residue(bbclones[i]), pose, symminfo );
+			                    bbclones[i], pose.residue(bbclones[i]), pose, symminfo, scalefact );
 			edensScore -= cc / ((core::Real)nsubunits);
 		}
 	}
@@ -255,6 +268,8 @@ FastDensEnergy::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > &r_atom_derivs = (rsd1.aa() == core::chemical::aa_vrt) ? r2_atom_derivs : r1_atom_derivs;
 
 	core::Real weight = weights[ elec_dens_fast ];
+	if (res.aa() <= core::chemical::num_canonical_aas) weight *= sc_scale_byres_[(int)res.aa()];
+
 	bool is_symmetric = core::pose::symmetry::is_symmetric(pose);
 	core::Size resid = res.seqpos();
 
@@ -322,6 +337,10 @@ FastDensEnergy::eval_residue_pair_derivatives(
 							int source_res = (k-1)*nres_per+l;
 							int target_res = (mapping_j[k]-1)*nres_per+l;
 
+							core::Real sc_weight = 1.0;
+							if (pose.residue(source_res).aa() <= core::chemical::num_canonical_aas)
+								sc_weight = sc_scale_byres_[(int)res.aa()];
+
 							for (int m=1, m_end=pose.residue(target_res).nheavyatoms(); m<=m_end; ++m) {
 								numeric::xyzVector<core::Real> X_lm_src = pose.residue(source_res).atom(m).xyz();
 								numeric::xyzVector<core::Real> X_lm_tgt = pose.residue(target_res).atom(m).xyz();
@@ -330,15 +349,19 @@ FastDensEnergy::eval_residue_pair_derivatives(
 										 ( m, source_res, X_lm_src, pose.residue(source_res), pose, dCCdx );
 								numeric::xyzVector< core::Real > dEdx = -1*R_j * dCCdx / ((core::Real)nsubunits);
 
-
 								numeric::xyzVector<core::Real> atom_x = X_lm_tgt;
 								numeric::xyzVector<core::Real> const f2( dEdx );
 								numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 								Vector const f1( atom_x.cross( atom_y ) );
 
 								// define for "ORIG" atom which is 2 (?)
-								r_atom_derivs[ 2 ].f1() -= weight * f1;
-								r_atom_derivs[ 2 ].f2() -= weight * f2;
+								if (m <= (int)pose.residue(target_res).last_backbone_atom()) {
+									r_atom_derivs[ 2 ].f1() -= weight * f1;
+									r_atom_derivs[ 2 ].f2() -= weight * f2;
+								} else {
+									r_atom_derivs[ 2 ].f1() -= sc_weight * weight * f1;
+									r_atom_derivs[ 2 ].f2() -= sc_weight * weight * f2;
+								}
 							}
 						}
 					}
@@ -364,6 +387,10 @@ FastDensEnergy::eval_residue_pair_derivatives(
 							core::scoring::electron_density::getDensityMap().dCCdx_fastRes
 													 ( m, source_res, X_lm_src, pose.residue(source_res), pose, dCCdx );
 
+							core::Real sc_weight = 1.0;
+							if (pose.residue(source_res).aa() <= core::chemical::num_canonical_aas)
+								sc_weight = sc_scale_byres_[(int)res.aa()];
+
 							numeric::xyzVector< core::Real > dEdx = -1*R_i * dCCdx / ((core::Real)nsubunits);
 							numeric::xyzVector<core::Real> atom_x = X_lm_tgt;
 							numeric::xyzVector<core::Real> const f2( dEdx );
@@ -371,8 +398,13 @@ FastDensEnergy::eval_residue_pair_derivatives(
 							Vector const f1( atom_x.cross( atom_y ) );
 
 							// define for "ORIG" atom which is 2 (?)
-							r_atom_derivs[ 2 ].f1() += weight * f1;
-							r_atom_derivs[ 2 ].f2() += weight * f2;
+							if (m <= (int)pose.residue(target_res).last_backbone_atom()) {
+								r_atom_derivs[ 2 ].f1() += weight * f1;
+								r_atom_derivs[ 2 ].f2() += weight * f2;
+							} else {
+								r_atom_derivs[ 2 ].f1() += sc_weight * weight * f1;
+								r_atom_derivs[ 2 ].f2() += sc_weight * weight * f2;
+							}
 						}
 					}
 				}
