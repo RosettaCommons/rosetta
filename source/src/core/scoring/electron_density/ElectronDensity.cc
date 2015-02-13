@@ -876,9 +876,9 @@ core::Real ElectronDensity::matchCentroidPose(
 
 	///////////////////////////
 	/// 3  CALCULATE SYMMETRIC ROTATION MATRICES + SYMM MAPPING at each level
-	if (isSymm && remapSymm && cacheCCs) {
-		compute_symm_rotations( pose, symmInfo );
-	}
+	//if (isSymm && remapSymm && cacheCCs) {
+	//	compute_symm_rotations( pose, symmInfo );
+	//}
 
 	///////////////////////////
 	/// 4  CALCULATE PER-CA DERIVATIVES
@@ -1125,9 +1125,9 @@ core::Real ElectronDensity::matchPose(
 
 	///////////////////////////
 	/// 3  CALCULATE SYMMETRIC ROTATION MATRICES + SYMM MAPPING at each level
-	if (isSymm && remapSymm && cacheCCs) {
-		compute_symm_rotations( pose, symmInfo );
-	}
+	//if (isSymm && remapSymm && cacheCCs) {
+	//	compute_symm_rotations( pose, symmInfo );
+	//}
 
 
 	///////////////////////////

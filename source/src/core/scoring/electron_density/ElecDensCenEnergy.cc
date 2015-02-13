@@ -123,6 +123,8 @@ ElecDensCenEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 	}
 	structure_score = core::scoring::electron_density::getDensityMap().matchCentroidPose( pose, symminfo , true );
+
+	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }
 
 
@@ -190,6 +192,8 @@ ElecDensCenEnergy::setup_for_scoring(
 	for (int i=1; i<=(int)pose.total_residue(); ++i)
 		if ( pose.residue(i).is_protein() && pose.residue(i).atom_name(2) == " CA " )
 			nreses++;
+
+ 	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }
 
 

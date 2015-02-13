@@ -145,7 +145,8 @@ ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const &
 		}
 	}
 	TR.Debug << "Average CC = " << ccsum/nressum << " ( " << nressum << " res)" << std::endl;
- 	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
+
+	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }
 
 
@@ -195,9 +196,17 @@ ElecDensEnergy::setup_for_scoring(
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
+	// grab symminfo (if defined) from the pose
+	// make a copy
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation() ).Symmetry_Info();
+	}
+
 	// allocate space for per-AA stats
 	int nres = pose.total_residue();
 	core::scoring::electron_density::getDensityMap().set_nres( nres );
+ 	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }
 
 

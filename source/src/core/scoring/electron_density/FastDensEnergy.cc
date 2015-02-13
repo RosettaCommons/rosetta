@@ -193,6 +193,15 @@ FastDensEnergy::setup_for_scoring(
 		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.total_residue(),  elec_dens_fast ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
+
+	// grab symminfo (if defined) from the pose
+	// make a copy
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation() ).Symmetry_Info();
+	}
+
+	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }
 
 

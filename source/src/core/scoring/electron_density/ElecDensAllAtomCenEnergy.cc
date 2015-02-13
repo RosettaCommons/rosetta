@@ -123,6 +123,7 @@ ElecDensAllAtomCenEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunctio
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 	}
 	structure_score = core::scoring::electron_density::getDensityMap().matchPose( pose, symminfo , true );
+	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }
 
 
@@ -193,6 +194,7 @@ ElecDensAllAtomCenEnergy::setup_for_scoring(
 			nreses++;
 
 	TR.Debug << "ElecDensAllAtomCenEnergy::setup_for_scoring() returns CC = " << structure_score << std::endl;
+ 	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }
 
 
