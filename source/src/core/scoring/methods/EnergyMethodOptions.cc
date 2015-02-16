@@ -60,6 +60,10 @@ EnergyMethodOptions::EnergyMethodOptions():
 	elec_die_(10.0),
 	elec_no_dis_dep_die_(false),
 	smooth_fa_elec_( false ),
+	elec_sigmoidal_die_(false),
+	elec_sigmoidal_D_(78.0),
+	elec_sigmoidal_D0_(2.0),
+	elec_sigmoidal_S_(0.36),
 	grpelec_fade_type_( "false" ),
 	grpelec_fade_param1_( 1.0 ),
 	grpelec_fade_param2_( 1.0 ),
@@ -99,6 +103,10 @@ void EnergyMethodOptions::initialize_from_options() {
 	elec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_min_dis ]();
 	elec_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_die ]();
 	elec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_r_option ]();
+	elec_sigmoidal_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_sigmoidal_die ]();
+	elec_sigmoidal_D_ = basic::options::option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ]();
+	elec_sigmoidal_D0_ = basic::options::option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ]();
+	elec_sigmoidal_S_ = basic::options::option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ]();
 	smooth_fa_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_fa_elec ]();
 	grpelec_fade_type_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_type ]();
 	grpelec_fade_param1_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_param1 ]();
@@ -145,6 +153,10 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		elec_min_dis_ = src.elec_min_dis_;
 		elec_die_ = src.elec_die_;
 		elec_no_dis_dep_die_ = src.elec_no_dis_dep_die_;
+		elec_sigmoidal_die_ = src.elec_sigmoidal_die_;
+		elec_sigmoidal_D_ = src.elec_sigmoidal_D_;
+		elec_sigmoidal_D0_ = src.elec_sigmoidal_D0_;
+		elec_sigmoidal_S_ = src.elec_sigmoidal_S_;
 		smooth_fa_elec_ = src.smooth_fa_elec_;
 		grpelec_fade_type_ = src.grpelec_fade_type_;
 		grpelec_fade_param1_ = src.grpelec_fade_param1_;
@@ -258,6 +270,30 @@ EnergyMethodOptions::elec_no_dis_dep_die() const {
 void
 EnergyMethodOptions::elec_no_dis_dep_die( bool const setting ) {
 	elec_no_dis_dep_die_ = setting;
+}
+
+bool
+EnergyMethodOptions::elec_sigmoidal_die() const {
+	return elec_sigmoidal_die_;
+}
+
+void
+EnergyMethodOptions::elec_sigmoidal_die( bool const setting ) {
+	elec_sigmoidal_die_ = setting;
+}
+
+void
+EnergyMethodOptions::elec_sigmoidal_die_params(Real &D, Real &D0, Real &S) const {
+	D = elec_sigmoidal_D_;
+	D0 = elec_sigmoidal_D0_;
+	S = elec_sigmoidal_S_;
+}
+
+void
+EnergyMethodOptions::set_elec_sigmoidal_die_params( Real D, Real D0, Real S ) {
+	elec_sigmoidal_D_ = D;
+	elec_sigmoidal_D0_ = D0;
+	elec_sigmoidal_S_ = S;
 }
 
 bool
@@ -641,6 +677,10 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.elec_min_dis_ == b.elec_min_dis_ ) &&
 		( a.elec_die_ == b.elec_die_ ) &&
 		( a.elec_no_dis_dep_die_ == b.elec_no_dis_dep_die_ ) &&
+		( a.elec_sigmoidal_die_ == b.elec_sigmoidal_die_ ) &&
+		( a.elec_sigmoidal_D_ == b.elec_sigmoidal_D_ ) &&
+		( a.elec_sigmoidal_D0_ == b.elec_sigmoidal_D0_ ) &&
+		( a.elec_sigmoidal_S_ == b.elec_sigmoidal_S_ ) &&
 		( a.smooth_fa_elec_ == b.smooth_fa_elec_ ) &&
 		( a.grpelec_fade_type_ == b.grpelec_fade_type_ ) &&
 		( a.grpelec_fade_param1_ == b.grpelec_fade_param1_ ) &&
@@ -670,7 +710,8 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.bond_angle_central_atoms_to_score_ == b.bond_angle_central_atoms_to_score_ ) &&
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
 		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
-					 ( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) )
+		( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) &&
+		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) )
 		;
 }
 
@@ -824,6 +865,18 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("elec_die");
 	option_values.push_back(boost::lexical_cast<std::string>(elec_die_));
+
+	option_keys.push_back("elec_sigmoidal_die");
+	option_values.push_back(elec_sigmoidal_die_ ? "1" : "0");
+
+	option_keys.push_back("elec_sigmoidal_D");
+	option_values.push_back(boost::lexical_cast<std::string>(elec_sigmoidal_D_));
+
+	option_keys.push_back("elec_sigmoidal_D0");
+	option_values.push_back(boost::lexical_cast<std::string>(elec_sigmoidal_D0_));
+
+	option_keys.push_back("elec_sigmoidal_S");
+	option_values.push_back(boost::lexical_cast<std::string>(elec_sigmoidal_S_));
 
 	option_keys.push_back("elec_no_dis_dep_die");
 	option_values.push_back(elec_no_dis_dep_die_ ? "1" : "0");

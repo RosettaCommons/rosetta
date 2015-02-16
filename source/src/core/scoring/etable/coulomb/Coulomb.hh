@@ -79,6 +79,20 @@ public:
 		Real const q2
 	) const;
 
+	inline
+	Real
+	sigmoid_eps( Real R ) const {
+		return (sigmoidal_D_
+			- 0.5 * (sigmoidal_D_ - sigmoidal_D0_)
+				* (2 + 2*R*sigmoidal_S_ + R*R*sigmoidal_S_*sigmoidal_S_)
+				* std::exp (-R*sigmoidal_S_) );
+	}
+
+	inline
+	Real
+	sigmoid_deps_dr( Real R ) const {
+		return (0.5*(sigmoidal_D_ - sigmoidal_D0_) * R*R*sigmoidal_S_*sigmoidal_S_*sigmoidal_S_ * std::exp (-R*sigmoidal_S_));
+	}
 
 	inline Real max_dis( ) const { return max_dis_; }
 	inline Real max_dis2( ) const { return max_dis2_;}
@@ -111,6 +125,10 @@ private:
 
 	Real die_;
 	bool no_dis_dep_die_;
+
+	// optional sigmoidal dielectric
+	bool sigmoidal_die_;
+	Real sigmoidal_D_, sigmoidal_D0_, sigmoidal_S_;
 
   ///@brief Precomputed constants
 	Real C0_;
@@ -162,6 +180,9 @@ Coulomb::eval_atom_atom_fa_elecE(
 		return i_charge * j_charge * Etable::eval_cubic_polynomial( std::sqrt( d2 ), low_poly_ );
 	} else if ( d2 > hi_poly_start2_ ) {
 		return i_charge * j_charge * Etable::eval_cubic_polynomial( std::sqrt( d2 ), hi_poly_ );
+	} else if( sigmoidal_die_ ) {
+		core::Real d = std::sqrt(d2);
+		return i_charge * j_charge * ( C1_ / (d*sigmoid_eps(d)) - C2_ );
 	} else if ( no_dis_dep_die_ ) {
 		return i_charge * j_charge * ( C1_ / std::sqrt(d2) - C2_ );
 	} else {
@@ -185,7 +206,12 @@ Coulomb::eval_dfa_elecE_dr_over_r(
 	Real q1q2 = q1*q2;
 
 	if ( dis2 > low_poly_end2_ && dis2 < hi_poly_start2_ ) {
-		if ( no_dis_dep_die_ ) {
+		if( sigmoidal_die_ ) {
+			core::Real d = std::sqrt(dis2);
+			Real eps_d = sigmoid_eps (d);
+			Real deps_d = sigmoid_deps_dr (d);
+			return dEfac_ * q1q2 * (eps_d + d*deps_d) / ( d*dis2*eps_d*eps_d );
+		} else if ( no_dis_dep_die_ ) {
 			return dEfac_ * q1q2 / ( dis2 * std::sqrt(dis2) ) ;
 		} else {
 			return dEfac_ * q1q2 / ( dis2 * dis2 );

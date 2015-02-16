@@ -142,6 +142,19 @@ public:
 	void
 	elec_no_dis_dep_die( bool setting );
 
+	/// @brief Should fa_elec/gpelec use a sigmoidal dielectric?
+	bool
+	elec_sigmoidal_die() const;
+
+	void
+	elec_sigmoidal_die( bool const setting );
+
+	void
+	elec_sigmoidal_die_params(Real &D, Real &D0, Real &S) const;
+
+	void
+	set_elec_sigmoidal_die_params( Real D, Real D0, Real S );
+
 	bool
 	smooth_fa_elec() const;
 
@@ -302,7 +315,6 @@ public:
 	void set_density_sc_scale_byres(core::Real newscscale);
 	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
 
-
 	/// @brief  This is used in the construction of the VDW_Energy's AtomVDW object
 	std::string const &
 	atom_vdw_atom_type_set_name() const;
@@ -443,6 +455,8 @@ private:
 	core::Real elec_die_;
 	bool elec_no_dis_dep_die_;
 	bool smooth_fa_elec_;
+	bool elec_sigmoidal_die_;
+	Real elec_sigmoidal_D_, elec_sigmoidal_D0_, elec_sigmoidal_S_;
 	std::string grpelec_fade_type_;
 	core::Real grpelec_fade_param1_;
 	core::Real grpelec_fade_param2_;
