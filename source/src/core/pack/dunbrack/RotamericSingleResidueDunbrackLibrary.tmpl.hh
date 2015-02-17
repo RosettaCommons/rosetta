@@ -467,9 +467,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 	}
 
 	/// sum derivatives.
-	Real4 & dE_dbb(  scratch.dE_dbb() );
-	Real4 & dE_dbb_dev(  scratch.dE_dbb_dev() );
-	Real4 & dE_dbb_rot(  scratch.dE_dbb_rot() );
+	Real5 & dE_dbb(  scratch.dE_dbb() );
+	Real5 & dE_dbb_dev(  scratch.dE_dbb_dev() );
+	Real5 & dE_dbb_rot(  scratch.dE_dbb_rot() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
 	Real4 & dE_dchi_dev( scratch.dE_dchi_dev() );
 
@@ -527,11 +527,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	Real4 & chidev				( scratch.chidev()  );
 	Real4 & chidevpen			( scratch.chidevpen() );
 	Real4 & dchidevpen_dchi		( scratch.dchidevpen_dchi() );
-	Real4 & drotprob_dbb		( scratch.drotprob_dbb() );
-	Real4 & dneglnrotprob_dbb	( scratch.dneglnrotprob_dbb() ); // for bicubic interpolation
-	Real4 & dchidevpen_dbb		( scratch.dchidevpen_dbb()  );
-	FourReal4 & dchimean_dbb	( scratch.dchimean_dbb()  );
-	FourReal4 & dchisd_dbb		( scratch.dchisd_dbb()  );
+	Real5 & drotprob_dbb		( scratch.drotprob_dbb() );
+	Real5 & dneglnrotprob_dbb	( scratch.dneglnrotprob_dbb() ); // for bicubic interpolation
+	Real5 & dchidevpen_dbb		( scratch.dchidevpen_dbb()  );
+	FiveReal4 & dchimean_dbb	( scratch.dchimean_dbb()  );
+	FiveReal4 & dchisd_dbb		( scratch.dchisd_dbb()  );
 
 	std::fill( chimean.begin(),		      chimean.end(),           0.0 );
 	std::fill( chisd.begin(),		      chisd.end(),             0.0 );
@@ -558,7 +558,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static( chi, rotwell );
 
 	Size packed_rotno( rotwell_2_packed_rotno( rotwell ) );
-	
+
 	// panic!  Extremely unlikely rotamer found.  Find another rotamer that has at least some probability,
 	// and move this rotamer toward it -- do so in a predictable manner so that the score function is continuous
 	// as it tries to move from this rotamer to another.
@@ -566,13 +566,13 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 
 	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 	interpolate_rotamers( rsd, scratch, packed_rotno, interpolated_rotamer );
-	
+
 	if ( dun02() ) {
 		for ( Size ii = 1; ii <= T; ++ii ) chidev[ ii ] = subtract_chi_angles( chi[ ii ], chimean[ ii ], aa(), ii );
 	} else {
 		for ( Size ii = 1; ii <= T; ++ii ) chidev[ ii ] = basic::periodic_range( chi[ ii ] - chimean[ ii ], 360 );
 	}
-	
+
 	for ( Size ii = 1; ii <= T; ++ii ) {
 		/// chidev penalty: define a gaussian with a height of 1 and a standard deviation of chisd[ ii ];
 		/// exp( -1 * (chi_i - chi_mean_i )**2 / ( 2 * chisd_ii**2 ) )
@@ -589,11 +589,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 			chidevpen[ ii ] += std::log( chisd[ ii ] );
 		}
 	}
-	
+
 	Real chidevpensum( 0.0 );
 	for ( Size ii = 1; ii <= T; ++ii ) chidevpensum += chidevpen[ ii ];
-	
-	
+
+
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 		scratch.fa_dun_tot() = scratch.negln_rotprob() + chidevpensum;
 		scratch.fa_dun_rot() = scratch.negln_rotprob();
@@ -611,11 +611,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	}
 
 	Real const score( scratch.fa_dun_tot() );
-	
+
 	if ( ! eval_deriv ) return score;
 
 	for ( Size bbi = 1; bbi <= N; ++bbi ) dchidevpen_dbb[ bbi ] = 0.0;
-	
+
 	for ( Size ii = 1; ii <= T; ++ii ) {
 
 		/// Backbone derivatives for chi-dev penalty.
@@ -635,9 +635,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 		for ( Size bbi = 1; bbi <= N; ++bbi ) {
 			scratch.dE_dbb_dev_perchi()[ bbi ][ ii ] = ( g * fprime * dchimean_dbb[ bbi ][ ii ]
 													   - f * gprime *   dchisd_dbb[ bbi ][ ii ] ) * invgg;
-			
+
 			dchidevpen_dbb[ bbi ] += scratch.dE_dbb_dev_perchi()[ bbi ][ ii ];
-			
+
 			// Derivatives for the change in the Gaussian height normalization due to sd changing as a function of phi
 			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_normsd ] ) {
 				dchidevpen_dbb[ bbi ]					 += 1.0 / chisd[ ii ] * dchisd_dbb[ bbi ][ ii ];
@@ -763,7 +763,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::find_another_representative_for_u
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
-	
+
 	Size index = make_index( N, N_PHIPSI_BINS, bb_bin );
 	Size packed_rotno = rotamers_( index, 1 ).packed_rotno();
 	packed_rotno_2_rotwell( packed_rotno, rotwell );
@@ -818,7 +818,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		interpolate_rotamers( rsd, scratch, packed_rotno, interpolated_rotamer );
 		maxprob = interpolated_rotamer.rotamer_probability();
-		
+
 	} else {
 		utility::fixedsizearray1< Real, N > const bbs = get_bbs_from_rsd( rsd );
 		utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
@@ -830,7 +830,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 			Size index = make_conditional_index( N, N_PHIPSI_BINS, indi, bb_bin_next, bb_bin );
 			packed_rotnos[ indi ] = rotamers_( index, 1 ).packed_rotno();
 		}
-		
+
 		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		for ( Size ii = 1; ii <= num_packed_rots; ++ii ) {
 			interpolate_rotamers( rsd, scratch, packed_rotnos[ ii ], interpolated_rotamer );
@@ -866,10 +866,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(
 	for ( Size ii = 1; ii <= N; ++ii )
 		parent::bin_angle( -180.0, PHIPSI_BINRANGE, 360.0, N_PHIPSI_BINS, basic::periodic_range( bbs[ ii ], 360 ),
 						   bb_bin[ ii ], bb_bin_next[ ii ], bb_alpha[ ii ] );
-	
+
 	verify_bb_bins( bbs, bb_bin, bb_bin_next );
 }
-	
+
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(
@@ -881,7 +881,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 }
-	
+
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
@@ -894,11 +894,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	utility::fixedsizearray1< Real, N > bbs = get_bbs_from_rsd( rsd );
 	//For D-amino acids, invert phi and psi:
 	if ( core::chemical::is_canonical_D_aa( rsd.aa() ) ) for ( Size bbi = 1; bbi <= N; ++bbi ) bbs[ bbi ] *= -1.0;
-		
+
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
-	
+
 	interpolate_rotamers( scratch, packed_rotno, bb_bin, bb_bin_next, bb_alpha, interpolated_rotamer );
 }
 
@@ -914,13 +914,13 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 ) const
 {
 	using namespace basic;
-	
+
 	interpolated_rotamer.packed_rotno() = packed_rotno;
 	utility::fixedsizearray1< Size, ( 1 << N ) > sorted_rotno;
 	utility::vector1< PackedDunbrackRotamer< T, N > > rot( 1 << N );
 	utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > derivs_vec;
 	utility::fixedsizearray1< Real, ( 1 << N ) > rotprob;
-	
+
 	for ( Size sri = 1; sri <= ( 1 << N ); ++sri ) {
 		Size index = make_conditional_index( N, N_PHIPSI_BINS, sri, bb_bin_next, bb_bin );
 		sorted_rotno[ sri ] = packed_rotno_2_sorted_rotno_( index, packed_rotno );
@@ -934,10 +934,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 		rotprob[ sri ] = static_cast< Real >( rot[ sri ].rotamer_probability() );
 		if ( rotprob[ sri ] <= 1e-6 ) rotprob[ sri ] = 1e-6;
 	}
-	
+
 	utility::fixedsizearray1< Real, N > binw( PHIPSI_BINRANGE );
 	utility::fixedsizearray1< Real, N > scratch_drotprob_dbb;
-	
+
 	/// Note: with bicubic splines to interpolate the energy for a rotamer, bilinear
 	/// interpolation of the rotamer probabilities no longer serves a useful purpose
 	/// for the 2002 library.  However, the 2008 and 2010 libraries are not yet up to
@@ -945,11 +945,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	/// around for the moment.  Also being preserved for the sake of backwards compatibility.
 	interpolate_polylinear_by_value( rotprob, bb_alpha, binw, false, // treat as angles
 									scratch.rotprob(), scratch_drotprob_dbb );
-	
+
 	for ( Size i = 1; i <= N; ++i ) scratch.drotprob_dbb()[ i ] = scratch_drotprob_dbb[ i ];
-	
+
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-		
+
 		// populate derivatives vector
 		utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > n_derivs;
 		for ( Size i = 1; i <= ( 1 << N ); ++i ) {
@@ -964,7 +964,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	} else {
 		interpolated_rotamer.rotamer_probability() = scratch.rotprob();
 	}
-		
+
 	// Entropy correction
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
 		// populate S_n_derivs
@@ -973,35 +973,35 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 			for ( Size j = 1; j <= ( 1 << N ); ++j ) S_n_derivs[i][j] = ShanonEntropy_n_derivs_[ i ][ j ];
 		}
 		utility::fixedsizearray1< Real, N > binw( PHIPSI_BINRANGE );
-		
+
 		utility::fixedsizearray1< Real, N > scratch_dentropy_dbb;
 		alternate_tricubic_interpolation( S_n_derivs, bb_alpha, binw, scratch.entropy(), scratch_dentropy_dbb );
 		for ( Size i = 1; i <= N; ++i ) scratch.dentropy_dbb()[ i ] = scratch_dentropy_dbb[ i ];
 	}
-		
+
 	for ( Size ii = 1; ii <= T; ++ii ) {
-			
+
 		utility::fixedsizearray1< Real, ( 1 << N ) > chi_mean;
 		utility::fixedsizearray1< Real, ( 1 << N ) > chi_sd;
 		for ( Size roti = 1; roti <= ( 1 << N ); ++roti ) {
 			chi_mean[ roti ] = static_cast< Real >( rot[ roti ].chi_mean( ii ) );
 			chi_sd[ roti ]   = static_cast< Real >( rot[ roti ].chi_sd( ii ) );
 		}
-		
+
 		utility::fixedsizearray1< Real, N > scratch_dchi_mean;
 		utility::fixedsizearray1< Real, N > scratch_dchi_sd;
-		
+
 		for ( Size bbi = 1; bbi <= N; ++bbi ) {
 			scratch_dchi_mean[ bbi ] = scratch.dchimean_dbb()[ bbi ][ ii ];
 			scratch_dchi_sd[ bbi ]   = scratch.dchisd_dbb()[   bbi ][ ii ];
 		}
 		utility::fixedsizearray1< Real, N > binw( PHIPSI_BINRANGE );
-		
+
 		interpolate_polylinear_by_value( chi_mean, bb_alpha, binw, true, scratch.chimean()[ ii ], scratch_dchi_mean );
 		interpolated_rotamer.chi_mean( ii ) = scratch.chimean()[ ii ];
 		interpolate_polylinear_by_value( chi_sd, bb_alpha, binw, false, scratch.chisd()[ ii ], scratch_dchi_sd );
 		interpolated_rotamer.chi_sd( ii ) = scratch.chisd()[ ii ];
-		
+
 		for ( Size bbi = 1; bbi <= N; ++bbi ) {
 			scratch.dchimean_dbb()[ bbi ][ ii ] = scratch_dchi_mean[ bbi ];
 			scratch.dchisd_dbb()[ bbi ][ ii ]   = scratch_dchi_sd[ bbi ];
@@ -1046,7 +1046,7 @@ Real
 	else if ( rsd.is_upper_terminus() && bbn == N ) return parent::NEUTRAL_PSI;
 	else return rsd.mainchain_torsion( bbn );
 }
-	
+
 /// @details Handle upper-term residues by returning a "neutral" psi value
 template < Size T, Size N >
 utility::fixedsizearray1< Real, N >
@@ -1055,7 +1055,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bbs_from_rsd(
 ) const
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
-	
+
 	utility::fixedsizearray1< Real, N > tors;
 	for ( Size ii = 1; ii <= N; ++ii ) {
 		if      ( rsd.is_lower_terminus() && ii == 1 ) tors[ ii ] = parent::NEUTRAL_PHI;
@@ -1091,7 +1091,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector(
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
-	
+
 	Real const requisit_probability = probability_to_accumulate_while_building_rotamers( buried ); // ( buried  ? 0.98 : 0.95 )
 	Real accumulated_probability( 0.0 );
 
@@ -1126,7 +1126,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples(
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
-	
+
 	Size const n_rots = n_packed_rots();
 	utility::vector1< DunbrackRotamerSampleData > all_rots;
 	all_rots.reserve( n_rots );
@@ -1137,7 +1137,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples(
 		Size const packed_rotno00 = rotamers_( index, ii ).packed_rotno();
 		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		interpolate_rotamers( scratch, packed_rotno00, bb_bin, bb_bin_next, bb_alpha, interpolated_rotamer );
-		
+
 		DunbrackRotamerSampleData sample( false );
 		sample.set_nchi( T );
 		sample.set_rotwell( parent::packed_rotno_2_rotwell( interpolated_rotamer.packed_rotno() ));
@@ -1171,7 +1171,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer(
 ) const
 {
 	Size const n_rot = 1 << N;
-	
+
 	utility::fixedsizearray1< Size, N >  bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N >  bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
@@ -1185,7 +1185,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer(
 	rot[ 1 ].rotamer_probability() = rotamers_( ind00, rot_ind ).rotamer_probability();
 	interp_probs[ 1 ] = static_cast< Real >( rot[ 1 ].rotamer_probability() );
 	Size const packed_rotno00 = rot[ 1 ].packed_rotno();
-	
+
 	for ( Size indi = 2; indi <= n_rot; ++indi ) {
 		Size index = make_conditional_index( N, N_PHIPSI_BINS, indi, bb_bin_next, bb_bin );
 		sorted_rotno[ indi ] = packed_rotno_2_sorted_rotno_( index, packed_rotno00 );
@@ -1228,7 +1228,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer(
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
-	
+
 	Size index = make_index( N, N_PHIPSI_BINS, bb_bin );
 	PackedDunbrackRotamer< T, N > const & rot00( rotamers_( index, rot_ind ) );
 	Size const packed_rotno00 = rot00.packed_rotno();
@@ -1321,7 +1321,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::build_rotamers(
 		packer_neighbor_graph, concrete_residue, existing_residue,
 		chi_set_vector, rotamers );
 }
-	
+
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::verify_bb_bins(
@@ -1338,7 +1338,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::verify_bb_bins(
 		}
 	}
 }
-	
+
 /// @details once a list of chi samples has been enumerated, this function
 /// instantiates Residue objectes and give them the correct geometry.
 template < Size T, Size N >
@@ -1364,7 +1364,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::create_rotamers_from_chisets(
 		conformation::ResidueOP rotamer = conformation::ResidueFactory::create_residue(
 			*concrete_residue, existing_residue, pose.conformation(), rtask.preserve_c_beta() );
 		for ( Size jj = 1; jj <= (*chi_set)->chi.size(); ++jj ) rotamer->set_chi( jj, (*chi_set)->chi[ jj ] );
-		
+
 		// apply an operation (or a filter) to this rotamer at build time
 		bool reject(false);
 		for ( pack::rotamer_set::RotamerOperations::const_iterator
@@ -1446,9 +1446,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::enumerate_chi_sets(
 
 		for ( Size ii = 1; ii <= nchi; ++ii )
 			if ( chisample_prob[ ii ].size() >= lex[ ii ] ) chi_set_prob *= chisample_prob[ ii ][ lex[ ii ] ];
-		
+
 		if ( ! first_rotamer && chi_set_prob < minimum_probability_for_extra_rotamers ) continue;
-		
+
 		first_rotamer = false;
 
 		ChiSetOP chi_set( new ChiSet( nchi ) );
@@ -1595,7 +1595,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 	using namespace boost;
 
 	parent::write_to_binary( out );
-	
+
 	/// 1. rotamers_
 	{
 	Size const ntotalrot = positive_pow( N_PHIPSI_BINS, N ) * parent::n_packed_rots();
@@ -1611,18 +1611,18 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 	for ( Size initi = 1; initi <= ( 1 << N ); ++initi ) {
 		rotamer_negln_n_derivs[ initi ] = new DunbrackReal[ ntotalrot ];
 	}
-	
+
 	// e. packed rotamer numbers
 	DunbrackReal * packed_rotnos = new DunbrackReal[ ntotalrot ];
-		
+
 	Size count_chi( 0 ), count_rots( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
-			
+
 			Size bb_rot_index = make_index( N, N_PHIPSI_BINS, bb_bin );
-			
+
 			for ( Size ll = 1; ll <= T; ++ll ) {
 				rotamer_means[ count_chi ] = rotamers_( bb_rot_index, ii ).chi_mean( ll );
 				rotamer_stdvs[ count_chi ] = rotamers_( bb_rot_index, ii ).chi_sd( ll );
@@ -1632,10 +1632,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 			for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
 				rotamer_negln_n_derivs[ deriv_i ][ count_rots ] = rotamers_( bb_rot_index, ii ).n_derivs()[ deriv_i ];
 			}
-			
+
 			packed_rotnos[ count_rots ] = rotamers_( bb_rot_index, ii ).packed_rotno();
 			++count_rots;
-			
+
 			bb_bin[ 1 ]++;
 			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
 				bb_bin[ p ] = 1;
@@ -1650,7 +1650,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 	for ( Size writei = 1; writei <= ( 1 << N ); ++writei ) {
 		out.write( (char*) rotamer_negln_n_derivs[ writei ], ntotalrot * sizeof( DunbrackReal ));
 	}
-		
+
 	out.write( (char*) packed_rotnos, ntotalrot * sizeof( DunbrackReal ));
 	delete [] rotamer_means;
 	delete [] rotamer_stdvs;
@@ -1670,10 +1670,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
-			
+
 			packed_rotno_2_sorted_rotno[ count ] = packed_rotno_2_sorted_rotno_( make_index( N, N_PHIPSI_BINS, bb_bin ), ii );
 			++count;
-			
+
 			bb_bin[ 1 ]++;
 			while ( bb_bin[ p ] == N_PHIPSI_BINS+1) {
 				bb_bin[ p ] = 1;
@@ -1707,7 +1707,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 	DunbrackReal * rotamer_probs = new DunbrackReal[ ntotalrot ];
 	// d. bicubic polynomial parameters
 	utility::vector1< DunbrackReal * > rotamer_negln_n_derivs( 1 << N );
-		
+
 	in.read( (char*) rotamer_means, ntotalchi * sizeof( DunbrackReal ));
 	in.read( (char*) rotamer_stdvs, ntotalchi * sizeof( DunbrackReal ));
 	in.read( (char*) rotamer_probs, ntotalrot * sizeof( DunbrackReal ));
@@ -1719,14 +1719,14 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 	DunbrackReal * packed_rotnos = new DunbrackReal[ ntotalrot ];
 
 	in.read( (char*) packed_rotnos, ntotalrot * sizeof( DunbrackReal ));
-		
+
 	Size count_chi( 0 ), count_rots( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
-		
+
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
-			
+
 			Size bb_rot_index = make_index( N, N_PHIPSI_BINS, bb_bin );
 			for ( Size ll = 1; ll <= T; ++ll ) {
 				rotamers_( bb_rot_index, ii ).chi_mean( ll ) = rotamer_means[ count_chi ];
@@ -1738,9 +1738,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 				rotamers_( bb_rot_index, ii ).n_derivs()[ deriv_i ] = rotamer_negln_n_derivs[ deriv_i ][ count_rots ];
 			}
 			rotamers_( bb_rot_index, ii ).packed_rotno( ( Size ) packed_rotnos[ count_rots ] );
-			
+
 			++count_rots;
-			
+
 			bb_bin[ 1 ]++;
 			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
 				bb_bin[ p ] = 1;
@@ -1771,10 +1771,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
-			
+
 			packed_rotno_2_sorted_rotno_( make_index( N, N_PHIPSI_BINS, bb_bin ), ii ) = packed_rotno_2_sorted_rotno[ count ];
 			++count;
-			
+
 			bb_bin[ 1 ]++;
 			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
 				bb_bin[ p ] = 1;
@@ -1862,7 +1862,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamer
 						 << this_rot.packed_rotno() << " vs. " <<  other_rot.packed_rotno() << std::endl;
 				equal = false;
 			}
-			
+
 			bb_bin[ 1 ]++;
 			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
 				bb_bin[ p ] = 1;
@@ -1884,7 +1884,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamer
 						 << packed_rotno_2_sorted_rotno_( bb_rot_index, ii ) << " vs. " << other.packed_rotno_2_sorted_rotno_( bb_rot_index, ii ) << std::endl;
 				equal = false;
 			}
-			
+
 			bb_bin[ 1 ]++;
 			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
 				bb_bin[ p ] = 1;
@@ -1914,25 +1914,25 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 	utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 	Size p = 1;
 	while ( bb_bin[ N + 1 ] == 1 ) {
-		
+
 		Size bb_rot_index = make_index( N, N_PHIPSI_BINS, bb_bin );
-		
+
 		// Initialize
 		for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
 			ShanonEntropy_n_derivs_[ deriv_i ]( bb_rot_index ) = 0.0;
 		}
-		
+
 		// Divide probability by psum in order to make probability normalized
 		// especially for semi-rotameric amino acids
 		Real psum( 0.0 );
 		for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii )
 			psum += rotamers_( bb_rot_index, ii ).rotamer_probability();
-		
+
 		// The values actually stored are positive sign ( == negative entropy )
 		// which corresponds to Free energy contribution by Entropy
 		for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii )
 			ShanonEntropy_n_derivs_[ 1 ]( bb_rot_index ) += -rotamers_( bb_rot_index, ii ).n_derivs()[ 1 ] * rotamers_( bb_rot_index, ii ).rotamer_probability() / psum;
-		
+
 		bb_bin[ 1 ]++;
 		while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
 			bb_bin[ p ] = 1;
@@ -1951,11 +1951,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 	*/
 
 	// Derivatives
-	
+
 	utility::fixedsizearray1< Size, (N+1) > indices( 0 );
 	p = 1;
 	while ( indices[ N + 1 ] == 0 ) {
-		
+
 		utility::fixedsizearray1< Size, N > bb_ri_plus( 1 );
 		utility::fixedsizearray1< Size, N > bb_ri_minus( 1 );
 		Size base = 1;
@@ -1981,7 +1981,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 			}
 			base += positive_pow( N_PHIPSI_BINS, N - indi ) * i;
 		}
-		
+
 		//  derivatives
 		// Let's do this later...
 		Real const dbb2( 4.0 * PHIPSI_BINRANGE * PHIPSI_BINRANGE );
@@ -2003,7 +2003,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 				}
 			}
 		}
-		
+
 		indices[ 1 ]++;
 		while ( indices[ p ] == N_PHIPSI_BINS ) {
 			indices[ p ] = 0;
@@ -2032,10 +2032,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 	/// allocate the big tables, transfer the data in the temporary arrays into the big table,
 	typename utility::vector1< DunbrackRotamer< T, N > > first_phipsibin_data;
 	first_phipsibin_data.reserve( n_possible_rots() );
-	
+
 	utility::fixedsizearray1< Real, N > bb;
 	DunbrackReal probability(0.0);
-	
+
 	utility::fixedsizearray1< Size, N > bb_bin;
 	utility::fixedsizearray1< Size, N > last_bb_bin;
 	Size count( 0 );
@@ -2087,22 +2087,22 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 		}
 
 		for ( Size ii = 1; ii <= N; ++ii ) infile >> bb[ ii ];
-		
+
 		infile >> count;
 		infile >> rotwell[ 1 ] >> rotwell[ 2 ] >> rotwell[ 3 ] >> rotwell[ 4 ];
 		infile >> probability;
 		infile >> chimean[ 1 ] >> chimean[ 2 ] >> chimean[ 3 ] >> chimean[ 4 ];
 		infile >> chisd[ 1 ] >> chisd[ 2 ] >> chisd[ 3 ] >> chisd[ 4 ];
-		
+
 		bool cont = false;
 		for ( Size ii = 1; ii <= N; ++ii ) if ( bb[ ii ] == -180 ) cont = true; // duplicated data...
 		if ( cont ) continue;
-		
+
 		++count_read_rotamers;
 
 		/// AVOID INF!
 		for ( Size ii = 1; ii <= T; ++ii ) if ( chisd[ ii ] == 0.0 ) chisd[ ii ] = 5; // bogus!
-				
+
 		if ( probability <= 1e-6 ) {
 			probability = 1e-6;
 			/// APL -- On the advice of Roland Dunbrack, modifying the minimum probability to the
@@ -2113,7 +2113,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 		}
 
 		get_bb_bins( bb, bb_bin );
-		
+
 		if ( finished_first_phipsi_bin ) {
 			Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
 			if ( packed_rotno < 1 || packed_rotno > parent::n_packed_rots() ) {
@@ -2123,20 +2123,20 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 				utility_exit();
 			}
 			PackedDunbrackRotamer< T, N > rotamer( chimean, chisd, probability, packed_rotno );
-			
+
 			for ( Size ii = 1; ii <= N; ++ii ) {
 				if ( bb_bin[ ii ] != last_bb_bin[ ii ] ) {
 					count_in_this_phipsi_bin = 1; break;
 				}
 			}
 			if ( count_in_this_phipsi_bin > parent::n_packed_rots() ) break;
-			
+
 			Size bb_bin_index = make_index( N, N_PHIPSI_BINS, bb_bin );
 			rotamers_( bb_bin_index, count_in_this_phipsi_bin ) = rotamer;
 			packed_rotno_2_sorted_rotno_( bb_bin_index, packed_rotno ) = count_in_this_phipsi_bin;
 			++count_in_this_phipsi_bin;
 			for ( Size ii = 1; ii <= N; ++ii ) last_bb_bin[ ii ] = bb_bin[ ii ];
-			
+
 		} else {
 			bool notdone = false;
 			for ( Size ii = 1; ii <= N; ++ii ) {
@@ -2160,7 +2160,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 				utility::vector1< Size > first_bin_rotwell( DUNBRACK_MAX_SCTOR, 0 );
 				for ( Size ii = 1; ii <= first_phipsibin_data.size(); ++ii ) {
 					for ( Size jj = 1; jj <= T; ++jj ) first_bin_rotwell[ jj ] = first_phipsibin_data[ ii ].rotwell( jj );
-					
+
 					Size const packed_rotno = rotwell_2_packed_rotno( first_bin_rotwell );
 
 					if ( packed_rotno < 1 || packed_rotno > parent::n_packed_rots() ) {
@@ -2173,7 +2173,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 					Size bb_bin_index = make_index( N, N_PHIPSI_BINS, last_bb_bin );
 					rotamers_( bb_bin_index, ii ) = PackedDunbrackRotamer< T, N >( first_phipsibin_data[ ii ], packed_rotno );
 					rotamers_( bb_bin_index, ii ).rotamer_probability() = first_phipsibin_data[ ii ].rotamer_probability();
-					
+
 					packed_rotno_2_sorted_rotno_( bb_bin_index, packed_rotno ) = ii;
 				}
 
@@ -2182,12 +2182,12 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 				Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
 				PackedDunbrackRotamer< T, N > rotamer( chimean, chisd, probability, packed_rotno );
 				Size bb_bin_index = make_index( N, N_PHIPSI_BINS, bb_bin );
-				
+
 				rotamers_( bb_bin_index, count_in_this_phipsi_bin ) = rotamer;
 				packed_rotno_2_sorted_rotno_( bb_bin_index, packed_rotno ) = count_in_this_phipsi_bin;
 				++count_in_this_phipsi_bin;
 				for ( Size bbi = 1; bbi <= N; ++bbi ) last_bb_bin[ bbi ] = bb_bin[ bbi ];
-				
+
 				finished_first_phipsi_bin = true;
 			} else {
 				very_first_rotamer = false;
@@ -2198,7 +2198,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 			}
 		}
 	}
-	
+
 	initialize_bicubic_splines();
 	/// Entropy setup once reading is finished
 	if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] )
@@ -2219,7 +2219,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 		for ( Size ii = 1; ii <= n_packed_rots(); ++ii ) {
 			using namespace numeric;
 			using namespace numeric::interpolation::spline;
-			
+
 			BicubicSpline rotEspline;
 			MathMatrix< Real > energy_vals( N_PHIPSI_BINS, N_PHIPSI_BINS );
 			for ( Size jj = 0; jj < N_PHIPSI_BINS; ++jj ) {
@@ -2260,7 +2260,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 		for ( Size ii = 1; ii <= n_packed_rots(); ++ii ) {
 			using namespace numeric;
 			using namespace numeric::interpolation::spline;
-			
+
 			TricubicSpline rotEspline;
 			MathTensor< Real > energy_vals( N_PHIPSI_BINS, N_PHIPSI_BINS, N_PHIPSI_BINS );
 			for ( Size jj = 0; jj < N_PHIPSI_BINS; ++jj ) {
@@ -2306,15 +2306,15 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 		for ( Size ii = 1; ii <= n_packed_rots(); ++ii ) {
 			using namespace numeric;
 			using namespace numeric::interpolation::spline;
-			
+
 			PolycubicSpline rotEspline( N );
 			utility::vector1< Size > n_dims( N, N_PHIPSI_BINS );
 			MathNTensor< Real > energy_vals( n_dims, 0.0 );
-			
+
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			Size p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
-				
+
 				Size bb_rot_index = make_index( N, N_PHIPSI_BINS, bb_bin );
 				Size sortedrotno = packed_rotno_2_sorted_rotno_( bb_rot_index, ii );
 				PackedDunbrackRotamer< T, N > & rot = rotamers_( bb_rot_index, sortedrotno );
@@ -2323,7 +2323,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 				utility::vector1< Size > indices;
 				for ( Size i = 1; i <= N; ++i ) indices.push_back( bb_bin[ i ] - 1 );
 				energy_vals( indices ) = rotamer_energy;
-				
+
 				bb_bin[ 1 ]++;
 				while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
 					bb_bin[ p ] = 1;
@@ -2331,26 +2331,26 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 					if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
 				}
 			}
-			
+
 			utility::vector1< BorderFlag > periodic_boundary( N, e_Periodic );
 			utility::vector1< Real > start_vals( N, 0.0 );
 			utility::vector1< Real > deltas( N, 10.0 );
 			utility::vector1< bool > lincont( N, false );
 			utility::vector1< std::pair< Real, Real > > unused( N, std::make_pair( 0.0, 0.0 ) );
 			rotEspline.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
-			
+
 			for ( Size clear_i = 1; clear_i <= N+1; ++clear_i ) bb_bin[ clear_i ] = 1;
 			p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
-				
+
 				Size bb_rot_index = make_index( N, N_PHIPSI_BINS, bb_bin );
 				Size sortedrotno = packed_rotno_2_sorted_rotno_( bb_rot_index, ii );
 				PackedDunbrackRotamer< T, N > & rot = rotamers_( bb_rot_index, sortedrotno );
-				
+
 				utility::vector1< Size > indices;
 				for ( Size i = 1; i <= N; ++i ) indices.push_back( bb_bin[ i ] - 1 );
 				for ( Size i = 1; i <= ( 1 << N ); ++i ) rot.n_derivs()[ i ] = rotEspline.get_deriv( i )( indices );
-				
+
 				bb_bin[ 1 ]++;
 				while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
 					bb_bin[ p ] = 1;

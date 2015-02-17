@@ -28,15 +28,15 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-Size const DUNBRACK_MAX_BBTOR = 4;
+Size const DUNBRACK_MAX_BBTOR = 5;
 Size const DUNBRACK_MAX_SCTOR = 4;
-	
-typedef utility::fixedsizearray1< utility::fixedsizearray1< Real, DUNBRACK_MAX_SCTOR >, DUNBRACK_MAX_BBTOR > FourReal4;
+
+typedef utility::fixedsizearray1< utility::fixedsizearray1< Real, DUNBRACK_MAX_SCTOR >, DUNBRACK_MAX_BBTOR > FiveReal4;
 typedef utility::fixedsizearray1< Real, DUNBRACK_MAX_SCTOR > Real4;
 typedef utility::fixedsizearray1< Size, DUNBRACK_MAX_SCTOR > Size4;
 
-typedef utility::fixedsizearray1< Real, DUNBRACK_MAX_BBTOR > Real3;
-typedef utility::fixedsizearray1< Size, DUNBRACK_MAX_BBTOR > Size3;
+typedef utility::fixedsizearray1< Real, DUNBRACK_MAX_BBTOR > Real5;
+typedef utility::fixedsizearray1< Size, DUNBRACK_MAX_BBTOR > Size5;
 
 
 class RotamerLibraryScratchSpace;

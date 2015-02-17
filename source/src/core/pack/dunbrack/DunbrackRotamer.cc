@@ -17,41 +17,17 @@
 
 // Package headers
 #include <core/pack/dunbrack/ChiSet.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-
-// AUTO-REMOVED #include <basic/database/open.hh>
-
-// AUTO-REMOVED #include <basic/options/option.hh>
-
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/interpolate.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/constants.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
 
-// Utility headers
-// AUTO-REMOVED #include <utility/LexicographicalIterator.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-
-// ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-
-
 #include <cmath>
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
@@ -75,12 +51,12 @@ Size positive_pow( Size mantissa, Size exponent )
     if ( exponent == 1 ) return mantissa;
     if ( exponent == 2 ) return mantissa * mantissa;
     if ( exponent == 3 ) return mantissa * mantissa * mantissa;
-        
+
     int tmp = positive_pow( mantissa, exponent/2 );
     if ( exponent % 2 == 0 ) return tmp * tmp;
     else return mantissa * tmp * tmp;
 }
-    
+
 /// @details Fun Fact: virtual destructor must still be defined even if it's abstract
 RotamerBuildingData::~RotamerBuildingData() {}
 
@@ -155,7 +131,6 @@ debug_assert( dyp >= 0 && dyp < 1.0 );
 		+dx3m *( -( 3 * dym * dym - 1) * d4dx2y200 + ( 3 * dyp * dyp - 1) * d4dx2y201 ) * binwy_over6
 		+dx3p *( -( 3 * dym * dym - 1) * d4dx2y210 + ( 3 * dyp * dyp - 1) * d4dx2y211 ) * binwy_over6;
 
-	//std::cout << "bicubic interpolation " << val << " " << dvaldx << " " << dvaldy << std::endl;
 }
 
 void
@@ -365,177 +340,8 @@ tricubic_interpolation(
 		+dxp*(dy3m*dvdyz101+dy3p*dvdyz111)
 		+dx3m*(dy3m*dvdxyz001+dy3p*dvdxyz011)
 		+dx3p*(dy3m*dvdxyz101+dy3p*dvdxyz111));
-    //std::cout << "tri interpolation " << val << " " << dvaldx << " " << dvaldy << " " << dvaldz << std::endl;
-
 
 }
-
-/*template < Size N >
-void
-interpolate_polylinear_by_value(
-    utility::fixedsizearray1< double, ( 1 << N ) > const vals,
-    utility::fixedsizearray1< double, N > const bbd,
-	utility::fixedsizearray1< double, N > const binrange,
-    bool const angles,
-    double & val,
-    utility::fixedsizearray1< double, N > & dval_dbb
-)
-{
-    Size const n_bb = N;
-    assert( n_bb != 0 );
- 
-    dval_dbb.resize( n_bb );
- 
-    if ( angles ) {
-        val = 0;
- 
-        utility::vector1< double > w;
-        utility::vector1< double > a;
-
-        Size total = vals.size();
- 
-        for ( Size ii = 1; ii <= total; ++ii ) {
-            double w_val = 1;
-            for ( Size jj = 1; jj <= n_bb; ++jj ) {
-                w_val *= bit_is_set( ii, n_bb, jj ) ? bbd[ jj ] : 1.0f - bbd[ jj ];
-            }
-            w.push_back( w_val );
-        }
-        
-        for ( Size total = vals.size(); total >= 4; total /= 2 ) {
-            for ( Size ii = 1; ii <= total/2; ++ii ) {
-                double a_val = 0;
-                if ( w[ ii ] + w[ ii + total/2 ] != 0.0 )
-                    a_val = ( w[ ii ] * vals[ ii ] + w[ ii + total/2 ] * ( basic::subtract_degree_angles(vals[ ii + total/2 ], vals[ ii ] ) + vals[ ii ] ) ) / ( w[ ii ] + w[ ii + total/2 ] );
-                a.push_back( a_val );
-            }
-            if ( total > 4 ) {
-                w = a;
-                a = utility::vector1< double >();
-            }
-        }
-        
-		val = ( w[ 1 ] + w[ 3 ] ) * a[ 1 ] + ( w[ 2 ] + w[ 4 ] ) * ( basic::subtract_degree_angles( a[ 2 ], a[ 1 ] ) + a[ 1 ] );
-        basic::angle_in_range(val);
- 
-        for ( Size ii = 1; ii <= n_bb; ++ii ) {
-            dval_dbb[ ii ] = 0.0f;
-            
-            for ( Size kk = 1; kk <= n_bb; ++kk ) {
-                if ( kk != ii ) {
-                    Size ind1 = 1;
-                    Size ind2 = ind1 + (1<<n_bb>>ii);
-                    dval_dbb[ ii ] += ( 1.0f - bbd[ kk ] ) * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
-                    ind1 += (1<<n_bb>>kk); ind2 += (1<<n_bb>>kk);
-                    dval_dbb[ ii ] +=          bbd[ kk ]   * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
-                }
-            }
-            dval_dbb[ ii ] /= binrange[ii];
-        }
-		
-    } else {
-        val = 0;
-        
-        for ( Size ii = 1; ii <= vals.size(); ++ii ) {
-            double valterm = vals[ ii ];
-            for ( Size jj = 1; jj <= n_bb; ++jj ) {
-                valterm *= bit_is_set( ii, n_bb, jj ) ? bbd[ jj ] : (1.0f - bbd[ jj ]);
-            }
-            val += valterm;
-        }
-        
-        for ( Size ii = 1; ii <= n_bb; ++ii ) {
-            dval_dbb[ ii ] = 0.0f;
-            for ( Size jj = 1; jj <= vals.size(); ++jj ) {
-                double valterm = 1;
-                
-                for ( Size kk = 1; kk <= n_bb; ++kk ) {
-                    if ( kk == ii ) {
-                        valterm *= vals[ jj ];
-                        valterm *= bit_is_set( jj, n_bb, kk ) ?      1.0f : -1.0f;
-                    } else {
-                        valterm *= bit_is_set( jj, n_bb, kk ) ? bbd[ kk ] :  (1.0f - bbd[ kk ]);
-                    }
-                }
-                dval_dbb[ ii ] += valterm;
-            }
-            dval_dbb[ ii ] /= binrange[ii];
-        }
-
-    }
-}*/
-	
-/*template < Size N >
-void
-alternate_tricubic_interpolation(
-    utility::fixedsizearray1< utility::fixedsizearray1< Real, (1 << N) >, (1 << N) > n_derivs,
-    utility::fixedsizearray1< Real, N > dbbp,
-    utility::fixedsizearray1< Real, N > binwbb,
-    Real & val,
-    utility::fixedsizearray1< Real, N > & dvaldbb
-)
-{
-    Size const n_bb = N;
-    dvaldbb.resize( n_bb );
-    
-    utility::vector1< Real > invbinwbb;
-    utility::vector1< Real > binwbb_over_6;
-    utility::vector1< Real > dbbm;
-    utility::vector1< Real > dbb3p;
-    utility::vector1< Real > dbb3m;
-    for ( Size ii = 1; ii <= n_bb; ++ii ) {
-        invbinwbb.push_back( 1/binwbb[ ii ] );
-        binwbb_over_6.push_back( binwbb[ ii ] / 6 );
-        dbbm.push_back( 1 - dbbp[ ii ] );
-        dbb3p.push_back( ( dbbp[ ii ] * dbbp[ ii ] * dbbp[ ii ] - dbbp[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ] );
-        dbb3m.push_back( ( dbbm[ ii ] * dbbm[ ii ] * dbbm[ ii ] - dbbm[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ] );
-    }
-    val = 0;
- 
-    // there are 2^nbb deriv terms, i.e. value, dv/dx, dv/dy, d2v/dxy for phipsi
-    for ( Size iid = 1; iid <= n_derivs.size(); ++iid ) {
-        for ( Size iiv = 1; iiv <= n_derivs[ iid ].size(); ++iiv ) {
-            Real valterm = n_derivs[ iid ][ iiv ];
-            for ( Size jj = 1; jj <= n_bb; ++jj ) { // each bb
-                Size two_to_the_jj_compl = 1 << ( n_bb - jj );
-                if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
-                    valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3p[ jj ] : dbbp[ jj ];
-                } else {
-                    valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3m[ jj ] : dbbm[ jj ];
-                }
-            }
-            if ( valterm != valterm ) std::cout << "valterm NaN at iid " << iid << " iiv " << iiv << std::endl;
-            val += valterm;
-        }
-    }
-    
-    for ( Size bbn = 1; bbn <= n_bb; ++bbn ) {
-        dvaldbb[ bbn ] = 0;
-        for ( Size iid = 1; iid <= n_derivs.size(); ++iid ) {
-            for ( Size iiv = 1; iiv <= n_derivs[ iid ].size(); ++iiv ) {
-                Real valterm = n_derivs[ iid ][ iiv ]; // v000
-                for ( Size jj = 1; jj <= n_bb; ++jj ) {
-                    Size two_to_the_jj_compl = 1 << ( n_bb - jj );
-                    if ( ( iiv - 1 ) & two_to_the_jj_compl ) { // if this backbone value is from bb_bin_next
-                        if ( ( iid - 1 ) & two_to_the_jj_compl ) { // if it is time for the derivative-based term for this bb angle
-                            valterm *= ( bbn == jj ) ?      ( 3 * dbbp[ jj ] * dbbp[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3p[ jj ];
-                        } else { // not taking the derivative for this term
-                            valterm *= ( bbn == jj ) ?      invbinwbb[ jj ]                                           :  dbbp[ jj ];
-                        }
-                    } else { // bb_bin
-                        if ( ( iid - 1 ) & two_to_the_jj_compl ) { // is derived
-                            valterm *= ( bbn == jj ) ? -1 * ( 3 * dbbm[ jj ] * dbbm[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3m[ jj ];
-                        } else {
-                            // subtract all terms where bbn was taken from bb_bin
-                            valterm *= ( jj == bbn ) ? -1 * invbinwbb[ jj ]                                           :  dbbm[ jj ];
-                        }
-                    }
-                }
-                dvaldbb[ bbn ] += valterm;
-            }
-        }
-    }
-}*/
 
 /// @details alternative interpolate_rotamers that uses polylinear interpolation
 template < Size N >
@@ -558,31 +364,31 @@ void interpolate_rotamers(
             chi_sd.push_back( static_cast< Real > ( rot[ roti ].chi_sd( i ) ) );
         }
         interpolate_polylinear_by_value( chi_mean, bb_err, binrange, true /*treat_as_angles*/, interpolated_value, tmp );
-            
+
         interpolated_rotamer.chi_mean( i, interpolated_value );
-            
+
         // get the dunbrack chi angle sdevs
         interpolate_polylinear_by_value( chi_sd, bb_err, binrange, false /*don't treat_as_angles */, interpolated_value, tmp );
         interpolated_rotamer.chi_sd( i, interpolated_value );
         interpolated_rotamer.rotwell( i, rot[ 1 ].rotwell( i ) );
-            
+
         // ctsa - check validity of result
         if ( interpolated_rotamer.chi_sd(i) < 0.0 ) {
             utility_exit_with_message( "interpolated_rotamer.chi_sd < 0 in fill_chi_set" );
         }
-            
+
     } // i=1, i<= nchi_aa_
-    
+
     utility::fixedsizearray1< Real, N > rot_prob;
     for ( Size roti = 1; roti <= rot.size(); ++roti ) {
         rot_prob[ roti ] = static_cast< Real > ( rot[ roti ].rotamer_probability() );
     }
-    
+
     Real interpolated_prob;
     interpolate_polylinear_by_value( rot_prob, bb_err, binrange, false /*dont' treat_as_angles*/ , interpolated_prob, tmp );
     interpolated_rotamer.rotamer_probability( interpolated_prob );
 }
-    
+
 
 
 /* OL: I thought copying the whole chi_set_vector is unnecessary and made a new version of this function */

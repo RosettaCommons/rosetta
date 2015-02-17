@@ -407,12 +407,10 @@ RotamerLibrary::rotamer_energy_deriv(
 		return library->rotamer_energy_deriv( rsd, scratch );
 	}
 
-	Real4 & dE_dbb( scratch.dE_dbb() );
+	Real5 & dE_dbb( scratch.dE_dbb() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
 
 	// ensure that these guys are dimensioned
-	//dE_dbb.resize ( rsd.mainchain_torsions().size() );
-	//dE_dchi.resize( rsd.nchi() );
 	std::fill( dE_dbb.begin(), dE_dbb.end(), 0 );
 	std::fill( dE_dchi.begin(), dE_dchi.end(), 0 );
 	return 0.0;
@@ -1488,7 +1486,7 @@ RotamerLibrary::random_tempname( std::string const & prefix ) const
 	std::string tempfilename;
 	do {
 		static numeric::random::uniform_RG_OP RG = 0;
-		
+
 		if( RG == 0 ) {
 			//RG = new numeric::random::mt19937_RG;
 			RG = numeric::random::uniform_RG_OP( new numeric::random::standard_RG );
@@ -1951,7 +1949,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 											  boost::lexical_cast<std::string>(nbb) );
 			}
 		} break;
-			
+
 		default:
 			utility_exit_with_message( "ERROR: too many chi angles desired for semi-rotameric Dunbrack library: " +
 					boost::lexical_cast<std::string>(nchi) );
@@ -2383,7 +2381,7 @@ RotamerLibrary::read_from_binary( utility::io::izstream & in )
 		AA which_aa( static_cast< AA >( which_aa32 ) );
 
 		//TR << "amw reading binlib for " << which_aa << std::endl;
-		
+
 		/// 3. Read the data associated with that amino acid.
 		SingleResidueDunbrackLibraryOP single_lib = create_srdl( which_aa );
 		if( !single_lib ){
@@ -2487,7 +2485,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 											  boost::lexical_cast<std::string>(n_rotlib_bb) );
 					break;
 			}
-			
+
 		} break;
 		case 2: {
 			switch ( n_rotlib_bb ) {

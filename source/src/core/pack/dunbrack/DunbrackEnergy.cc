@@ -135,7 +135,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return 0.0;
-	
+
 	Real deriv( 0.0 );
 	Real deriv_dev( 0.0 );
 	Real deriv_rot( 0.0 );

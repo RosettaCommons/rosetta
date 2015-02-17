@@ -307,7 +307,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::rotamer_energy_deriv(
 
 
 	/// sum derivatives.
-    Real4 & dE_dbb(  scratch.dE_dbb() );
+    Real5 & dE_dbb(  scratch.dE_dbb() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
 
 	// p0 - the base probability -- not modified by the chi-dev penalty
@@ -315,7 +315,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::rotamer_energy_deriv(
 
 	Size const nbb( numeric::min( rsd.mainchain_torsions().size(), DUNBRACK_MAX_BBTOR) );
     //Size const nbb( parent::bb_indices().size() );
-    
+
 	Real const invp( ( rotprob == Real( 0.0 ) ) ? 0.0 : -1.0 / rotprob );
 
 	for ( Size i=1; i<= nbb; ++i ) {

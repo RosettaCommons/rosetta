@@ -362,7 +362,7 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 		utility_exit();
 	}
 
-    utility::fixedsizearray1<Real, FOUR> & dE_dbb(scratch.dE_dbb());
+    utility::fixedsizearray1<Real, FIVE> & dE_dbb(scratch.dE_dbb());
 
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		CentroidRotamerSampleData const &sample(rotamer_sample_data[nr]);

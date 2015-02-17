@@ -159,7 +159,7 @@ public:
 		utility::fixedsizearray1< Real, N > bbs,
 		Size rot_ind
 	) const;
-	
+
 	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
@@ -182,13 +182,13 @@ public:
 		Real psi,
 		Size rot_ind
 	) const;
-    
+
     virtual
 	Size nchi() const;
-	
+
 	virtual
 	Size nbb() const;
-	
+
 	virtual
 	Size n_rotamer_bins() const;
 
@@ -258,7 +258,7 @@ public:
     // and I would sooner change their access than I would change the
     // inheritance between the two from public to protected
 	// hard coded constants
-	
+
     // for some reason I can't have this static anymore, so I will now assign it in the ctor
     // this is probably appropriate anyway because eventually this may vary!
     Size const N_PHIPSI_BINS;
@@ -336,7 +336,7 @@ protected:
 		Real const psi_alpha,
 		PackedDunbrackRotamer< T, Real > & interpolated_rotamer
     ) const;*/
-	
+
     void
 	interpolate_rotamers(
                          RotamerLibraryScratchSpace & scratch,
@@ -382,7 +382,7 @@ protected:
 	get_psi_from_rsd(
 		conformation::Residue const & rsd
                      ) const;
-    
+
 	void
 	get_bb_bins(
 				utility::fixedsizearray1< Real, N > bbs,
@@ -390,19 +390,19 @@ protected:
                 utility::fixedsizearray1< Size, N > & bb_bin_next,
                 utility::fixedsizearray1< Real, N > & bb_alpha
                     ) const;
-    
+
 	void
 	get_bb_bins(
                     utility::fixedsizearray1< Real, N > bbs,
                     utility::fixedsizearray1< Size, N > & bb_bin
                     ) const;
-    
-	
+
+
     utility::fixedsizearray1< Real, N >
 	get_bbs_from_rsd(
                      conformation::Residue const & rsd
                      ) const;
-    
+
 	Real
 	get_bb_from_rsd(
                     core::Size bbn,
@@ -437,7 +437,7 @@ private:
 		Size const phibin_next,
 		Size const psibin_next
     ) const;
-    
+
 	void verify_bb_bins(
                         utility::fixedsizearray1< Real, N > bbs,
                         utility::fixedsizearray1< Size, N > const bb_bin,

@@ -132,9 +132,9 @@ struct BBDepScoreInterpData
 public:
     BBDepScoreInterpData()
     {}
-	
+
 	inline bool operator==( BBDepScoreInterpData< N > const & other ) const;
-    
+
 	utility::fixedsizearray1< Real, ( 1 << (N+1) ) > n_derivs_;
 
 };
@@ -309,7 +309,7 @@ public:
 
 	virtual
 	Size nchi() const;
-	
+
 	virtual
 	Size nbb() const;
 
@@ -386,7 +386,7 @@ public:
 	set_nonrotameric_chi_bbind_scoring_step_size( Real step_size_in_degrees );
 
 protected:
-    
+
 	virtual Size memory_usage_static() const;
 	virtual Size memory_usage_dynamic() const;
 
@@ -518,7 +518,7 @@ protected:
 
 
 private:
-	
+
 	void
 	read_rotamer_definitions( utility::io::izstream & in_rotdef );
 
@@ -605,7 +605,7 @@ private:
 		Size & bin_upper,
 		Real & nrchi_alpha
 	) const;
-    
+
     BBDepNRChiSample< Real >
 	interpolate_bbdep_nrchi_sample(
                                    Size const packed_rotno,
@@ -614,7 +614,7 @@ private:
                                    utility::fixedsizearray1< Size, N > const bb_bin_next,
                                    utility::fixedsizearray1< Real, N > const bb_alpha
                                    ) const;
-    
+
 	BBDepNRChiSample< Real >
 	interpolate_bbdep_nrchi_sample(
                                    utility::vector1< BBDepNRChiSample<> > const & nrchi_sample,

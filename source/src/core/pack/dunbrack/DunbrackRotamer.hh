@@ -54,7 +54,7 @@ namespace pack {
 namespace dunbrack {
 
 Size positive_pow( Size mantissa, Size exponent );
-    
+
 inline bool
 bit_is_set(
     Size num,
@@ -63,7 +63,7 @@ bit_is_set(
 ) {
     return ( num - 1 ) & ( 1 << ( num_len - pos ) );
 }
-	
+
 template< Size N >
 inline Size make_index(
 	Size n_bb,
@@ -96,7 +96,7 @@ inline Size make_conditional_index(
     }
     return index;
 }
-    
+
 /// @brief A class who's size is known at compile time.  A vector of these objects
 /// will occupy a perfectly contiguous region of memory, with no extra space
 /// allocated for pointers.  These objects may be rapidly allocated and deallocated
@@ -118,7 +118,7 @@ public:
 			chi_sd_[ ii ]   = rhs.chi_sd( ii );
         }
 	}
-	
+
 	/*DunbrackRotamerMeanSD( PackedDunbrackRotamer< S, N, P > const & rhs ) :
 	rotamer_probability_( rhs.rotamer_probability() )
 	{
@@ -146,7 +146,7 @@ public:
 			chi_sd_  [ ii ] = chisd_in  [ ii ];
 		}
 	}
-    
+
 	DunbrackRotamerMeanSD():
 	rotamer_probability_( P( 0.0 ) )
 	{
@@ -171,7 +171,7 @@ public:
 	rotamer_probability() const {
 		return rotamer_probability_;
 	}
-    
+
     utility::fixedsizearray1< P, (1<<N) >
 	n_derivs() const {
 		return n_derivs_;
@@ -191,7 +191,7 @@ public:
 	rotamer_probability() {
 		return rotamer_probability_;
 	}
-    
+
     utility::fixedsizearray1< P, (1<<N) > & n_derivs() {
 		return n_derivs_;
 	}
@@ -287,14 +287,14 @@ public:
 		parent( sibling ),
 		packed_rotno_( packed_rotno_in )
 	{}
-    
+
 	PackedDunbrackRotamer(
 		DunbrackRotamer< S, N, P > const & sibling
 	) :
     parent( sibling ),
     packed_rotno_( 0 )
 	{}
-    
+
     PackedDunbrackRotamer(
 		PackedDunbrackRotamer const & rhs
 		) :
@@ -306,8 +306,8 @@ public:
 			chi_sd( ii )   = rhs.chi_sd( ii );
 		}*/
 	}
-    
-    
+
+
     PackedDunbrackRotamer(
                           PackedDunbrackRotamer & rhs
                           ) :
@@ -320,7 +320,7 @@ public:
 		}*/
 	}
 
-	
+
 	PackedDunbrackRotamer() :
     parent(),
     packed_rotno_( 0 )
@@ -455,7 +455,7 @@ tricubic_interpolation(
 	Real & dvaldy,
 	Real & dvaldz
 );
-	
+
 template < Size N >
 void
 alternate_tricubic_interpolation(
@@ -465,68 +465,67 @@ alternate_tricubic_interpolation(
 	Real & val,
 	utility::fixedsizearray1< Real, N > & dvaldbb
 )
-	{
-		
-		utility::fixedsizearray1< Real, N > invbinwbb;
-		utility::fixedsizearray1< Real, N > binwbb_over_6;
-		utility::fixedsizearray1< Real, N > dbbm;
-		utility::fixedsizearray1< Real, N > dbb3p;
-		utility::fixedsizearray1< Real, N > dbb3m;
-		for ( Size ii = 1; ii <= N; ++ii ) {
-			invbinwbb[ ii ] = 1/binwbb[ ii ];
-			binwbb_over_6[ ii ] = binwbb[ ii ] / 6 ;
-			dbbm[ ii ] = 1 - dbbp[ ii ];
-			dbb3p[ ii ] = ( dbbp[ ii ] * dbbp[ ii ] * dbbp[ ii ] - dbbp[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
-			dbb3m[ ii ] = ( dbbm[ ii ] * dbbm[ ii ] * dbbm[ ii ] - dbbm[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
-		}
-		val = 0;
-		
-		// there are 2^nbb deriv terms, i.e. value, dv/dx, dv/dy, d2v/dxy for phipsi
-		for ( Size iid = 1; iid <= (1 << N); ++iid ) {
-			for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
-				Real valterm = n_derivs[ iid ][ iiv ];
-				for ( Size jj = 1; jj <= N; ++jj ) { // each bb
-					Size two_to_the_jj_compl = 1 << ( N - jj );
-					if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
-						valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3p[ jj ] : dbbp[ jj ];
-					} else {
-						valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3m[ jj ] : dbbm[ jj ];
-					}
-				}
-				if ( valterm != valterm ) std::cout << "valterm NaN at iid " << iid << " iiv " << iiv << std::endl;
-				val += valterm;
-				//std::cout << "first valterm " << valterm << " so val now " << val << std::endl;
-			}
-		}
-		
-		for ( Size bbn = 1; bbn <= N; ++bbn ) {
-			dvaldbb[ bbn ] = 0;
-			for ( Size iid = 1; iid <= (1 << N); ++iid ) {
-				for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
-					Real valterm = n_derivs[ iid ][ iiv ]; // v000
-					for ( Size jj = 1; jj <= N; ++jj ) {
-						Size two_to_the_jj_compl = 1 << ( N - jj );
-						if ( ( iiv - 1 ) & two_to_the_jj_compl ) { // if this backbone value is from bb_bin_next
-							if ( ( iid - 1 ) & two_to_the_jj_compl ) { // if it is time for the derivative-based term for this bb angle
-								valterm *= ( bbn == jj ) ?      ( 3 * dbbp[ jj ] * dbbp[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3p[ jj ];
-							} else { // not taking the derivative for this term
-								valterm *= ( bbn == jj ) ?      invbinwbb[ jj ]                                           :  dbbp[ jj ];
-							}
-						} else { // bb_bin
-							if ( ( iid - 1 ) & two_to_the_jj_compl ) { // is derived
-								valterm *= ( bbn == jj ) ? -1 * ( 3 * dbbm[ jj ] * dbbm[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3m[ jj ];
-							} else {
-								// subtract all terms where bbn was taken from bb_bin
-								valterm *= ( jj == bbn ) ? -1 * invbinwbb[ jj ]                                           :  dbbm[ jj ];
-							}
-						}
-					}
-					dvaldbb[ bbn ] += valterm;
+{
+
+	utility::fixedsizearray1< Real, N > invbinwbb;
+	utility::fixedsizearray1< Real, N > binwbb_over_6;
+	utility::fixedsizearray1< Real, N > dbbm;
+	utility::fixedsizearray1< Real, N > dbb3p;
+	utility::fixedsizearray1< Real, N > dbb3m;
+	for ( Size ii = 1; ii <= N; ++ii ) {
+		invbinwbb[ ii ] = 1/binwbb[ ii ];
+		binwbb_over_6[ ii ] = binwbb[ ii ] / 6 ;
+		dbbm[ ii ] = 1 - dbbp[ ii ];
+		dbb3p[ ii ] = ( dbbp[ ii ] * dbbp[ ii ] * dbbp[ ii ] - dbbp[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
+		dbb3m[ ii ] = ( dbbm[ ii ] * dbbm[ ii ] * dbbm[ ii ] - dbbm[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
+	}
+	val = 0;
+
+	// there are 2^nbb deriv terms, i.e. value, dv/dx, dv/dy, d2v/dxy for phipsi
+	for ( Size iid = 1; iid <= (1 << N); ++iid ) {
+		for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
+			Real valterm = n_derivs[ iid ][ iiv ];
+			for ( Size jj = 1; jj <= N; ++jj ) { // each bb
+				Size two_to_the_jj_compl = 1 << ( N - jj );
+				if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
+					valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3p[ jj ] : dbbp[ jj ];
+				} else {
+					valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3m[ jj ] : dbbm[ jj ];
 				}
 			}
+			if ( valterm != valterm ) std::cout << "valterm NaN at iid " << iid << " iiv " << iiv << std::endl;
+			val += valterm;
+			//std::cout << "first valterm " << valterm << " so val now " << val << std::endl;
 		}
 	}
 
+	for ( Size bbn = 1; bbn <= N; ++bbn ) {
+		dvaldbb[ bbn ] = 0;
+		for ( Size iid = 1; iid <= (1 << N); ++iid ) {
+			for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
+				Real valterm = n_derivs[ iid ][ iiv ]; // v000
+				for ( Size jj = 1; jj <= N; ++jj ) {
+					Size two_to_the_jj_compl = 1 << ( N - jj );
+					if ( ( iiv - 1 ) & two_to_the_jj_compl ) { // if this backbone value is from bb_bin_next
+						if ( ( iid - 1 ) & two_to_the_jj_compl ) { // if it is time for the derivative-based term for this bb angle
+							valterm *= ( bbn == jj ) ?      ( 3 * dbbp[ jj ] * dbbp[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3p[ jj ];
+						} else { // not taking the derivative for this term
+							valterm *= ( bbn == jj ) ?      invbinwbb[ jj ]                                           :  dbbp[ jj ];
+						}
+					} else { // bb_bin
+						if ( ( iid - 1 ) & two_to_the_jj_compl ) { // is derived
+							valterm *= ( bbn == jj ) ? -1 * ( 3 * dbbm[ jj ] * dbbm[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3m[ jj ];
+						} else {
+							// subtract all terms where bbn was taken from bb_bin
+							valterm *= ( jj == bbn ) ? -1 * invbinwbb[ jj ]                                           :  dbbm[ jj ];
+						}
+					}
+				}
+				dvaldbb[ bbn ] += valterm;
+			}
+		}
+	}
+}
 
 template < Size N >//, class P >
 void
@@ -540,15 +539,15 @@ interpolate_polylinear_by_value(
 )
 	{
 		assert( N != 0 );
-		
+
 		if ( angles ) {
 			val = 0;
-			
+
 			utility::vector1< double > w;
 			utility::vector1< double > a;
-			
+
 			Size total = vals.size();
-			
+
 			for ( Size ii = 1; ii <= total; ++ii ) {
 				double w_val = 1;
 				for ( Size jj = 1; jj <= N; ++jj ) {
@@ -556,7 +555,7 @@ interpolate_polylinear_by_value(
 				}
 				w.push_back( w_val );
 			}
-			
+
 			for ( Size total = vals.size(); total >= 4; total /= 2 ) {
 				for ( Size ii = 1; ii <= total/2; ++ii ) {
 					double a_val = 0;
@@ -569,13 +568,13 @@ interpolate_polylinear_by_value(
 					a = utility::vector1< double >();
 				}
 			}
-			
+
 			val = ( w[ 1 ] + w[ 3 ] ) * a[ 1 ] + ( w[ 2 ] + w[ 4 ] ) * ( basic::subtract_degree_angles( a[ 2 ], a[ 1 ] ) + a[ 1 ] );
 			basic::angle_in_range(val);
-			
+
 			for ( Size ii = 1; ii <= N; ++ii ) {
 				dval_dbb[ ii ] = 0.0f;
-				
+
 				for ( Size kk = 1; kk <= N; ++kk ) {
 					if ( kk != ii ) {
 						Size ind1 = 1;
@@ -587,10 +586,10 @@ interpolate_polylinear_by_value(
 				}
 				dval_dbb[ ii ] /= binrange[ii];
 			}
-			
+
 		} else {
 			val = 0;
-			
+
 			for ( Size ii = 1; ii <= vals.size(); ++ii ) {
 				double valterm = vals[ ii ];
 				for ( Size jj = 1; jj <= N; ++jj ) {
@@ -598,12 +597,12 @@ interpolate_polylinear_by_value(
 				}
 				val += valterm;
 			}
-			
+
 			for ( Size ii = 1; ii <= N; ++ii ) {
 				dval_dbb[ ii ] = 0.0f;
 				for ( Size jj = 1; jj <= vals.size(); ++jj ) {
 					double valterm = 1;
-					
+
 					for ( Size kk = 1; kk <= N; ++kk ) {
 						if ( kk == ii ) {
 							valterm *= vals[ jj ];
@@ -616,10 +615,10 @@ interpolate_polylinear_by_value(
 				}
 				dval_dbb[ ii ] /= binrange[ii];
 			}
-			
+
 		}
 	}
-	
+
 
 template < Size S, Size N/*, class P*/ >
 DunbrackRotamer< S, N, Real >

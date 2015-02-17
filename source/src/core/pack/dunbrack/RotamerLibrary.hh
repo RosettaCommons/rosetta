@@ -286,7 +286,7 @@ private:
         Size const n_bb,
 		bool dun02
 	) const;
-    
+
     SingleResidueDunbrackLibraryOP
     create_rotameric_dunlib(
         chemical::AA aa,
@@ -323,8 +323,8 @@ private:
 		bool const nrchi_is_symmetric,
 		Real const nrchi_start_angle
 	) const;
-    
-    
+
+
     SingleResidueDunbrackLibraryOP
     create_semi_rotameric_dunlib(
                                  chemical::AA aa,

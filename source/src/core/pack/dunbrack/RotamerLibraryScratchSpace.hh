@@ -47,7 +47,7 @@ public:
 	RotamerLibraryScratchSpace();
     //RotamerLibraryScratchSpace();
 
-    
+
 	virtual ~RotamerLibraryScratchSpace();
 
 	Real rotprob() const { return rotprob_; }
@@ -57,30 +57,21 @@ public:
 	Real4 const & chisd() const { return chisd_; }
 	Real4 const & chidev() const { return chidev_; }
 	Real4 const & chidevpen() const { return chidevpen_; }
-    Real4 const & drotprob_dbb() const { return drotprob_dbb_; } // Only preserved temporarily for use in the semirotameric libraries ('08, '10)
-	Real4 const & dneglnrotprob_dbb() const { return dneglnrotprob_dbb_; }
-	/*Real4 const & dchimean_dphi() const { return dchimean_dphi_; }
-	Real4 const & dchimean_dpsi() const { return dchimean_dpsi_; }
-	Real4 const & dchisd_dphi() const { return dchisd_dphi_; }
-	Real4 const & dchisd_dpsi() const { return dchisd_dpsi_; }*/
-	FourReal4 const & dchimean_dbb() const { return dchimean_dbb_; }
-	FourReal4 const & dchisd_dbb() const { return dchisd_dbb_; }
-	Real4 const & dchidevpen_dbb() const { return dchidevpen_dbb_; }
+    Real5 const & drotprob_dbb() const { return drotprob_dbb_; } // Only preserved temporarily for use in the semirotameric libraries ('08, '10)
+	Real5 const & dneglnrotprob_dbb() const { return dneglnrotprob_dbb_; }
+	FiveReal4 const & dchimean_dbb() const { return dchimean_dbb_; }
+	FiveReal4 const & dchisd_dbb() const { return dchisd_dbb_; }
+	Real5 const & dchidevpen_dbb() const { return dchidevpen_dbb_; }
 	Real4 const & dchidevpen_dchi() const { return dchidevpen_dchi_; }
-	Real4 const & dE_dbb() const { return dE_dbb_; }
-	Real4 const & dE_dbb_dev() const { return dE_dbb_dev_; }
-	Real4 const & dE_dbb_semi() const { return dE_dbb_semi_; }
+	Real5 const & dE_dbb() const { return dE_dbb_; }
+	Real5 const & dE_dbb_dev() const { return dE_dbb_dev_; }
+	Real5 const & dE_dbb_semi() const { return dE_dbb_semi_; }
 	Real4 const & dE_dchi() const { return dE_dchi_; }
 	Real4 const & dE_dchi_dev() const { return dE_dchi_dev_; }
 	Real4 const & dE_dchi_semi() const { return dE_dchi_semi_; }
 
-	// fpd per-chi components of bb derivs
-	//Real4 const & dE_dphi_dev() const { return dE_dphi_dev_; }
-	//Real4 const & dE_dphi_rot() { return dE_dphi_rot_; }
-	//Real4 const & dE_dpsi_dev() const { return dE_dpsi_dev_; }
-	FourReal4 const & dE_dbb_dev_perchi() const { return dE_dbb_dev_perchi_; }
-	//Real4 const & dE_dpsi_rot() { return dE_dpsi_rot_; }
-
+	FiveReal4 const & dE_dbb_dev_perchi() const { return dE_dbb_dev_perchi_; }
+	
 	Real fa_dun_tot() const { return fa_dun_tot_; }
 	Real fa_dun_rot() const { return fa_dun_rot_; }
 	Real fa_dun_semi() const { return fa_dun_semi_; }
@@ -94,31 +85,22 @@ public:
 	Real4  & chisd()    { return chisd_; }
 	Real4  & chidev()   { return chidev_; }
 	Real4  & chidevpen()     { return chidevpen_; }
-	Real4  & drotprob_dbb()  { return drotprob_dbb_; } // TEMP
-	Real4  & dneglnrotprob_dbb()  { return dneglnrotprob_dbb_; }
-	/*Real4  & dchimean_dphi() { return dchimean_dphi_; }
-	Real4  & dchimean_dpsi() { return dchimean_dpsi_; }
-	Real4  & dchisd_dphi()   { return dchisd_dphi_; }
-	Real4  & dchisd_dpsi()   { return dchisd_dpsi_; }*/
-	FourReal4  & dchimean_dbb() { return dchimean_dbb_; }
-	FourReal4  & dchisd_dbb()   { return dchisd_dbb_; }
-	Real4  & dchidevpen_dbb()   { return dchidevpen_dbb_; }
+	Real5  & drotprob_dbb()  { return drotprob_dbb_; } // TEMP
+	Real5  & dneglnrotprob_dbb()  { return dneglnrotprob_dbb_; }
+	FiveReal4  & dchimean_dbb() { return dchimean_dbb_; }
+	FiveReal4  & dchisd_dbb()   { return dchisd_dbb_; }
+	Real5  & dchidevpen_dbb()   { return dchidevpen_dbb_; }
 	Real4  & dchidevpen_dchi()  { return dchidevpen_dchi_; }
-	Real4  & dE_dbb()  { return dE_dbb_; }
-	Real4  & dE_dbb_dev()  { return dE_dbb_dev_; }
-	Real4  & dE_dbb_rot()  { return dE_dbb_rot_; }
-	Real4  & dE_dbb_semi()  { return dE_dbb_semi_; }
+	Real5  & dE_dbb()  { return dE_dbb_; }
+	Real5  & dE_dbb_dev()  { return dE_dbb_dev_; }
+	Real5  & dE_dbb_rot()  { return dE_dbb_rot_; }
+	Real5  & dE_dbb_semi()  { return dE_dbb_semi_; }
 	Real4  & dE_dchi() { return dE_dchi_; }
 	Real4  & dE_dchi_dev() { return dE_dchi_dev_; }
 	Real4  & dE_dchi_semi() { return dE_dchi_semi_; }
 
-	// fpd per-chi components of bb derivs
-	//Real4  & dE_dphi_dev() { return dE_dphi_dev_; }
-	//Real4  & dE_dphi_rot() { return dE_dphi_rot_; }
-	//Real4  & dE_dpsi_dev() { return dE_dpsi_dev_; }
-	FourReal4 & dE_dbb_dev_perchi() { return dE_dbb_dev_perchi_; }
-	//Real4  & dE_dpsi_rot() { return dE_dpsi_rot_; }
-
+	FiveReal4 & dE_dbb_dev_perchi() { return dE_dbb_dev_perchi_; }
+	
 	Real & fa_dun_tot() { return fa_dun_tot_; }
 	Real & fa_dun_rot() { return fa_dun_rot_; }
 	Real & fa_dun_semi() { return fa_dun_semi_; }
@@ -126,9 +108,9 @@ public:
 
 	// Entropy correction
 	Real    entropy() const { return entropy_; }
-	Real4   dentropy_dbb() const { return dentropy_dbb_; }
+	Real5   dentropy_dbb() const { return dentropy_dbb_; }
 	Real  & entropy() { return entropy_; }
-	Real4 & dentropy_dbb() { return dentropy_dbb_; }
+	Real5 & dentropy_dbb() { return dentropy_dbb_; }
 
 private:
 
@@ -146,20 +128,20 @@ private:
 	Real4 chisd_;
 	Real4 chidev_;
 	Real4 chidevpen_;
-	Real4 drotprob_dbb_;
-	Real4 dneglnrotprob_dbb_;
+	Real5 drotprob_dbb_;
+	Real5 dneglnrotprob_dbb_;
 	/*Real4 dchimean_dphi_;
 	Real4 dchimean_dpsi_;
 	Real4 dchisd_dphi_;
 	Real4 dchisd_dpsi_;*/
-	FourReal4 dchimean_dbb_;
-	FourReal4 dchisd_dbb_;
-	Real4 dchidevpen_dbb_;
+	FiveReal4 dchimean_dbb_;
+	FiveReal4 dchisd_dbb_;
+	Real5 dchidevpen_dbb_;
 	Real4 dchidevpen_dchi_;
-	Real4 dE_dbb_;
-	Real4 dE_dbb_dev_;
-	Real4 dE_dbb_rot_;
-	Real4 dE_dbb_semi_;
+	Real5 dE_dbb_;
+	Real5 dE_dbb_dev_;
+	Real5 dE_dbb_rot_;
+	Real5 dE_dbb_semi_;
 	Real4 dE_dchi_;
 	Real4 dE_dchi_dev_;
 	Real4 dE_dchi_semi_;
@@ -168,7 +150,7 @@ private:
 	//Real4 dE_dphi_dev_;
 	//Real4 dE_dphi_rot_;
 	//Real4 dE_dpsi_dev_;
-	FourReal4 dE_dbb_dev_perchi_;
+	FiveReal4 dE_dbb_dev_perchi_;
 	//Real4 dE_dpsi_rot_;
 
 	Real fa_dun_tot_;
@@ -178,7 +160,7 @@ private:
 
 	// Entropic correction
 	Real entropy_;
-	Real4 dentropy_dbb_;
+	Real5 dentropy_dbb_;
 
 	// DOUG DOUG DOUG May need to make a sub class, for peptoid rotlibs
 public:
