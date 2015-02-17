@@ -92,7 +92,7 @@
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
-#include <protocols/kinematic_closure/perturbers/BondAnglePerturber.hh>
+#include <protocols/kinematic_closure/perturbers/RamaPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
 
 #ifdef GL_GRAPHICS
@@ -572,7 +572,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					using protocols::loop_modeling::refiners::MinimizationRefiner;
 					using protocols::kinematic_closure::KicMover;
 					using protocols::kinematic_closure::KicMoverOP;
-					using protocols::kinematic_closure::perturbers::BondAnglePerturber;
+					using protocols::kinematic_closure::perturbers::RamaPerturber;
 					using protocols::kinematic_closure::perturbers::FragmentPerturber;
 					using protocols::evaluation::PoseEvaluatorOP;
 
@@ -633,11 +633,19 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						TR << "Beginning centroid-mode KIC sampling..." << endl;
 
 						KicMoverOP kic_mover( new KicMover );
+						kic_mover->clear_perturbers();
+						kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new RamaPerturber ));//to emulate legacy KIC behavior
 
 						if (kic_with_fragments) {
 							kic_mover->clear_perturbers();
-							kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new BondAnglePerturber ));
 							kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs()) ));
+						}
+						
+						if ( option[OptionKeys::loops::ramp_rama].user() ) {
+							protocol->set_rama_term_ramping(true);
+						}
+						if ( option[OptionKeys::loops::ramp_fa_rep].user() ) {
+							protocol->set_repulsive_term_ramping(true);
 						}
 
 						protocol->set_loops(*loops);
@@ -1143,7 +1151,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				using protocols::loop_modeling::refiners::MinimizationRefiner;
 				using protocols::kinematic_closure::KicMover;
 				using protocols::kinematic_closure::KicMoverOP;
-				using protocols::kinematic_closure::perturbers::BondAnglePerturber;
+				using protocols::kinematic_closure::perturbers::RamaPerturber;
 				using protocols::kinematic_closure::perturbers::FragmentPerturber;
 
 				TR << "Beginning full-atom KIC sampling..." << endl;
@@ -1180,10 +1188,19 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 				LoopProtocolOP protocol( new LoopProtocol );
 				KicMoverOP kic_mover( new KicMover );
+				kic_mover->clear_perturbers();
+				kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new RamaPerturber ));//to emulate legacy KIC behavior
 
 				if (kic_with_fragments) {
-					kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new BondAnglePerturber ));
+					kic_mover->clear_perturbers();
 					kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs()) ));
+				}
+				
+				if ( option[OptionKeys::loops::ramp_rama].user() ) {
+					protocol->set_rama_term_ramping(true);
+				}
+				if ( option[OptionKeys::loops::ramp_fa_rep].user() ) {
+					protocol->set_repulsive_term_ramping(true);
 				}
 
 				protocol->set_loops(*loops);
