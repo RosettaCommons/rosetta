@@ -564,10 +564,10 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 	utility::vector1< core::Real > residue_weights(num_residues_nonvirt, 0.0);
 	TR.Debug << "Fragment insertion positions and weights:" << std::endl;
 	for ( Size ires=1; ires<= num_residues_nonvirt; ++ires ) {
-        if (!residue_sample_abinitio_[ires]) {
-            residue_weights[ires] = 0.0;
-            continue;
-        }
+		if (!residue_sample_abinitio_[ires]) {
+			residue_weights[ires] = 0.0;
+			continue;
+		}
 
 		if (domain_assembly_) {
 			bool residue_in_template = false;
@@ -591,14 +591,14 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 			= renumber_with_pdb_info(
 										 template_contigs_[initial_template_index_], template_poses_[initial_template_index_]);
 
-            if (residue_sample_abinitio_[ires]) {
-			if (! renumbered_template_chunks.has(ires) ) {
-                    residue_weights[ires] = 1.0;
+			if (residue_sample_abinitio_[ires]) {
+				if (! renumbered_template_chunks.has(ires) ) {
+						residue_weights[ires] = 1.0;
+				}
+				else {
+					residue_weights[ires] = frag_weight_aligned_;
+				}
 			}
-			else {
-				residue_weights[ires] = frag_weight_aligned_;
-			}
-            }
 		}
 		TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
  }
@@ -666,25 +666,25 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(
 
   core::Size last_anchor = 0;
   for (core::Size i = 1; i<=jump_anchors.size(); ++i) {
-    core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
-    if (anchor_gap && (anchor_gap < min_small_frag_len)) {
-      for (core::Size ipos = last_anchor+1;ipos<jump_anchors[i];++ipos) {
-          if (residue_sample_abinitio_[ipos]) {
-        residue_weights_new[ipos] = residue_weights[ipos];
-        TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
-          }
-      }
-    }
-    last_anchor = jump_anchors[i];
-  }
+		core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
+		if (anchor_gap && (anchor_gap < min_small_frag_len)) {
+		  for (core::Size ipos = last_anchor+1;ipos<jump_anchors[i];++ipos) {
+			  if (residue_sample_abinitio_[ipos]) {
+					residue_weights_new[ipos] = residue_weights[ipos];
+					TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+				}
+			}
+		}
+		last_anchor = jump_anchors[i];
+	}
   core::Size anchor_gap = num_residues_nonvirt-last_anchor;
   if (anchor_gap && (anchor_gap < min_small_frag_len)) {
-    for (core::Size ipos = last_anchor+1;ipos<=num_residues_nonvirt;++ipos) {
-        if (residue_sample_abinitio_[ipos]) {
-      residue_weights_new[ipos] = residue_weights[ipos];
-      TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
-        }
-    }
+		for (core::Size ipos = last_anchor+1;ipos<=num_residues_nonvirt;++ipos) {
+			if (residue_sample_abinitio_[ipos]) {
+	  		residue_weights_new[ipos] = residue_weights[ipos];
+				TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+			}
+		}
   }
   return residue_weights_new;
 }
@@ -700,17 +700,17 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_small_
 	for (core::Size i = 1; i<=frag_libs_big_.size(); ++i) {
 		if (frag_libs_big_[i]->max_frag_length() < min_big_frag_len) {
 			min_big_frag_len = frag_libs_big_[i]->max_frag_length();
-        }
-    }
+		}
+	}
 	core::Size last_anchor = 0;
 	for (core::Size i = 1; i<=jump_anchors.size(); ++i) {
 		core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
 		if (anchor_gap && anchor_gap < min_big_frag_len) {
 			for (core::Size ipos = last_anchor+1;ipos<jump_anchors[i];++ipos) {
-                if (residue_sample_abinitio_[ipos]) {
-				residue_weights_new[ipos] = residue_weights[ipos];
-				TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
-                }
+				if (residue_sample_abinitio_[ipos]) {
+					residue_weights_new[ipos] = residue_weights[ipos];
+					TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+				}
 			}
 		}
 		last_anchor = jump_anchors[i];
@@ -718,10 +718,10 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_small_
 	core::Size anchor_gap = num_residues_nonvirt-last_anchor;
 	if (anchor_gap && anchor_gap < min_big_frag_len) {
 		for (core::Size ipos = last_anchor+1;ipos<=num_residues_nonvirt;++ipos) {
-            if (residue_sample_abinitio_[ipos]) {
-			residue_weights_new[ipos] = residue_weights[ipos];
-			TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
-            }
+			if (residue_sample_abinitio_[ipos]) {
+				residue_weights_new[ipos] = residue_weights[ipos];
+				TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+			}
 		}
 	}
 	return residue_weights_new;
@@ -1180,9 +1180,9 @@ public:
   hConvergenceCheck() : bInit_( false ), ct_( 0 ) {}
   void reset() { ct_ = 0; bInit_ = false; residue_selection_big_frags_.clear(); residue_selection_small_frags_.clear(); }
   void set_trials( moves::TrialMoverOP trin ) {
-    trials_ = trin;
-    runtime_assert( trials_->keep_stats_type() < moves::no_stats );
-    last_move_ = 0;
+		trials_ = trin;
+		runtime_assert( trials_->keep_stats_type() < moves::no_stats );
+		last_move_ = 0;
   }
 	void set_residue_selection_big_frags( std::list< core::Size > const & residue_selection ) {
 		residue_selection_big_frags_ = residue_selection;
@@ -1204,11 +1204,11 @@ private:
 // keep going --> return true
 bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
   if ( !bInit_ ) {
-    bInit_ = true;
+		bInit_ = true;
 		TR.Trace << "hConvergenceCheck residue_selection_small_frags size: " << residue_selection_small_frags_.size() << std::endl;
 		TR.Trace << "hConvergenceCheck residue_selection_big_frags size: " << residue_selection_big_frags_.size() << std::endl;
-    very_old_pose_ = pose;
-    return true;
+		very_old_pose_ = pose;
+		return true;
   }
   runtime_assert( trials_ != 0 );
   TR.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
@@ -1222,7 +1222,7 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
   very_old_pose_ = pose;
   if ( converge_rms_big >= 3.0 || converge_rms_small >= 1.5 || (!converge_rms_small && !converge_rms_big)) {
 		TR.Trace << "hConvergenceCheck continue, converge_rms_big: " << converge_rms_big << " converge_rms_small: " << converge_rms_small <<  std::endl;
-    return true;
+		return true;
   }
   // if we get here thing is converged stop the While-Loop
   TR.Info << "stop cycles due to convergence, converge_rms_big: " << converge_rms_big << " converge_rms_small: " << converge_rms_small <<  std::endl;
@@ -1290,10 +1290,10 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// ab initio ramping up of weights
 	// set up scorefunctions
 	core::scoring::ScoreFunctionOP score0=scorefxn_->clone(),
-                                     score1=scorefxn_->clone(),
-                                     score2=scorefxn_->clone(),
-                                     score5=scorefxn_->clone(),
-                                     score3=scorefxn_->clone();
+			score1=scorefxn_->clone(),
+			score2=scorefxn_->clone(),
+			score5=scorefxn_->clone(),
+			score3=scorefxn_->clone();
 	setup_scorefunctions( score0, score1, score2, score5, score3 );
 
 	if ( !core::pose::symmetry::is_symmetric(pose) )
@@ -1442,9 +1442,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	//       this version: up to 2000 cycles until torsions are replaced
 	//     casp10 version: 2000 cycles
 	if (do_frag_inserts) {
-    TR.Info <<  "\n===================================================================\n";
-    TR.Info <<  "   Stage 1                                                         \n";
-    TR.Info <<  "   Folding with score0 for max of " << stage1_max_cycles << std::endl;
+		TR.Info <<  "\n===================================================================\n";
+		TR.Info <<  "   Stage 1                                                         \n";
+		TR.Info <<  "   Folding with score0 for max of " << stage1_max_cycles << std::endl;
 		using namespace ObjexxFCL::format;
 		AllResiduesChanged done( pose, residue_weights, jump_anchors );
 		protocols::moves::MonteCarloOP mc1( new protocols::moves::MonteCarlo( pose, *score0, temp ) );
@@ -1485,8 +1485,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	//      this version: 2000 cycles with autotemp
 	//    casp10 version: 2000 cycles
 	{
-    TR.Info <<  "\n===================================================================\n";
-    TR.Info <<  "   Stage 2                                                         \n";
+		TR.Info <<  "\n===================================================================\n";
+		TR.Info <<  "   Stage 2                                                         \n";
     TR.Info <<  "   Folding with score1 for " << stage2_max_cycles << std::endl;
 
 		// ramp chainbreak weight as in KinematicAbinitio
@@ -1522,9 +1522,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	//      this version: up to 2000 cycles with autotemp, convergence checking, and ramped chainbreak score
 	//    casp10 version: 200 cycles
 	{
-    TR.Info <<  "\n===================================================================\n";
-    TR.Info <<  "   Stage 3                                                         \n";
-    TR.Info <<  "   Folding with score2 and score5 for " << stage3_max_cycles <<std::endl;
+		TR.Info <<  "\n===================================================================\n";
+		TR.Info <<  "   Stage 3                                                         \n";
+		TR.Info <<  "   Folding with score2 and score5 for " << stage3_max_cycles <<std::endl;
 		hConvergenceCheckOP convergence_checker ( NULL );
 		if ( !option[ abinitio::skip_convergence_check ] ) {
 			convergence_checker = hConvergenceCheckOP( new hConvergenceCheck );

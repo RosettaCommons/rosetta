@@ -66,14 +66,33 @@ using namespace core;
 using namespace id;
 using namespace ObjexxFCL;
 
-InsertChunkMover::InsertChunkMover() :
-registry_shift_(0), anchor_insert_only_(false), align_to_ss_only_(false), copy_ss_torsion_only_(false), secstruct_('L')
-{
+InsertChunkMover::InsertChunkMover() {
 	moves::Mover::type( "InsertChunkMover" );
+	init();
+}
+
+void
+InsertChunkMover::init() {
+	registry_shift_ = 0;
+	anchor_insert_only_ = false;
+	align_to_ss_only_ = false;
+	copy_ss_torsion_only_ = false;
+	secstruct_ = 'L';
+
+	template_id_ = 0;
+
+	jump_number_ = 1;
+	seqpos_start_ = 0;
+	seqpos_stop_ = 0;
+	seqpos_aligned_start_ = 0;
+	seqpos_aligned_stop_ = 0;
+
+	success_ = false;
+
 	align_trial_counter_.clear();
 }
 
-InsertChunkMover::~InsertChunkMover(){}
+InsertChunkMover::~InsertChunkMover() {}
 
 void InsertChunkMover::set_template(core::pose::PoseCOP template_pose, core::Size template_id,
 				  std::map <core::Size, core::Size> const & sequence_alignment) {

@@ -230,6 +230,12 @@ HybridizeProtocol::init() {
 	skip_long_min_ = true;   //fpd  this is no longer necessary and seems to hurt model accuracy
 	keep_pose_constraint_ = false;   //fpd PLEASE INITIALIZE NEW VARIABLES
 
+	// domain parsing options
+	hcut_ = 0.18;
+	pcut_ = 0.81;
+	length_ = 38;
+
+
 	jump_move_ = false;
 	jump_move_repeat_ = 1;
 

@@ -66,12 +66,12 @@ ChunkTrialMover::ChunkTrialMover(
 					bool random_template,
 					AlignOption align_option,
 					Size max_registry_shift ) :
-    template_poses_(template_poses),
-    template_chunks_(template_chunks),
-    random_template_(random_template),
-    align_option_(align_option),
-    align_chunk_(),
-    max_registry_shift_global_(max_registry_shift)
+		template_poses_(template_poses),
+		template_chunks_(template_chunks),
+		random_template_(random_template),
+		align_option_(align_option),
+		align_chunk_(),
+		max_registry_shift_global_(max_registry_shift)
 {
 	moves::Mover::type( "ChunkTrialMover" );
 	bool alignment_from_template = option[cm::hybridize::alignment_from_template_seqpos]();
@@ -87,8 +87,8 @@ ChunkTrialMover::ChunkTrialMover(
 	sequence_alignments_.clear();
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		std::map <core::Size, core::Size> sequence_alignment;
-        //TR << "template: " << i_template << std::endl;
-        sequence_alignment.clear();
+		//TR << "template: " << i_template << std::endl;
+		sequence_alignment.clear();
 		if (alignment_from_template) {
 			get_alignment_from_template(template_poses_[i_template], sequence_alignment);
 		}
@@ -112,32 +112,32 @@ ChunkTrialMover::ChunkTrialMover(
 			}
 		}
 	}
-    residue_covered_by_template_.resize(highest_tmpl_resnum_, 0);
-    for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
+	residue_covered_by_template_.resize(highest_tmpl_resnum_, 0);
+	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		for (core::Size ires=1; ires<=template_poses_[i_template]->total_residue(); ++ires) {
-            core::Size ires_template = template_poses_[i_template]->pdb_info()->number(ires);
-            residue_covered_by_template_[ires_template] += 1;
+			core::Size ires_template = template_poses_[i_template]->pdb_info()->number(ires);
+			residue_covered_by_template_[ires_template] += 1;
 		}
 	}
 }
-    
+
 ChunkTrialMover::ChunkTrialMover(
-                                 utility::vector1 < core::pose::PoseCOP > const & template_poses,
-                                 utility::vector1 < protocols::loops::Loops > const & template_chunks,
-                                 Loops ss_chunks_pose,
-                                 bool random_template,
-                                 AlignOption align_option,
-                                 utility::vector1<bool> sampling_chunk_in,
-                                 utility::vector1<Size> residue_max_registry_shift ) :
-template_poses_(template_poses),
-template_chunks_(template_chunks),
-random_template_(random_template),
-align_option_(align_option),
-align_chunk_()
+			utility::vector1 < core::pose::PoseCOP > const & template_poses,
+			utility::vector1 < protocols::loops::Loops > const & template_chunks,
+			Loops ss_chunks_pose,
+			bool random_template,
+			AlignOption align_option,
+			utility::vector1<bool> sampling_chunk_in,
+			utility::vector1<Size> residue_max_registry_shift ) :
+	template_poses_(template_poses),
+	template_chunks_(template_chunks),
+	random_template_(random_template),
+	align_option_(align_option),
+	align_chunk_()
 {
 	moves::Mover::type( "ChunkTrialMover" );
 	bool alignment_from_template = option[cm::hybridize::alignment_from_template_seqpos]();
-    
+
 	Size count = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		if (template_chunks_[i_template].size() != 0) ++count;
@@ -145,12 +145,12 @@ align_chunk_()
 	if (count == 0) {
 		utility_exit_with_message("Template structures need at least one secondary structure for this protocol");
 	}
-    
+
 	sequence_alignments_.clear();
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		std::map <core::Size, core::Size> sequence_alignment;
-        //TR << "template: " << i_template << std::endl;
-        sequence_alignment.clear();
+		//TR << "template: " << i_template << std::endl;
+		sequence_alignment.clear();
 		if (alignment_from_template) {
 			get_alignment_from_template(template_poses_[i_template], sequence_alignment);
 		}
@@ -161,12 +161,12 @@ align_chunk_()
 					chunk_mapping[i] = option[cm::hybridize::alignment_from_chunk_mapping]()[i];
 				}
 			}
-            
+
 			get_alignment_from_chunk_mapping(chunk_mapping, template_chunks_[i_template], ss_chunks_pose, sequence_alignment);
 		}
 		sequence_alignments_.push_back(sequence_alignment);
 	}
-    
+
 	highest_tmpl_resnum_ = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		for (core::Size ires=1; ires<=template_poses_[i_template]->total_residue(); ++ires) {
@@ -176,15 +176,15 @@ align_chunk_()
 		}
 	}
 
-    sampling_chunk_ = sampling_chunk_in;
-    residue_max_registry_shift_ = residue_max_registry_shift;
+	sampling_chunk_ = sampling_chunk_in;
+	residue_max_registry_shift_ = residue_max_registry_shift;
 }
 
 void
 ChunkTrialMover::get_alignment_from_template(
-                                             core::pose::PoseCOP template_pose,
-                                             std::map <core::Size, core::Size> & seqpos_alignment
-                                             ) {
+		core::pose::PoseCOP template_pose,
+		std::map <core::Size, core::Size> & seqpos_alignment
+) {
 	// specific to this case, alignment comes from residue number
 	for (core::Size ires=1; ires<=template_pose->total_residue(); ++ires) {
 		TR.Debug << "Sequence aln: " << template_pose->pdb_info()->number(ires) << " " << ires << std::endl;
@@ -241,12 +241,12 @@ void ChunkTrialMover::pick_random_template()
 
 void ChunkTrialMover::set_template(core::Size const template_number)
 {
-    template_number_ = template_number;
+	template_number_ = template_number;
 }
 
 core::Size ChunkTrialMover::template_number()
 {
-    return template_number_;
+	return template_number_;
 }
 
 void
@@ -255,17 +255,17 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
 	int ntrials=500;
 
 	bool chosen_good_jump=false;
-	
-    while ( !chosen_good_jump && ntrials>0 ) {
-        --ntrials;
-		jump_number_ = numeric::random::rg().random_range(1, pose.num_jump());
-        core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
 
-        if (pose.residue(jump_residue_pose).aa() == core::chemical::aa_vrt) {
-            continue;
-        }
-        
-        // make sure downstream residues are in templates (avoid symmetry problems)
+	while ( !chosen_good_jump && ntrials>0 ) {
+		--ntrials;
+		jump_number_ = numeric::random::rg().random_range(1, pose.num_jump());
+		core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
+
+		if (pose.residue(jump_residue_pose).aa() == core::chemical::aa_vrt) {
+			continue;
+		}
+
+		// make sure downstream residues are in templates (avoid symmetry problems)
 		std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
 		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
 			if ( *it < highest_tmpl_resnum_ ) {
@@ -274,10 +274,10 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
 			}
 		}
 		if (! chosen_good_jump ) continue;
-		
+
 		chosen_good_jump = false;
 		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
-            if ( *it > sampling_chunk_.size() ) continue;
+			if ( *it > sampling_chunk_.size() ) continue;
 			if (sampling_chunk_[*it]==true) {
 				chosen_good_jump=true;
 				break;
@@ -286,7 +286,7 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
 	}
 
 	if (ntrials == 0) {
-        jump_number_ = pose.num_jump() + 1;
+		jump_number_ = pose.num_jump() + 1;
 	}
 }
 
@@ -314,41 +314,38 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 	if (align_option_ == random_chunk) {
 		// pick a random jump
 		pick_random_chunk(pose);
-        if (jump_number_ > pose.num_jump()) {
-            TR << "Warning! Fail to find a template chunk for sampling." << std::endl;
-            return;
-        }
+		if (jump_number_ > pose.num_jump()) {
+			TR << "Warning! Fail to find a template chunk for sampling." << std::endl;
+			return;
+		}
 		align_chunk_.set_aligned_chunk(pose, jump_number_, false);
 
 		// apply alignment
 		//int registry_shift = numeric::random::rg().random_range(-max_registry_shift_[jump_number_], max_registry_shift_[jump_number_]);
-        int registry_shift = 0;
+		int registry_shift = 0;
 		align_chunk_.set_registry_shift(registry_shift);
 		align_chunk_.apply(pose);
 	} else {
 		// loop over all jumps (we're initializing)
 		for (core::Size jump_number=1; jump_number<=pose.num_jump(); ++jump_number) {
-            // make sure that the downstream residues of this jump is within the template residues
+			// make sure that the downstream residues of this jump is within the template residues
 			bool is_jump_affect_moveable_residue=false;
-    		std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number);
-    		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
-                if ( *it <= residue_covered_by_template_.size() ) {
-                    if (residue_covered_by_template_[*it] > 0) {
-                        is_jump_affect_moveable_residue=true;
-                        break;
-                    }
-                }
+			std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number);
+			for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
+				if ( *it <= residue_covered_by_template_.size() ) {
+					if (residue_covered_by_template_[*it] > 0) {
+						is_jump_affect_moveable_residue=true;
+						break;
+					}
+				}
 			}
 			if (is_jump_affect_moveable_residue) {
-                align_chunk_.set_aligned_chunk(pose, jump_number, true);
-                // apply alignment
-                //int registry_shift = numeric::random::rg().random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);
-                int registry_shift = 0;
-                align_chunk_.set_registry_shift(registry_shift);
-                align_chunk_.apply(pose);
-                if (!align_chunk_.success()) {
-                    TR.Debug << "Warning! This chunk might not be aligned, jump number " << jump_number << std::endl;
-                }
+				align_chunk_.set_aligned_chunk(pose, jump_number, true);
+				align_chunk_.set_registry_shift(0);
+				align_chunk_.apply(pose);
+				if (!align_chunk_.success()) {
+					TR.Debug << "Warning! This chunk might not be aligned, jump number " << jump_number << std::endl;
+				}
 			}
 		}
 	}
