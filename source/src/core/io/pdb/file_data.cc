@@ -961,8 +961,6 @@ build_pose_from_pdb_as_is(
 	PDB_DReaderOptions const & pdr_options
 )
 {
-	std::string all_lines, sub_lines;
-
 	utility::io::izstream file( filename );
 	if (!file) {
 		TR.Error << "File:" << filename << " not found!" << std::endl;
@@ -970,8 +968,20 @@ build_pose_from_pdb_as_is(
 	} else {
 		TR.Debug << "read file: " << filename << std::endl;
 	}
+	build_pose_from_pdb_as_is( pose, residue_set, filename, file, pdr_options );
+}
 
-	utility::slurp( file, all_lines );
+void
+build_pose_from_pdb_as_is(
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename,
+	std::istream & file_contents,
+	PDB_DReaderOptions const & pdr_options
+)
+{
+	std::string all_lines;
+	utility::slurp( file_contents, all_lines );
 	FileData fd = PDB_DReader::createFileData( all_lines, pdr_options );
 	if ( fd.filename == "" ) {
 		fd.filename = filename;

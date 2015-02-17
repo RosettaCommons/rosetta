@@ -44,6 +44,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
+#include <utility/io/izstream.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
@@ -374,6 +375,14 @@ void build_pose_from_pdb_as_is(
 	PDB_DReaderOptions const & pdr_options
 );
 
+void
+build_pose_from_pdb_as_is(
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename,
+	std::istream & file_contents,
+	PDB_DReaderOptions const & pdr_options
+);
 
 void build_pose_as_is1(
 	io::pdb::FileData & fd,
