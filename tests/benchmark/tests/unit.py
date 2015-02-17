@@ -39,7 +39,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     raise BenchmarkError()
 
 
-def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
+def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags=""):
     ''' Run TestSuite.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
@@ -57,7 +57,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     extras   = ','.join(platform['extras'])
 
     build_command_line = 'cd {}/source && ./scons.py cxx={compiler} extras={extras} -j{jobs} && ./scons.py cxx={compiler} extras={extras} cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras)
-    if debug: res, output = 0, 'unit.py: debug is enabled, skippig build phase...\n'
+    if debug: res, output = 0, 'unit.py: debug is enabled, skipping build phase...\n'
     else: res, output = execute('Compiling...', build_command_line, return_='tuple')
 
     full_log += 'Compiling: {}\n'.format(build_command_line) + output  #file(working_dir+'/build-log.txt', 'w').write(output)
@@ -71,10 +71,10 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         json_results_file = rosetta_dir+'/source/.unit_test_results.json'
         if (not debug) and  os.path.isfile(json_results_file): os.remove(json_results_file)
 
-        command_line = 'cd {}/source && test/run.py --compiler={compiler} --extras={extras} -j{jobs} --mute all'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras)
+        command_line = 'cd {}/source && test/run.py --compiler={compiler} --extras={extras} -j{jobs} --mute all {additional_flags}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras, additional_flags=additional_flags)
         TR( 'Running unit test script: {}'.format(command_line) )
 
-        if debug: res, output = 0, 'unit.py: debug is enabled, skippig unit-tests script run...\n'
+        if debug: res, output = 0, 'unit.py: debug is enabled, skipping unit-tests script run...\n'
         else: res, output = execute('Running unit test script...', command_line, return_='tuple')
         full_log += output
 
@@ -101,5 +101,6 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
 
 def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
-    if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test == "valgrind": return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags="--valgrind --timeout 1440") # 24 hour time limit
+    elif test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)

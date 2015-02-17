@@ -33,18 +33,23 @@ cd %(workdir)s
 #./letters_clustering_data.py > dm
 %(bin)s/hierarchical_clustering.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  -clustering:n 3 2>&1 \
     | egrep -vf ../../ignore_list \
-    | egrep -A 5 members | grep -v "#" > raw_clusters
+    > log_cluster_3
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+ 
+cat log_cluster_3 | egrep -A 5 members | grep -v "#" > raw_clusters_3
+
 
 echo "Letters: ABCFGHJKXYZ divided into 3 clusters:" > final_clusters
-awk 'BEGIN{split("A B C F G H J K X Y Z",ch)} {for(i=5;i<=NF;i++) print ch[$i]; print ""}' < raw_clusters >> final_clusters
+awk 'BEGIN{split("A B C F G H J K X Y Z",ch)} {for(i=5;i<=NF;i++) print ch[$i]; print ""}' < raw_clusters_3 >> final_clusters
 
 echo "Letters: ABCFGHJKXYZ divided into 4 clusters:" >> final_clusters
 %(bin)s/hierarchical_clustering.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  -clustering:n 4 2>&1 \
     | egrep -vf ../../ignore_list \
-    | egrep -A 5 members | grep -v "#" > raw_clusters
+    > log_cluster_4
+
+cat log_cluster_4 | egrep -A 5 members | grep -v "#" > raw_clusters_4
     
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so    
     
-awk 'BEGIN{split("A B C F G H J K X Y Z",ch)} {for(i=5;i<=NF;i++) print ch[$i]; print ""}' < raw_clusters >> final_clusters
+awk 'BEGIN{split("A B C F G H J K X Y Z",ch)} {for(i=5;i<=NF;i++) print ch[$i]; print ""}' < raw_clusters_4 >> final_clusters

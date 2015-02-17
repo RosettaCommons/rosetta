@@ -1,5 +1,6 @@
 /ref/
 /new/
+/valgrind/
 /tmp/
 runtime_diffs.txt
 compare_times.pyc

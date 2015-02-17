@@ -40,7 +40,7 @@ def write_runtimes(runtimes, dir):
 
 def main(argv):
     '''
-A simple system for running regression tests on Mini.
+A simple system for running regression tests for Rosetta.
 
 Each test has its own subdirectory in tests/, which serves as its name.
 Each test has a file named "command", which should have the command to be executed.
@@ -188,10 +188,24 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       help="Do not order tests by expected runtime prior to launching. (default is to order)",
     )
 
+    parser.add_option("--valgrind",
+      default=False, action="store_true",
+      help="Enable valgrind checking mode, instead of regular integration testing.",
+    )
+    parser.add_option("--valgrind_path",
+      default=None,
+      help="The path to the valgrind executable. (default: find in path)",
+    )
+    parser.add_option("--trackorigins",
+      action="store_true",
+      help="Tell Valgrind to output information about where uninitialized variables came from (default is no tracking, which is faster)",
+    )
+    parser.add_option("--leakcheck",
+      action="store_true",
+      help="Tell Valgrind to output details about memory leaks in addition to finding uninitialized variables. (default is no info, which is faster)",
+    )
 
     (options, remaining_args) = parser.parse_args(args=argv)
-    global Options;  Options = options
-    Options.num_procs = Options.jobs
 
     # Strip off whitespace and blank remaining arguments
     args = [a.strip() for a in remaining_args if a.strip()]
@@ -207,26 +221,24 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         random.shuffle(digs)
         options.host.extend( digs[:options.digs] )
 
+    #Parse database (will update options object)
+    if parse_database( options, parser ) != 0: # Returns 1 on error
+        return 1
 
-    if not path.isdir( options.database ):
-        if options.database == parser.get_default_values().database:
-            if os.environ.get('ROSETTA3_DB') is not None and \
-                    path.isdir(os.environ.get('ROSETTA3_DB')):
-                options.database = os.environ.get('ROSETTA3_DB')
-            else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'database')
-
-            if not path.isdir( options.database ):
-                options.database = path.join( path.expanduser("~"), "rosetta_database")
-
-            if not path.isdir( options.database ):
-                print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
-                return 1
-
-    # Normalize path before we change directories!
-    options.database = path.abspath(options.database)
+    #Parse valgrind options (will update options object)
+    if not options.valgrind and ( options.trackorigins or options.leakcheck or options.valgrind_path is not None ):
+        print "Valgrind specific options set, but Valgrind mode not enabled. Enabling it for you."
+        options.valgrind = True
+    if options.valgrind:
+        parse_valgrind_options(options)
 
     print 'Using Rosetta source dir at: ', options.mini_home
     print 'Using Rosetta database dir at:', options.database
+    if options.valgrind:
+        print 'Using Valgrind at:', options.valgrind_path
+
+    global Options;  Options = options
+    Options.num_procs = Options.jobs
 
     # Make sure the current directory is the script directory:
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
@@ -235,15 +247,15 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         print "You must run this script from rosetta/tests/integration/"
         return 2
 
-    # If the "ref" directory doesn't exist, compute that;
-    # else compute the "new" directory.
-
-    #if not path.isdir("ref"): outdir = "ref"
-    #else: outdir = "new"
-    # scratch that ^^^^^, output will always go to new dir for now and rename it later.
-    if not path.isdir("ref"): rename_to_ref = True
-    else: rename_to_ref = False
-    outdir = "new"
+    # Where are we running the tests?
+    if options.valgrind:
+        outdir = "valgrind"
+        rename_to_ref = False
+    else:
+        # Always put the output in the 'new' directory, and move to ref later, if appropriate
+        outdir = "new"
+        if not path.isdir("ref"): rename_to_ref = True
+        else: rename_to_ref = False
 
     # Each test consists of a directory with a "command" file in it.
     if len(args) > 0:
@@ -279,101 +291,15 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             copytree( path.join("tests", test), path.join(outdir, test),
                 accept=lambda src, dst: path.basename(src) != '.svn' )
 
-        if Options.fork or Options.jobs==1:
-            def signal_handler(signal_, f):
-                print 'Ctrl-C pressed... killing child jobs...'
-                for nt in Jobs:
-                    os.killpg(os.getpgid(nt.pid), signal.SIGKILL)
-
-            signal.signal(signal.SIGINT, signal_handler)
-
-            while not queue.empty():
-                test = queue.get()
-                if test is None: break
-
-                cmd_line_sh, workdir = generateIntegrationTestCommandline(test, outdir);
-
-                def run(nt, times):
-                    #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
-                    extra = 'ulimit -t %s && ' % Options.timeout  if Options.timeout else ''
-                    res = execute('Running Test %s' % nt.test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
-                    if res:
-                        error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
-                        file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
-                        print error_string,
-                        times[test] = float('nan')
-
-                    #execute('Just sleeeping %s...' % test, 'ulimit -t%s && sleep 60 && echo "Done!"' % Options.timeout)
-                    #execute('Just echo %s...' % test, 'echo "%s Done!"' % test)
-                    #print 'Not even echo %s... ' % test
-
-                def normal_finish(nt, times):
-                    queue.task_done()
-                    percent = (100* (queue.TotalNumberOfTasks-queue.qsize())) / queue.TotalNumberOfTasks
-                    elapse_time = time.time() - nt.start_time
-                    print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (nt.test, elapse_time, queue.TotalNumberOfTasks-queue.qsize(), percent, queue.qsize(), queue.unfinished_tasks-queue.qsize() )
-                    if nt.test not in times:
-                        times[nt.test] = elapse_time
-
-
-                def error_finish(nt, times):
-                    error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (nt.test, datetime.datetime.now())
-                    file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
-                    print error_string,
-                    times[nt.test] = float('nan')
-                    normal_finish(nt, times)
-
-                def timeout_finish(nt, times):
-                    error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (nt.test, Options.timeout, datetime.datetime.now())
-                    file(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
-                    print error_string,
-                    times[nt.test] = float('inf')
-                    normal_finish(nt, times)
-
-                if Options.jobs > 1:
-                    pid, nt = mFork(times=runtimes, test=test, workdir=workdir, queue=queue, timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
-                    if not pid:  # we are child process
-                        signal.signal(signal.SIGINT, signal.SIG_DFL)
-                        run(nt,runtimes)
-                        sys.exit(0)
-                else:
-                    nt = NT(times=runtimes, test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
-                    run(nt,runtimes)
-                    if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt,runtimes)
-                    else: normal_finish(nt,runtimes)
-
-            mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
-
+        if options.fork or options.jobs==1:
+            simple_job_running( generateTestCommandline, queue, outdir, runtimes, options )
         else:
-            # Start worker thread(s)
-            for i in range(options.num_procs):
-                worker = Worker(queue, outdir, options, times=runtimes, timeout_minutes=options.timeout)
-                thread = threading.Thread(target=worker.work)
-                #thread.setDaemon(True) # shouldn't be necessary here
-                thread.start()
-            for host in options.host:
-                if host.count('/') > 1:
-                  sys.exit("only one forward slash per host specification")
-                parts = host.split('/')
-                nodes=None
-                if len(parts) == 1:
-                  nodes=1
-                if len(parts) == 2:
-                  host= parts[0]
-                  nodes= int(parts[1])
-                for node in range(nodes):
-                  worker = Worker(queue, outdir, options, times=runtimes, host=host, timeout_minutes=options.timeout)
-                  thread = threading.Thread(target=worker.work)
-                  #thread.setDaemon(True) # shouldn't be necessary here
-                  thread.start()
-
-            # Wait for them to finish
-            queue.join()
+            parallel_job_running(  generateTestCommandline, queue, outdir, runtimes, options )
 
     # removing absolute paths to root Rosetta checkout from tests results and replacing it with 'ROSETTA'
     rosetta_dir = os.path.abspath('../..')
     for test in tests:
-        for dir_, _, files in os.walk( path.join("new", test) ):
+        for dir_, _, files in os.walk( path.join(outdir, test) ):
             for f in files:
                 if f == 'command.sh': continue
                 fname = dir_ + '/' + f
@@ -386,9 +312,9 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
     #if outdir == "ref":
     if rename_to_ref:
-        os.renames('new', 'ref')
+        os.renames(outdir, 'ref')
 
-        print "Just generated 'ref' results [renamed 'new' to 'ref'];  run again after making changes."
+        print "Just generated 'ref' results [renamed '%s' to 'ref'];  run again after making changes." % outdir
         if options.daemon:
             print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0)
 
@@ -398,90 +324,32 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
     else:
         if options.skip_comparison:
-            print 'Skipping comparison phase because command line option "--skip-comparison" was specified...'
+            print 'Skipping comparison/analysis phase because command line option "--skip-comparison" was specified...'
 
         else:
-            diffs = 0
+            errors = 0
             results = {}
             full_log = ''
             for test in tests:
-                dir_before = path.join("ref", test)
-                dir_after = path.join(outdir, test)
-                # diff returns 0 on no differences, 1 if there are differences
-
-                flags = ["-rq"]
-                if options.fulldiff: flags = ["-r"]
-                flags += ["--exclude=command.sh"]
-
-                proc = subprocess.Popen(["diff"] + flags + [dir_before, dir_after], stdout=subprocess.PIPE)
-
-                full_log_msg = "FAIL %s\n" % test
-
-                if options.daemon:
-                    msg = "FAIL %s #####" % test
-
-                    if options.fulldiff:
-                        for diff in proc.stdout.readlines():
-                            msg += "~ %s\n" % diff.strip()
-                            full_log_msg += "     %s\n" % diff.strip()
-                    else :
-                        lines = proc.stdout.readlines()
-                        for line in lines :
-                            cols = line.split()
-                            if len(cols) < 4 :
-                                msg += "~ %s\n" % line.strip()
-                                full_log_msg += "     %s\n" % line.strip()
-                            else:
-                                msg += "~ nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
-                                full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
-                    msg += "#####"
-
+                if options.valgrind:
+                    errors += analyze_valgrind_test(test, outdir, results, full_log )
                 else:
-                    msg = "FAIL %s\n" % test
-                    #for diff in proc.stdout.readlines():
-                    #    msg += "     %s\n" % diff.strip()
-                    #    full_log_msg += "     %s\n" % diff.strip()
-
-                    if options.fulldiff:
-                        for diff in proc.stdout.readlines():
-                            msg += "~ %s\n" % diff.strip()
-                            full_log_msg += "     %s\n" % diff.strip()
-                    else :
-                        lines = proc.stdout.readlines()
-                        for line in lines :
-                            cols = line.split()
-                            if len(cols) < 4 or not( cols[2] == "and" ) :
-                                msg += "    %s\n" %  line.strip()
-                                full_log_msg += "     %s\n" % line.strip()
-                            else:
-                                msg += "    nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
-                                full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
-                full_log_msg += '\n'
-
-                result = proc.wait()
-                results[test] = result
-
-                if result == 0:
-                    print "ok   %s" % test
-                    full_log += "ok   %s\n" % test
-                else:
-                    #runtimes[test] = float('nan')
-                    print msg
-                    full_log += full_log_msg
-
-                    diffs += 1
+                    errors += analyze_integration_test(test, outdir, results, full_log)
 
             if options.daemon:
-                print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests)-diffs, diffs)
+                print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests)-errors, errors)
             else:
-                if diffs:
-                    print "%i test(s) failed.  Use 'diff' to compare results." % diffs
+                if errors:
+                    if options.valgrind:
+                        print "%i test(s) failed.  Examine respective valgrind.out file(s) for details." % errors
+                    else:
+                        print "%i test(s) failed.  Use 'diff' to compare results." % errors
                 else:
                     print "All tests passed."
 
             if options.yaml:
                 try:
-                  data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
+                  data = dict(total=len(tests), failed=errors, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
                   f = file(options.yaml, 'w')
                   json.dump(data, f, sort_keys=True, indent=2)
                   f.close()
@@ -490,17 +358,54 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                   brief = makeBriefResults(full_log)
                   brief = brief.replace('"', '\\"')
                   brief = '"' + brief.replace('\n', '\\n') + '"'
-                  f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
+                  f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), errors, results, brief) )
                   f.close()
                   '''
                 except:
                   pass
 
-        if not options.compareonly: write_runtimes(runtimes, 'new')
-        from compare_times import compare_times
-        compare_times(verbose=False)
+        if not options.compareonly: write_runtimes(runtimes, outdir)
+        if not options.valgrind:
+            #compare_times has hardcoded new/ref dependancies
+            from compare_times import compare_times
+            compare_times(verbose=False)
     return 0
 
+# Parse the path to the database in the options object
+def parse_database( options, option_parser ):
+    if not path.isdir( options.database ):
+        if options.database == option_parser.get_default_values().database:
+            if os.environ.get('ROSETTA3_DB') is not None and \
+                    path.isdir(os.environ.get('ROSETTA3_DB')):
+                options.database = os.environ.get('ROSETTA3_DB')
+            else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'database')
+
+            if not path.isdir( options.database ):
+                options.database = path.join( path.expanduser("~"), "rosetta_database")
+
+            if not path.isdir( options.database ):
+                print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
+                return 1
+
+    # Normalize path before we change directories!
+    options.database = path.abspath(options.database)
+    return 0
+
+def parse_valgrind_options(options):
+    ## By default timeout is off for integration tests - observe set value
+    #if options.timeout > 0 :
+    #    print "Turning off timeout with valgrind." # Valgrind runs take a long time.
+    #    options.timeout = 0
+    if options.valgrind_path is None:
+        import distutils.spawn
+        options.valgrind_path = distutils.spawn.find_executable('valgrind')
+        if options.valgrind_path is None:
+            print "Unable to find valgrind - install or specify the path with the --valgrind_path option."
+            sys.exit(1)
+    options.valgrind_path = path.abspath( options.valgrind_path )
+    if not os.path.exists( options.valgrind_path ):
+        print "Cannot find Valgrind at", options.valgrind_path, "install or use the --valgrind_path option."
+        sys.exit(1)
 
 #
 # Generate brief version of results, only ~20 first lines of difference will be shown.
@@ -719,12 +624,21 @@ def generateIntegrationTestSubstitutionParameters(test, outdir, host=None):
 
     return params
 
-def generateIntegrationTestCommandline(test, outdir, host=None):
+def generateTestCommandline(test, outdir, options=None, host=None):
     ''' Generate and write command.sh and return command line that will run given integration test
     '''
     # Read the command from the file "command"
     params = generateIntegrationTestSubstitutionParameters(test, outdir, host)
     workdir = params["workdir"]
+
+    if options.valgrind:
+        # We need to adjust the "bin" variable to use valgrind instead
+        preamble = options.valgrind_path
+        if( options.trackorigins ):
+            preamble = preamble + " --track-origins=yes"
+        if( options.leakcheck ):
+            preamble = preamble + " --leak-check=full"
+        params["bin"] = preamble + " " + params["bin"]
 
     cmd=''
     # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
@@ -737,6 +651,14 @@ def generateIntegrationTestCommandline(test, outdir, host=None):
     cmd += file(path.join(workdir, "command")).read().strip()
     cmd = cmd % params # variable substitution using Python printf style
 
+    if options.valgrind:
+        # We need to remove the existance testing commands from the commandfile
+        # Substitute all occurances of the "[ -x blah blah blah ]" pattern with the "true" command
+        cmd = re.sub( r'\[ -x[^\]]*\]', 'true', cmd )
+
+        # We also don't need the standard output restrictions (as we're not doing comparisons
+        cmd = re.sub( r'egrep -vf ../../ignore_list', 'cat', cmd )
+
     cmd_line_sh = path.join(workdir, "command.sh")
     f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
     #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
@@ -744,14 +666,249 @@ def generateIntegrationTestCommandline(test, outdir, host=None):
 
     return cmd_line_sh, workdir
 
+def analyze_integration_test( test, outdir, results, full_log ):
+    """Look at the specific integration test, and check for errors"""
+    dir_before = path.join("ref", test)
+    dir_after = path.join(outdir, test)
+    # diff returns 0 on no differences, 1 if there are differences
+
+    flags = ["-rq"]
+    if Options.fulldiff: flags = ["-r"]
+    flags += ["--exclude=command.sh"]
+
+    proc = subprocess.Popen(["diff"] + flags + [dir_before, dir_after], stdout=subprocess.PIPE)
+
+    full_log_msg = "FAIL %s\n" % test
+
+    if Options.daemon:
+        msg = "FAIL %s #####" % test
+
+        if Options.fulldiff:
+            for diff in proc.stdout.readlines():
+                msg += "~ %s\n" % diff.strip()
+                full_log_msg += "     %s\n" % diff.strip()
+        else :
+            lines = proc.stdout.readlines()
+            for line in lines :
+                cols = line.split()
+                if len(cols) < 4 :
+                    msg += "~ %s\n" % line.strip()
+                    full_log_msg += "     %s\n" % line.strip()
+                else:
+                    msg += "~ nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
+                    full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
+        msg += "#####"
+
+    else:
+        msg = "FAIL %s\n" % test
+        #for diff in proc.stdout.readlines():
+        #    msg += "     %s\n" % diff.strip()
+        #    full_log_msg += "     %s\n" % diff.strip()
+
+        if Options.fulldiff:
+            for diff in proc.stdout.readlines():
+                msg += "~ %s\n" % diff.strip()
+                full_log_msg += "     %s\n" % diff.strip()
+        else :
+            lines = proc.stdout.readlines()
+            for line in lines :
+                cols = line.split()
+                if len(cols) < 4 or not( cols[2] == "and" ) :
+                    msg += "    %s\n" %  line.strip()
+                    full_log_msg += "     %s\n" % line.strip()
+                else:
+                    msg += "    nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
+                    full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
+    full_log_msg += '\n'
+
+    result = proc.wait()
+    results[test] = result
+
+    if result == 0:
+        print "ok   %s" % test
+        full_log += "ok   %s\n" % test
+        return 0
+    else:
+        #runtimes[test] = float('nan')
+        print msg
+        full_log += full_log_msg
+        return 1
+
+def analyze_valgrind_test( test, outdir, results, full_log ):
+    valgrind_output = []
+    dir = path.join(outdir, test)
+
+    # Find all the Valgrind formatted lines in the log files
+    def recurse( dirname, outlines ):
+        for fn in os.listdir( dirname ): #Looking for all the files
+            fn = os.path.join( dirname, fn )
+            if os.path.isdir( fn ):
+                recurse( fn, outlines )
+                continue
+            if (not os.path.isfile( fn )) or fn.endswith("valgrind.out"):
+                continue
+            f = open( fn )
+            try:
+                for line in f:
+                    if line.startswith("=="):
+                        outlines.append(line)
+            finally:
+                f.close()
+
+    recurse(dir, valgrind_output)
+
+    # Save the valgrind output specifically
+    f = open( os.path.join(dir, "valgrind.out" ), 'w' )
+    try:
+        f.writelines( valgrind_output )
+    finally:
+        f.close()
+
+    # Check that the number of log files with valgrind output matches the number we expect from
+    # the number of commands we ran (i.e. there isn't a missing log somewhere)
+    number_expected = 0
+    f = open( os.path.join( dir, "command.sh" ) )
+    try:
+        for line in f:
+            # Lines for valgrind runs start in column 0.
+            # To turn off counting a line (e.g. because it's surrounded in an if clause)
+            # Simply indent it.
+            if line.startswith( Options.valgrind_path ):
+                number_expected += 1
+    finally:
+        f.close()
+
+    # Count the summary error lines, and sum the number of errors
+    number_logs = 0
+    total_errors = 0
+    for line in valgrind_output:
+        if line.find("ERROR SUMMARY") == -1:
+            continue
+        number_logs += 1
+        total_errors += int(line.split()[3])
+
+    msg = ''
+    if number_logs != number_expected:
+        msg += " --Log file(s) missing (%d of %d) -- " % (number_logs,number_expected)
+    if total_errors != 0:
+        msg += " Found " + str( total_errors ) + " Valgrind error(s)."
+
+    results[test] = total_errors # I think this is what we should be attaching to the results object
+
+    if len(msg)  == 0:
+        print "ok   %s" % test
+        full_log += "ok   %s\n" % test
+        return 0
+    else:
+        print "FAIL %s: %s" % (test, msg)
+        full_log += "FAIL %s: %s" % (test, msg)
+        return 1
+
+def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
+    '''Using the function GenerateJob to generate the job commandlines, run the jobs in queue with the given options.
+
+    GenerateJob signature:
+    cmd_line_sh, workdir = GenerateJob(test, outdir)
+    '''
+    def signal_handler(signal_, f):
+        print 'Ctrl-C pressed... killing child jobs...'
+        for nt in Jobs:
+            os.killpg(os.getpgid(nt.pid), signal.SIGKILL)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    while not queue.empty():
+        test = queue.get()
+        if test is None: break
+
+        cmd_line_sh, workdir = GenerateJob(test, outdir, options);
+
+        def run(nt, times):
+            #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
+            extra = 'ulimit -t %s && ' % Options.timeout  if Options.timeout else ''
+            res = execute('Running Test %s' % nt.test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
+            if res:
+                error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
+                file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
+                print error_string,
+                times[test] = float('nan')
+
+            #execute('Just sleeeping %s...' % test, 'ulimit -t%s && sleep 60 && echo "Done!"' % Options.timeout)
+            #execute('Just echo %s...' % test, 'echo "%s Done!"' % test)
+            #print 'Not even echo %s... ' % test
+
+        def normal_finish(nt, times):
+            queue.task_done()
+            percent = (100* (queue.TotalNumberOfTasks-queue.qsize())) / queue.TotalNumberOfTasks
+            elapse_time = time.time() - nt.start_time
+            print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (nt.test, elapse_time, queue.TotalNumberOfTasks-queue.qsize(), percent, queue.qsize(), queue.unfinished_tasks-queue.qsize() )
+            if nt.test not in times:
+                times[nt.test] = elapse_time
+
+
+        def error_finish(nt, times):
+            error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (nt.test, datetime.datetime.now())
+            file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
+            print error_string,
+            times[nt.test] = float('nan')
+            normal_finish(nt, times)
+
+        def timeout_finish(nt, times):
+            error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (nt.test, Options.timeout, datetime.datetime.now())
+            file(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
+            print error_string,
+            times[nt.test] = float('inf')
+            normal_finish(nt, times)
+
+        if options.jobs > 1:
+            pid, nt = mFork(times=runtimes, test=test, workdir=workdir, queue=queue, timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
+            if not pid:  # we are child process
+                signal.signal(signal.SIGINT, signal.SIG_DFL)
+                run(nt,runtimes)
+                sys.exit(0)
+        else:
+            nt = NT(times=runtimes, test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
+            run(nt,runtimes)
+            if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt,runtimes)
+            else: normal_finish(nt,runtimes)
+
+    mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
+
+def parallel_job_running(GenerateJob, queue, outdir, runtimes, options ):
+    # Start worker thread(s)
+    for i in range(options.num_procs):
+        worker = Worker(queue, outdir, options, times=runtimes, timeout_minutes=options.timeout, GenerateJob=GenerateJob)
+        thread = threading.Thread(target=worker.work)
+        #thread.setDaemon(True) # shouldn't be necessary here
+        thread.start()
+    for host in options.host:
+        if host.count('/') > 1:
+          sys.exit("only one forward slash per host specification")
+        parts = host.split('/')
+        nodes=None
+        if len(parts) == 1:
+          nodes=1
+        if len(parts) == 2:
+          host= parts[0]
+          nodes= int(parts[1])
+        for node in range(nodes):
+          worker = Worker(queue, outdir, options, times=runtimes, host=host, timeout_minutes=options.timeout,GenerateJob=GenerateJob)
+          thread = threading.Thread(target=worker.work)
+          #thread.setDaemon(True) # shouldn't be necessary here
+          thread.start()
+
+    # Wait for them to finish
+    queue.join()
+
 class Worker:
-    def __init__(self, queue, outdir, opts, times, host=None, timeout_minutes=0):
+    def __init__(self, queue, outdir, opts, times, host=None, timeout_minutes=0, GenerateJob=generateTestCommandline):
         self.queue = queue
         self.outdir = outdir
         self.opts = opts
         self.host = host
         self.timeout = timeout_minutes * 60
         self.times = times
+        self.GenerateJob = GenerateJob
 
     def work(self):
         running=0
@@ -761,7 +918,7 @@ class Worker:
                 try: # Actually catch exception and ignore it.  Python 2.4 can't use "except" and "finally" together.
                     start = time.time() # initial guess at start time, in case of exception
                     try: # Make sure job is marked done even if we throw an exception
-                        cmd_line_sh, workdir = generateIntegrationTestCommandline(test, self.outdir, host=self.host)
+                        cmd_line_sh, workdir = self.GenerateJob(test, self.outdir, options=self.opts, host=self.host)
 
                         if self.host is None:
                             print "Running  %-40s on localhost ..." % test

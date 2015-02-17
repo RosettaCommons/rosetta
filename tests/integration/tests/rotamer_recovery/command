@@ -45,13 +45,13 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 if [[ %(binext)s =~ sqlite ]]
 then
 
-sed 's@BASE_DIR@%(workdir)s@' rotamer_recovery_db_output.script.TEMPLATE > rotamer_recovery_db_output.script
+  sed 's@BASE_DIR@%(workdir)s@' rotamer_recovery_db_output.script.TEMPLATE > rotamer_recovery_db_output.script
 
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @rotamer_recovery_via_script.flags -database %(database)s  2>&1 \
+  %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @rotamer_recovery_via_script.flags -database %(database)s  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_db_output
 
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+  test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
 fi
 

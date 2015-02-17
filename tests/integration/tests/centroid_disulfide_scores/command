@@ -41,7 +41,7 @@ cd %(workdir)s
 ##	 > /dev/null
 #
 
-test -x %(bin)s/score.%(binext)s || exit 1
+[ -x %(bin)s/score.%(binext)s ] || exit 1
 
 #Test centroid disulfide scores
 %(bin)s/score.%(binext)s %(additional_flags)s -database %(database)s \

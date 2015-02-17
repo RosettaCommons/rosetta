@@ -55,7 +55,7 @@ psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_na
 echo "CREATE SCHEMA %(dbms_pq_schema)s;" >> log_db_output 2>&1
 psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_name)s -c "CREATE SCHEMA %(dbms_pq_schema)s;" >> log_db_output 2>&1
 
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s \
+  %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s \
 	@flags \
 	-database %(database)s \
 	-dbms:mode postgres \

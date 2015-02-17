@@ -22,6 +22,9 @@ from optparse import OptionParser
 #import yaml
 import json
 
+#The factor by which to multiply the single test timeout value for a suite
+SUITE_FACTOR = 3
+
 UnitTestExecutable = ["protocols.test", "core.test", "basic.test", "ObjexxFCL.test", "numeric.test", "utility.test", "apps.test", "devel.test"]
 #UnitTestExecutable = ["numeric.test", "utility.test"]
 
@@ -138,41 +141,65 @@ class Tester:
 
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
         path = "cd " + self.testpath + " && "
-        exe = " ".join(["./" + lib, Options.one] + self.genericTestFlags())
-        #if self.db_path: exe += " " + self.db_path
+        exe = self.buildCommandLine(lib, Options.one)
         print "Command line:: %s%s" % (path, exe)
 
         if os.path.isfile(yaml_file): os.remove(yaml_file)
 
-        output = "Running %s unit tests..." % lib
+        output = [ "Running %s unit tests...\n" % lib ]
 
-        timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' 10 '
+        if( Options.timeout > 0 ):
+            timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' ' + str(Options.timeout) + ' '
+        else:
+            timelimit = ""
         #print "timelimit:", timelimit
 
         command_line = path + ' ' + timelimit + exe + " 1>&2"
         #print 'Executing:', command_line
 
-
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
-        for line in f:
-            print line,
-            output += line
-            sys.stdout.flush()
+        if Options.valgrind:
+            self.parseOneLibValgrind(f, output, yaml_file)
+        else:
+            self.parseOneLib(f, output)
+
         f.close()
 
-        #else:
-        #    print 'Test %s is not in %s, skipping...' % (Options.one, lib)
-        #    print 'tests:', self.all_test_suites_by_lib[lib]
-
         # saving log to a file...
-        f = open(log_file, 'w');  f.write(output);  f.close()
+        f = open(log_file, 'w');  f.write(''.join(output));  f.close()
 
+    def parseOneLib(self, f, output):
+        '''Parse output for OneLib run for regular unit tests.'''
+        for line in f:
+            print line,
+            output.append(line)
+            sys.stdout.flush()
+
+    def parseOneLibValgrind(self, f, output, yaml_file):
+        valgrind_errors = 0
+        for line in f:
+            if line.startswith("=="):
+                print line.strip()
+                if line.find("ERROR SUMMARY") != -1:
+                    valgrind_errors += int( line.split()[3] )
+                output.append(line)
+                sys.stdout.flush()
+
+        #The yaml file might not be the same name - e.g. if we're running a single suite
+        if valgrind_errors > 0 and os.path.isfile(yaml_file):
+            data = json.loads(open(yaml_file).read())
+            failures = []
+            for test in data["ALL_TESTS"]:
+                if test.startswith( Options.one ):
+                    failures.append( test )
+            data["FAILED_TESTS"] = failures
+            yaml = open( yaml_file, "w" )
+            yaml.write( json.dumps(data) )
+            yaml.close()
 
     def runOneSuite(self, lib, suite):
         path = "cd " + self.testpath + " && "
-        exe = " ".join(["./" + lib, suite] + self.genericTestFlags())
-        #if self.db_path: exe += " " + self.db_path
-        #print "Paths:", path, 'command line:', exe
+        exe = self.buildCommandLine(lib, suite)
 
         log_file = self.testpath + '/' + lib + '.' + suite + '.log'
         yaml_file = self.testpath + '/' + lib + '.'+ suite + '.yaml'
@@ -180,28 +207,57 @@ class Tester:
         if os.path.isfile(yaml_file): os.remove(yaml_file)
         if os.path.isfile(log_file): os.remove(log_file)
 
-        #output = ''
-        output = "Running %s:%s unit tests..." % (lib, suite)
+        #output = [ ]
+        output = [ "Running %s:%s unit tests...\n" % (lib, suite) ]
         #print output
 
-        timelimit = sys.executable + ' ' + os.path.abspath('test/timelimit.py') + ' 30 '
+        if Options.timeout > 0:
+            timelimit = sys.executable + ' ' + os.path.abspath('test/timelimit.py') + ' ' + str(Options.timeout*SUITE_FACTOR) + ' '
+        else:
+            timelimit = ""
         #print "timelimit:", timelimit
 
         command_line = path + ' ' + timelimit + exe + " 1>&2"
         #print 'Executing:', command_line
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
+        if Options.valgrind:
+            self.parseOneSuiteValgrind(f, output, lib, suite, yaml_file)
+        else:
+            self.parseOneSuite(f, output)
+        f.close()
+
+        # saving log to a file...
+        f = open(log_file, 'w');  f.write(''.join(output));  f.close()
+
+    def parseOneSuite(self, f, output):
         for line in f:
             if line != 'All tests passed!\n':
                 print line,
-                output += line
+                output.append(line)
                 sys.stdout.flush()
-        f.close()
-        #output += '\n\n'; print '\n'
 
-        # saving log to a file...
-        f = open(log_file, 'w');  f.write(output);  f.close()
+    def parseOneSuiteValgrind(self, f, output, lib, suite, yaml_file):
+        valgrind_errors = 0
+        for line in f:
+            if line != 'All tests passed!\n':
+                if line.find("ERROR SUMMARY") != -1:
+                    valgrind_errors += int( line.split()[3] )
+                    if valgrind_errors != 0:
+                        print lib, suite, line.strip()
+                output.append(line)
+                sys.stdout.flush()
 
-
+        # Running suites, we really can't determine which of the sub-tests caused the Valgrind error - so mark them all failed.
+        if valgrind_errors > 0:
+            data = json.loads(open(yaml_file).read())
+            failures = []
+            for test in data["ALL_TESTS"]:
+                if test.startswith( suite ):
+                    failures.append( test )
+            data["FAILED_TESTS"] = failures
+            yaml = open( yaml_file, "w" )
+            yaml.write( json.dumps(data) )
+            yaml.close()
 
     # Run unit test.
     def runUnitTests(self):
@@ -388,6 +444,19 @@ class Tester:
         print "Success rate: %s%%" % ((total-failed)*100/total)
         print "---------- End of Unit test summary"
 
+
+    def buildCommandLine(self, lib, test):
+        if Options.valgrind:
+            preamble = [ Options.valgrind_path ]
+            if Options.trackorigins:
+                preamble.append( "--track-origins=yes" )
+            if Options.leakcheck:
+                preamble.append( "--leak-check=full" )
+        else:
+            preamble = []
+
+        return " ".join( preamble + ["./" + lib, test] +  self.genericTestFlags() )
+
     def genericTestFlags(self):
         """Generate generic command line flags (database/tracer/etc...) for tests."""
 
@@ -404,8 +473,23 @@ class Tester:
 
         return flags
 
+def parse_valgrind_options(options, option_parser):
+    if( options.timeout == option_parser.get_default_values().timeout ):
+        print "Default value for timeout used - turning off timeout for valgrind." # Valgrind runs take a long time.
+        options.timeout = 0
+    if options.valgrind_path is None:
+        import distutils.spawn
+        options.valgrind_path = distutils.spawn.find_executable('valgrind')
+        if options.valgrind_path is None:
+            print "Unable to find valgrind - install or specify the path with the --valgrind_path option."
+            sys.exit(1)
+    options.valgrind_path = path.abspath( options.valgrind_path )
+    if not os.path.exists( options.valgrind_path ):
+        print "Cannot find Valgrind at", options.valgrind_path, "install or use the --valgrind_path option."
+        sys.exit(1)
+
 def main(args):
-    ''' Script to run Unit test in  mini.
+    ''' Script to run Unit test in Rosetta3.
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
@@ -483,10 +567,31 @@ def main(args):
     )
 
     parser.add_option("--debug",
-                      action="store_true", default=False,
-                      help="Enable debug mode: skip test running, only generate summary from previously created yaml and log files.",
+      action="store_true", default=False,
+      help="Enable debug mode: skip test running, only generate summary from previously created yaml and log files.",
     )
 
+    parser.add_option("--timeout",
+      action="store",type="int",default=10,metavar="MINUTES",
+      help="Automatically cancel test runs if they are taking longer than the given number of minutes. (Default 10) A value of zero turns off the timeout."
+    )
+
+    parser.add_option("--valgrind",
+      default=False, action="store_true",
+      help="Enable valgrind checking mode, instead of regular unit testing.",
+    )
+    parser.add_option("--valgrind_path",
+      default=None,
+      help="The path to the valgrind executable. (default: find in path)",
+    )
+    parser.add_option("--trackorigins",
+      action="store_true",
+      help="Tell Valgrind to output information about where uninitialized variables came from (default is no tracking, which is faster)",
+    )
+    parser.add_option("--leakcheck",
+      action="store_true",
+      help="Tell Valgrind to output details about memory leaks in addition to finding uninitialized variables. (default is no info, which is faster)",
+    )
 
     (options, args) = parser.parse_args(args=args[1:])
 
@@ -511,6 +616,13 @@ def main(args):
             raise ValueError("Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database)
 
     else: options.database = path.abspath( options.database )
+
+
+    if not options.valgrind and ( options.trackorigins or options.leakcheck or options.valgrind_path is not None ):
+        print "Valgrind specific options set, but Valgrind mode not enabled. Enabling it for you."
+        options.valgrind = True
+    if options.valgrind:
+        parse_valgrind_options(options,parser)
 
     global Options;  Options = options
 
