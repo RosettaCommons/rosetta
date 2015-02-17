@@ -126,7 +126,7 @@ HelixKinkFilter::apply( Pose const & pose ) const
 	//This checks if there is broken helix in the range already
   if ( select_range_ ) {
 			for( Size ii=1; ii<=helices.size(); ++ii ) {
-					for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it != ite; ++it ) {
+					for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it <= ite; ++it ) {
 						residues_to_check[it]=false;
 					}
 			}
