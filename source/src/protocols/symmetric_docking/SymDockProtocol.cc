@@ -273,31 +273,13 @@ SymDockProtocol::set_default()
 	}
 
 	// score function setup
-	/*	docking_score_low_ = ScoreFunctionFactory::create_score_function( "interchain_cen" ) ;
-	docking_score_high_ = ScoreFunctionFactory::create_score_function( "docking" );
-	docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
-	docking_score_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ;*/
 	design(false); //??
 
+	dock_ppk_ = option[ OptionKeys::docking::dock_ppk ]();
 	if ( dock_ppk_ ) set_local_refine(true);
 	hurry( false );
 
-	// score function setup
-//	docking_score_low_ = ScoreFunctionFactory::create_score_function( "interchain_cen" ) ;
-//	docking_score_high_ = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH ) ;
-/*	fullatom_ = option[ OptionKeys::out::file::fullatom ]();
-	local_refine_ = option[ OptionKeys::docking::docking_local_refine ]();
-
-	if (local_refine_) fullatom_=true;
-	view_ = option[ OptionKeys::docking::view ]();
-
-  // options
-	protocol_ = "standard";
-	docking_low_ = new protocols::symmetric_docking::SymDockingLowRes( scorefxn_lowres_ );
-	docking_high_ = new protocols::symmetric_docking::SymDockingHiRes( scorefxn_hires_ );
-*/
 	// add density if necessary
-
 	if ( option[ OptionKeys::edensity::mapfile ].user() ) {
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *docking_score_low_ );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *docking_score_high_ );
