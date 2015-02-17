@@ -1581,12 +1581,12 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 	// detect disulfides...
 	Real const DISULFIDE_LENGTH_CUTOFF2( 3.0 * 3.0 );
 	for ( int m = start; m <= end; m++ ){
-		if ( residues[ m ]->aa() != core::chemical::aa_cys ) continue;
+		if ( residues[ m ]->aa() != core::chemical::aa_cys || !residues[ m ]->type().has( "SG" ) || residues[ m ]->type().atom_type_set().name() != "fa_standard" ) continue;
 		Size const i = residues[ m ]->atom_index( " SG " );
 		Vector const & xyz1 = residues[ m ]->xyz( i );
 
 		for ( int n = start; n <= end; n++ ){
-			if ( residues[ n ]->aa() != core::chemical::aa_cys ) continue;
+			if ( residues[ n ]->aa() != core::chemical::aa_cys || !residues[ n ]->type().has( "SG" ) || residues[ n ]->type().atom_type_set().name() != "fa_standard" ) continue;
 			Size const j = residues[ n ]->atom_index( " SG " );
 			Vector const & xyz2 = residues[ n ]->xyz( j );
 
