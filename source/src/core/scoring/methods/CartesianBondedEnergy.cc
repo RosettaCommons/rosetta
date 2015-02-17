@@ -1689,7 +1689,6 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 	bool preproline = (rsd2.aa()==core::chemical::aa_pro || rsd2.aa()==core::chemical::aa_dpr); //Is rsd2 either D-proline or L-proline?
 
-	if ( rsd1.aa() == core::chemical::aa_vrt) return;
 
 	//Multipliers for D-amino acids:
 	const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
@@ -1710,7 +1709,9 @@ debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 	}
 
 	// get subcomponents
-	eval_singleres_derivatives( rsd1, res1params, phi1, psi1, weights, r1_atom_derivs );
+	if ( rsd1.aa() != core::chemical::aa_vrt) {
+		eval_singleres_derivatives( rsd1, res1params, phi1, psi1, weights, r1_atom_derivs );
+	}
 
 	// cterm special case
 	Size nres = pose.total_residue();
@@ -1719,6 +1720,8 @@ debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 	if (rsd2.seqpos() == nres) {
 		eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
 	}
+
+	if ( rsd1.aa() == core::chemical::aa_vrt) return;
 
 	// bail out if the residues aren't bonded or we cross a cutpoint
 	if (!rsd1.is_bonded(rsd2)) { return; }
@@ -2044,7 +2047,6 @@ debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 	bool preproline = pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
 		(pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr);
 
-	if ( rsd1.aa() == core::chemical::aa_vrt) return;
 
 	//Multipliers for D-amino acids:
 	const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
@@ -2064,7 +2066,9 @@ debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 	}
 
 	// get one body component (but which has two-body influence based on whether or not rsd2 is a proline)
-	eval_singleres_energy(rsd1, rsd1params, phi1, psi1, pose, emap ); // calls singleres improper
+	if ( rsd1.aa() != core::chemical::aa_vrt) {
+		eval_singleres_energy(rsd1, rsd1params, phi1, psi1, pose, emap ); // calls singleres improper
+	}
 
 	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the
 	// last residue
@@ -2076,6 +2080,8 @@ debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 		// get one body component for the last residue
 		eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
 	}
+
+	if ( rsd1.aa() == core::chemical::aa_vrt) return;
 
 	// bail out if the residues aren't bonded or we cross a cutpoint
 	if (!rsd1.is_bonded(rsd2)) { return; }
