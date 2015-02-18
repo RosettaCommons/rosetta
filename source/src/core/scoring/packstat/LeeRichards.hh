@@ -434,14 +434,17 @@ private:
 			cubes.init( Xdim_+1, Ydim_+1 );
 			// std::cerr << "Octree2D size " << Xdim_+1 << " " << Ydim_+1 << " " << items.size() << " " << mxx_ << " " << mnx_ << " " << mxr_ << std::endl;
 			for( CircleIter i = items.begin(); i != items.end(); ++i ){
+				bool skipcirc(false);
 				Circle* item(*i);
 				Circles & cube(get_cube(item));
 				for( CircleIter j = cube.begin(); j != cube.end(); ++j ) {
 					Circle *item2(*j);
-					if( item->x == item2->x && item->y == item2->y && item->r == item2->r ) goto SKIPCIRC;
+					if( item->x == item2->x && item->y == item2->y && item->r == item2->r ) {
+						skipcirc=true;
+						break;
+					}
 				}
-				cube.push_back(item);
-				SKIPCIRC:;
+				if(!skipcirc) cube.push_back(item);
 			}
 		}
 
