@@ -329,12 +329,13 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         else:
             errors = 0
             results = {}
-            full_log = ''
+            full_log = []
             for test in tests:
                 if options.valgrind:
                     errors += analyze_valgrind_test(test, outdir, results, full_log )
                 else:
                     errors += analyze_integration_test(test, outdir, results, full_log)
+            full_log = ''.join(full_log)
 
             if options.daemon:
                 print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests)-errors, errors)
@@ -726,12 +727,12 @@ def analyze_integration_test( test, outdir, results, full_log ):
 
     if result == 0:
         print "ok   %s" % test
-        full_log += "ok   %s\n" % test
+        full_log.append("ok   %s\n" % test)
         return 0
     else:
         #runtimes[test] = float('nan')
         print msg
-        full_log += full_log_msg
+        full_log.append( full_log_msg )
         return 1
 
 def analyze_valgrind_test( test, outdir, results, full_log ):
@@ -797,11 +798,12 @@ def analyze_valgrind_test( test, outdir, results, full_log ):
 
     if len(msg)  == 0:
         print "ok   %s" % test
-        full_log += "ok   %s\n" % test
+        full_log.append( "ok   %s\n" % test )
         return 0
     else:
         print "FAIL %s: %s" % (test, msg)
-        full_log += "FAIL %s: %s" % (test, msg)
+        full_log.append( "FAIL %s: %s\n" % (test, msg) )
+
         return 1
 
 def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):

@@ -192,12 +192,20 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
 
     json_results = dict(tests={}, summary=dict(total=json_file_results[ "total" ], failed=json_file_results[ "failed" ], failed_tests=[]))
     for test, nfailures in json_file_results[ "details" ].items():
-        if  nfailures > 0 :
-            state = _S_failed_
+        log = ''
+        if nfailures > 0 or os.path.isfile(files_location+'/'+test+'/.test_did_not_run.log')  or  os.path.isfile(files_location+'/'+test+'/.test_got_timeout_kill.log'):
+            if nfailures > 0:
+                state = _S_failed_
+                log = "Found {} Valgrind error(s).\n\n".format(nfailures)
+            else:
+                state = _S_script_failed_
+                log = "Test script did not run correctly.\n\n"
             json_results['summary']['failed_tests'].append(test)
+            if os.path.isfile(files_location+'/'+test+'/valgrind.out'):
+                log += open(files_location+'/'+test+'/valgrind.out').read()
         else:
             state = _S_finished_
-        json_results['tests'][test] = {_StateKey_: state, _LogKey_: "Found {} Valgrind error(s).".format(nfailures) if state != _S_finished_ else ''}
+        json_results['tests'][test] = {_StateKey_: state, _LogKey_: log }
 
     results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
     results[_IgnoreKey_] = ignore
