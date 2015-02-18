@@ -72,7 +72,7 @@ OnTheFlyNode::set_rotamers(
 	rotamer_set::RotamerSetCOP rotamers
 )
 {
-debug_assert( rotamers->num_rotamers() == (Size) get_num_states() );
+	debug_assert( rotamers->num_rotamers() == (Size) get_num_states() );
 	rotamer_set_ = rotamers;
 	for ( Size ii = 1; ii <= rotamer_set_->num_rotamers(); ++ii ) {
 		rotamers_[ ii ] = rotamer_set_->rotamer( ii );
@@ -87,7 +87,7 @@ debug_assert( rotamers->num_rotamers() == (Size) get_num_states() );
 	// figure out which residue-type group each rotamer is a member of
 	Size curr_restype = 1;
 	Size count_for_restype = 1;
-	Size const num_aa_types_ = rotamers->get_n_residue_types();
+	Size const num_aa_types_ = rotamers->get_n_residue_groups();
 	//num_states_for_aatype_.resize( num_aa_types_ );
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
 
