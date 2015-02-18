@@ -80,7 +80,7 @@ Coulomb::initialize() {
 	C0_ = 322.0637 ;
 	if( sigmoidal_die_ ) {
 		C1_ = C0_ ;
-		C2_ = C1_ / sigmoid_eps (max_dis_);
+		C2_ = C1_ / (max_dis_*sigmoid_eps (max_dis_));
 		min_dis_score_ = C1_ / (min_dis_*sigmoid_eps (min_dis_)) - C2_ ;
 		dEfac_ = -1.0 * C0_ ;
 	} else if( no_dis_dep_die_ ) {
