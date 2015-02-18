@@ -147,7 +147,7 @@ Coulomb::initialize() {
 				Real eps_hi = sigmoid_eps (hi_poly_start_);
 				Real deps_hi = sigmoid_deps_dr (hi_poly_start_);
 				hi_poly_start_score = C1_ / (hi_poly_start_*eps_hi) - C2_;
-				hi_poly_start_deriv = -(C0_*(eps_hi + low_poly_end_*deps_hi))/(low_poly_end_*low_poly_end_*eps_hi*eps_hi);
+				hi_poly_start_deriv = -(C0_*(eps_hi + hi_poly_start_*deps_hi))/(hi_poly_start_*hi_poly_start_*eps_hi*eps_hi);
 			} else if ( no_dis_dep_die_ ) {
 				hi_poly_start_score = C1_ / hi_poly_start_ - C2_;
 				hi_poly_start_deriv = -1 * C1_ / hi_poly_start2_ ;
