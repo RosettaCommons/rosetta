@@ -1,0 +1,28 @@
+<ROSETTASCRIPTS>
+<SCOREFXNS>
+    <sfxn_std  weights=talaris2014/>
+</SCOREFXNS>
+
+<FILTERS>
+</FILTERS>
+
+<TASKOPERATIONS>
+	<LimitAromaChi2 name="limitchi2" include_trp="1" />
+	<LayerDesign name="layer_all" layer="core_boundary_surface_Nterm_Cterm" pore_radius="2.0" verbose="True" use_sidechain_neighbors="True" />
+</TASKOPERATIONS>
+
+<MOVERS>
+	<RemodelMover name="remodel" fast_disulf="True" match_rt_limit="6" quick_and_dirty="True" bypass_fragments="True" min_disulfides=1 max_disulfides=3 min_loop=8 use_disulf_fa_score=False/>
+	<FastDesign name="fastdes" task_operations="limitchi2,layer_all" scorefxn="sfxn_std" clear_designable_residues="0" repeats="1" ramp_down_constraints="0" >
+		<MoveMap name="mm">
+			<Span begin=13 end=17 chi=False bb=False/>
+		</MoveMap>
+	</FastDesign>
+</MOVERS>
+
+<PROTOCOLS>
+	<Add mover_name="remodel" />
+	<Add mover_name="fastdes" />
+</PROTOCOLS>
+
+</ROSETTASCRIPTS>

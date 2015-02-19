@@ -27,6 +27,7 @@
 #include <core/chemical/ResidueConnection.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
@@ -317,6 +318,16 @@ void disulfide_bonds( core::conformation::Conformation const& conformation, util
 /// @brief Introduce cysteines at the specified location and define a disulfide bond between them.
 /// @details Does not do the repacking & minimization required to place the disulfide correctly.
 void form_disulfide(core::conformation::Conformation & conformation, core::Size lower_res, core::Size upper_res);
+
+/// @brief Helper function for the form_disulfide function.
+/// @details This function ensures that as a residue is mutated to a disulfide-bonding residue type,
+/// all other variant types are preserved; it is used to avoid code duplication.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+void form_disulfide_helper(
+	core::conformation::Conformation &conformation,
+	core::Size const lower_res,
+	core::chemical::ResidueTypeSetCOP restype_set
+);
 
 id::NamedAtomID
 atom_id_to_named_atom_id(
