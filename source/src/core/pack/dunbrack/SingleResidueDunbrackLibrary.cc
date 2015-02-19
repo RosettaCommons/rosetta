@@ -114,7 +114,6 @@ SingleResidueDunbrackLibrary::set_n_chi_bins( utility::vector1< Size > const & n
 	
 	// basically the same as the ctor
 	for ( Size ii = n_rotameric_chi_; ii > 1; --ii ) {
-		//std::cout << "n_rotameric_chi_ " << n_rotameric_chi_ << " ii " << ii << " n_chi_bins_[ "<<ii<<" ] " << n_chi_bins_[ ii ] << " n_chi_products_[ "<<ii<<" ] "<<n_chi_products_[ ii ] << std::endl;
 		n_chi_products_[ ii - 1 ] = n_chi_products_[ ii ] * n_chi_bins_[ ii ];
 	}
 	n_possible_rots_ = n_rotameric_chi_ == 0 ? 0 : n_chi_products_[ 1 ] * n_chi_bins_[ 1 ];
