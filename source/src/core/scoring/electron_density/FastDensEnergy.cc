@@ -286,6 +286,11 @@ FastDensEnergy::eval_residue_pair_derivatives(
 	core::Size nsubunits = 1;
 	core::Size nres_per = 1;
 
+	core::Real scalefact = 1.0;
+	if (res.aa() <= core::chemical::num_canonical_aas)
+		scalefact = sc_scale_byres_[(int)res.aa()];
+
+
 	if ( is_symmetric ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation &>(pose.conformation()).Symmetry_Info();
 		nsubunits = symminfo->subunits();
@@ -454,7 +459,7 @@ FastDensEnergy::eval_residue_pair_derivatives(
 				}
 			} else {
 				// SYMMETRIC CASE, NO REMAP
-				core::scoring::electron_density::getDensityMap().dCCdx_fastRes( i, resid, X, pose.residue(resid), pose, dCCdx );
+				core::scoring::electron_density::getDensityMap().dCCdx_fastRes( i, resid, X, pose.residue(resid), pose, dCCdx, scalefact );
 				numeric::xyzVector< core::Real > dEdx = -1.0 * dCCdx;
 				numeric::xyzVector<core::Real> atom_x = X;
 				numeric::xyzVector<core::Real> const f2( dEdx );
@@ -466,7 +471,7 @@ FastDensEnergy::eval_residue_pair_derivatives(
 			}
 		} else {
 			// ASYMMETRIC CASE
-			core::scoring::electron_density::getDensityMap().dCCdx_fastRes( i, resid, X, pose.residue(resid), pose, dCCdx );
+			core::scoring::electron_density::getDensityMap().dCCdx_fastRes( i, resid, X, pose.residue(resid), pose, dCCdx, scalefact );
 			numeric::xyzVector< core::Real > dEdx = -1.0 * dCCdx;
 			numeric::xyzVector<core::Real> atom_x = X;
 			numeric::xyzVector<core::Real> const f2( dEdx );
