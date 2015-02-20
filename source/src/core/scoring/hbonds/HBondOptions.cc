@@ -31,7 +31,7 @@
 #include <basic/options/keys/dna.OptionKeys.gen.hh> //sthyme
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh> //pba
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // C++ Headers
 #include <string>
@@ -86,8 +86,8 @@ void HBondOptions::initialize_from_options() {
 		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
 	}
 
-	if ( option.has( OptionKeys::membrane_new::scoring::hbond ) ) {
-		mphbond_ = option[ OptionKeys::membrane_new::scoring::hbond ];
+	if ( option.has( OptionKeys::mp::scoring::hbond ) ) {
+		mphbond_ = option[ OptionKeys::mp::scoring::hbond ];
 	}
 
 	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme

@@ -1,6 +1,6 @@
 -in:file:s 1AFO_A.pdb
--membrane_new:setup:spanfiles 1AFO_A.span
--membrane_new:setup:center 0 0 0
--membrane_new:setup:normal 0 0 1
+-mp:setup:spanfiles 1AFO_A.span
+-mp:setup:center 0 0 0
+-mp:setup:normal 0 0 1
 -ignore_unrecognized_res
 -score:weights mpframework_fa_2014

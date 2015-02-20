@@ -30,7 +30,7 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #include <numeric/xyzVector.hh>
 #include <utility/file/file_sys_util.hh>
@@ -364,99 +364,99 @@ void user_overwrites_options(){
 	
 	// read user-defined options
     // read membrane options
-    if ( option[ membrane_new::thickness ].user() ){
-        thickness = option[OptionKeys::membrane_new::thickness];
+    if ( option[ mp::thickness ].user() ){
+        thickness = option[OptionKeys::mp::thickness];
     }
     
     // read embedding options
-    if ( option[ membrane_new::center_start ].user()){
-        center_start.x() = option[OptionKeys::membrane_new::center_start]()[1];
-        center_start.y() = option[OptionKeys::membrane_new::center_start]()[2];
-        center_start.z() = option[OptionKeys::membrane_new::center_start]()[3];
+    if ( option[ mp::center_start ].user()){
+        center_start.x() = option[OptionKeys::mp::center_start]()[1];
+        center_start.y() = option[OptionKeys::mp::center_start]()[2];
+        center_start.z() = option[OptionKeys::mp::center_start]()[3];
     }
     
-    if ( option[ membrane_new::center_delta ].user()){
-        center_delta = option[ OptionKeys::membrane_new::center_delta ];
+    if ( option[ mp::center_delta ].user()){
+        center_delta = option[ OptionKeys::mp::center_delta ];
     }
 
-    if ( option[ membrane_new::center_search_cycles ].user()){
-        center_search_cycles = option[ OptionKeys::membrane_new::center_search_cycles ];
+    if ( option[ mp::center_search_cycles ].user()){
+        center_search_cycles = option[ OptionKeys::mp::center_search_cycles ];
     }
 
-    if ( option[ membrane_new::normal_start ].user()){
-        normal_start.x() = option[ OptionKeys::membrane_new::normal_start ]()[1];
-        normal_start.y() = option[ OptionKeys::membrane_new::normal_start ]()[2];
-        normal_start.z() = option[ OptionKeys::membrane_new::normal_start ]()[3];
+    if ( option[ mp::normal_start ].user()){
+        normal_start.x() = option[ OptionKeys::mp::normal_start ]()[1];
+        normal_start.y() = option[ OptionKeys::mp::normal_start ]()[2];
+        normal_start.z() = option[ OptionKeys::mp::normal_start ]()[3];
     }
 
-    if ( option[ membrane_new::normal_angle_start ].user()){
-        normal_angle_start = option[ OptionKeys::membrane_new::normal_angle_start ]();
+    if ( option[ mp::normal_angle_start ].user()){
+        normal_angle_start = option[ OptionKeys::mp::normal_angle_start ]();
     }
 
-    if ( option[ membrane_new::normal_angle_delta ].user()){
-        normal_angle_delta = option[ OptionKeys::membrane_new::normal_angle_delta ]();
+    if ( option[ mp::normal_angle_delta ].user()){
+        normal_angle_delta = option[ OptionKeys::mp::normal_angle_delta ]();
     }
 
-    if ( option[ membrane_new::normal_search_cycles ].user()){
-        normal_search_cycles = option[ OptionKeys::membrane_new::normal_search_cycles ]();
+    if ( option[ mp::normal_search_cycles ].user()){
+        normal_search_cycles = option[ OptionKeys::mp::normal_search_cycles ]();
     }
 
-    if ( option[ membrane_new::chain_normal_angle_max ].user()){
-        chain_normal_angle_max = option[ OptionKeys::membrane_new::chain_normal_angle_max ]();
+    if ( option[ mp::chain_normal_angle_max ].user()){
+        chain_normal_angle_max = option[ OptionKeys::mp::chain_normal_angle_max ]();
     }
 
-    if ( option[ membrane_new::pose_normal_angle_max ].user()){
-        pose_normal_angle_max = option[ OptionKeys::membrane_new::pose_normal_angle_max ]();
+    if ( option[ mp::pose_normal_angle_max ].user()){
+        pose_normal_angle_max = option[ OptionKeys::mp::pose_normal_angle_max ]();
     }
 
     // read scoring options
-    if ( option[ membrane_new::no_interpolate_Mpair ].user()){
-        no_interpolate_Mpair = option[ OptionKeys::membrane_new::no_interpolate_Mpair ]();
+    if ( option[ mp::no_interpolate_Mpair ].user()){
+        no_interpolate_Mpair = option[ OptionKeys::mp::no_interpolate_Mpair ]();
     }
     
-    if ( option[ membrane_new::Hbond_depth_correction ].user()){
-        Hbond_depth_correction = option[ OptionKeys::membrane_new::Hbond_depth_correction ]();
+    if ( option[ mp::Hbond_depth_correction ].user()){
+        Hbond_depth_correction = option[ OptionKeys::mp::Hbond_depth_correction ]();
     }
     
     // read penalty options
-    if ( option[ membrane_new::TMprojection ].user()){
-        TMprojection = option[ OptionKeys::membrane_new::TMprojection ]();
+    if ( option[ mp::TMprojection ].user()){
+        TMprojection = option[ OptionKeys::mp::TMprojection ]();
     }
 
-    if ( option[ membrane_new::wt_TMprojection ].user()){
-        wt_TMprojection = option[ OptionKeys::membrane_new::wt_TMprojection ]();
+    if ( option[ mp::wt_TMprojection ].user()){
+        wt_TMprojection = option[ OptionKeys::mp::wt_TMprojection ]();
     }
 
-    if ( option[ membrane_new::non_helix ].user()){
-        non_helix = option[ OptionKeys::membrane_new::non_helix ]();
+    if ( option[ mp::non_helix ].user()){
+        non_helix = option[ OptionKeys::mp::non_helix ]();
     }
 
-    if ( option[ membrane_new::wt_non_helix ].user()){
-        wt_non_helix = option[ OptionKeys::membrane_new::wt_non_helix ]();
+    if ( option[ mp::wt_non_helix ].user()){
+        wt_non_helix = option[ OptionKeys::mp::wt_non_helix ]();
     }
 
-    if ( option[ membrane_new::termini ].user()){
-        termini = option[ OptionKeys::membrane_new::termini ]();
+    if ( option[ mp::termini ].user()){
+        termini = option[ OptionKeys::mp::termini ]();
     }
 
-    if ( option[ membrane_new::wt_termini ].user()){
-        wt_termini = option[ OptionKeys::membrane_new::wt_termini ]();
+    if ( option[ mp::wt_termini ].user()){
+        wt_termini = option[ OptionKeys::mp::wt_termini ]();
     }
     
-    if ( option[ membrane_new::secstruct ].user() ){
-        secstruct = option[ OptionKeys::membrane_new::secstruct ]();
+    if ( option[ mp::secstruct ].user() ){
+        secstruct = option[ OptionKeys::mp::secstruct ]();
     }
 
-    if ( option[ membrane_new::wt_secstruct ].user() ){
-        wt_secstruct = option[ OptionKeys::membrane_new::wt_secstruct ]();
+    if ( option[ mp::wt_secstruct ].user() ){
+        wt_secstruct = option[ OptionKeys::mp::wt_secstruct ]();
     }
 
-    if ( option[ membrane_new::spanning ].user() ){
-        spanning = option[ OptionKeys::membrane_new::spanning ]();
+    if ( option[ mp::spanning ].user() ){
+        spanning = option[ OptionKeys::mp::spanning ]();
     }
 
-    if ( option[ membrane_new::wt_spanning ].user() ){
-        wt_spanning = option[ OptionKeys::membrane_new::wt_spanning ]();
+    if ( option[ mp::wt_spanning ].user() ){
+        wt_spanning = option[ OptionKeys::mp::wt_spanning ]();
     }
 }
 ///////////////////////////////////////////////////////////////////////////////

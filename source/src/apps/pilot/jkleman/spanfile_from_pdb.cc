@@ -22,7 +22,7 @@
 #include <protocols/membrane/geometry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
@@ -96,8 +96,8 @@ Real read_thickness() {
 
 	// set or read in thickness
 	Real thickness;
-	if ( option[OptionKeys::membrane_new::thickness].user() ){
-		thickness = option[OptionKeys::membrane_new::thickness]();
+	if ( option[OptionKeys::mp::thickness].user() ){
+		thickness = option[OptionKeys::mp::thickness]();
 		TR << "Taking user-defined thickness: " << thickness << std::endl;
 	}
 	else{

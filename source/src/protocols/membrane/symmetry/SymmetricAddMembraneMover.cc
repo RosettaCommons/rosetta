@@ -71,7 +71,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #include <utility/tag/Tag.hh>
 
@@ -225,22 +225,22 @@ SymmetricAddMembraneMover::get_name() const {
 
 /// @brief Register Options from Command Line
 /// @details Register mover-relevant options with JD2 - includes
-/// membrane_new seutp options: spanfiles, lipsfile, and
+/// mp seutp options: spanfiles, lipsfile, and
 /// spans_from_structure.
 void
 SymmetricAddMembraneMover::register_options() {
     
     using namespace basic::options;
     
-    option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
-    option.add_relevant( OptionKeys::membrane_new::setup::spans_from_structure );
-    option.add_relevant( OptionKeys::membrane_new::setup::lipsfile );
+    option.add_relevant( OptionKeys::mp::setup::spanfiles );
+    option.add_relevant( OptionKeys::mp::setup::spans_from_structure );
+    option.add_relevant( OptionKeys::mp::setup::lipsfile );
     
 }
     
 /// @brief Initialize Mover options from the comandline
 /// @details Initialize mover settings from the commandline
-/// mainly in the membrane_new, setup group: spans_from_structure,
+/// mainly in the mp, setup group: spans_from_structure,
 /// spanfile and lipsfiles paths
 void
 SymmetricAddMembraneMover::init_from_cmd() {
@@ -248,26 +248,26 @@ SymmetricAddMembraneMover::init_from_cmd() {
     using namespace basic::options;
     
     // Read in User-Provided spanfile
-    if ( get_spanfile().size() == 0 && option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
-        spanfile( option[ OptionKeys::membrane_new::setup::spanfiles ]()[1] );
+    if ( get_spanfile().size() == 0 && option[ OptionKeys::mp::setup::spanfiles ].user() ) {
+        spanfile( option[ OptionKeys::mp::setup::spanfiles ]()[1] );
     }
     
-    if ( get_spanfile().size() == 0 && option[ OptionKeys::membrane_new::setup::spans_from_structure ].user() ) {
+    if ( get_spanfile().size() == 0 && option[ OptionKeys::mp::setup::spans_from_structure ].user() ) {
         TR << "WARNING: Spanfile not given, topology will be created from PDB!" << std::endl;
         TR << "WARNING: Make sure your PDB is transformed into membrane coordinates!!!" << std::endl;
         spanfile( "from_structure" );
     }
     
     // Read in User-provided lipsfiles
-    if ( option[ OptionKeys::membrane_new::setup::lipsfile ].user() ) {
+    if ( option[ OptionKeys::mp::setup::lipsfile ].user() ) {
         
         // Set include lips to true and read in filename
         include_lips( true );
-        lipsfile( option[ OptionKeys::membrane_new::setup::lipsfile ]() );
+        lipsfile( option[ OptionKeys::mp::setup::lipsfile ]() );
     }
     
     // Read in user-provided membrane residue position
-    if ( option[ OptionKeys::membrane_new::setup::membrane_rsd ].user() ) {
+    if ( option[ OptionKeys::mp::setup::membrane_rsd ].user() ) {
         utility_exit_with_message( "Cannot specify a custom membrane position with symmetry code. Must setup a conformation for membranes and symmetry using SymmetricAddMembraneMover (feature coming soon)" );
     }
 }

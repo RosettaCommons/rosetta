@@ -51,7 +51,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.fwd.hh>
@@ -64,7 +64,7 @@ using namespace core::pose;
 using namespace core::conformation::membrane;
 using namespace protocols::moves;
 	  
-/// @brief	Translation vector can be defined in -membrane_new:setup center
+/// @brief	Translation vector can be defined in -mp:setup center
 ///			flag to translate the new pose to. The mover is a general mover
 ///			but used mainly on membrane proteins, that's why we use this flag here
 ///			The default jump is going to be the membrane jump, but you can also
@@ -138,12 +138,12 @@ private: // methods
 
 	/// @brief Register Options from Command Line
 	/// @details Register mover-relevant options with JD2 - includes
-	/// membrane_new:setup options: center
+	/// mp:setup options: center
 	void register_options();
 	
 	/// @brief Initialize Mover options from the commandline
 	/// @details Initialize mover settings from the commandline
-	/// using the membrane_new:setup center flag
+	/// using the mp:setup center flag
 	void init_from_cmd();
 	
 	
@@ -178,7 +178,7 @@ public:
 	/////////////////////
 	
 	/// @brief Default Constructor
-	/// @details Uses the -membrane_new:setup center and normal flags
+	/// @details Uses the -mp:setup center and normal flags
 	RotationMover();
 	
 	/// @brief Custom Constructor
@@ -245,12 +245,12 @@ private: // methods
 	
 	/// @brief Register Options from Command Line
 	/// @details Register mover-relevant options with JD2 - includes
-	/// membrane_new:setup options: center and normal
+	/// mp:setup options: center and normal
 	void register_options();
 	
 	/// @brief Initialize Mover options from the commandline
 	/// @details Initialize mover settings from the commandline
-	/// using the membrane_new:setup center and normal flags
+	/// using the mp:setup center and normal flags
 	void init_from_cmd();
 	
 	
@@ -270,7 +270,7 @@ private: // data
 };
 
 /// @brief	Translation and Rotation of a pose. The new position can be defined by
-///		the -membrane_new:setup center and normal flags. The mover is a
+///		the -mp:setup center and normal flags. The mover is a
 ///		general mover, but used mainly on membrane proteins, that's why we
 ///		use this flag here. The default jump is going to be the membrane jump,
 ///		but you can also specify your own. See above for the TranslationMover
@@ -284,7 +284,7 @@ public:
 	/////////////////////
 	
 	/// @brief Default Constructor
-	/// @details Uses the -membrane_new:setup center and normal flags
+	/// @details Uses the -mp:setup center and normal flags
 	TranslationRotationMover();
 	
 	/// @brief Custom Constructor
@@ -352,12 +352,12 @@ private: // methods
 	
 	/// @brief Register Options from Command Line
 	/// @details Register mover-relevant options with JD2 - includes
-	/// membrane_new:setup center and normal flags
+	/// mp:setup center and normal flags
 	void register_options();
 	
 	/// @brief Initialize Mover options from the commandline
 	/// @details Initialize mover settings from the commandline
-	/// using the membrane_new:setup center and normal flags
+	/// using the mp:setup center and normal flags
 	void init_from_cmd();
 	
 	

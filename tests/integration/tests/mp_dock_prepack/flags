@@ -1,5 +1,5 @@
 -s input/2knc_tr.pdb
--membrane_new:setup:spanfiles input/2knc_tr.span
+-mp:setup:spanfiles input/2knc_tr.span
 -nstruct 1
 -overwrite
 -score:weights mpframework_fa_2014.wts #for scoring as a membrane protein

@@ -56,7 +56,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
@@ -253,21 +253,21 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 
 /// @brief Register Options from Command Line
 /// @details Register mover-relevant options with JD2 - includes
-/// membrane_new, seutp options: center, normal, spanfile and
+/// mp, seutp options: center, normal, spanfile and
 void
 TransformIntoMembraneMover::register_options() {
 	
 	using namespace basic::options;
 
-	option.add_relevant( OptionKeys::membrane_new::setup::center );
-	option.add_relevant( OptionKeys::membrane_new::setup::normal );
-	option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
+	option.add_relevant( OptionKeys::mp::setup::center );
+	option.add_relevant( OptionKeys::mp::setup::normal );
+	option.add_relevant( OptionKeys::mp::setup::spanfiles );
 	
 }
 
 /// @brief Initialize Mover options from the comandline
 /// @details Initialize mover settings from the commandline
-/// mainly in the membrane_new, setup group: center, normal,
+/// mainly in the mp, setup group: center, normal,
 /// spanfile
 void
 TransformIntoMembraneMover::init_from_cmd() {
@@ -280,24 +280,24 @@ TransformIntoMembraneMover::init_from_cmd() {
 	}
 	
 	// Read in User-Provided spanfile
-	if ( option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
-		spanfile_ = option[ OptionKeys::membrane_new::setup::spanfiles ]()[1];
+	if ( option[ OptionKeys::mp::setup::spanfiles ].user() ) {
+		spanfile_ = option[ OptionKeys::mp::setup::spanfiles ]()[1];
 	}
 
 	// Read in Center Parameter
 	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::center ].user() ) {
-		mem_center_.x() = option[ OptionKeys::membrane_new::setup::center ]()[1];
-		mem_center_.y() = option[ OptionKeys::membrane_new::setup::center ]()[2];
-		mem_center_.z() = option[ OptionKeys::membrane_new::setup::center ]()[3];
+	if ( option[ OptionKeys::mp::setup::center ].user() ) {
+		mem_center_.x() = option[ OptionKeys::mp::setup::center ]()[1];
+		mem_center_.y() = option[ OptionKeys::mp::setup::center ]()[2];
+		mem_center_.z() = option[ OptionKeys::mp::setup::center ]()[3];
 	}
 	
 	// Read in Normal Parameter
 	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::normal ].user() ) {
-		mem_normal_.x() = option[ OptionKeys::membrane_new::setup::normal ]()[1];
-		mem_normal_.y() = option[ OptionKeys::membrane_new::setup::normal ]()[2];
-		mem_normal_.z() = option[ OptionKeys::membrane_new::setup::normal ]()[3];
+	if ( option[ OptionKeys::mp::setup::normal ].user() ) {
+		mem_normal_.x() = option[ OptionKeys::mp::setup::normal ]()[1];
+		mem_normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
+		mem_normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
 	}
 	
 }// init from cmd

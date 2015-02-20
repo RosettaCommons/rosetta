@@ -44,7 +44,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -105,7 +105,7 @@ void DockingPrepackProtocol::init_from_options()
 	if( option[ OptionKeys::docking::dock_ppk ].user() )
 		set_dock_ppk(option[ OptionKeys::docking::dock_ppk ]());
 
-	if( option[ OptionKeys::membrane_new::setup::spanfiles ].user() )
+	if( option[ OptionKeys::mp::setup::spanfiles ].user() )
 		membrane_ = true;
 }
 
@@ -121,7 +121,7 @@ void DockingPrepackProtocol::register_options()
 	option.add_relevant( OptionKeys::docking::dock_rtmin );
 	option.add_relevant( OptionKeys::docking::sc_min );
 	option.add_relevant( OptionKeys::docking::partners );
-	option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
+	option.add_relevant( OptionKeys::mp::setup::spanfiles );
 }
 
 void DockingPrepackProtocol::score_and_output(std::string outfilename,

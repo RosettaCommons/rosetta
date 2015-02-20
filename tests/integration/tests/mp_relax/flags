@@ -1,6 +1,6 @@
 -parser:protocol membrane_relax.xml
 -in:file:s inputs/1afo_tr_native.pdb
--membrane_new:setup:spanfiles inputs/1afo_tr.span
+-mp:setup:spanfiles inputs/1afo_tr.span
 -nstruct 1
 -relax:fast
 -relax:jump_move true

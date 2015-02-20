@@ -47,7 +47,7 @@
 #include <numeric/xyzVector.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
@@ -299,7 +299,7 @@ void FlipMover::apply( Pose & pose ) {
 void FlipMover::register_options() {
 	
 	using namespace basic::options;
-	option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
+	option.add_relevant( OptionKeys::mp::setup::spanfiles );
 	
 }
 

@@ -53,7 +53,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
@@ -75,7 +75,7 @@ using namespace protocols::moves;
 /// Constructors  ///
 /////////////////////
 
-/// @brief	Translation vector can be defined in -membrane_new:setup center
+/// @brief	Translation vector can be defined in -mp:setup center
 ///			flag to translate the new pose to. The mover is a general mover
 ///			but used mainly on membrane proteins, that's why we use this flag here
 ///			The default jump is going to be the membrane jump, but you can also
@@ -242,19 +242,19 @@ TranslationMover::apply( Pose & pose ) {
 
 /// @brief Register Options from Command Line
 /// @details Register mover-relevant options with JD2 - includes
-/// membrane_new:setup options: center
+/// mp:setup options: center
 void
 TranslationMover::register_options() {
 	
 	using namespace basic::options;
 
-	option.add_relevant( OptionKeys::membrane_new::setup::center );
+	option.add_relevant( OptionKeys::mp::setup::center );
 	
 }
 
 /// @brief Initialize Mover options from the commandline
 /// @details Initialize mover settings from the commandline
-/// using the membrane_new:setup center flag
+/// using the mp:setup center flag
 void
 TranslationMover::init_from_cmd() {
 	
@@ -267,10 +267,10 @@ TranslationMover::init_from_cmd() {
 	
 	// Read in Center Parameter
 	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::center ].user() ) {
-		translation_vector_.x() = option[ OptionKeys::membrane_new::setup::center ]()[1];
-		translation_vector_.y() = option[ OptionKeys::membrane_new::setup::center ]()[2];
-		translation_vector_.z() = option[ OptionKeys::membrane_new::setup::center ]()[3];
+	if ( option[ OptionKeys::mp::setup::center ].user() ) {
+		translation_vector_.x() = option[ OptionKeys::mp::setup::center ]()[1];
+		translation_vector_.y() = option[ OptionKeys::mp::setup::center ]()[2];
+		translation_vector_.z() = option[ OptionKeys::mp::setup::center ]()[3];
 	}
 }// init from cmd
 
@@ -480,20 +480,20 @@ RotationMover::apply( Pose & pose ) {
 
 /// @brief Register Options from Command Line
 /// @details Register mover-relevant options with JD2 - includes
-/// membrane_new:setup options: center
+/// mp:setup options: center
 void
 RotationMover::register_options() {
 	
 	using namespace basic::options;
 	
-	option.add_relevant( OptionKeys::membrane_new::setup::center );
-	option.add_relevant( OptionKeys::membrane_new::setup::normal );
+	option.add_relevant( OptionKeys::mp::setup::center );
+	option.add_relevant( OptionKeys::mp::setup::normal );
 	
 }
 
 /// @brief Initialize Mover options from the commandline
 /// @details Initialize mover settings from the commandline
-/// using the membrane_new:setup center flag
+/// using the mp:setup center flag
 void
 RotationMover::init_from_cmd() {
 	
@@ -506,22 +506,22 @@ RotationMover::init_from_cmd() {
 	
 	// Read in Center Parameter
 	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::center ].user() ) {
-		rot_center_.x() = option[ OptionKeys::membrane_new::setup::center ]()[1];
-		rot_center_.y() = option[ OptionKeys::membrane_new::setup::center ]()[2];
-		rot_center_.z() = option[ OptionKeys::membrane_new::setup::center ]()[3];
+	if ( option[ OptionKeys::mp::setup::center ].user() ) {
+		rot_center_.x() = option[ OptionKeys::mp::setup::center ]()[1];
+		rot_center_.y() = option[ OptionKeys::mp::setup::center ]()[2];
+		rot_center_.z() = option[ OptionKeys::mp::setup::center ]()[3];
 	}
 
 	// Read in Normal Parameter
 	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::normal ].user() ) {
-		new_normal_.x() = option[ OptionKeys::membrane_new::setup::normal ]()[1];
-		new_normal_.y() = option[ OptionKeys::membrane_new::setup::normal ]()[2];
-		new_normal_.z() = option[ OptionKeys::membrane_new::setup::normal ]()[3];
+	if ( option[ OptionKeys::mp::setup::normal ].user() ) {
+		new_normal_.x() = option[ OptionKeys::mp::setup::normal ]()[1];
+		new_normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
+		new_normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
 	}
 }// init from cmd
 
-/// @brief	TranslationRotation vector can be defined in -membrane_new:setup center
+/// @brief	TranslationRotation vector can be defined in -mp:setup center
 ///			flag to translate the new pose to. The mover is a general mover
 ///			but used mainly on membrane proteins, that's why we use this flag here
 ///			The default jump is going to be the membrane jump, but you can also
@@ -720,20 +720,20 @@ TranslationRotationMover::apply( Pose & pose ) {
 
 /// @brief Register Options from Command Line
 /// @details Register mover-relevant options with JD2 - includes
-/// membrane_new:setup options: center
+/// mp:setup options: center
 void
 TranslationRotationMover::register_options() {
 	
 	using namespace basic::options;
 	
-	option.add_relevant( OptionKeys::membrane_new::setup::center );
-	option.add_relevant( OptionKeys::membrane_new::setup::normal );
+	option.add_relevant( OptionKeys::mp::setup::center );
+	option.add_relevant( OptionKeys::mp::setup::normal );
 	
 }
 
 /// @brief Initialize Mover options from the commandline
 /// @details Initialize mover settings from the commandline
-/// using the membrane_new:setup center flag
+/// using the mp:setup center flag
 void
 TranslationRotationMover::init_from_cmd() {
 	
@@ -746,18 +746,18 @@ TranslationRotationMover::init_from_cmd() {
 	
 	// Read in Center Parameter
 	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::center ].user() ) {
-		new_center_.x() = option[ OptionKeys::membrane_new::setup::center ]()[1];
-		new_center_.y() = option[ OptionKeys::membrane_new::setup::center ]()[2];
-		new_center_.z() = option[ OptionKeys::membrane_new::setup::center ]()[3];
+	if ( option[ OptionKeys::mp::setup::center ].user() ) {
+		new_center_.x() = option[ OptionKeys::mp::setup::center ]()[1];
+		new_center_.y() = option[ OptionKeys::mp::setup::center ]()[2];
+		new_center_.z() = option[ OptionKeys::mp::setup::center ]()[3];
 	}
 
 	// Read in Normal Parameter
 	// TODO: Add better error checking
-	if ( option[ OptionKeys::membrane_new::setup::normal ].user() ) {
-		new_normal_.x() = option[ OptionKeys::membrane_new::setup::normal ]()[1];
-		new_normal_.y() = option[ OptionKeys::membrane_new::setup::normal ]()[2];
-		new_normal_.z() = option[ OptionKeys::membrane_new::setup::normal ]()[3];
+	if ( option[ OptionKeys::mp::setup::normal ].user() ) {
+		new_normal_.x() = option[ OptionKeys::mp::setup::normal ]()[1];
+		new_normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
+		new_normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
 	}
 }// init from cmd
 

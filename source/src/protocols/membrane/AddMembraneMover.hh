@@ -202,13 +202,13 @@ private:
 
 	/// @brief Register Options from Command Line
 	/// @details Register mover-relevant options with JD2 - includes
-	/// membrane_new, seutp options: center, normal, spanfiles and
+	/// mp, seutp options: center, normal, spanfiles and
 	/// lipsfiles
 	void register_options();
 	
 	/// @brief Initialize Mover options from the comandline
 	/// @details Initialize mover settings from the commandline
-	/// mainly in the membrane_new, setup group: center, normal,
+	/// mainly in the mp, setup group: center, normal,
 	/// spanfiles and lipsfiles paths
 	void init_from_cmd();
 

@@ -42,6 +42,7 @@
 #include <cmath>
 
 using namespace core;
+using namespace core::pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
 using namespace protocols::membrane::geometry;
@@ -67,9 +68,9 @@ public: // test functions
 ////////////////////////////////////////////////////////////////////////////////
 
 	// compute_structure_based_embedding
-	void test_compute_structure_based_membrane_position() {
+	void test_compute_structure_based_embedding1() {
 		
-		TS_TRACE("Test compute_structure_based_embedding");
+		TS_TRACE("Test compute_structure_based_embedding 1");
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 		
@@ -94,8 +95,20 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed1->center(), center1, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed1->normal(), normal1, 0.001 ) );
 		
+
+	}
+
+	// compute_structure_based_embedding
+	void test_compute_structure_based_embedding2() {
+
+		TS_TRACE("Test compute_structure_based_embedding 2");
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
 		// 1BL8
 		TS_TRACE("1BL8");
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		Pose pose2;
 		core::import_pose::pose_from_pdb( pose2, "protocols/membrane/geometry/1BL8_.pdb" );
 		AddMembraneMoverOP addmem2( new AddMembraneMover( "protocols/membrane/geometry/1BL8__tr.span" ) );
@@ -106,8 +119,19 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed2->center(), center2, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed2->normal(), normal2, 0.001 ) );
 
+	}
+
+	// compute_structure_based_embedding
+	void test_compute_structure_based_embedding3() {
+		
+		TS_TRACE("Test compute_structure_based_embedding 3");
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+
 		// 1QJP - beta-barrel
 		TS_TRACE("1QJP");
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		Pose pose3;
 		core::import_pose::pose_from_pdb( pose3, "protocols/membrane/geometry/1QJP_.pdb" );
 		AddMembraneMoverOP addmem3( new AddMembraneMover( "protocols/membrane/geometry/1QJP__tr.span" ) );
@@ -117,9 +141,20 @@ public: // test functions
 		EmbeddingDefOP embed3( compute_structure_based_embedding( pose3 ) );
 		TS_ASSERT( position_equal_within_delta( embed3->center(), center3, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed3->normal(), normal3, 0.001 ) );
+		
+	}
+
+	// compute_structure_based_embedding
+	void test_compute_structure_based_embedding4() {
+		
+		TS_TRACE("Test compute_structure_based_embedding 4");
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
 
 		// 2BS2
 		TS_TRACE("2BS2");
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		Pose pose4;
 		core::import_pose::pose_from_pdb( pose4, "protocols/membrane/geometry/2BS2_CF.pdb" );
 		AddMembraneMoverOP addmem4( new AddMembraneMover( "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
@@ -129,9 +164,20 @@ public: // test functions
 		EmbeddingDefOP embed4( compute_structure_based_embedding( pose4 ) );
 		TS_ASSERT( position_equal_within_delta( embed4->center(), center4, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed4->normal(), normal4, 0.001 ) );
+		
+	}
 
+	// compute_structure_based_embedding
+	void test_compute_structure_based_embedding5() {
+		
+		TS_TRACE("Test compute_structure_based_embedding 5");
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
 		// 2MPN
 		TS_TRACE("2MPN");
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		Pose pose5;
 		core::import_pose::pose_from_pdb( pose5, "protocols/membrane/geometry/2MPN_.pdb" );
 		AddMembraneMoverOP addmem5( new AddMembraneMover( "protocols/membrane/geometry/2MPN__tr.span" ) );
@@ -141,9 +187,20 @@ public: // test functions
 		EmbeddingDefOP embed5( compute_structure_based_embedding( pose5 ) );
 		TS_ASSERT( position_equal_within_delta( embed5->center(), center5, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed5->normal(), normal5, 0.001 ) );
+		
+	}
 
+	// compute_structure_based_embedding
+	void test_compute_structure_based_embedding6() {
+		
+		TS_TRACE("Test compute_structure_based_embedding 6");
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
 		// 2OAR
 		TS_TRACE("2OAR");
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		Pose pose6;
 		core::import_pose::pose_from_pdb( pose6, "protocols/membrane/geometry/2OAR_.pdb" );
 		AddMembraneMoverOP addmem6( new AddMembraneMover( "protocols/membrane/geometry/2OAR__tr.span" ) );
@@ -153,9 +210,20 @@ public: // test functions
 		EmbeddingDefOP embed6( compute_structure_based_embedding( pose6 ) );
 		TS_ASSERT( position_equal_within_delta( embed6->center(), center6, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed6->normal(), normal6, 0.001 ) );
+		
+	}
 
+	// compute_structure_based_embedding
+	void test_compute_structure_based_embedding7() {
+		
+		TS_TRACE("Test compute_structure_based_embedding 7");
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
 		// 2UUH
 		TS_TRACE("2UUH");
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		Pose pose7;
 		core::import_pose::pose_from_pdb( pose7, "protocols/membrane/geometry/2UUH__tr.pdb" );
 		AddMembraneMoverOP addmem7( new AddMembraneMover( "protocols/membrane/geometry/2UUH__tr.span" ) );
@@ -165,9 +233,21 @@ public: // test functions
 		EmbeddingDefOP embed7( compute_structure_based_embedding( pose7 ) );
 		TS_ASSERT( position_equal_within_delta( embed7->center(), center7, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed7->normal(), normal7, 0.001 ) );
+		
+		
+	}
+
+	// compute_structure_based_embedding
+	void test_compute_structure_based_embedding8() {
+		
+		TS_TRACE("Test compute_structure_based_embedding 8");
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
 
 		// 3PXO
 		TS_TRACE("3PXO");
+		Vector center( mem_center );
+		Vector normal( mem_normal );
 		Pose pose8;
 		core::import_pose::pose_from_pdb( pose8, "protocols/membrane/geometry/3PXO_.pdb" );
 		AddMembraneMoverOP addmem8( new AddMembraneMover( "protocols/membrane/geometry/3PXO__tr.span" ) );
@@ -177,6 +257,7 @@ public: // test functions
 		EmbeddingDefOP embed8( compute_structure_based_embedding( pose8 ) );
 		TS_ASSERT( position_equal_within_delta( embed8->center(), center8, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed8->normal(), normal8, 0.001 ) );
+		
 	}
 
 	// check vector for reasonable size

@@ -35,7 +35,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <protocols/membrane/geometry/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/metrics.hh>
@@ -95,7 +95,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		rigid::RigidBodyTransMoverOP translate_away;
 		
 		// for membrane proteins
-		if ( option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
+		if ( option[ OptionKeys::mp::setup::spanfiles ].user() ) {
 
 			// get membrane axis
 			core::Vector trans_axis( protocols::membrane::geometry::membrane_axis( unbound_pose, rb_jump ) );

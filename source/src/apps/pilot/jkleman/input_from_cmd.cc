@@ -31,7 +31,7 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #include <numeric/xyzVector.hh>
 #include <utility/file/file_sys_util.hh>

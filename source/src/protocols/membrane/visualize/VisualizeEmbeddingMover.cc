@@ -46,7 +46,7 @@
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
@@ -142,7 +142,7 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ OptionKeys::membrane_new::visualize::embedding ].user() ) {
+	if ( option[ OptionKeys::mp::visualize::embedding ].user() ) {
 		
 		TR << "Adding virtual residues to the pose to visualize embeddings of TMspans" << std::endl;
 
@@ -215,7 +215,7 @@ void
 VisualizeEmbeddingMover::register_options() {
 	
 	using namespace basic::options;
-	option.add_relevant( OptionKeys::membrane_new::visualize::embedding );
+	option.add_relevant( OptionKeys::mp::visualize::embedding );
 	
 }
 

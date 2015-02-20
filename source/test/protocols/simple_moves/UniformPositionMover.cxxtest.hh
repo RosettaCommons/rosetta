@@ -40,7 +40,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 using namespace core;
 

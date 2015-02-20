@@ -54,7 +54,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.fwd.hh>
@@ -136,12 +136,12 @@ private: // methods
 
 	/// @brief Register Options from Command Line
 	/// @details Register mover-relevant options with JD2 - includes
-	/// membrane_new, seutp options: center, normal, spanfiles
+	/// mp, seutp options: center, normal, spanfiles
 	void register_options();
 	
 	/// @brief Initialize Mover options from the commandline
 	/// @details Initialize mover settings from the commandline
-	/// mainly in the membrane_new, setup group: center, normal,
+	/// mainly in the mp, setup group: center, normal,
 	/// spanfiles
 	void init_from_cmd();
 	

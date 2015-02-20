@@ -73,7 +73,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #include <utility/tag/Tag.hh>
 
@@ -469,25 +469,25 @@ AddMembraneMover::apply( Pose & pose ) {
 
 /// @brief Register Options from Command Line
 /// @details Register mover-relevant options with JD2 - includes
-/// membrane_new, seutp options: center, normal, spanfile and
+/// mp, seutp options: center, normal, spanfile and
 /// lipsfiles
 void
 AddMembraneMover::register_options() {
 	
     using namespace basic::options;
 
-    option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
-    option.add_relevant( OptionKeys::membrane_new::setup::spans_from_structure );
-    option.add_relevant( OptionKeys::membrane_new::setup::lipsfile );
-    option.add_relevant( OptionKeys::membrane_new::setup::membrane_rsd );
-    option.add_relevant( OptionKeys::membrane_new::setup::center );
-    option.add_relevant( OptionKeys::membrane_new::setup::normal );
+	option.add_relevant( OptionKeys::mp::setup::center );
+	option.add_relevant( OptionKeys::mp::setup::normal );
+	option.add_relevant( OptionKeys::mp::setup::spanfiles );
+	option.add_relevant( OptionKeys::mp::setup::spans_from_structure );
+	option.add_relevant( OptionKeys::mp::setup::lipsfile );
+	option.add_relevant( OptionKeys::mp::setup::membrane_rsd );
 	
 }
 
 /// @brief Initialize Mover options from the comandline
 /// @details Initialize mover settings from the commandline
-/// mainly in the membrane_new, setup group: center, normal,
+/// mainly in the mp, setup group: center, normal,
 /// spanfile and lipsfiles paths
 void
 AddMembraneMover::init_from_cmd() {
@@ -495,46 +495,46 @@ AddMembraneMover::init_from_cmd() {
 	using namespace basic::options;
 	
 	// Read in User-Provided spanfile
-	if ( spanfile_.size() == 0 && option[ OptionKeys::membrane_new::setup::spanfiles ].user() ) {
-		spanfile_ = option[ OptionKeys::membrane_new::setup::spanfiles ]()[1];
+	if ( spanfile_.size() == 0 && option[ OptionKeys::mp::setup::spanfiles ].user() ) {
+		spanfile_ = option[ OptionKeys::mp::setup::spanfiles ]()[1];
 	}
 	
-	if ( spanfile_.size() == 0 && option[ OptionKeys::membrane_new::setup::spans_from_structure ].user() ) {
+	if ( spanfile_.size() == 0 && option[ OptionKeys::mp::setup::spans_from_structure ].user() ) {
 		TR << "WARNING: Spanfile not given, topology will be created from PDB!" << std::endl;
 		TR << "WARNING: Make sure your PDB is transformed into membrane coordinates!!!" << std::endl;
 		spanfile_ = "from_structure";
 	}
 	
 	// Read in User-provided lipsfiles
-	if ( option[ OptionKeys::membrane_new::setup::lipsfile ].user() ) {
+	if ( option[ OptionKeys::mp::setup::lipsfile ].user() ) {
 		
 		// Set include lips to true and read in filename
 		include_lips_ = true;
-		lipsfile_ = option[ OptionKeys::membrane_new::setup::lipsfile ]();
+		lipsfile_ = option[ OptionKeys::mp::setup::lipsfile ]();
 	}
 	
 	// Read in user-provided membrane residue position
-	if ( option[ OptionKeys::membrane_new::setup::membrane_rsd ].user() ) {
-		membrane_rsd_ = option[ OptionKeys::membrane_new::setup::membrane_rsd ]();
+	if ( option[ OptionKeys::mp::setup::membrane_rsd ].user() ) {
+		membrane_rsd_ = option[ OptionKeys::mp::setup::membrane_rsd ]();
 	}
-    
+	
     // Read in Center Parameter
-    if ( option[ OptionKeys::membrane_new::setup::center ].user() ) {
-        if ( option[ OptionKeys::membrane_new::setup::center ]().size() == 3 ) {
-            center_.x() = option[ OptionKeys::membrane_new::setup::center ]()[1];
-            center_.y() = option[ OptionKeys::membrane_new::setup::center ]()[2];
-            center_.z() = option[ OptionKeys::membrane_new::setup::center ]()[3];
+    if ( option[ OptionKeys::mp::setup::center ].user() ) {
+        if ( option[ OptionKeys::mp::setup::center ]().size() == 3 ) {
+            center_.x() = option[ OptionKeys::mp::setup::center ]()[1];
+            center_.y() = option[ OptionKeys::mp::setup::center ]()[2];
+            center_.z() = option[ OptionKeys::mp::setup::center ]()[3];
         } else {
             utility_exit_with_message( "Center xyz vector must have three components! Option has either too many or too few arguments!" );
         }
     }
     
     // Read in Normal Parameter
-    if ( option[ OptionKeys::membrane_new::setup::normal ].user() ) {
-        if ( option[ OptionKeys::membrane_new::setup::normal ]().size() == 3 ) {
-            normal_.x() = option[ OptionKeys::membrane_new::setup::normal ]()[1];
-            normal_.y() = option[ OptionKeys::membrane_new::setup::normal ]()[2];
-            normal_.z() = option[ OptionKeys::membrane_new::setup::normal ]()[3];
+    if ( option[ OptionKeys::mp::setup::normal ].user() ) {
+        if ( option[ OptionKeys::mp::setup::normal ]().size() == 3 ) {
+            normal_.x() = option[ OptionKeys::mp::setup::normal ]()[1];
+            normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
+            normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
         } else {
             utility_exit_with_message( "Normal xyz vector must have three components! Option has either too many or too few arguments" );
         }

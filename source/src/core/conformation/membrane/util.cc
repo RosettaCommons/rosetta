@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -43,12 +43,12 @@ utility::vector1< std::string > spanfile_names(){
 	using namespace basic;
 	using namespace basic::options;
 	
-	if ( ! option[OptionKeys::membrane_new::setup::spanfiles].user() ){
+	if ( ! option[OptionKeys::mp::setup::spanfiles].user() ){
 		utility_exit_with_message("Please provide spanfile(s)!");
 	}
 	
 	// get filenames from Optionsystem
-	utility::vector1< std::string > spanfiles = option[OptionKeys::membrane_new::setup::spanfiles]();
+	utility::vector1< std::string > spanfiles = option[OptionKeys::mp::setup::spanfiles]();
 	
 	return spanfiles;
 

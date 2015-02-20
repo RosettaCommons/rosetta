@@ -47,7 +47,7 @@
 // Utility Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/mpdock.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>

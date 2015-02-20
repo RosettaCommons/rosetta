@@ -46,7 +46,7 @@
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
@@ -245,8 +245,8 @@ VisualizeMembraneMover::register_options() {
 
 	using namespace basic::options;
 
-	option.add_relevant( OptionKeys::membrane_new::visualize::spacing );
-	option.add_relevant( OptionKeys::membrane_new::visualize::width );
+	option.add_relevant( OptionKeys::mp::visualize::spacing );
+	option.add_relevant( OptionKeys::mp::visualize::width );
 
 }
 
@@ -258,18 +258,18 @@ VisualizeMembraneMover::init_from_cmd() {
 	using namespace basic::options;
 
 	// Specify spacing option
-	if ( option[ OptionKeys::membrane_new::visualize::spacing ].user() ) {
-		spacing_ = option[ OptionKeys::membrane_new::visualize::spacing ]();
+	if ( option[ OptionKeys::mp::visualize::spacing ].user() ) {
+		spacing_ = option[ OptionKeys::mp::visualize::spacing ]();
 	}
 
 	// Specify width option
-	if ( option[ OptionKeys::membrane_new::visualize::width ].user() ) {
-		width_ = option[ OptionKeys::membrane_new::visualize::width ]();
+	if ( option[ OptionKeys::mp::visualize::width ].user() ) {
+		width_ = option[ OptionKeys::mp::visualize::width ]();
 	}
 
 	// Specify Thickness Option
-	if ( option[ OptionKeys::membrane_new::visualize::thickness ].user() ) {
-		thickness_ = option[ OptionKeys::membrane_new::visualize::thickness ]();
+	if ( option[ OptionKeys::mp::visualize::thickness ].user() ) {
+		thickness_ = option[ OptionKeys::mp::visualize::thickness ]();
 	}
 
 }

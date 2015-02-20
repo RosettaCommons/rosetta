@@ -407,7 +407,7 @@ Options = Option_Group( '',
 					default='false' ),
 
 			## Input Membrane Options
-			## Last Modified: 1/12/14 - Old & New Option System
+			## Last Modified: 1/12/14 - Old RosettaMembrane Option System
 			## Author: Rebecca Alford
 			Option('spanfile', 'String', desc='Membrane spanning file'),
 			Option('lipofile', 'String', desc='Membrane exposure file'),
@@ -525,7 +525,7 @@ Options = Option_Group( '',
 				default="false",
 				oldName="output_silent_gz" ),
 		Option( 'membrane_pdb', 'Boolean', desc="Write out the membrane in the PDB - on/off."),
-		Option( 'membrane_pdb_thickness', 'Real', desc="Thickness of the written membrane in the PDB file. Using this flag, turns on -out:membrane_pdb automatically. If flag is not given, it uses the default (30) or the one from the -membrane_new:thickness flag."),
+		Option( 'membrane_pdb_thickness', 'Real', desc="Thickness of the written membrane in the PDB file. Using this flag, turns on -out:membrane_pdb automatically. If flag is not given, it uses the default (30) or the one from the -mp:thickness flag."),
 
 		# Database options ----------------------------------------------------
 		Option( 'use_database', 'Boolean',
@@ -2512,12 +2512,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # -loops
 
 	#New Membrane Protein Option group
-	Option_Group( 'membrane_new',
+	Option_Group( 'mp',
 
 		#Membrane options
 		Option( 'thickness', 'Real', desc='User-defined membrane thickness. Overwrites default thickness of 60A.'),
 
-		#Embedding options - advanced
+		#Embedding options - advanced (these are currently not used)
 		Option( 'center_start', 'RealVector', desc='Starting point for center search. Example: 3 2 4.'),
 		Option( 'center_delta', 'Real', desc='Perturbation of center in Angstrom.'),
 		Option( 'center_search_cycles', 'Real', desc='Iterations for center search.'),
@@ -2545,7 +2545,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'wt_spanning', 'Real', desc='Weight for spanning penalty.'),
 
 		Option_Group( 'viewer',
-			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
+			Option( 'thickness', 'Real', desc="Thickness of membrane to visualize", default='12.5' ),
 			Option( 'num_points', 'Integer', desc="Number of points to define the membrane planes. x >= 3" ),
 		),
 
@@ -2554,7 +2554,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'embedding', 'Boolean', desc='Visualize embedding centers and normals for each TMspan' ),
 			Option( 'spacing', 'Real', desc="Spacing of virtual membrane residues representing the membrane planes", default='5' ),
 			Option( 'width', 'Real', desc='Width of membrane planes for n by n plane', default='100' ),
-			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
+			Option( 'thickness', 'Real', desc="Thickness of membrane to visualize", default='12.5' ),
 			Option( 'plane_radius', 'Real', desc="Radius of membrane planes to draw in PyMol - part of the PyMol viewer plugin" ),
 		),
 
@@ -2585,7 +2585,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	),
 
-	# Old Membrane Protein Option Group
+	# Old RosettaMembrane Option Group
 	# Last Modified: 1/12/14
 	# @author Rebecca Alford
 	Option_Group( 'membrane',
