@@ -693,6 +693,15 @@ HA	CT2	S	CT1	0.2800	3	0.00	#from:	HA	CT2	S	CT3
 CT2	S	CT1	CT3	0.2400	1	180.00	#from:	CT3	CT2	S	CT3
 CT2	S	CT1	CT3	0.3700	3	0.00	#from:	CT3	CT2	S	CT3
 
+#ADDED FOR HEXAFLUOROBENZENE CROSSLINKER
+CT1	CT2	S	CA	0.2400  1       180.00  #from:  CT3     CT2     S       CT3
+CT1	CT2	S	CA	0.3700  3       0.00    #from:  CT3     CT2     S       CT3
+HA	CT2	S	CA	0.2800  3       0.00    #from:  HA      CT2     S       CT3
+CT2	S	CA	CA	0.2400  1       180.00  #from:  CT3     CT2     S       CT3
+CT2	S	CA	CA	0.3700  3       0.00    #from:  CT3     CT2     S       CT3
+S	CA	CA	CA	3.1000  2       180.00  #from:  OH1     CA      CA      CA
+S	CA      CA      F1      2.4000  2       180.00  #from:  HP	CA      CA      HP
+
 # ADDED FOR PHENYLGLYCINE AND 2-AMNO-2-PHENYL-BUTYRIC ACID
 C	NH1	CT1	CA	0.2000	1	180.00	#from:	CC	CT1	NH1	C
 H	NH1	CT1	CA	0.0000	1	0.00	#from:	H	NH1	CT1	CC

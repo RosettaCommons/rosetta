@@ -15,6 +15,7 @@
 // Headers
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverStatus.hh>
 #include <protocols/helical_bundle/BundleGridSampler.hh>
 #include <protocols/helical_bundle/BundleGridSamplerCreator.hh>
 #include <protocols/helical_bundle/BundleGridSamplerHelper.hh>
@@ -40,6 +41,11 @@
 #include <core/pose/util.tmpl.hh>
 #include <protocols/helical_bundle/PerturbBundleOptions.fwd.hh>
 #include <protocols/helical_bundle/PerturbBundleOptions.hh>
+
+//JD2:
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -80,6 +86,8 @@ namespace protocols {
 		BundleGridSampler::BundleGridSampler():
 			Mover("BundleGridSampler"),
 			reset_mode_(true),
+			nstruct_mode_(false),
+			nstruct_mode_repeats_(1),
 			select_low_(true),
 			n_helices_(0),
 			max_samples_( 10000 ),
@@ -109,6 +117,8 @@ namespace protocols {
 		BundleGridSampler::BundleGridSampler( BundleGridSampler const & src ):
 			protocols::moves::Mover( src ),
 			reset_mode_(src.reset_mode_),
+			nstruct_mode_(src.nstruct_mode_),
+			nstruct_mode_repeats_(src.nstruct_mode_repeats_),
 			select_low_(src.select_low_),
 			n_helices_(src.n_helices_),
 			max_samples_(src.max_samples_),
@@ -238,15 +248,43 @@ namespace protocols {
 			sampler_helper->initialize_samples();
 
 			//Loop through all grid samples
-			for(core::Size i=1; i<=total_samples; ++i) {
+			core::Size loopstart(1);
+			core::Size loopend(total_samples);
+			if(nstruct_mode()) { //Special case: if we're just doing one set of Crick parameters per job, we need to figure out which set to do.
+				if(!protocols::jd2::jd2_used()) utility_exit_with_message(
+					"In protocols::helical_bundle::BundleGridSampler::apply() function: The nstruct_mode option was used, but the current application is not using JD2.");
+				protocols::jd2::JobCOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+				if(!job || job==protocols::jd2::JD2_BOGUS_JOB) utility_exit_with_message(
+					"In protocols::helical_bundle::BundleGridSampler::apply() function: The nstruct_mode option was used, but we could not get a valid JD2-style job object!");
+				core::Size curjob( job->nstruct_index() );
+				core::Size totaljobs( job->nstruct_max() );
+				if(curjob==0 || totaljobs==0) utility_exit_with_message(
+					"In protocols::helical_bundle::BundleGridSampler::apply() function: The nstruct_mode option was used, but invalid values were obtained for the current job index or the total number of jobs.");
+				if(totaljobs < total_samples*nstruct_repeats() && TR.Warning.visible())
+					TR.Warning << "Warning!  The BundleGridSampler mover is in nstruct mode, meaning that one set of Crick parameters will be sampled per job.  However, the total number of jobs is less than the total number of samples!  Certain sets of Crick parameters will be missed!" << std::endl ;
+				//The current job might be greater than the total number of samples, in which case we should wrap around:
+				loopstart = (curjob % total_samples) / nstruct_repeats();
+				loopend=loopstart;
+			}
+			for(core::Size i=loopstart; i<=loopend; ++i) {
 				core::pose::Pose temppose;
 
 				//Making a copy of the MakeBundle mover:
 				MakeBundleOP makebundle_copy( utility::pointer::dynamic_pointer_cast< MakeBundle>( make_bundle_->clone() ) );
 
-				//If i is greater than 1, increment the current permutation.
-				//(Note that we start out on the first permutation, so there's no need to increment the first time).
-				if(i > 1) sampler_helper->increment_cur_indices();
+				if(nstruct_mode()) { //If this is one-set-of-Crick-params-per-job mode
+					if(i > 1) {
+						//If i is greater than 1, increment repeatedly until we reach the current permutation.
+						//(Note that we start out on the first permutation, so there's no need to increment the first time).
+						for(core::Size j=2; j<=i; ++j) {
+							sampler_helper->increment_cur_indices(); //This is a recursive function that increments indices in a non-trivial way, and so must be called repeatedly to get the right indices.
+						}
+					}
+				} else { //If this is NOT one-set-of-Crick-params-per-job mode
+					//If i is greater than 1, increment the current permutation.
+					//(Note that we start out on the first permutation, so there's no need to increment the first time).
+					if(i > 1) sampler_helper->increment_cur_indices();
+				}
 
 				//Set the parameters that are being varied:
 				for(core::Size j=1, jmax=sampler_helper->nDoFs(); j<=jmax; ++j) {
@@ -322,7 +360,6 @@ namespace protocols {
 						TR << "Bundle generated successfully." << std::endl;
 						TR.flush();
 					}
-					at_least_one_success = true; //We've successfully generated at least one helical bundle.
 				}
 
 				//Apply the preselection mover, if it exists:
@@ -346,6 +383,8 @@ namespace protocols {
 					}
 					if(!filterpassed) continue; //Go on to the next grid sample.
 				}
+				
+				at_least_one_success = true; //At this point, we've successfully generated at least one helical bundle.
 
 				// Score the pose:
 				(*sfxn_)(	temppose);
@@ -395,11 +434,15 @@ namespace protocols {
 			if(at_least_one_success) {
 				pose=lowestEpose;
 				if(TR.visible()) TR << "Success!  Returning lowest-energy pose." << std::endl << final_report.str();
+				set_last_move_status( protocols::moves::MS_SUCCESS );
 			} else {
-				if(TR.visible()) TR << "No sensible parameter values returning helical bundles were sampled.  Mover failed.  Returning input pose." << std::endl;
+				if(TR.visible()) TR << "No parameter values returning sensible helical bundles, or helical bundles passing filters, were sampled.  Mover failed." << std::endl;
+				set_last_move_status( protocols::moves::FAIL_RETRY );
 			}
 
 			if(TR.visible()) TR.flush();
+			if(TR.Warning.visible()) TR.Warning.flush();
+			if(TR.Debug.visible()) TR.Debug.flush();
 
 			return;
 		}
@@ -492,6 +535,15 @@ namespace protocols {
 			if(TR.visible()) TR << "Setting reset mode to " << (resetmode ? "true." : "false.") << std::endl;
 			set_reset_mode(resetmode);
 			make_bundle_->set_reset_pose( reset_mode() );
+			
+			//Set nstruct mode and options:
+			bool nstructmode = tag->getOption<bool>("nstruct_mode", false);
+			if(TR.visible()) TR << "Setting nstruct mode to " << (nstructmode ? "true." : "false.") << "  This means that " << (nstructmode ? "each job will sample a different set of Crick parameters." : "every job will sample all sets of Crick parameters.") << std::endl;
+			set_nstruct_mode(nstructmode);
+			core::Size nstructrepeats( tag->getOption<core::Size>( "nstruct_repeats", 1 ) );
+			if(nstructrepeats<1) nstructrepeats=1;
+			if(TR.visible()) TR << "Setting nstruct repeats to " << nstructrepeats << "." << std::endl;
+			set_nstruct_repeats(nstructrepeats);
 
 			// Default options applied to all helices, unless overrides are provided:
 			if( tag->hasOption("r0") ) {

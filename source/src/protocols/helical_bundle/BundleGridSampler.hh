@@ -42,6 +42,10 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
+//JD2:
+#include <protocols/jd2/JobDistributor.fwd.hh>
+#include <protocols/jd2/Job.fwd.hh>
+
 // Project Headers
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/grid/CartGrid.hh>
@@ -296,6 +300,33 @@ namespace protocols {
 			/// @brief Returns whether the scorefunction has been set.
 			///
 			bool sfxn_set() const { return sfxn_set_; }
+			
+			/// @brief Set the nstruct mode.
+			/// @details If true, each job samples one set of Crick parameters.  If false, every job samples
+			/// every set of Crick parameters.  False by default.
+			void set_nstruct_mode( bool const &val ) { nstruct_mode_=val; return; }
+			
+			/// @brief Get the nstruct mode.
+			/// @details If true, each job samples one set of Crick parameters.  If false, every job samples
+			/// every set of Crick parameters.  False by default.
+			bool nstruct_mode( ) const { return nstruct_mode_; }
+			
+			/// @brief Set the nstruct repeats.
+			/// @details This is set to 1 by default, which means that each nstruct number correspnds to a different
+			/// set of Crick parameters.  If set greater than 1, then multiple consecutive nstruct numbers will
+			/// correspond to the same Crick parameters.  This allows combinatorially combining this mover's sampling
+			/// with another, similar mover's sampling.
+			void set_nstruct_repeats( core::Size const val ) { nstruct_mode_repeats_=val; return; }
+			
+			/// @brief Get the nstruct repeats.
+			/// @details This is set to 1 by default, which means that each nstruct number correspnds to a different
+			/// set of Crick parameters.  If set greater than 1, then multiple consecutive nstruct numbers will
+			/// correspond to the same Crick parameters.  This allows combinatorially combining this mover's sampling
+			/// with another, similar mover's sampling.
+			core::Size nstruct_repeats( ) const { 
+				if(nstruct_mode_repeats_ < 1) return 1;
+				return nstruct_mode_repeats_;
+			}
 
 		private:
 		////////////////////////////////////////////////////////////////////////////////
@@ -305,6 +336,18 @@ namespace protocols {
 			/// @brief Should the pose be reset before applying the GridSampler?  Default true.
 			///
 			bool reset_mode_;
+			
+			/// @brief Should the parallel sampling be done based on the job (nstruct number)?
+			/// @details If true, each job samples one set of Crick parameters.  If false, every job samples
+			/// every set of Crick parameters.  False by default.
+			bool nstruct_mode_;
+			
+			/// @brief If nstruct_mode_ is true, how many times should each set of Crick parameters be repeated?
+			/// @details This is set to 1 by default, which means that each nstruct number correspnds to a different
+			/// set of Crick parameters.  If set greater than 1, then multiple consecutive nstruct numbers will
+			/// correspond to the same Crick parameters.  This allows combinatorially combining this mover's sampling
+			/// with another, similar mover's sampling.
+			core::Size nstruct_mode_repeats_;
 
 			/// @brief The selection type.
 			/// @default If false, the pose with the highest score value is selected.  If true,
