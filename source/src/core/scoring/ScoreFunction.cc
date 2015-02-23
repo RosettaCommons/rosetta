@@ -381,7 +381,9 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			if (scale_sc_density.size() != core::chemical::num_canonical_aas) {
 				utility_exit_with_message( "incorrect number of arguments to SCALE_SIDECHAIN_DENSITY_WEIGHTS: " + line );
 			}
-			energy_method_options_->set_density_sc_scale_byres( real_value );
+			for (int i=1; i<=(int) core::chemical::num_canonical_aas; ++i) {
+				energy_method_options_->set_density_sc_scale_byres( (core::chemical::AA)i, scale_sc_density[i] );
+			}
 		} else {
 
 	// //////////// Regular Weights ///////////////////////

@@ -279,8 +279,7 @@ public:
 		numeric::xyzVector<core::Real> const &X,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
-		numeric::xyzVector<core::Real> &gradX,
-		core::Real sc_scale=1.0
+		numeric::xyzVector<core::Real> &gradX
 	);
 
 	/// @brief Gradient of CC w.r.t B factors
