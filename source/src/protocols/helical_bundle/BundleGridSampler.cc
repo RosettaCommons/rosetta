@@ -268,6 +268,7 @@ namespace protocols {
 			}
 			for(core::Size i=loopstart; i<=loopend; ++i) {
 				core::pose::Pose temppose;
+				if(!reset_mode()) temppose=pose; //If we're not resetting the pose, then we need to copy the input pose.
 
 				//Making a copy of the MakeBundle mover:
 				MakeBundleOP makebundle_copy( utility::pointer::dynamic_pointer_cast< MakeBundle>( make_bundle_->clone() ) );
