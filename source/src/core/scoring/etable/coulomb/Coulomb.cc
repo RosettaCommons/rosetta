@@ -50,9 +50,9 @@ Coulomb::Coulomb( Coulomb const & src ): ReferenceCount(),
 	die_( src.die_ ),
 	no_dis_dep_die_( src.no_dis_dep_die_ ),
 	sigmoidal_die_( src.sigmoidal_die_ ),
-	sigmoidal_D_( src.sigmoidal_die_ ),
-	sigmoidal_D0_( src.sigmoidal_die_ ),
-	sigmoidal_S_( src.sigmoidal_die_ )
+	sigmoidal_D_( src.sigmoidal_D_ ),
+	sigmoidal_D0_( src.sigmoidal_D0_ ),
+	sigmoidal_S_( src.sigmoidal_S_ )
 {
 	initialize();
 }
