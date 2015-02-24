@@ -542,11 +542,11 @@ struct TreeVizBuilder {
 					}
 				}
 			}
-		}
-		Size lb, ub;
-		get_ft_node_bounds( *i, lb, ub );
-		for ( Size ir = lb; ir <= ub; ++ir ) {
-			node_labels_partial[ ir ] = node_labels_partial[ *i ];
+			Size lb, ub;
+			get_ft_node_bounds( *i, lb, ub );
+			for ( Size ir = lb; ir <= ub; ++ir ) {
+				node_labels_partial[ ir ] = node_labels_partial[ *i ];
+			}
 		}
 	}
 		
