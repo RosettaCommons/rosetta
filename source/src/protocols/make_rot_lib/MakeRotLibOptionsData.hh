@@ -48,8 +48,8 @@ typedef utility::vector1< TorsionRangeVec > TorsionRangeVecVec;
   
 // Hold a centoids starting value and rotamer bin number
 struct CentroidRotNum {
-  core::Real angle;
-  core::Size rot_num;
+	core::Real angle;
+	core::Size rot_num;
 };
 
 typedef utility::vector1< CentroidRotNum > CentroidRotNumVec;
@@ -80,36 +80,41 @@ public:
 	TorsionRangeVec get_chi_data() const { return chi_ranges_; }
 	CentroidRotNumVecVec get_centroid_data() const { return centroid_data_; }
 	MakeRotLibPolymerType get_polymer_type() const { return polymer_type_; }
+	bool get_semirotameric() const { return semirotameric_; }
+	core::Real get_temperature() const { return KbT_; }
 
 private:
 
-  // AA name
-  std::string name_;
+	// AA name
+	std::string name_;
 
-  // number of chi torsions
-  core::Size n_chi_;
-  // number of bb torsionss
-  core::Size n_bb_;
+	// number of chi torsions
+	core::Size n_chi_;
+	// number of bb torsionss
+	core::Size n_bb_;
 
-  // store sets of torsion ranges for epsilon and omega torsions
-  TorsionRange omg_range_;
-  TorsionRange eps_range_;
-  // store sets of torsion ranges for each backbone angle
-  TorsionRangeVec bb_ranges_;
-  // bb_ranges_[ i ] refers to the residue torsion id bb_ids_[ i ]
-  utility::vector1< core::Size > bb_ids_;
+	// store sets of torsion ranges for epsilon and omega torsions
+	TorsionRange omg_range_;
+	TorsionRange eps_range_;
+	// store sets of torsion ranges for each backbone angle
+	TorsionRangeVec bb_ranges_;
+	// bb_ranges_[ i ] refers to the residue torsion id bb_ids_[ i ]
+	utility::vector1< core::Size > bb_ids_;
   
 	// store sets of torsion ranges for each chi torsion
-  TorsionRangeVec chi_ranges_;
+	TorsionRangeVec chi_ranges_;
 
-  // number of centroids
-  core::Size n_centroids_;
+	// number of centroids
+	core::Size n_centroids_;
 
-  // centroid data
-  CentroidRotNumVecVec centroid_data_;
+	// centroid data
+	CentroidRotNumVecVec centroid_data_;
 
 	// polymer type
 	MakeRotLibPolymerType polymer_type_;
+
+	bool semirotameric_;
+	core::Real KbT_;
 
 }; // MakeRotLibOptionsData
 

@@ -291,7 +291,7 @@ debug_assert( ! packed_rotno_conversion_data_current_ );
 }
 
 /// @brief After the derived class has marked all the rotwells that do exist,
-/// the base class will create the rotwell to packerot conversion data.
+/// the base class will create the rotwell to packedrot conversion data.
 void
 SingleResidueDunbrackLibrary::declare_all_existing_rotwells_encountered()
 {

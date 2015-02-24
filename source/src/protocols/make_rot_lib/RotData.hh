@@ -46,6 +46,10 @@ private:
 	core::Size num_chi_;						// number of chi angles in AA
 	core::Size num_clusters_;			 // number of clusters
 	core::Size cluster_num_;				// cluster id
+	
+	utility::vector1< core::Real > semi_energy_dist_;
+	utility::vector1< core::Real > semi_prob_dist_;
+	
 	utility::vector1< core::Real > inp_chi_;	// starting chi angles
 	utility::vector1< core::Real > min_chi_;	// minimized chi angles
 	utility::vector1< core::Size > lib_chi_val_; // rotamer number for dunbrack format
@@ -59,8 +63,24 @@ private:
 	core::Real intra_rep_;
 	core::Real intra_atr_;
 	core::Real solvation_;
+	
+	bool semirotameric_;
 
 public:
+	
+	void set_semi_energy_dist( core::Size i, core::Real setting ) {
+		semi_energy_dist_[ i ] = setting;
+	}
+	
+	void set_semi_prob_dist( core::Size i, core::Real setting ) {
+		semi_prob_dist_[ i ] = setting;
+	}
+	
+	void resize_semi_vectors( core::Size i ) {
+		semi_energy_dist_.resize( i, 0 );
+		semi_prob_dist_.resize( i, 0 );
+	}
+	
 	void set_twist( core::Real twist ) {
 		twist_ = twist;
 	}
@@ -80,6 +100,18 @@ public:
 		solvation_ = solvation;
 	}
 
+	bool get_semirotameric() {
+		return semirotameric_;
+	}
+	
+	core::Real get_semi_prob_dist( core::Size i ) {
+		return semi_prob_dist_[ i ];
+	}
+	
+	core::Real get_semi_energy_dist( core::Size i ) {
+		return semi_energy_dist_[ i ];
+	}
+	
 	core::Real get_twist() {
 		return twist_;
 	}
@@ -102,7 +134,9 @@ public:
  public:
 	// ctor
 	RotData( core::Size NumChi, core::Size NumCluster );
+	RotData( core::Size NumChi, core::Size NumCluster, bool semirotameric );
 	RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster );
+	RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster, bool semirotameric );
 
 	// setters and getters
 	void set_bb( core::Size i, core::Real BB ) {

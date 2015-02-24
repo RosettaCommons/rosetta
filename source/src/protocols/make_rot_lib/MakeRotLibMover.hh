@@ -38,19 +38,19 @@ namespace make_rot_lib {
 class MakeRotLibMover : public protocols::moves::Mover {
 public:
 
-  // ctor
-  MakeRotLibMover();
+	// ctor
+	MakeRotLibMover();
 
-  // dtor
-  virtual ~MakeRotLibMover(){}
+	// dtor
+	virtual ~MakeRotLibMover(){}
 
 	// pose interface
-  virtual void apply( core::pose::Pose & pose );
-  virtual std::string get_name() const { return "MakeRotLibMover"; }
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "MakeRotLibMover"; }
 
 	// setup methods
-	void init_centroids( CentroidRotNumVecVec const & centroid_data, core::Size num_chi );
-	void init_rotamers( TorsionRangeVec const & chi_ranges, core::Size num_clusters, core::Real omg, utility::vector1< core::Real> bbs, utility::vector1<core::Size> bbids, core::Real eps );
+	void init_centroids( CentroidRotNumVecVec const & centroid_data, core::Size num_chi, bool semirotameric );
+	void init_rotamers( TorsionRangeVec const & chi_ranges, core::Size num_clusters, core::Real omg, utility::vector1< core::Real> bbs, utility::vector1<core::Size> bbids, core::Real eps, bool semirotameric );
 
 	// minmization methods
 	void minimize_rotamer( RotData & rd, core::pose::Pose & pose, utility::vector1< core::Real> bbs, utility::vector1<core::Size> bb_ids,  MakeRotLibPolymerType polymer_type );
@@ -60,32 +60,35 @@ public:
 	void calc_all_dist();
 	bool calc_rotamer_clusters();
 	bool calc_centroids();
+	bool bbs_appropriate_for_definitions( utility::vector1< core::Real > bbs );
 
 	// finalizing methods
 	void calc_final_rotamers();
 	void calc_final_rotamer_probs();
 	void calc_standard_deviations( core::pose::Pose & pose,utility::vector1< core::Real> bbs, utility::vector1<core::Size> bb_ids, MakeRotLibPolymerType polymer_type );
 
-	// symetry methods
-	void make_two_fold_symetry_135_315( RotDataVec & rdv, core::Size chi_num );
-	void make_two_fold_symetry_0_180( RotDataVec & rdv, core::Size chi_num );
-	void make_three_fold_symetry_90_210_330( RotDataVec & rdv, core::Size chi_num );
+	// symmetry methods
+	void make_two_fold_symmetry_135_315( RotDataVec & rdv, core::Size chi_num );
+	void make_two_fold_symmetry_0_180( RotDataVec & rdv, core::Size chi_num );
+	void make_three_fold_symmetry_90_210_330( RotDataVec & rdv, core::Size chi_num );
 
 	// logging
 	void print_rot_data( RotData & rd, utility::vector1< core::Size > bb_ids, std::ostream & os );
 	void print_rot_data_vec( RotDataVec & rdv, utility::vector1< core::Size > bb_ids, std::ostream & os );
 	core::Real print_avg_cluster_centroid_dist( std::ostream & os );
 	void print_dunbrack02_rotlib( core::Real omg, utility::vector1< core::Real> bbs, utility::vector1<core::Size> bbids, core::Real eps, MakeRotLibPolymerType polymer_type, std::ostream & os );
+	void print_definitions( std::ostream & os );
+	void print_dunbrack10_rotlib( core::Real omg, utility::vector1< core::Real> bbs, utility::vector1<core::Size> bbids, core::Real eps, MakeRotLibPolymerType polymer_type, std::ostream & os );
 
 	// utility
 	core::Real calc_dist( RotData & rd1, RotData & rd2 );
 	core::Real angle_diff( core::Real a1, core::Real a2 );
-  void calc_running_avg( core::Real angle_new, core::Real & angle_old, core::Size & count );
+	void calc_running_avg( core::Real angle_new, core::Real & angle_old, core::Size & count );
 
 private:
 
 	core::scoring::ScoreFunctionOP scrfxn_;
-
+	core::Real KbT_;
 	RotDataVec centroids_;
 	RotDataVec rotamers_;
 	RotDataVec final_rotamers_;

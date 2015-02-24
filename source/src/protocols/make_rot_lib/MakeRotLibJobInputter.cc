@@ -116,6 +116,7 @@ void protocols::make_rot_lib::MakeRotLibJobInputter::fill_jobs( jd2::Jobs & jobs
 
 	// nstruct will always be 1
 	core::Size nstruct( 1 );
+	bool semirotameric = mrlod_->get_semirotameric();
 	core::Size n_bb = mrlod_->get_n_bb();
 	utility::vector1 < core::Size > bb_ids = mrlod_->get_bb_ids();
 	// make single InnerJob that will be used in each job
@@ -165,8 +166,8 @@ void protocols::make_rot_lib::MakeRotLibJobInputter::fill_jobs( jd2::Jobs & jobs
 		//	for ( core::Real s(mrlod_->get_psi_range().low ); s <= mrlod_->get_psi_range().high; s += mrlod_->get_psi_range().step ) {
 		core::Size p = 1;
 		while ( i [ n_bb + 1 ] == 0 ) { 
-			utility::vector1<core::Real> bbs;
-			bbs.resize(n_bb);
+			utility::vector1< core::Real > bbs;
+			bbs.resize( n_bb );
 			for ( core::Size init_i = 1; init_i <= n_bb; ++init_i ) {
 				bbs[ init_i ] = i[ init_i ];
 			}
@@ -176,22 +177,18 @@ void protocols::make_rot_lib::MakeRotLibJobInputter::fill_jobs( jd2::Jobs & jobs
 					TR << " bb" << bb_ids[ push_i ] << ": " << bbs[ push_i ];
 				}
 				TR << " eps: " << e << " bin" << std::endl;
-				jobs.push_back( jd2::JobOP( new MakeRotLibJob( ij, nstruct, o, bbs, bb_ids, e, mrlod_ ) ) );
+				jobs.push_back( jd2::JobOP( new MakeRotLibJob( ij, nstruct, o, bbs, bb_ids, e, mrlod_, semirotameric ) ) );
 			}
 
 			i [ 1 ] += steps[ 1 ];
 			while ( i[ p ] > maxes[ p ] ) {
-				if ( p <= n_bb )
-					i[ p ] = mrlod_->get_bb_range( p ).low;
-				else
-					i[ p ] = 0;
+				if ( p <= n_bb ) i[ p ] = mrlod_->get_bb_range( p ).low;
+				else             i[ p ] = 0;
 				p = p + 1;
 				i[ p ] += steps[ p ];
 				if ( i[ p ] <= maxes[ p ] ) p = 1;
 			} 
 		}
-		//	}
-		//}
 	}
 	TR << "pushed all jobs" << std::endl;
 

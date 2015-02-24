@@ -850,6 +850,8 @@ debug_assert( rsd_type_set != 0 ); // not really needed
 			l >> path;
 			rsd->set_ncaa_rotlib_path( path );
 			rsd->set_use_ncaa_rotlib( true );
+		} else if ( tag == "NCAA_SEMIROTAMERIC" ) {
+			rsd->set_semirotameric_ncaa_rotlib( true );
 		} else if ( tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ) {
 			Size n_rots(0);
 			utility::vector1<Size> n_bins_per_rot;
@@ -862,6 +864,13 @@ debug_assert( rsd_type_set != 0 ); // not really needed
 				n_bins_per_rot[i] = bin_size;
 			}
 			rsd->set_ncaa_rotlib_n_bin_per_rot( n_bins_per_rot );
+		} else if ( tag == "NRCHI_SYMMETRIC" ) {
+			// this tag present = true
+			rsd->set_nrchi_symmetric( true );
+		} else if ( tag == "NRCHI_START_ANGLE" ) {
+			Real angle(-180);
+			l >> angle;
+			rsd->set_nrchi_start_angle( angle );
 		}	else if ( tag == "PEPTOID_ROTLIB_PATH" ) {
 			std::string path;
 			l >> path;

@@ -1801,12 +1801,26 @@ public:
 	{
 		use_ncaa_rotlib_ = flag;
 	}
+	
+	/// @brief Sets whether our NCAA rotlib is semirotameric
+	void
+	set_semirotameric_ncaa_rotlib( bool flag )
+	{
+		semirotameric_ncaa_rotlib_ = flag;
+	}
 
 	/// @brief Returns whether we are using a NCAA rotlib for the residue type
 	bool
 	get_use_ncaa_rotlib() const
 	{
 		return use_ncaa_rotlib_;
+	}
+	
+	/// @brief Returns whether our NCAA rotlib is semirotameric
+	bool
+	get_semirotameric_ncaa_rotlib() const
+	{
+		return semirotameric_ncaa_rotlib_;
 	}
 
 	/// @brief Sets the number of rotatable bonds described by the NCAA rotlib (not nesesarily equal to nchi)
@@ -1818,11 +1832,29 @@ public:
 
 	/// @brief Returns the number of rotatable bonds described by the NCAA rotlib  (not nesesarily equal to nchi)
 	Size
-	set_ncaa_rotlib_n_rotameric_bins() const
+	get_ncaa_rotlib_n_rotameric_bins() const
 	{
 		return ncaa_rotlib_n_rots_;
 	}
-
+	
+	void
+	set_nrchi_symmetric( bool setting ) {
+		nrchi_symmetric_ = setting;
+	}
+	
+	Real get_nrchi_start_angle() const {
+		return nrchi_start_angle_;
+	}
+	
+	void
+	set_nrchi_start_angle( Real setting ) {
+		nrchi_start_angle_ = setting;
+	}
+	
+	bool get_nrchi_symmetric() const {
+		return nrchi_symmetric_;
+	}
+	
 	/// @brief Sets the number of rotamers for each rotatable bond described by the NCAA rotlib
 	void
 	set_ncaa_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot );
@@ -2320,12 +2352,18 @@ private:
 
 	/// @brief whether or not we should use the NCAA rotlib if it exists -- Primary.
 	bool use_ncaa_rotlib_;
+	
+	/// @brief whether or not the NCAA rotlib is semirotameric -- Primary.
+	bool semirotameric_ncaa_rotlib_;
 
 	/// @brief path to the NCAA rotlib -- Primary
 	std::string ncaa_rotlib_path_;
 
 	/// @brief the number of non-hydrogen chi angles in the NCAA rotlib -- Primary
 	Size ncaa_rotlib_n_rots_;
+	
+	bool nrchi_symmetric_;
+	Real nrchi_start_angle_;
 
 	/// @brief the number of rotamer bins for each chi angle in the NCAA rotlib -- Primary
 	utility::vector1< Size > ncaa_rotlib_n_bins_per_rot_;

@@ -2536,8 +2536,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_files(
 {
 debug_assert( ! bbind_nrchi_scoring_ ); // make sure you're not actually trying to use backbone-independent scoring.
 
+	//std::cout << "amw about to read rotamer defs " << std::endl;
 	read_rotamer_definitions( in_rotdef );
+	//std::cout << "amw about to read rotamers " << std::endl;
 	read_rotameric_data( in_rotameric );
+	//std::cout << "amw about to read nrchi densities " << std::endl;
 	read_bbdep_continuous_minimization_data( in_continmin_bbdep );
 }
 
@@ -2593,7 +2596,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotameric_data(
 		if ( ! in_rotameric ) break; // we've read past the end of the file...
 
 		bool cont = false;
-		for ( Size ii = 1; ii <= N; ++ii ) if ( bbs[ ii ] == 180 ) cont = true; // duplicated data...
+		// skip -180 because some of our libraries omit -180
+		for ( Size ii = 1; ii <= N; ++ii ) if ( bbs[ ii ] == -180 ) cont = true; // duplicated data...
 		if ( cont ) continue;
 
 		/// AVOID inf and NaN by correcting the database
@@ -2730,7 +2734,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 
 		if ( ! in_continmin ) break; // we've read past the end of the file...
 		bool cont = false;
-		for ( Size ii = 1; ii <= N; ++ii ) if ( bbs[ ii ] == 180 ) cont = true; // duplicated data...
+		for ( Size ii = 1; ii <= N; ++ii ) if ( bbs[ ii ] == -180 ) cont = true; // duplicated data...
 		if ( cont ) continue;
 
 		/// APL -- On the advice of Roland Dunbrack, modifying the minimum probability to the
@@ -2911,6 +2915,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotamer_definitions(
 		if ( ! in_rotdef ) break; // we've read past the end of the file...
 
 		Size const rotno( grandparent::rotwell_2_rotno( rotwell ) );
+		//std::cout << "amw rotwell[ T + 1 ] = rotwell[ " << (T+1) << " ] = " << rotwell[ T+1 ] << std::endl;
 		if ( rotwell[ T + 1 ] == 1 ) grandparent::mark_rotwell_exists( rotwell );
 		lefts[   rotno ].push_back( left );
 		medians[ rotno ].push_back( median );
@@ -2933,6 +2938,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotamer_definitions(
 				}
 			}
 			n_nrchi_sample_bins_ = lefts[ ii ].size();
+			//std::cout << "Setting n_nrchi_sample_bins_ to lefts[ " << ii << " ].size() = " << lefts[ ii ].size() << std::endl;
 			break;
 		}
 	}
@@ -2944,6 +2950,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotamer_definitions(
 
 	/// Allocate space for rotamers and rotamer-sorted-order mapping
 	parent::rotamers().dimension( num_bins, grandparent::n_packed_rots(), PackedDunbrackRotamer< T, N >() );
+	//std::cout << "amw dimensioned rotamers to num_bins = " << num_bins << " and n_packed_rots " << grandparent::n_packed_rots() << std::endl;
 	parent::packed_rotno_2_sorted_rotno().dimension( num_bins, grandparent::n_packed_rots() );
 	parent::packed_rotno_2_sorted_rotno() = 0;
 
@@ -2964,6 +2971,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotamer_definitions(
 	}
 	if ( ! bbind_nrchi_sampling_ ) {
 		/// Allocate space for bbdep rotamer sampling for the nrchi.
+		//std::cout << "amw dimensioned bbdep_rotamers_to_sample to num_bins = " << num_bins << " and n_packed_rots " << (grandparent::n_packed_rots()*n_nrchi_sample_bins_) << std::endl;
 		bbdep_rotamers_to_sample_.dimension( num_bins, grandparent::n_packed_rots() * n_nrchi_sample_bins_ );
 		bbdep_rotsample_sorted_order_.dimension( num_bins, grandparent::n_packed_rots(), n_nrchi_sample_bins_ );
 		bbdep_rotsample_sorted_order_ = 0;

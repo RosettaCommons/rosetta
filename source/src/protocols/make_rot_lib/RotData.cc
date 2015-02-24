@@ -35,7 +35,8 @@ RotData::RotData( core::Size NumChi, core::Size NumCluster ) :
 	inter_atr_( 0 ),
 	intra_rep_( 0 ),
 	intra_atr_( 0 ),
-	solvation_( 0 )
+	solvation_( 0 ),
+	semirotameric_( false )
 {
 	bbs_.resize( num_bbs_ );
 	inp_chi_.assign( NumChi, 0 );
@@ -43,8 +44,42 @@ RotData::RotData( core::Size NumChi, core::Size NumCluster ) :
 	lib_chi_val_.assign( NumChi, 0 );
 	std_dev_.assign( NumChi, 0 );
 	cen_dst_.assign( NumCluster, 0 );
+	
+	semi_energy_dist_.assign( 36, 0 );
+	semi_prob_dist_.assign( 36, 0 );
 }
-    
+
+RotData::RotData( core::Size NumChi, core::Size NumCluster, bool semirotameric ) :
+	num_bbs_( 2 ),
+	omega_( 0 ),
+	min_omega_( 0 ),
+	epsilon_( 0 ),
+	min_epsilon_( 0 ),
+	energy_( 0 ),
+	probability_( 0 ),
+	num_chi_( NumChi ),
+	num_clusters_( NumCluster ),
+	cluster_num_( 0 ),
+	// debug
+	twist_( 0 ),
+	inter_rep_( 0 ),
+	inter_atr_( 0 ),
+	intra_rep_( 0 ),
+	intra_atr_( 0 ),
+	solvation_( 0 ),
+	semirotameric_( semirotameric )
+{
+	bbs_.resize( num_bbs_ );
+	inp_chi_.assign( NumChi, 0 );
+	min_chi_.assign( NumChi, 0 );
+	lib_chi_val_.assign( NumChi, 0 );
+	std_dev_.assign( NumChi, 0 );
+	cen_dst_.assign( NumCluster, 0 );
+	
+	semi_energy_dist_.assign( 37, 0 );
+	semi_prob_dist_.assign( 37, 0 );
+}
+	
 RotData::RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster ) :
 	num_bbs_( NumBBs ),
 	omega_( 0 ),
@@ -62,7 +97,8 @@ RotData::RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster ) 
 	inter_atr_( 0 ),
 	intra_rep_( 0 ),
 	intra_atr_( 0 ),
-	solvation_( 0 )
+	solvation_( 0 ),
+	semirotameric_( false )
 {
     bbs_.resize( num_bbs_ );
     bb_ids_.resize( num_bbs_ );
@@ -70,8 +106,44 @@ RotData::RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster ) 
     min_chi_.assign( NumChi, 0 );
     lib_chi_val_.assign( NumChi, 0 );
     std_dev_.assign( NumChi, 0 );
-    cen_dst_.assign( NumCluster, 0 );
+	cen_dst_.assign( NumCluster, 0 );
+	
+	semi_energy_dist_.assign( 36, 0 );
+	semi_prob_dist_.assign( 36, 0 );
 }
+
+RotData::RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster, bool semirotameric ) :
+	num_bbs_( NumBBs ),
+	omega_( 0 ),
+	min_omega_( 0 ),
+	epsilon_( 0 ),
+	min_epsilon_( 0 ),
+	energy_( 0 ),
+	probability_( 0 ),
+	num_chi_( NumChi ),
+	num_clusters_( NumCluster ),
+	cluster_num_( 0 ),
+	// debug
+	twist_( 0 ),
+	inter_rep_( 0 ),
+	inter_atr_( 0 ),
+	intra_rep_( 0 ),
+	intra_atr_( 0 ),
+	solvation_( 0 ),
+	semirotameric_( semirotameric )
+{
+	bbs_.resize( num_bbs_ );
+	bb_ids_.resize( num_bbs_ );
+	inp_chi_.assign( NumChi, 0 );
+	min_chi_.assign( NumChi, 0 );
+	lib_chi_val_.assign( NumChi, 0 );
+	std_dev_.assign( NumChi, 0 );
+	cen_dst_.assign( NumCluster, 0 );
+		
+	semi_energy_dist_.assign( 36, 0 );
+	semi_prob_dist_.assign( 36, 0 );
+}
+	
 
 /// @brief Output function, primarily for debugging purposes.
 void
@@ -89,7 +161,19 @@ RotData::show( std::ostream & out ) const {
 	out << num_clusters_ << " ";
 	out << cluster_num_ << " ";
 	out << min_omega_ << " ";
-	out << min_epsilon_ << std::endl;
+	out << min_epsilon_;
+ 
+	if ( semirotameric_ ) {
+		out << " ";
+		for ( core::Size i = 1; i <= 36; ++i ) {
+			out << semi_energy_dist_[i] << " ";
+		}
+		for ( core::Size i = 1; i <= 36; ++i ) {
+			out << semi_prob_dist_[i] << " ";
+		}
+		
+	}
+	out << std::endl;
 
 	assert( inp_chi_.size() == num_chi_ );
 	assert( min_chi_.size() == num_chi_ );

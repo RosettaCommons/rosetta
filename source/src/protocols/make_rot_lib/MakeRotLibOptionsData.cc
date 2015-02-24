@@ -38,7 +38,7 @@ static thread_local basic::Tracer TR( "protocols.make_rot_lib.MakeRotLibOptionsD
 
 /// @brief Reads in options file. Parses it twice. Stores data.
 MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
-	n_chi_( 0 ), n_centroids_( 0 )
+	n_chi_( 0 ), n_centroids_( 0 ), semirotameric_( false ), KbT_( 1.4 )
 {
 
 	// init stuff to hold lines
@@ -89,6 +89,18 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 		// get amino acid name
 		else if ( tag == "AA_NAME" ) {
 			l >> name_;
+		}
+		
+		else if ( tag == "SEMIROTAMERIC") {
+			semirotameric_ = true;
+		}
+		
+		else if ( tag == "ROTAMERIC") {
+			semirotameric_ = false;
+		}
+		
+		else if ( tag == "TEMPERATURE") {
+			l >> KbT_;
 		}
 
 	}
@@ -147,8 +159,13 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 		// get centroids
 		else if ( tag == "CENTROID" ) {
 			CentroidRotNumVec temp_crnv;
-			temp_crnv.resize( n_chi_ );
-			for ( core::Size i( 1 ); i <= n_chi_; ++i ) l >> temp_crnv[ i ].angle >> temp_crnv[ i ].rot_num;
+			if ( semirotameric_ ) {
+				temp_crnv.resize( n_chi_-1 );
+				for ( core::Size i( 1 ); i <= n_chi_-1; ++i ) l >> temp_crnv[ i ].angle >> temp_crnv[ i ].rot_num;
+			} else {
+				temp_crnv.resize( n_chi_ );
+				for ( core::Size i( 1 ); i <= n_chi_; ++i ) l >> temp_crnv[ i ].angle >> temp_crnv[ i ].rot_num;
+			}
 			centroid_data_.push_back( temp_crnv );
 		}
 	}

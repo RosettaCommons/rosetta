@@ -185,7 +185,10 @@ debug_assert( rsd.is_protein() );
 	Real const psi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
-	if ( phi == 0.0 || psi == 0.0 || rsd.is_terminus() ) { // begin or end of chain
+	// amw replacing anything that would set rama to 0 because of an incidental phi/psi of 0
+	// (rare but possible)
+	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
+		|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) || rsd.is_terminus() ) { // begin or end of chain
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
@@ -216,7 +219,8 @@ debug_assert( center.is_protein() );
 	Real const psi
 		( nonnegative_principal_angle_degrees( center.mainchain_torsion(2)));
 
-	if ( phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+	if ( center.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
+		|| center.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
@@ -335,7 +339,8 @@ debug_assert( rsd.is_protein() );
 	Real const psi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
-	if ( phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
+		|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
 		return 0.0;
 	}
 
@@ -405,7 +410,8 @@ debug_assert( rsd.is_protein() );
 	Real const psi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
-	if ( phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
+		|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { // begin or end of chain
 		return 0.0;
 	}
 
@@ -475,7 +481,8 @@ debug_assert( rsd.is_protein() );
 	Real const psi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
-	if ( phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
+		|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
 		return 0.0;
 	}
 

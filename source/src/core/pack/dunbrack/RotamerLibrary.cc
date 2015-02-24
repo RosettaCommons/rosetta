@@ -2401,23 +2401,28 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 
 	// get some info about amino acid type
 	std::string aa_name3( rsd_type.name3() );
-	Size n_rotlib_chi( rsd_type.nchi() - rsd_type.n_proton_chi() );
+	
+	// dun02 if rotameric, dun10 densities if semirotameric
+	bool dun02( !rsd_type.get_semirotameric_ncaa_rotlib() );
+	
+	// one fewer rotameric rotlib chi if semirotameric
+	Size n_rotlib_chi( rsd_type.nchi() - rsd_type.n_proton_chi() - ( dun02 ? 0 : 1 ) );
+	
 	// amw: this should come from somewhere else that has the opportunity to define how many bbs the rotlib depends on!
 	// amw: it could come from the rsd type via the params file but doesn't currently; it could also come from the rotlib
-	// ooh, notably the betas come through this path so setting to 2 flat isn't safe!
-	// well, eventually: at the moment the betas depend on just two dihedrals
-	Size n_rotlib_bb( 2 );//rsd_type.mainchain_torsions().size() - 1 ); // 2 for alpha 3 for beta
+	// this is compatible with THREE backbone torsion beta rotlibs
+	Size n_rotlib_bb( rsd_type.mainchain_atoms().size() - 1 ); // 2 for alpha 3 for beta
 	chemical::AA aan( rsd_type.aa() );
-	bool dun02( true );
 
 	if ( ncaa_rotlibs_.find( aa_name3 ) == ncaa_rotlibs_.end() ) {
 
 		// create izstream from path
 		std::string dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
+		// trust the params file to correctly name the rotamer library even if it's densities format
 		std::string file_name = rsd_type.get_ncaa_rotlib_path();
 		std::string full_path = dir_name + file_name;
 		utility::io::izstream rotlib_in( full_path );
-
+		
 		// if we cannot open in regular path, try alternate paths
 		utility::options::PathVectorOption & pvec = option[ in::file::extra_rot_lib_path ];
 		Size pveci(1);
@@ -2436,7 +2441,131 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 
 		// this comes almost directally from RotmerLibrary.cc::create_rotameric_dunlib()
 		SingleResidueRotamerLibraryOP ncaa_rotlib;
+		if ( !dun02 ) {
+			// semirotameric
+			
+			// amw: I suppose this is sort of gross, but the residue type now reports whether its nrchi is symmetric
+			// and where its angle starts
+			// come to think of it why do we have a symmetric nrchi for C95? we shouldn't. TODO: make the right library.
+			bool nrchi_is_symmetric = rsd_type.get_nrchi_symmetric();
+			Real nrchi_start_angle = rsd_type.get_nrchi_start_angle();
+			
+			
+			std::string def_suffix = "_definitions.rotlib";
+			std::string dens_suffix = "_densities.rotlib";
+			
+			std::string full_def = dir_name + rsd_type.name3() + def_suffix;
+			std::string full_dens = dir_name + rsd_type.name3() + dens_suffix;
+			utility::io::izstream defstream( full_def );
+			utility::io::izstream densstream( full_dens );
 
+			// pretty sure we only have 1 and 2 rotameric chi implemented
+			// because in the canonicals that's how many semirotameric rotlib chi we have
+			// so stick to that for now...
+			switch ( n_rotlib_chi ) {
+				case 1: {
+					switch ( n_rotlib_bb ) {
+						case 1: {
+							SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						case 2: {
+							SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						case 3: {
+							SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						case 4: {
+							SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						case 5: {
+							SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						default:
+							utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
+													  boost::lexical_cast<std::string>(n_rotlib_bb) );
+							break;
+					}
+					
+				} break;
+				case 2: {
+					switch ( n_rotlib_bb ) {
+						case 1: {
+							SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						case 2: {
+							SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						case 3: {
+							SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						case 4: {
+							SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						case 5: {
+							SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE > * r1 =
+							new SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aan, false, false );
+							r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+							initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+							ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+							break;
+						}
+						default:
+							utility_exit_with_message( "ERROR: too many bb angles desired for semirotameric NCAA library: " +
+													  boost::lexical_cast<std::string>(n_rotlib_bb) );
+							break;
+					}
+				} break;
+				default:
+					utility_exit_with_message( "ERROR: too many chi angles desired for semirotameric NCAA library: " +
+											  boost::lexical_cast<std::string>(n_rotlib_chi) );
+					break;
+			}
+		} else {
 		switch ( n_rotlib_chi ) {
 		case 1: {
 			switch ( n_rotlib_bb ) {
@@ -2635,6 +2764,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 			utility_exit_with_message( "ERROR: too many chi angles desired for NCAA library: " +
 					boost::lexical_cast<std::string>(n_rotlib_chi) );
 			break;
+		}
 		}
 
 		// add new rotamer library to map

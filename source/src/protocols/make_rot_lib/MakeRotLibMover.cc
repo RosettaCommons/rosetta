@@ -55,12 +55,12 @@ static thread_local basic::Tracer TR( "protocols.make_rot_lib.MakeRotLibMover" )
 
 /// @brief Default constructor
 MakeRotLibMover::MakeRotLibMover() :
-	protocols::moves::Mover("MakeRotLibMover")
+protocols::moves::Mover("MakeRotLibMover")
 {
 	using namespace core::scoring;
-
+		
 	TR << "Creating score function..." << std::endl;
-
+	
 	scrfxn_ = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS );
 	scrfxn_->set_weight( fa_dun, 0.0 );
 	scrfxn_->set_weight( p_aa_pp, 0.0 );
@@ -74,7 +74,7 @@ MakeRotLibMover::MakeRotLibMover() :
 	scrfxn_->set_weight( mm_lj_inter_atr, 1.0 );
 	scrfxn_->set_weight( mm_lj_intra_rep, 1.0 );
 	scrfxn_->set_weight( mm_lj_intra_atr, 1.0 );
-
+		
 }
 
 void
@@ -94,12 +94,12 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 
 	// get the unique data from the job
 	core::Real omg( job->get_omg() );
+	bool semirotameric( job->get_semirotameric() );
 	utility::vector1< core::Real > bbs( job->get_bbs() );
 	utility::vector1< core::Size > bb_ids( job->get_bb_ids() );
-	//TR << "bbs size " << bbs.size() << " bb_ids size " << bb_ids.size() << std::endl;
-	// phi( job->get_bb(1) );
-	//core::Real psi( job->get_bb(2) );
 	core::Real eps( job->get_eps() );
+	
+	KbT_ = mrlod->get_temperature();
 
 	TR << "Working on Rotamer library for AA NAME: " << mrlod->get_name() << "OMG: " << omg;
 	for ( core::Size i = 1; i <= bbs.size(); ++i ) TR << " bb" << i << ": " << bbs[ i ];
@@ -110,33 +110,33 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 	//+-----------------------------------------+
 
 	TR << "Initializing centroids..." << std::endl;
-	init_centroids( mrlod->get_centroid_data(), mrlod->get_n_chi() );
+	init_centroids( mrlod->get_centroid_data(), mrlod->get_n_chi(), mrlod->get_semirotameric() );
 
 	TR << "Initializing rotamers..." << std::endl;
-	init_rotamers( mrlod->get_chi_data(), mrlod->get_n_centroids(), omg, bbs, bb_ids, eps );
+	init_rotamers( mrlod->get_chi_data(), mrlod->get_n_centroids(), omg, bbs, bb_ids, eps, mrlod->get_semirotameric() );
 	TR << "Minimizing rotamers..." << std::endl;
 	minimize_all_rotamers( pose, bbs, bb_ids, mrlod->get_polymer_type() );
 
 	//+-----------------------------------------+
-	//|					symetry operations						 |
+	//|					symmetry operations						 |
 	//+-----------------------------------------+
-	if ( option[ two_fold_symetry_135_315 ].user() ){
-		utility::vector1< core::Size > tfs_135_315_chi( option[ two_fold_symetry_135_315 ].value() );
+	if ( option[ two_fold_symmetry_135_315 ].user() ){
+		utility::vector1< core::Size > tfs_135_315_chi( option[ two_fold_symmetry_135_315 ].value() );
 		for ( core::Size i(1); i <= tfs_135_315_chi.size(); ++i) {
-			TR << "Applying two fold symetry to minimized rotamers accross the 135/315 axis for chi:" << tfs_135_315_chi[i] << std::endl;
-			make_two_fold_symetry_135_315( rotamers_, tfs_135_315_chi[i] );
+			TR << "Applying two fold symmetry to minimized rotamers accross the 135/315 axis for chi:" << tfs_135_315_chi[i] << std::endl;
+			make_two_fold_symmetry_135_315( rotamers_, tfs_135_315_chi[i] );
 		}
-	} else if ( option[ two_fold_symetry_0_180 ].user() ){
-		utility::vector1< core::Size > tfs_0_180_chi( option[ two_fold_symetry_0_180 ].value() );
+	} else if ( option[ two_fold_symmetry_0_180 ].user() ){
+		utility::vector1< core::Size > tfs_0_180_chi( option[ two_fold_symmetry_0_180 ].value() );
 		for ( core::Size i(1); i <= tfs_0_180_chi.size(); ++i) {
-			TR << "Applying two fold symetry to minimized rotamers accross the 0/180 axis for chi:" << tfs_0_180_chi[i] << std::endl;
-			make_two_fold_symetry_0_180( rotamers_, tfs_0_180_chi[i] );
+			TR << "Applying two fold symmetry to minimized rotamers accross the 0/180 axis for chi:" << tfs_0_180_chi[i] << std::endl;
+			make_two_fold_symmetry_0_180( rotamers_, tfs_0_180_chi[i] );
 		}
-	} else if ( option[ three_fold_symetry_90_210_330 ].user() ){
-		utility::vector1< core::Size > tfs_90_210_330_chi( option[ three_fold_symetry_90_210_330 ].value() );
+	} else if ( option[ three_fold_symmetry_90_210_330 ].user() ){
+		utility::vector1< core::Size > tfs_90_210_330_chi( option[ three_fold_symmetry_90_210_330 ].value() );
 		for ( core::Size i(1); i <= tfs_90_210_330_chi.size(); ++i) {
-			TR << "Applying three fold symetry to minimized rotamers accross the 90/210/330 axes for chi:" << tfs_90_210_330_chi[i] << std::endl;
-			make_three_fold_symetry_90_210_330( rotamers_, tfs_90_210_330_chi[i] );
+			TR << "Applying three fold symmetry to minimized rotamers accross the 90/210/330 axes for chi:" << tfs_90_210_330_chi[i] << std::endl;
+			make_three_fold_symmetry_90_210_330( rotamers_, tfs_90_210_330_chi[i] );
 		}
 	}
 
@@ -173,23 +173,23 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 	TR << "Calculating standard deviations..." << std::endl;
 	calc_standard_deviations( pose, bbs, bb_ids, mrlod->get_polymer_type() );
 
-	if ( option[ two_fold_symetry_135_315 ].user() ){
-		utility::vector1< core::Size > tfs_135_315_chi( option[ two_fold_symetry_135_315 ].value() );
+	if ( option[ two_fold_symmetry_135_315 ].user() ){
+		utility::vector1< core::Size > tfs_135_315_chi( option[ two_fold_symmetry_135_315 ].value() );
 		for ( core::Size i(1); i <= tfs_135_315_chi.size(); ++i) {
-			TR << "Applying two fold symetry to minimized rotamers accross the 135/315 axis for chi:" << tfs_135_315_chi[i] << std::endl;
-			make_two_fold_symetry_135_315( final_rotamers_, tfs_135_315_chi[i] );
+			TR << "Applying two fold symmetry to minimized rotamers accross the 135/315 axis for chi:" << tfs_135_315_chi[i] << std::endl;
+			make_two_fold_symmetry_135_315( final_rotamers_, tfs_135_315_chi[i] );
 		}
-	} else if ( option[ two_fold_symetry_0_180 ].user() ){
-		utility::vector1< core::Size > tfs_0_180_chi( option[ two_fold_symetry_0_180 ].value() );
+	} else if ( option[ two_fold_symmetry_0_180 ].user() ){
+		utility::vector1< core::Size > tfs_0_180_chi( option[ two_fold_symmetry_0_180 ].value() );
 		for ( core::Size i(1); i <= tfs_0_180_chi.size(); ++i) {
-			TR << "Applying two fold symetry to minimized rotamers accross the 0/180 axis for chi:" << tfs_0_180_chi[i] << std::endl;
-			make_two_fold_symetry_0_180( final_rotamers_, tfs_0_180_chi[i] );
+			TR << "Applying two fold symmetry to minimized rotamers accross the 0/180 axis for chi:" << tfs_0_180_chi[i] << std::endl;
+			make_two_fold_symmetry_0_180( final_rotamers_, tfs_0_180_chi[i] );
 		}
-	} else if ( option[ three_fold_symetry_90_210_330 ].user() ){
-		utility::vector1< core::Size > tfs_90_210_330_chi( option[ three_fold_symetry_90_210_330 ].value() );
+	} else if ( option[ three_fold_symmetry_90_210_330 ].user() ){
+		utility::vector1< core::Size > tfs_90_210_330_chi( option[ three_fold_symmetry_90_210_330 ].value() );
 		for ( core::Size i(1); i <= tfs_90_210_330_chi.size(); ++i) {
-			TR << "Applying three fold symetry to minimized rotamers accross the 90/210/330 axes for chi:" << tfs_90_210_330_chi[i] << std::endl;
-			make_three_fold_symetry_90_210_330( final_rotamers_, tfs_90_210_330_chi[i] );
+			TR << "Applying three fold symmetry to minimized rotamers accross the 90/210/330 axes for chi:" << tfs_90_210_330_chi[i] << std::endl;
+			make_three_fold_symmetry_90_210_330( final_rotamers_, tfs_90_210_330_chi[i] );
 		}
 	}
 
@@ -207,6 +207,10 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 	std::string log_filename( base_filename.str() + ".mrllog" ), rotlib_filename( base_filename.str() + ".rotlib" );
 	std::ofstream log_out( log_filename.c_str() );
 	std::ofstream rotlib_out( rotlib_filename.c_str() );
+	
+	std::stringstream def_fn;
+	def_fn << mrlod->get_name() << "_definitions.rotlib";
+	std::ofstream def_os( def_fn.str().c_str() );
 
 	TR << "Printing out log file to " << log_filename << "..." << std::endl;
 	log_out << "ROTAMERS" << std::endl;
@@ -222,26 +226,54 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 	print_avg_cluster_centroid_dist( log_out );
 
 	TR << "Printing out rotamer library file to " << rotlib_filename << "..." << std::endl;
-	print_dunbrack02_rotlib( omg, bbs, bb_ids, eps, mrlod->get_polymer_type(), rotlib_out );
-
+	if ( semirotameric )
+		print_dunbrack10_rotlib( omg, bbs, bb_ids, eps, mrlod->get_polymer_type(), rotlib_out );
+	else {
+		print_dunbrack02_rotlib( omg, bbs, bb_ids, eps, mrlod->get_polymer_type(), rotlib_out );
+		
+		if ( bbs_appropriate_for_definitions (	bbs ) )
+			print_definitions( def_os );
+	}
 	log_out.close();
 	rotlib_out.close();
 
 }
 
+/// @brief returns if you should print definitions from this file
+bool
+MakeRotLibMover::bbs_appropriate_for_definitions( utility::vector1< core::Real > bbs )
+{
+	// use neutral phi and psi for alpha
+	// use -120 60 -120 for beta
+	if ( ( bbs.size() == 3 && bbs[1] == -120 && bbs[2] == 60 && bbs[3] == 120 )
+		|| ( bbs.size() == 2 && bbs[1] == -60 && bbs[2] == 60 ) ) {
+		return true;
+		
+	} else if ( bbs.size() != 2 && bbs.size() != 3 ) {
+		for ( Size i = 1; i <= bbs.size(); ++i ) {
+			if ( bbs[ i ] != -120 ) return false;
+		}
+		return true;
+	}
+	return false;
+}
+
 /// @brief Initializes centroid arrays based on data from the MRLOptionsData
 void
-MakeRotLibMover::init_centroids( CentroidRotNumVecVec const & centroid_data, core::Size num_chi )
+MakeRotLibMover::init_centroids( CentroidRotNumVecVec const & centroid_data, core::Size num_chi, bool semirotameric )
 {
 	using namespace core;
-
+	
 	// resize the centroids array to take up just enough space
-	RotData rd_init( num_chi, centroid_data.size() );
+	RotData rd_init( num_chi, centroid_data.size(), semirotameric );
 	centroids_.resize( centroid_data.size(), rd_init );
+	
+	Size num_rotameric_chi = num_chi;
+	if ( semirotameric ) num_rotameric_chi--;
 
 	// load the centroid data fromt he MRL options data in to the centroids array
 	for ( Size i(1); i <= centroid_data.size(); ++i ) {
-		for ( Size j(1); j <= num_chi; ++j ) {
+		for ( Size j(1); j <= num_rotameric_chi; ++j ) {
 			centroids_[ i ].set_inp_chi( centroid_data[ i ][ j ].angle, j );
 			centroids_[ i ].set_min_chi( centroid_data[ i ][ j ].angle, j );
 			centroids_[ i ].set_lib_chi_val( centroid_data[ i ][ j ].rot_num, j );
@@ -253,31 +285,36 @@ MakeRotLibMover::init_centroids( CentroidRotNumVecVec const & centroid_data, cor
 /// @brief Initializes rotamer arrays based on data from the MRLOptionsData
 void
 MakeRotLibMover::init_rotamers( TorsionRangeVec const & chi_ranges, core::Size num_cluster,
-	core::Real omg, utility::vector1< core::Real > bbs, utility::vector1< core::Size > /*bb_ids*/, core::Real eps )
+	core::Real omg, utility::vector1< core::Real > bbs, utility::vector1< core::Size > /*bb_ids*/, core::Real eps, bool semirotameric )
 {
 	using namespace core;
+	// chi_ranges is always as big as nchi so if semirotameric we go one lesser
+	Size chi_max = semirotameric ? chi_ranges.size() - 1 : chi_ranges.size();
 
 	// determin the number of chi bins for each chi angle and the size of the rotamers array
 	utility::vector1< Size > total_chi_num_bins;
-	total_chi_num_bins.resize( chi_ranges.size(), 0 );
+	total_chi_num_bins.resize( chi_max, 0 );
 	Size num_rotamers( 1 );
+	
 
 	// TODO: check that the chi range % stepsize is zero
-	for ( Size i( 1 ); i <= chi_ranges.size(); ++i ) {
+	for ( Size i( 1 ); i <= chi_max; ++i ) {
 		total_chi_num_bins[ i ] = ( ( chi_ranges[ i ].high - chi_ranges[ i ].low ) / chi_ranges[ i ].step ) + 1;
 		num_rotamers *= total_chi_num_bins[ i ];
 	}
 
 	// resize the rotamers array to take up just eneough space
-	RotData rd_init( chi_ranges.size(), bbs.size(), num_cluster );
+	// NOTABLY we have to pass chi_ranges.size here
+	RotData rd_init( chi_ranges.size(), bbs.size(), num_cluster, semirotameric );
 	rotamers_.resize( num_rotamers, rd_init);
 
 	// set all of the chi angles
 	// the logic here is a little complicated but was done this way to work with any number of chi angles
-	for ( Size i( 1 ); i <= chi_ranges.size(); ++i ) {
+	for ( Size i( 1 ); i <= chi_max; ++i ) {
 
 		// calc all chi(i) values based on high, low, and step
 		utility::vector1< Real > chi_values;
+		//TR << "setting chi " << i << " from " << chi_ranges[i].low << " to " << chi_ranges[i].high << " by " << chi_ranges[i].step << std::endl;
 		for ( Real k( chi_ranges[ i ].low ); k <= chi_ranges[ i ].high; k += chi_ranges[ i ].step )
 			chi_values.push_back( k );
 
@@ -286,13 +323,13 @@ MakeRotLibMover::init_rotamers( TorsionRangeVec const & chi_ranges, core::Size n
 
 		// calc number of rotamer combos for larger chi numbers
 		Size count_up( 1 );
-		if ( i >= chi_ranges.size() )
+		if ( i >= chi_max )
 			count_up = 1;
 		else
-			for ( Size m( i+1 ); m <= chi_ranges.size(); ++m )
+			for ( Size m( i+1 ); m <= chi_max; ++m )
 				count_up *= total_chi_num_bins[ m ];
 
-		// calc number of rotmater combos for smaller chi numbers
+		// calc number of rotamer combos for smaller chi numbers
 		Size count_down(1);
 		if ( i <= 1 )
 			count_down = 1;
@@ -304,7 +341,7 @@ MakeRotLibMover::init_rotamers( TorsionRangeVec const & chi_ranges, core::Size n
 		for ( Size n = 1; n <= count_down; ++n ) {
 			for ( Size j = 1; j <= chi_values.size(); ++j ) {
 				for ( Size l = 1; l <= count_up; ++l ) {
-                    TR << "About to set input chi " << i << " for rotamer " << rot_iter << " to " << chi_values[ j ] << std::endl;
+                    //TR << "About to set input chi " << i << " for rotamer " << rot_iter << " to " << chi_values[ j ] << std::endl;
 					rotamers_[ rot_iter ].set_inp_chi( chi_values[ j ], i );
 					++rot_iter;
                 }
@@ -343,7 +380,10 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	file_name << "tripeptide_" << rd.get_omg() << "_";
 	for ( Size bb_i(1); bb_i <= bbs.size(); ++bb_i ) file_name << rd.get_bb(bb_i) << "_";
 	file_name << rd.get_eps() << "_";
-	for ( Size j( 1 ); j <= nchi; ++j ) file_name << rd.get_inp_chi( j ) << "_";
+	if ( rd.get_semirotameric() )
+		for ( Size j( 1 ); j <= nchi; ++j ) file_name << rd.get_inp_chi( j ) << "_";
+	else
+		for ( Size j( 1 ); j <= nchi-1; ++j ) file_name << rd.get_inp_chi( j ) << "_";
 	file_name << ".pdb";
     
 	// set phi, psi, omg, eps based on torsion ids
@@ -370,11 +410,17 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	//pose.set_torsion( psi_id, rd.get_psi() );
 
 	// set chi angles
-	for ( Size j( 1 ); j <= nchi; ++j ) {
-        pose.set_chi( j, 1, rd.get_inp_chi( j ) );
-        TR << pose.conformation().residue(1).chi(j) << std::endl;
-    }
-    
+	if ( rd.get_semirotameric() ) {
+		for ( Size j( 1 ); j <= ( nchi - 1 ); ++j ) {
+			pose.set_chi( j, 1, rd.get_inp_chi( j ) );
+			TR << pose.conformation().residue(1).chi(j) << std::endl;
+		}
+	} else {
+		for ( Size j( 1 ); j <= nchi; ++j ) {
+			pose.set_chi( j, 1, rd.get_inp_chi( j ) );
+			TR << pose.conformation().residue(1).chi(j) << std::endl;
+		}
+	}
 	// setup the movemap
 	kinematics::MoveMapOP mvmp( new kinematics::MoveMap );
 	mvmp->set_chi( 1, true );
@@ -417,10 +463,64 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	rd.set_intra_rep( em[ mm_lj_intra_rep ] );
 	rd.set_intra_atr( em[ mm_lj_intra_atr ] );
 	rd.set_solvation( em[ fa_sol ] );
-
+	
 	// record min chi, energy
-	for (Size j = 1; j <= nchi; ++j ) rd.set_min_chi( pose.chi( j, 1 ), j );
-    
+	for ( Size j = 1; j <= nchi; ++j ) {
+		rd.set_min_chi( pose.chi( j, 1 ), j );
+	}
+	
+	if ( rd.get_semirotameric() ) {
+		
+		// scan rd for energies
+		Real min_ener = 100000;
+		
+		MakeRotLibJobOP job( utility::pointer::static_pointer_cast< MakeRotLibJob >( jd2::JobDistributor::get_instance()->current_job() ) );
+		MakeRotLibOptionsDataOP mrlod( job->get_options_data() );
+		
+		Real step = mrlod->get_chi_data()[ nchi ].step;
+		Size i  = 1;
+		rd.resize_semi_vectors( ( mrlod->get_chi_data()[ nchi ].high - mrlod->get_chi_data()[ nchi ].low ) / step + 1 );
+		
+		for ( Real nchi_setting = mrlod->get_chi_data()[ nchi ].low,
+			  high = mrlod->get_chi_data()[ nchi ].high;
+			       nchi_setting <= high;
+			 nchi_setting += step, ++i ) {
+
+			pose.set_chi( nchi, 1, nchi_setting );
+			Real energy = ( ( * scrfxn_ ) ( pose ) );
+			
+			// dump pdb for debugging
+			//std::stringstream fn;
+			//fn << "tripeptide_" << rd.get_omg() << "_";
+			//for ( Size bb_i = 1; bb_i <= bbs.size(); ++bb_i ) fn << rd.get_bb( bb_i ) << "_";
+			//fn << rd.get_eps() << "_";
+			//if ( rd.get_semirotameric() )
+			//	for ( Size j = 1; j <= nchi; ++j ) fn << rd.get_inp_chi( j ) << "_";
+			//else
+			//	for ( Size j = 1; j <= nchi - 1; ++j ) fn << rd.get_inp_chi( j ) << "_";
+			//fn << nchi_setting << ".pdb";
+			//pose.dump_scored_pdb( fn.str(), (*scrfxn_) );
+			
+			if ( energy < min_ener ) min_ener = energy;
+			rd.set_semi_energy_dist( i, energy );
+			
+		}
+		
+		utility::vector1< Real > normalized_ener( 36, 0 );
+		Real tot_prob = 0;
+		for ( Size i = 1; i <= 36; ++i ) {
+			normalized_ener[ i ] = rd.get_semi_energy_dist( i ) - min_ener;
+			rd.set_semi_prob_dist( i, exp( ( -normalized_ener[ i ] ) / KbT_ ) );
+			tot_prob += rd.get_semi_prob_dist( i );
+		}
+		for ( Size i = 1; i <= 36; ++i ) {
+			rd.set_semi_prob_dist( i, rd.get_semi_prob_dist( i ) / tot_prob );
+		}
+	}
+	
+	// restore minimum chi2 from before the semirotameric scan
+	pose.set_chi( nchi, 1, rd.get_min_chi( nchi ) );
+	
 	rd.set_energy( min_ener );
 	rd.set_min_omg( numeric::nonnegative_principal_angle_degrees( pose.torsion( omg_id ) ) );
 	rd.set_min_eps( numeric::nonnegative_principal_angle_degrees( pose.torsion( eps_id ) ) );
@@ -579,9 +679,11 @@ MakeRotLibMover::calc_final_rotamers()
 	// resize the rotamers array to take up just enough space
 	Size num_clusters( centroids_.size() );
 	Size num_chi( rotamers_[ 1 ].get_num_chi() );
-
-    //TR << "num bbs for rd_init is " <<rotamers_[1].get_num_bbs()<<std::endl;
-	RotData rd_init( num_chi, rotamers_[1].get_num_bbs(), num_clusters );
+	
+	// get out job object
+	MakeRotLibJobOP job( utility::pointer::static_pointer_cast< MakeRotLibJob >( jd2::JobDistributor::get_instance()->current_job() ) );
+	
+	RotData rd_init( num_chi, rotamers_[1].get_num_bbs(), num_clusters, job->get_semirotameric() );
 	final_rotamers_.resize( num_clusters, rd_init );
 
 	//sets high energies for later minimization (probably better way to do this)
@@ -592,30 +694,8 @@ MakeRotLibMover::calc_final_rotamers()
 		Size cluster_num( rotamers_[ i ].get_cluster_num() );
 		if ( rotamers_[ i ].get_energy() <= final_rotamers_[ cluster_num ].get_energy() ) {
 			final_rotamers_[ cluster_num ] = rotamers_[ i ];
-            /*final_rotamers_[ cluster_num ].set_num_bbs( rotamers_[ i ].get_num_bbs() );
-            final_rotamers_[ cluster_num ].resize_bbs( rotamers_[ i ].get_num_bbs() );
-            final_rotamers_[ cluster_num ].resize_bb_ids( rotamers_[ i ].get_num_bbs() );
-            for ( Size j = 1; j <= final_rotamers_[ cluster_num ].get_num_bbs(); ++j) {
-                final_rotamers_[ cluster_num ].set_bb( j, rotamers_[i].get_bb(j));
-                final_rotamers_[ cluster_num ].set_bb_id( j, rotamers_[i].get_bb_id(j));
-            }*/
         }
 	}
-    
-    // check final rotamers
-    /*TR << "Rotamer check " << std::endl;
-	for ( Size i( 1 ); i <= final_rotamers_.size(); ++i ){
-        TR << "Final rotamer " << i << " has ";
-        if ( final_rotamers_[i].get_energy() == 6000 ) {
-            TR << "no chance! " << std::endl;
-            continue;
-        }
-        for ( Size bb_i = 1; bb_i <= final_rotamers_[i].get_num_bbs(); ++bb_i ) {
-            TR << "bb" << final_rotamers_[i].get_bb_id( bb_i )<< " of " << final_rotamers_[i].get_bb( bb_i ) << " and ";
-        }
-        TR << std::endl;
-    }*/
-    
 }
 
 void
@@ -630,7 +710,6 @@ MakeRotLibMover::calc_final_rotamer_probs()
 	vector1< Real > normalized_ener;
 	normalized_ener.resize( final_rotamers_.size(), 0 );
 
-	Real KbT( 0.5961 );
 	Real total_prob( 0 );
 
 	// get the minimum energy
@@ -645,12 +724,12 @@ MakeRotLibMover::calc_final_rotamer_probs()
 
 	// finds probabilities from energy
 	for (Size i( 1 ); i <= final_rotamers_.size(); ++i ) {
-		prob_temp[ i ] = exp( ( -normalized_ener[ i ] ) / KbT ) ;
+		prob_temp[ i ] = exp( ( -normalized_ener[ i ] ) / KbT_ ) ;
 		total_prob += prob_temp[ i ];
 		TR << "Cluster:	" << i << "	 Probability=" << prob_temp[ i ] << std::endl;
 	}
 	TR << "Total Probability= " << total_prob << std::endl;
-	TR << "Kb T value used: " << KbT << std::endl;
+	TR << "Kb T value used: " << KbT_ << std::endl;
 
 	// normalizes and sets probabilities of final_rotamers
 	for ( Size i( 1 ); i <= final_rotamers_.size(); ++i )
@@ -665,7 +744,8 @@ MakeRotLibMover::calc_standard_deviations( core::pose::Pose & pose, utility::vec
 
 	// iterate over final rotamers
 	for ( Size i( 1 ); i <= final_rotamers_.size(); ++i ) {
-		Size const nchi ( final_rotamers_[ i ].get_num_chi() );
+		Size const nchi ( final_rotamers_[ i ].get_semirotameric() ?
+						 final_rotamers_[ i ].get_num_chi() - 1 : final_rotamers_[ i ].get_num_chi() );
 
 		// minimize the rotamer based on the input chi since we don't keep poses
 		minimize_rotamer( final_rotamers_[ i ], pose, bbs, bb_ids, polymer_type );
@@ -676,7 +756,7 @@ MakeRotLibMover::calc_standard_deviations( core::pose::Pose & pose, utility::vec
 	 	//test to see if getting right Energy for this rotamer
 	 	Real test_ener ( ( *scrfxn_ )( pose ) );
 	 	Real found_ener ( final_rotamers_[ i ].get_energy() );
-	 	if ( test_ener != found_ener ) {
+		if ( std::abs( test_ener - found_ener ) >= 0.000001 ) {
 	 		TR << "--------WARNING---------"<< std::endl;
 	 		TR << "For Final_Rot: " << i << "	Scored E: "<<	test_ener	<< "	but Min Rot E: "<< found_ener <<std::endl;
 	 	}
@@ -685,11 +765,9 @@ MakeRotLibMover::calc_standard_deviations( core::pose::Pose & pose, utility::vec
 	 	Real chi_step ( 0.1 );
 
 	 	// search around minimized chi's
-	 	//std::cout <<"pre-for loop" <<std::endl;
 	 	for ( Size j( 1 ); j <= nchi; ++j ) {
 	 		Size k( 0 );
 	 		Real new_ener( 0 );
-	 		//std::cout <<"pre-while loop" <<std::endl;
 	 		while ( new_ener < cut_off_ener && ( k * chi_step ) <= 30 ) {
 	 			k = k + 1;
 	 			pose.set_chi( j, 1, numeric::nonnegative_principal_angle_degrees( final_rotamers_[ i ].get_min_chi( j ) + k * chi_step ) );
@@ -698,10 +776,7 @@ MakeRotLibMover::calc_standard_deviations( core::pose::Pose & pose, utility::vec
 	 			Real neg_ener( ( *scrfxn_ )( pose ) );
 	 			// set new_ener to highest energy in either direction
 	 			new_ener = ( plus_ener >= neg_ener ? plus_ener : neg_ener );
-
-	 			//std::cout << "While Loop run: " << k <<" for chi: "<< j
-	 			//<<" for final_rot: " << i <<	"	 Current E= " << new_ener << "	Cutoff E=" << cut_off_ener << std::endl;
-	 		}
+			}
 	 		final_rotamers_[ i ].set_std_dev( k*chi_step, j );
 
 	 		//reset pose
@@ -711,9 +786,9 @@ MakeRotLibMover::calc_standard_deviations( core::pose::Pose & pose, utility::vec
 }
 
 
-/// brief Use to symetrize if the 2 rotamers are falling near 0 (360) and 90 (270) like the symetric chi2 of phenylalanine
+/// brief Use to symmetrize if the 2 rotamers are falling near 0 (360) and 90 (270) like the symmetric chi2 of phenylalanine
 void
-MakeRotLibMover::make_two_fold_symetry_135_315( RotDataVec & rdv, core::Size chi_num )
+MakeRotLibMover::make_two_fold_symmetry_135_315( RotDataVec & rdv, core::Size chi_num )
 {
 	using namespace core;
 
@@ -723,9 +798,9 @@ MakeRotLibMover::make_two_fold_symetry_135_315( RotDataVec & rdv, core::Size chi
 	}
 }
 
-/// brief Use to symetrize if the 1 rotamer is falling near 90 (270) like the symetric chi1 of a n-aryl peptoid
+/// brief Use to symmetrize if the 1 rotamer is falling near 90 (270) like the symmetric chi1 of a n-aryl peptoid
 void
-MakeRotLibMover::make_two_fold_symetry_0_180( RotDataVec & rdv, core::Size chi_num )
+MakeRotLibMover::make_two_fold_symmetry_0_180( RotDataVec & rdv, core::Size chi_num )
 {
 	using namespace core;
 
@@ -735,9 +810,9 @@ MakeRotLibMover::make_two_fold_symetry_0_180( RotDataVec & rdv, core::Size chi_n
 	}
 }
 
-/// brief Use to symetrize if the 2 rotamers are falling near 0 and 60 like with a tert-butyl group
+/// brief Use to symmetrize if the 2 rotamers are falling near 0 and 60 like with a tert-butyl group
 void
-MakeRotLibMover::make_three_fold_symetry_90_210_330( RotDataVec & rdv, core::Size chi_num )
+MakeRotLibMover::make_three_fold_symmetry_90_210_330( RotDataVec & rdv, core::Size chi_num )
 {
 	using namespace core;
 
@@ -776,19 +851,23 @@ MakeRotLibMover::print_rot_data( RotData & rd, utility::vector1< core::Size > bb
 	<< "NCH: " << setw(4) << fixed << rd.get_num_chi() << " "
 	<< "CLN: " << setw(4) << fixed << rd.get_cluster_num() << " ";
 
+	Size max = rd.get_num_chi();
+	if ( rd.get_semirotameric() )
+		max--;
+	
 	// print inp_chi_ vector
 	os << "ICHI:";
-	for (Size i = 1; i <= rd.get_num_chi(); ++i )
+	for (Size i = 1; i <= max; ++i )
 		os << setw( 7 ) << setprecision( 2 ) << fixed << rd.get_inp_chi( i ) << " ";
 	
     // print min_chi_ vector
 	os << "MCHI:";
-	for (Size i = 1; i <= rd.get_num_chi(); ++i )
+	for (Size i = 1; i <= max; ++i )
 		os << setw( 7 ) << setprecision( 2 ) << fixed << rd.get_min_chi( i ) << " ";
 	
 	// print std_dev_ vector
 	os << "STDD:";
-	for (Size i = 1; i <= rd.get_num_chi(); ++i )
+	for (Size i = 1; i <= max; ++i )
 		os << setw( 7 ) << setprecision( 2 ) << fixed << rd.get_std_dev( i ) << " ";
 	
 	// print cen_dst_ vector
@@ -874,33 +953,17 @@ MakeRotLibMover::print_dunbrack02_rotlib( core::Real omg, utility::vector1< core
 	}
 
 	// get "chi bin" number assignments from centroids
-	vector1< Size > chi1_bin_nums; vector1< Size > chi2_bin_nums; vector1< Size > chi3_bin_nums; vector1< Size > chi4_bin_nums;
-	chi1_bin_nums.resize( nrot, 0 ); chi4_bin_nums.resize( nrot, 0 ); chi3_bin_nums.resize( nrot, 0 ); chi2_bin_nums.resize( nrot, 0 );
-
-	if ( nchi >= 1 ) {
-		for ( Size i = 1; i <= nrot; ++i ) {
-			chi1_bin_nums[ i ] = Size( centroids_[ i ].get_lib_chi_val(1) );
+	vector1< vector1< Size > > chi_bin_nums; //vector1< Size > chi2_bin_nums; vector1< Size > chi3_bin_nums; vector1< Size > chi4_bin_nums;
+	chi_bin_nums.resize( 4 ); // keeping to 4 chis for now!
+	for ( Size i = 1; i <= 4; ++i ) {
+		chi_bin_nums[ i ].resize( nrot, 0 );
+		if ( i <= nchi ) {
+			for ( Size j = 1; j <= nrot; ++j ) {
+				chi_bin_nums[ i ][ j ] = Size( centroids_[ j ].get_lib_chi_val(i) );
+			}
 		}
 	}
-	if ( nchi >= 2 ) {
-		for ( Size i = 1; i <= nrot; ++i ) {
-			chi2_bin_nums[ i ] = Size( centroids_[ i ].get_lib_chi_val(2) );
-		}
-	}
-
-	if ( nchi >= 3 ) {
-		for ( Size i = 1; i <= nrot; ++i ) {
-			chi3_bin_nums[ i ] = Size( centroids_[ i ].get_lib_chi_val(3) );
-		}
-	}
-
-	if ( nchi >= 4 ) {
-		for ( Size i = 1; i <= nrot; ++i ) {
-			chi4_bin_nums[ i ] = Size( centroids_[ i ].get_lib_chi_val(4) );
-		}
-	}
-
-
+	
 	// now print out lines
 	for ( Size i = 1; i <= nrot; ++i ) {
 		
@@ -915,9 +978,11 @@ MakeRotLibMover::print_dunbrack02_rotlib( core::Real omg, utility::vector1< core
 			os << setw(4) << setprecision(0) << fixed << numeric::principal_angle_degrees( bbs[ bb_i ] ) << " ";
 		
         // print count found (in this case, meaningless) and the bin numbers for these rotamers and the probability
-        os << setw(4) << count << "		"
-		<< chi1_bin_nums[ i ] << " " << chi2_bin_nums[ i ] << " " << chi3_bin_nums[ i ] << " " << chi4_bin_nums[ i ] << "	"
-		<< setw(8) << setprecision(6) << fixed << final_rotamers_[ i ].get_probability() << "	";
+        os << setw(4) << count << "		";
+		for ( Size j = 1; j <= 4; ++j ) {
+			os << chi_bin_nums[ j ][ i ] << " ";
+		}
+		os << "   " << setw(8) << setprecision(6) << fixed << final_rotamers_[ i ].get_probability() << "	";
 
         // mean chi
 		for ( Size j = 1; j <= 4; ++j ){
@@ -934,6 +999,153 @@ MakeRotLibMover::print_dunbrack02_rotlib( core::Real omg, utility::vector1< core
 			os << "	";
 		}
 
+		os << endl;
+	}
+}
+
+void
+MakeRotLibMover::print_definitions( std::ostream & os )
+{
+	using namespace std;
+	using namespace core;
+	using namespace utility;
+	
+	Size nchi( final_rotamers_[ 1 ].get_num_chi() );
+	Size nrot( final_rotamers_.size() );
+
+	vector1< vector1< Size > > chi_bin_nums; //vector1< Size > chi2_bin_nums; vector1< Size > chi3_bin_nums; vector1< Size > chi4_bin_nums;
+	chi_bin_nums.resize( 4 ); // keeping to 4 chis for now!
+	// keep the biggest chi bin num for n-1 chi
+	vector1< Size > biggest_chi_bin_num( nchi-1, 0 );
+	for ( Size i = 1; i <= 4; ++i ) {
+		chi_bin_nums[ i ].resize( nrot, 0 );
+		if ( i <= nchi ) {
+			for ( Size j = 1; j <= nrot; ++j ) {
+				chi_bin_nums[ i ][ j ] = Size( centroids_[ j ].get_lib_chi_val(i) );
+				
+				if ( j < nchi && chi_bin_nums[ i ][ j ] > biggest_chi_bin_num[ j ] )
+					biggest_chi_bin_num[ j ] = chi_bin_nums[ i ][ j ];
+				
+			}
+		}
+	}
+	
+	// Factor for scaling probability is this product
+	Real prob_scale = 1;
+	for ( Size i = 1; i <= biggest_chi_bin_num.size(); ++i ) {
+		prob_scale *= biggest_chi_bin_num[ i ];
+	}
+	
+	// output ind file
+	// probabilities only relative for final chi
+	// so scale by multiplying by the number of chi bin nums for the first two
+	for ( Size i = 1; i <= nrot; ++i ) {
+		for ( Size j = 1; j <= nchi; ++j ) os << setw(4) << chi_bin_nums[ j ][ i ] << " ";
+		Real prob = final_rotamers_[ i ].get_probability() * prob_scale;
+			
+		os << "   " << setw(8) << setprecision(6) << fixed << prob << "	";
+		os << "   " << setw(8) << setprecision(6) << fixed << ( -std::log( prob ) ) << "	";
+			
+		Real middle = numeric::principal_angle_degrees( final_rotamers_[ i ].get_min_chi( nchi ) );
+		Real left = middle - 2 * final_rotamers_[ i ].get_std_dev( nchi );
+		Real right = middle + 2 * final_rotamers_[ i ].get_std_dev( nchi );
+		
+		os << setw(8) << setprecision(3) << fixed << left;
+		os << setw(8) << setprecision(3) << fixed << middle;
+		os << setw(8) << setprecision(3) << fixed << right << std::endl;
+	}
+}
+
+void
+MakeRotLibMover::print_dunbrack10_rotlib( core::Real omg, utility::vector1< core::Real > bbs, utility::vector1<core::Size> /*bb_ids*/, core::Real /*eps*/, MakeRotLibPolymerType polymer_type, std::ostream & os )
+{
+	// MUST BE SEMIROTAMERIC!!!
+	
+	using namespace std;
+	using namespace core;
+	using namespace utility;
+	
+	// sanity check
+	assert( final_rotamers_.size() >= 1 && centroids_.size() >= 1 && final_rotamers_.size() == centroids_.size() );
+
+	// get nchi and num rots
+	// ASSUMES ONLY ONE CONTINUOUS ANGLE
+	Size n_rotameric_chi( final_rotamers_[ 1 ].get_num_chi() - 1 );
+	Size nrot( final_rotamers_.size() );
+		
+	// get aa name
+	std::string aa_name3( "UNK" );
+	
+	//counts (imaginary and I believe unused)
+	Size count( 9999 );
+		
+	// sort final_rotamers based on probability adjust centroids too
+	for ( Size i = 1; i <= nrot; ++i ) {
+		Size max( i );
+			
+		for ( Size j = i+1; j <= nrot; ++j )
+			if ( final_rotamers_[ j ].get_probability() > final_rotamers_[ max ].get_probability() )
+				max = j;
+		
+		RotData temp_rot( final_rotamers_[ i ] );
+		RotData temp_cen( centroids_[ i ] );
+		final_rotamers_[ i ] = final_rotamers_[ max ];
+		centroids_[ i ] = centroids_[ max ];
+		final_rotamers_[ max ] = temp_rot;
+		centroids_[ max ] = temp_cen;
+	}
+	
+	// get "chi bin" number assignments from centroids
+	vector1< vector1< Size > > chi_bin_nums; //vector1< Size > chi2_bin_nums; vector1< Size > chi3_bin_nums; vector1< Size > chi4_bin_nums;
+	chi_bin_nums.resize( 4 ); // keeping to 4 chis for now!
+	for ( Size i = 1; i <= 4; ++i ) {
+		chi_bin_nums[ i ].resize( nrot, 0 );
+		if ( i <= n_rotameric_chi ) {
+			for ( Size j = 1; j <= nrot; ++j ) {
+				chi_bin_nums[ i ][ j ] = Size( centroids_[ j ].get_lib_chi_val(i) );
+			}
+		}
+	}
+		
+	// now print out lines
+	for ( Size i = 1; i <= nrot; ++i ) {
+			
+		os << setw(3) << aa_name3 << "	";
+			
+		// if peptoid print out the omega column
+		if ( polymer_type == PEPTOID )
+			os << setw(4) << setprecision(0) << fixed << numeric::principal_angle_degrees( omg ) << "	";
+			
+		// print other BB angles in all cases
+		for (core::Size bb_i = 1; bb_i <= bbs.size(); ++bb_i )
+			os << setw(4) << setprecision(0) << fixed << numeric::principal_angle_degrees( bbs[ bb_i ] ) << " ";
+			
+		// print count found (in this case, meaningless) and the bin numbers for these rotamers and the probability
+		os << setw(4) << count << "	    ";
+		for ( Size j = 1; j <= n_rotameric_chi; ++j ) os << chi_bin_nums[ j ][ i ] << " ";
+		
+		os << "   " << setw(8) << setprecision(6) << fixed << final_rotamers_[ i ].get_probability() << "	";
+		
+		// mean chi
+		for ( Size j = 1; j <= n_rotameric_chi; ++j ) {
+			if ( j <= n_rotameric_chi )	os << setw(6) << setprecision(1) << fixed << numeric::principal_angle_degrees( final_rotamers_[ i ].get_min_chi(j) );
+			else os << setw(6) << setprecision(1) << fixed << "0.0";
+			os << "	";
+		}
+			
+		os << "	";
+		// stdev chi
+		for ( Size j = 1; j <= n_rotameric_chi; ++j ) {
+			if ( j <= n_rotameric_chi )	os << setw(6) << setprecision(1) << fixed << final_rotamers_[ i ].get_std_dev(j);
+			else os << setw(6) << setprecision(1) << fixed << "0.0";
+			os << "	";
+		}
+		
+		// final nonrotameric chi distribution
+		for ( Size j = 1; j <= 36; ++j ) {
+			os << setw(8) << setprecision(6) << final_rotamers_[ i ].get_semi_prob_dist( j ) << "  ";
+		}
+		
 		os << endl;
 	}
 }

@@ -22,13 +22,15 @@ namespace protocols {
 namespace make_rot_lib {
 
 MakeRotLibJob::MakeRotLibJob( jd2::InnerJobOP inner_job, core::Size nstruct_index,
-  core::Real omg, utility::vector1< core::Real > bbs, utility::vector1< core::Size > bb_ids, core::Real eps, MakeRotLibOptionsDataOP mrlod ) :
-  jd2::Job( inner_job, nstruct_index ),
-  omg_( omg ),
-  bbs_( bbs ),
-  bb_ids_( bb_ids ),
-  eps_( eps ),
-  mrlod_( mrlod )
+	core::Real omg, utility::vector1< core::Real > bbs, utility::vector1< core::Size > bb_ids, core::Real eps,
+	MakeRotLibOptionsDataOP mrlod, bool semirotameric ) :
+	jd2::Job( inner_job, nstruct_index ),
+	omg_( omg ),
+	bbs_( bbs ),
+	bb_ids_( bb_ids ),
+	eps_( eps ),
+	mrlod_( mrlod ),
+	semirotameric_( semirotameric )
 {}
 
 }//make_rot_lib
