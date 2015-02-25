@@ -6430,6 +6430,20 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'inv_kin_lig_loop_design_filename', 'String', desc='input filename to be used for inv_kin_lig_loop_design' ),
 	),
 
+	Option_Group( 'peptide_deriver',
+		Option( 'pep_lengths', 'IntegerVector', desc = 'Length(s) of derived peptides', default = [ '10' ] ),
+		Option( 'skip_zero_isc', 'Boolean', desc = 'Makes derivation go faster by skipping peptides with 0 interface score', default = 'true' ),
+		Option( 'dump_peptide_pose', 'Boolean', desc = 'Output pose with peptide cut out (best one for each chain pair)', default = 'false' ),
+		Option( 'dump_cyclic_poses', 'Boolean', desc = 'Output each cyclic peptide pose (those that are modeled; which is determined by -optimize_cyclic_threshold)', default = 'false' ),
+		Option( 'dump_prepared_pose', 'Boolean', desc = 'Output each receptor-partner pose as Peptiderive sees it, i.e. after preparation (minimization and disulfide detection)', default = 'false' ),
+		Option( 'dump_report_file', 'Boolean', desc = 'Send PeptideDeriver output to a file (<input_name>.peptiderive.txt)', default = 'true' ),
+		Option( 'restrict_receptors_to_chains', 'StringVector', desc = 'Only use chains listed here as receptors. When empty, consider all chains.', default = [] ),
+		Option( 'restrict_partners_to_chains', 'StringVector', desc = 'Only use chains listed here as partners. When empty, consider all chains. For each receptor-partner pair, a peptide is derived from the partner.', default = [] ),
+		Option( 'do_minimize', 'Boolean', desc = 'Perform minimization before everything.', default = 'true' ),
+		Option( 'optimize_cyclic_threshold', 'Real', desc = 'Choose value of peptide interface score percent of total isc from which to optimize cyclic peptide', default = '0.35' ),
+		Option( 'report_format', 'String', desc = 'The format of the report. Either \'basic\' (easily parsable format) or \'markdown\' (pretty, readable, but verbose format).', default = 'markdown' ),
+	), # peptide_deriver
+
 	## these are just temporary for hacking/debugging -- if they conflict with something else let me know and
 	## I can get rid of them
 	##                     -Phil

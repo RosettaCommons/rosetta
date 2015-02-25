@@ -990,6 +990,7 @@ build_pose_from_pdb_as_is(
 	build_pose_as_is1( fd, pose, residue_set, missing, pdr_options);
 }
 
+/// Fills the pose with the data from FileData
 void
 build_pose_as_is1(
 	io::pdb::FileData & fd,
@@ -1763,7 +1764,6 @@ is_residue_type_recognized(
 }
 
 
-
 void
 pose_from_pose(
 	pose::Pose & new_pose,
@@ -1802,6 +1802,10 @@ pose_from_pose(
 }
 
 
+/// Creates a subpose from a pose, to include only certain
+/// residues, using FileData::init_from_pose() to construct the
+/// pose, and build_pose_as_is1() to construct the pose
+/// with the given options.
 void
 pose_from_pose(
 	pose::Pose & new_pose,

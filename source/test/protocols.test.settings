@@ -20,7 +20,9 @@ sources = {
 		"FragmentCMTest",
                 "RigidChunkTest",
 	],
-
+	"analysis": [
+		"PeptideDeriverFilterTests",
+	],
 	"antibody": [
 		"AntibodyInfo",
 	],
@@ -421,6 +423,9 @@ testinputfiles = [
 	"abinitio/score3_pcs_only.wts_patch",
         "abinitio/abscript/one_frag3_per_pos",
         "abinitio/abscript/ubq_frag.pdb",
+	"analysis/2hle_AB_cut_min.pdb",
+	"analysis/test_peptiderive.xml",
+	"analysis/PeptideDeriverFilter.u",
 	"antibody/2j88.pdb",
 	"antibody/1bln_AB_chothia.pdb",
 	"antibody/1bln_AB_aho.pdb",
