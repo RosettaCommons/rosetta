@@ -1467,6 +1467,9 @@ public:
 	/// @brief is upper terminus?
 	bool is_upper_terminus() const;
 
+	/// @brief is a branch-point residue?
+	bool is_branch_point() const;
+
 	/// @brief is lower terminus of a branch?
 	bool is_branch_lower_terminus() const;
 
@@ -1484,7 +1487,8 @@ public:
 
 
 	/// @brief  Generic property access.
-	bool has_property( std::string const & property ) const
+	bool
+	has_property( std::string const & property ) const
 	{
 		return properties_->has_property( property );
 	}
@@ -1503,21 +1507,23 @@ public:
 	/// @brief Add a variant type to this ResidueType by string.
 	void add_variant_type( std::string const & variant_type );
 
-  /// @brief Remove a variant type to this ResidueType.
-  void remove_variant_type( VariantType const variant_type );
+	/// @brief Remove a variant type to this ResidueType.
+	void remove_variant_type( VariantType const variant_type );
 
-  /// @brief Remove a variant type to this string.
-  void remove_variant_type( std::string const & variant_type );
+	/// @brief Remove a variant type to this ResidueType by string.
+	void remove_variant_type( std::string const & variant_type );
 
 	/// @brief  Generic variant access.
-	bool has_variant_type( VariantType const variant_type ) const
+	bool
+	has_variant_type( VariantType const variant_type ) const
 	{
 		return properties_->is_variant_type( variant_type );
 	}
 
 	// TODO: Find a way to remove this; it only exists because of how ResidueSelectors are currently written. ~Labonte
 	/// @brief  Generic variant access by string.
-	bool has_variant_type( std::string const & variant_type ) const
+	bool
+	has_variant_type( std::string const & variant_type ) const
 	{
 		return properties_->is_variant_type( variant_type );
 	}
@@ -2094,7 +2100,7 @@ private:
 	/// * Fixed - A conceptual stage at this point. The ResidueType is completely finished.
 	///      Only Fixed ResidueTypes should be placed into ResidueTypeSets and be used to construct Residues.
 	///      Do not call any modification methods on Fixed ResidueTypes.
-	///      There may be programatic enforcement of this in the future.
+	///      There may be programmatic enforcement of this in the future.
 	///
 	/// Documentation requirements:
 	///

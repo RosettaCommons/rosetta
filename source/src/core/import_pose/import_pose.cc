@@ -669,11 +669,11 @@ void build_pose_as_is2(
 /// All ligand residues and polymer branches have been appended by a jump.  This method creates a new fold tree without
 /// jumps through ligands, using CHEMICAL edges instead.
 void
-set_reasonable_fold_tree(pose::Pose & pose)
+set_reasonable_fold_tree( pose::Pose & pose )
 {
-	// An empty pose doesn't have jumps through ligands
+	// An empty pose doesn't have jumps through ligands.
 	// (Will encounter a SegFault otherwise)
-	if( pose.total_residue() == 0 ) {
+	if ( pose.total_residue() == 0 ) {
 		return;
 	}
 
@@ -688,32 +688,31 @@ set_reasonable_fold_tree(pose::Pose & pose)
 	// some jumps to ligand residues with ligand-ligand chemical bonds.
 	// As a result, jumps must be renumbered.
 	Size last_jump_id = 0;
-	for( FoldTree::const_iterator i = origft.begin(), i_end = origft.end(); i != i_end; ++i ) {
+	for ( FoldTree::const_iterator i = origft.begin(), i_end = origft.end(); i != i_end; ++i ) {
 		Edge e = *i;
 		// Jump to a ligand residue or polymer branch?
-		if( e.is_jump() &&
-				(pose.residue_type(e.stop()).has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT) ||
-				!pose.residue_type(e.stop()).is_polymer() ) ) {
-			Size const ii = e.stop(); // the residue at the end of the jump
-			conformation::Residue const & ii_res = pose.residue(ii);
-			// Now we'll prepare a chemical edge by first finding the connecting atoms
-			// between the two residues
+		if ( e.is_jump() &&
+				( pose.residue_type( e.stop() ).is_branch_lower_terminus() ||
+				! pose.residue_type( e.stop() ).is_polymer() ) ) {
+			Size const ii = e.stop();  // the residue at the end of the jump
+			conformation::Residue const & ii_res = pose.residue( ii );
+			// Now we'll prepare a chemical edge by first finding the connecting atoms between the two residues.
 			bool found_connection_residue_in_fold_tree( false );
 			for ( Size jj = 1; jj <= pose.residue_type( ii ).n_residue_connections(); ++jj ) {
-				if(ii_res.connection_incomplete(jj)) continue;  // allow incomplete connections for design
-				Size jj_res_ID= ii_res.connect_map( jj ).resid();
-				if ( jj_res_ID < ii){
-					core::conformation::Residue const &  jj_res=pose.residue(jj_res_ID);
+				if ( ii_res.connection_incomplete( jj ) ) { continue; }  // Allow incomplete connections for design.
+				Size jj_res_ID = ii_res.connect_map( jj ).resid();
+				if ( jj_res_ID < ii ) {
+					core::conformation::Residue const & jj_res=pose.residue( jj_res_ID );
 					// Ensure that the connection is either a polymer branching or a ligand of the same chain.
-					if ((jj_res.has_variant_type(BRANCH_POINT_VARIANT) && ii_res.has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT)) ||
-							(jj_res.chain() == ii_res.chain())) {
-						int ii_connect_ID = ii_res.connect_atom(jj_res);
-						int jj_connect_ID = jj_res.connect_atom(ii_res);
+					if ( ( jj_res.is_branch_point() && ii_res.is_branch_lower_terminus() ) ||
+							( jj_res.chain() == ii_res.chain() ) ) {
+						core::uint ii_connect_ID = ii_res.connect_atom( jj_res );
+						core::uint jj_connect_ID = jj_res.connect_atom( ii_res );
 
-						std::string ii_connector = ii_res.atom_name(ii_connect_ID);
-						std::string jj_connector = jj_res.atom_name(jj_connect_ID);
+						std::string ii_connector = ii_res.atom_name( ii_connect_ID );
+						std::string jj_connector = jj_res.atom_name( jj_connect_ID );
 
-						newft.add_edge(jj_res_ID, ii, jj_connector, ii_connector);
+						newft.add_edge( jj_res_ID, ii, jj_connector, ii_connector );
 
 						found_connection_residue_in_fold_tree = true;
 						break;
@@ -721,16 +720,21 @@ set_reasonable_fold_tree(pose::Pose & pose)
 				}
 			}
 			// If we couldn't find a chemical bond to make, then we should probably just keep the jump as-is.
-			if( ! found_connection_residue_in_fold_tree ) {
-				if( pose.residue_type( ii ).n_residue_connections() > 0 ) {
-					TR.Warning << "Can't find a chemical connection for residue " << ii << " " << pose.residue_type(ii).name() << std::endl;
+			if ( ! found_connection_residue_in_fold_tree ) {
+				if ( pose.residue_type( ii ).n_residue_connections() > 0 ) {
+					TR.Warning << "Can't find a chemical connection for residue " << ii << " " <<
+							pose.residue_type( ii ).name() << std::endl;
 				}
-				if( e.is_jump() ) e.label() = ++last_jump_id;
-				newft.add_edge(e);
+				if ( e.is_jump() ) {
+					e.label() = ++last_jump_id;
+				}
+				newft.add_edge( e );
 			}
 		} else { // no, just a normal peptide edge, inter-chain jump, etc.
-			if( e.is_jump() ) e.label() = ++last_jump_id;
-			newft.add_edge(e);
+			if ( e.is_jump() ) {
+				e.label() = ++last_jump_id;
+			}
+			newft.add_edge( e );
 		}
 	}
 

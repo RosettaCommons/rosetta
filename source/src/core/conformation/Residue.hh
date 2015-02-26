@@ -1788,6 +1788,13 @@ public:
 		return rsd_type_.is_lower_terminus();
 	}
 
+	/// @brief Return true if the residue is a branch point variant.
+	bool
+	is_branch_point() const
+	{
+		return rsd_type_.is_branch_point();
+	}
+
 	/// @brief Return true if the residue is a branch lower terminus variant.
 	bool
 	is_branch_lower_terminus() const
