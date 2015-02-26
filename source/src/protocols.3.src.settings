@@ -661,6 +661,10 @@ sources = {
 		"AsymFoldandDockMoveRbJumpMover",
 		"AsymFoldandDockRbTrialMover",
 	],
+	"protocols/simple_moves/bin_transitions": [
+		"InitializeByBins",
+		"PerturbByBins",
+	],
 	#"protocols/simple_moves/carbohydrates": [
 		# to be added later ~Labonte
 	#],

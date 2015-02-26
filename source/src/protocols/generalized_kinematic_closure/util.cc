@@ -97,7 +97,7 @@ void set_loop_pose (
 	using namespace numeric::conversions;
 	using namespace core::id;
 
-	TR.Debug << "Setting loop conformation based on solution from generalized kinematic closure." << std::endl; TR.Debug.flush(); //DELETE ME
+	if(TR.Debug.visible()) { TR.Debug << "Setting loop conformation based on solution from generalized kinematic closure." << std::endl; TR.Debug.flush(); }
 
 	//pose.dump_pdb("before.pdb"); //DELETE ME -- for debugging only.
 
@@ -141,10 +141,32 @@ void set_loop_pose (
 
 	//pose.dump_pdb("after.pdb"); //DELETE ME -- for debugging only.
 
-	TR.flush();
+	if(TR.visible()) TR.flush();
 
 	return;
-}
+} //set_loop_pose
+
+/// @brief Set the loop pose conformation based on a set of results from kinematic closure.
+/// @detailed  This version ONLY sets mainchain torsions, and does no rebuilding of mainchain O or H atoms.
+/// @param[in,out] pose -- A pose consisting of the loop to be closed only.
+/// @param[in] atomlist -- A list of AtomIDs and corresponding xyz coordinates (though we don't use the latter) of the chain of atoms closed by KIC.  Note that the residue indices refer to the loop pose, not the original pose.
+/// @param[in] torsions -- The torsion angles values to set.
+void set_loop_pose (
+	core::pose::Pose &pose,
+	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //I want this to be const access
+	utility::vector1 < core::Real > const &t_ang
+) {
+	using namespace numeric::conversions;
+	using namespace core::id;
+	
+	for(core::Size ii=2, iimax=(t_ang.size()-2); ii<=iimax; ++ii){ //Set torsion angles
+		//TR << "Setting at1=" << atomlist[ii-1].first.atomno() << " rsd1=" << atomlist[ii-1].first.rsd() << " at2=" << atomlist[ii].first.atomno() << " rsd2=" << atomlist[ii].first.rsd() << " at3=" << atomlist[ii+1].first.atomno() << " rsd3=" << atomlist[ii+1].first.rsd() << " at4=" << atomlist[ii+2].first.atomno() << " rsd4=" << atomlist[ii+2].first.rsd() << " angle=" << t_ang[ii] << std::endl ; //DELETE ME
+		pose.conformation().set_torsion_angle(atomlist[ii-1].first, atomlist[ii].first, atomlist[ii+1].first, atomlist[ii+2].first, radians(t_ang[ii]));
+	}
+	pose.update_residue_neighbors();
+	
+	return;
+} //set_loop_pose
 
 /// @brief Copy the atom positions of the residues in the loop pose to the original pose.
 ///
@@ -174,7 +196,7 @@ void copy_loop_pose_to_original (
 
 	original_pose.update_residue_neighbors();
 
-	TR.Debug << "Copied coordinates of the loop pose to the original pose." << std::endl;  TR.Debug.flush(); //DELETE ME.
+	if(TR.Debug.visible()) { TR.Debug << "Copied coordinates of the loop pose to the original pose." << std::endl;  TR.Debug.flush(); }
 
 	return;
 }
@@ -192,15 +214,15 @@ void general_set_phi (
 	core::Size const N_connection_index = 1;
 
 	if(!pose.residue(residue_index).type().is_alpha_aa()) {
-		TR.Warning << "Residue " << residue_index << " was passed to general_set_phi, but this isn't an alpha-amino acid.  Skipping." << std::endl;  TR.Warning.flush();
+		if(TR.Warning.visible()) { TR.Warning << "Residue " << residue_index << " was passed to general_set_phi, but this isn't an alpha-amino acid.  Skipping." << std::endl;  TR.Warning.flush(); }
 		return;
 	}
 	if(pose.residue(residue_index).is_lower_terminus()) {
-		TR.Debug << "Residue " << residue_index << " was passed to general_set_phi, but this is a lower terminus.  Skipping." << std::endl;  TR.Debug.flush();
+		if(TR.Debug.visible()) { TR.Debug << "Residue " << residue_index << " was passed to general_set_phi, but this is a lower terminus.  Skipping." << std::endl;  TR.Debug.flush(); }
 		return;
 	}
 	if(pose.residue(residue_index).connection_incomplete(N_connection_index)) {
-		TR.Debug << "Residue " << residue_index << " was passed to general_set_phi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Debug.flush();
+		if(TR.Debug.visible()) { TR.Debug << "Residue " << residue_index << " was passed to general_set_phi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Debug.flush(); }
 		return; //If nothing is attached here, we can't set this phi.
 	}
 
@@ -234,18 +256,18 @@ void general_set_psi (
 	core::Size C_connection_index = 2;
 
 	if(!pose.residue(residue_index).type().is_alpha_aa()) {
-		TR.Warning << "Residue " << residue_index << " was passed to general_set_psi, but this isn't an alpha-amino acid.  Skipping." << std::endl;  TR.Warning.flush();
+		if(TR.Warning.visible()) { TR.Warning << "Residue " << residue_index << " was passed to general_set_psi, but this isn't an alpha-amino acid.  Skipping." << std::endl;  TR.Warning.flush(); }
 		return;
 	}
 	if(pose.residue(residue_index).is_lower_terminus()) {
 		--C_connection_index;
 	}
 	if(pose.residue(residue_index).is_upper_terminus()) {
-		TR.Debug << "Residue " << residue_index << " was passed to general_set_psi, but this is an upper terminus.  Skipping." << std::endl;  TR.Debug.flush();
+		if(TR.Debug.visible()) { TR.Debug << "Residue " << residue_index << " was passed to general_set_psi, but this is an upper terminus.  Skipping." << std::endl;  TR.Debug.flush(); }
 		return;
 	}
 	if(pose.residue(residue_index).connection_incomplete(C_connection_index)) {
-		TR.Debug << "Residue " << residue_index << " was passed to general_set_psi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Debug.flush();
+		if(TR.Debug.visible()) { TR.Debug << "Residue " << residue_index << " was passed to general_set_psi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Debug.flush(); }
 		return; //If nothing is attached here, we can't set this phi.
 	}
 

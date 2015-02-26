@@ -1,0 +1,31 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name=repack_only />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+
+		<SwitchResidueTypeSetMover name=fullatom set=fa_standard/>
+		<PerturbByBins name=perturbbins must_switch_bins=0 bin_params_file="ABBA" start=0 end=0 must_switch_bins=false repeats=500 / >
+		<PackRotamersMover name=pack task_operations=repack_only />
+		<FastRelax name=frlx repeats=1 task_operations=repack_only >
+			<MoveMap name=mm_frlx>
+				<Span begin=1 end=100 bb=0 chi=1 />
+			</MoveMap>
+		</FastRelax>
+	
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=fullatom />
+		<Add mover=perturbbins />
+		<Add mover=pack />
+		Add mover=frlx />
+	</PROTOCOLS>
+	<OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>

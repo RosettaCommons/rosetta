@@ -184,6 +184,10 @@ sources = {
 		"util",
 		"WaterAdductHBondPotential",
 	],
+        "core/scoring/bin_transitions": [ #Moved from core.2 because this needs to use Rama fxns.
+                "BinTransitionCalculator",
+                "BinTransitionData",
+        ],
 	"core/scoring/carbon_hbonds": [
 		"CarbonHBondEnergy",
 		"CarbonHBondPotential",

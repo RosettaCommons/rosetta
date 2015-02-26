@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/protocols/generalized_kinematic_closure/GeneralizedKIC.hh
+/// @file   protocols/generalized_kinematic_closure/GeneralizedKIC.hh
 /// @brief  Headers for GeneralizedKIC mover class.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
@@ -202,6 +202,31 @@ public:
 	/// @param[in] perturber_index -- The index in the list of perturbers already added.
 	/// @param[in] effect -- The perturber effect type, based on the perturber::perturber_effect enum (e.g. set_dihedral, randomize_backbone, etc.).
 	void set_perturber_effect ( core::Size const perturber_index, perturber::perturber_effect const &effect );
+
+	/// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
+	/// 
+	void load_bin_params( core::Size const perturber_index, std::string const &bin_params_file );
+	
+	/// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
+	/// @details This acts on the last perturber in the perturber list.
+	void load_bin_params( std::string const &bin_params_file );
+	
+	/// @brief Set the number of iterations for a perturber.
+	/// 
+	void set_perturber_iterations( core::Size const perturber_index, core::Size const val );
+	
+	/// @brief Set the number of iterations for a perturber.
+	/// @details This acts on the last perturber in the perturber list.
+	void set_perturber_iterations( core::Size const val );
+	
+	/// @brief Set whether the perturb_backbone_by_bins perturber requires residues to change their torsion
+	/// bins every move, or whether they can stay within the same bin.
+	void set_perturber_must_switch_bins( core::Size const perturber_index, bool const val );
+	
+	/// @brief Set whether the perturb_backbone_by_bins perturber requires residues to change their torsion
+	/// bins every move, or whether they can stay within the same bin.
+	/// @details This acts on the last perturber in the perturber list.
+	void set_perturber_must_switch_bins( bool const val );
 
 	///
 	/// @brief Add a value to the list of values that a perturber takes.

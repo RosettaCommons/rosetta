@@ -61,9 +61,20 @@ namespace generalized_kinematic_closure {
 	void set_loop_pose (
 		core::pose::Pose &pose,
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //I want this to be const access
-		utility::vector1 < core::Real > const &torsions,
-		utility::vector1 < core::Real > const &bondangles,
-		utility::vector1 < core::Real > const &bondlengths
+		utility::vector1 < core::Real > const &t_ang,
+		utility::vector1 < core::Real > const &b_ang,
+		utility::vector1 < core::Real > const &b_len
+	);
+	
+	/// @brief Set the loop pose conformation based on a set of results from kinematic closure.
+	/// @detailed  This version ONLY sets mainchain torsions, and does no rebuilding of mainchain O or H atoms.
+	/// @param[in,out] pose -- A pose consisting of the loop to be closed only.
+	/// @param[in] atomlist -- A list of AtomIDs and corresponding xyz coordinates (though we don't use the latter) of the chain of atoms closed by KIC.  Note that the residue indices refer to the loop pose, not the original pose.
+	/// @param[in] torsions -- The torsion angles values to set.
+	void set_loop_pose (
+		core::pose::Pose &pose,
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //I want this to be const access
+		utility::vector1 < core::Real > const &t_ang
 	);
 
 	/// @brief Copy the atom positions of the residues in the loop pose to the original pose.

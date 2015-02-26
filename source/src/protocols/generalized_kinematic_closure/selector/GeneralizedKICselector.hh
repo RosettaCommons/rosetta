@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.hh
+/// @file   protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.hh
 /// @brief  Headers for GeneralizedKICselector class (helper class for the GeneralizedKIC mover that defines how closure
 /// solutions that pass filters are chosen).
 /// @author Vikram K. Mulligan (vmullig@uw.edu)

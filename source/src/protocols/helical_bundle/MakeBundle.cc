@@ -50,7 +50,7 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-static basic::Tracer TR("protocols.helical_bundle.MakeBundle");
+static thread_local basic::Tracer TR("protocols.helical_bundle.MakeBundle");
 
 std::string
 MakeBundleCreator::keyname() const

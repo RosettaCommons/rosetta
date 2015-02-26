@@ -59,7 +59,7 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-	static basic::Tracer TR("protocols.helical_bundle.util");
+	static thread_local basic::Tracer TR("protocols.helical_bundle.util");
 
 	void write_minor_helix_params (
 		std::string const &filename,

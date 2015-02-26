@@ -285,7 +285,22 @@ GeneralizedKIC::parse_my_tag(
 		} else if ( (*tag_it)->getName() == "AddPerturber" ) { //If we're adding a perturber, need to loop through sub-tags.
 			runtime_assert_string_msg( (*tag_it)->hasOption("effect"), "RosettaScript parsing error: the <AddPerturber> group within a <GeneralizedKIC> block must include a \"effect=<perturber_effect_type>\" statement." );
 
-			add_perturber( (*tag_it)->getOption<std::string>("effect", "") );
+			std::string effect( (*tag_it)->getOption<std::string>("effect", "") );
+			add_perturber( effect );
+			
+			//If this is a perturber that uses torsion bin transition probabilities, we need to initialize the
+			//BinTransitionCalculator object and load a bin_params file:
+			if(effect=="randomize_backbone_by_bins" || effect=="perturb_backbone_by_bins") {
+				load_bin_params( (*tag_it)->getOption<std::string>("bin_params_file", "ABBA") );
+			}
+			if(effect=="perturb_backbone_by_bins") {
+				core::Size const iterationcount( (*tag_it)->getOption<core::Size>("iterations", 1) );
+				set_perturber_iterations( iterationcount );
+				if(TR.visible()) TR << "Set iterations for perturb_backbone_by_bins GeneralizedKICPerturber to " << iterationcount << "." << std::endl;
+				bool const mustswitch( (*tag_it)->getOption<bool>("must_switch_bins", false) );
+				set_perturber_must_switch_bins( mustswitch );
+				if(TR.visible()) TR << "The perturb_backbone_by_bins GeneralizedKICPerturber " << (mustswitch ? "must always " : "need not necessarily ") << "switch torsion bins." << std::endl;
+			}
 
 			//Loop through the sub-tags to find out what information we're adding to this perturber:
 			utility::vector1< utility::tag::TagCOP > const subbranch_tags( (*tag_it)->getTags() );
@@ -357,6 +372,8 @@ GeneralizedKIC::parse_my_tag(
 		}
 
   }
+
+	if(TR.visible()) TR.flush();
 
 	return;
 }
@@ -593,16 +610,71 @@ void GeneralizedKIC::add_perturber ( std::string const &effectname ) {
 /// @param[in] effect -- The perturber effect type, based on the perturber::perturber_effect enum (e.g. set_dihedral, randomize_backbone, etc.).
 void GeneralizedKIC::set_perturber_effect ( core::Size const perturber_index, perturber::perturber_effect const &effect )
 {
-	runtime_assert_string_msg( perturber_index <= perturberlist_.size(), "The perturber index provided to GeneralizedKIC::set_perturber_effect is out of range." );
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::set_perturber_effect() is out of range." );
 	perturberlist_[perturber_index]->set_perturber_effect(effect);
 	return;
 }
+
+/// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
+/// 
+void GeneralizedKIC::load_bin_params( core::Size const perturber_index, std::string const &bin_params_file )
+{
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::load_bin_params() is out of range." );
+	perturberlist_[perturber_index]->load_bin_params( bin_params_file );
+	return;
+} //load_bin_params
+
+/// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
+/// @details This acts on the last perturber in the perturber list.
+void GeneralizedKIC::load_bin_params( std::string const &bin_params_file )
+{
+	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::load_bin_params().");
+	load_bin_params( perturberlist_.size(), bin_params_file );
+	return;
+} //load_bin_params
+
+/// @brief Set the number of iterations for a perturber.
+/// 
+void GeneralizedKIC::set_perturber_iterations( core::Size const perturber_index, core::Size const val )
+{
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::set_perturber_iterations() is out of range." );
+	perturberlist_[perturber_index]->set_iterations( val );
+	return;
+} //set_perturber_iterations
+
+/// @brief Set the number of iterations for a perturber.
+/// @details This acts on the last perturber in the perturber list.
+void GeneralizedKIC::set_perturber_iterations( core::Size const val )
+{
+	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::set_perturber_iterations().");
+	set_perturber_iterations( perturberlist_.size(), val );
+	return;
+} //set_perturber_iterations
+
+/// @brief Set whether the perturb_backbone_by_bins perturber requires residues to change their torsion
+/// bins every move, or whether they can stay within the same bin.
+void GeneralizedKIC::set_perturber_must_switch_bins( core::Size const perturber_index, bool const val )
+{
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::set_perturber_must_switch_bins() is out of range." );
+	perturberlist_[perturber_index]->set_must_switch_bins( val );
+	return;
+} //set_perturber_must_switch_bins
+
+/// @brief Set whether the perturb_backbone_by_bins perturber requires residues to change their torsion
+/// bins every move, or whether they can stay within the same bin.
+/// @details This acts on the last perturber in the perturber list.
+void GeneralizedKIC::set_perturber_must_switch_bins( bool const val )
+{
+	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::set_perturber_must_switch_bins().");
+	set_perturber_must_switch_bins( perturberlist_.size(), val );
+	return;
+} //set_perturber_must_switch_bins
 
 ///
 /// @brief Add a value to the list of values that a perturber takes.
 void GeneralizedKIC::add_value_to_perturber_value_list ( core::Size const perturber_index, core::Real const &val )
 {
-	runtime_assert_string_msg( perturber_index <= perturberlist_.size(), "The perturber index provided to GeneralizedKIC::add_value_to_perturber_value_list is out of range." );
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::add_value_to_perturber_value_list() is out of range." );
 	perturberlist_[perturber_index]->add_inputvalue(val);
 	return;
 }
@@ -620,7 +692,7 @@ void GeneralizedKIC::add_value_to_perturber_value_list ( core::Real const &val )
 /// not the loop in isolation.
 void GeneralizedKIC::add_residue_to_perturber_residue_list ( core::Size const perturber_index, core::Size const residue_index )
 {
-	runtime_assert_string_msg( perturber_index <= perturberlist_.size(), "The perturber index provided to GeneralizedKIC::add_residue_to_perturber_residue_list is out of range." );
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::add_residue_to_perturber_residue_list() is out of range." );
 	perturberlist_[perturber_index]->add_residue(residue_index);
 	return;
 }
@@ -638,7 +710,7 @@ void GeneralizedKIC::add_residue_to_perturber_residue_list ( core::Size const re
 /// @brief Add a set of AtomIDs to the list of sets of AtomIDs that a perturber takes.
 void GeneralizedKIC::add_atomset_to_perturber_atomset_list ( core::Size const perturber_index, utility::vector1 < core::id::NamedAtomID > const &atomset )
 {
-	runtime_assert_string_msg( perturber_index <= perturberlist_.size(), "The perturber index provided to GeneralizedKIC::add_atomset_to_perturber_atomset_list is out of range." );
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::add_atomset_to_perturber_atomset_list() is out of range." );
 	perturberlist_[perturber_index]->add_atom_set(atomset);
 	return;
 }

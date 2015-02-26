@@ -52,7 +52,7 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-static basic::Tracer TR("protocols.helical_bundle.PerturbBundle");
+static thread_local basic::Tracer TR("protocols.helical_bundle.PerturbBundle");
 
 std::string
 PerturbBundleCreator::keyname() const

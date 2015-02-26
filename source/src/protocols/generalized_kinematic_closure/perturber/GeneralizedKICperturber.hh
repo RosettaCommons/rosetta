@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/protocols/generalized_kinematic_closure/perturber/GeneralizedKICperturber.hh
+/// @file   protocols/generalized_kinematic_closure/perturber/GeneralizedKICperturber.hh
 /// @brief  Headers for GeneralizedKICperturber class (helper class for the GeneralizedKIC mover).
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
@@ -38,6 +38,7 @@
 
 #include <core/grid/CartGrid.fwd.hh>
 #include <protocols/simple_moves/BBGaussianMover.fwd.hh>
+#include <core/scoring/bin_transitions/BinTransitionCalculator.fwd.hh>
 
 // How to add new perturber effects:
 // 1. Add a new entry in the perturber_effect enum list.
@@ -68,11 +69,13 @@ enum perturber_effect {
 
 	randomize_dihedral,
 	randomize_alpha_backbone_by_rama,
+	randomize_backbone_by_bins,
 	//randomize_chi,
 	//randomize_rotamer
 
 	perturb_dihedral,
 	perturb_dihedral_bbg,
+	perturb_backbone_by_bins,
 
 	sample_cis_peptide_bond,
 
@@ -89,7 +92,10 @@ class GeneralizedKICperturber : public utility::pointer::ReferenceCount
 {
 public:
 	GeneralizedKICperturber();
+	GeneralizedKICperturber( GeneralizedKICperturber const &src );
 	~GeneralizedKICperturber();
+
+	GeneralizedKICperturberOP clone() const;
 
 	std::string get_name() const;
 
@@ -132,7 +138,26 @@ public:
 	/// the loop to be closed.  Some effects act on a list of residues, while
 	/// others act on a list of atoms.
 	void add_atom_set ( utility::vector1< core::id::NamedAtomID > const &atomset ) { atoms_.push_back(atomset); return; }
+	
+	/// @brief Initializes the BinTransitionCalculator object and loads a bin_params file.
+	///
+	void load_bin_params( std::string const &bin_params_file );
 
+	/// @brief Set the number of iterations for this perturber
+	///
+	void set_iterations( core::Size const val ) { iterations_=val; return; }
+	
+	/// @brief Return the number of iterations for this perturber
+	///
+	core::Size iterations() const { return iterations_; }
+	
+	/// @brief Set whether the perturb_backbone_by_bins perturber requires residues to change their torsion
+	/// bins every move, or whether they can stay within the same bin.
+	void set_must_switch_bins( bool const val ) { must_switch_bins_=val; return; }
+	
+	/// @brief Return whether the perturb_backbone_by_bins perturber requires residues to change their torsion
+	/// bins every move, or whether they can stay within the same bin.
+	bool must_switch_bins( ) const { return must_switch_bins_; }
 
 	/// @brief Applies the perturbation to the vectors of desired torsions, desired angles, and desired bond lengths.
 	///
@@ -166,8 +191,14 @@ private:
 //          PRIVATE VARIABLES                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-	// @brief bbgmover
+	/// @brief bbgmover
+	///
 	simple_moves::BBGaussianMoverOP bbgmover_;
+	
+	/// @brief A BinTransitionCalculatorOP.  This will be null by default,
+	/// and will only point to a BinTransitionCalculator object in the case
+	/// of those perturbers that use torsion bin transition probabilities.
+	core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
 
 	/// @brief The effect of this perturber.  See the perturber_effect enum type
 	/// for more information.
@@ -191,6 +222,16 @@ private:
 	/// closed.  Some effects act on a list of residues, while others act on a
 	/// list of atoms.
 	utility::vector1 < utility::vector1 < core::id::NamedAtomID > > atoms_;
+	
+	/// @brief Number of iterations of perturbation for certain perturbers.
+	///
+	core::Size iterations_;
+	
+	/// @brief A parameter specifically for the perturb_backbone_by_bins perturber.  If true,
+	/// the perturber ALWAYS changes the torsion bin of the residue.  If false, it MAY change
+	/// the torsion bin of the residue, or it MAY keep it the same, based on the relative
+	/// bin probabilities.
+	bool must_switch_bins_;
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //
@@ -222,11 +263,13 @@ private:
 	/// @details  Can also be used to randomize dihedral values.
 	/// @param[in] dihedrallist - List of sets of atoms defining dihedrals, indexed based on the loop_pose.
 	/// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
+	/// @param[in] inputvalues_real -- Vector of input values (one value or one for each dihedral to be set).
 	/// @param[in,out] torsions - Desired torsions for each atom; set by this function.
 	/// @param[in] effect - Should the specified torsions be set (0), randomized (1), or perturbed (2)?
 	void apply_set_dihedral (
 		utility::vector1 < utility::vector1 < core::id::AtomID > > const &dihedrallist, //List of sets of atoms defining dihedrals, indexed based on the loop_pose.
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < core::Real > const &inputvalues_real,
 		utility::vector1< core::Real > &torsions, //desired torsions for each atom (input/output)
 		core::Size const effect //0=set, 1=randomize, 2=perturb
 	) const;
@@ -237,10 +280,12 @@ private:
 	///
 	/// @param[in] bondanglelist - List of sets of atoms defining bond angles, indexed based on the loop_pose.
 	/// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
+	/// @param[in] inputvalues_real -- Vector of input values (one value or one for each bond angle to be set).
 	/// @param[in,out] bondangles - Desired bond angles for each atom; set by this function.
 	void apply_set_bondangle (
 		utility::vector1 < utility::vector1 < core::id::AtomID > > const &bondanglelist, //List of sets of atoms defining bond angles, indexed based on the loop_pose.
-		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose).
+		utility::vector1 < core::Real > const &inputvalues_real,
 		utility::vector1< core::Real > &bondangles //desired bond angles for each atom (input/output)
 	) const;
 
@@ -250,10 +295,12 @@ private:
 	///
 	/// @param[in] bondlengthlist - List of sets of atoms defining bond lengths, indexed based on the loop_pose.
 	/// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
+	/// @param[in] inputvalues_real -- Vector of input values (one value or one for each bond angle to be set).
 	/// @param[in,out] bondlengths - Desired bond lengths for each atom; set by this function.
 	void apply_set_bondlength (
 		utility::vector1 < utility::vector1 < core::id::AtomID > > const &bondlengthlist, //List of sets of atoms defining bond lengths, indexed based on the loop_pose.
-		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose).
+		utility::vector1 < core::Real > const &inputvalues_real,
 		utility::vector1< core::Real > &bondlengths //desired bond lengths for each atom (input/output)
 	) const;
 
@@ -261,12 +308,31 @@ private:
 	/// @details This checks whether each residue is an alpha-amino acid.
 	/// @param[in] original_pose - The input pose.
 	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
-	/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that 
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.
 	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
 	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
 	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
 	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
 	void apply_randomize_alpha_backbone_by_rama(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 <core::Size> const &residues,
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
+	) const;
+
+	/// @brief Applies a randomize_backbone_by_bins perturbation to the list of torsions.
+	/// @details
+	/// @param[in] original_pose - The input pose.
+	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.
+	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
+	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+	void apply_randomize_backbone_by_bins(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 <core::Size> const &residues,
@@ -290,6 +356,25 @@ private:
 		utility::vector1 <core::Size> const &residues,
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
+	) const;
+
+	/// @brief Applies a perturb_backbone_by_bins perturbation to the list of torsions.
+	/// @details
+	/// @param[in] original_pose - The input pose.
+	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.
+	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
+	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+	void apply_perturb_backbone_by_bins(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 <core::Size> const &residues,
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
 		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
 	) const;
 

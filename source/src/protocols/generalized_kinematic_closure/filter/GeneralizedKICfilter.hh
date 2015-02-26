@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.hh
+/// @file   protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.hh
 /// @brief  Headers for GeneralizedKICfilter class (helper class for the GeneralizedKIC mover that defines filters to accept/reject closure solutions).
 ///	        Filters must be pass/fail (i.e. there are no shades of grey, here.)
 /// @author Vikram K. Mulligan (vmullig@uw.edu)

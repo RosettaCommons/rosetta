@@ -355,6 +355,9 @@ static MoverRegistrator< simple_moves::TaskAwareMinMoverCreator > reg_TaskAwareM
 static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
 static MoverRegistrator< simple_moves::TumbleCreator > reg_TumbleCreator;
 
+static MoverRegistrator< simple_moves::bin_transitions::InitializeByBinsCreator > reg_InitializeByBinsCreator;
+static MoverRegistrator< simple_moves::bin_transitions::PerturbByBinsCreator > reg_PerturbByBinsCreator;
+
 static MoverRegistrator< simple_moves::sidechain_moves::SidechainMCMoverCreator > reg_SidechainMCMoverCreator;
 static MoverRegistrator< simple_moves::sidechain_moves::SidechainMoverCreator > reg_SidechainMoverCreator;
 static MoverRegistrator< simple_moves::sidechain_moves::SetChiMoverCreator > reg_SetChiMoverCreator;

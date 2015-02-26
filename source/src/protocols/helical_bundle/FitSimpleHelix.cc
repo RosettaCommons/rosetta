@@ -43,7 +43,7 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-static basic::Tracer TR("protocols.helical_bundle.FitSimpleHelix");
+static thread_local basic::Tracer TR("protocols.helical_bundle.FitSimpleHelix");
 
 std::string
 FitSimpleHelixCreator::keyname() const

@@ -186,6 +186,9 @@ sources = {
 		"use_bicubic_interpolation",
 		"VirtualResidues",
 	],
+        "scoring/bin_transitions" : [
+                "BinTransitionCalculator",
+        ],
 	"scoring/carbon_hbonds" : [
 		"CarbonHBondEnergy",
 	],
