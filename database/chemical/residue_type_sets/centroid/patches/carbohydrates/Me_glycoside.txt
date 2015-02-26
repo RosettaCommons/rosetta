@@ -1,6 +1,6 @@
 ## full-atom carbohydrate lower (reducing end) terminus patch
 
-NAME Me_glycoside
+NAME OMe
 TYPES METHYL_GLYCOSIDE
 
 BEGIN_SELECTOR
@@ -23,6 +23,8 @@ ADD_ATOM  CO1  CH3  CT3 -0.14
 ADD_ATOM 1HC1 Hapo  HA   0.09
 ADD_ATOM 2HC1 Hapo  HA   0.09
 ADD_ATOM 3HC1 Hapo  HA   0.09
+
+#ADD_ATOM_ALIAS  CO1  C7 
 
 ADD_BOND  O1   CO1
 ADD_BOND  CO1 1HC1
