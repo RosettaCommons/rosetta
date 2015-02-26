@@ -126,7 +126,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 #ifdef USEMPI
 	runtime_assert( rank_ == 0 );
 
-	int slave_data( 0 );
+	core::Size slave_data( 0 );
 	MPI_Status status;
 
 	// set first job to assign
@@ -137,7 +137,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 		TR << "Master Node: Waiting for job requests..." << std::endl;
 		//MPI::COMM_WORLD.Recv( &slave_data, 1, MPI::INT, MPI::ANY_SOURCE, MPI::ANY_TAG, status );
 		//TR << "Master Node: Received message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
-		MPI_Recv( &slave_data, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		TR << "Master Node: Received message from " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
@@ -147,7 +147,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				//TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI::Status::Get_source() << " with tag " << NEW_JOB_ID_TAG << std::endl;
 				//MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
 				TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI_SOURCE << " with tag " << NEW_JOB_ID_TAG << std::endl;
-				MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
+				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 				master_get_new_job_id();
 				break;
 			case BAD_INPUT_TAG:
@@ -158,8 +158,8 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				break;
 			case JOB_SUCCESS_TAG:
 				TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
-				MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
-				MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
+				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+				MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
 				TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
 				break;
 			case REQUEST_MESSAGE_TAG:
@@ -214,7 +214,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 		TR << "Master Node: Waiting for " << n_nodes_left_to_spin_down << " slaves to finish jobs" << std::endl;
 		//MPI::COMM_WORLD.Recv( &slave_data, 1, MPI::INT, MPI::ANY_SOURCE, MPI::ANY_TAG, status );
 		//TR << "Master Node: Received message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
-		MPI_Recv( &slave_data, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		TR << "Master Node: Received message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
@@ -224,15 +224,15 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				//TR << "Master Node: Sending spin down signal to node " << status.MPI::Status::Get_source() << std::endl;
 				//MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
 				TR << "Master Node: Sending spin down signal to node " << status.MPI_SOURCE << std::endl;
-				MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
+				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 				n_nodes_left_to_spin_down--;
 				break;
 			case BAD_INPUT_TAG:
 				break;
 			case JOB_SUCCESS_TAG:
 				TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
-				MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
-				MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
+				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+				MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
 				TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
 				break;
 			case REQUEST_MESSAGE_TAG:
@@ -339,13 +339,13 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 		repeat_job_ = false;
 	}	else {
 		TR << "Slave Node " << rank_ << ": Requesting new job id from master" <<std::endl;
-		int empty_data( 0 );
+		core::Size empty_data( 0 );
 		MPI_Status status;
 		current_job_id_ = 0;
 		//MPI::COMM_WORLD.Send( &empty_data, 1, MPI::INT, 0, NEW_JOB_ID_TAG );
 		//MPI::COMM_WORLD.Recv( &current_job_id_, 1, MPI::INT, 0, NEW_JOB_ID_TAG );
-		MPI_Send( &empty_data, 1, MPI_INT, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
-		MPI_Recv( &current_job_id_, 1, MPI_INT, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD, &status );
+		MPI_Send( &empty_data, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
+		MPI_Recv( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD, &status );
 		TR << "Slave Node " << rank_ << ": Received job id " << current_job_id_ << " from master" <<std::endl;
 	}
 #endif
@@ -423,7 +423,7 @@ MPIWorkPoolJobDistributor::slave_remove_bad_inputs_from_job_list()
 	runtime_assert( !( rank_ == 0 ) );
 
 	//MPI::COMM_WORLD.Send( &current_job_id_, 1, MPI::INT, 0, BAD_INPUT_TAG );
-	MPI_Send( &current_job_id_, 1, MPI_INT, 0, BAD_INPUT_TAG, MPI_COMM_WORLD );
+	MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, BAD_INPUT_TAG, MPI_COMM_WORLD );
 #endif
 }
 
@@ -462,16 +462,16 @@ MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose
 	if ( option[ OptionKeys::jd2::mpi_fast_nonblocking_output	].value() == true ) {
 		job_outputter()->final_pose( current_job(), pose, tag );
 	} else {
-		int empty_data( 0 );
+		core::Size empty_data( 0 );
 		MPI_Status status;
 
 		// send job success message to master
 		TR << "Slave Node " << rank_ << ": Finished job successfully! Sending output request to master." << std::endl;
-		MPI_Send( &current_job_id_, 1, MPI_INT, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+		MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 
 		// receive message from master that says is okay to write
 		TR << "Slave Node " << rank_ << ": Received output confirmation from master. Writing output." << std::endl;
-		MPI_Recv( &empty_data, 1, MPI_INT, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status );
+		MPI_Recv( &empty_data, 1, MPI_UNSIGNED_LONG, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status );
 		// time and write output (pdb, silent file, score file etc.)
 		clock_t starttime = clock();
 		job_outputter()->final_pose( current_job(), pose, tag );
@@ -479,7 +479,7 @@ MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose
 
 		// send message to master that we are done outputing
 		TR << "Slave Node " << rank_ << ": Finished writing output in " << ((double) stoptime-starttime) / CLOCKS_PER_SEC << " seconds. Sending message to master" << std::endl;
-		MPI_Send( &empty_data, 1, MPI_INT, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+		MPI_Send( &empty_data, 1, MPI_UNSIGNED_LONG, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 	}
 #endif
 }
