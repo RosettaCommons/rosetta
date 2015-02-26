@@ -19,6 +19,9 @@
 # These are settings for the stampede cluster at stampede.tacc.utexas.edu.
 # These settings are for compiling with intel, the compiler loaded by default
 
+# mpacella 2/26/2015:
+# These setting have now been updated for compatibility with the new pointer
+# system in Rosetta.  Thanks to Cyrus Proctor for helping me develop these
 import os
 settings = {
     "site" : {
@@ -33,7 +36,8 @@ settings = {
             },
         },
         "overrides" : {
-            "cxx" : "mpicxx",
+            "cxx" : "mpicxx -DMPICH_IGNORE_CXX_SEEK -shared-intel",
+            "cc" : "mpicc",
         },
         "removes" : {
         },
