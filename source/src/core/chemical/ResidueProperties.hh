@@ -214,8 +214,6 @@ public:  // FIXME: Reset this to private; I made it public to work as a temp fix
 
 private:  // Private data /////////////////////////////////////////////////////
 	// Back pointer to the owning ResidueType
-	// (Luki made this a const * during the switch to smart pointers, because get_self_weak_ptr() is not available
-	// within ResidueType's constructors.)
 	ResidueType const * residue_type_;  // useful for tracer output
 
 	// Storage of general properties.

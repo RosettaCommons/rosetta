@@ -163,7 +163,6 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 	// while non-adduct variants are in general disallowed
 	new_rsd_type->set_adduct_flag( true );
 
-	new_rsd_type->finalize();
 	return new_rsd_type;
 }
 

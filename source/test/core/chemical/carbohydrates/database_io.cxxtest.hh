@@ -40,6 +40,21 @@ public:
 
 
 	// Tests //////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Confirm that carbohydrate properties are loaded correctly from the database.
+	void test_read_properties_from_database_file()
+	{
+		using namespace std;
+		using namespace utility;
+		using namespace core::chemical::carbohydrates;
+
+		TS_TRACE("Testing read_properties_from_database_file() method.");
+
+		vector1<string> properties =
+				read_properties_from_database_file("core/chemical/carbohydrates/sugar_properties.list");
+
+		TS_ASSERT_EQUALS(properties.size(), 19);
+	}
+
 	// Confirm that carbohydrate 3-letter codes and roots are loaded correctly from the database.
 	void test_read_codes_and_roots_from_database_file()
 	{

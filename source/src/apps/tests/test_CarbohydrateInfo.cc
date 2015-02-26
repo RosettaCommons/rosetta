@@ -102,8 +102,6 @@ main( int argc, char *argv[] )
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,
 				neuraminate, Lex, GalCer, Me_glycoside;
-		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
-
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
@@ -129,20 +127,19 @@ main( int argc, char *argv[] )
 		test_sugar( lactose );
 
 
-		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Creating maltotriose from sequence: alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp:" << endl;
+		/*cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating maltotriose from sequence:" << endl;
 
-		make_pose_from_saccharide_sequence(
-				maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set );
+		ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
+		make_pose_from_saccharide_sequence(maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set);
 
 		// TODO: Figure out what is wrong from sugar poses made from sequences.
-		// Note to self: It's a PDBInfo issue.
 		//test_sugar(maltotriose);
 		cout << endl << maltotriose << endl;
 
 		cout << "Sequences:" << endl;
 		cout << " Chain 1: ";
-		cout << maltotriose.chain_sequence( 1 ) << endl;
+		cout << maltotriose.chain_sequence(1) << endl;*/
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -169,18 +166,6 @@ main( int argc, char *argv[] )
 		test_sugar( glucosamine );
 
 		cout << *glucosamine.residue( 1 ).type().ring_conformer_set();
-
-
-		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Creating glucosamine from sequence: GlcpN:" << endl;
-
-		make_pose_from_saccharide_sequence( glucosamine, "GlcpN", *residue_set );
-
-		cout << endl << glucosamine << endl;
-
-		cout << "Sequences:" << endl;
-		cout << " Chain 1: ";
-		cout << glucosamine.chain_sequence( 1 ) << endl;
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -215,28 +200,6 @@ main( int argc, char *argv[] )
 		pose_from_pdb( Lex, PATH + "Lex.pdb" );
 
 		test_sugar( Lex );
-		
-		
-		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Creating Lewisx from sequence: beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpN:" << endl;
-
-		//make_pose_from_saccharide_sequence( Lex, "beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpN", *residue_set );
-		// TEMP
-		vector1< ResidueTypeCOP > residue_types(
-				residue_types_from_saccharide_sequence( "beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpN", *residue_set ) );
-
-		for ( core::uint i( 1 ); i <= residue_types.size();  ++i ) {
-			cout << residue_types[ i ]->name() << endl;
-		}
-		// END TEMP
-
-		cout << endl << Lex << endl;
-
-		cout << "Sequences:" << endl;
-		cout << " Chain 1: ";
-		cout << Lex.chain_sequence( 1 ) << endl;
-		cout << " Chain 2: ";
-		cout << Lex.chain_sequence( 2 ) << endl;
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

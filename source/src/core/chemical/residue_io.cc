@@ -1159,11 +1159,21 @@ write_topology_file(
 
 	// now all the properties
 	out << "PROPERTIES";
-	utility::vector1< std::string > const & properties( rsd.properties().get_list_of_properties() );
-	Size const n_properties( properties.size() );
-	for ( core::uint i = 1; i <= n_properties; ++i ) {
-		out << ' ' << properties[ i ];
-	}
+	if (rsd.is_protein() ) { out << " PROTEIN"; }
+	if (rsd.is_alpha_aa() ) {out << " ALPHA_AA"; }
+	if (rsd.is_beta_aa() ) {out << " BETA_AA"; }
+	if (rsd.is_l_aa() ) {out << " L_AA"; }
+	if (rsd.is_d_aa() ) {out << " D_AA"; }
+	if (rsd.is_metalbinding()) { out << " METALBINDING"; }
+	if (rsd.is_metal()) { out << " METAL"; }
+	if (rsd.is_DNA() ) { out << " DNA"; }
+	if (rsd.is_RNA() ) { out << " RNA"; }
+	if (rsd.is_polar() ) { out << " POLAR"; }
+	if (rsd.is_charged() ) { out << " CHARGED"; }
+	if (rsd.is_aromatic() ) { out << " AROMATIC"; }
+	if (rsd.is_lower_terminus() ) { out << " LOWER_TERMINUS"; }
+	if (rsd.is_upper_terminus() ) { out << " UPPER_TERMINUS"; }
+	if (rsd.is_terminus() ) { out << " TERMINUS"; }
 	out << " \n";
 
 	out << "NBR_ATOM " << rsd.atom_name( rsd.nbr_atom() ) << " \n";

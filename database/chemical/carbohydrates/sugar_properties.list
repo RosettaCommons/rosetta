@@ -1,0 +1,91 @@
+# A list of allowed properties in carbohydrate .params and patch files.
+
+# Any properties added to this list will be ignored when a ResidueType is
+# constructed but still saved in the properties_ data member.  These properies
+# will instead be processed by the read_and_set_properties() method of
+# CarbohydrateInfo.
+
+# If the 1st character of a property is a number, it is a sugar modification.
+# Otherwise, it is a regular property or a modification for which the position
+# is inherent, such as uronic acid.  The patch system is set up such that only
+# one modification can occur at each position.  The position of any modifica-
+# tion is used in the proper IUPAC naming of the residue.  Most modifications
+# listed here should come in sets of nine, one property for each possible
+# position 1 through 9.
+
+# Handling for regular properties must be explicitly defined within
+# read_and_set_properties().  Handling for modifications with positions is
+# general, with 1) the position being extracted and stored, 2) all-caps con-
+# verted to lower case, and 3) underscores replaced with spaces.  This string
+# is stored in the modifications_ vector, which has a size corresponding to the
+# number of carbon atoms in the saccharide residue.
+
+# Oxidation types
+ALDOSE
+KETOSE
+
+# Stereochemistries
+L_SUGAR
+D_SUGAR
+
+# Ring sizes
+OXIROSE
+OXETOSE
+FURANOSE
+PYRANOSE
+SEPTANOSE
+
+# Anomeric forms
+ALPHA_SUGAR
+BETA_SUGAR
+
+# Extra classifications
+SIALIC_ACID
+
+# Modifications
+GLYCOSIDE
+ALDONIC_ACID
+_2_KETOALDONIC_ACID
+_3_KETOALDONIC_ACID
+_4_KETOALDONIC_ACID
+_5_KETOALDONIC_ACID
+_6_KETOALDONIC_ACID
+_7_KETOALDONIC_ACID
+_8_KETOALDONIC_ACID
+URONIC_ACID
+_1_DEOXY_SUGAR
+_2_DEOXY_SUGAR
+_3_DEOXY_SUGAR
+_4_DEOXY_SUGAR
+_5_DEOXY_SUGAR
+_6_DEOXY_SUGAR
+_7_DEOXY_SUGAR
+_8_DEOXY_SUGAR
+_9_DEOXY_SUGAR
+_1_AMINO_SUGAR
+_2_AMINO_SUGAR
+_3_AMINO_SUGAR
+_4_AMINO_SUGAR
+_5_AMINO_SUGAR
+_6_AMINO_SUGAR
+_7_AMINO_SUGAR
+_8_AMINO_SUGAR
+_9_AMINO_SUGAR
+_1_ACETYLAMINO_SUGAR
+_2_ACETYLAMINO_SUGAR
+_3_ACETYLAMINO_SUGAR
+_4_ACETYLAMINO_SUGAR
+_5_ACETYLAMINO_SUGAR
+_6_ACETYLAMINO_SUGAR
+_7_ACETYLAMINO_SUGAR
+_8_ACETYLAMINO_SUGAR
+_9_ACETYLAMINO_SUGAR
+_1_PHOSPHATE
+_2_PHOSPHATE
+_3_PHOSPHATE
+_4_PHOSPHATE
+_5_PHOSPHATE
+_6_PHOSPHATE
+_7_PHOSPHATE
+_8_PHOSPHATE
+_9_PHOSPHATE

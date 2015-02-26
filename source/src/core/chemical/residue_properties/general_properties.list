@@ -33,6 +33,7 @@ LIGAND
 
 ## Residue Family
 PROTEIN  # TODO: Change this to AMINO_ACID, since that's what it really means. ~Labonte
+NA
 DNA
 RNA
 PEPTOID
@@ -44,6 +45,7 @@ WATER
 VIRTUAL_RESIDUE
 
 ## Variants
+TERMINUS  # last or first residue in a chain
 LOWER_TERMINUS  # first residue in a chain
 UPPER_TERMINUS  # last residue in a chain
 BRANCH_LOWER_TERMINUS
@@ -108,21 +110,49 @@ BETA_SUGAR
 SIALIC_ACID
 
 ## Modifications
-C1_MODIFIED  # for any saccharide residue modified at the 1 position
-C2_MODIFIED  # for any saccharide residue modified at the 2 position
-C3_MODIFIED  # for any saccharide residue modified at the 3 position
-C4_MODIFIED  # for any saccharide residue modified at the 4 position
-C5_MODIFIED  # for any saccharide residue modified at the 5 position
-C6_MODIFIED  # for any saccharide residue modified at the 6 position
-C7_MODIFIED  # for any saccharide residue modified at the 7 position
-C8_MODIFIED  # for any saccharide residue modified at the 8 position
-C9_MODIFIED  # for any saccharide residue modified at the 9 position
-
 GLYCOSIDE
 ALDONIC_ACID
+_2_KETOALDONIC_ACID
+_3_KETOALDONIC_ACID
+_4_KETOALDONIC_ACID
+_5_KETOALDONIC_ACID
+_6_KETOALDONIC_ACID
+_7_KETOALDONIC_ACID
+_8_KETOALDONIC_ACID
 URONIC_ACID
-DEOXY_SUGAR
-AMINO_SUGAR
-ACETYLAMINO_SUGAR  # specific for N-acetylations
-ACETYL_SUGAR  # specific for O-acetylations
-PHOSPHATE
+_1_DEOXY_SUGAR
+_2_DEOXY_SUGAR
+_3_DEOXY_SUGAR
+_4_DEOXY_SUGAR
+_5_DEOXY_SUGAR
+_6_DEOXY_SUGAR
+_7_DEOXY_SUGAR
+_8_DEOXY_SUGAR
+_9_DEOXY_SUGAR
+_1_AMINO_SUGAR
+_2_AMINO_SUGAR
+_3_AMINO_SUGAR
+_4_AMINO_SUGAR
+_5_AMINO_SUGAR
+_6_AMINO_SUGAR
+_7_AMINO_SUGAR
+_8_AMINO_SUGAR
+_9_AMINO_SUGAR
+_1_ACETYLAMINO_SUGAR
+_2_ACETYLAMINO_SUGAR
+_3_ACETYLAMINO_SUGAR
+_4_ACETYLAMINO_SUGAR
+_5_ACETYLAMINO_SUGAR
+_6_ACETYLAMINO_SUGAR
+_7_ACETYLAMINO_SUGAR
+_8_ACETYLAMINO_SUGAR
+_9_ACETYLAMINO_SUGAR
+_1_PHOSPHATE
+_2_PHOSPHATE
+_3_PHOSPHATE
+_4_PHOSPHATE
+_5_PHOSPHATE
+_6_PHOSPHATE
+_7_PHOSPHATE
+_8_PHOSPHATE
+_9_PHOSPHATE

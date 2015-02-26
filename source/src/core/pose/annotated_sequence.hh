@@ -52,10 +52,9 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 );
 
 
-/// @brief Return a list of carbohydrate ResidueTypes corresponding to an annotated, linear, IUPAC polysaccharide
-/// sequence.
-chemical::ResidueTypeCOPs residue_types_from_saccharide_sequence( std::string const & sequence,
-		chemical::ResidueTypeSet const & residue_set );
+/// @brief Return a list of carbohydrate ResidueTypes corresponding to an annotated polysaccharide sequence.
+chemical::ResidueTypeCOPs residue_types_from_saccharide_sequence(std::string const & sequence,
+		chemical::ResidueTypeSet const & residue_set);
 
 
 /// @brief Creates a Pose from the annotated protein sequence  <sequence>
@@ -96,25 +95,25 @@ void make_pose_from_sequence(
 );
 
 
-/// @brief Create a Pose from an annotated, linear, IUPAC polysaccharide sequence <sequence> with ResidueTypeSet
-/// <residue_set> and store it in <pose>.
-void make_pose_from_saccharide_sequence( pose::Pose & pose,
+/// @brief Create a Pose from an annotated polysaccharide sequence <sequence> with ResidueTypeSet <residue_set> and
+/// stores it in <pose>.
+void make_pose_from_saccharide_sequence(pose::Pose & pose,
 		std::string const & sequence,
 		chemical::ResidueTypeSet const & residue_set,
-		bool const auto_termini = true );
+		bool const auto_termini = true);
 
-/// @brief Create a Pose from an annotated, linear, IUPAC polysaccharide sequence <sequence> with residue type set name
-/// <type_set_name> and store it in <pose>.
-void make_pose_from_saccharide_sequence( pose::Pose & pose,
+/// @brief Create a Pose from an annotated polysaccharide sequence <sequence> with residue type set name
+/// <type_set_name> and stores it in <pose>.
+void make_pose_from_saccharide_sequence(pose::Pose & pose,
 		std::string const & sequence,
 		std::string const & type_set_name = "fa_standard",
-		bool const auto_termini = true );
+		bool const auto_termini = true);
 
-/// @brief Return a Pose from an annotated, linear, IUPAC polysaccharide sequence <sequence> with residue type set name
+/// @brief Return a Pose from an annotated polysaccharide sequence <sequence> with residue type set name
 /// <type_set_name>.
-pose::PoseOP pose_from_saccharide_sequence( std::string const & sequence,
+pose::PoseOP pose_from_saccharide_sequence(std::string const & sequence,
 		std::string const & type_set_name = "fa_standard",
-		bool const auto_termini = true );
+		bool const auto_termini = true);
 
 
 /// @brief Returns the oneletter_sequence that corresponds to the given

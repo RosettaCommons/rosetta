@@ -244,18 +244,18 @@ case_from_lines(
 
 
 /// @details First clone the base ResidueType.  Then patching for this case is done by applying all the operations.
-/// finalize() is called after the VariantTypes and name are set by Patch::apply().
-/// @note    If you call this method without calling finalize(), your ResidueType may not have the correct derived data!
+/// Finally,  call finalize() to update all primary and derived data for the new ResidueType.
 ResidueTypeOP
 PatchCase::apply( ResidueType const & rsd_in ) const
 {
 	ResidueTypeOP rsd( rsd_in.clone() );
 
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		bool const fail( ( *iter )->apply( *rsd ) );
-		if ( fail ) { return 0; }
+	for ( utility::vector1< PatchOperationOP >::const_iterator iter= operations_.begin(),
+			iter_end= operations_.end(); iter != iter_end; ++iter ) {
+		bool const fail( (*iter)->apply( *rsd ) );
+		if ( fail ) return 0;
 	}
+	rsd->finalize();
 	return rsd;
 }
 
@@ -352,13 +352,13 @@ Patch::read_file( std::string const & filename )
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, the corresponding patch
 /// operations are applied to create a new variant type of the basic ResidueType.  The new types's name and its
 /// variant type info are updated together with all other primary and derived ResidueType data.
-/// Finally, call finalize() to update all primary and derived data for the new ResidueType.
 ResidueTypeOP
 Patch::apply( ResidueType const & rsd_type ) const
 {
 	if ( !applies_to( rsd_type ) ) return 0;  // I don't know how to patch this residue.
 
 	using namespace basic;
+	//static basic::Tracer core_chemical("core.chemical");  // unused, I think ~Labonte
 
 	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
 			iter_end = cases_.end(); iter != iter_end; ++iter ) {
@@ -377,7 +377,6 @@ Patch::apply( ResidueType const & rsd_type ) const
 					std::string name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
 					patched_rsd_type->name( name_new );
 				}
-				patched_rsd_type->finalize();
 				tr.Debug << "successfully patched: " << rsd_type.name() <<
 						" to: " << patched_rsd_type->name() << std::endl;
 				return patched_rsd_type;

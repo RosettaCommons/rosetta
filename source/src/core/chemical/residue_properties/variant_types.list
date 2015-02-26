@@ -21,51 +21,36 @@
 
 ##############################################################################
 
-
-# POLYMERIC VARIANTS (VariantTypes having to do with polymers)
-## Termini
 UPPER_TERMINUS_VARIANT  # C-terminus cap
 LOWER_TERMINUS_VARIANT  # N-terminus cap
 UPPERTERM_TRUNC_VARIANT  # C-terminus truncation
 LOWERTERM_TRUNC_VARIANT  # N-terminus truncation
-NTERM_CONNECT  # for cyclic peptides
-CTERM_CONNECT  # for cyclic peptides
-
-BRANCH_LOWER_TERMINUS_VARIANT  # used for branched polymers and glycosylations
-
-## Cutpoints
 CUTPOINT_LOWER  # for use during loop modeling, at positions before a cutpoint
 CUTPOINT_UPPER  # for use during loop modeling, at positions after a cutpoint
 
-## Branch Points
-SC_BRANCH_POINT  # for branched polymers and glycosylations from amino acid side chains
-C1_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C2_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C3_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C4_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C5_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C6_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C7_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C8_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C9_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
+DISULFIDE
 
-SIDECHAIN_CONJUGATION  # for chemically conjugable residues and side-chain conjugation (like ubiquitination)
-
-
-# PROTONATION STATES
-PROTONATED
-DEPROTONATED
-ALTERNATIVE_PROTONATION
-
-
-# METAL-BINDING VARIANTS
 SG_CONNECT
 NE2_CONNECT
 ZN_CONNECT
 
+BRANCH_POINT_VARIANT  # used for branched polymers and glycosylations
+BRANCH_LOWER_TERMINUS_VARIANT  # used for branched polymers and glycosylations
 
-# POST-TRANSLATIONAL MODIFICATIONS
+ADDUCT_VARIANT
+
 METHYLATION
+
+CENTROID_HA
+
+PROTONATED
+DEPROTONATED
+ALTERNATIVE_PROTONATION
+
+SPECIAL_ROT  # generic VariantType that allows for differential scoring of a set of residues/rotamers
+
+HYDROXYLATION1  # used specifically for hydroxylated Pro
+HYDROXYLATION2  # used specifically for hydroxylated Pro
 
 METHYLATED_NTERM_VARIANT  # N-terminal methylation
 PHOSPHORYLATION  # used for PTM patches
@@ -81,8 +66,6 @@ ACETYLATED_NTERMINUS_VARIANT  # for creating amino acid dipeptides for NCAA rota
 METHYLATED_CTERMINUS_VARIANT  # for creating amino acid dipeptides for NCAA rotamer libraries
 PHOSPHONATE_UPPER_VARIANT  # for terminal amino phosphonic acids
 
-
-# NUCLEIC-ACID-SPECIFIC VARIANTS
 VIRTUAL_DNA_PHOSPHATE
 VIRTUAL_PHOSPHATE # in wide use for RNA -- 'default' 5' ending for fragment assembly & stepwise
 VIRTUAL_RIBOSE    # in use for RNA during stepwise assembly
@@ -107,85 +90,33 @@ THREE_PRIME_PACKABLE_PHOSPHATE  # experimental terminal variant -- deprecate in 
 FIVE_PRIME_PACKABLE_PHOSPHATE   # experimental terminal variant -- deprecate in 2015 if not in use by then.
 PROTONATED_H1_ADENOSINE # in use in RNA -- functionally important protonation state
 
+
 N_ACETYLATION      # for stepwise assembly (SWA) code; different geometry/atoms then ACETYLATED_NTERMINUS above
 C_METHYLAMIDATION  # for stepwise assembly (SWA) code; distinct from METHYLATED_CTERMINUS above
 
+REPLONLY  # Only the repulsive energy will be considered during structure calculations on this residue.
 
-# CARBOHYDRATE-SPECIFIC VARIANTS
-## Oxidations
-ALDONIC_ACID_VARIANT  # C1 by definition
-C2_KETOALDONIC_ACID
-C3_KETOALDONIC_ACID
-C4_KETOALDONIC_ACID
-C5_KETOALDONIC_ACID
-C6_KETOALDONIC_ACID
-C7_KETOALDONIC_ACID
-C8_KETOALDONIC_ACID
-URONIC_ACID_VARIANT  # Cn by definition
+NTERM_CONNECT  # for cyclic peptides
+CTERM_CONNECT  # for cyclic peptides
 
-## Reductions
-C1_DEOXY_SUGAR
-C2_DEOXY_SUGAR
-C3_DEOXY_SUGAR
-C4_DEOXY_SUGAR
-C5_DEOXY_SUGAR
-C6_DEOXY_SUGAR
-C7_DEOXY_SUGAR
-C8_DEOXY_SUGAR
-C9_DEOXY_SUGAR
-
-## Substitutions
-C1_AMINO_SUGAR
-C2_AMINO_SUGAR
-C3_AMINO_SUGAR
-C4_AMINO_SUGAR
-C5_AMINO_SUGAR
-C6_AMINO_SUGAR
-C7_AMINO_SUGAR
-C8_AMINO_SUGAR
-C9_AMINO_SUGAR
-C1_ACETYLAMINO_SUGAR
-C2_ACETYLAMINO_SUGAR
-C3_ACETYLAMINO_SUGAR
-C4_ACETYLAMINO_SUGAR
-C5_ACETYLAMINO_SUGAR
-C6_ACETYLAMINO_SUGAR
-C7_ACETYLAMINO_SUGAR
-C8_ACETYLAMINO_SUGAR
-C9_ACETYLAMINO_SUGAR
-C1_PHOSPHATE
-C2_PHOSPHATE
-C3_PHOSPHATE
-C4_PHOSPHATE
-C5_PHOSPHATE
-C6_PHOSPHATE
-C7_PHOSPHATE
-C8_PHOSPHATE
-C9_PHOSPHATE
-
-METHYL_GLYCOSIDE  # for methylated saccharide lower termini
-
-
-# PEPTIDOMIMETICS VARIANTS
 OOP_PRE  # used for oligooxopiperazines (OOPs)
 OOP_POST  # used for oligooxopiperazines (OOPs)
 HBS_PRE  # used for hydrogen bond surrogates
 HBS_POST  # used for hydrogen bond surrogates
 
+C1_MODIFIED_SUGAR  # for any saccharide residue modified at the 1 position
+C2_MODIFIED_SUGAR  # for any saccharide residue modified at the 2 position
+C3_MODIFIED_SUGAR  # for any saccharide residue modified at the 3 position
+C4_MODIFIED_SUGAR  # for any saccharide residue modified at the 4 position
+C5_MODIFIED_SUGAR  # for any saccharide residue modified at the 5 position
+C6_MODIFIED_SUGAR  # for any saccharide residue modified at the 6 position
+C7_MODIFIED_SUGAR  # for any saccharide residue modified at the 7 position
+C8_MODIFIED_SUGAR  # for any saccharide residue modified at the 8 position
+C9_MODIFIED_SUGAR  # for any saccharide residue modified at the 9 position
 
-# MISCELLANEOUS VARIANTS
-DISULFIDE
+METHYL_GLYCOSIDE  # for methylated saccharide lower termini
 
-ADDUCT_VARIANT
-
-CENTROID_HA
-
-SPECIAL_ROT  # generic VariantType that allows for differential scoring of a set of residues/rotamers
-
-HYDROXYLATION1  # used specifically for hydroxylated Pro
-HYDROXYLATION2  # used specifically for hydroxylated Pro
-
-REPLONLY  # Only the repulsive energy will be considered during structure calculations on this residue.
+SIDECHAIN_CONJUGATION  # used for chemically conjugable residues and side-chain conjugation (like ubiquitination)
 
 SC_FRAGMENT  # used by PlaceProbeMover.cc and hotspot hashing
 SHOVE_BB  # used by MapHotSpot.cc, HotspotStubSet.cc, ShoveResidueMover.cc, and TryRotamers.cc
