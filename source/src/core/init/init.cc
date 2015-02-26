@@ -245,6 +245,10 @@
 #endif
 #endif
 
+#if defined( MAC ) || defined( __APPLE__ ) || defined( __OSX__ )
+#include <sys/resource.h> // for getrlimit/setrlimit
+#define REQUIRED_STACK_SIZE 16 * 1024 * 1024 // 16 MB
+#endif
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <cstring>
@@ -1046,6 +1050,19 @@ init_profiling(){
 	basic::prof_reset(); //reads option run::profile -- starts clock TOTAL
 }
 
+void
+init_resources() {
+#ifdef REQUIRED_STACK_SIZE 
+	// set stack size of process at runtime
+	struct rlimit rl;
+	int error = getrlimit( RLIMIT_STACK, &rl );
+	if ( !error && rl.rlim_cur < REQUIRED_STACK_SIZE ) {
+		rl.rlim_cur = REQUIRED_STACK_SIZE;
+		setrlimit( RLIMIT_STACK, &rl );
+	}
+#endif
+}
+
 /// @brief Init basic core systems: options system, random system.
 void init(int argc, char * argv [])
 {
@@ -1096,6 +1113,9 @@ void init(int argc, char * argv [])
 
     //Profiling measures execution performance
     init_profiling();
+
+	//Set up system resources 
+	init_resources();
 
     // help out user...
     if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;

@@ -74,6 +74,11 @@
 
 #endif
 
+#if defined( MAC ) || defined( __APPLE__ ) || defined( __OSX__ )
+#define REQUIRED_STACK_SIZE 16 * 1024 * 1024 // 16 MB
+#endif
+
+
 using namespace core; /////////////////////////////////////////// DANGER
 
 namespace protocols {
@@ -538,9 +543,22 @@ silly_window_init() {
 int
 viewer_main( VoidFunc worker_main )
 {
+	// initialize attributes with default values
+	pthread_attr_t stack_size_attr;
+	pthread_attr_init( &stack_size_attr );
+
+#ifdef REQUIRED_STACK_SIZE	
+	// set stack size allocated to thread
+	size_t thread_stack_size;
+	int error = pthread_attr_getstacksize( &stack_size_attr, &thread_stack_size );
+	if ( !error && thread_stack_size < REQUIRED_STACK_SIZE ) {
+		pthread_attr_setstacksize( &stack_size_attr, REQUIRED_STACK_SIZE );
+	}
+#endif
+
 	// launch rosetta thread (worker)
 	pthread_t p;
-	pthread_create ( &p, NULL, worker_main, NULL );
+	pthread_create ( &p, &stack_size_attr, worker_main, NULL );
 
 	// start glut
 	int argc(1);

@@ -58,6 +58,9 @@ void locate_rosetta_database();
 /// @brief Profiling measures execution performance
 void init_profiling();
 
+/// @brief Set up system resources 
+void init_resources();
+
 /// @brief Init basic core systems: options system, random system.
 void init(int argc, char * argv []);
 
