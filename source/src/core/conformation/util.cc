@@ -1774,7 +1774,7 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 	chemical::ResidueTypeSet const & residue_type_set = res.type().residue_type_set();
 
 	// make sure we're working on a cys
-	//if ( (!res.type().forms_disulfide_bond()) && (!res.type().is_disulfide_bonded()) ) {
+	//if ( ( ! res.type().forms_disulfide_bond() ) && ( ! res.type().is_disulfide_bonded() ) ) {
 	if ( !(res.type().name3() == "CYS") && !(res.type().name3() == "CYD") &&
 		 !(res.type().name3() == "DCS") &&
 		 !(res.type().name3() == "C26") &&

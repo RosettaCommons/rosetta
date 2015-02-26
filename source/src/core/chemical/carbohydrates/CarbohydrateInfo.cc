@@ -65,29 +65,16 @@ using namespace core;
 /// @param    <residue_type>: the ResidueType object containing this CarbohydrateInfo
 CarbohydrateInfo::CarbohydrateInfo( core::chemical::ResidueTypeCAP residue_type ) : utility::pointer::ReferenceCount()
 {
-	init(residue_type);
+	init( residue_type );
 }
 
-// FIXME: Make copy constructor private as I did with ResidueProperties.
-// Copy constructor
-CarbohydrateInfo::CarbohydrateInfo( CarbohydrateInfo const & object_to_copy ) :
+// "Copy constructor"
+CarbohydrateInfo::CarbohydrateInfo( CarbohydrateInfo const & object_to_copy,
+		core::chemical::ResidueTypeCAP new_owner ) :
 		utility::pointer::ReferenceCount( object_to_copy )
 {
+	residue_type_ = new_owner;
 	copy_data( *this, object_to_copy );
-}
-
-// FIXME: Make assignment operator private as I did with ResidueProperties.
-// Assignment operator
-CarbohydrateInfo &
-CarbohydrateInfo::operator=( CarbohydrateInfo const & object_to_copy )
-{
-	// Abort self-assignment.
-	if ( this == &object_to_copy ) {
-		return *this;
-	}
-
-	copy_data( *this, object_to_copy );
-	return *this;
 }
 
 // Destructor
@@ -192,24 +179,6 @@ CarbohydrateInfo::show( std::ostream & output ) const
 }
 
 
-// Static constant data access
-utility::vector1< std::string > const &
-CarbohydrateInfo::sugar_properties()
-{
-	using namespace std;
-	using namespace utility;
-
-	static vector1< string > *SUGAR_PROPERTIES = NULL;
-
-	// If statement ensures that the data is only created once, i.e., is constant.
-	if ( ! SUGAR_PROPERTIES ) {
-		SUGAR_PROPERTIES = new vector1< string >( read_properties_from_database_file(
-				basic::database::full_name( "chemical/carbohydrates/sugar_properties.list" ) ) );
-	}
-
-	return *SUGAR_PROPERTIES;
-}
-
 std::map< std::string, std::string > const &
 CarbohydrateInfo::code_to_root_map() {
 	using namespace std;
@@ -282,6 +251,38 @@ debug_assert( ( i > 0 ) && ( i <= n_branches() ) );
 }
 
 
+// Side-chain modifications
+// Return true if any hydroxyl group has been modified to an acetylated amino group.
+bool
+CarbohydrateInfo::is_N_acetylated() const {
+	return residue_type_.lock()->properties().has_property( ACETYLAMINO_SUGAR );
+}
+
+// Return true if any hydroxyl group has been modified by acetylation.
+bool
+CarbohydrateInfo::is_O_acetylated() const {
+	return residue_type_.lock()->properties().has_property( ACETYL_SUGAR );
+}
+
+// Return true if the sugar has been acetylated at any position.
+bool
+CarbohydrateInfo::is_acetylated() const {
+	return is_N_acetylated() || is_O_acetylated();
+}
+
+// Return true if any hydroxyl group has been modified to an amino group or an acetylated amino group.
+bool
+CarbohydrateInfo::is_amino_sugar() const {
+	return residue_type_.lock()->properties().has_property( AMINO_SUGAR ) || is_N_acetylated();
+}
+
+// Return true if the primary hydroxyl group is oxidized to the acid.
+bool
+CarbohydrateInfo::is_uronic_acid() const {
+	return residue_type_.lock()->properties().has_property( URONIC_ACID );
+}
+
+
 // Private methods /////////////////////////////////////////////////////////////
 // Empty constructor
 CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()
@@ -295,18 +296,13 @@ CarbohydrateInfo::init( core::chemical::ResidueTypeCAP residue_type_in )
 {
 	// Set default values.
 	residue_type_ = residue_type_in;
-	anomeric_carbon_ = 1;  // assumes that most sugars will be aldoses if not specified by .params file
-	anomeric_carbon_name_ = "C1";
 	cyclic_oxygen_ = 0;  // assumes linear
 	cyclic_oxygen_name_ = "";
 	cyclic_oxygen_index_ = 0;
 	virtual_cyclic_oxygen_index_ = 0;
 	n_carbons_ = get_n_carbons();
-	stereochem_ = 'D';  // assumes that most sugars will have D stereochemistry
-	ring_size_ = 0;  // assumes linear
-	anomer_ = "";  // assumes linear
 
-	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
+	ResidueTypeCOP residue_type( residue_type_ );
 	if ( residue_type->is_lower_terminus() ) {
 		is_glycoside_ = false;  // can be overridden later
 	} else {
@@ -326,8 +322,6 @@ CarbohydrateInfo::copy_data(
 		CarbohydrateInfo & object_to_copy_to,
 		CarbohydrateInfo const & object_to_copy_from)
 {
-	// FIXME: Make copy constructor private as I did with ResidueProperties.
-	object_to_copy_to.residue_type_ = object_to_copy_from.residue_type_;
 	object_to_copy_to.full_name_ = object_to_copy_from.full_name_;
 	object_to_copy_to.short_name_ = object_to_copy_from.short_name_;
 	object_to_copy_to.anomeric_carbon_ = object_to_copy_from.anomeric_carbon_;
@@ -371,129 +365,103 @@ CarbohydrateInfo::get_n_carbons() const
 
 // Read through all the properties.  Check for impossible cases.  If any property type is not set, the default
 // value will be maintained.
-// TODO: Update my code to use enums instead of strings here after properties are refactored. ~Labonte
 void
 CarbohydrateInfo::read_and_set_properties()
 {
 	using namespace std;
 	using namespace utility;
 
-	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
-
-	vector1< string > const & properties( residue_type->properties().get_list_of_properties() );
-	string property;
-	uint position;  // location of modification; 0 for a property that does not have an associated position
+	ResidueTypeCOP residue_type( residue_type_ );
+	ResidueProperties const & properties( residue_type->properties() );
 	modifications_.resize( n_carbons_ );
 
-	bool aldose_or_ketose_is_set( false );
-	bool stereochem_is_set( false );
-	bool ring_size_is_set( false );
-	bool anomer_is_set( false );
+	// Start with general sugar properties:
+	// Oxidation type
+	if ( properties.has_property( ALDOSE ) && ! properties.has_property( KETOSE ) ) {
+		anomeric_carbon_ = 1;
+		anomeric_carbon_name_ = "C1";
+	} else if ( properties.has_property( KETOSE ) && ! properties.has_property( ALDOSE ) ) {
+		anomeric_carbon_ = 2;  // TODO: Provide method for dealing with non-ulose ketoses.
+		anomeric_carbon_name_ = "C2";
+	} else {
+		utility_exit_with_message( "A sugar must be EITHER an aldose OR a ketose; check the .params file." );
+	}
 
-	for ( uint i = 1, n_properties = properties.size(); i <= n_properties; ++i ) {
+	// Stereochemistry
+	if ( properties.has_property( L_SUGAR ) && ! properties.has_property( D_SUGAR ) ) {
+		stereochem_ = 'L';
+	} else if ( properties.has_property( D_SUGAR ) && ! properties.has_property( L_SUGAR ) ) {
+		stereochem_ = 'D';
+	} else {
+		utility_exit_with_message( "A sugar must have EITHER L OR D stereochemistry; check the .params file." );
+	}
+
+	// Ring Size
+	Size const n_ring_size_properties( properties.has_property( OXIROSE ) + properties.has_property( OXETOSE ) +
+			properties.has_property( FURANOSE ) + properties.has_property( PYRANOSE ) +
+			properties.has_property( SEPTANOSE ) );
+	if ( n_ring_size_properties == 0 ) {
+		ring_size_ = 0;  // assumes linear
+	} else if ( n_ring_size_properties == 1 ) {
+		if ( properties.has_property( OXIROSE ) ) {
+			ring_size_ = 3;
+		} else if ( properties.has_property( OXETOSE ) ) {
+			ring_size_ = 4;
+		} else if ( properties.has_property( FURANOSE ) ) {
+			ring_size_ = 5;
+		} else if ( properties.has_property( PYRANOSE ) ) {
+			ring_size_ = 6;
+		} else /* SEPTANOSE */ {
+			ring_size_ = 7;
+		}
+	} else {
+		utility_exit_with_message( "A sugar cannot have multiple ring sizes; check the .params file." );
+	}
+
+	// Anomer
+	if ( properties.has_property( ALPHA_SUGAR ) && ! properties.has_property( BETA_SUGAR ) ) {
+		anomer_ = "alpha";
+	} else if ( properties.has_property( BETA_SUGAR ) && ! properties.has_property( ALPHA_SUGAR ) ) {
+		anomer_ = "beta";
+	} else if ( ! properties.has_property( ALPHA_SUGAR ) && ! properties.has_property( BETA_SUGAR ) ) {
+		anomer_ = "";  // assumes linear
+	} else {
+		utility_exit_with_message( "A sugar cannot be both alpha and beta; check the .params file." );
+	}
+
+	// Next, look for modifications:
+	// Modifications for Which the Position Is Inherent
+	if ( properties.has_property( GLYCOSIDE ) ) {
+		is_glycoside_ = true;
+	}
+	if ( properties.has_property( URONIC_ACID ) ) {
+		modifications_[ 1 ] = "uronic acid";
+	}
+
+	// Modifications with Positions
+	// TODO: This is crap; I am going to refactor this with a VariantType to position, string map. ~Labonte
+	vector1< string > const & variants( residue_type->properties().get_list_of_variants() );
+	Size const n_variants( variants.size() );
+	string variant;
+	uint position;  // location of modification; 0 for a property that does not have an associated position
+
+	for ( uint i( 1 ); i <= n_variants; ++i ) {
 		// If the 2nd character (index 1) of ith property is a number, it is a modification.
 		// Otherwise, it is a regular property or a modification for which the position is inherent, such as uronic
 		// acid.
-		property = properties[ i ];
-		position = atoi( &property[ 1 ]);
-		if ( ! position ) {
-			if ( property == "ALDOSE" ) {
-				if ( anomeric_carbon_ != 1 ) {
-					utility_exit_with_message(
-							"A sugar cannot be both an aldose and a ketose; check the .params file." );
-				} else {
-					anomeric_carbon_ = 1;
-					anomeric_carbon_name_ = "C1";
-					aldose_or_ketose_is_set = true;
-				}
-			} else if ( property == "KETOSE" ) {
-				if ( aldose_or_ketose_is_set && ( anomeric_carbon_ == 1 ) ) {
-					utility_exit_with_message(
-							"A sugar cannot be both an aldose and a ketose; check the .params file." );
-				} else {
-					anomeric_carbon_ = 2;  // TODO: Provide method for dealing with non-ulose ketoses.
-					anomeric_carbon_name_ = "C2";
-					aldose_or_ketose_is_set = true;
-				}
-			} else if ( property == "L_SUGAR" ) {
-				if ( stereochem_is_set && ( stereochem_ == 'D' ) ) {
-					utility_exit_with_message(
-							"A sugar cannot have both L and D stereochemistry; check the .params file." );
-				} else {
-					stereochem_ = 'L';
-					stereochem_is_set = true;
-				}
-			} else if ( property == "D_SUGAR" ) {
-				if ( stereochem_ == 'L' ) {
-					utility_exit_with_message(
-							"A sugar cannot have both L and D stereochemistry; check the .params file." );
-				} else {
-					stereochem_ = 'D';
-					stereochem_is_set = true;
-				}
-			} else if ( property == "OXIROSE" ) {
-				if ( ring_size_is_set && ( ring_size_ != 3 ) ) {
-					utility_exit_with_message( "A sugar cannot have multiple ring sizes; check the .params file." );
-				} else {
-					ring_size_ = 3;
-					ring_size_is_set = true;
-				}
-			} else if ( property == "OXETOSE" ) {
-				if ( ring_size_is_set && ( ring_size_ != 4 ) ) {
-					utility_exit_with_message( "A sugar cannot have multiple ring sizes; check the .params file." );
-				} else {
-					ring_size_ = 4;
-					ring_size_is_set = true;
-				}
-			} else if ( property == "FURANOSE" ) {
-				if ( ring_size_is_set && ( ring_size_ != 5 ) ) {
-					utility_exit_with_message( "A sugar cannot have multiple ring sizes; check the .params file." );
-				} else {
-					ring_size_ = 5;
-					ring_size_is_set = true;
-				}
-			} else if ( property == "PYRANOSE" ) {
-				if ( ring_size_is_set && ( ring_size_ != 6 ) ) {
-					utility_exit_with_message( "A sugar cannot have multiple ring sizes; check the .params file." );
-				} else {
-					ring_size_ = 6;
-					ring_size_is_set = true;
-				}
-			} else if ( property == "SEPTANOSE" ) {
-				if ( ring_size_is_set && ( ring_size_ != 7 ) ) {
-					utility_exit_with_message( "A sugar cannot have multiple ring sizes; check the .params file." );
-				} else {
-					ring_size_ = 7;
-					ring_size_is_set = true;
-				}
-			} else if ( property == "ALPHA_SUGAR" ) {
-				if ( anomer_is_set && ( anomer_ == "beta" ) ) {
-					utility_exit_with_message( "A sugar cannot be both alpha and beta; check the .params file." );
-				} else {
-					anomer_ = "alpha";
-					anomer_is_set = true;
-				}
-			} else if ( property == "BETA_SUGAR" ) {
-				if ( anomer_is_set && ( anomer_ == "alpha" ) ) {
-					utility_exit_with_message( "A sugar cannot be both alpha and beta; check the .params file." );
-				} else {
-					anomer_ = "beta";
-					anomer_is_set = true;
-				}
-			} else if ( property == "GLYCOSIDE" ) {
-				is_glycoside_ = true;
-			} else if ( property == "URONIC_ACID" ) {
-				modifications_[ 1 ] = "uronic acid";
-			}
-		} else /*property has a position*/ {
+		variant = variants[ i ];
+		position = atoi( &variant[ 1 ] );
+		if ( position ) {
 			if ( modifications_[ position ] != "" ) {
 				utility_exit_with_message(
 						"A sugar cannot have multiple modifications at the same position; check the .params file.");
 			} else {
-				property = property.substr( 3 );  // assumes 1st and 3rd characters are underscores
-				boost::algorithm::to_lower( property );
-				replace( property.begin(), property.end(), '_', ' ' );
-				modifications_[ position ] = property;
+				variant = variant.substr( 3 );  // assumes 1st character is a "C" and the 3rd an underscore
+				if ( variant != "BRANCH_POINT" ) {
+					boost::algorithm::to_lower( variant );
+					replace( variant.begin(), variant.end(), '_', ' ' );
+					modifications_[ position ] = variant;
+				}
 			}
 		}
 	}
@@ -527,7 +495,7 @@ CarbohydrateInfo::determine_polymer_connections()
 	using namespace std;
 	using namespace id;
 
-	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
+	ResidueTypeCOP residue_type( residue_type_ );
 
 	// Main chain connections
 	if ( ! residue_type->is_upper_terminus() ) {

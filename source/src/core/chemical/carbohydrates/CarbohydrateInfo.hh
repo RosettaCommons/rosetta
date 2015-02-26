@@ -43,17 +43,24 @@ public: // Standard methods ///////////////////////////////////////////////////
 	/// @brief  Standard constructor
 	CarbohydrateInfo( core::chemical::ResidueTypeCAP residue_type );
 
-	// FIXME: Make copy constructor private as I did with ResidueProperties.
 	/// @brief  Copy constructor
-	CarbohydrateInfo( CarbohydrateInfo const & object_to_copy );
-
-	// FIXME: Make assignment operator private as I did with ResidueProperties.
-	// Assignment operator
-	CarbohydrateInfo & operator=( CarbohydrateInfo const & object_to_copy );
+	CarbohydrateInfo( CarbohydrateInfo const & object_to_copy, core::chemical::ResidueTypeCAP new_owner );
 
 	// Destructor
-	~CarbohydrateInfo();
+	virtual ~CarbohydrateInfo();
 
+private:
+	// Empty constructor -- should not ever be called; not implemented
+	// An instance of CarbohydrateInfo must have a pointer back to its owning ResidueType.
+	CarbohydrateInfo();
+
+	// Copy constructor -- should not ever be called; not implemented
+	// An instance of CarbohydrateInfo must have a pointer back to its owning ResidueType.
+	CarbohydrateInfo( CarbohydrateInfo const & object_to_copy );
+
+	// Assignment operator -- should not ever be called; not implemented
+	// An instance of CarbohydrateInfo must have a pointer back to its owning ResidueType.
+	CarbohydrateInfo & operator=( CarbohydrateInfo const & object_to_copy );
 
 public: // Standard Rosetta methods ///////////////////////////////////////////
 	/// @brief  Generate string representation of CarbohydrateInfo for debugging purposes.
@@ -62,9 +69,6 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 
 	// Static constant data access
 	// TODO: Create a singleton to handle these functions.
-	/// @brief A list of allowed properties in carbohydrate .params and patch files.
-	static utility::vector1< std::string > const & sugar_properties();
-
 	/// @brief A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root.
 	static std::map< std::string, std::string > const & code_to_root_map();
 
@@ -444,41 +448,22 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 
 
 	// Side-chain modifications
-	// (Be sure to update database/chemical/carbohydrates/sugar_properties.list if adding functions to this section.)
 	/// @brief  Return true if any hydroxyl group has been modified to an acetylated amino group.
-	bool
-	is_N_acetylated() const {
-		return modifications_.contains( "acetylamino sugar" );
-	}
+	bool is_N_acetylated() const;
 
 	/// @brief  Return true if any hydroxyl group has been modified by acetylation.
-	bool
-	is_O_acetylated() const {
-		return modifications_.contains( "acetyl sugar" );
-	}
+	bool is_O_acetylated() const;
 
 	/// @brief  Return true if the sugar has been acetylated at any position.
-	bool
-	is_acetylated() const {
-		return is_N_acetylated() || is_O_acetylated();
-	}
+	bool is_acetylated() const;
 
 	/// @brief  Return true if any hydroxyl group has been modified to an amino group or an acetylated amino group.
-	bool
-	is_amino_sugar() const {
-		return modifications_.contains( "amino sugar" ) || modifications_.contains( "acetylamino sugar" );
-	}
+	bool is_amino_sugar() const;
 
 	/// @brief  Return true if the primary hydroxyl group is oxidized to the acid.
-	bool
-	is_uronic_acid() const {
-		return modifications_.contains( "uronic acid" );
-	}
+	bool is_uronic_acid() const;
 
 private: // Private methods ///////////////////////////////////////////////////
-	// Empty constructor
-	CarbohydrateInfo();
-
 	// Initialize data members from properties.
 	void init( core::chemical::ResidueTypeCAP residue_type );
 

@@ -666,7 +666,7 @@ FileData::dump_pdb(
 
 
 /// @details Debug/Info function.
-/// Output FileData object to TR like stream in human redable format.
+/// Output FileData object to TR like stream in human readable format.
 std::ostream&
 operator <<(std::ostream &os, FileData const & fd)
 {
@@ -1133,12 +1133,12 @@ build_pose_as_is1(
 				//TR.Debug << "because of the terminus state" << std::endl;
 				continue;
 			}
-			if (is_polymer && (is_branch_point != rsd_type.has_variant_type(BRANCH_POINT_VARIANT))) {
+			if ( is_polymer && ( is_branch_point != rsd_type.is_branch_point() ) ) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the branch state" << std::endl;
 				continue;
 			}
-			if (is_polymer && (is_branch_lower_terminus != rsd_type.has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT))) {
+			if ( is_polymer && ( is_branch_lower_terminus != rsd_type.is_branch_lower_terminus() ) ) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the branch lower terminus state" << std::endl;
 				continue;
@@ -1156,30 +1156,30 @@ build_pose_as_is1(
 			}
 
 			// special checks to ensure selecting the proper carbohydrate ResidueType
-			if (rsd_type.is_carbohydrate() && residue_type_base_name(rsd_type) !=
-					fd.carbohydrate_residue_type_base_names[resid]) {
+			if ( rsd_type.is_carbohydrate() &&
+					residue_type_base_name( rsd_type ) != fd.carbohydrate_residue_type_base_names[ resid ] ) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because the residue is not a carbohydrate" << std::endl;
 				continue;
 			}
-			if (rsd_type.is_carbohydrate() && rsd_type.has_variant_type(BRANCH_POINT_VARIANT)) {
+			if ( rsd_type.is_carbohydrate() && rsd_type.is_branch_point() ) {
 				// The below assumes that ResidueTypes with fewer patches are selected 1st, that is, that an
 				// :->2-branch ResidueType will be checked as a possible match before an :->2-branch:->6-branch
 				// ResidueType.  If this were not the case, Rosetta could misassign an :->2-branch:->6-branch
 				// ResidueType to a residue that actually only has a single branch at the 2 or 6 position.
 				char branch_point;
-				bool branch_point_is_missing = false;
-				for (Size k = 1, n_branch_points = branch_points_on_this_residue.size();
-						k <= n_branch_points; ++k) {
-					branch_point = branch_points_on_this_residue[k][2];  // 3rd column (index 2) is the atom number.
+				bool branch_point_is_missing( false );
+				Size const n_branch_points( branch_points_on_this_residue.size() );
+				for ( core::uint k( 1 ); k <= n_branch_points; ++k ) {
+					branch_point = branch_points_on_this_residue[ k ][ 2 ];  // 3rd column (index 2) is the atom number.
 					//TR.Debug << "Checking '" << rsd_type.name() << "' for branch at position " << branch_point << std::endl;
-					if (residue_type_all_patches_name(rsd_type).find(string(1, branch_point) + ")-branch") ==
-							string::npos) {
+					if ( residue_type_all_patches_name( rsd_type ).find( string( 1, branch_point ) + ")-branch" ) ==
+							string::npos ) {
 						branch_point_is_missing = true;
 						break;
 					}
 				}
-				if (branch_point_is_missing) {
+				if ( branch_point_is_missing ) {
 					//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 					//TR.Debug << "because of a missing branch point" << std::endl;
 					continue;

@@ -245,7 +245,8 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		n_polymeric_residue_connections_( residue_type.n_polymeric_residue_connections_ ),
 		force_bb_(residue_type.force_bb_),
 		rna_residue_type_(residue_type.rna_residue_type_),
-		carbohydrate_info_(residue_type.carbohydrate_info_),
+		// CarbohydrateInfo has a back-pointer to ResidueType and must be reset during finalize().
+		carbohydrate_info_( /* NULL */ ),
 		atom_base_indices_(residue_type.atom_base_indices_),
 		abase2_indices_(residue_type.abase2_indices_),
 		chi_atoms_indices_(residue_type.chi_atoms_indices_),
@@ -1681,34 +1682,23 @@ ResidueType::add_property( std::string const & property )
 		properties_->set_property( POLYMER, true );
 		properties_->set_property( ALPHA_AA, true );
 	} else if ( property == "DNA" ) {
-		properties_->set_property( NA, true );
 		properties_->set_property( POLYMER, true );
 	} else if ( property == "RNA" ) {
-		properties_->set_property( NA, true );
 		properties_->set_property( POLYMER, true );
 	}	else if ( property == "PEPTOID" ) {
 		properties_->set_property( POLYMER, true );
-	} else if ( property == "LOWER_TERMINUS" ) {
-		properties_->set_property( TERMINUS, true );
-	} else if ( property == "UPPER_TERMINUS" ) {
-		properties_->set_property( TERMINUS, true );
 	} else if ( property == "LOWERTERM_TRUNC" ) {
-		properties_->set_property( TERMINUS, true );
 		properties_->set_property( LOWER_TERMINUS, true );
 	} else if ( property == "UPPERTERM_TRUNC" ) {
-		properties_->set_property( TERMINUS, true );
 		properties_->set_property( UPPER_TERMINUS, true );
 	} else if ( property == "PHOSPHONATE" ) {
 		properties_->set_property( POLYMER, true );
 	} else if ( property == "PHOSPHONATE_UPPER" ) {
-		properties_->set_property( TERMINUS, true );
 		properties_->set_property( UPPER_TERMINUS, true );
 		properties_->set_property( PHOSPHONATE, true );
 	} else if ( property == "ACETYLATED_NTERMINUS" ) {
-		properties_->set_property( TERMINUS, true );
 		properties_->set_property( LOWER_TERMINUS, true );
 	} else if ( property == "METHYLATED_CTERMINUS" ) {
-		properties_->set_property( TERMINUS, true );
 		properties_->set_property( UPPER_TERMINUS, true );
 	}
 }
@@ -1812,7 +1802,7 @@ ResidueType::is_coarse() const
 bool
 ResidueType::is_NA() const
 {
-	return properties_->has_property( NA );
+	return is_DNA() || is_RNA();
 }
 
 bool
@@ -1900,7 +1890,7 @@ ResidueType::is_cyclic() const
 bool
 ResidueType::is_terminus() const
 {
-	return properties_->has_property( TERMINUS );
+	return is_upper_terminus() || is_lower_terminus();
 }
 
 bool
@@ -1913,6 +1903,12 @@ bool
 ResidueType::is_upper_terminus() const
 {
 	return properties_->has_property( UPPER_TERMINUS );
+}
+
+bool
+ResidueType::is_branch_point() const
+{
+	return properties_->has_property( BRANCH_POINT );
 }
 
 bool
@@ -1946,12 +1942,6 @@ ResidueType::is_adduct() const
 }
 
 
-//bool
-//ResidueType::has_property( std::string const & property ) const
-//{
-//	return properties_->has_property( property );
-//}
-
 core::Real
 ResidueType::get_numeric_property(std::string const & tag) const
 {
@@ -1983,41 +1973,41 @@ ResidueType::get_string_property(std::string const & tag) const
 void
 ResidueType::add_variant_type( VariantType const variant_type )
 {
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
 	properties_->set_variant_type( variant_type, true );
 }
 
 void
 ResidueType::add_variant_type( std::string const & variant_type )
 {
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
 	properties_->set_variant_type( variant_type, true );
 }
 
 void
 ResidueType::remove_variant_type( VariantType const variant_type )
 {
-  properties_->set_variant_type( variant_type, false );
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
+	properties_->set_variant_type( variant_type, false );
 }
 
 void
-ResidueType::remove_variant_type( std::string const& variant_type )
+ResidueType::remove_variant_type( std::string const & variant_type )
 {
-  properties_->set_variant_type( variant_type, false );
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
+	properties_->set_variant_type( variant_type, false );
 }
 
 
-//bool
-//ResidueType::has_variant_type( VariantType const variant_type ) const
-//{
-//	return properties_->is_variant_type( variant_type );
-//}
-//
-//bool
-//ResidueType::has_variant_type( std::string const & variant_type ) const
-//{
-//	return properties_->is_variant_type( variant_type );
-//}
-
-/// @details Custom" VariantTypes as strings are permitted for the enzdes and metalloproteins cases.
+/// @details "Custom" VariantTypes as strings are permitted for the enzdes and metalloproteins cases.
 /// Do not enable unless you have a good reason to, as string look-ups are less efficient and more error-prone.
 void
 ResidueType::enable_custom_variant_types()
@@ -2728,11 +2718,11 @@ ResidueType::update_derived_data()
 		// ring_size could be made a private datum, but it only really makes sense for monocyclics.  Since its only use
 		// for the time being is to set the proper RingConformerSet, I'll just leave it as a local variable here.
 		// ~Labonte
-		Size ring_size = nu_atoms_indices_.size() + 2;
+		Size const ring_size = nu_atoms_indices_.size() + 2;
 		conformer_set_ = RingConformerSetOP( new RingConformerSet( ring_size ) );
 	}
 
-	if( properties_->has_property( RNA ) ){ //reinitialize and RNA derived data.
+	if ( properties_->has_property( RNA ) ){ //reinitialize and RNA derived data.
 		//Reinitialize rna_residue_type_ object! This also make sure rna_residue_type_ didn't inherit anything from the previous update!
 		//It appears that the rna_residue_type_ is shared across multiple ResidueType object, if the rna_residue_type_ is not reinitialized here!
 		rna_residue_type_ = core::chemical::rna::RNA_ResidueTypeOP( new core::chemical::rna::RNA_ResidueType );
@@ -2740,7 +2730,8 @@ ResidueType::update_derived_data()
 		rna_residue_type_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);
 		rna_residue_type_->update_derived_rna_data( get_self_weak_ptr() );
 	} else if ( properties_->has_property( CARBOHYDRATE ) ) {
-		carbohydrate_info_ = core::chemical::carbohydrates::CarbohydrateInfoOP( new chemical::carbohydrates::CarbohydrateInfo( get_self_weak_ptr() ) );
+		carbohydrate_info_ =
+				carbohydrates::CarbohydrateInfoOP( new carbohydrates::CarbohydrateInfo( get_self_weak_ptr() ) );
 		update_last_controlling_chi();
 	} else {
 		update_last_controlling_chi();
