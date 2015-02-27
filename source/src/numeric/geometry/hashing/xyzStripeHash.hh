@@ -43,6 +43,10 @@ struct Ball {
 	Size atomno() const { return atomno_; }
 };
 
+/// @brief Test IO operator for debug and Python bindings
+std::ostream & operator << ( std::ostream & os, Ball const & ball);
+
+
 struct Counter {
 	int count;
 	Counter():count(0){}
@@ -112,7 +116,7 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 	int clash_check_ball( Ball const & b ) const;
 
 	// @brief Generate residue mapping (r_t, r) where:
-	// 	any(dist(b_t, b) < (b_t.radius + b.radius)) for 
+	// 	any(dist(b_t, b) < (b_t.radius + b.radius)) for
 	// 		{b_t in target_balls | b_t.resi = r_t}, {b in this | b.resi == r}
 	//
 	// Populated residue_pairs with the first identified clash per r_t, meaning that

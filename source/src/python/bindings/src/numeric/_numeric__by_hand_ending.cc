@@ -17,6 +17,8 @@
 #include "numeric/BodyPosition.hh"
 #include <numeric/io.hh>
 
+#include <numeric/geometry/hashing/xyzStripeHash.hh>
+
 #include <vector>
 
 namespace bp = boost::python;
@@ -3288,8 +3290,71 @@ void instantiate_numeric_containers(std::string type_name)
   bp::implicitly_convertible<  T  const &, numeric::xyzVector< T > >();
 }
 
+
+template <class T>
+std::string vector1_repr(utility::vector1<T> const & v)
+{
+    std::ostringstream os;
+
+    os << "[";
+    for(unsigned int i=1; i<=v.size(); i++) {
+        os << v[i] << ", ";
+    }
+    os << "]";
+    return os.str();
+}
+
+template< class TT > inline void vector1_set( utility::vector1<TT> & v, platform::Size const & i, TT const & val ) { v[i] = val; }
+template< class TT > inline platform::Size vector1_len( utility::vector1<TT> & v ) { return v.size(); }
+
+template< class TT > inline std::string vector1_str( utility::vector1<TT> & v ) { std::ostringstream s; s<<v; return s.str(); }
+
+template< class TT > inline typename utility::vector1<TT>::iterator vector1_begin( utility::vector1<TT> & v ) { return v.begin(); }
+template< class TT > inline typename utility::vector1<TT>::iterator vector1_end  ( utility::vector1<TT> & v ) { return v.end(); }
+
+template< class TT > inline void vector1_reserve( utility::vector1<TT> & v, platform::Size n) { v.reserve(n); }
+template< class TT > inline void vector1_resize( utility::vector1<TT> & v, platform::Size n) { v.resize(n); }
+
+template< class Htype, class CP, class CP_const>
+void wrap_vector1(std::string name) {
+  typedef utility::vector1<Htype> Ttype;
+  typedef utility::vectorL<1,Htype, std::allocator<Htype> > Btype;
+  typedef std::vector<Htype> Vtype;
+  bp::class_<Ttype>(name.c_str())
+    .def( bp::init< platform::Size >() )
+    .def( bp::init< utility::vector1<Htype> const & >() )
+    // .def( bp::init< platform::Size, TT >() )
+    .def("__getitem__"
+        , (Htype const & (Ttype::*)(platform::Size const) const)( &Ttype::at )
+        , CP_const()    )
+    .def("__getitem__"
+        , (Htype & (Ttype::*)(platform::Size const))( &Ttype::at )
+        , CP()        )
+    .def("__setitem__"
+        , &vector1_set<Htype> )
+    .def("append"
+        , (Btype & (Btype::*)(Htype const &))( &Btype::add_back )
+        , bp::return_value_policy< bp::reference_existing_object >()        )
+    .def("__len__", & vector1_len<Htype> )
+    .def("__iter__", bp::range(&vector1_begin<Htype>,&vector1_end<Htype>) )
+
+    //.def("__str__", & vector1_str<Htype> )
+    .def("__str__", & vector1_repr<Htype> )
+    //.def( bp::self_ns::str( bp::self ) )
+
+    .def("reserve", &vector1_reserve<Htype> )
+    .def("resize", &vector1_resize<Htype> )
+  ;
+}
+
+
 void __numeric_by_hand_ending__()
 {
+    typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;
+    typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
+    typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
+
+
 	// instantiate template classes at the end of numeric bindings so they act as default classes for Python for temaplte bindings (some of them might get binded automatically due to temaplate specifications)
 	// Conflic with Real instantiate_numeric_containers<double>("double");
 	instantiate_numeric_containers<float>("float");
@@ -3302,4 +3367,6 @@ void __numeric_by_hand_ending__()
 	instantiate_numeric_functions<float>("float");
 	instantiate_numeric_functions<double>("double");
 	instantiate_numeric_functions<numeric::Real>("Real");
+
+	wrap_vector1<numeric::geometry::hashing::Ball,  CP_REF, CP_REF>("vector1_numeric_geometry_hashing_Ball");
 }

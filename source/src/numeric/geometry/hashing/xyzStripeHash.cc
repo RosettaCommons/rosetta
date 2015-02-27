@@ -17,6 +17,13 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+std::ostream & operator << ( std::ostream & os, Ball const & ball)
+{
+	os << "Ball( [" << ball.x_ << "," << ball.y_ << "," << ball.z_ << "], radius:" << ball.radius_ << ", atomno:" << ball.atomno_ << ", resid:"  << ball.resid_ << ")" << std::endl;
+	return os;
+}
+
+
 xyzStripeHash::xyzStripeHash(
 	float grid_size,
     utility::vector1<Ball> const & balls
@@ -396,7 +403,7 @@ xyzStripeHash::clash_check_ball( Ball const & b_in ) const {
 			for(int i = igl; i < igu; ++i) {
 				Ball const a2 = grid_balls_[i];
 				float const d2 = (x-a2.x())*(x-a2.x()) + (y-a2.y())*(y-a2.y()) + (z-a2.z())*(z-a2.z());
-				
+
 				if( d2 < (a2.radius() + b_in.radius()) ) {
 					// Return type is 1-based ball number.
 					return i + 1;
@@ -492,4 +499,3 @@ std::string xyzStripeHash::debug_pdb(Xform const & x) const {
  } // namespace hashing
  } // namespace geometry
  } // namespace numeric
-
