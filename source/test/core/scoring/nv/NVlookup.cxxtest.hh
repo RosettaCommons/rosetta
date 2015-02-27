@@ -17,7 +17,7 @@
 // Unit headers
 #include <core/scoring/nv/NVlookup.hh>
 
-#include "platform/types.hh"
+#include <platform/types.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>

@@ -17,9 +17,9 @@
 #define INCLUDED_core_scoring_packstat_SimplePDB_hh
 
 // Project forward headers
-#include "core/scoring/packstat/types.hh"
-#include "core/scoring/packstat/SimplePDB.fwd.hh"
-#include "core/scoring/packstat/SimplePDB_Atom.hh"
+#include <core/scoring/packstat/types.hh>
+#include <core/scoring/packstat/SimplePDB.fwd.hh>
+#include <core/scoring/packstat/SimplePDB_Atom.hh>
 // AUTO-REMOVED #include "core/scoring/packstat/AtomRadiusMap.hh"
 
 // AUTO-REMOVED #include <vector>

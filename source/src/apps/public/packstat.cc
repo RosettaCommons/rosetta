@@ -14,37 +14,37 @@
 // libRosetta headers
 //#include <basic/options/option.hh>
 
-#include "core/scoring/packstat/types.hh"
-#include "core/scoring/packstat/SimplePDB_Atom.hh"
-#include "core/scoring/packstat/SimplePDB.hh"
-// AUTO-REMOVED #include "core/scoring/packstat/io.hh"
-#include "core/scoring/packstat/AtomRadiusMap.hh"
-#include "core/scoring/packstat/compute_sasa.hh"
-// AUTO-REMOVED #include "core/scoring/packstat/sasa_dot_locations.hh"
-// AUTO-REMOVED #include "core/scoring/packstat/packing_score_params.hh"
+#include <core/scoring/packstat/types.hh>
+#include <core/scoring/packstat/SimplePDB_Atom.hh>
+#include <core/scoring/packstat/SimplePDB.hh>
+// AUTO-REMOVED #include <core/scoring/packstat/io.hh>
+#include <core/scoring/packstat/AtomRadiusMap.hh>
+#include <core/scoring/packstat/compute_sasa.hh>
+// AUTO-REMOVED #include <core/scoring/packstat/sasa_dot_locations.hh>
+// AUTO-REMOVED #include <core/scoring/packstat/packing_score_params.hh>
 
 #include <protocols/analysis/PackStatMover.hh>
 
 #include <devel/init.hh>
-#include "core/types.hh"
-// AUTO-REMOVED #include "core/id/AtomID_Map.hh"
+#include <core/types.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 // AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 
-// AUTO-REMOVED #include "core/pose/Pose.hh"
-// AUTO-REMOVED #include "core/io/pdb/pose_io.hh"
-// AUTO-REMOVED #include "core/scoring/sasa.hh"
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/scoring/sasa.hh>
 
-#include "basic/Tracer.hh"
+#include <basic/Tracer.hh>
 
-#include "utility/vector1.hh"
-#include "utility/file/FileName.hh"
-#include "utility/io/izstream.hh"
-#include "utility/io/ozstream.hh"
+#include <utility/vector1.hh>
+#include <utility/file/FileName.hh>
+#include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
 
-// AUTO-REMOVED #include "numeric/xyz.functions.hh"
-// AUTO-REMOVED #include "numeric/random/random.hh"
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <iostream>
 #include <fstream>

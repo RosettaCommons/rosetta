@@ -17,7 +17,7 @@
 #define INCLUDED_core_scoring_packstat_sasa_dot_locations_hh
 
 // AUTO-REMOVED #include "ObjexxFCL/FArray2D.hh"
-#include "core/scoring/packstat/types.hh"
+#include <core/scoring/packstat/types.hh>
 
 namespace core {
 namespace scoring {

@@ -10,12 +10,12 @@
 /// @file protocols/vip/VIP_Utils.cc
 /// @brief Utility functions for VIP mover
 
-#include "core/types.hh"
-#include "core/kinematics/MoveMap.hh"
-#include "core/scoring/Energies.hh"
+#include <core/types.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include "core/scoring/packstat/types.hh"
-#include "core/pose/Pose.hh"
+#include <core/scoring/packstat/types.hh>
+#include <core/pose/Pose.hh>
 #include <protocols/simple_filters/PackStatFilter.hh>
 #include <basic/options/option.hh>
 

@@ -18,11 +18,11 @@
 
 
 // Project forward headers
-#include "core/scoring/packstat/types.hh"
+#include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/CavityBall.fwd.hh>
 
 // AUTO-REMOVED #include "utility/vector1.hh"
-#include "numeric/xyzVector.hh"
+#include <numeric/xyzVector.hh>
 
 #include <iosfwd>
 #include <string>

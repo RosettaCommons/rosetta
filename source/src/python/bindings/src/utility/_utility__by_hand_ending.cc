@@ -17,9 +17,9 @@ void __utility_by_hand_ending__()
 	expose_basic_type<double>("double");
     // conflict with Real expose_basic_type<double>("double");
     //expose_basic_type<unsigned>("unsigned");
-    expose_basic_type<core::Size>("Size");
-    expose_basic_type<core::SSize>("SSize");
-    expose_basic_type<core::Real>("Real");
+    expose_basic_type<platform::Size>("Size");
+    expose_basic_type<platform::SSize>("SSize");
+    expose_basic_type<platform::Real>("Real");
 
     //Need overload of bool_get so no:
     // expose_basic_type<bool>("bool");

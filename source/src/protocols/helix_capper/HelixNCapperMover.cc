@@ -13,7 +13,7 @@
 
 #include <protocols/helix_capper/HelixNCapperMover.hh>
 
-#include "basic/Tracer.hh"
+#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/cp.OptionKeys.gen.hh>
 #include <basic/database/open.hh>

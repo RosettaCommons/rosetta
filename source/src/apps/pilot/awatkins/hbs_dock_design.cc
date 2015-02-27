@@ -48,7 +48,7 @@
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
+//#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
 #include <protocols/simple_moves/hbs/HbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -390,7 +390,7 @@ HbsDockDesignMinimizeMover::apply(
 	*******************************************************************************/
 
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf( new TaskFactory() );
 	pert_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );

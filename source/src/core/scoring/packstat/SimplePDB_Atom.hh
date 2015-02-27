@@ -19,7 +19,7 @@
 
 // Project forward headers
 #include <core/scoring/packstat/SimplePDB_Atom.fwd.hh>
-#include "core/scoring/packstat/types.hh"
+#include <core/scoring/packstat/types.hh>
 
 #include <string>
 

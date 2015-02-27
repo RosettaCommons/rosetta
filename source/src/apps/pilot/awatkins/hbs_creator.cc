@@ -50,7 +50,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
+//#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
 #include <protocols/simple_moves/hbs/HbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>

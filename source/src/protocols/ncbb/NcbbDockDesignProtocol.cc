@@ -50,8 +50,8 @@
 #include <protocols/simple_moves/oop/OopRandomPuckMover.hh>
 #include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
 #include <protocols/simple_moves/oop/OopPatcher.hh>
-#include <protocols/simple_moves/hbs/HbsMover.hh>
-#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
+//#include <protocols/simple_moves/hbs/HbsMover.hh>
+//#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
 #include <protocols/simple_moves/hbs/HbsPatcher.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -139,10 +139,10 @@ NcbbDockDesignProtocol::NcbbDockDesignProtocol():
 
 		pymol_ (false),
 		keep_history_ (false)
-{ 
+{
 		Mover::type("NcbbDockDesignProtocol");
-	
-		score_fxn_ = get_score_function(); 
+
+		score_fxn_ = get_score_function();
 		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 }
 
@@ -197,12 +197,12 @@ NcbbDockDesignProtocol::NcbbDockDesignProtocol(
 	mc_initial_pose_(mc_initial_pose),
 	ncbb_design_first_(ncbb_design_first),
 	pymol_(pymol),
-	keep_history_(keep_history) 
-{	
+	keep_history_(keep_history)
+{
 }
 
 NcbbDockDesignProtocol::NcbbDockDesignProtocol(
-	scoring::ScoreFunctionOP score_function, 
+	scoring::ScoreFunctionOP score_function,
 	core::Real const mc_temp,
 	core::Real const pert_dock_rot_mag,
 	core::Real const pert_dock_trans_mag,
@@ -290,7 +290,7 @@ NcbbDockDesignProtocol::apply(
 	////awatkins: initialize specific vectors for each supported patch type, too
 	utility::vector1< core::Size > oop_seq_positions = core::pose::ncbb::initialize_oops(pose);
 	utility::vector1< core::Size > hbs_seq_positions = core::pose::ncbb::initialize_hbs(pose);
-	
+
 	for( Size i = 1; i <= ncbb_seq_positions.size(); ++i  )
 	{
 		pert_pep_mm->set_bb( ncbb_seq_positions[i], false );
@@ -298,7 +298,7 @@ NcbbDockDesignProtocol::apply(
 		if ( score_fxn_->has_zero_weight( core::scoring::atom_pair_constraint ) )
 			score_fxn_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	}
-	
+
 
 	// create small and shear movers
 	simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, pert_pep_small_temp_, 1 ) );
@@ -328,7 +328,7 @@ NcbbDockDesignProtocol::apply(
 	*******************************************************************************/
 
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf( new TaskFactory() );
 	pert_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
@@ -397,7 +397,7 @@ NcbbDockDesignProtocol::apply(
 	desn_mm->set_bb_true_range( pep_start, pep_end );
 	desn_mm->set_chi( true );
 	desn_mm->set_jump( 1, true );
-	
+
 	// create minimization mover
 	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
 
@@ -704,11 +704,11 @@ NcbbDockDesignProtocol::clone() const
 
 void
 NcbbDockDesignProtocol::parse_my_tag
-( 
-	utility::tag::TagCOP tag, 
-	basic::datacache::DataMap &data, 
-	protocols::filters::Filters_map const &, 
-	protocols::moves::Movers_map const &, 
+(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 
@@ -724,7 +724,7 @@ NcbbDockDesignProtocol::parse_my_tag
 		this->mc_temp_ = tag->getOption<core::Real>("mc_temp", mc_temp_);
 	else
 		mc_temp_ = 1.0;
- 
+
 	if(tag->hasOption( "pert_mc_temp"))
 		pert_mc_temp_ = tag->getOption<core::Real>("pert_mc_temp", pert_mc_temp_);
 	else
@@ -734,32 +734,32 @@ NcbbDockDesignProtocol::parse_my_tag
 		pert_dock_rot_mag_ = tag->getOption<core::Real>("pert_dock_rot_mag", pert_dock_rot_mag_);
 	else
 		pert_dock_rot_mag_ = 1.0;
- 
+
 	if(tag->hasOption( "pert_dock_trans_mag"))
 		pert_dock_trans_mag_ = tag->getOption<core::Real>("pert_dock_trans_mag", pert_dock_trans_mag_);
  	else
 		pert_dock_trans_mag_ = 0.5;
- 
+
 	if(tag->hasOption( "pert_pep_small_temp"))
 		pert_pep_small_temp_ = tag->getOption<core::Real>("pert_pep_small_temp", pert_pep_small_temp_);
  	else
 		pert_pep_small_temp_ = 0.8;
- 
+
 	if(tag->hasOption( "pert_pep_small_H"))
 		pert_pep_small_H_ = tag->getOption<core::Real>("pert_pep_small_H", pert_pep_small_H_);
 	else
 		pert_pep_small_H_ = 2.0;
- 
+
 	if(tag->hasOption( "pert_pep_small_L"))
 		pert_pep_small_L_ = tag->getOption<core::Real>("pert_pep_small_L", pert_pep_small_L_);
  	else
 		pert_pep_small_L_ = 2.0;
- 
+
 	if(tag->hasOption( "pert_pep_small_E"))
 		pert_pep_small_E_ = tag->getOption<core::Real>("pert_pep_small_E", pert_pep_small_E_);
  	else
 		pert_pep_small_E_ = 2.0;
- 
+
 	if(tag->hasOption( "pert_pep_shear_temp"))
 		pert_pep_shear_temp_ = tag->getOption<core::Real>("pert_pep_shear_temp", pert_pep_shear_temp_);
  	else
@@ -769,7 +769,7 @@ NcbbDockDesignProtocol::parse_my_tag
 		pert_pep_shear_H_ = tag->getOption<core::Real>("pert_pep_shear_H", pert_pep_shear_H_);
  	else
 		pert_pep_shear_H_ = 2.0;
- 
+
 	if(tag->hasOption( "pert_pep_shear_L"))
 		pert_pep_shear_L_ = tag->getOption<core::Real>("pert_pep_shear_L", pert_pep_shear_L_);
  	else
@@ -779,7 +779,7 @@ NcbbDockDesignProtocol::parse_my_tag
 		pert_pep_shear_E_ = tag->getOption<core::Real>("pert_pep_shear_E", pert_pep_shear_E_);
  	else
 		pert_pep_shear_E_ = 2.0;
- 
+
 	if(tag->hasOption( "pert_pep_num_rep"))
 		pert_pep_num_rep_ = tag->getOption<core::Size>("pert_pep_num_rep", pert_pep_num_rep_);
  	else
@@ -804,12 +804,12 @@ NcbbDockDesignProtocol::parse_my_tag
 		final_design_min_ = tag->getOption<bool>("final_design_min", final_design_min_);
  	else
 		final_design_min_ = true;
- 
+
 	if(tag->hasOption( "use_soft_rep"))
 		use_soft_rep_ = tag->getOption<bool>("use_soft_rep", use_soft_rep_);
  	else
 		use_soft_rep_ = false;
- 
+
 	if(tag->hasOption( "mc_initial_pose"))
 		mc_initial_pose_ = tag->getOption<bool>("mc_initial_pose", mc_initial_pose_);
  	else
@@ -819,12 +819,12 @@ NcbbDockDesignProtocol::parse_my_tag
 		ncbb_design_first_ = tag->getOption<bool>("ncbb_design_first", ncbb_design_first_);
  	else
 		ncbb_design_first_ = false;
- 
+
 	if(tag->hasOption( "pymol"))
 		pymol_ = tag->getOption<bool>("pymol", pymol_);
  	else
 		pymol_ = false;
- 
+
 	if(tag->hasOption( "keep_history"))
 		keep_history_ = tag->getOption<bool>("keep_history", keep_history_);
  	else

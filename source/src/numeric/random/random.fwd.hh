@@ -19,7 +19,7 @@
 #ifndef INCLUDED_numeric_random_random_fwd_hh
 #define INCLUDED_numeric_random_random_fwd_hh
 
-#include "platform/types.hh"
+#include <platform/types.hh>
 
 // C++ headers
 #include <cstddef>

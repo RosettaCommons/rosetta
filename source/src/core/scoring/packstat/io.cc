@@ -12,10 +12,10 @@
 /// @brief
 /// @author will sheffler
 
-#include "core/scoring/packstat/io.hh"
+#include <core/scoring/packstat/io.hh>
 
-#include "core/scoring/packstat/SimplePDB.hh"
-#include "core/scoring/packstat/SimplePDB_Atom.hh"
+#include <core/scoring/packstat/SimplePDB.hh>
+#include <core/scoring/packstat/SimplePDB_Atom.hh>
 
 // AUTO-REMOVED #include "numeric/io.hh"
 

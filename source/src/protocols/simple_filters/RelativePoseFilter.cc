@@ -34,7 +34,6 @@
 #include <protocols/simple_moves/DumpPdb.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/SymmDataFactory.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>

@@ -15,9 +15,9 @@
 #ifndef INCLUDED_core_scoring_packstat_io_hh
 #define INCLUDED_core_scoring_packstat_io_hh
 
-#include "core/scoring/packstat/SimplePDB.fwd.hh"
-#include "core/scoring/packstat/SimplePDB_Atom.fwd.hh"
-#include "core/scoring/packstat/types.hh"
+#include <core/scoring/packstat/SimplePDB.fwd.hh>
+#include <core/scoring/packstat/SimplePDB_Atom.fwd.hh>
+#include <core/scoring/packstat/types.hh>
 
 #include <iosfwd>
 

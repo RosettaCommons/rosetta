@@ -16,11 +16,11 @@
 #ifndef INCLUDED_core_scoring_packstat_util_hh
 #define INCLUDED_core_scoring_packstat_util_hh
 
-#include "core/scoring/packstat/types.hh"
-#include "core/scoring/packstat/CavityBall.hh"
+#include <core/scoring/packstat/types.hh>
+#include <core/scoring/packstat/CavityBall.hh>
 // AUTO-REMOVED #include "core/scoring/packstat/SimplePDB_Atom.hh"
 
-#include "numeric/xyzVector.hh"
+#include <numeric/xyzVector.hh>
 
 
 namespace core {

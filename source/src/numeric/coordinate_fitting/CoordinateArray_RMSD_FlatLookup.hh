@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "numeric/coordinate_fitting/FlatLookup.hh"
-#include "numeric/alignment/QCP_Kernel.hh"
+#include <numeric/coordinate_fitting/FlatLookup.hh>
+#include <numeric/alignment/QCP_Kernel.hh>
 
 #ifndef COORDINATEARRRAY_RMSD_FLATLOOKUP_HH_
 #define COORDINATEARRRAY_RMSD_FLATLOOKUP_HH_

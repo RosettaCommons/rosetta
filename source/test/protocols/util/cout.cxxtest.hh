@@ -14,7 +14,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include "platform/types.hh"
+#include <platform/types.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>

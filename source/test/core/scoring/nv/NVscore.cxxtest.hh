@@ -17,7 +17,7 @@
 // Unit headers
 #include <core/scoring/nv/NVscore.hh>
 
-#include "platform/types.hh"
+#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/pose_funcs.hh>

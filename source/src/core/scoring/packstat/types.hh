@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_packstat_types_hh
 #define INCLUDED_core_scoring_packstat_types_hh
 
-#include "numeric/xyzVector.hh"
+#include <numeric/xyzVector.hh>
 // AUTO-REMOVED #include "utility/vector1.hh"
 
 #include <core/types.hh>

@@ -13,10 +13,10 @@
 #ifndef INCLUDED_protocols_vip_VIP_Utils_HH
 #define INCLUDED_protocols_vip_VIP_Utils_HH
 
-#include "core/kinematics/MoveMap.fwd.hh"
-#include "core/types.hh"
-#include "core/pose/Pose.hh"
-#include "core/scoring/packstat/types.hh"
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/packstat/types.hh>
 #include <string>
 
 namespace protocols {

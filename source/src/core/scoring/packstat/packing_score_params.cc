@@ -12,7 +12,7 @@
 /// @brief
 /// @author will sheffler
 
-#include "core/scoring/packstat/PackingScore.hh"
+#include <core/scoring/packstat/PackingScore.hh>
 
 namespace core {
 namespace scoring {

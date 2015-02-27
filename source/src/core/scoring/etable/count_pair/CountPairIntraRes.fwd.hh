@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/etable/count_pair/CountPairIntraResC3.fwd.hh
-/// @brief  Count pair for residue pairs connected with one bond, where the
-/// crossover from excluding to counting atom pair interactions is at 3 bonds.
+/// @file   core/scoring/etable/count_pair/CountPairIntraRes.fwd.hh
+/// @brief
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 

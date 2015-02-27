@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_packstat_packing_score_params_hh
 #define INCLUDED_core_scoring_packstat_packing_score_params_hh
 
-#include "core/scoring/packstat/PackingScore.hh"
+#include <core/scoring/packstat/PackingScore.hh>
 
 namespace core {
 namespace scoring {

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_numeric_xyzTransform_fwd_hh
 #define INCLUDED_numeric_xyzTransform_fwd_hh
 
-#include "numeric/types.hh"
+#include <numeric/types.hh>
 
 // C++ headers
 #include <cstddef>

@@ -22,6 +22,7 @@ sources = {
 		"FlexbbInteractionGraph",
 		"MinimalistFlexbbInteractionGraph",
 		"OTFFlexbbInteractionGraph",
+		"PrecomputedFlexbbInteractionGraph",
 	],
 	"protocols/flexpack/rotamer_set": [
 		"FlexbbRotamerSet",

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_packstat_AtomRadiusMap_hh
 #define INCLUDED_core_scoring_packstat_AtomRadiusMap_hh
 
-#include "core/scoring/packstat/types.hh"
+#include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/AtomRadiusMap.fwd.hh>
 
 
