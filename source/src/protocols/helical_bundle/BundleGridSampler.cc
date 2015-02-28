@@ -263,7 +263,7 @@ namespace protocols {
 				if(totaljobs < total_samples*nstruct_repeats() && TR.Warning.visible())
 					TR.Warning << "Warning!  The BundleGridSampler mover is in nstruct mode, meaning that one set of Crick parameters will be sampled per job.  However, the total number of jobs is less than the total number of samples!  Certain sets of Crick parameters will be missed!" << std::endl ;
 				//The current job might be greater than the total number of samples, in which case we should wrap around:
-				loopstart = (curjob % total_samples) / nstruct_repeats();
+				loopstart = ( ( (curjob-1) % total_samples) + 1 ) / nstruct_repeats();
 				loopend=loopstart;
 			}
 			for(core::Size i=loopstart; i<=loopend; ++i) {
