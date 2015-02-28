@@ -30,6 +30,8 @@ core.pack.dunbrack: Memory usage:
 core.pack.dunbrack: ... with [0-9]+ bytes
 core.pack.dunbrack: Total memory on Dunbrack Libraries: [0-9]+ bytes.
 core.pack.dunbrack: dunbrack library is out-dated
+core.pack.dunbrack: cannot find binary dunbrack library under name
+core.pack.dunbrack: Random tempname will be:
 current_directory=
 reating tricubic splines
 core.chemical.ResidueTypeSet: Finished initializing fa_standard residue type set.  Created [0-9]+ residue types
