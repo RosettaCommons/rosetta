@@ -280,13 +280,34 @@ CartesianHybridize::init() {
 	skip_long_min_ = false;
 
 	// default scorefunction
-	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+	if (option[corrections::score::cenrot]) {
+		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_relax_cart" ) );
+	}
+	else {
+		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+	}
 }
 
 void
 CartesianHybridize::set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) {
-	lowres_scorefxn_ = scorefxn_in->clone();
-	min_scorefxn_ = scorefxn_in->clone();
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if (option[corrections::score::cenrot]) {
+		// score using input score func
+		lowres_scorefxn_ = scorefxn_in->clone();
+		// minimize using score4_cenrot_cartmin
+		min_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_cartmin");
+
+		//copy cst and elec_dens term from lowres_scorefxn_
+		Real w_den = lowres_scorefxn_->get_weight( core::scoring::elec_dens_fast );
+		Real w_cst = lowres_scorefxn_->get_weight( core::scoring::atom_pair_constraint );
+		min_scorefxn_->set_weight( core::scoring::elec_dens_fast, w_den );
+		min_scorefxn_->set_weight( core::scoring::atom_pair_constraint, w_cst );
+	}
+	else {
+		lowres_scorefxn_ = scorefxn_in->clone();
+		min_scorefxn_ = scorefxn_in->clone();
+	}
 
 	//bonds_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
 	bonds_scorefxn_ = scorefxn_in->clone();
@@ -533,7 +554,9 @@ CartesianHybridize::apply( Pose & pose ) {
 	TaskFactoryOP main_task_factory( new TaskFactory );
 	main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
 	pack_rotamers->task_factory(main_task_factory);
-	pack_rotamers->score_function(lowres_scorefxn_);
+	//repack using score4_cenrot_repack
+	core::scoring::ScoreFunctionOP scorefxn_cenrot_repack_ = core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_repack" );
+	pack_rotamers->score_function( scorefxn_cenrot_repack_ );
 
 	if (option[corrections::score::cenrot]) {
 		protocols::moves::MoverOP tocenrot( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT ) );

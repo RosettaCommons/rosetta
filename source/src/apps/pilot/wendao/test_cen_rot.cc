@@ -103,7 +103,7 @@ int main( int argc, char * argv [] ) {
 	//read in a fullatom pose
 	core::import_pose::pose_from_pdb( p, *rsd_set, option[ in::file::native ]() );
 	//convert it to cenrot
-	to_centroid.apply(p);
+	to_cenrot.apply(p);
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( "test" );
 
 	using namespace basic::options;

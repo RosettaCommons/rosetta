@@ -95,7 +95,7 @@ public:
 		Real start_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, -1.43971912089564, 1e-12);
+		TS_ASSERT_DELTA(start_score, -1.43971912089564, 1e-8);
 	}
 
 	void test_cen_rot_vdw()
@@ -116,7 +116,7 @@ public:
 		Real start_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, 0.838790208886603, 1e-12);
+		TS_ASSERT_DELTA(start_score, 0.628521044333649, 1e-8);
 	}
 
 	void test_cen_rot_dun()
@@ -134,7 +134,7 @@ public:
 		Real start_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, 41.6239745723091, 1e-12);
+		TS_ASSERT_DELTA(start_score, 47.9850902912855, 1e-8);
 	}
 
 	void test_cen_rot_repack()
@@ -171,7 +171,7 @@ public:
 		Real final_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << final_score << std::endl;
-		TS_ASSERT_DELTA( final_score, -11.2961651753465, 1e-12 );
+		TS_ASSERT_DELTA( final_score, -12.9057864339961, 1e-8 );
 	}
 
 	void test_cen_rot_atomtree_min()
@@ -199,6 +199,7 @@ public:
 		sfxn.set_weight( cen_rot_env, 1.0 );
 		sfxn.set_weight( cen_rot_pair, 1.0 );
 		sfxn.set_weight( cen_rot_pair_ang, 1.0 );
+		sfxn.set_weight( cart_bonded, 0.5 );
 
 		//atomtree min
 		core::kinematics::MoveMap mm;
@@ -223,7 +224,7 @@ public:
 		Real start_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, 36.1618331777519, 1e-5);
+		TS_ASSERT_DELTA(start_score, 42.0028855608596, 1e-5);
 	}
 
 	void test_cen_rot_cart_min()
@@ -250,7 +251,7 @@ public:
 		sfxn.set_weight( cen_rot_env, 1.0 );
 		sfxn.set_weight( cen_rot_pair, 1.0 );
 		sfxn.set_weight( cen_rot_pair_ang, 1.0 );
-		sfxn.set_weight( cart_bonded, 0.1 );
+		sfxn.set_weight( cart_bonded, 0.5 );
 
 		//cart min
 		core::kinematics::MoveMap mm;
@@ -266,7 +267,7 @@ public:
 		Real start_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, 20.0778485587594, 1e-5);
+		TS_ASSERT_DELTA(start_score, 26.3380664508932, 1e-5);
 	}
 
 };

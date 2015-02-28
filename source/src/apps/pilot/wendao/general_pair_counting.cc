@@ -121,7 +121,7 @@ Size get_env_bin_number(Size nbr_num)
 {
 	if (option[env_dependent_pair].user()) {
 		for (Size i=1; i<=option[env_dependent_pair].size();i++) {
-			if (nbr_num<=option[env_dependent_pair][i]) {
+			if ((int)nbr_num<=option[env_dependent_pair][i]) {
 				return i;
 			}
 		}
@@ -253,6 +253,7 @@ void my_main()
 
 	// build the count table
 	utility::vector1 <utility::vector1<utility::vector1<Size> > > pair_table;
+	utility::vector1 <utility::vector1<utility::vector1<Size> > > contact_table;
 	utility::vector1 <utility::vector1<Size> > env_table;
 	//theta 0~180, 18bin
 	utility::vector1 <utility::vector1 <utility::vector1<utility::vector1<Size> > > > th1_table;
@@ -269,6 +270,9 @@ void my_main()
 	if (option[env_dependent_pair].user()) {
 		nrottype *= nenv_pair;
 	}
+	Size nbin_contact = 150;
+	Real wbin_c = 0.1;
+
 	Size nbin_ang = 16;
 	Size nbin_dih = 18;
 	Real cos_ang0 = -1;
@@ -278,6 +282,7 @@ void my_main()
 
 	//fill pair table
 	fill_3D_vector(pair_table, nrottype, nrottype, nbin_pair);
+	fill_3D_vector(contact_table, nrottype, nrottype, nbin_contact);
 	//fill env table
 	fill_2D_vector(env_table, nrottype, nbin_env);
 	//fill angle table
@@ -335,7 +340,7 @@ void my_main()
 			//TR.Debug << rotliblst[i] << ": nbr= " <<  nbr_within_ten << std::endl;
 
 			//add to env_table
-			if (nbr_within_ten>=1 && nbr_within_ten<=option[env_bin_number])
+			if (nbr_within_ten>=1 && (int)nbr_within_ten<=option[env_bin_number])
 			{
 					env_table[rotliblst[i]][nbr_within_ten]++;
 			}
@@ -368,7 +373,7 @@ void my_main()
 				Size const j( edge->get_second_node_ind() );
 
 				//check the sequence seperation, skip local interaction
-				if ((j-i)<option[sequence_seperation]) continue;
+				if ((int)(j-i)<option[sequence_seperation]) continue;
 
 				conformation::Residue const & rsd2 ( p.residue(j) );
 		    if (rsd2.name3()=="CYD") continue;
@@ -376,11 +381,17 @@ void my_main()
 				//save r
 				Real d = rsd1.atom("CEN").xyz().distance(rsd2.atom("CEN").xyz());
 				Size bin_r = int(d/wbin)+1;
+				Size bin_c_r = int(d/wbin_c)+1;
 				if ( bin_r <= nbin_pair ) {
 			 		pair_table[rotliblst[i]][rotliblst[j]][bin_r]++;
 			 		pair_table[rotliblst[j]][rotliblst[i]][bin_r]++;
+					if ( bin_c_r <= nbin_contact ) {
+						// save 0:0.1:15.0 bin counting
+			 		  contact_table[rotliblst[i]][rotliblst[j]][bin_c_r]++;
+			 		  contact_table[rotliblst[j]][rotliblst[i]][bin_c_r]++;
+					}
 
-				 	if (rsd1.name3()=="GLY" || rsd1.name3()=="ALA" 
+				 	if (rsd1.name3()=="GLY" || rsd1.name3()=="ALA"
 				 		|| rsd2.name3()=="GLY" || rsd2.name3()=="ALA") continue;
 
 				 	//save angle
@@ -421,6 +432,18 @@ void my_main()
 		}
 	}
 
+
+	//output contact table
+	std::ofstream out_contact_dat("contact_table.txt");
+	for (Size i=1; i<=rot_type_list.size(); i++) {
+		for (Size j=i; j<=rot_type_list.size(); j++) {
+			out_contact_dat << rot_type_list[i] << " " << rot_type_list[j] << " ";
+			for (Size k=1; k<=nbin_contact; k++) {
+				out_contact_dat << contact_table[i][j][k] << " ";
+			}
+			out_contact_dat << std::endl;
+		}
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// output octave scritps for pair and env data
@@ -520,7 +543,7 @@ void my_main()
 			}
 		}
 	}
-	
+
 	octave_scr2 << "dih_table = zeros(" << nrottype << "," 
 		<< nrottype << "," << nbin_pair << ","
 		<< nbin_dih << ");" << std::endl;

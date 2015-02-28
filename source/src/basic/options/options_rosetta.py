@@ -5399,6 +5399,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'no_hb_env_dependence', 'Boolean', desc='Disable environmental dependent weighting of hydrogen bond terms'),
 		Option( 'no_hb_env_dependence_DNA', 'Boolean', desc='Disable environmental dependent weighting of hydrogen bonds involving DNA'),
 		Option( 'optE_no_protein_fa_elec', 'Boolean', desc='Instruct the IterativeOptEDriver to use the soft-repulsion etable', default='false' ),
+		Option( 'centroid_rot', 'Boolean', desc='Use CENTROID_ROT vdw radii', default='false' ),
+		Option( 'centroid_rot_min', 'Boolean', desc='Use CENTROID_ROT_MIN vdw radii', default='false' ),
 		Option( 'design_first', 'Boolean', desc='Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights.'),
 		Option( 'n_design_cycles', 'Integer', desc='The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred', default='10'),
 		##Option( 'recover_nat_aa',   'Boolean', desc='With the iterative optE driver, use design to recover the native amino acids'),

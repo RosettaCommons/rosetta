@@ -1,0 +1,17 @@
+cen_rot_pair      1.0
+cen_rot_pair_ang  1.0
+cen_rot_dun       1.0
+cen_rot_env       1.0
+cen_rot_cbeta     1.0
+rg                1.0
+
+rama              0.6
+omega             0.6
+CENTROID_ROT
+vdw               1.6 #opt weights 3.2
+
+STRAND_STRAND_WEIGHTS 0 6
+hs_pair           0.2
+ss_pair           0.2
+rsigma            0.2
+sheet             0.2

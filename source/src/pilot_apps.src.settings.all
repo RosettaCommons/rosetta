@@ -790,7 +790,7 @@ sources = {
 
 	# W ######################################################################
 	"pilot/wendao" : [
-		"test_bbmc",
+		#"test_bbmc",
 		#"test_cen_rot",
 		#"fa_to_cenrot_score",
 		"cenrot_jd2",

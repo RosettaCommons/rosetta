@@ -27,6 +27,9 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/TenANeighborGraph.hh>
@@ -120,6 +123,7 @@
 
 #include <basic/options/keys/optE.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
@@ -297,7 +301,7 @@ IterativeOptEDriver::task_factory( core::pack::task::TaskFactoryCOP tf )
 ///
 void
 IterativeOptEDriver::read_tagfile_to_taskfactory(std::string tagfile_name,
-																								 core::pack::task::TaskFactoryOP task_factory){
+	core::pack::task::TaskFactoryOP task_factory){
 	using namespace core::pack::task::operation;
 	TaskOperationFactory::TaskOperationOPs tops;
 	basic::datacache::DataMap datamap;
@@ -347,6 +351,12 @@ IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename,
 			core::import_pose::centroid_pose_from_pdb( pose, filename );
 		} else {
 			core::import_pose::pose_from_pdb( pose, filename );
+
+			if ( option[ corrections::score::cenrot ] ) {
+				using namespace protocols::simple_moves;
+				SwitchResidueTypeSetMoverOP to_cenrot( new SwitchResidueTypeSetMover("centroid_rot") );
+				to_cenrot->apply(pose);
+			}
 		}
 	}
 }
@@ -381,7 +391,7 @@ IterativeOptEDriver::divide_up_pdbs()
 			//next_iteration_pdbs_.push_back( "workdir_" + to_string( MPI_rank_ ) + "/" + all_filenames[ ii ] );
 //#endif
 			//TR << "divide_up_pdbs(): PROC #" << MPI_rank_ << " has native pdb " << native_pdbs_[ ii ] << std::endl;
-		}
+	}
 
 #ifdef USEMPI
 		//std::cout << " number of nodes " << MPI_nprocs_ << std::endl;
@@ -986,6 +996,13 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 				core::import_pose::centroid_pose_from_pdb( native_pose, native_filename );
 			} else {
 				core::import_pose::pose_from_pdb( native_pose, native_filename );
+
+				if ( option[ corrections::score::cenrot ] ) {
+					using namespace protocols::simple_moves;
+					SwitchResidueTypeSetMoverOP to_cenrot( new SwitchResidueTypeSetMover("centroid_rot") );
+					to_cenrot->apply(native_pose);
+				}
+
 			}
 			pose = native_pose;
 
@@ -3022,6 +3039,16 @@ IterativeOptEDriver::configure_new_scorefunction() const
 		options.unfolded_energies_type( scoring::UNFOLDED_SCORE12 );
 		scorefxn->set_energy_method_options( options );
 	}
+	if ( option[ optE::centroid_rot ] ) {
+		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
+		options.atom_vdw_atom_type_set_name( "centroid_rot" );
+		scorefxn->set_energy_method_options( options );
+	}
+	if ( option[ optE::centroid_rot_min ] ) {
+		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
+		options.atom_vdw_atom_type_set_name( "centroid_rot:min" );
+		scorefxn->set_energy_method_options( options );
+	}
 	return scorefxn;
 }
 
@@ -4931,8 +4958,8 @@ IterativeOptEDriver::measure_sequence_recovery(
 		// If desired make sure the task logic is aligned to the native.
 		if(option[ optE::constant_logic_taskops_file ].user() ) {
 			ptask = copy_native_packertask_logic( native_poses_[ poseindex ],
-																						pose,
-																						task_factory_for_design);
+			pose,
+			task_factory_for_design);
 		}
 		else
 			ptask = task_factory_for_design->create_task_and_apply_taskoperations( pose ) ;
@@ -5036,8 +5063,8 @@ IterativeOptEDriver::measure_rotamer_recovery(
 		// If desired make sure the task logic is aligned to the native.
 		if(option[ optE::constant_logic_taskops_file ].user() ) {
 			ptask = copy_native_packertask_logic( native_poses_[ poseindex ],
-																						pose,
-																						task_factory_for_repacking);
+			pose,
+			task_factory_for_repacking);
 		}
 		else
 			ptask = task_factory_for_repacking->create_task_and_apply_taskoperations( pose ) ;

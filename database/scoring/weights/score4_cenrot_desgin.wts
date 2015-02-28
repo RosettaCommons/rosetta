@@ -1,0 +1,21 @@
+METHOD_WEIGHTS ref -0.439 1.001 0.121 0.831 -0.669 -0.729 -0.219 0.601 0.361 -0.379 0.191 -0.179 -0.879 0.511 0.141 0.031 0.211 0.141 -0.109 -0.539
+
+hbond_sr_bb 0.8
+hbond_lr_bb 0.8
+rama 0.6
+omega 0.6
+
+cen_rot_env 1.0
+cen_rot_pair 1.0
+cen_rot_pair_ang 1.0
+
+cen_rot_dun 1.0
+CENTROID_ROT_MIN
+vdw 4.0
+
+cen_rot_cbeta 1.0
+rg 1.0
+
+cart_bonded 0.1
+
+ref 1.0

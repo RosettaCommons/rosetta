@@ -1,7 +1,7 @@
-cen_rot_env 0.5
-cen_rot_pair 0.5
-cen_rot_pair_ang 0.5
-cen_rot_cbeta 1.0
-cen_rot_dun 0.5
-CENTROID_ROT
-vdw 4.0
+cen_rot_env      1.0
+cen_rot_pair     1.0
+cen_rot_pair_ang 1.0
+cen_rot_cbeta    1.0
+cen_rot_dun      1.0
+CENTROID_ROT_MIN
+vdw              1.3

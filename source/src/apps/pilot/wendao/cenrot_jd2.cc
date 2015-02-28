@@ -141,7 +141,7 @@ static thread_local basic::Tracer TR( "pilot.wendao.cenrotjd2" );
 utility::vector1<core::Size> nrecovery(20);
 utility::vector1<core::Size> n_total(20);
 
-void* my_main( void* );
+void *my_main( void *);
 
 ///////////////////////////////////////////////////////////////////
 OPT_KEY(Boolean, fit_best_rotamer)
@@ -183,7 +183,8 @@ OPT_1GRP_KEY(Boolean, min, cenrot) //add min mover alone
 OPT_1GRP_KEY(Boolean, min, debug)
 OPT_1GRP_KEY(Boolean, min, cartesian)
 
-int main( int argc, char * argv [] ) {
+int main( int argc, char * argv [] )
+{
 	NEW_OPT(fit_best_rotamer, "fit the exact centroid to the closest in lib", false);
 	NEW_OPT(switch_to_centroid, "switch the fa pdb to the old centroid", false);
 	NEW_OPT(output_cenrot_intcoord, "output the internal coordinate, for building lib", false);
@@ -240,7 +241,10 @@ class OutputCenrotIntCoord : public Mover
 {
 public:
 	OutputCenrotIntCoord() {}
-	virtual std::string get_name() const {return "OutputCenrotIntCoordMover";}
+	virtual std::string get_name() const
+	{
+			return "OutputCenrotIntCoordMover";
+	}
 
 	void apply( Pose & p )
 	{
@@ -269,27 +273,35 @@ public:
 class ClearPoseHeader : public Mover
 {
 public:
-	ClearPoseHeader() {}
-	virtual std::string get_name() const {return "ClearPoseHeaderMover";}
-	void apply( Pose &pose )
-	{
-		clearPoseExtraScores(pose);
-	}
+    ClearPoseHeader() {}
+    virtual std::string get_name() const
+    {
+        return "ClearPoseHeaderMover";
+    }
+    void apply( Pose &pose )
+    {
+        clearPoseExtraScores(pose);
+    }
 };
 
-class RepackCenrotMover : public Mover {
+class RepackCenrotMover : public Mover
+{
 private:
-	core::scoring::ScoreFunctionOP scfxn_;
+    core::scoring::ScoreFunctionOP scfxn_;
 
 public:
-	virtual std::string get_name() const {return "RepackCenrotMover";}
+	virtual std::string get_name() const
+	{
+			return "RepackCenrotMover";
+	}
 
 	void set_scfxn(core::scoring::ScoreFunctionOP const &in_score)
 	{
 		scfxn_ = in_score;
 	}
 
-	void apply( Pose & p ) {
+	void apply( Pose & p )
+	{
 		using namespace core::pack::task;
 		TaskFactoryOP main_task_factory( new TaskFactory );
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
@@ -375,15 +387,15 @@ public:
 class CenRotCanonicalMover : public Mover
 {
 private:
-	Size mc_steps_;
-	Real mc_temp_;
-	Real sc_prob_;
+    Size mc_steps_;
+    Real mc_temp_;
+    Real sc_prob_;
 
-	bool first_run_;
+    bool first_run_;
 
-	core::scoring::ScoreFunctionOP scorefxn_;
-	MonteCarloOP mc_;
-	BBG8T3AMoverOP bbgmover_;
+    core::scoring::ScoreFunctionOP scorefxn_;
+    MonteCarloOP mc_;
+    BBG8T3AMoverOP bbgmover_;
 
 	typedef utility::pointer::shared_ptr< CenRotSidechainMover > CenRotSidechainMoverOP;
 	CenRotSidechainMoverOP sidechainmover_;
@@ -428,8 +440,9 @@ public:
 				//fill ss info
 				//without fragment_insertion
 				//no ss is assigned if we want to use that for scoring
-				core::scoring::dssp::Dssp dssp( pose );
-				dssp.insert_ss_into_pose( pose );
+				// only when fragment insertion?
+				//core::scoring::dssp::Dssp dssp( pose );
+				//dssp.insert_ss_into_pose( pose );
 
 				move_type = bbgmover_->type();
 				proposal_density_ratio = bbgmover_->last_proposal_density_ratio();
@@ -445,6 +458,7 @@ public:
 
 		if (option[canonical_recover]) mc_->recover_low(pose);
 		mc_->show_counters();
+		mc_->reset_counters();
 	}
 
 	virtual std::string get_name() const {return "CenRotCanonicalMover";}
@@ -455,10 +469,10 @@ public:
 class CenRotRBRelaxMover : public Mover
 {
 private:
-	core::scoring::ScoreFunctionOP scorefxn_dock_;
-	core::scoring::ScoreFunctionOP scorefxn_repack_;
+    core::scoring::ScoreFunctionOP scorefxn_dock_;
+    core::scoring::ScoreFunctionOP scorefxn_repack_;
 
-	Real repack_score_scale_;
+    Real repack_score_scale_;
 
 public:
 	CenRotRBRelaxMover()
@@ -534,27 +548,27 @@ public:
 class CenRotDockingMover : public Mover
 {
 private:
-	core::scoring::ScoreFunctionOP scorefxn_dock_;
-	core::scoring::ScoreFunctionOP scorefxn_repack_;
+    core::scoring::ScoreFunctionOP scorefxn_dock_;
+    core::scoring::ScoreFunctionOP scorefxn_repack_;
 
-	moves::MonteCarloOP mc_;
+    moves::MonteCarloOP mc_;
 
-	simple_moves::PackRotamersMoverOP pack_rotamers_;
-	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
-	moves::TrialMoverOP trial_;
-	moves::SequenceMoverOP combo_;
+    simple_moves::PackRotamersMoverOP pack_rotamers_;
+    protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
+    moves::TrialMoverOP trial_;
+    moves::SequenceMoverOP combo_;
 
 
-	Size inner_cycles_;
-	Size outer_cycles_;
+    Size inner_cycles_;
+    Size outer_cycles_;
 
-	Real temperature_;
-	bool first_run_;
+    Real temperature_;
+    bool first_run_;
 
-	Real rot_magnitude_;
-	Real trans_magnitude_;
+    Real rot_magnitude_;
+    Real trans_magnitude_;
 
-	bool do_repack_;
+    bool do_repack_;
 
 public:
 	CenRotDockingMover():first_run_(true)
@@ -719,19 +733,20 @@ public:
 
 //////////////////////////////////////////////////////////
 //intermediate level sampling, frag-insertion+repack -> MC
-class SmoothFragRepackMover : public Mover {
+class SmoothFragRepackMover : public Mover
+{
 private:
-	simple_moves::ClassicFragmentMoverOP sms_;
-	core::fragment::FragSetCOP fragset_small_;
-	simple_moves::PackRotamersMoverOP pack_rotamers_;
-	moves::TrialMoverOP smooth_trial_small_pack_;
-	moves::SequenceMoverOP combo_smooth_;
+    simple_moves::ClassicFragmentMoverOP sms_;
+    core::fragment::FragSetCOP fragset_small_;
+    simple_moves::PackRotamersMoverOP pack_rotamers_;
+    moves::TrialMoverOP smooth_trial_small_pack_;
+    moves::SequenceMoverOP combo_smooth_;
 
-	core::scoring::ScoreFunctionOP scorefxn_;
-	moves::MonteCarloOP mc_;
+    core::scoring::ScoreFunctionOP scorefxn_;
+    moves::MonteCarloOP mc_;
 
-	Size inner_cycles_;
-	Size outer_cycles_;
+    Size inner_cycles_;
+    Size outer_cycles_;
 
 public:
 	SmoothFragRepackMover(){
@@ -789,46 +804,55 @@ public:
 };
 
 
-class RescoreCenrot : public Mover {
+class RescoreCenrot : public Mover
+{
 private:
-	core::scoring::ScoreFunctionOP scfxn_;
-	pose::PoseOP native_pose_;
+    core::scoring::ScoreFunctionOP scfxn_;
+    pose::PoseOP native_pose_;
 
 public:
-	RescoreCenrot(){}
-	virtual std::string get_name() const {return "RescoreCenrotMover";}
+    RescoreCenrot() {}
+    virtual std::string get_name() const
+    {
+        return "RescoreCenrotMover";
+    }
 
-	void set_scfxn(core::scoring::ScoreFunctionOP const &in_score) {
-		scfxn_ = in_score;
-	}
-	void set_native(pose::PoseOP const &in_pose) {
-		native_pose_ = in_pose;
-	}
+    void set_scfxn(core::scoring::ScoreFunctionOP const &in_score)
+    {
+        scfxn_ = in_score;
+    }
+    void set_native(pose::PoseOP const &in_pose)
+    {
+        native_pose_ = in_pose;
+    }
 
-	void apply( Pose & p ) {
-		//setup the ss correctly
-		core::scoring::dssp::Dssp dssp( p );
-		dssp.insert_ss_into_pose( p );
+    void apply( Pose &p )
+    {
+        //setup the ss correctly
+        core::scoring::dssp::Dssp dssp( p );
+        dssp.insert_ss_into_pose( p );
 
-		(*scfxn_)(p);
+        (*scfxn_)(p);
 
-		if ( option[OptionKeys::evaluation::gdttm] && option[in::file::native].user() ) {
-			// protocols::evaluation::MetaPoseEvaluatorOP evaluator = new protocols::evaluation::MetaPoseEvaluator;
-			// protocols::evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
-			// evaluator->add_evaluation(
-			// 	new protocols::simple_filters::SelectRmsdEvaluator( native_pose_, "_native" )
-			// );
+        if ( option[OptionKeys::evaluation::gdttm] && option[in::file::native].user() )
+        {
+            // protocols::evaluation::MetaPoseEvaluatorOP evaluator = new protocols::evaluation::MetaPoseEvaluator;
+            // protocols::evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+            // evaluator->add_evaluation(
+            //  new protocols::simple_filters::SelectRmsdEvaluator( native_pose_, "_native" )
+            // );
 
-			Real gdttm_sc, gdtha_sc;
-			core::scoring::CA_gdttm( *native_pose_, p, gdttm_sc, gdtha_sc );
-			protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-			job->add_string_real_pair("gdttm", gdttm_sc);
-			job->add_string_real_pair("gdtha", gdtha_sc);
-		}
-	}
+            Real gdttm_sc, gdtha_sc;
+            core::scoring::CA_gdttm( *native_pose_, p, gdttm_sc, gdtha_sc );
+            protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+            job->add_string_real_pair("gdttm", gdttm_sc);
+            job->add_string_real_pair("gdtha", gdtha_sc);
+        }
+    }
 };
 
-class RepackMinCenrotMover : public Mover {
+class RepackMinCenrotMover : public Mover
+{
 public:
 	virtual std::string get_name() const {return "RepackMinCenrotMover";}
 
@@ -891,7 +915,8 @@ public:
 	}
 };
 
-class MinCenrotMover : public Mover {
+class MinCenrotMover : public Mover
+{
 public:
 	MinCenrotMover(){}
 	virtual std::string get_name() const { return "MinCenrotMover"; }
@@ -948,12 +973,13 @@ public:
 	}
 };
 
-class CenRotRelaxMover : public Mover {
+class CenRotRelaxMover : public Mover
+{
 private:
-	core::scoring::ScoreFunctionOP scorefxn_min_;
-	core::scoring::ScoreFunctionOP scorefxn_repack_;
+    core::scoring::ScoreFunctionOP scorefxn_min_;
+    core::scoring::ScoreFunctionOP scorefxn_repack_;
 
-	Real repack_score_scale_;
+    Real repack_score_scale_;
 
 public:
 	CenRotRelaxMover()
@@ -1088,7 +1114,7 @@ my_main( void* ) {
 		do_cenrot->add_mover(MoverOP( new SwitchResidueTypeSetMover("centroid") ));
 	}
 	else {
-		TR << "Switch to CenRot model" << std::endl;
+		TR.Debug << "Switch to CenRot model" << std::endl;
 		do_cenrot->add_mover(MoverOP( new SwitchResidueTypeSetMover("centroid_rot") ));
 	}
 
@@ -1105,44 +1131,52 @@ my_main( void* ) {
 
 		//repack
 		if (option[repack_cenrot]) {
+			TR.Debug << "Adding repack mover" << std::endl;
 			RepackCenrotMoverOP repack( new RepackCenrotMover() );
 			repack->set_scfxn(score_fxn);
 			do_cenrot->add_mover(repack);
 		}
 
 		if (option[min::cenrot]) {
+		  TR.Debug << "Adding min mover" << std::endl;
 			MinCenrotMoverOP mincenrot( new MinCenrotMover() );
 			do_cenrot->add_mover(mincenrot);
 		}
 
 		if (option[repack_min]) {
+      TR.Debug << "Adding repackmin mover" << std::endl;
 			RepackMinCenrotMoverOP repackmincenrot( new RepackMinCenrotMover() );
 			do_cenrot->add_mover(repackmincenrot);
 		}
 
 		//relax
 		if (option[relax_cenrot]) {
+      TR.Debug << "Adding relax mover" << std::endl;
 			CenRotRelaxMoverOP relax( new CenRotRelaxMover() );
 			do_cenrot->add_mover(relax);
 		}
 
 		if (option[frag_repack]) {
+      TR.Debug << "Adding fragment instertion mover" << std::endl;
 			SmoothFragRepackMoverOP fragrepack( new SmoothFragRepackMover() );
 			do_cenrot->add_mover(fragrepack);
 		}
 
 		if (option[docking_cenrot]) {
+      TR.Debug << "Adding docking mover" << std::endl;
 			CenRotDockingMoverOP cenrotdock( new CenRotDockingMover() );
 			if (option[docking_skip_repack]) cenrotdock->skip_repack();
 			do_cenrot->add_mover(cenrotdock);
 		}
 
 		if (option[rbrelax_cenrot]) {
+      TR.Debug << "Adding rigid body relax mover" << std::endl;
 			CenRotRBRelaxMoverOP rbrelax( new CenRotRBRelaxMover() );
 			do_cenrot->add_mover(rbrelax);
 		}
 
 		if (option[cenrot_canonical]) {
+      TR.Debug << "Adding canonical mover" << std::endl;
 			CenRotCanonicalMoverOP cenrotcan( new CenRotCanonicalMover() );
 			do_cenrot->add_mover(cenrotcan);
 		}
@@ -1151,9 +1185,9 @@ my_main( void* ) {
 		RescoreCenrotOP rescore( new RescoreCenrot() );
 		rescore->set_scfxn(score_fxn);
 		if (option[in::file::native].user()) {
+      //read as centroid, only bb info needed
 			ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
-			core::pose::PoseOP native_pose;
-			native_pose = core::pose::PoseOP( new Pose() );
+			core::pose::PoseOP native_pose( new Pose() );
 			core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
 			rescore->set_native(native_pose);
 		}

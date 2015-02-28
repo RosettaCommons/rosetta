@@ -1,12 +1,15 @@
-hbond_sr_bb 1.2
+hbond_sr_bb 0.8
 hbond_lr_bb 0.8
-p_aa_pp 0.32
-rama 0.2
-omega 0.5
+rama 0.6
+omega 0.6
+
 cen_rot_env 1.0
 cen_rot_pair 1.0
 cen_rot_pair_ang 1.0
+
 cen_rot_dun 1.0
-CENTROID_ROT
-vdw 1.0
-cart_bonded 0.2
+CENTROID_ROT_MIN
+vdw 2.0
+
+cen_rot_cbeta 1.0
+rg 1.0

@@ -125,12 +125,15 @@ public:
 	Real cal_distance( const DOF3 &sample, bool use_xyz=false ) const;
 	Real cal_distance_squared( const DOF3 &sample, bool use_xyz=false ) const;
 	Real cal_distance_squared( const conformation::Residue & rsd ) const;
-	void cal_delta_internal_coordinates_squared(
+
+	/// return the value of angle (in rad)
+	Real cal_delta_internal_coordinates_squared(
 		const conformation::Residue & rsd,
 		Real & d_sq, Real & a_sq, Real & w_sq ) const;
-	void cal_delta_internal_coordinates(
+	Real cal_delta_internal_coordinates(
 		const conformation::Residue & rsd,
 		Real & delta_d, Real & delta_a, Real & delta_w ) const;
+	
 	/// generate a random rot inside the well
 	void assign_random_rotamer( DOF3 &sample, numeric::random::RandomGenerator &RG ) const;
 	/// generate the best rot (mean of the well)

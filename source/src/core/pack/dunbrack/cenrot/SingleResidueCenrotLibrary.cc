@@ -135,6 +135,9 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 
 		if(count<=all_rots_bb_(phi_bin,psi_bin).size())break;
 
+		// ang,  dih  -- degree
+		// vang, vdih -- radian^2
+		//convert deg to rad
 		CentroidRotamerSampleData crsd(
 				prob, dis,
 				ang*numeric::constants::r::pi_over_180,
@@ -240,13 +243,19 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		Real d_sq(0.0), a_sq(0.0), w_sq(0.0);
-		rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
+
+		Real cur_ang = rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
+		Real sin_ang = sin( cur_ang );
+		Real weight = sin_ang * sin_ang;
+		
 		factori[nr] = rotamer_sample_data[nr].prob() \
-			* rotamer_sample_data[nr].norm_factor() \
-			* exp(-d_sq/(2.0*rotamer_sample_data[nr].sd_dis()) \
-			-a_sq/(2.0*rotamer_sample_data[nr].sd_ang()) \
-			-w_sq/(2.0*rotamer_sample_data[nr].sd_dih()));
-	 	p +=  factori[nr];
+			* rotamer_sample_data[nr].norm_factor()  \
+			* exp(
+				-d_sq / ( 2.0 * rotamer_sample_data[nr].sd_dis() )
+				-a_sq / ( 2.0 * rotamer_sample_data[nr].sd_ang() )
+				-w_sq * weight / ( 2.0 * rotamer_sample_data[nr].sd_dih() )
+			);
+	 	p += factori[nr];
 	}
 
 	if (p<MIN_ROT_PROB) return MAX_ROT_ENERGY; //too far away
@@ -260,11 +269,13 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 		for (Size nr=1; nr<=max_rot_num; nr++) {
 			TR.Error << "nr " << nr << ": " << factori[nr] << " p: " << rotamer_sample_data[nr].prob() << std::endl;
 			Real d_sq(0.0), a_sq(0.0), w_sq(0.0);
-			rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
+			Real cur_ang = rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
+			Real sin_ang = sin( cur_ang );
 			TR.Error << "delta: " << d_sq << " " << a_sq << " " << w_sq << std::endl;
 			TR.Error << "sigma: " << rotamer_sample_data[nr].sd_dis() << " "
 				<< rotamer_sample_data[nr].sd_ang() << " "
 				<< rotamer_sample_data[nr].sd_dih() << std::endl;
+			TR.Error << "Sin(ang): " << sin_ang << std::endl;
 			utility_exit();
 		}
 		return MAX_ROT_ENERGY;
@@ -282,13 +293,20 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 	//cal devriv
 	Real dE_ddis(0.0), dE_dang(0.0), dE_ddih(0.0);
 	for (Size nr=1; nr<=max_rot_num; nr++) {
+		
 		CentroidRotamerSampleData const &sample(rotamer_sample_data[nr]);
+		
 		Real delta_dis, delta_ang, delta_dih;
-		rotamer_sample_data[nr].cal_delta_internal_coordinates(rsd, delta_dis, delta_ang, delta_dih);
+		Real cur_ang = rotamer_sample_data[nr].cal_delta_internal_coordinates(rsd, delta_dis, delta_ang, delta_dih);
+		Real sin_ang = sin(cur_ang);
+		Real cos_ang = cos(cur_ang);
 
 		dE_ddis += factori[nr] * delta_dis / sample.sd_dis();
-		dE_dang -= factori[nr] * delta_ang / sample.sd_ang();
-		dE_ddih += factori[nr] * delta_dih / sample.sd_dih();
+		dE_dang -= factori[nr] * ( 
+			delta_ang / sample.sd_ang() + 
+			delta_dih * delta_dih * sin_ang * cos_ang / sample.sd_dih() 
+		);
+		dE_ddih += factori[nr] * delta_dih * sin_ang * sin_ang / sample.sd_dih();
 	}
 
 	//hack save derivs (dis, ang, dih) in scratch.dE_dchi
@@ -340,15 +358,18 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		Real d_sq(0.0), a_sq(0.0), w_sq(0.0);
-		rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
+		Real cur_ang = rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
+		Real sin_ang = sin( cur_ang );
+		Real weight = sin_ang * sin_ang;
+
 		//debug
 		//std::cout << "sq: " << nr << "- " << d_sq << " " << a_sq << " " << w_sq << std::endl;
 		factori[nr] = rotamer_sample_data[nr].norm_factor() * exp(
-			-d_sq/(2.0*rotamer_sample_data[nr].sd_dis()) \
-			-a_sq/(2.0*rotamer_sample_data[nr].sd_ang()) \
-			-w_sq/(2.0*rotamer_sample_data[nr].sd_dih())
+			-d_sq / ( 2.0 * rotamer_sample_data[nr].sd_dis() )
+			-a_sq / ( 2.0 * rotamer_sample_data[nr].sd_ang() )
+			-w_sq * weight / ( 2.0 * rotamer_sample_data[nr].sd_dih() )
 		);
-		//factori[nr] = rotamer_sample_data[nr].norm_factor() * exp(-d_sq/(2.0*rotamer_sample_data[nr].sd_dis()));
+		
 		p +=  rotamer_sample_data[nr].prob() * factori[nr];
 	}
 
@@ -367,25 +388,31 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		CentroidRotamerSampleData const &sample(rotamer_sample_data[nr]);
 		Real delta[3];
-		sample.cal_delta_internal_coordinates(rsd, delta[0], delta[1], delta[2]);
+		Real cur_ang = sample.cal_delta_internal_coordinates(rsd, delta[0], delta[1], delta[2]);
+		Real sin_ang = sin(cur_ang);
 
 		Real tmp_phi(0.0), tmp_psi(0.0);
-		Size dat_shift = 1;
-		Size dev_shift = 4;
+		Size dat_shift = 1; // skip prob
+		Size dev_shift = 4; // skip prob + dat
 		for (Size i=0; i<3; i++) {
-			Real f = delta[i]*delta[i];
-			Real df_dphi = -2.0*delta[i]*sample.deriv_phi_[i+dat_shift];
-			Real df_dpsi = -2.0*delta[i]*sample.deriv_psi_[i+dat_shift];
-			Real g = sample.data_[i+dev_shift];
-			Real dg_dphi = sample.deriv_phi_[i+dev_shift];
-			Real dg_dpsi = sample.deriv_psi_[i+dev_shift];
 
-			tmp_phi += (df_dphi*g - dg_dphi*f)/(g*g)/2.0;
-			tmp_psi += (df_dpsi*g - dg_dpsi*f)/(g*g)/2.0;
+			Real weight = 1.0;
+			//for dih(2) only, dis->0, ang->1
+			if (i==2) weight = sin_ang * sin_ang;
+
+			Real f = delta[i] * delta[i] * weight;
+			Real df_dphi = - 2.0 * delta[i] * sample.deriv_phi_[ i + dat_shift ] * weight;
+			Real df_dpsi = - 2.0 * delta[i] * sample.deriv_psi_[ i + dat_shift ] * weight;
+			Real g = sample.data_[ i + dev_shift ];
+			Real dg_dphi = sample.deriv_phi_[ i + dev_shift ];
+			Real dg_dpsi = sample.deriv_psi_[ i + dev_shift ];
+
+			tmp_phi += ( df_dphi * g - dg_dphi * f ) / ( g * g ) / 2.0;
+			tmp_psi += ( df_dpsi * g - dg_dpsi * f ) / ( g * g ) / 2.0;
 		}
 
-		dE_dbb[RSD_PHI_INDEX] += factori[nr]*(tmp_phi*sample.prob()-sample.deriv_phi_[0]);
-		dE_dbb[RSD_PSI_INDEX] += factori[nr]*(tmp_psi*sample.prob()-sample.deriv_psi_[0]);
+		dE_dbb[RSD_PHI_INDEX] += factori[nr] * ( tmp_phi * sample.prob() - sample.deriv_phi_[0] );
+		dE_dbb[RSD_PSI_INDEX] += factori[nr] * ( tmp_psi * sample.prob() - sample.deriv_psi_[0] );
 	}
 
 	dE_dbb[RSD_PHI_INDEX] /= p;
@@ -668,19 +695,21 @@ void SingleResidueCenrotLibrary::verify_phipsi_bins(
 
 
 /// CentroidRotamerSampleData
-void CentroidRotamerSampleData::cal_delta_internal_coordinates_squared(
+Real CentroidRotamerSampleData::cal_delta_internal_coordinates_squared(
 		const conformation::Residue & rsd,
 		Real & d_sq, Real & a_sq, Real & w_sq ) const
 {
 	Real ddis, dang, ddih;
-	cal_delta_internal_coordinates(rsd, ddis, dang, ddih);
+	Real cur_ang = cal_delta_internal_coordinates(rsd, ddis, dang, ddih);
 
 	d_sq = ddis * ddis;
 	a_sq = dang * dang;
 	w_sq = ddih * ddih;
+
+	return cur_ang;
 }
 
-void CentroidRotamerSampleData::cal_delta_internal_coordinates(
+Real CentroidRotamerSampleData::cal_delta_internal_coordinates(
 		const conformation::Residue & rsd,
 		Real & ddis, Real & dang, Real & ddih ) const
 {
@@ -693,9 +722,12 @@ void CentroidRotamerSampleData::cal_delta_internal_coordinates(
 	core::kinematics::Stub::Vector const d(rsd.atom("CEN").xyz());
 
 	//get centroid_rot int
+	Real cur_ang = numeric::constants::r::pi-numeric::angle_radians(b,c,d);
 	ddis = (d-c).length() - distance_;
-	dang = numeric::constants::r::pi-numeric::angle_radians(b,c,d) - angle_;
+	dang = cur_ang - angle_;
 	ddih = basic::periodic_range( numeric::dihedral_radians(a,b,c,d) - dihedral_, pi_2 );
+
+	return cur_ang;
 }
 
 Real CentroidRotamerSampleData::cal_distance_squared( const conformation::Residue & rsd ) const
