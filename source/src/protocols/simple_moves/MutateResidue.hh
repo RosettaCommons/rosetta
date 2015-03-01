@@ -31,13 +31,6 @@
 
 #include <utility/vector1.hh>
 
-
-// Utility headers
-
-// C++ headers
-
-// Unit headers
-
 namespace protocols {
 namespace simple_moves {
 
@@ -70,14 +63,50 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
+		
+	/// @brief Set this mover's target residue index.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void set_target( core::Size const target_in ) { target_ = target_in; return; }
+
+	/// @brief Get this mover's target residue index.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Size target() { return target_; }
+	
+	/// @brief Set the residue to mutate to.
+	/// @details This is the full name, not the three-letter code.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void set_res_name( std::string const &name_in ) { res_name_ = name_in; return; }
+
+	/// @brief Get the residue to mutate to.
+	/// @details This is the full name, not the three-letter code.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	std::string res_name() { return res_name_; }
+	
+	/// @brief Set whether the mover should try to preserve atoms' xyz coordinates or not.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void set_preserve_atom_coords( bool const val ) { preserve_atom_coords_ = val; return; }
+
+	/// @brief Get whether the mover should try to preserve atoms' xyz coordinates or not.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool preserve_atom_coords() { return preserve_atom_coords_; }
 
   virtual void parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );
 private:
+
+	/// @brief The index of the residue to mutate.
+	/// @details In Rosetta residue numbering.
 	core::Size target_;
+
+	/// @brief The name (full name, not three-letter code) of the residue to mutate to.
+	///
 	std::string res_name_;
+
+	/// @brief Should the mover try to preserve the xyz coordinates of the atoms in the side-chain if the
+	/// new residue has an atom name matching an atom name in the old residue?  Default false.
+	bool preserve_atom_coords_;
 };
 
 } // moves

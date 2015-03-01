@@ -98,11 +98,26 @@ is_ideal_position( // Barak 6/30/09
 
 
 /// @brief  Fills coords of target_rsd with coords from source_rsd of same atom_name, rebuilds others.
+/// @details  If preserve_only_sidechain_dihedrals is true, then this function only copies mainchain coordinates,
+/// and rebuilds all sidechain coordinates from scratch, setting side-chain dihedrals based on the source residue.
+/// Otherwise, if false, it copies all the atoms that it can from the source residue, then rebuilds the rest.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
 copy_residue_coordinates_and_rebuild_missing_atoms(
 	Residue const & source_rsd,
 	Residue & target_rsd,
-	Conformation const & conf
+	Conformation const & conformation,
+	bool const preserve_only_sidechain_dihedrals
+);
+
+
+/// @brief  Fills coords of target_rsd with coords from source_rsd of same atom_name, rebuilds others.
+///
+void
+copy_residue_coordinates_and_rebuild_missing_atoms(
+	Residue const & source_rsd,
+	Residue & target_rsd,
+	Conformation const & conformation
 );
 
 

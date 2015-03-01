@@ -77,7 +77,9 @@ MutateResidueCreator::mover_name()
 ///@brief default ctor
 MutateResidue::MutateResidue() :
 	parent(),
-	target_(0)
+	target_(0),
+	res_name_(""),
+	preserve_atom_coords_(false)
 {}
 
 ///@brief copy ctor
@@ -85,7 +87,8 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 	//utility::pointer::ReferenceCount(),
 	parent( dm ),
 	target_(dm.target_),
-	res_name_(dm.res_name_)
+	res_name_(dm.res_name_),
+	preserve_atom_coords_(dm.preserve_atom_coords_)
 {}
 
 ///@brief Mutate a single residue to a new amino acid
@@ -126,7 +129,7 @@ void MutateResidue::apply( Pose & pose ) {
 		pose.conformation());
 	// Make sure we retain as much info from the previous res as possible
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue(target_),
-		*new_res, pose.conformation() );
+		*new_res, pose.conformation(), !preserve_atom_coords() );
 	pose.replace_residue(target_, *new_res, false );
 
 }
@@ -150,21 +153,28 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 		Pose const & pose)
 {
 
-	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
+	// Set target to the residue specified by "target_pdb_num" or "target_res_num":
 	if( !tag->hasOption("target") ){
 		TR.Error << "Error: no 'target' parameter specified." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
-	target_ = core::pose::parse_resnum(
-		tag->getOption<string>("target"),pose);
+	set_target( core::pose::parse_resnum( tag->getOption<string>("target"), pose ) );
 
+	//Set the identity of the new residue:
 	if( !tag->hasOption("new_res") ){
 		TR.Error << "Error: no 'new_res' parameter specified." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
-	res_name_ = tag->getOption<string>("new_res");
+	set_res_name( tag->getOption<string>("new_res") );
+	
+	//Set whether the mover should try to preserve atom XYZ coordinates or not.  (Default false).
+	set_preserve_atom_coords( tag->getOption<bool>("preserve_atom_coords", false) );
+	
+	return;
 }
 
+///VKM 26 Feb 2015: Can we get rid of this, now?  These LUA hooks are really the ultimate in
+///code dupication...
 void MutateResidue::parse_def( utility::lua::LuaObject const & def,
 				utility::lua::LuaObject const & /*score_fxns*/,
 				utility::lua::LuaObject const & /*tasks*/,
@@ -174,13 +184,13 @@ void MutateResidue::parse_def( utility::lua::LuaObject const & def,
 		TR.Error << "Error: no 'target' parameter specified." << std::endl;
 		utility_exit();
 	}
-	target_ = def["target"].to<core::Size>();
+	set_target( def["target"].to<core::Size>() );
 
 	if( !def["target"] ) {
 		TR.Error << "Error: no 'new_res' parameter specified." << std::endl;
 		utility_exit();
 	}
-	res_name_ = def["new_res"].to<std::string>();
+	set_res_name( def["new_res"].to<std::string>() ); //God I feel like a chump, updating this ridiculous code -- VKM.
 }
 
 } // moves

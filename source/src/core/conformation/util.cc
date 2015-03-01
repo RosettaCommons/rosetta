@@ -63,13 +63,12 @@
 #include <utility/io/izstream.hh>
 
 // C++ headers
-// #include <algorithm>
+#include <algorithm> //std::min()
+
+// Additional misc headers:
 #include <utility/assert.hh>
-
 #include <basic/Tracer.hh>
-
 #include <core/chemical/ChemicalManager.hh>
-
 #include <utility/vector1.hh>
 
 
@@ -521,10 +520,55 @@ is_ideal_position(
 }
 
 
+/// @brief  Fills coords of target_rsd with coords from source_rsd of same atom_name, rebuilds others.
+/// @details  If preserve_only_sidechain_dihedrals is true, then this function only copies mainchain coordinates,
+/// and rebuilds all sidechain coordinates from scratch, setting side-chain dihedrals based on the source residue.
+/// Otherwise, if false, it copies all the atoms that it can from the source residue, then rebuilds the rest.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+copy_residue_coordinates_and_rebuild_missing_atoms(
+	Residue const & source_rsd,
+	Residue & target_rsd,
+	Conformation const & conformation,
+	bool const preserve_only_sidechain_dihedrals
+) {
+	target_rsd.seqpos( source_rsd.seqpos() ); // in case fill_missing_atoms needs context info
+	target_rsd.chain ( source_rsd.chain () );
+
+	if(preserve_only_sidechain_dihedrals) { //If we're keeping only the sidechain dihedral information
+		Size const natoms(target_rsd.natoms());
+		Size const nmainchain( target_rsd.n_mainchain_atoms() );
+		bool any_missing(false);
+		utility::vector1< bool > missing( natoms, false );
+
+		for(Size ia=1; ia<=natoms; ++ia) { //Loop through all atoms
+			std::string const & atom_name( target_rsd.atom_name(ia) );
+			if( ia <= nmainchain && source_rsd.has( atom_name ) ) { //If this is a mainchain atom and it's present in both target and source
+				target_rsd.atom(ia).xyz( source_rsd.atom(atom_name).xyz() );
+			} else {
+				if(TR.Debug.visible()) TR.Debug << "copy_residue_coordinates_and_rebuild_missing_atoms: missing atom " << target_rsd.name() << ' ' << atom_name << std::endl;
+				any_missing=true;
+				missing[ia]=true;
+			}	
+		}
+		if ( any_missing ) {
+			target_rsd.fill_missing_atoms( missing, conformation );
+		}
+		
+		//Set side-chain dihedrals
+		for(core::Size i=1, imax=std::min( target_rsd.nchi(), source_rsd.nchi() ); i<=imax; ++i) { //Loop through all shared chi angles
+			target_rsd.set_chi(i, source_rsd.chi(i)); //Set side-chain dihedral.
+		}
+		
+	} else { //If we're trying to keep the sidechain atom position information
+		copy_residue_coordinates_and_rebuild_missing_atoms( source_rsd, target_rsd, conformation );
+	}
+	return;
+}
+
 
 /// @details  For building variant residues, eg
 /// @note  Need conformation for context in case we have to rebuild atoms, eg backbone H
-
 void
 copy_residue_coordinates_and_rebuild_missing_atoms(
 	Residue const & source_rsd,
@@ -532,6 +576,8 @@ copy_residue_coordinates_and_rebuild_missing_atoms(
 	Conformation const & conformation
 )
 {
+	target_rsd.seqpos( source_rsd.seqpos() ); // in case fill_missing_atoms needs context info
+	target_rsd.chain ( source_rsd.chain () );
 
 	Size const natoms( target_rsd.natoms() );
 
@@ -543,16 +589,13 @@ copy_residue_coordinates_and_rebuild_missing_atoms(
 		if ( source_rsd.has( atom_name ) ) {
 			target_rsd.atom( i ).xyz( source_rsd.atom( atom_name ).xyz() );
 		} else {
-			TR.Debug << "copy_residue_coordinates_and_rebuild_missing_atoms: missing atom " << target_rsd.name() << ' ' <<
-				atom_name << std::endl;
+			if(TR.Debug.visible()) TR.Debug << "copy_residue_coordinates_and_rebuild_missing_atoms: missing atom " << target_rsd.name() << ' ' << atom_name << std::endl;
 			any_missing = true;
 			missing[i] = true;
 		}
 	}
 
 	if ( any_missing ) {
-		target_rsd.seqpos( source_rsd.seqpos() ); // in case fill_missing_atoms needs context info
-		target_rsd.chain ( source_rsd.chain () );
 		target_rsd.fill_missing_atoms( missing, conformation );
 	}
 
@@ -2080,8 +2123,7 @@ void form_disulfide_helper(
 		utility_exit_with_message( "In core::conformation::form_disulfide() (in util.cc): Could not find a suitable residue type with variant types matching the residue that was there before." );
 	}
 
-	copy_residue_coordinates_and_rebuild_missing_atoms(
-		conformation.residue(res_index), *lower_cyd, conformation );
+	copy_residue_coordinates_and_rebuild_missing_atoms(	conformation.residue(res_index), *lower_cyd, conformation, true );
 	conformation.replace_residue(res_index, *lower_cyd, false /*backbone already oriented*/); // doug
 
 	return;
