@@ -192,8 +192,8 @@ public:
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_sfxn_rep_, false);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_sfxn_rama_, false);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_temp_, true);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->initial_temp_, 2.0);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->final_temp_, 1.0);
+		TS_ASSERT_DELTA(modeler->centroid_stage_->initial_temp_, 2.0, 1e-5);
+		TS_ASSERT_DELTA(modeler->centroid_stage_->final_temp_, 1.0, 1e-5);
 	}
 
 	static void assert_default_centroid_movers(LoopModelerOP modeler) { // {{{1
@@ -225,8 +225,8 @@ public:
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rep_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rama_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_temp_, true);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->initial_temp_, 1.5);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->final_temp_, 0.5);
+		TS_ASSERT_DELTA(modeler->fullatom_stage_->initial_temp_, 1.5, 1e-5);
+		TS_ASSERT_DELTA(modeler->fullatom_stage_->final_temp_, 0.5, 1e-5);
 	}
 
 	static void assert_default_fullatom_movers(LoopModelerOP modeler) { // {{{1
@@ -309,17 +309,17 @@ public:
 			TS_ASSERT_EQUALS(mover->get_loop(1).start(), 30);
 			TS_ASSERT_EQUALS(mover->get_loop(1).cut(), 41);
 			TS_ASSERT_EQUALS(mover->get_loop(1).stop(), 41);
-			TS_ASSERT_EQUALS(mover->get_loop(1).skip_rate(), 0);
+			TS_ASSERT_DELTA(mover->get_loop(1).skip_rate(), 0, 1e-5);
 			TS_ASSERT_EQUALS(mover->get_loop(1).is_extended(), true);
 			TS_ASSERT_EQUALS(mover->get_loop(2).start(), 49);
 			TS_ASSERT_EQUALS(mover->get_loop(2).cut(), 55);
 			TS_ASSERT_EQUALS(mover->get_loop(2).stop(), 61);
-			TS_ASSERT_EQUALS(mover->get_loop(2).skip_rate(), 0.5);
+			TS_ASSERT_DELTA(mover->get_loop(2).skip_rate(), 0.5, 1e-5);
 			TS_ASSERT_EQUALS(mover->get_loop(2).is_extended(), false);
 			TS_ASSERT_EQUALS(mover->get_loop(3).start(), 11);
 			TS_ASSERT_EQUALS(mover->get_loop(3).cut(), 17);
 			TS_ASSERT_EQUALS(mover->get_loop(3).stop(), 23);
-			TS_ASSERT_EQUALS(mover->get_loop(3).skip_rate(), 0.4);
+			TS_ASSERT_DELTA(mover->get_loop(3).skip_rate(), 0.4, 1e-5);
 			TS_ASSERT_EQUALS(mover->get_loop(3).is_extended(), true);
 		}
 
@@ -405,8 +405,8 @@ public:
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_sfxn_rep_, true);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_sfxn_rama_, true);
 		TS_ASSERT_EQUALS(modeler->centroid_stage_->ramp_temp_, false);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->initial_temp_, 2.6);
-		TS_ASSERT_EQUALS(modeler->centroid_stage_->final_temp_, 0.6);
+		TS_ASSERT_DELTA(modeler->centroid_stage_->initial_temp_, 2.6, 1e-5);
+		TS_ASSERT_DELTA(modeler->centroid_stage_->final_temp_, 0.6, 1e-5);
 
 		TS_ASSERT(get_centroid_refiners(modeler).empty())
 	}
@@ -433,8 +433,8 @@ public:
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rep_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_sfxn_rama_, true);
 		TS_ASSERT_EQUALS(modeler->fullatom_stage_->ramp_temp_, false);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->initial_temp_, 2.4);
-		TS_ASSERT_EQUALS(modeler->fullatom_stage_->final_temp_, 0.4);
+		TS_ASSERT_DELTA(modeler->fullatom_stage_->initial_temp_, 2.4, 1e-5);
+		TS_ASSERT_DELTA(modeler->fullatom_stage_->final_temp_, 0.4, 1e-5);
 
 		TS_ASSERT(get_fullatom_refiners(modeler).empty())
 	}

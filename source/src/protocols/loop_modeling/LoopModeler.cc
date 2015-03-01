@@ -272,6 +272,30 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 		TR << "Build Time: " << end_time - start_time << " sec" << endl;
 	}
 
+	// Output score and RMSD to debug tracer?  That sounds good.  I need two 
+	// versions of a function that outputs score and rmsd.  One version uses the 
+	// standard tracer, fills up the pose extra scores, and deals with buried 
+	// H-bonds.  The other version just outputs to a debug tracer.
+	//
+	// Actually, I'm starting to think that I should move the score and rmsd code 
+	// to LoopProtocol.  LoopModeler shouldn't do anything but combine other bits 
+	// of code, and right now there's no other way to get this output behavior.  
+	// If I were to move the code into LoopProtocol, both fullatom and centroid 
+	// would report scores and RMSDs to the log.  The full atom extra pose scores 
+	// would overwrite the centroid ones, which is good.  But LoopBuilder isn't a 
+	// LoopProtocol, so I will have to move all this stuff into its own function 
+	// in order to reuse it.  That's not so bad.  This really would be a 
+	// generally useful function for evaluating the quality of a loop.  The 
+	// argument would have to be a pose, a reference pose, a loop, and a tracer.
+	// 
+	// Actually, only the LoopModeler knows about the original pose, doesn't it.  
+	// So I probably can't move this function to the LoopProtocol.  Also, I 
+	// should consider the fact that in real application the RMSD is meaningless 
+	// and should probably not be displayed.  You know, I could have my utility 
+	// function query -in:file:native.  Then I don't need to pass it a reference 
+	// structure and I can easily omit RMSDs if there is no starting structure.  
+	// That's perfect!
+
 	// Centroid stage
 
 	if (is_centroid_stage_enabled_) {
