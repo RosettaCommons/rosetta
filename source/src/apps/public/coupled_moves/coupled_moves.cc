@@ -74,6 +74,7 @@ OPT_1GRP_KEY(Boolean, coupled_moves, ligand_mode)
 OPT_1GRP_KEY(Boolean, coupled_moves, initial_repack)
 OPT_1GRP_KEY(Boolean, coupled_moves, min_pack)
 OPT_1GRP_KEY(Boolean, coupled_moves, save_sequences)
+OPT_1GRP_KEY(Boolean, coupled_moves, save_structures)
 OPT_1GRP_KEY(Real, coupled_moves, ligand_prob)
 OPT_1GRP_KEY(Boolean, coupled_moves, fix_backbone)
 OPT_1GRP_KEY(Boolean, coupled_moves, uniform_backrub)
@@ -112,6 +113,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(coupled_moves::initial_repack, "start simulation with repack and design step", true);
 	NEW_OPT(coupled_moves::min_pack, "use min_pack for initial repack and design step", false);
 	NEW_OPT(coupled_moves::save_sequences, "save all unique sequences", true);
+	NEW_OPT(coupled_moves::save_structures, "save structures for all unique sequences", false);
 	NEW_OPT(coupled_moves::ligand_prob, "probability of making a ligand move", 0.1);
 	NEW_OPT(coupled_moves::fix_backbone, "do not make any backbone moves", false);
 	NEW_OPT(coupled_moves::uniform_backrub, "select backrub rotation angle from uniform distribution", false);
@@ -339,6 +341,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	TR << "Running " << option[ coupled_moves::ntrials ] << " trials..." << std::endl;
 	
 	std::map<std::string,core::Real> unique_sequences;
+	std::map<std::string,core::pose::Pose> unique_structures;
 	std::map<std::string,core::scoring::EnergyMap> unique_scores;
 	
 	core::Size ntrials = option[ coupled_moves::ntrials ];
@@ -394,10 +397,16 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 				if (unique_sequences.find(sequence) == unique_sequences.end()) {
 					unique_sequences.insert(std::make_pair(sequence,current_score));
 					unique_scores.insert(std::make_pair(sequence,pose_copy->energies().total_energies()));
+					if (option[coupled_moves::save_structures]) {
+						unique_structures.insert(std::make_pair(sequence,*pose_copy));
+					}
 				} else {
 					if (unique_sequences[sequence] > current_score) {
 						unique_sequences[sequence] = current_score;
 						unique_scores[sequence] = pose_copy->energies().total_energies();
+						if (option[coupled_moves::save_structures]) {
+							unique_structures[sequence] = *pose_copy;
+						}
 					}
 				}
 			}
@@ -454,6 +463,16 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 			count++;
 		}
 		out_stats.close();
+		
+		if (option[coupled_moves::save_structures]) {
+			for(std::map<std::string,core::pose::Pose>::iterator it = unique_structures.begin(); it != unique_structures.end(); it++) {
+				if (option[out::pdb_gz]) {
+					it->second.dump_pdb(output_tag + "_" + it->first + "_low.pdb.gz");
+				} else {
+					it->second.dump_scored_pdb(output_tag + "_" + it->first + "_low.pdb", *score_fxn_);
+				}
+			}
+		}
 	}
 
 }
