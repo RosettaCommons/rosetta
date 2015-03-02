@@ -48,7 +48,8 @@ namespace setup {
 																																			core::Size const nstruct ):
 		StepWiseJobDistributor( stepwise_monte_carlo, silent_file, nstruct ),
 		count_( 1 ),
-		out_tag_( "" )
+		out_tag_( "" ),
+		init_tag_is_done_( false )
 	{
 	}
 
