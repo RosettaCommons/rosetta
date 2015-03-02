@@ -88,22 +88,19 @@ public:
 
 	// accessors
 	void set_userpos(std::set<core::Size> const &user_pos_in) { user_pos_ = user_pos_in; }
-	void set_strategy(std::string  strategy_in) { fragment_bias_strategy_ = strategy_in; }
+	void set_strategy( std::string strategy_in ) { fragment_bias_strategies_.push_back( strategy_in ); }
 	void set_rms_cutoff(core::Real rms_cutoff_in) { rms_cutoff_ = rms_cutoff_in; }
 	void set_fullatom(bool fullatom_in) {fullatom_ = fullatom_in; }
 	void set_bbmove(bool bbmove_in) { bbmove_ = bbmove_in; }
 	void set_restore_csts(bool restore_csts_in) { restore_csts_ = restore_csts_in; }
 	void set_frag_sizes(utility::vector1<core::Size> const &frag_sizes_in) { frag_sizes_ = frag_sizes_in; }
 	void set_nminsteps(core::Size nminsteps_in) { nminsteps_ = nminsteps_in; }
-	//void set_mc_scorefxn(core::scoring::ScoreFunctionOP){ ;}
 
 	void set_ncycles(core::Size ncycles_in) { ncycles_=ncycles_in; }
 	void set_overlap(core::Size overlap_in) { overlap_=overlap_in; }
 	void set_nfrags(core::Size nfrags_in) { nfrags_=nfrags_in; }
 	void set_temp(core::Real temp_in) { temp_=temp_in; }
 
-	// TODO
-	//void set_bias_fraction( std::map< core::Size, std::pair< char, core::Real > > bias_map ){ bias_map_ = bias_map; }
 
 protected:
 	// apply a sequence fragment
@@ -138,13 +135,30 @@ private:
 	utility::vector1<core::Size> frag_sizes_;
 	core::Size nfrags_;
 	utility::vector1<core::fragment::FragSetOP> fragments_;
-	utility::vector1<boost::unordered_map<core::Size, core::fragment::Frame> > library_;
+	utility::vector1<boost::unordered_map<core::Size, core::fragment::Frame> > library_; // [ fragsize: { pos: frag_frame }, ]
 
 	// fragment bias
-	std::string fragment_bias_strategy_;
+	//std::string fragment_bias_strategy_;
+	utility::vector1<std::string> fragment_bias_strategies_;
 	utility::vector1<numeric::random::WeightedSampler> frag_bias_;
-	std::set<core::Size> user_pos_;
 	core::Real temp_;
+
+	// FragmentBiasAssigner
+	bool cumulate_prob_, exclude_residues_;
+	std::set<core::Size> user_pos_;
+	std::set<core::Size> residues_to_exclude_;
+
+ 	// dump pdb right before changing anything
+	bool dump_pdb_;
+	std::string dump_pdb_tag_;
+
+	// for automode()
+	core::Size automode_rsd_window_size_;
+	core::Real automode_scorecut_;
+
+	// freeze floppy tails: when see jump at the end, how many residues are you chewing back to disallow fragment stitching moves, default=3
+	int wdw_to_freeze_;
+	bool freeze_endpoints_;
 
 	// selection bias
 	std::string selection_bias_;
@@ -152,6 +166,7 @@ private:
 	// reference model
 	core::pose::Pose ref_model_;
 	core::Real ref_cst_weight_;
+	core::Real ref_cst_maxdist_;
 	bool input_as_ref_;
 	bool restore_csts_;
 	bool debug_;
@@ -161,6 +176,12 @@ private:
 
 	// scorefunctions
 	core::scoring::ScoreFunctionOP scorefxn_, fa_scorefxn_, mc_scorefxn_;  // mc_scorefxn allows us to minimize and eval with different scorefxns
+
+	// ligands
+	bool add_hetatm_;
+	core::Real hetatm_self_cst_weight_;
+	core::Real hetatm_prot_cst_weight_;
+
 }; //class CartesianSampler
 
 } // hybridize
