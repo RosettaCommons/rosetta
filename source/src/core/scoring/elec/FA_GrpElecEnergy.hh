@@ -363,11 +363,13 @@ private:
 	bool exclude_DNA_DNA_;
 	Real intrares_scale_;
 	bool context_dependent_;
+	Real context_minstrength_;
+	Real ncb_maxburial_, ncb_minburial_;
 
 	mutable Size nres_monomer_;
 
-	// temporary for derivative stuffs
-	mutable utility::vector1< Real > Eres_;
+	// temporary for derivative stuffs; turn off for now
+	//mutable utility::vector1< Real > Eres_;
 
 	virtual
 	core::Size version() const;

@@ -1487,6 +1487,12 @@ SymmetryInfo::get_nres_subunit() const
 	return nres_monomer_;
 }
 
+void
+SymmetryInfo::set_nres_subunit( Size const setting )
+{
+	nres_monomer_ = setting;
+}
+
 Size
 SymmetryInfo::get_njumps_subunit() const
 {

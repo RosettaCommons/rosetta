@@ -112,8 +112,9 @@ FA_GrpElecEnergy::FA_GrpElecEnergy( methods::EnergyMethodOptions const & options
 	intrares_scale_( options.intrares_elec_correction_scale() ),
 	context_dependent_( options.grpelec_context_dependent() )
 {
-	coulomb_.initialize();
-	groupelec_.initialize( coulomb() );
+	//coulomb_.initialize();
+	//groupelec_.initialize( coulomb() );
+	initialize();
 }
 
 
@@ -128,15 +129,23 @@ FA_GrpElecEnergy::FA_GrpElecEnergy( FA_GrpElecEnergy const & src ):
 	intrares_scale_( src.intrares_scale_ ),
 	context_dependent_( src.context_dependent_ )
 {
-	coulomb_.initialize();
-	groupelec_.initialize( coulomb() );
+	//coulomb_.initialize();
+	//groupelec_.initialize( coulomb() );
+	initialize();
 }
 
 
 void
 FA_GrpElecEnergy::initialize() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	coulomb_.initialize();
 	groupelec_.initialize( coulomb() );
+
+	context_minstrength_ = option[ score::elec_context_minstrength ]();
+	ncb_minburial_ = option[ score::elec_context_minburial ]();
+	ncb_maxburial_ = option[ score::elec_context_maxburial ]();
 }
 
 
@@ -190,7 +199,8 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 
 	//TR.Debug << "setup_for_scoring" << std::endl;
 
-  Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
+	// turn off for now
+  //Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
 
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
@@ -398,7 +408,7 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 		 << burial_weight( nb1 ) << " " << burial_weight( nb2 ) << " " << score << std::endl;
 	*/
 
-	emap[ fa_grpelec ] += w*score;
+	emap[ fa_grpelec ] += score;
 
 	//TR.Debug << "done residue_pair_energy_ext" << std::endl;
 }
@@ -418,7 +428,7 @@ FA_GrpElecEnergy::setup_for_minimizing_for_residue_pair(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
-debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	/*
 	// update the existing nblist if it's already present in the min_data object
@@ -484,10 +494,9 @@ debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 																							r1_atom_derivs, r2_atom_derivs,
 																							total_weight, Erespair );
 
-	// mutable
-	Eres_[ rsd1.seqpos() ] += 0.5*Erespair;
-	Eres_[ rsd2.seqpos() ] += 0.5*Erespair;
-
+	// mutable; turn off for now
+	//Eres_[ rsd1.seqpos() ] += 0.5*Erespair;
+	//Eres_[ rsd2.seqpos() ] += 0.5*Erespair;
 }
 
 void
@@ -558,7 +567,8 @@ debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 	Size res( rsd.seqpos() );
 
   // get deriv on context
-	eval_context_derivatives( rsd, data, weights, r1_atom_derivs );
+	// turn off for now
+	//eval_context_derivatives( rsd, data, weights, r1_atom_derivs );
 
 	// use to avoid double counting with hbond_set
 	/*
@@ -580,7 +590,7 @@ debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 																							total_weight, Erespair );
 
 	// mutable
-	Eres_[ rsd.seqpos() ] += Erespair;
+	//Eres_[ rsd.seqpos() ] += Erespair;
 
 	//TR.Debug << "done eval residue pair deriv" << std::endl;
 }
@@ -876,10 +886,12 @@ FA_GrpElecEnergy::eval_context_derivatives(
 	Size const atm1 = rsd1.nbr_atom();
 
 	utility::vector1< Size > neighs = data->get_boundary_neighs( rsd1.seqpos() );
+	/*
 	for( Size jres = 1; jres <= neighs.size(); ++jres ){
 		Size res2 = neighs[ jres ];
 		f2 += Eres_[ res2 ]*(data->get_dw_dr( res2 ));
 	}
+	*/
 	r1_atom_derivs[ atm1 ].f1() += f1;
 
 	f2 = rsd1.xyz( atm1 ).cross( f1 );
@@ -893,18 +905,19 @@ FA_GrpElecEnergy::eval_context_derivatives(
 inline core::Real
 FA_GrpElecEnergy::burial_weight( core::Real const nb ) const
 {
-	if ( nb < 7.0 ) return 0.1;
-	if ( nb > 24.0 ) return 0.5;
-	return (nb-2.75)*(0.5/21.25);
+	if ( nb < ncb_minburial_ ) return 0.5*context_minstrength_;
+	if ( nb > ncb_maxburial_ ) return 0.5;
+	return (nb-ncb_minburial_)*0.5*(1.0-context_minstrength_)/(ncb_maxburial_ - ncb_minburial_);
 }
 
 // same as in hbond;
 inline core::Real
 FA_GrpElecEnergy::burial_deriv( core::Real const nb ) const
 {
-	if ( nb < 7.0 ) return 0.0;
-	if ( nb > 24.0 ) return 0.0;
-	return 0.5/21.25;
+	if ( nb < ncb_minburial_ ) return 0.0;
+	if ( nb > ncb_maxburial_ ) return 0.0;
+	return 0.5*(1.0-context_minstrength_)/(ncb_maxburial_ - ncb_minburial_);
+	//return 0.5/21.25;
 }
 
 core::Size
