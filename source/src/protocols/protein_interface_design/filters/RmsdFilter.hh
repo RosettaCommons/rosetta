@@ -54,6 +54,9 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
 	void superimpose_on_all( bool const b ){ superimpose_on_all_ = b; }
 	bool superimpose_on_all() const{ return superimpose_on_all_; }
+    void by_aln( bool s) { by_aln_ = s; }
+    bool by_aln() const{ return by_aln_; }
+    
 private:
 	std::list< core::Size > selection_;
 	bool superimpose_, symmetry_;
@@ -68,8 +71,15 @@ private:
 	core::Size end_native_;
 	core::Size begin_pose_;
 	core::Size end_pose_;
+    bool by_aln_;
+    utility::vector1<std::string> aln_files_;
+    utility::vector1<std::string> template_names_;
+    utility::vector1<std::string> query_names_;
 
 };
+core::Real atom_distance( core::conformation::Residue const & r1, std::string const a1, core::conformation::Residue const & r2, std::string const a2 );
+core::Real res_rmsd( utility::vector1< core::Size > const pose_res_for_rmsd, utility::vector1< core::Size > const template_res_for_rmsd, core::pose::Pose const & copy_pose, core::pose::Pose const &template_pose );
+utility::vector1< numeric::xyzVector< core::Real > > Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const positions );
 
 } // filters
 } // protein_interface_design

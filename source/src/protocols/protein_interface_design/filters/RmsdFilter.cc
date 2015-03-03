@@ -47,10 +47,14 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/io/izstream.hh>
+#include <protocols/toolbox/superimpose.hh>
 namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
+
+using namespace::protocols::toolbox;
 using namespace ObjexxFCL;
 
 RmsdFilter::RmsdFilter() :
@@ -66,9 +70,13 @@ RmsdFilter::RmsdFilter() :
   begin_native_ (0),
   end_native_ (0),
   begin_pose_ (0),
-  end_pose_ ( 0 )
+  end_pose_ ( 0 ),
+  by_aln_ ( false )
 {
 	selection_.clear();
+    aln_files_.clear();
+    template_names_.clear();
+    query_names_.clear();
 }
 
 RmsdFilter::RmsdFilter(
@@ -87,8 +95,13 @@ RmsdFilter::RmsdFilter(
     begin_native_ (0),
     end_native_ (0),
     begin_pose_ (0),
-    end_pose_ ( 0 )
-{}
+    end_pose_ ( 0 ),
+    by_aln_ (false )
+{
+    aln_files_.clear();
+    template_names_.clear();
+    query_names_.clear();
+}
 
 
 RmsdFilter::~RmsdFilter() {}
@@ -107,6 +120,104 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	core::pose::Pose copy_pose = pose;
 	core::pose::Pose native = *reference_pose_;
 	core::Real rmsd( 0.0 );
+    if ( by_aln_ ) {
+        utility::vector1<std::string> template_seq;
+        utility::vector1<std::string> query_seq;
+        // read sequences from alignment files
+        for( core::Size iter = 1; iter <= aln_files_.size(); ++iter){
+            utility::io::izstream data( aln_files_[iter] );
+            query_seq.push_back(""); template_seq.push_back("");
+            runtime_assert( data );
+            std::string line;
+            getline(data, line);
+            while( data ){
+                if (line.length() == 0){
+                    continue;
+                }
+                if ( line.substr(1, query_names_[iter].length()) == query_names_[iter] ) {
+                    while( data ) {
+                        getline( data, line );
+                        if (line[0] == '>')
+                            break;
+                        query_seq[iter] += line;
+                    }
+                }
+                if (line.length() == 0){
+                    continue;
+                }
+                if ( line.substr(1, template_names_[iter].length()) == template_names_[iter] ) {
+                    while ( data ) {
+                        getline( data, line );
+                        if ( line[0] == '>' )
+                            break;
+                        template_seq[iter] += line;
+                    }
+                }
+                if ( line.substr(1, query_names_[iter].length()) == query_names_[iter] ) {
+                    while( data ) {
+                        getline( data, line );
+                        if (line[0] == '>')
+                            break;
+                        query_seq[iter] += line;
+                    }
+                }
+                while ( data ){
+                    getline( data, line);
+                    if ( line[0] == '>')
+                        break;
+                }
+            }
+        }
+        utility::vector1<core::Size> template_segm;
+        utility::vector1<core::Size> query_segm;
+        core::Size template_length = 0;
+        core::Size query_length = 0;
+        core::Size template_prev_chain;
+        core::Size query_prev_chain;
+        // read through aligned sequences, count every "aligned" residue into segments
+        for( core::Size i=1; i <= aln_files_.size(); ++i){
+            template_prev_chain = template_length;
+            query_prev_chain = query_length;
+            template_length = 0;
+            query_length = 0;
+            core::Size template_gaps = 0;
+            core::Size query_gaps = 0;
+            for (core::Size pos = 0; pos < template_seq[i].size(); ++pos){
+                if ( template_seq[i][pos] == '-' && query_seq[i][pos] == '-' ){
+                    template_gaps ++;
+                    query_gaps ++;
+                }
+                else if ( template_seq[i][pos] != '-' && query_seq[i][pos] == '-' ){
+                    query_gaps ++;
+                    template_length ++;
+                }
+                else if ( template_seq[i][pos] == '-' && query_seq[i][pos] != '-' ){
+                    template_gaps ++;
+                    query_length ++;
+                }
+                else if ( template_seq[i][pos] != '-' && query_seq[i][pos] != '-') {
+                    template_segm.add_back(template_prev_chain + pos - template_gaps + 1);
+                    query_segm.add_back(query_prev_chain + pos - query_gaps + 1);
+                    template_length ++;
+                    query_length ++;
+                }
+            }
+        }
+        TR << "template segments to align and calculate RMSD on:\n" << template_segm << "\nquery segments to align and calculate RMSD on:\n" << query_segm << std::endl;
+				TR << "Found " << template_segm.size() << " residues to calculate RMSD over" << std::endl;
+				runtime_assert_msg( template_segm.size() > 10 , "there must be more that 10 residues to calculate RMSD over" )
+        // align and calculate RMSD over the above calculated segments
+        utility::vector1< numeric::xyzVector< core::Real > >  query_coords( Ca_coords( pose, template_segm ) );
+        utility::vector1< numeric::xyzVector< core::Real > >  template_coords( Ca_coords( *reference_pose_, query_segm ) );
+        numeric::xyzMatrix< core::Real > rotation;
+        numeric::xyzVector< core::Real > to_init_center, to_fit_center;
+        using namespace protocols::toolbox;
+        superposition_transform( query_coords, template_coords, rotation, to_init_center, to_fit_center );
+        apply_superposition_transform( copy_pose, rotation, to_init_center, to_fit_center );
+        rmsd = res_rmsd( template_segm, query_segm, copy_pose, *reference_pose_ );
+        return rmsd;
+    }
+    
   if ( specify_both_spans_ ) {
 
     if (CA_only_) {
@@ -198,7 +309,7 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 
 		return rmsd;
 	}
-
+    
 	if ( !symmetry_ )
 		runtime_assert_msg( copy_pose.total_residue() == native.total_residue(), "the reference pose must be the same size as the working pose" );
 
@@ -352,6 +463,16 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 
 	superimpose_ = tag->getOption<bool>( "superimpose", 1 );
 	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
+    ///
+    if (tag->hasOption("by_aln") ){
+        by_aln_ = (tag->getOption<bool>("by_aln"));
+        if (by_aln_){
+            aln_files_ = utility::string_split(tag->getOption<std::string>("aln_files"), ',', std::string());
+            template_names_ = utility::string_split(tag->getOption<std::string>("template_names"), ',', std::string());
+            query_names_ = utility::string_split(tag->getOption<std::string>("query_names"), ',', std::string());
+        }
+    }
+
 	if( tag->hasOption("rms_residues_from_pose_cache") ){
 		selection_from_segment_cache_ = tag->getOption<bool>( "rms_residues_from_pose_cache", 1 );
 		if( selection_.size() != 0 ) std::cerr << "Warning: in rmsd filter tag, both a span selection and the instruction to set the residues from the pose cache is given. Incompatible, defined span will be ignored." << std::endl;
@@ -371,6 +492,41 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	}
 }
 
+core::Real atom_distance( core::conformation::Residue const & r1, std::string const a1, core::conformation::Residue const & r2, std::string const a2 ){
+return( r1.xyz( a1 ).distance( r2.xyz( a2 ) ) );
+}
+            
+core::Real res_rmsd( utility::vector1< core::Size > const pose_res_for_rmsd, utility::vector1< core::Size > const template_res_for_rmsd, core::pose::Pose const & copy_pose, core::pose::Pose const & template_pose ){
+    //two_res_rmsd( core::conformation::Residue const & r1, core::conformation::Residue const & r2 ){
+    core::Real rmsd( 0.0 );
+    core::Size count = 0.0;
+    runtime_assert( pose_res_for_rmsd.size() == template_res_for_rmsd.size() );
+                
+    for (core::Size i = 1; i <= pose_res_for_rmsd.size(); i++){
+    core::conformation::Residue r1 = copy_pose.conformation().residue( pose_res_for_rmsd[i] );
+    core::conformation::Residue r2 = template_pose.conformation().residue( template_res_for_rmsd[i] );
+    rmsd += pow( atom_distance( r1, "CA", r2, "CA" ), 2.0 );
+    count = count + 1;
+    //if ( (r1.name3()!="GLY") && (r2.name3()!="GLY") ){
+    //rmsd += pow( atom_distance( r1, "CB", r2, "CB" ), 2.0 );
+    //count++;
+    //}
+    }
+    rmsd /= (core::Real) count;
+    rmsd = pow( rmsd, 0.5 );
+    return rmsd;
+}
+            
+utility::vector1< numeric::xyzVector< core::Real > >Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const positions ){
+    utility::vector1< numeric::xyzVector< core::Real > > coords;
+                
+    coords.clear();
+    BOOST_FOREACH( core::Size const pos, positions ){
+        coords.push_back( pose.residue( pos ).xyz( "CA" ) );
+    }
+    return coords;
+}
+            
 protocols::filters::FilterOP
 RmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RmsdFilter ); }
 
