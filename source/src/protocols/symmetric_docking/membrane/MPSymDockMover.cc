@@ -175,8 +175,8 @@ MPSymDockMover::apply( Pose & pose ) {
 
     // Configure Symmetric MP Docking. Rosetta will symmetrize the
     // score functions automatically
-    ScoreFunctionOP sfxn_high = ScoreFunctionFactory::create_score_function( "mpframework_symdock_fa_2014" );
-    ScoreFunctionOP sfxn_low = ScoreFunctionFactory::create_score_function( "mpframework_symdock_cen_2014" );
+    ScoreFunctionOP sfxn_high = ScoreFunctionFactory::create_score_function( "mpframework_symdock_fa_2015" );
+    ScoreFunctionOP sfxn_low = ScoreFunctionFactory::create_score_function( "mpframework_symdock_cen_2015" );
     
     // Setup repulsives based slide criteria (better for membranes than
     // initial contact scoring)

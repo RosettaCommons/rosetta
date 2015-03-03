@@ -90,7 +90,7 @@ MPFastRelaxMover::show_protocol( Pose & pose ) {
     
     TR << "Membrane Relax protocol + MEM Optimization" << std::endl;
     TR << "Relax Type: " << relax_protocol_->get_name() << std::endl;
-    TR << "Sfxn type: mpframework_fa_smooth_2014" << std::endl;
+    TR << "Sfxn type: mpframework_fa_smooth_2012" << std::endl;
     TR << "Movemap: " << std::endl;
 	relax_protocol_->get_movemap()->show();
     TR << "FoldTree: " << pose.fold_tree() << std::endl;
@@ -171,7 +171,7 @@ MPFastRelaxMover::apply( Pose & pose ) {
     relax_protocol_->set_movemap( movemap );
     
     // Setup membrane fullatom smooth energy function
-    ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2014" );
+    ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012" );
     relax_protocol_->set_scorefxn( sfxn );
 
     // Setup custom foldtree where the membrane jump is attached at the

@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<memb_hires weights=mpframework_smooth_fa_2014 />
+		<memb_hires weights=mpframework_smooth_fa_2012 />
 	</SCOREFXNS>
 	<MOVERS>
 		<AddMembraneMover name=add_memb/>

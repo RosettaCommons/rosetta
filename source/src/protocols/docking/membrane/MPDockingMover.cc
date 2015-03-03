@@ -201,9 +201,12 @@ void MPDockingMover::set_defaults( const Pose & pose ){
 	add_membrane_mover_ = AddMembraneMoverOP( new AddMembraneMover() );
 	
 	// create scorefunctions for lowres and highres
-	// these don't contain the smooth term!
-	ScoreFunctionOP lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpdocking_cen_14-7-23_no-penalties.wts" );
-	ScoreFunctionOP highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpdocking_fa_14-7-23_no-penalties.wts" );
+	// the ones I took were:
+	// mpdocking_cen_14-7-23_no-penalties.wts
+	// mpdocking_fa_14-7-23_no-penalties.wts
+	// now I added the smooth term and took adjustments from MP fa score function
+	ScoreFunctionOP lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
+	ScoreFunctionOP highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
 
 	// create new docking protocol; both low-res and high-res
 	docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, false, false, lowres_scorefxn_, highres_scorefxn_ ) );

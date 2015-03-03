@@ -106,7 +106,7 @@ main( int argc, char* argv [] ) {
 
 	// Setup new Membrane Energy function with all weights 
 	// fyi currently hard coded to setup the centroid scores 
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "mpframework_cen_2014" );
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "mpframework_cen_2006" );
      
     // Set Options for Energy Methods
 	core::scoring::methods::EnergyMethodOptionsOP emopts( new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() ) );

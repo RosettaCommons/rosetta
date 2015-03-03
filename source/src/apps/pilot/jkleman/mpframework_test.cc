@@ -140,7 +140,7 @@ public:
 //		DockingSlideIntoContactOP slide( new DockingSlideIntoContact( 1, axis ) );
 //		slide->apply( pose );
 
-//		ScoreFunctionOP lowres_scorefxn = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2014.wts" );
+//		ScoreFunctionOP lowres_scorefxn = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
 //		
 //		DockingLowResOP lowresdocking( new DockingLowRes( lowres_scorefxn, 1 ) );
 //		lowresdocking->set_trans_magnitude( 100 );

@@ -3,4 +3,4 @@
 -mp:setup:center 0 0 0
 -mp:setup:normal 0 0 1
 -ignore_unrecognized_res
--score:weights mpframework_fa_2014
+-score:weights mpframework_fa_2007

@@ -91,7 +91,7 @@ public:
 		init_memb->apply( pose ); 
 
 		// Setup Membrane Energy Function as is
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_fa_2014" ); 
+		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_fa_2007" ); 
 
 		// Setup a MoveMap
 		MoveMapOP movemap = new MoveMap();

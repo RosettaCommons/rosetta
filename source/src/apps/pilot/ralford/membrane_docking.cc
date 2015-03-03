@@ -71,8 +71,8 @@ public:
 		}
 
 		// Setup custom membrane energy funcitons
-		ScoreFunctionOP mpdocking_low = ScoreFunctionFactory::create_score_function("mpframework_cen_2014");
-		ScoreFunctionOP mpdocking_high = ScoreFunctionFactory::create_score_function("mpframework_fa_2014");
+		ScoreFunctionOP mpdocking_low = ScoreFunctionFactory::create_score_function("mpframework_cen_2006");
+		ScoreFunctionOP mpdocking_high = ScoreFunctionFactory::create_score_function("mpframework_fa_2007");
 
 		// Setup Relax Base Protocol
 		DockingProtocolOP docking = DockingProtocol( 1, false, true, true, mpdocking_low, mpdocking_high ); 
