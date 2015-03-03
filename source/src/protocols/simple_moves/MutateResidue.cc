@@ -97,13 +97,15 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 MutateResidue::MutateResidue( Size const target, string const new_res ) :
 	parent(),
 	target_(target),
-	res_name_(new_res)
+	res_name_(new_res),
+	preserve_atom_coords_(false)
 {}
 
 MutateResidue::MutateResidue( Size const target, int const new_res ) :
 	parent(),
 	target_(target),
-	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) )
+	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) ),
+	preserve_atom_coords_(false)
 {}
 
 
