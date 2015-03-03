@@ -62,6 +62,7 @@ using namespace protocols;
 
 OPT_1GRP_KEY(File, edensity, alt_mapfile)
 OPT_1GRP_KEY(Integer, denstools, nresbins)
+OPT_1GRP_KEY(Integer, denstools, rscc_wdw)
 OPT_1GRP_KEY(Real, denstools, lowres)
 OPT_1GRP_KEY(Real, denstools, hires)
 OPT_1GRP_KEY(Real, denstools, truncate_lowres)
@@ -323,7 +324,7 @@ densityTools()
 
 			core::scoring::electron_density::getDensityMap().set_nres( nres );
 			core::scoring::electron_density::getDensityMap().setScoreWindowContext( true );
-			core::scoring::electron_density::getDensityMap().setWindow( 3 );
+			core::scoring::electron_density::getDensityMap().setWindow( option[ denstools::rscc_wdw ]() );
 
 			core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 			scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
@@ -422,6 +423,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(denstools::verbose, "dump extra output", false);
 	NEW_OPT(denstools::super_verbose, "dump a lot of extra output", false);
 	NEW_OPT(denstools::bin_squared, "bin uniformly in 1/res^2 (default bins 1/res)", false);
+	NEW_OPT(denstools::rscc_wdw, "sliding window to calculate rscc", 3);
 
 	devel::init( argc, argv );
 	densityTools();
