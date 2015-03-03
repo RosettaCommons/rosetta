@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/ss_prediction/SS_predictor.fwd.hh
-/// @brief  SS_predictor forward header
+/// @file   src/protocols/ss_prediction/SS_predictorFromSilents.fwd.hh
+/// @brief  SS_predictorFromSilents 
 /// @author TJ Brunette
 
 
-#ifndef INCLUDED_protocols_ss_prediction_SS_predictor_fwd_hh
-#define INCLUDED_protocols_ss_prediction_SS_predictor_fwd_hh
+#ifndef INCLUDED_protocols_ss_prediction_SS_predictorFromSilents_fwd_hh
+#define INCLUDED_protocols_ss_prediction_SS_predictorFromSilents_fwd_hh
 
 
 // Utility headers
@@ -25,14 +25,14 @@ namespace protocols {
 namespace ss_prediction {
 
 // Forward
-class SS_predictor;
+class SS_predictorFromSilents;
 
 // Types
-typedef  utility::pointer::shared_ptr< SS_predictor >  SS_predictorOP;
-typedef  utility::pointer::shared_ptr< SS_predictor const >  SS_predictorCOP;
+typedef  utility::pointer::shared_ptr< SS_predictorFromSilents >  SS_predictorFromSilentsOP;
+typedef  utility::pointer::shared_ptr< SS_predictorFromSilents const >  SS_predictorFromSilentsCOP;
 
-typedef  utility::pointer::weak_ptr< SS_predictor >  SS_predictorAP;
-typedef  utility::pointer::weak_ptr< SS_predictor const >  SS_predictorCAP;
+typedef  utility::pointer::weak_ptr< SS_predictorFromSilents >  SS_predictorFromSilentsAP;
+typedef  utility::pointer::weak_ptr< SS_predictorFromSilents const >  SS_predictorFromSilentsCAP;
 
 
 } // namespace ss_prediction

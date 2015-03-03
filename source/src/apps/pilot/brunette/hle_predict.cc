@@ -25,6 +25,8 @@
 #include <core/sequence/util.hh>
 #include <core/types.hh>
 #include <protocols/ss_prediction/SS_predictor.hh>
+#include <protocols/ss_prediction/SS_predictorFromSilents.hh>
+
 #include <ctime>
 #include <iostream>
 #include <utility/io/ozstream.hh>
@@ -52,7 +54,6 @@ char get_label(vector1 <Real> ss_pred_pos){
 	return(label);
 }
 
-
 void predict_ss(vector1< vector1 <Real> > ss_pred, string fasta, string id){
 	std::string out_file_name_str( id + ".che_ss2");
 	utility::io::ozstream output(out_file_name_str);
@@ -75,16 +76,15 @@ int main( int argc, char * argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	devel::init(argc, argv);
-	SS_predictor *hle_predictor = new SS_predictor("HLE");
-	typedef vector1< SequenceOP > seqlist;
+    typedef vector1< SequenceOP > seqlist;
+    SS_predictor *hle_predictor = new SS_predictor("HLE");
 	for(Size ii = 1; ii<= option[in::file::fasta]().size(); ++ii){
 		seqlist query_seq = read_fasta_file(option[in::file::fasta ]()[ii]);
 		string fasta = query_seq[1]->sequence();
 		string id = option[in::file::fasta ]()[ii];
 		vector1< vector1 <Real> > ss_pred = hle_predictor->predict_ss(fasta);
 		predict_ss(ss_pred,fasta,id);
-	}
-
+    }
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

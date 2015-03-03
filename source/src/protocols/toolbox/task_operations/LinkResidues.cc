@@ -89,12 +89,9 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 						for(Size ll=1; ll<=grp_i.size(); ++ll){
 								Size numResInSet = grp_i[kk].size();
 								for(Size mm=1; mm<=numResInSet; ++mm){
-										if(kk != ll) {
-											Size source = grp_i[kk][mm];
-											Size target = grp_i[ll][mm];
-											assert(source != target);
-											equiv_pos[source].push_back(target);
-										}
+										Size source = grp_i[kk][mm];
+										Size target = grp_i[ll][mm];
+										equiv_pos[source].push_back(target);
 								}
 						}
 				}
