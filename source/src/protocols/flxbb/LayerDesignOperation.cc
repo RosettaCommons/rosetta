@@ -544,7 +544,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 			}
 			else {
   			task.nonconst_residue_task( i ).prevent_repacking();
-				if(TR.visible()) TR << "    prenventing aminoacid from  repacking" << std::endl;
+				if(TR.visible()) TR << "    preventing aminoacid from  repacking" << std::endl;
 			}
 		}
 		if(TR.visible()) {

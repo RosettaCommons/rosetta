@@ -45,7 +45,7 @@
 
 
 //// C++ headers
-static thread_local basic::Tracer tr( "protocols.filters.ShapeComplementarityFilter" );
+static thread_local basic::Tracer tr( "protocols.simple_filters.ShapeComplementarityFilter" );
 
 namespace protocols {
 namespace simple_filters {

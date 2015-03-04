@@ -11,6 +11,7 @@
 /// @brief Tom's Denovo design protocol
 /// @detailed
 /// @author Tom Linsky (tlinsky@gmail.com)
+/// @author Vikram K. Mulligan (vmullig@uw.edu -- added threshhold option)
 
 // Unit headers
 #include <devel/denovo_design/filters/SSShapeComplementarityFilter.hh>
@@ -86,6 +87,7 @@ SSShapeComplementarityFilter::SSShapeComplementarityFilter() :
 	verbose_( false ),
 	calc_loops_( true ),
 	calc_helices_( true ),
+	rejection_thresh_(0),
 	blueprint_( /* NULL */ ),
 	scc_( core::scoring::sc::ShapeComplementarityCalculatorOP( new core::scoring::sc::ShapeComplementarityCalculator() ) )
 {
@@ -96,6 +98,7 @@ SSShapeComplementarityFilter::SSShapeComplementarityFilter( SSShapeComplementari
 	verbose_( rval.verbose_ ),
 	calc_loops_( rval.calc_loops_ ),
 	calc_helices_( rval.calc_helices_ ),
+	rejection_thresh_(rval.rejection_thresh_),
 	blueprint_( rval.blueprint_ ),
 	scc_( rval.scc_ )
 {
@@ -139,6 +142,7 @@ SSShapeComplementarityFilter::parse_my_tag(
 	verbose_ = tag->getOption< bool >( "verbose", verbose_ );
 	calc_loops_ = tag->getOption< bool >( "loops", calc_loops_ );
 	calc_helices_ = tag->getOption< bool >( "helices", calc_helices_ );
+	set_rejection_thresh( tag->getOption< core::Real >("min_sc", 0.0) );
 }
 
 std::string
@@ -284,7 +288,15 @@ SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 bool
 SSShapeComplementarityFilter::apply( core::pose::Pose const & pose ) const
 {
-	return report_sm( pose );
+	core::Real const returnval( report_sm( pose ) );
+
+	if(returnval < rejection_thresh()) {
+		if(TR.visible()) TR << "SSShapecomplementarity result is less than rejection threshold (" << returnval << " < " << rejection_thresh() << ").  Filter failed." << std::endl;
+		return false;
+	}
+	
+	if(TR.visible()) TR << "SSShapecomplementarityFilter passed." << std::endl;
+	return true;
 }
 
 

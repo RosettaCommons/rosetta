@@ -81,6 +81,14 @@ public:
 
 	core::Real compute( core::pose::Pose const & pose ) const;
 
+	/// @brief Set the threshold below which structures are rejected.
+	///
+	void set_rejection_thresh( core::Real const &val ) {rejection_thresh_ = val; return;}
+
+	/// @brief Get the threshold below which structures are rejected.
+	///
+	core::Real rejection_thresh() const {return rejection_thresh_;}
+
 private:   // private functions
 	/// @brief sets up the underlying filter to work based on a helix
 	void
@@ -108,6 +116,10 @@ private:   // options
 	bool calc_loops_;
 	/// @brief should we calculate SC from each helix to the rest of the protein?
 	bool calc_helices_;
+	
+	/// @brief Threshold below which structures are rejected.  Default 0.0 (no filtration).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Real rejection_thresh_;
 
 private:   // other data
 	/// @brief the blueprint file that contains secondary structure definitions
