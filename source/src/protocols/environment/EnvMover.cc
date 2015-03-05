@@ -54,7 +54,10 @@ EnvMoverCreator::mover_name() {
 EnvMover::EnvMover():
   Mover(),
   movers_( new moves::SequenceMover )
-{}
+{
+  env_ = EnvironmentOP( new Environment( "env" ) );
+  movers_->use_mover_status( true );
+}
 
 EnvMover::~EnvMover() {}
 
@@ -83,8 +86,12 @@ void EnvMover::apply( Pose& pose ) {
     tr.Error << "[ERROR] Error during broking in environment '" << get_name() << "'." << std::endl;
     throw;
   }
+
   movers_->apply( ppose );
-  pose = env->end( ppose );
+
+  set_last_move_status( movers_->get_last_move_status() );
+  tr.Debug << this->get_name() << " exited with status " << get_last_move_status() << std::endl;
+  pose = env_->end( ppose );
 }
 
 void EnvMover::parse_my_tag( utility::tag::TagCOP tag,

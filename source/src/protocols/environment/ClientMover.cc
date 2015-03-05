@@ -25,6 +25,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.fwd.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // tracer
 #include <basic/Tracer.hh>
 
@@ -162,16 +164,21 @@ void ClientMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
   passports_.push( std::make_pair( env_ap, pass ) );
 }
 
-void ClientMover::pop_passport( Environment const& env ) {
+void ClientMover::pop_passport( Environment const& canceling_env ) {
   // passport_cancel should never be called on an empty passport stack
   if( passports_.empty() ) {
-    throw utility::excn::EXCN_Msg_Exception( "Environment "+env.name()+" trying to pop a passport on "+this->get_name()+"'s empty pass stack." );
+    throw utility::excn::EXCN_Msg_Exception( "Environment '"+canceling_env.name()+" trying to pop a passport on "+this->get_name()+"'s empty pass stack." );
   }
   // in fact, we should only ever cancel our own passports. (Should this be an assert?)
-  EnvironmentCOP passport_env = active_environment().lock();
-  if( passport_env &&
-      passport_env->id() != env.id() ){
-    throw utility::excn::EXCN_Msg_Exception( "Environment "+env.name()+" trying to pop a passport on "+this->get_name()+" it did not issue.");
+  EnvironmentCOP passport_env = passports_.top().first.lock();
+
+  if( !passport_env ){
+    // If we can't get a lock on our top environment, our top environment has been (or is currently)
+    // being deallocated. We'll allow the delete. Optimally, we'd want to check to see that the incoming passport
+    // is also inaccessible via owning pointer, but I don't really know how to do that...
+  } else if( passport_env->id() != canceling_env.id() ){
+    throw utility::excn::EXCN_Msg_Exception( "Environment '"+canceling_env.name()+" trying to pop a passport on "+this->get_name()+" it did not issue." );
+
   }
   passports_.pop();
   passport_updated();

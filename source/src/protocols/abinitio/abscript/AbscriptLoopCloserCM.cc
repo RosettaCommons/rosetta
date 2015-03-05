@@ -209,10 +209,10 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
       if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::psi_torsion ) ) )
         warn += 1;
     }
-  } catch( loops::EXCN_Loop_not_closed const& e ) {
-    tr.Info << "Loop closure in " << this->get_name() << " failed. Retrying this output. Report: " << std::endl;
-    tr.Info << e.msg() << std::endl;
-    set_last_move_status( moves::FAIL_DO_NOT_RETRY );
+  } catch( utility::excn::EXCN_Msg_Exception& e ) {
+    tr.Warning << this->get_name() << " failed to close loops without violating the ClientMover contract. Report: "
+              << e.msg() << std::endl;
+    this->set_last_move_status( moves::FAIL_DO_NOT_RETRY );
   }
   if( warn ){
     tr.Warning << "[WARNING] AbscriptLoopMoverCM ignoring " << warn

@@ -52,6 +52,8 @@ public:
 
   void add_registered_mover( protocols::moves::MoverOP );
 
+  Environment& env() { return *env_; }
+
   virtual std::string get_name() const;
 
   virtual moves::MoverOP clone() const;
