@@ -227,6 +227,14 @@ public:
 	/// bins every move, or whether they can stay within the same bin.
 	/// @details This acts on the last perturber in the perturber list.
 	void set_perturber_must_switch_bins( bool const val );
+	
+	/// @brief Set the bin for the set_backbone_bin perturber.
+	///
+	void set_perturber_bin( core::Size const perturber_index, std::string const &bin );
+	
+	/// @brief Set the bin for the set_backbone_bin perturber.
+	/// @details This acts on the last perturber in the perturber list.
+	void set_perturber_bin( std::string const &bin );
 
 	///
 	/// @brief Add a value to the list of values that a perturber takes.

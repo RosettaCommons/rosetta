@@ -69,7 +69,8 @@ GeneralizedKICperturber::GeneralizedKICperturber():
 		residues_(),
 		atoms_(),
 		iterations_(1),
-		must_switch_bins_(false)
+		must_switch_bins_(false),
+		bin_("")
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -83,7 +84,8 @@ GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const 
 	residues_(src.residues_),
 	atoms_(src.atoms_),
 	iterations_(src.iterations_),
-	must_switch_bins_(src.must_switch_bins_)
+	must_switch_bins_(src.must_switch_bins_),
+	bin_(src.bin_)
 {}
 
 ///@brief Destructor for GeneralizedKICperturber mover.
@@ -131,6 +133,9 @@ std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effe
 			break;
 		case set_bondlength:
 			returnstring = "set_bondlength";
+			break;
+		case set_backbone_bin:
+			returnstring = "set_backbone_bin";
 			break;
 		case randomize_dihedral:
 			returnstring = "randomize_dihedral";
@@ -237,6 +242,9 @@ void GeneralizedKICperturber::apply(
 		case set_bondlength:
 			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
 			apply_set_bondlength(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondlengths);
+			break;
+		case set_backbone_bin:
+			apply_set_backbone_bin( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
 			break;
 		case randomize_dihedral:
 			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
@@ -673,6 +681,84 @@ void GeneralizedKICperturber::apply_set_bondlength (
   if(TR.Warning.visible()) TR.Warning.flush();
   if(TR.Debug.visible()) TR.Debug.flush();
   if(TR.visible()) TR.flush();
+
+	return;
+} //set_bondlength
+
+/// @brief Applies a set_backbone_bin perturbation to the list of torsions.
+/// @details  Sets the mainchain torsion bin for each of a list of residues, then picks random mainchain torsion
+/// values from within the bin.
+/// @param[in] original_pose - The input pose.
+/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+/// @param[in] residues - A vector of the indices of residues affected by this perturber.
+/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
+/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+void GeneralizedKICperturber::apply_set_backbone_bin (
+	core::pose::Pose const &original_pose,
+	core::pose::Pose const &loop_pose,
+	utility::vector1 <core::Size> const &residues,
+	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+	utility::vector1 < std::pair < core::Size, core::Size > > const &,//tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+	utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
+) const {
+	//Initial checks:
+	if(!bin_transition_calculator_)
+		utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): The BinTransitionCalculator object has not been created!  This should be impossible -- consult a developer or a mortician." );
+	if(!bin_transition_calculator_->bin_params_loaded())
+		utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): The BinTransitionCalculator object has not loaded a bin params file!" );
+	if(bin_=="") utility_exit_with_message( "No bin has been specified!  Failing in GeneralizedKICperturber::apply_set_backbone_bin()." );
+
+	core::Size const rescount( residues.size() );
+	if(rescount<1) utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): no residues have been specified!  Failing gracelessly." );
+	core::Size const nres( original_pose.n_residue() );
+
+	utility::vector1 <core::Size> loop_indices; //The indices in the loop of the defined residues.
+	loop_indices.resize( rescount, 0 );
+	for(core::Size ir=1, irmax=rescount; ir<=irmax; ++ir) { //Loop through all residues in the residues list
+		//Confirm that this residue exists in the pose.
+		if( !(residues[ir]>0 && residues[ir]<=nres) ) utility_exit_with_message("In GeneralizedKICperturber::apply_set_backbone_bin(): At least one of the residues specified does not exist in the pose!" );
+		//Get this residue's index in the loop pose:
+		core::Size const loopindex = get_loop_index(residues[ir], residue_map);
+		loop_indices[ir]=loopindex;
+		if(ir>1) {
+			for(core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr) {
+				if( loop_indices[jr]==loopindex ) utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): The same residue cannot be specified twice!" ) ;
+			}
+		}
+	}
+	
+	utility::vector1 < utility::vector1 < core::Real > > mainchain_torsions; //Vector of mainchain torsion values that will be populated by the BinTransitionCalculator object.
+	bin_transition_calculator_->random_mainchain_torsions_from_bin( bin_, loop_pose.conformation(), loop_indices, mainchain_torsions ); //Get the BinTransitionCalculator to draw a random sequence of torsions from the specified bin.
+
+	//Generate list of atoms defining the mainchain torsions to set:
+	utility::vector1 < utility::vector1 <core::id::AtomID> > dihedral_list;
+	utility::vector1 < core::Real > inputvalues_real;
+	for(core::Size i=1, imax=loop_indices.size(); i<=imax; ++i) {
+		for(core::Size j=1, jmax=mainchain_torsions[i].size(); j<=jmax; ++j) {
+			utility::vector1 < core::id::AtomID > cur_atomid_list;
+			cur_atomid_list.push_back( core::id::AtomID( loop_pose.conformation().residue(loop_indices[i]).mainchain_atoms()[j], loop_indices[i] ) );
+			if(j<jmax) {
+				cur_atomid_list.push_back( core::id::AtomID( loop_pose.conformation().residue(loop_indices[i]).mainchain_atoms()[j+1], loop_indices[i] ) );
+			} else { //For the last torsion, we have to look up what the last mainchain atom is bonded to.
+				core::conformation::Residue const &cur_res( loop_pose.conformation().residue(loop_indices[i]) );
+				core::Size const other_res( cur_res.connect_map( cur_res.type().upper_connect_id() ).resid() ); //Index of the other residue that this one is connected to.
+				core::Size const other_conn_id( cur_res.connect_map( cur_res.type().upper_connect_id() ).connid() ); //Index of the connection on the other residue.
+				cur_atomid_list.push_back(
+					core::id::AtomID (
+						loop_pose.conformation().residue(other_res).residue_connect_atom_index( other_conn_id  ), //Other atom that this one is connected to at its upper connection
+						other_res //Other residue that this one is connected to at its upper connection.
+					)
+				);
+			}
+			dihedral_list.push_back( cur_atomid_list );
+			inputvalues_real.push_back( mainchain_torsions[i][j] );
+		}
+	}
+
+	apply_set_dihedral ( dihedral_list, atomlist, inputvalues_real, torsions, 0); //Recycle this function.
 
 	return;
 }

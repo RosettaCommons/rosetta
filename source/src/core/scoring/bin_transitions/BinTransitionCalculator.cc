@@ -135,6 +135,47 @@ namespace core {
 						return;
 					} //load_bin_params()
 					
+					/// @brief Given a bin name and a residue, find a BinTransitionsData object describing that residue,
+					/// and the index of the bin within that object.
+					/// @details data_index and bin_index are outputs.  Both are set to 0 if the search fails.  Everything
+					/// else is const input.
+					void BinTransitionCalculator::find_data_and_bin(
+						std::string const &bin_name,
+						core::conformation::Residue const &res,
+						core::Size &data_index,
+						core::Size &bin_index,
+						bool const use_iplus1
+					) const {
+						
+						if(n_bin_transition_data()==0) return; //If there are no BinTransitionData objects, we've already failed.
+						
+						//Loop through all BinTransitionData objects:
+						for(core::Size i=1, imax=n_bin_transition_data(); i<=imax; ++i) {
+							//Initialize data_index and bin_index
+							data_index=0;
+							bin_index=0;
+
+							if(!use_iplus1) {
+								if( !bin_transition_data(i)->criteria_match_i( res ) ) continue;
+								data_index=i;
+								bin_index = bin_transition_data(i)->binname_index_from_string_i(bin_name);
+								if(bin_index==0) continue;								
+							} else {
+								if( !bin_transition_data(i)->criteria_match_i( res ) ) continue;
+								data_index=i;
+								bin_index = bin_transition_data(i)->binname_index_from_string_i(bin_name);
+								if(bin_index==0) continue;
+							}
+							//If we get to here, then we've found a BinTransitionData object and the bin index,
+							//and data_index and bin_index have been set.  So we're done.
+							if(data_index!=0 && bin_index!=0 /*Redundant check*/) return;
+						}
+					
+						//If we get to here, then we have failed and should return 0 for data_index and bin_index.
+						data_index=0; bin_index=0;					
+						return;
+					} //find_data_and_bin
+					
 					/// @brief Initialize a string of residues to a bunch of random bins, based on bin transition probabilities; then draw random mainchain torsion angles from those bins.
 					/// @details Takes a const conformation and a const list of residue indices as input; the conformation is just for checking residues types, numbers of mainchain torsions, etc.
 					/// The residue indices must be in order, defining a contiguous chain (running backwards or forwards).  Output is the mainchain_torsions vector of vectors (reset and
@@ -179,6 +220,58 @@ namespace core {
 
 						return;
 					} //random_mainchain_torsions_from_bins
+					
+					/// @brief Draw random mainchain torsion values for a set of residues, given a bin from which the values should be drawn.
+					/// @details Takes a bin name, a const conformation, and a const list of residue indices as input; the conformation is just for checking residues types, numbers of mainchain
+					/// torsions, etc.  Output is the mainchain_torsions vector of vectors (reset and replaced by this operation).  The distribution WITHIN the bin depends on the BinTransitionData
+					/// object and what was specified in the bin_params file.  Default is uniform within each bin, though Ramachandran-biased distributions are also permitted for alpha-amino acids.
+					/// Note that this function uses bins for residue i, and only checks i+1 if no suitable data are found for i.
+					void BinTransitionCalculator::random_mainchain_torsions_from_bin(
+						std::string const &bin_name,
+						core::conformation::Conformation const &conformation,
+						utility::vector1 <core::Size> const &res_indices,
+						utility::vector1 < utility::vector1 < core::Real > > &mainchain_torsions
+					) const {
+						//Initial checks:
+						if(bin_name=="")
+							utility_exit_with_message( "In core::scoring::bin_transitions::BinTransitionCalculator::random_mainchain_torsions_from_bin(): No bin name was specified!" );
+
+						//Get the number of residues that we'll be setting:
+						core::Size const nres(res_indices.size());
+						if(nres < 1) utility_exit_with_message( "In core::scoring::bin_transitions::BinTransitionCalculator::random_mainchain_torsions_from_bin(): We need at least one residue to operate on!");
+
+						//Storage slots for the index of the BinTransitionData object that we'll use, and for the bin index:
+						core::Size data_index(0);
+						core::Size bin_index(0);
+						bool use_iplus1(false); //Should we get the data from the data for residue i+1?
+
+						//Generate the mainchain_torsions vector:
+						mainchain_torsions.clear();
+						for(core::Size ir=1; ir<=nres; ++ir) {
+							utility::vector1 < core::Real > newvect;
+							newvect.resize( conformation.residue(res_indices[ir]).mainchain_torsions().size(), 0.0);
+
+							//Find the data index and bin index:
+							data_index=0;
+							bin_index=0;
+							use_iplus1=false;
+							find_data_and_bin( bin_name, conformation.residue(res_indices[ir]), data_index, bin_index, use_iplus1 );
+							if(data_index==0) {
+								use_iplus1=true;
+								find_data_and_bin( bin_name, conformation.residue(res_indices[ir]), data_index, bin_index, use_iplus1 ); //Use the i+1st bin if nothing is found for bin i.
+							}
+							if(data_index==0) utility_exit_with_message( "In core::scoring::bin_transitions::BinTransitionCalculator::random_mainchain_torsions_from_bin(): No BinTransitionData object could be found for the specified bin and residue type!" );
+
+							//Draw random mainchain torsions from that bin:
+							random_mainchain_torsions_from_bin( bin_index, use_iplus1, data_index, newvect  );
+
+							//Add the new mainchain torsions to the mainchain torsion vector:
+							mainchain_torsions.push_back(newvect);
+						}
+
+						//And we're done!
+						return;
+					} //random_mainchain_torsions_from_bin
 					
 					/// @brief Randomly pick mainchain torsions for a residue based on the torsion bins of its i+1 and i-1 neighbours.
 					/// @details Takes a const conformatoin, a const residue index, and a boolean valueas input.  The conformation is for checking residue

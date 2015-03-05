@@ -64,12 +64,36 @@ namespace core {
 					///
 					void load_bin_params( std::string const &filename );
 					
+					/// @brief Given a bin name and a residue, find a BinTransitionsData object describing that residue,
+					/// and the index of the bin within that object.
+					/// @details data_index and bin_index are outputs.  Both are set to 0 if the search fails.  Everything
+					/// else is const input.
+					void find_data_and_bin(
+						std::string const &bin_name,
+						core::conformation::Residue const &res,
+						core::Size &data_index,
+						core::Size &bin_index,
+						bool const use_iplus1
+					) const;
+					
 					/// @brief Initialize a string of residues to a bunch of random bins, based on bin transition probabilities; then draw random mainchain torsion angles from those bins.
 					/// @details Takes a const conformation and a const list of residue indices as input; the conformation is just for checking residues types, numbers of mainchain torsions, etc.
 					/// The residue indices must be in order, defining a contiguous chain (running backwards or forwards).  Output is the mainchain_torsions vector of vectors (reset and
 					/// replaced by this operation).  The distribution WITHIN the bin depends on the BinTransitionData object and what was specified in the bin_params file.  Default is uniform
 					/// within each bin, though Ramachandran-biased distributions are also permitted for alpha-amino acids.
 					void random_mainchain_torsions_from_bins(
+						core::conformation::Conformation const &conformation,
+						utility::vector1 <core::Size> const &res_indices,
+						utility::vector1 < utility::vector1 < core::Real > > &mainchain_torsions
+					) const;
+
+					/// @brief Draw random mainchain torsion values for a set of residues, given a bin from which the values should be drawn.
+					/// @details Takes a bin name, a const conformation, and a const list of residue indices as input; the conformation is just for checking residues types, numbers of mainchain
+					/// torsions, etc.  Output is the mainchain_torsions vector of vectors (reset and replaced by this operation).  The distribution WITHIN the bin depends on the BinTransitionData
+					/// object and what was specified in the bin_params file.  Default is uniform within each bin, though Ramachandran-biased distributions are also permitted for alpha-amino acids.
+					/// Note that this function uses bins for residue i, and only checks i+1 if no suitable data are found for i.
+					void random_mainchain_torsions_from_bin(
+						std::string const &bin_name,
 						core::conformation::Conformation const &conformation,
 						utility::vector1 <core::Size> const &res_indices,
 						utility::vector1 < utility::vector1 < core::Real > > &mainchain_torsions

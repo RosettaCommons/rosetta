@@ -66,6 +66,7 @@ enum perturber_effect {
 	set_dihedral,
 	set_bondangle,
 	set_bondlength,
+	set_backbone_bin,
 
 	randomize_dihedral,
 	randomize_alpha_backbone_by_rama,
@@ -158,6 +159,14 @@ public:
 	/// @brief Return whether the perturb_backbone_by_bins perturber requires residues to change their torsion
 	/// bins every move, or whether they can stay within the same bin.
 	bool must_switch_bins( ) const { return must_switch_bins_; }
+	
+	/// @brief Set the bin that the set_backbone_bin perturber will use.
+	///
+	void set_bin( std::string const &bin ) { bin_ = bin; return; }
+	
+	/// @brief Get the bin that the set_backbone_bin perturber will use.
+	///
+	std::string bin( ) const { return bin_; }
 
 	/// @brief Applies the perturbation to the vectors of desired torsions, desired angles, and desired bond lengths.
 	///
@@ -232,6 +241,10 @@ private:
 	/// the torsion bin of the residue, or it MAY keep it the same, based on the relative
 	/// bin probabilities.
 	bool must_switch_bins_;
+	
+	/// @brief A parameter specifically for the set_backbone_bin perturber.  The bin
+	/// that will be assigned.
+	std::string bin_;
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //
@@ -302,6 +315,26 @@ private:
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose).
 		utility::vector1 < core::Real > const &inputvalues_real,
 		utility::vector1< core::Real > &bondlengths //desired bond lengths for each atom (input/output)
+	) const;
+	
+	/// @brief Applies a set_backbone_bin perturbation to the list of torsions.
+	/// @details  Sets the mainchain torsion bin for each of a list of residues, then picks random mainchain torsion
+	/// values from within the bin.
+	/// @param[in] original_pose - The input pose.
+	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.
+	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
+	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+	void apply_set_backbone_bin (
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 <core::Size> const &residues,
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
 	) const;
 
 	/// @brief Applies a randomize_alpha_backbone_by_rama perturbation to the list of torsions.

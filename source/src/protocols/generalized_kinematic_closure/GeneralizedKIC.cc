@@ -147,15 +147,27 @@ void GeneralizedKIC::apply (core::pose::Pose & pose)
 	if(rosettascripts_filter_exists_) rosettascripts_filter_->set_value(last_run_successful_);
 
 	if(last_run_successful_) {
-		TR << "Closure successful." << std::endl; TR.flush();
+		if(TR.visible()) {TR << "Closure successful." << std::endl; TR.flush();}
 		//perturbedloop_pose.dump_pdb("temp.pdb"); //DELETE ME -- for debugging only
 		copy_loop_pose_to_original( pose, perturbedloop_pose, residue_map, tail_residue_map);
 		if(preselection_mover_exists()) {
-			TR << "Re-applying preselection mover." << std::endl; TR.flush();
+			if(TR.visible()) {TR << "Re-applying preselection mover." << std::endl; TR.flush();}
 			pre_selection_mover_->apply(pose);
+			if(pre_selection_mover_->get_last_move_status()!=protocols::moves::MS_SUCCESS) {
+				if(TR.visible()) {
+					TR << "Warning!  Re-applied preselection mover failed.  GenKIC failure." << std::endl;
+					TR.flush();
+				}
+				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+			} else {
+				set_last_move_status( protocols::moves::MS_SUCCESS );
+			}
+		} else {
+			set_last_move_status( protocols::moves::MS_SUCCESS );
 		}
 	} else {
-		TR << "Closure unsuccessful." << std::endl; TR.flush();
+		if(TR.visible()) {TR << "Closure unsuccessful." << std::endl; TR.flush();}
+		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 	}
 
 	return;
@@ -290,16 +302,22 @@ GeneralizedKIC::parse_my_tag(
 			
 			//If this is a perturber that uses torsion bin transition probabilities, we need to initialize the
 			//BinTransitionCalculator object and load a bin_params file:
-			if(effect=="randomize_backbone_by_bins" || effect=="perturb_backbone_by_bins") {
+			if(effect=="randomize_backbone_by_bins" || effect=="perturb_backbone_by_bins" || effect=="set_backbone_bin") {
 				load_bin_params( (*tag_it)->getOption<std::string>("bin_params_file", "ABBA") );
 			}
 			if(effect=="perturb_backbone_by_bins") {
 				core::Size const iterationcount( (*tag_it)->getOption<core::Size>("iterations", 1) );
 				set_perturber_iterations( iterationcount );
-				if(TR.visible()) TR << "Set iterations for perturb_backbone_by_bins GeneralizedKICPerturber to " << iterationcount << "." << std::endl;
+				if(TR.visible()) TR << "Set iterations for perturb_backbone_by_bins GeneralizedKICperturber to " << iterationcount << "." << std::endl;
 				bool const mustswitch( (*tag_it)->getOption<bool>("must_switch_bins", false) );
 				set_perturber_must_switch_bins( mustswitch );
-				if(TR.visible()) TR << "The perturb_backbone_by_bins GeneralizedKICPerturber " << (mustswitch ? "must always " : "need not necessarily ") << "switch torsion bins." << std::endl;
+				if(TR.visible()) TR << "The perturb_backbone_by_bins GeneralizedKICperturber " << (mustswitch ? "must always " : "need not necessarily ") << "switch torsion bins." << std::endl;
+			}
+			if(effect=="set_backbone_bin") { //Get the bin that we're setting these residues to lie in.
+				if( !(*tag_it)->hasOption( "bin" ) ) utility_exit_with_message( "RosettaScript parsing error: the set_backbone_bin GeneralizedKICperturber requires a \"bin=\" option to be specified." );
+				std::string const bin( (*tag_it)->getOption<std::string>("bin", "") );
+				set_perturber_bin( bin );
+				if(TR.visible()) TR << "The set_backbone_bin GeneralizedKICperturber was set to use bin " << bin << "." << std::endl;
 			}
 
 			//Loop through the sub-tags to find out what information we're adding to this perturber:
@@ -669,6 +687,24 @@ void GeneralizedKIC::set_perturber_must_switch_bins( bool const val )
 	set_perturber_must_switch_bins( perturberlist_.size(), val );
 	return;
 } //set_perturber_must_switch_bins
+
+/// @brief Set the bin for the set_backbone_bin perturber.
+///
+void GeneralizedKIC::set_perturber_bin( core::Size const perturber_index, std::string const &bin )
+{
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::set_bin() is out of range." );
+	perturberlist_[perturber_index]->set_bin( bin );
+	return;
+} //set_perturber_bin
+
+/// @brief Set the bin for the set_backbone_bin perturber.
+/// @details This acts on the last perturber in the perturber list.
+void GeneralizedKIC::set_perturber_bin( std::string const &bin )
+{
+	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::set_bin().");
+	set_perturber_bin(perturberlist_.size(), bin);
+	return;
+} //set_perturber_bin
 
 ///
 /// @brief Add a value to the list of values that a perturber takes.

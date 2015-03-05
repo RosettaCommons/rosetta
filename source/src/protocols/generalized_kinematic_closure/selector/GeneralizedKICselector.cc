@@ -147,7 +147,7 @@ void GeneralizedKICselector::set_selector_type( std::string const &stypename) {
 /// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 /// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 /// @param[in] total_solutions -- Total number of solutions found.
-/// @param[in] pre_selectoin_mover -- Pointer to a mover applied to each solution before applying the selector.
+/// @param[in] pre_selection_mover -- Pointer to a mover applied to each solution before applying the selector.
 /// @param[in] preselection_mover_exists -- Boolean that determines whether a mover has been specified.
 void GeneralizedKICselector::apply (
 	core::pose::Pose &pose,
@@ -304,8 +304,12 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 			set_loop_pose( looppose, atomlist, torsions[i][j], bondangles[i][j], bondlengths[i][j]);
 			copy_loop_pose_to_original( fullpose, looppose, residue_map, tail_residue_map);
 			if(preselection_mover_exists) {
-				TR.Debug << "Applying preselection mover to solution " << j << " from closure attempt " << i << "." << std::endl;
+				if(TR.Debug.visible()) TR.Debug << "Applying preselection mover to solution " << j << " from closure attempt " << i << "." << std::endl;
 				pre_selection_mover->apply(fullpose);
+				if(pre_selection_mover->get_last_move_status()!=protocols::moves::MS_SUCCESS) {
+					if(TR.visible()) TR << "Preselection mover failed.  Discarding this solution and moving to next." << std::endl;
+					continue;
+				}
 			}
 			(*my_sfxn)(fullpose);
 			if(!use_boltzmann) { //If we're just finding the lowest-energy solution:

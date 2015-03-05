@@ -259,6 +259,26 @@ namespace core {
 					///
 					bool matrix_finalized() const { return matrix_finalized_; }
 					
+					/// @brief Given a bin name, get the bin index.
+					/// @details Returns 0 if the name is not found.  Checks the list of bin names
+					/// for the ith residue.
+					core::Size binname_index_from_string_i( std::string const &bin_name ) const {
+						for(core::Size i=1, imax=binnames_i_.size(); i<=imax; ++i) {
+							if(binnames_i_[i]==bin_name) return i;
+						}
+						return 0;
+					}
+
+					/// @brief Given a bin name, get the bin index.
+					/// @details Returns 0 if the name is not found.  Checks the list of bin names
+					/// for the i+1st residue.
+					core::Size binname_index_from_string_iplus1( std::string const &bin_name ) const {
+						for(core::Size i=1, imax=binnames_iplus1_.size(); i<=imax; ++i) {
+							if(binnames_iplus1_[i]==bin_name) return i;
+						}
+						return 0;
+					}
+					
 					/// @brief Get the number of bins for the ith residue.
 					///
 					core::Size n_bins_i() const { return n_bins_i_; }
