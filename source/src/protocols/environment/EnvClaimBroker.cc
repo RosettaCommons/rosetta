@@ -550,6 +550,8 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
              << " allowed jumps and " << pair.second->active_dofs().size() << " dofs." << std::endl;
     pair.first->passport_updated();
   }
+
+  pose.conformation().detect_disulfides();
 }
 
 /// @brief A brief comparator object initialized with the correct strength accessor for reuse of setup_passports
