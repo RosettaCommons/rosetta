@@ -48,6 +48,7 @@ public:
 		std::string const & name,
 		core::Real scaleFactor=1);
 	static void executeAllBenchmarks(core::Real scaleFactor=1);
+	static void perform_until_set_found ( PerformanceBenchmark * B, core::Real scaleFactor );
 	static std::string getReport();
 	static std::string getOneReport(std::string const & name);
 

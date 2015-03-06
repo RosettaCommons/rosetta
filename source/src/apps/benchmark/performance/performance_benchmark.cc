@@ -30,7 +30,7 @@
 #include <utility/exit.hh>
 #include <stdio.h>
 
-
+#include <set>
 #include <fstream>
 
 #if  !defined(WINDOWS) && !defined(WIN32)
@@ -159,18 +159,85 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 	return t;
 }
 
+void PerformanceBenchmark::perform_until_set_found (
+	PerformanceBenchmark * B,
+	Real scaleFactor
+) {
+	// We need to run the benchmark repeatedly until we're happy with the distribution of results
+	// I actually want a set of results, not a vector, so that I can compare the middle 3 and their spread
+	// ACTUALLY I need a multiset in case results are the same
+	std::multiset< Real > results;
+	Real average = 0;
+	bool average_found = false;
+	
+	while ( ! average_found ) {
+		
+		B->execute( 1 );
+
+		results.insert( B->result_ );
+		
+		// we have "found our average" if we have scaleFactor of values
+		// within 5% of their mutual mean
+		// clearly need only consider adjacent values in the set
+		Size size = results.size();
+		if ( size < scaleFactor ) continue;
+		
+		Size counter = 0;
+		for ( std::multiset< Real >::iterator it( results.begin() ),
+			 end( results.end() );
+			 it != end;
+			 ++it, ++counter ) {
+			
+			//TR << "at counter " << counter << std::endl;
+			if ( counter == size - scaleFactor+1 ) break;
+			
+			std::multiset< Real >::iterator avg_iter = it;
+			
+			average = 0;
+			//TR << " among ";
+			
+			Real final_value = 0;
+			for ( Size i = 1; i <= scaleFactor; ++i, ++avg_iter ) {
+				final_value = (*avg_iter);
+				average += final_value;
+				TR << final_value << " ";
+			}
+			average /= scaleFactor;
+			
+			Real spread = final_value - *it;
+			//TR << " spread is " << spread << " and average is " << average << std::endl;
+			
+			if ( spread < 0.1 * average ) {
+				average_found = true;
+				break;
+			}
+		}
+		
+		// not done, so it's safe to zero out the result
+		B->result_ = 0;
+	}
+	
+	// done, so set result to average of the tight results
+	B->result_ = average;
+}
+
 void PerformanceBenchmark::executeOneBenchmark(
 	std::string const & name,
 	Real scaleFactor
-){
+) {
+	// Before, scaleFactor would just be how many times B is executed
+	// Now we search for scaleFactor tightly spaced tests.
+	
 	TR << std::endl << "Executing benchmark '" << name << "'" << std::endl << std::endl;
 
 	std::vector<PerformanceBenchmark * > & all( allBenchmarks() );
 	bool found_benchmark(false);
-	for(Size i=0; i<all.size(); i++){
+	for ( Size i = 0; i < all.size(); i++ ) {
 		PerformanceBenchmark * B = all[i];
-		if(B->name() == name) {
-   		    for(int s=0; s<scaleFactor; ++s) B->execute(1);
+		if ( B->name() == name ) {
+			
+			perform_until_set_found( B, scaleFactor );
+				
 			found_benchmark = true;
 			break;
 		}
@@ -189,15 +256,16 @@ void PerformanceBenchmark::executeOneBenchmark(
 
 void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 {
+	// Before, scaleFactor would just be how many times B is executed
+	// Now we search for scaleFactor tightly spaced tests.
+	
 	TR << std::endl << "Executing all benchmarks..." << std::endl << std::endl;
 
 	std::vector<PerformanceBenchmark *> & all( allBenchmarks() );
-
-	for(int s=0; s<scaleFactor; ++s) {
-		for(Size i=0; i<all.size(); ++i) {
-			PerformanceBenchmark * B = all[i];
-			B->execute(1);
-		}
+	
+	for ( Size i = 0; i < all.size(); ++i ) {
+		PerformanceBenchmark * B = all[ i ];
+		perform_until_set_found( B, scaleFactor );
 	}
 	TR << std::endl << "Executing all benchmarks... Done." << std::endl;
 }
@@ -212,7 +280,7 @@ std::string PerformanceBenchmark::getReport()
 	char buf[1024];
 
 	std::string res = "{\n";
-	for(Size i=0; i<all.size(); i++) {
+	for (Size i = 0; i < all.size(); i++ ) {
 		if( i != 0 ) res += ",\n"; // special first case
 		PerformanceBenchmark * B = all[i];
 		sprintf(buf, "%f", B->result_);
