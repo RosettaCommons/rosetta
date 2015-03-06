@@ -77,8 +77,8 @@ GeneralizedKICperturber::GeneralizedKICperturber():
 ///@brief Copy constructor for GeneralizedKICperturber.
 ///
 GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const &src ):
-	bbgmover_( utility::pointer::dynamic_pointer_cast< protocols::simple_moves::BBGaussianMover >(src.bbgmover_->clone())),
-	bin_transition_calculator_( utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone()) ),
+	bbgmover_( ), //Cloned later
+	bin_transition_calculator_( ), //Cloned later
 	effect_(src.effect_),
 	inputvalues_real_(src.inputvalues_real_),
 	residues_(src.residues_),
@@ -86,7 +86,10 @@ GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const 
 	iterations_(src.iterations_),
 	must_switch_bins_(src.must_switch_bins_),
 	bin_(src.bin_)
-{}
+{
+	if(src.bbgmover_) bbgmover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::BBGaussianMover >(src.bbgmover_->clone());
+	if(src.bin_transition_calculator_) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
+}
 
 ///@brief Destructor for GeneralizedKICperturber mover.
 GeneralizedKICperturber::~GeneralizedKICperturber() {}

@@ -51,6 +51,7 @@ class GeneralizedKIC : public protocols::moves::Mover
 {
 public:
 	GeneralizedKIC();
+	GeneralizedKIC(GeneralizedKIC const &src);
 	virtual ~GeneralizedKIC();
 
 	virtual protocols::moves::MoverOP clone() const;
@@ -205,11 +206,11 @@ public:
 
 	/// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
 	/// 
-	void load_bin_params( core::Size const perturber_index, std::string const &bin_params_file );
+	void load_perturber_bin_params( core::Size const perturber_index, std::string const &bin_params_file );
 	
 	/// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
 	/// @details This acts on the last perturber in the perturber list.
-	void load_bin_params( std::string const &bin_params_file );
+	void load_perturber_bin_params( std::string const &bin_params_file );
 	
 	/// @brief Set the number of iterations for a perturber.
 	/// 
@@ -305,7 +306,31 @@ public:
 	/// @brief Add a string-valued parameter to the last filter's parameter list.
 	void add_filter_parameter (std::string const &param_name, std::string const &value);
 
+	/// @brief Set the residue number that a backbone_bin filter is acting on.
 	///
+	void set_filter_resnum( core::Size const filter_index, core::Size const value );
+
+	/// @brief Set the residue number that a backbone_bin filter is acting on.
+	/// @details This version acts on the last filter in the filter list.
+	void set_filter_resnum( core::Size const value );
+	
+	/// @brief Set the bin name that a backbone_bin filter is looking for.
+	///
+	void set_filter_bin( core::Size const filter_index, std::string const &name_in );
+
+	/// @brief Set the bin name that a backbone_bin filter is looking for.
+	/// @details This version acts on the last filter in the filter list.
+	void set_filter_bin( std::string const &name_in );
+	
+	/// @brief Initialize a filter's BinTransitionCalculator object, and load a bin_params file.
+	/// 
+	void load_filter_bin_params( core::Size const filter_index, std::string const &bin_params_file );
+	
+	/// @brief Initialize a filter's BinTransitionCalculator object, and load a bin_params file.
+	/// @details This acts on the last filter in the filter list.
+	void load_filter_bin_params( std::string const &bin_params_file );
+
+
 	/// @brief Set the number of closure attempts.
 	/// @details Perturbation, closure, and filtering is carried out for every closure
 	/// attempt.  Successful closures from ALL attempts are then selected from by
@@ -354,13 +379,6 @@ private:
 	/// @brief The list of tail residues (as indices of the original pose) that will "come along for the ride" as the
 	/// loop moves.  These must be attached to the original loop, either directly, or through other tail residues.
 	utility::vector1 < core::Size > tailresidues_;
-
-	// @brief The effect of the GeneralizedKIC mover on geometry that is covalently bound to the loop
-	// to be closed, but which is not part of that loop segment.  0 means that the mover will only
-	// move the loop, possibly tearing apart covalent bonds to other parts of the pose.  1 means that
-  // the mover will move the loop along with anything that is downstream in the FoldTree.
-	// CURRENTLY DEPRECATED
-	//core::Size effect_on_bonded_geometry_;
 
 	/// @brief The lower end of the loop to be closed is presumably connected to geometry that is not
 	/// moved by this mover.  However, the connection could be through backbone or sidechain.  The

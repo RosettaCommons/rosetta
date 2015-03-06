@@ -727,6 +727,20 @@ namespace core {
 						
 						return bin_index;
 					} //which_bin_iplus1
+					
+					/// @brief Is a given residue within the bounds of a given bin?
+					/// @details Uses bin definitions for the ith residue.
+					bool BinTransitionData::in_bin_i( core::Size const bin_index, core::conformation::Residue const &rsd  ) const
+					{
+						return ( bin_index == which_bin_i( rsd.mainchain_torsions() ) );
+					} //in_bin_i
+
+					/// @brief Is a given residue within the bounds of a given bin?
+					/// @details Uses bin definitions for the i+1st residue.
+					bool BinTransitionData::in_bin_iplus1( core::Size const bin_index, core::conformation::Residue const &rsd  ) const
+					{
+						return ( bin_index == which_bin_iplus1( rsd.mainchain_torsions() ) );
+					} //in_bin_iplus1
 
 					
 					/// @brief Do final post-load calculations (e.g. precomputing the sum of the transition probability matrix entries,

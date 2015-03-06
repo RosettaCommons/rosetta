@@ -176,6 +176,35 @@ namespace core {
 						return;
 					} //find_data_and_bin
 					
+					/// @brief Is the given residue in the given bin?
+					/// @details For the bin definitions, this uses the first BinTransitionsData object that it finds where residue i matches the properties of the given
+					/// residue.  Checks the i+1 definitions if nothing is found for the i transitions.  Fails if no bin definitions for the given residue type are found.
+					bool BinTransitionCalculator::is_in_bin (
+						core::conformation::Residue const &res,
+						std::string const &bin_name
+					) const {
+						if(bin_name=="") utility_exit_with_message( "In core::scoring::bin_transitions::BinTransitionCalculator::is_in_bin(): Received an empty string for the bin name." );
+						
+						core::Size data_index(0);
+						core::Size bin_index(0);
+						bool use_iplus1(false);
+						
+						find_data_and_bin( bin_name, res, data_index, bin_index, use_iplus1 );
+						if(data_index==0) {
+							use_iplus1=true;
+							find_data_and_bin( bin_name, res, data_index, bin_index, use_iplus1 );
+						}
+						if(data_index==0) utility_exit_with_message( "In core::scoring::bin_transitions::BinTransitionCalculator::is_in_bin(): Could not find suitable bin definitions for the given residue type." );
+
+						if(!use_iplus1) {
+							return bin_transition_data(data_index)->in_bin_i( bin_index, res );
+						} else {
+							return bin_transition_data(data_index)->in_bin_iplus1( bin_index, res );							
+						}
+
+						return true;
+					}
+					
 					/// @brief Initialize a string of residues to a bunch of random bins, based on bin transition probabilities; then draw random mainchain torsion angles from those bins.
 					/// @details Takes a const conformation and a const list of residue indices as input; the conformation is just for checking residues types, numbers of mainchain torsions, etc.
 					/// The residue indices must be in order, defining a contiguous chain (running backwards or forwards).  Output is the mainchain_torsions vector of vectors (reset and

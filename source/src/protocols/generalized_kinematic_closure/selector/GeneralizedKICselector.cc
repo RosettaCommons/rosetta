@@ -57,17 +57,31 @@ namespace selector {
 
 static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.selector.GeneralizedKICselector" );
 
-///@brief Creator for GeneralizedKICselector.
+///@brief Constructor for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector():
 		selectortype_(no_selector),
-		selector_sfxn_(/* NULL */),
+		selector_sfxn_(),
 		boltzmann_kbt_(1.0)
-		//utility::pointer::ReferenceCount(),
+		//TODO -- make sure above data are copied properly when duplicating this mover.
+{}
+
+///@brief Copy constructor for GeneralizedKICselector.
+GeneralizedKICselector::GeneralizedKICselector( GeneralizedKICselector const &src ):
+		selectortype_(src.selectortype_),
+		selector_sfxn_(src.selector_sfxn_), //NOT cloned
+		boltzmann_kbt_(src.boltzmann_kbt_)
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
 ///@brief Destructor for GeneralizedKICselector mover.
 GeneralizedKICselector::~GeneralizedKICselector() {}
+
+/// @brief Clone function for GeneralizedKICselector:
+/// @details Returns an owning pointer to a copy of this selector.
+GeneralizedKICselectorOP GeneralizedKICselector::clone() const
+{
+	return GeneralizedKICselectorOP( new GeneralizedKICselector(*this) );
+}
 
 ///@brief Returns the name of this class ("GeneralizedKICselector").
 std::string GeneralizedKICselector::get_name() const{

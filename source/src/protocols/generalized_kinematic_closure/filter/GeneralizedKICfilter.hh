@@ -32,6 +32,7 @@
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/bin_transitions/BinTransitionCalculator.fwd.hh>
 
 #include <set>
 
@@ -55,6 +56,7 @@ enum filter_type {
 	no_filter = 1,
 	loop_bump_check,
 	atom_pair_distance,
+	backbone_bin,
 
 	unknown_filter, //Keep this second-to-last.
 	end_of_filter_list = unknown_filter //Keep this last.
@@ -70,7 +72,9 @@ class GeneralizedKICfilter : public utility::pointer::ReferenceCount
 {
 public:
 	GeneralizedKICfilter();
+	GeneralizedKICfilter(GeneralizedKICfilter const &src);
 	~GeneralizedKICfilter();
+	GeneralizedKICfilterOP clone() const;
 
 	///
 	/// @brief Returns the name of this class.
@@ -127,7 +131,26 @@ public:
 	/// @brief Get a string-valued filter parameter.
 	/// @details Returns false if the parameter couldn't be found.
 	bool get_filter_param( std::string const &param_name, std::string &outvalue ) const;
+	
+	/// @brief Set the residue number that this filter acts on.
+	/// @details Only used by some filters.
+	void set_resnum( core::Size const val ) { resnum_ = val; return; }
 
+	/// @brief Get the residue number that this filter acts on.
+	/// @details Only used by some filters.
+	core::Size resnum( ) const { return resnum_; }
+	
+	/// @brief Set the bin name for this filter.
+	/// @details Only used by some filters.
+	void set_binname( std::string const &name_in ) {bin_ = name_in; return; }
+	
+	/// @brief Get the bin name for this filter.
+	/// @details Only used by some filters.
+	std::string binname( ) const { return bin_; }
+	
+	/// @brief Initializes the BinTransitionCalculator object and loads a bin_params file.
+	///
+	void load_bin_params( std::string const &bin_params_file );
 
 	/// @brief Apply this filter to ONE of the kinematic closure solutions produced by the bridgeObjects function,
 	/// and return pass or fail.
@@ -177,10 +200,29 @@ private:
 	/// @brief String-valued filter parameters
 	utility::vector1 < std::pair<std::string, std::string > > filter_params_string_;
 
+	/// @brief A BinTransitionCalculatorOP.  This will be null by default,
+	/// and will only point to a BinTransitionCalculator object in the case
+	/// of those filters that use torsion bin transition probabilities.
+	core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
+
+	/// @brief A parameter specifically for the backbone_bin filter.  The bin
+	/// that the residue must lie within.
+	std::string bin_;
+	
+	/// @brief A parameter specifically for the backbone_bin filter.  The residue
+	/// that must lie within the mainchain torsion bin specified.
+	core::Size resnum_;
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //
 ////////////////////////////////////////////////////////////////////////////////
+
+	/// @brief Given an index in the original pose and a mapping from loop to pose,
+	/// return the index in the loop.
+	core::Size get_loop_index (
+		core::Size const original_pose_index,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
+	) const;
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE APPLY FUNCTIONS FOR EACH FILTER                           //
@@ -227,6 +269,29 @@ private:
   /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
   /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
 	bool apply_atom_pair_distance(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
+		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+		utility::vector1 < core::Real > const &torsions,
+		utility::vector1 < core::Real > const &bondangles,
+		utility::vector1 < core::Real > const &bondlengths
+	) const;
+	
+	/// @brief Applies the backbone_bin filter, checking that a given residue lies within a defined
+	/// mainchain torsion bin and failing if it does not.
+	/// @details Returns "true" for pass and "false" for fail.  The user needs to have set a bin
+	/// transition probabilities file, a bin, and a residue.
+	/// @param[in] original_pose -- The full, initial pose.
+  /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
+	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
+  /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+  /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+  /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+	bool apply_backbone_bin(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,

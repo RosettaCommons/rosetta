@@ -31,7 +31,7 @@
 			<Append resname=ALA />
 			<Append resname=ALA />
 			<Append resname=ALA />
-		</PetptideStubMover>
+		</PeptideStubMover>
 		
 		<SetTorsion name=tors>
 			<Torsion torsion_name=omega residue=1 angle=180.0 />
@@ -77,7 +77,7 @@
 			<AddResidue res_index=20 />
 			<AddResidue res_index=1 />
 			<AddResidue res_index=2 />
-			<SetPivots res1=4 atom1=CA res2=7 atom2=CA res3=2 atom3=CA />
+			<SetPivots res1=4 atom1=CA res2=14 atom2=CA res3=2 atom3=CA />
 			<CloseBond atom1=C res1=20 atom2=N res2=1 bondlength=1.32 angle1=114 angle2=123 torsion=180 />
 			<AddPerturber effect="set_backbone_bin" bin="A">
 				<AddResidue index=9 />
@@ -105,6 +105,7 @@
 				<AddResidue index=8 />
 			</AddPerturber>
 			<AddFilter type="loop_bump_check" />
+			<AddFilter type="backbone_bin" bin_params_file="ABBA" residue=14 bin="A" />
 		</GeneralizedKIC>
 	
 	</MOVERS>

@@ -91,7 +91,7 @@ namespace core {
 					
 				private: //Private functions:
 
-					/// @brief Am I within the bounds of a bin?
+					/// @brief Am I within the bounds of a 1D bin?
 					/// @details If min > max, I want to be OUTSIDE of the range [min, max].
 					bool in_bin( core::Real const &min, core::Real const &max, core::Real const &val ) const {
 						if(min < max) {
@@ -195,7 +195,14 @@ namespace core {
 					/// @brief Given a vector of mainchain torsions for a particular residue (at position i+1), figure out which bin the torsions lie in.
 					///
 					core::Size which_bin_iplus1( utility::vector1 < core::Real > const &mainchain_torsions ) const;
+					
+					/// @brief Is a given residue within the bounds of a given bin?
+					/// @details Uses bin definitions for the ith residue.
+					bool in_bin_i( core::Size const bin_index, core::conformation::Residue const &rsd  ) const;
 
+					/// @brief Is a given residue within the bounds of a given bin?
+					/// @details Uses bin definitions for the i+1st residue.
+					bool in_bin_iplus1( core::Size const bin_index, core::conformation::Residue const &rsd  ) const;
 
 				public: //Public functions -- cleanups and checks:
 				

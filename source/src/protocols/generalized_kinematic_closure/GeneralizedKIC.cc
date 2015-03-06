@@ -72,22 +72,25 @@ GeneralizedKICCreator::mover_name()
 	return "GeneralizedKIC";
 }
 
+///@brief Constructor for GeneralizedKIC mover.
 ///
-///@brief Creator for GeneralizedKIC mover.
 GeneralizedKIC::GeneralizedKIC():
-		//utility::pointer::ReferenceCount(),
 		Mover("GeneralizedKIC"),
-		//effect_on_bonded_geometry_(0), //By default, this mover does not respect the geometry of bonds between the loop to be closed and anything else.
+		loopresidues_(),
+		tailresidues_(),
 		lower_anchor_connID_(0),
 		upper_anchor_connID_(0),
 		build_ideal_geometry_(false),
 		last_run_successful_(false),
+		atomlist_(),
 		pivot_1_rsd_(0),
 		pivot_1_atmname_(""),
 		pivot_2_rsd_(0),
 		pivot_2_atmname_(""),
 		pivot_3_rsd_(0),
 		pivot_3_atmname_(""),
+		perturberlist_(),
+		filterlist_(),
 		selector_( selector::GeneralizedKICselectorOP( new selector::GeneralizedKICselector ) ),
 		n_closure_attempts_(2000),
 		n_closure_attempts_is_a_maximum_(false),
@@ -99,18 +102,63 @@ GeneralizedKIC::GeneralizedKIC():
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
+///@brief Copy constructor for GeneralizedKIC mover.
 ///
+GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
+		Mover("GeneralizedKIC"),
+		loopresidues_(src.loopresidues_),
+		tailresidues_(src.tailresidues_),
+		lower_anchor_connID_(src.lower_anchor_connID_),
+		upper_anchor_connID_(src.upper_anchor_connID_),
+		build_ideal_geometry_(src.build_ideal_geometry_),
+		last_run_successful_(src.last_run_successful_),
+		atomlist_(src.atomlist_),
+		pivot_1_rsd_(src.pivot_1_rsd_),
+		pivot_1_atmname_(src.pivot_1_atmname_),
+		pivot_2_rsd_(src.pivot_2_rsd_),
+		pivot_2_atmname_(src.pivot_2_atmname_),
+		pivot_3_rsd_(src.pivot_3_rsd_),
+		pivot_3_atmname_(src.pivot_3_atmname_),
+		perturberlist_(), //Will be cloned
+		filterlist_(), //Will be cloned
+		selector_( src.selector_->clone() ), //Cloned!
+		n_closure_attempts_(src.n_closure_attempts_),
+		n_closure_attempts_is_a_maximum_(src.n_closure_attempts_is_a_maximum_),
+		rosettascripts_filter_(src.rosettascripts_filter_), //Not cloned!
+		rosettascripts_filter_exists_(src.rosettascripts_filter_exists_),
+		pre_selection_mover_(src.pre_selection_mover_), //Not cloned!
+		pre_selection_mover_exists_(src.pre_selection_mover_exists_),
+		ntries_before_giving_up_(src.ntries_before_giving_up_)
+		//TODO -- make sure above data are copied properly when duplicating this mover.
+{
+	//Clone elements in the perturber list
+	perturberlist_.clear();
+	for(core::Size i=1, imax=src.perturberlist_.size(); i<=imax; ++i) {
+		perturberlist_.push_back( src.perturberlist_[i]->clone() );
+	}
+	
+	//Clone elements in the filter list
+	filterlist_.clear();
+	for(core::Size i=1, imax=src.filterlist_.size(); i<=imax; ++i) {
+		filterlist_.push_back( src.filterlist_[i]->clone() );
+	}
+	
+	return;
+}
+
 ///@brief Destructor for GeneralizedKIC mover.
+///
 GeneralizedKIC::~GeneralizedKIC() {}
 
-///
 ///@brief Clone operator to create a pointer to a fresh GeneralizedKIC object that copies this one.
+///
 protocols::moves::MoverOP GeneralizedKIC::clone() const {
 	return protocols::moves::MoverOP( new GeneralizedKIC( *this ) );
 }
 
-///
+
 ///@brief Fresh_instance operator to create a pointer to a fresh GeneralizedKIC object that does NOT copy this one.
+///
 protocols::moves::MoverOP GeneralizedKIC::fresh_instance() const {
 	return protocols::moves::MoverOP( new GeneralizedKIC );
 }
@@ -303,7 +351,7 @@ GeneralizedKIC::parse_my_tag(
 			//If this is a perturber that uses torsion bin transition probabilities, we need to initialize the
 			//BinTransitionCalculator object and load a bin_params file:
 			if(effect=="randomize_backbone_by_bins" || effect=="perturb_backbone_by_bins" || effect=="set_backbone_bin") {
-				load_bin_params( (*tag_it)->getOption<std::string>("bin_params_file", "ABBA") );
+				load_perturber_bin_params( (*tag_it)->getOption<std::string>("bin_params_file", "ABBA") );
 			}
 			if(effect=="perturb_backbone_by_bins") {
 				core::Size const iterationcount( (*tag_it)->getOption<core::Size>("iterations", 1) );
@@ -350,7 +398,26 @@ GeneralizedKIC::parse_my_tag(
 			
 		} else if ( (*tag_it)->getName() == "AddFilter" ) { //If we're adding a filter, need to loop through sub-tags.
 			runtime_assert_string_msg( (*tag_it)->hasOption("type"), "RosettaScript parsing error: the <AddFilter> group within a <GeneralizedKIC> block must include a \"type=<filter_type>\" statement." );
-			add_filter( (*tag_it)->getOption<std::string>("type", "") );
+			std::string const filtertype( (*tag_it)->getOption<std::string>("type", "") );
+			add_filter( filtertype );
+			
+			//Parse filter-specific options:
+			if( filtertype=="backbone_bin" ) {
+				//Residue number:
+				runtime_assert_string_msg( (*tag_it)->hasOption("residue"), "RosettaScript parsing error: when adding a backbone_bin filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
+				core::Size const resnum( (*tag_it)->getOption<core::Size>("residue",0) );
+				set_filter_resnum(resnum);
+				if(TR.visible()) TR << "Set the residue number for backbone_bin filter to " << resnum << "." << std::endl;
+				
+				//Bin transition probabilities params file:
+				load_filter_bin_params( (*tag_it)->getOption<std::string>("bin_params_file", "ABBA") );
+
+				//Bin name:
+				runtime_assert_string_msg( (*tag_it)->hasOption("bin"), "RosettaScript parsing error: when adding a backbone_bin filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"bin=\" statement." );
+				std::string const binname( (*tag_it)->getOption<std::string>("bin", "")  );
+				set_filter_bin(binname);
+				if(TR.visible()) TR << "Set the bin name for the backbone_bin filter to " << binname << "." << std::endl;
+			}
 
 			//Loop through the sub-tags to find out what information we're adding to this filter, if any:
 			utility::vector1< utility::tag::TagCOP > const subbranch_tags( (*tag_it)->getTags() );
@@ -635,21 +702,21 @@ void GeneralizedKIC::set_perturber_effect ( core::Size const perturber_index, pe
 
 /// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
 /// 
-void GeneralizedKIC::load_bin_params( core::Size const perturber_index, std::string const &bin_params_file )
+void GeneralizedKIC::load_perturber_bin_params( core::Size const perturber_index, std::string const &bin_params_file )
 {
-	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::load_bin_params() is out of range." );
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::load_perturber_bin_params() is out of range." );
 	perturberlist_[perturber_index]->load_bin_params( bin_params_file );
 	return;
-} //load_bin_params
+} //load_perturber_bin_params
 
 /// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
 /// @details This acts on the last perturber in the perturber list.
-void GeneralizedKIC::load_bin_params( std::string const &bin_params_file )
+void GeneralizedKIC::load_perturber_bin_params( std::string const &bin_params_file )
 {
-	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::load_bin_params().");
-	load_bin_params( perturberlist_.size(), bin_params_file );
+	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::load_perturber_bin_params().");
+	load_perturber_bin_params( perturberlist_.size(), bin_params_file );
 	return;
-} //load_bin_params
+} //load_perturber_bin_params
 
 /// @brief Set the number of iterations for a perturber.
 /// 
@@ -848,6 +915,66 @@ void GeneralizedKIC::add_filter_parameter (std::string const &param_name, std::s
 	add_filter_parameter(filterlist_.size(), param_name, value);
 	return;
 }
+
+/// @brief Set the residue number that a backbone_bin filter is acting on.
+///
+void GeneralizedKIC::set_filter_resnum( core::Size const filter_index, core::Size const value )
+{
+	if(filter_index < 1 || filter_index >filterlist_.size())
+		utility_exit_with_message( "In GeneralizedKIC::set_filter_resnum(): Filter index is out of range.\n" );
+	filterlist_[filter_index]->set_resnum(value);
+	return;
+}
+
+/// @brief Set the residue number that a backbone_bin filter is acting on.
+/// @details This version acts on the last filter in the filter list.
+void GeneralizedKIC::set_filter_resnum( core::Size const value )
+{
+	if(filterlist_.size() < 1)
+		utility_exit_with_message( "In GeneralizedKIC::set_filter_resnum(): No filters have been defined!\n" );
+	set_filter_resnum(filterlist_.size(), value);
+	return;
+}
+
+/// @brief Set the bin name that a backbone_bin filter is looking for.
+///
+void GeneralizedKIC::set_filter_bin (
+	core::Size const filter_index,
+	std::string const &name_in
+) {
+	if(filter_index < 1 || filter_index >filterlist_.size())
+		utility_exit_with_message( "In GeneralizedKIC::set_filter_bin(): Filter index is out of range.\n" );
+	filterlist_[filter_index]->set_binname(name_in);
+	return;
+}
+
+/// @brief Set the bin name that a backbone_bin filter is looking for.
+/// @details This version acts on the last filter in the filter list.
+void GeneralizedKIC::set_filter_bin( std::string const &name_in )
+{
+	if(filterlist_.size() < 1)
+		utility_exit_with_message( "In GeneralizedKIC::set_filter_bin(): No filters have been defined!\n" );
+	set_filter_bin(filterlist_.size(), name_in);
+	return;
+}
+
+/// @brief Initialize a filter's BinTransitionCalculator object, and load a bin_params file.
+/// 
+void GeneralizedKIC::load_filter_bin_params( core::Size const filter_index, std::string const &bin_params_file )
+{
+	runtime_assert_string_msg( filter_index <= filterlist_.size() && filter_index > 0, "The filter index provided to GeneralizedKIC::load_filter_bin_params() is out of range." );
+	filterlist_[filter_index]->load_bin_params( bin_params_file );
+	return;
+} //load_filter_bin_params
+
+/// @brief Initialize a filter's BinTransitionCalculator object, and load a bin_params file.
+/// @details This acts on the last filter in the filter list.
+void GeneralizedKIC::load_filter_bin_params( std::string const &bin_params_file )
+{
+	runtime_assert_string_msg(filterlist_.size()>0, "No filters specified.  Aborting from GeneralizedKIC::load_filter_bin_params().");
+	load_filter_bin_params( filterlist_.size(), bin_params_file );
+	return;
+} //load_filter_bin_params
 
 /// @brief Set the number of closure attempts.
 /// @details Perturbation, closure, and filtering is carried out for every closure

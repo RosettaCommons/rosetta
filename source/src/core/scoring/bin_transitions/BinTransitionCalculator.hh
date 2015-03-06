@@ -76,6 +76,14 @@ namespace core {
 						bool const use_iplus1
 					) const;
 					
+					/// @brief Is the given residue in the given bin?
+					/// @details For the bin definitions, this uses the first BinTransitionsData object that it finds where residue i matches the properties of the given
+					/// residue.  Checks the i+1 definitions if nothing is found for the i transitions.  Fails if no bin definitions for the given residue type are found.
+					bool is_in_bin (
+						core::conformation::Residue const &res,
+						std::string const &bin_name
+					) const;
+					
 					/// @brief Initialize a string of residues to a bunch of random bins, based on bin transition probabilities; then draw random mainchain torsion angles from those bins.
 					/// @details Takes a const conformation and a const list of residue indices as input; the conformation is just for checking residues types, numbers of mainchain torsions, etc.
 					/// The residue indices must be in order, defining a contiguous chain (running backwards or forwards).  Output is the mainchain_torsions vector of vectors (reset and

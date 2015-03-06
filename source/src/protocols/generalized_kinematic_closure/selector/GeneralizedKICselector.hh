@@ -75,7 +75,9 @@ class GeneralizedKICselector : public utility::pointer::ReferenceCount
 {
 public:
 	GeneralizedKICselector();
+	GeneralizedKICselector(GeneralizedKICselector const &src);
 	~GeneralizedKICselector();
+	GeneralizedKICselectorOP clone() const;
 
 	///
 	/// @brief Returns the name of this class.
