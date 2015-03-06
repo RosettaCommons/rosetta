@@ -127,7 +127,7 @@ main( int argc, char * argv [] )
     }
   }
   char * token;
-  char * str = new char[chain_list.length()];
+  char * str = new char[chain_list.length()+1];
   strcpy (str, chain_list.c_str());
   token = strtok (str, ",");
   while (token != NULL){
