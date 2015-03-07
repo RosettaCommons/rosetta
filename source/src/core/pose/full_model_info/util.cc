@@ -684,6 +684,11 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// deprecate soon in favor of direct loop-graph call
+	//
+	/// @brief Finds the number of missing residues in a pose.
+	/// @details This function returns the number of missing residues in the pose.
+	/// The pose is passed by nonconst reference, so that the full_model_info can be 
+	/// setup, if needed.
 	Size
 	get_number_missing_residues_and_connections( pose::Pose & pose ) {
 		make_sure_full_model_info_is_setup( pose );
@@ -694,6 +699,11 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// deprecate soon in favor of direct loop-graph call
+	//
+	/// @brief Finds the number of missing residues in a pose.
+	/// @details This function returns the number of missing residues in the pose. 
+	/// The missing_residues vector is passed by nonconst reference, so its values 
+	/// can be modified and accessed by this function and the calling method. 
 	Size
 	get_number_missing_residues_and_connections( pose::Pose const & pose,
 																							 utility::vector1< char > & missing_residues ){
@@ -703,15 +713,25 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// deprecate soon in favor of direct loop-graph call
+	//
+	/// @brief Finds the number of missing residues in a pose.
+	/// @details This function returns the number of missing residues in the pose.
+	/// The loop_suites vector is passed by nonconst reference, so its values 
+	/// can be modified and accessed by this function and the calling method. 
 	Size
 	get_number_missing_residues_and_connections( pose::Pose const & pose,
-																							 utility::vector1< utility::vector1< Size > > loop_suites ){
+																							 utility::vector1< utility::vector1< Size > > & loop_suites ){
 		utility::vector1< char > missing_residues;
 		return get_number_missing_residues_and_connections( pose, missing_residues, loop_suites );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// sort of a hodge-podge function -- might be better to unify with LoopGraph?
+	//
+	/// @brief Finds the number of missing residues in a pose.
+	/// @details This function returns the number of missing residues in the pose.
+	/// The missing_res and loop_suites vectors are passed by nonconst reference, so their 
+	/// values can be modified and accessed by this function and the calling method. 
 	Size
 	get_number_missing_residues_and_connections( pose::Pose const & pose,
 																							 utility::vector1< char > & missing_residues,
