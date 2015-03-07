@@ -289,10 +289,10 @@ using namespace core::scoring;
 
 // So fast is it really worth benchmarking them?
 
-// amw reduced EACH by a factor of 10
-ScoreEachBenchmark Score_ref_("core.scoring.Score_100000x_ref",ref,100000);
-ScoreEachBenchmark Score_yhh_planarity_("core.scoring.Score_100000x_yhh_planarity",yhh_planarity,100000);
+ScoreEachBenchmark Score_ref_("core.scoring.Score_1000000x_ref",ref,1000000);
+ScoreEachBenchmark Score_yhh_planarity_("core.scoring.Score_1000000x_yhh_planarity",yhh_planarity,1000000);
 //centroid
+// amw reduced EACH by a factor of 10
 ScoreEachBenchmark Score_cbeta_("core.scoring.Score_100000x_cbeta",cbeta,100000,"test_in_cen.pdb",true);
 ScoreEachBenchmark Score_env_("core.scoring.Score_100000x_env",env,100000,"test_in_cen.pdb",true);
 
@@ -304,7 +304,8 @@ ScoreEachBenchmark Score_fa_pair_pol_pol_("core.scoring.Score_10000x_fa_pair_pol
 ScoreEachBenchmark Score_omega_("core.scoring.Score_10000x_omega",omega,10000);
 ScoreEachBenchmark Score_rama_("core.scoring.Score_10000x_rama",rama,10000);
 ScoreEachBenchmark Score_rama2b_("core.scoring.Score_10000x_rama2b",rama2b,10000);
-ScoreEachBenchmark Score_p_aa_pp_("core.scoring.Score_10000x_p_aa_pp",p_aa_pp,10000);
+// not reduced
+ScoreEachBenchmark Score_p_aa_pp_("core.scoring.Score_100000x_p_aa_pp",p_aa_pp,100000);
 ScoreEachBenchmark Score_p_aa_("core.scoring.Score_10000x_p_aa",p_aa,10000);
 ScoreEachBenchmark Score_mm_lj_intra_rep_("core.scoring.Score_10000x_mm_lj_intra_rep",mm_lj_intra_rep,10000);
 ScoreEachBenchmark Score_mm_lj_intra_atr_("core.scoring.Score_10000x_mm_lj_intra_atr",mm_lj_intra_atr,10000);
@@ -322,7 +323,8 @@ ScoreEachBenchmark Score_cen_env_smooth_("core.scoring.Score_10000x_cen_env_smoo
 ScoreEachBenchmark Score_cbeta_smooth_("core.scoring.Score_10000x_cbeta_smooth",cbeta_smooth,10000,"test_in_cen.pdb",true);
 
 // fast
-ScoreEachBenchmark Score_pro_close_("core.scoring.Score_1000x_pro_close",pro_close,1000);
+// pro_close not reduced
+ScoreEachBenchmark Score_pro_close_("core.scoring.Score_10000x_pro_close",pro_close,10000);
 ScoreEachBenchmark Score_fa_dun_("core.scoring.Score_1000x_fa_dun",fa_dun,1000);
 ScoreEachBenchmark Score_fa_dun_dev_("core.scoring.Score_1000x_fa_dun_dev",fa_dun_dev,1000);
 ScoreEachBenchmark Score_fa_dun_rot_("core.scoring.Score_1000x_fa_dun_rot",fa_dun_rot,1000);
@@ -332,7 +334,8 @@ ScoreEachBenchmark Score_ref_nc_("core.scoring.Score_1000x_ref_nc",ref_nc,1000);
 ScoreEachBenchmark Score_co_("core.scoring.Score_1000x_co",co,1000);
 //chainbreak terms currently give zero energies, though it takes quite a while to do so
 ScoreEachBenchmark Score_chainbreak_("core.scoring.Score_1000x_chainbreak",chainbreak,1000);
-ScoreEachBenchmark Score_linear_chainbreak_("core.scoring.Score_1000x_linear_chainbreak",linear_chainbreak,1000);
+// not reduced
+ScoreEachBenchmark Score_linear_chainbreak_("core.scoring.Score_10000x_linear_chainbreak",linear_chainbreak,10000);
 ScoreEachBenchmark Score_overlap_chainbreak_("core.scoring.Score_1000x_overlap_chainbreak",overlap_chainbreak,1000);
 ScoreEachBenchmark Score_distance_chainbreak_("core.scoring.Score_1000x_distance_chainbreak",distance_chainbreak,1000);
 ScoreEachBenchmark Score_cart_bonded_("core.scoring.Score_1000x_cart_bonded",cart_bonded,1000);
