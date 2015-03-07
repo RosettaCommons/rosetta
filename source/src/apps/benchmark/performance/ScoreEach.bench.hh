@@ -364,9 +364,10 @@ ScoreEachBenchmark Score_pair_("core.scoring.Score_1000x_pair",pair,1000,"test_i
 ScoreEachBenchmark Score_fa_atr_("core.scoring.Score_100x_fa_atr",fa_atr,100);
 ScoreEachBenchmark Score_fa_rep_("core.scoring.Score_100x_fa_rep",fa_rep,100);
 ScoreEachBenchmark Score_fa_sol_("core.scoring.Score_100x_fa_sol",fa_sol,100);
-ScoreEachBenchmark Score_fa_intra_atr_("core.scoring.Score_100x_fa_intra_atr",fa_intra_atr,100);
-ScoreEachBenchmark Score_fa_intra_rep_("core.scoring.Score_100x_fa_intra_rep",fa_intra_rep,100);
-ScoreEachBenchmark Score_fa_intra_sol_("core.scoring.Score_100x_fa_intra_sol",fa_intra_sol,100);
+// amw did not reduce these, it makes them too fast
+ScoreEachBenchmark Score_fa_intra_atr_("core.scoring.Score_1000x_fa_intra_atr",fa_intra_atr,1000);
+ScoreEachBenchmark Score_fa_intra_rep_("core.scoring.Score_1000x_fa_intra_rep",fa_intra_rep,1000);
+ScoreEachBenchmark Score_fa_intra_sol_("core.scoring.Score_1000x_fa_intra_sol",fa_intra_sol,1000);
 // temp until lk hack works with analytic etable ScoreEachBenchmark Score_lk_hack_("core.scoring.Score_100x_lk_hack",lk_hack,100);
 // temp until lk ball works with analytic etable ScoreEachBenchmark Score_lk_ball_("core.scoring.Score_100x_lk_ball",lk_ball,100);
 // temp until lk ball works with analytic etable ScoreEachBenchmark Score_lk_ball_iso_("core.scoring.Score_100x_lk_ball_iso)",lk_ball_iso,100);
