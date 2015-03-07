@@ -305,10 +305,11 @@ ScoreEachBenchmark Score_omega_("core.scoring.Score_10000x_omega",omega,10000);
 ScoreEachBenchmark Score_rama_("core.scoring.Score_10000x_rama",rama,10000);
 ScoreEachBenchmark Score_rama2b_("core.scoring.Score_10000x_rama2b",rama2b,10000);
 // not reduced
-ScoreEachBenchmark Score_p_aa_pp_("core.scoring.Score_100000x_p_aa_pp",p_aa_pp,100000);
-ScoreEachBenchmark Score_p_aa_("core.scoring.Score_10000x_p_aa",p_aa,10000);
-ScoreEachBenchmark Score_mm_lj_intra_rep_("core.scoring.Score_10000x_mm_lj_intra_rep",mm_lj_intra_rep,10000);
-ScoreEachBenchmark Score_mm_lj_intra_atr_("core.scoring.Score_10000x_mm_lj_intra_atr",mm_lj_intra_atr,10000);
+ScoreEachBenchmark Score_p_aa_pp_("core.scoring.Score_400000x_p_aa_pp",p_aa_pp,400000);
+// readjusted
+ScoreEachBenchmark Score_p_aa_("core.scoring.Score_400000x_p_aa",p_aa,400000);
+ScoreEachBenchmark Score_mm_lj_intra_rep_("core.scoring.Score_100000x_mm_lj_intra_rep",mm_lj_intra_rep,100000);
+ScoreEachBenchmark Score_mm_lj_intra_atr_("core.scoring.Score_100000x_mm_lj_intra_atr",mm_lj_intra_atr,100000);
 ScoreEachBenchmark Score_unfolded_("core.scoring.Score_10000x_unfolded",unfolded,10000);
 ScoreEachBenchmark Score_e_pH_("core.scoring.Score_10000x_e_pH",e_pH,10000);
 //disulfides
@@ -374,8 +375,8 @@ ScoreEachBenchmark Score_fa_intra_sol_("core.scoring.Score_1000x_fa_intra_sol",f
 // temp until lk hack works with analytic etable ScoreEachBenchmark Score_lk_hack_("core.scoring.Score_100x_lk_hack",lk_hack,100);
 // temp until lk ball works with analytic etable ScoreEachBenchmark Score_lk_ball_("core.scoring.Score_100x_lk_ball",lk_ball,100);
 // temp until lk ball works with analytic etable ScoreEachBenchmark Score_lk_ball_iso_("core.scoring.Score_100x_lk_ball_iso)",lk_ball_iso,100);
-ScoreEachBenchmark Score_mm_bend_("core.scoring.Score_100x_mm_bend",mm_bend,100);
-ScoreEachBenchmark Score_mm_twist_("core.scoring.Score_100x_mm_twist",mm_twist,100);
+ScoreEachBenchmark Score_mm_bend_("core.scoring.Score_2000x_mm_bend",mm_bend,2000);
+ScoreEachBenchmark Score_mm_twist_("core.scoring.Score_2000x_mm_twist",mm_twist,2000);
 ScoreEachBenchmark Score_lk_costheta_("core.scoring.Score_100x_lk_costheta",lk_costheta,100);
 ScoreEachBenchmark Score_lk_polar_("core.scoring.Score_100x_lk_polar",lk_polar,100);
 ScoreEachBenchmark Score_lk_nonpolar_("core.scoring.Score_100x_lk_nonpolar",lk_nonpolar,100);
