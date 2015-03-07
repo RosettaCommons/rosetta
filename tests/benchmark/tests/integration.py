@@ -126,7 +126,7 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
     results[_IgnoreKey_] = ignore
     return results
 
-def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
+def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags=''):
     ''' Run TestSuite under valgrind
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
@@ -158,7 +158,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
         compiler = platform['compiler']
         extras   = ','.join(platform['extras'])
 
-        command_line = 'cd {}/tests/integration && ./integration.py --valgrind --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} --yaml {results_file}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, results_file=json_results_file)
+        command_line = 'cd {}/tests/integration && ./integration.py --valgrind --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} --yaml {results_file} {additional_flags} '.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, results_file=json_results_file, additional_flags=additional_flags)
         TR( 'Running integration with valgrindscript: {}'.format(command_line) )
 
         if debug: res, output = 0, 'integration.py: debug is enabled, skipping integration script run...\n'
@@ -218,6 +218,7 @@ def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbo
     elif test == 'release_debug': return run_itegration_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'release_debug_no_symbols': return run_itegration_tests('release_debug_no_symbols', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'valgrind': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug) # 'release_debug' for line # information
+    elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--trackorigins') # 'release_debug' for line # information
     else: raise BenchmarkError('Integration Test script does not support run with test="{}"!'.format(test))
 
     #if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
