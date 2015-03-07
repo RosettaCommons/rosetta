@@ -142,7 +142,7 @@ Conformation::Conformation( Conformation const & src ) :
 	if(src.parameters_set_.size() > 0) {
 		for(core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i) {
 			parameters_set_.push_back( src.parameters_set_[i]->clone() );
-			parameters_set_[parameters_set_.size()]->update_residue_links( *this );
+			//parameters_set_[parameters_set_.size()]->update_residue_links( *this );
 		}
 	}
 
@@ -169,6 +169,10 @@ Conformation::Conformation( Conformation const & src ) :
 	dof_moved_ = src.dof_moved_;
 	xyz_moved_ = src.xyz_moved_;
 	structure_moved_ = src.structure_moved_;
+
+	// final update of records -- keep this last:
+	for(core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i)
+		parameters_set_[i]->update_residue_links( *this );
 }
 
 // equals operator
@@ -202,7 +206,7 @@ Conformation::operator=( Conformation const & src )
 		if(src.parameters_set_.size() > 0) {
 			for(core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i) {
 				parameters_set_.push_back( src.parameters_set_[i]->clone() );
-				parameters_set_[parameters_set_.size()]->update_residue_links( *this );
+				//parameters_set_[parameters_set_.size()]->update_residue_links( *this );
 			}
 		}
 
@@ -230,6 +234,10 @@ Conformation::operator=( Conformation const & src )
 		notify_length_obs( LengthEvent( this, LengthEvent::INVALIDATE, 0, 0, NULL ), false );
 		// identity may have radically changed, tell length observers to invalidate their data
 		notify_identity_obs( IdentityEvent( this, IdentityEvent::INVALIDATE, 0, NULL ), false );
+
+		// final update of records -- keep this last in this scope:
+		for(core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i)
+			parameters_set_[i]->update_residue_links( *this );
 	}
 
 	notify_xyz_obs( XYZEvent( this ) );
