@@ -228,7 +228,7 @@ private:
 
 	std::ostringstream header_;
 	std::ostringstream best_linear_peptides_;
-	std::ostringstream best_cyclizable_peptides_;
+	std::ostringstream best_cyclic_peptides_;
 	std::ostringstream all_peptides_;
 	std::ostringstream footer_;
 

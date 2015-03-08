@@ -197,7 +197,7 @@ void PeptideDeriverBasicStreamOutputter::end_structure() {
 void PeptideDeriverMarkdownStreamOutputter::clear_buffers() {
 	header_.str("");
 	best_linear_peptides_.str("");
-	best_cyclizable_peptides_.str("");
+	best_cyclic_peptides_.str("");
 	all_peptides_.str("");
 	footer_.str("");
 }
@@ -216,7 +216,7 @@ void PeptideDeriverMarkdownStreamOutputter::begin_structure(core::pose::Pose con
 		<< prefix_ << "- Fold tree: " << pose.fold_tree() << std::endl
 		<< prefix_ << std::endl;
 
-	best_cyclizable_peptides_ << prefix_ << "## Best cyclizable peptides for all chain pairs" << std::endl
+	best_cyclic_peptides_ << prefix_ << "## Best cyclizable peptides for all chain pairs" << std::endl
 		<< prefix_ << std::endl
 		<< prefix_ << "| Receptor | Partner | Peptide length | Position | Interface score | Disulfide info               | Cyclized interface score | Sequence             |" << std::endl
 		<< prefix_ << "|----------|---------|----------------|----------|-----------------|------------------------------|--------------------------|----------------------|" << std::endl;
@@ -236,13 +236,13 @@ void PeptideDeriverMarkdownStreamOutputter::trace(std::string const & message) {
 }
 
 void PeptideDeriverMarkdownStreamOutputter::end_structure() {
-	footer_ << prefix_ << "*end of report*" << std::endl;
+	footer_ << prefix_ << "*end of report*";
 
 	( * out_p_ ) << header_.str() << std::endl << std::endl
-		<< best_cyclizable_peptides_.str() << std::endl << std::endl
+		<< best_cyclic_peptides_.str() << std::endl << std::endl
 		<< best_linear_peptides_.str() << std::endl << std::endl
 		<< all_peptides_.str() << std::endl << std::endl
-		<< footer_.str();
+		<< footer_.str() << std::endl;
 
 	clear_buffers();
 }
@@ -291,14 +291,14 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_entry(core::pose::Pose const
 					% cyclic_isc_string
 					% pose.chain_sequence(PEPTIDE_CHAIN) ) << std::endl;
 
-			// the best peptide marks the end of the chain-pair run
+			// the best linear peptide signals the end of a run for a certain chain pair in certain roles
+			// add a separator at the end of the table for the 'general' peptides
 			all_peptides_ << prefix_ << "---" << std::endl
-					<< prefix_ << std::endl;
-
+				<< prefix_ << std::endl;
 			break;
 
 		case ET_BEST_CYCLIC:
-			best_linear_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-28s | %7$-24s | %8$-20s |" )
+			best_cyclic_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-28s | %7$-24s | %8$-20s |" )
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
 					% current_pep_length_
@@ -308,9 +308,6 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_entry(core::pose::Pose const
 					% cyclic_isc_string
 					% pose.chain_sequence(PEPTIDE_CHAIN) ) << std::endl;
 
-			// the best peptide marks the end of the chain-pair run
-			all_peptides_ << prefix_ << "---" << std::endl
-					<< prefix_ << std::endl;
 			break;
 
 		case ET_GENERAL:
@@ -650,7 +647,7 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 	if ( is_dump_peptide_pose_ || is_dump_prepared_pose_ ) {
 		// TODO : add is_dump_cyclic_poses_ --yuvals
 		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverPoseOutputter( is_dump_peptide_pose_,
-				is_dump_cyclic_poses_, is_dump_prepared_pose_, scorefxn_deriver_ ) ) );
+				is_dump_prepared_pose_, is_dump_cyclic_poses_, scorefxn_deriver_ ) ) );
 	}
 
 	// prepare the PDB
@@ -864,21 +861,20 @@ PeptideDeriverFilter::derive_peptide(
 		std::string disulfide_info_of_best_lin;
 		core::pose::PoseOP lin_pose_of_best_lin;
 		core::pose::PoseOP cyc_pose_of_best_lin;
-		bool cyclized_best_lin = false;
+		bool was_best_lin_cyclic_model_created = false;
 
-		core::Real cyc_isc_of_best_cyc = UNLIKELY_ISC_VALUE;
 		core::Real lin_isc_of_best_cyc = UNLIKELY_ISC_VALUE;
+		core::Real cyc_isc_of_best_cyc = UNLIKELY_ISC_VALUE;
 		core::Size pep_start_of_best_cyc = 0;
 		std::string disulfide_info_of_best_cyc;
 		core::pose::PoseOP lin_pose_of_best_cyc;
 		core::pose::PoseOP cyc_pose_of_best_cyc;
-		bool cyclized_best_cyc = false; // this may be not intuitive, but best_cyc wasn't necessarily modeled (it's just cyclizable, not necessarily cyclized)
+		bool was_best_cyc_cyclic_model_created = false;
 
 		bool any_peptide_cyclizable = false;
-		bool any_peptide_cyclized = false;
-		bool current_peptide_cyclized = false;
-
-		protocols::simple_moves::DisulfideCyclizationViability cyclization_viable = protocols::simple_moves::DCV_NOT_CYCLIZABLE;
+		bool any_peptide_cyclic_model_created = false;
+		bool current_peptide_cyclizable = false;
+		bool current_peptide_cyclic_model_created = false;
 
 		// keep track of the next chain break
 		core::Size next_cutpoint_index = 1;
@@ -913,91 +909,116 @@ PeptideDeriverFilter::derive_peptide(
 			// evaluate the newly created pose
 			const core::Real linear_isc = calculate_interface_score(*receptor_peptide_pose);
 
-			// This section checks and prints out closability of the peptide by a proposed putative wrapper disulphide bridge
-			core::Size n_putative_cyd = pep_start - 1;
-			core::Size c_putative_cyd = pep_end + 1;
-			std::stringstream disulfide_info("");
-
-			core::Real cyclic_isc = UNLIKELY_ISC_VALUE;
-			// TODO : solve the need for a dummy value for receptor_cyclic_peptide_pose
-			core::pose::PoseOP receptor_cyclic_peptide_pose = receptor_peptide_pose;
-			if (linear_isc<CHECK_CYCLIZABLE_THRESHOLD_ISC && n_putative_cyd>=partner_start && c_putative_cyd<=partner_end) {
-				cyclization_viable = disulfide_inserter->determine_cyclization_viability(partner_pose, n_putative_cyd, c_putative_cyd);
-
-				if ( (cyclization_viable == protocols::simple_moves::DCV_CYCLIZABLE) || (cyclization_viable == protocols::simple_moves::DCV_ALREADY_CYCLIZED) ) {
-					any_peptide_cyclizable = true;
-
-					disulfide_info << partner_chain_letter << "_" << n_putative_cyd << "-"<< c_putative_cyd;
-					// For peptides that can be closed and contribute more then third of the binding energy, mutate to cysteins and re-evaluate energy
-					// TODO : this should probably be current_peptide_cyclized = false --yuvals
-					any_peptide_cyclized = false;
-					if (linear_isc / total_isc >= optimize_cyclic_threshold_) {
-						receptor_cyclic_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, n_putative_cyd, c_putative_cyd);
-						//define and create disulfide bond between the edges of the derived peptide using the DisulfideInsertionMover
-						disulfide_inserter->apply(*receptor_cyclic_peptide_pose);
-						// any_peptide_cyclized checks if any peptide in the pose has been cyclized
-						// current_peptide_cyclized checks if the current peptide has been cyclized
-						any_peptide_cyclized = true;
-						current_peptide_cyclized = true;
-						cyclic_isc = calculate_interface_score(*receptor_cyclic_peptide_pose);
-				   }
-				}
-			}
-
 			// skip zero linear_isc if requested
 			if ((is_skip_zero_isc_) && (linear_isc == 0)) {
 				pep_start += ( pep_length - 1 );
 				continue;
 			}
 
+			// This section checks and prints out closability of the peptide by a proposed putative wrapper disulphide bridge
+			core::Size n_putative_cyd = pep_start - 1;
+			core::Size c_putative_cyd = pep_end + 1;
+			std::stringstream disulfide_info("");
+
+			current_peptide_cyclizable = false;
+			current_peptide_cyclic_model_created = false;
+
+			core::Real cyclic_isc = UNLIKELY_ISC_VALUE;
+			core::pose::PoseOP receptor_cyclic_peptide_pose = receptor_peptide_pose; // NOTE : this is a dummy value so that we don't dereference NULL; see below
+			if (linear_isc<CHECK_CYCLIZABLE_THRESHOLD_ISC && n_putative_cyd>=partner_start && c_putative_cyd<=partner_end) {
+				protocols::simple_moves::DisulfideCyclizationViability cyclization_viable(disulfide_inserter->determine_cyclization_viability(partner_pose, n_putative_cyd, c_putative_cyd));
+				current_peptide_cyclizable = ( (cyclization_viable == protocols::simple_moves::DCV_CYCLIZABLE) || (cyclization_viable == protocols::simple_moves::DCV_ALREADY_CYCLIZED) );
+
+				if (current_peptide_cyclizable) {
+					any_peptide_cyclizable = true;
+
+					disulfide_info << partner_chain_letter << "_" << n_putative_cyd << "-"<< c_putative_cyd;
+
+					// For peptides that can be closed and contribute more then third of the binding energy, mutate to cysteins and re-evaluate energy
+					if (linear_isc / total_isc >= optimize_cyclic_threshold_) {
+						receptor_cyclic_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, n_putative_cyd, c_putative_cyd);
+						//define and create disulfide bond between the edges of the derived peptide using the DisulfideInsertionMover
+						disulfide_inserter->apply(*receptor_cyclic_peptide_pose);
+						// any_peptide_cyclic_model_created checks if any peptide in the pose has been cyclized
+						// current_peptide_cyclic_model_created checks if the current peptide has been cyclized
+						any_peptide_cyclic_model_created = true;
+						current_peptide_cyclic_model_created = true;
+						cyclic_isc = calculate_interface_score(*receptor_cyclic_peptide_pose);
+				   }
+				}
+			}
+
 			// output data for each cut-out peptide
 			output.peptide_entry(*receptor_peptide_pose, ET_GENERAL, pep_start, normalize_isc(linear_isc), disulfide_info.str(), /*was_cyclic_pep_modeled=*/cyclic_isc<0, *receptor_cyclic_peptide_pose, normalize_isc(cyclic_isc));
 
-			// save details for best linear pose
+			// save details for the linear peptide that scored best
 			if (linear_isc < lin_isc_of_best_lin) {
-				lin_isc_of_best_lin = linear_isc;
-				lin_pose_of_best_lin = receptor_peptide_pose;
-				cyc_pose_of_best_lin = (current_peptide_cyclized? receptor_cyclic_peptide_pose : receptor_peptide_pose);
-				cyclized_best_lin = current_peptide_cyclized;
 				pep_start_of_best_lin = pep_start;
-				if (current_peptide_cyclized) {
-					cyc_isc_of_best_lin = cyclic_isc;
-					disulfide_info_of_best_lin = disulfide_info.str();
-				} else {
-					cyc_isc_of_best_lin = UNLIKELY_ISC_VALUE;
-					disulfide_info_of_best_lin = "";
-				}
+				lin_isc_of_best_lin = linear_isc;
+				cyc_isc_of_best_lin = (current_peptide_cyclic_model_created? cyclic_isc : UNLIKELY_ISC_VALUE);
+				disulfide_info_of_best_lin = disulfide_info.str();
+				lin_pose_of_best_lin = receptor_peptide_pose;
+				// TODO : solve the need for a dummy value for receptor_cyclic_peptide_pose
+				// NOTE : receptor_peptide_pose is used here as dummy, since we can't pass NULL as reference
+				cyc_pose_of_best_lin = (current_peptide_cyclic_model_created? receptor_cyclic_peptide_pose : receptor_peptide_pose);
+				was_best_lin_cyclic_model_created = current_peptide_cyclic_model_created;
 			}
 
-			// save details for best cyclic pose
-			bool save_cyclic_data = false;
-			if (cyclization_viable == protocols::simple_moves::DCV_CYCLIZABLE || cyclization_viable == protocols::simple_moves::DCV_ALREADY_CYCLIZED) {
-				if (any_peptide_cyclized && current_peptide_cyclized && cyclic_isc < cyc_isc_of_best_cyc) {
-					save_cyclic_data = true;
-					cyc_isc_of_best_cyc = cyclic_isc;
-				} else if (!any_peptide_cyclized && linear_isc < cyc_isc_of_best_cyc) {
-					save_cyclic_data = true;
-					// TODO : I don't think cyc_isc should hold linear_isc data --yuvals
-					cyc_isc_of_best_cyc = linear_isc;
-				}
-			}
-			if (save_cyclic_data) {
+			// save details for the cyclizable peptide that scored best
+			//
+			// We only model cyclic peptides out of peptides that contribute enough to the interactions energy
+			// (more than the fraction specified by optimize_cyclic_threshold_).
+			//
+			// There are three ways to define the scoring or the set from which the 'best' peptide may be taken:
+			// 1. best scoring linear peptide pose
+			// 2. best scoring linear peptide pose among the cyclization candidates (if any candidates exist)
+			// 3. best scoring cyclic pose (if such were modeled among the candidates)
+			// Right now we merge and 2nd and 3rd into
+			// 2/3. the best cyclizable pose, which is the best scoring cyclic pose, if one is avaiable, otherwise, the best linear pose among cyclization candidates
+			//
+			// Now, consider the following scenario:
+			// Total interface score: -50
+			// Position    Linear peptide interface score     Cyclic peptide interface score
+			// 10          -10                                -4
+			// 20          -20                                -3
+			// 30          -30                                -3.5
+			//
+			// Let's assume all listed positions are cyclization candidates, and that they are the only cyclization candidates for this chain pair.
+			// We might get different results here depending on the value of optimize_cyclic_threshold
+			//
+			// optimize_cyclic_threshold    Positions that produce cyclic peptides       Best cyclizable peptide       Based on
+			// 0  -0.2                      10, 20, 30                                   10                            Cyclic peptide interface score
+			// 0.2-0.4                      20, 30                                       30                            Cyclic peptide interface score
+			// 0.4-0.6                      30                                           30                            Cyclic peptide interface score
+			// 0.6-1                        N/A                                          30                            Linear peptide interface score
+			//
+			// Note that position 20 will never be considered best cyclizable, since if no cyclic model was produced, position 30 has a better linear peptide interface score.
+			// If position 20 is compared using the cyclic peptide interface score, this means a cyclic model was produced for it, which means it would be produced for position 30 as well (has a better linear peptide interface score), and position 30 has a better cyclic interface score.
+			// So, if a peptide B has both a better linear peptide interface score and a better cyclic peptide interface score than peptide A, peptide A will never be the best cyclizable peptide.
+
+			if (current_peptide_cyclizable &&
+				(
+					(current_peptide_cyclic_model_created && (cyclic_isc < cyc_isc_of_best_cyc)) ||
+					((!any_peptide_cyclic_model_created) && (linear_isc < lin_isc_of_best_cyc))
+				) ) {
 				pep_start_of_best_cyc = pep_start;
 				lin_isc_of_best_cyc = linear_isc;
+				cyc_isc_of_best_cyc = (current_peptide_cyclic_model_created? cyclic_isc : UNLIKELY_ISC_VALUE);
 				disulfide_info_of_best_cyc = disulfide_info.str();
-				cyc_pose_of_best_cyc = (current_peptide_cyclized? receptor_cyclic_peptide_pose : receptor_peptide_pose);
 				lin_pose_of_best_cyc = receptor_peptide_pose;
-				cyclized_best_cyc = current_peptide_cyclized;
+				// TODO : solve the need for a dummy value for receptor_cyclic_peptide_pose
+				// NOTE : receptor_peptide_pose is used here as dummy, since we can't pass NULL as reference
+				cyc_pose_of_best_cyc = (current_peptide_cyclic_model_created? receptor_cyclic_peptide_pose : receptor_peptide_pose);
+				was_best_cyc_cyclic_model_created = current_peptide_cyclic_model_created;
 			}
 		} // for pep_start
 
 		//since the best disulfide position is not always the position of the best linear position and to make things less confusing
 		//best cyclic information will be printed in a line of its own
-		// TODO : I think that because of the fact tat cyc_isc_of_best_cyc might get a linear peptide isc at some point, the check for was_cyclic_pep_modeled is wrong. --yuvals
-		output.peptide_entry(*lin_pose_of_best_lin, ET_BEST_LINEAR, pep_start_of_best_lin, normalize_isc(lin_isc_of_best_lin), disulfide_info_of_best_lin, cyclized_best_lin, *cyc_pose_of_best_lin, normalize_isc(cyc_isc_of_best_lin));
+		output.peptide_entry(*lin_pose_of_best_lin, ET_BEST_LINEAR, pep_start_of_best_lin, normalize_isc(lin_isc_of_best_lin), disulfide_info_of_best_lin, was_best_lin_cyclic_model_created, *cyc_pose_of_best_lin, normalize_isc(cyc_isc_of_best_lin));
 		if ( any_peptide_cyclizable ) {
 			// otherwise, cyc_pose_of_best_cyc is unset
-			output.peptide_entry(*cyc_pose_of_best_cyc, ET_BEST_CYCLIC, pep_start_of_best_cyc, normalize_isc(lin_isc_of_best_cyc), disulfide_info_of_best_cyc, cyclized_best_cyc, *cyc_pose_of_best_cyc, normalize_isc(cyc_isc_of_best_cyc));
+			output.peptide_entry(*cyc_pose_of_best_cyc, ET_BEST_CYCLIC, pep_start_of_best_cyc, normalize_isc(lin_isc_of_best_cyc), disulfide_info_of_best_cyc, was_best_cyc_cyclic_model_created, *cyc_pose_of_best_cyc, normalize_isc(cyc_isc_of_best_cyc));
 		}
 
 	} // for each peptide_length
@@ -1114,7 +1135,7 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose (core::pose
 		receptor_peptide_pose->conformation().safely_append_polymer_residue_after_seqpos(partner_pose.residue(i+1), receptor_peptide_pose->total_residue(), false);
 	}
 
-	core::pose::add_variant_type_to_pose_residue(*receptor_peptide_pose, core::chemical::LOWER_TERMINUS_VARIANT,two_chain_peptide_start);
+	core::pose::add_variant_type_to_pose_residue(*receptor_peptide_pose, core::chemical::LOWER_TERMINUS_VARIANT, two_chain_peptide_start);
 	core::pose::add_variant_type_to_pose_residue(*receptor_peptide_pose, core::chemical::UPPER_TERMINUS_VARIANT, two_chain_peptide_end);
 	// if a cysteine in the peptide was disulfide bonded to a residue that no longer exists in the protein-peptide pose, it is converted back to a regular cysteine
 	for (core::Size i = two_chain_peptide_start; i <= two_chain_peptide_end ; ++i) {
