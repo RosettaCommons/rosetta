@@ -213,7 +213,7 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
             release_name = 'PyRosetta.{kind}.{os}.{branch}:{revision}'.format(kind=kind, os=platform['os'], branch=config['branch'], revision=config['revision'])
             archive = working_dir + '/' + release_name + '.tar.bz2'
 
-            file_list = 'app database demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python.so libboost_python.dylib rosetta.so'.split()  # rosetta dir is spefial, we omit it here  # ignore_list: _build_ .test.output
+            file_list = 'app database demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python rosetta.so'.split()  # rosetta dir is spefial, we omit it here  # ignore_list: _build_ .test.output
             # debug: file_list = 'app demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python'.split()  #  ignore_list: _build_ .test.output
 
             # Creating tar.bz2 archive with binaries
@@ -255,11 +255,12 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
                 execute('Removing previous files...', 'cd {working_dir}/{git_repository_name} && mv .git .. && rm -r * .* ; mv ../.git .'.format(**vars()), return_='tuple')
 
                 for f in os.listdir(buildings_path):
-                    if f in file_list:
-                        src = buildings_path+'/'+f;  dest = working_dir+'/'+git_repository_name+'/'+f
-                        if os.path.isfile(src): shutil.copy(src, dest)
-                        elif os.path.isdir(src): shutil.copytree(src, dest)
-                        execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
+                    for c in file_list:
+                        if f.startswith(c):
+                            src = buildings_path+'/'+f;  dest = working_dir+'/'+git_repository_name+'/'+f
+                            if os.path.isfile(src): shutil.copy(src, dest)
+                            elif os.path.isdir(src): shutil.copytree(src, dest)
+                            execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
 
                 build_rosetta_namespace_dir = buildings_path + '/rosetta'
                 git_rosetta_namespace_dir = working_dir+'/'+git_repository_name+'/rosetta'
