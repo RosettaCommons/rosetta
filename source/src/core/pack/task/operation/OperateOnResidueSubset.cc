@@ -163,7 +163,7 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 			TR(t_debug) << "using ResidueSelector of type " << type << std::endl;
 			continue;
 		}
-		utility_exit_with_message( type + " is not known to either the ResLvelTaskOperationFactory or the ResidueSelectorFactory." );
+		TR.Warning << "WARNING: " << type << " is not known to either the ResLvelTaskOperationFactory or the ResidueSelectorFactory. Ignorning it." << std::endl;
 	}
 
 	if ( ! rltop ) {
