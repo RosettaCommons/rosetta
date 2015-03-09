@@ -119,7 +119,9 @@ Motif::Motif(
 				pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom1_name ).xyz(),
 				pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom2_name ).xyz(),
 				pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom3_name ).xyz() ) ) ),
-		backward_jump_( forward_jump_.reversed() )
+		backward_jump_( forward_jump_.reversed() ),
+		has_remark_( false ),
+		has_path_( false )
 {
 	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
 	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
@@ -159,7 +161,9 @@ Motif::Motif(
 				pose.residue( residue_position_2 ).atom( res2_atom1_name ).xyz(),
 				pose.residue( residue_position_2 ).atom( res2_atom2_name ).xyz(),
 				pose.residue( residue_position_2 ).atom( res2_atom3_name ).xyz() ) ) ),
-		backward_jump_( forward_jump_.reversed() )
+		backward_jump_( forward_jump_.reversed() ),
+		has_remark_( false ),
+		has_path_( false )
 {
 	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
 	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
@@ -178,7 +182,9 @@ Motif::Motif(
 core::conformation::Residue const & res1,
 core::conformation::Residue const & res2,
 utility::vector1< Size >  const res2_atoms
-)
+):
+		has_remark_( false ),
+		has_path_( false )
 {
   if( (res1.is_protein() && res2.is_ligand() ) || (res1.is_protein() && res2.is_protein() ) ) {
 		restype_name1_ = res1.name3();
@@ -233,7 +239,9 @@ Motif::Motif(
  std::string const res2_atom2,
  std::string const res2_atom3,
  core::kinematics::Jump const & orientation
-)
+):
+		has_remark_( false ),
+		has_path_( false )
 {
 		restype_name1_ = resname1;
 		res1_atom1_name_ = res1_atom1;
@@ -267,7 +275,9 @@ Motif::Motif(
 Motif::Motif(
 	core::conformation::Residue const & res1,
 	core::conformation::Residue const & res2
-)
+):
+		has_remark_( false ),
+		has_path_( false )
 {
 	if( (res1.is_protein() && res2.is_protein() ) || (res1.is_protein() && res2.is_DNA() ) ) {
 		restype_name1_ = protocols::dna::dna_full_name3( res1.name3() );

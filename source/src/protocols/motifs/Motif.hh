@@ -329,6 +329,8 @@ public:
 	std::string const & res1_atom1_name() const { return res1_atom1_name_; }
 	std::string const & res1_atom2_name() const { return res1_atom2_name_; }
 	std::string const & res1_atom3_name() const { return res1_atom3_name_; }
+
+	/// @brief WARNING res*_atom*_int() values are not consistently initialized in constructors
 	int const & res1_atom1_int() const { return res1_atom1_int_; }
 	int const & res1_atom2_int() const { return res1_atom2_int_; }
 	int const & res1_atom3_int() const { return res1_atom3_int_; }
@@ -339,6 +341,8 @@ public:
 	std::string const & res2_atom1_name() const { return res2_atom1_name_; }
 	std::string const & res2_atom2_name() const { return res2_atom2_name_; }
 	std::string const & res2_atom3_name() const { return res2_atom3_name_; }
+
+	/// @brief WARNING res*_atom*_int() values are not consistently initialized in constructors
 	int const & res2_atom1_int() const { return res2_atom1_int_; }
 	int const & res2_atom2_int() const { return res2_atom2_int_; }
 	int const & res2_atom3_int() const { return res2_atom3_int_; }
@@ -353,6 +357,13 @@ public:
 	std::string const & path() const { return path_;}
 
 private:
+
+	// *********************************************************
+	// IMPORTANT: Motif has *A LOT* of constructors.
+	// If you add a new data members be sure you initialize them
+	// in each and *every* constructor
+	// *********************************************************
+
 	// names (name3) of the residues in motif and each of the 6 motif atoms
 	std::string restype_name1_;
 	std::string res1_atom1_name_;
