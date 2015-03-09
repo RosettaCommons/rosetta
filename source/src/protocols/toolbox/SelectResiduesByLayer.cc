@@ -267,7 +267,14 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 		
 			if (i != j) {
 
-				numeric::xyzVector< Real > new_sc_vector(pose.residue(j).atom(pose.residue(j).atom_index("CA")).xyz() -my_sc_coordinates);
+				numeric::xyzVector< Real > other_bb_coordinates;
+				if ( pose.residue(j).name3() == "GLY" ) {
+					other_bb_coordinates = pose.residue(j).atom(pose.residue(j).atom_index("CA")).xyz();
+				} else {
+					core::Size parent_atom_index = pose.residue(j).icoor( pose.residue(j).first_sidechain_atom() ).stub_atom1().atomno();
+					other_bb_coordinates = pose.residue(j).atom( parent_atom_index ).xyz();
+				}
+				numeric::xyzVector< Real > new_sc_vector(other_bb_coordinates - my_sc_coordinates);
 				//TR << new_sc_vector.length() << std::endl;
 
 				Real dist_term(1.0 / (1.0 + exp(new_sc_vector.length() - 9.0)));
