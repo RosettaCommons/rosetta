@@ -17,6 +17,7 @@
 // package headers
 
 // project headers
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -29,6 +30,9 @@
 #include <boost/lexical_cast.hpp>
 
 // C++ headers
+
+// C headers
+#include <time.h>
 
 static thread_local basic::Tracer TR( "devel.denovo_design.filters.psipredinterface" );
 
@@ -50,16 +54,28 @@ PsiPredInterface::PsiPredInterface( PsiPredInterface const & rval )
 {}
 
 /// @brief given a pose, generates a fasta string
-std::string
-PsiPredInterface::convert_to_fasta( core::pose::Pose const & pose ) const{
-	std::string fasta_str( ">" + pose.pdb_info()->name() + "\n" );
+/*std::string
+PsiPredInterface::extract_sequence( core::pose::Pose const & pose ) const
+{
+	std::string seq;
 	for ( core::Size i=1; i<=pose.total_residue(); i++ ){
 		if ( pose.residue( i ).is_protein() ){
-			fasta_str += pose.residue( i ).name1();
-			if ( i % 80 == 0 ){
-				fasta_str += "\n";
-			} //if 80 chars
+			seq += pose.residue( i ).name1();
 		} //if is protein
+	} // for each residue
+	return seq;
+}*/
+
+/// @brief converts a sequence into a fasta string, given the name
+std::string
+PsiPredInterface::convert_to_fasta( std::string const & pname, std::string const & seq ) const
+{
+	std::string fasta_str( ">" + pname + "\n" );
+	for ( core::Size i=0; i<seq.size(); i++ ){
+		fasta_str += seq[i];
+		if ( (i+1) % 80 == 0 ){
+			fasta_str += "\n";
+		} //if 80 chars
 	} // for each residue
 	return fasta_str;
 }
@@ -68,13 +84,14 @@ PsiPredInterface::convert_to_fasta( core::pose::Pose const & pose ) const{
 /// returns filename if successful
 /// exits rosetta if not successful
 std::string
-PsiPredInterface::create_fasta_file( core::pose::Pose const & pose ) const{
-	std::string fasta_filename( pose.pdb_info()->name() + ".fasta" );
+PsiPredInterface::create_fasta_file( std::string const & pname, std::string const & seq ) const
+{
+	std::string fasta_filename( pname + ".fasta" );
 	// get rid of the path and just use the current directory
 	if ( fasta_filename.find('/') != std::string::npos ) {
 		fasta_filename = fasta_filename.substr( fasta_filename.find_last_of( '/' )+1, std::string::npos );
 	}
-	std::string fasta( convert_to_fasta( pose ) );
+	std::string fasta( convert_to_fasta( pname, seq ) );
 	TR.Debug << "Fasta: " << fasta << std::endl;
 	TR << "Fasta filename: " << fasta_filename << std::endl;
 
@@ -141,7 +158,7 @@ PsiPredInterface::parse_psipred_horiz_output( std::string const & psipred_horiz_
 
 /// @brief Parses the psipred output and returns the predicted secondary structure and likelihoods of the blueprint secondary structure being present on the pose at each position.
 PsiPredResult
-PsiPredInterface::parse_psipred_output( core::pose::Pose const & /*pose*/,
+PsiPredInterface::parse_psipred_output(
 		std::string const & psipred_str,
 		std::string const & blueprint_ss,
 		std::string const & psipred_horiz_filename ) const {
@@ -202,18 +219,34 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		return it;
 		}*/
 
-	utility::vector1< core::pose::PoseOP > poses( pose.split_by_chain() );
 	PsiPredResult result;
 	core::Size start_residue = 1;
 
-	for (core::Size i=1; i<=poses.size(); ++i) {
-		std::string const fasta_filename( create_fasta_file( *(poses[i]) ) );
-		core::Size replace_pos( fasta_filename.find( ".fasta" ) );
-		runtime_assert( replace_pos != std::string::npos ); //sanity check
-		std::string psipred_filename( fasta_filename );
-		std::string psipred_horiz_filename( fasta_filename );
-		psipred_filename.replace( replace_pos, 6, ".ss2" );
-		psipred_horiz_filename.replace( replace_pos, 6, ".horiz" );
+	for (core::Size i=1; i<=pose.conformation().num_chains(); ++i) {
+		// check pose split to see if there are protein residues present
+		TR << "Running psipred for chain " << i << " of " << pose.conformation().num_chains() << std::endl;
+		std::string pose_seq = pose.chain_sequence(i);
+		std::string seq = "";
+		for ( core::Size ii=0; ii<pose_seq.size(); ++ii ) {
+			char const j = pose_seq[ii];
+			if ( ( j == 'A' ) || ( j == 'C' ) || ( j == 'D' ) || ( j == 'E' ) ||
+					( j == 'F' ) || ( j == 'G' ) || ( j == 'H' ) || ( j == 'I' ) ||
+					( j == 'K' ) || ( j == 'L' ) || ( j == 'M' ) || ( j == 'N' ) ||
+					( j == 'P' ) || ( j == 'Q' ) || ( j == 'R' ) || ( j == 'S' ) ||
+					( j == 'T' ) ||	( j == 'V' ) || ( j == 'W' ) || ( j == 'Y' ) ) {	 
+				seq += j;
+			}
+		}
+		if ( seq.size() == 0 ) {
+			TR << "Skipping chain " << i << " because there are no protein residues" << std::endl;
+			continue;
+		}
+		TR.Debug << "seq : " << seq << std::endl;
+		core::Size time_val = time(NULL);
+		std::string const filebase = pose.sequence().substr(0,10) + "_" + boost::lexical_cast< std::string >(time_val);
+		std::string const fasta_filename = create_fasta_file( filebase, seq );
+		std::string const psipred_filename = filebase + ".ss2";
+		std::string const psipred_horiz_filename = filebase + ".horiz";
 
 		//TR << "Psipred filename: " << psipred_filename << std::endl;
 		// ensure we can get a shell
@@ -240,10 +273,11 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		buffer << t.rdbuf();
 		t.close();
 
-		std::string chain_blueprint(blueprint_ss.substr(start_residue-1, poses[i]->total_residue()));
+		std::string chain_blueprint(blueprint_ss.substr(start_residue-1, seq.size()));
 
-		PsiPredResult chain_result( parse_psipred_output( *(poses[i]), buffer.str(), chain_blueprint, psipred_horiz_filename ) );
+		PsiPredResult chain_result( parse_psipred_output( buffer.str(), chain_blueprint, psipred_horiz_filename ) );
 
+		TR.Debug << "BP len: " << chain_blueprint.size() << " Chain result prob len: " << chain_result.psipred_prob.size() << std::endl;
 		//for (core::Size j = 1; j <= chain_result.psipred_prob.size(); ++j) {
 		//	TR << "chainresult" << j << "  " << chain_result.psipred_prob[j] << std::endl;
 		//}
@@ -256,7 +290,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		// clean up psipred files
 		cleanup_after_psipred( psipred_filename );
 
-		start_residue += poses[i]->total_residue();
+		start_residue += seq.size();
 
 	// parse and save result in the cache
 	}

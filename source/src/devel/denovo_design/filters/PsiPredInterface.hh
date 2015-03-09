@@ -72,19 +72,18 @@ public:
 	//private member functions
 private:
 	/// @brief converts a pose into a fasta string
-	std::string convert_to_fasta( core::pose::Pose const & pose ) const;
+	std::string convert_to_fasta( std::string const & pname, std::string const & seq ) const;
 
 	/// @brief dumps fasta sequence for the pose into a file and returns the filename
 	/// or exits rosetta if not successful
-	std::string create_fasta_file( core::pose::Pose const & pose ) const;
+	std::string create_fasta_file( std::string const & pname, std::string const & seq ) const;
 
 	/// @brief deletes files created by psipred and convert_to_fasta
 	void cleanup_after_psipred( std::string const & psipred_filename ) const;
 
 	/// @brief Parses the psipred output and returns the predicted secondary structure and likelihoods of the blueprint secondary structure being present on the pose at each position.
 	PsiPredResult
-	parse_psipred_output( core::pose::Pose const & pose,
-												std::string const & psipred_str,
+	parse_psipred_output(	std::string const & psipred_str,
 												std::string const & blueprint_ss,
 												std::string const & psipred_horiz_filename ) const;
 
