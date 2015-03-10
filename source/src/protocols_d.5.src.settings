@@ -119,9 +119,6 @@ sources = {
 	"StepWiseRNA_PoseSetupFromCommandLine",
 	"util",
     ],
-    "protocols/stepwise/legacy/modeler/rna/connection/": [
-	#"StepWiseRNA_ConnectionSampler",
-    ],
     "protocols/stepwise/options/": [
 	"StepWiseBasicOptions",
     ],

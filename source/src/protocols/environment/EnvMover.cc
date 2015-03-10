@@ -91,7 +91,8 @@ void EnvMover::apply( Pose& pose ) {
 
   set_last_move_status( movers_->get_last_move_status() );
   tr.Debug << this->get_name() << " exited with status " << get_last_move_status() << std::endl;
-  pose = env_->end( ppose );
+
+  pose = env->end( ppose );
 }
 
 void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
