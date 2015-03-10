@@ -150,7 +150,8 @@ void GeneralizedKICselector::set_selector_type( std::string const &stypename) {
 
 
 /// @brief Applies a selector type to choose a solution and set a loop pose.
-/// @details
+/// @details  Since the selector applies the preselection mover (if defined) and respects its exit status, it is possible that there will be no
+/// successful solution after application of that mover.  In that case, this function returns "false"; otherwise, it returns "true".
 /// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
 /// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 /// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
@@ -163,7 +164,7 @@ void GeneralizedKICselector::set_selector_type( std::string const &stypename) {
 /// @param[in] total_solutions -- Total number of solutions found.
 /// @param[in] pre_selection_mover -- Pointer to a mover applied to each solution before applying the selector.
 /// @param[in] preselection_mover_exists -- Boolean that determines whether a mover has been specified.
-void GeneralizedKICselector::apply (
+bool GeneralizedKICselector::apply (
 	core::pose::Pose &pose,
 	core::pose::Pose const &original_pose, //The original pose
 	utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
@@ -215,17 +216,21 @@ void GeneralizedKICselector::apply (
 		break;
 	default:
 		TR.Warning << "Warning!  No selector specified for GeneralizedKICselector::apply.  The loop pose could not be updated!  No solution chosen!" << std::endl;
-		return;
+		return false;
 		break;
 	}
 
 	if(chosen_attempt_number!=0 && chosen_solution!=0) {
 		set_loop_pose ( pose, atomlist, torsions[chosen_attempt_number][chosen_solution], bondangles[chosen_attempt_number][chosen_solution], bondlengths[chosen_attempt_number][chosen_solution]);
 	} else {
-		utility_exit_with_message("Internal program error.  For some reason, GeneralizedKICselector::apply() did not do its job.  Something has gone wrong that shouldn't have.  Contact a developer or an exorcist.");
+		if(TR.visible()) {
+			TR << "Although one or more GeneralizedKIC solutions were passed to the GeneralizedKICselector, the pre-selection mover exited with failed status for all of these.  No solution will be returned." << std::endl; 
+			TR.flush();
+		}
+		return false;
 	}
 
-	return;
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

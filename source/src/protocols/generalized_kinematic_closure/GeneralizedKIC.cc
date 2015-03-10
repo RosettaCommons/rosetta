@@ -1424,9 +1424,12 @@ bool GeneralizedKIC::doKIC(
 
 	// Apply the selector here.  This ultimately picks a single solution and sets pose (the loop pose) to the conformation for that solution, but doesn't touch the original pose.
 	// Preselection movers are also applied by select_solution(), though the loop pose returned will NOT have this applied.
-	if(total_solution_count>0) select_solution ( pose, original_pose, residue_map, tail_residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count );
+	bool selector_success(false);
+	if(total_solution_count>0) { 
+		selector_success=select_solution ( pose, original_pose, residue_map, tail_residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count );
+	}
 
-	return (total_solution_count>0);
+	return (total_solution_count>0 && selector_success);
 }
 
 ///
@@ -1700,7 +1703,7 @@ void GeneralizedKIC::filter_solutions(
 }
 
 /// @brief Applies the selector to choose a solution and set a loop pose.
-/// @details
+/// @details  If the selector could not select a solution (e.g. if the preselection mover returned failed status for every solution), this function returns "false"; otherwise, "true".
 /// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
 /// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 /// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
@@ -1711,7 +1714,7 @@ void GeneralizedKIC::filter_solutions(
 /// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 /// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 /// @param[in] total_solutions -- Total number of solutions found.
-void GeneralizedKIC::select_solution (
+bool GeneralizedKIC::select_solution (
 	core::pose::Pose &pose,
 	core::pose::Pose const &original_pose, //The original pose
 	utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
@@ -1723,8 +1726,7 @@ void GeneralizedKIC::select_solution (
 	utility::vector1 <core::Size> const &nsol_for_attempt,
 	core::Size const total_solutions
 ) const {
-	selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions, pre_selection_mover_, preselection_mover_exists());
-	return;
+	return selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions, pre_selection_mover_, preselection_mover_exists());
 }
 
 /// @brief Trims extra atoms from the start and end of the atom list, if the first and last pivots are not the fifth and fifth-last atoms, respectively.

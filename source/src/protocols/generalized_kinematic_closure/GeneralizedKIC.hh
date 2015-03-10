@@ -649,7 +649,7 @@ private:
 	) const;
 
 	/// @brief Applies the selector to choose a solution and set a loop pose.
-	/// @details
+	/// @details  If the selector could not select a solution (e.g. if the preselection mover returned failed status for every solution), this function returns "false"; otherwise, "true".
 	/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
 	/// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 	/// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
@@ -660,7 +660,7 @@ private:
 	/// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 	/// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 	/// @param[in] total_solutions -- Total number of solutions found.
-	void select_solution (
+	bool select_solution (
 		core::pose::Pose &pose,
 		core::pose::Pose const &original_pose, //The original pose
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)

@@ -116,7 +116,8 @@ public:
 	core::Real get_boltzmann_temp() const { return boltzmann_kbt_; }
 
 	/// @brief Applies a selector type to choose a solution and set a loop pose.
-	/// @details
+	/// @details  Since the selector applies the preselection mover (if defined) and respects its exit status, it is possible that there will be no
+	/// successful solution after application of that mover.  In that case, this function returns "false"; otherwise, it returns "true".
 	/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
 	/// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 	/// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
@@ -129,7 +130,7 @@ public:
 	/// @param[in] total_solutions -- Total number of solutions found.
 	/// @param[in] pre_selectoin_mover -- Pointer to a mover applied to each solution before applying the selector.
 	/// @param[in] preselection_mover_exists -- Boolean that determines whether a mover has been specified.
-	void apply (
+	bool apply (
 		core::pose::Pose &pose,
 		core::pose::Pose const &original_pose, //The original pose
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
