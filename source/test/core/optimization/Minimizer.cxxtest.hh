@@ -116,6 +116,16 @@ void test_simple_min()
 			TR << "MINTEST: rama" << std::endl;
 			minimizer.run( pose, *mm, *scorefxn, *min_options );
 		}
+		
+		{ // just omega
+			scorefxn->reset();
+			scorefxn->set_weight( scoring::omega, 0.5 );
+
+			Pose pose;
+			pose = start_pose;
+			TR << "MINTEST: omega" << std::endl;
+			minimizer.run( pose, *mm, *scorefxn, *min_options );
+		}
 
 		/*{ // just fa_elec // apl -- temporarily disable fa_elec
 			scorefxn->reset();

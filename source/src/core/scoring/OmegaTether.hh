@@ -83,6 +83,22 @@ public:
 		Pose & pose,
 		ScoreFunction const & scorefxn
 	) const;
+	
+	/// @brief Returns the mainchain torsion index corresponding to "phi".
+	/// @details Generally 1.  Set to 2 for beta-amino acids so that derivatives are calculated
+	/// for the dihedral two spaces before the peptide bond.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Size phi_index( core::conformation::Residue const &rsd ) const;
+
+	/// @brief Returns the mainchain torsion index corresponding to "psi".
+	/// @details Generally 2 (alpha-amino acids) or 3 (beta-amino acids).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Size psi_index( core::conformation::Residue const &rsd ) const;
+
+	/// @brief Returns the mainchain torsion index corresponding to "omega".
+	/// @details Should be 3 for alpha amino acids, 4 for beta amino acids.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Size omega_index( core::conformation::Residue const &rsd ) const;
 
 
 private:

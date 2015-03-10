@@ -35,7 +35,7 @@
 
 
 // C++
-
+#include <stdio.h> //For printf for debugging -- DELETE ME
 
 namespace core {
 namespace scoring {
@@ -124,12 +124,29 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 	}
 
 	Real deriv(0.0);
-	if ( tor_id.valid() && tor_id.type() == id::BB && tor_id.torsion() <= ((rsd.has("CM") && rsd.mainchain_torsions().size()==4) ? 4 : 3)  && rsd.is_protein() ) {
+	
+	// vkm: Changing this again to put all the mainchain torsion index logic in a single place.	
+	core::Size const index_phi( potential_.phi_index(rsd) );
+	core::Size const index_psi( potential_.psi_index(rsd) );
+	core::Size const index_omega( potential_.omega_index(rsd) );
+	// amw: I am going to use is_beta_aa (residueproperties)
+	// because some patches could give more mainchain torsions to a rsd...
+	// used to ask if it had 4 mainchain torsions and had a CM atom
+	if ( tor_id.valid() &&
+				tor_id.type() == id::BB &&
+				(tor_id.torsion() == index_phi || tor_id.torsion() == index_psi || tor_id.torsion() == index_omega) &&
+				rsd.is_protein()
+	) {
 		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
+		// amw: This still doesn't truly do a good job with beta amino acids,
+		// since it only gives bb derivatives with respect to two torsions!
+		// vkm: This is also inefficient.  It evaluates score and derivatives multiple times, performing the
+		// same calculation once for each mainchain torsion.  I guess it doesn't matter so much for a one-body
+		// term, but it's still inelegant.
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
-		if (tor_id.torsion() == 1) deriv = dscore_dphi;
-		if (tor_id.torsion() == 2) deriv = dscore_dpsi;
-		if ((rsd.has("CM") && rsd.mainchain_torsions().size()==4 && tor_id.torsion() == 4) || tor_id.torsion() == 3) deriv = dscore_domega; //If this is tor 3, or if this is a beta-amino acid residue and this is tor 4, store the derivative WRT omega.
+		if (tor_id.torsion() == index_phi) deriv = dscore_dphi;
+		if (tor_id.torsion() == index_psi) deriv = dscore_dpsi;
+    if (tor_id.torsion() == index_omega) deriv = dscore_domega; // Will be 3 by default (i.e. for alpha-aas or peptoids) and 4 for beta-aas.
 	}
 	return numeric::conversions::degrees( weights[ omega ] * deriv );
 }

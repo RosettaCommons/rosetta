@@ -81,6 +81,34 @@ OmegaTether::eval_omega_score_all(
 	}
 }
 
+/// @brief Returns the mainchain torsion index corresponding to "phi".
+/// @details Generally 1.  Set to 2 for beta-amino acids so that derivatives are calculated
+/// for the dihedral two spaces before the peptide bond.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Size OmegaTether::phi_index( core::conformation::Residue const &rsd ) const
+{
+	if(rsd.type().is_beta_aa()) return 2; //Special case.
+	return 1; //Default for alpha-amino acids.
+}
+
+/// @brief Returns the mainchain torsion index corresponding to "psi".
+/// @details Generally 2 (alpha-amino acids) or 3 (beta-amino acids).
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Size OmegaTether::psi_index( core::conformation::Residue const &rsd ) const
+{
+	if(rsd.type().is_beta_aa()) return 3; //Special case.
+	return 2; //Default for alpha-amino acids.
+}
+
+/// @brief Returns the mainchain torsion index corresponding to "omega".
+/// @details Should be 3 for alpha amino acids, 4 for beta amino acids.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Size OmegaTether::omega_index( core::conformation::Residue const &rsd ) const
+{
+	if(rsd.type().is_beta_aa()) return 4;
+	return 3; //Default for alpha-amino acids.
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,12 +141,16 @@ OmegaTether::eval_omega_score_residue(
 
 debug_assert( rsd.is_protein() );
 
+	// vkm -- changing this yet again, so that now we have the is_beta_aa() check in one and only one place.
+	// amw changing this to is_beta_aa as well
+	// old:
+	//Use backbone torsion angle 4 for omega if this is a beta-amino acid.  Test for this by looking for a CM atom AND by checking the size of the mainchain_torsions vector (since methylated lysine has a CM)
 	Real const phi_angle
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
+		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion( phi_index(rsd) )));
 	Real const psi_angle
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
+		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion( psi_index(rsd) )));
 	Real const omega_angle
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(3 + ((rsd.has("CM") && rsd.mainchain_torsions().size()==4) ? 1 : 0) ))); //Use backbone torsion angle 4 for omega if this is a beta-amino acid.  Test for this by looking for a CM atom AND by checking the size of the mainchain_torsions vector (since methylated lysine has a CM).
+		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion( omega_index(rsd) ))); //omega_index is 3 by default, 4 for beta-amino acids.
 
 	if ( rsd.is_upper_terminus() || rsd.is_virtual_residue() ) { // begin or end of chain
 		score = 0.0;
