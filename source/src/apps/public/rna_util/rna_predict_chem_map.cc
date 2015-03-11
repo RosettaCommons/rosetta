@@ -227,7 +227,7 @@ predict_chem_map_test()
 		if ( file_path  != "./" ) pdb_file_load = file_path + '/' + pdb_file;
 		pose_from_pdb( pose, *rsd_set, pdb_file_load );
 
-		std::cout << "Doing input file " << I(4,count) << " ==> " << pdb_file << std::endl;
+		std::cout << "Doing input file " << I(4,++count) << " ==> " << pdb_file << std::endl;
 		std::cout << "Read in pose sequence: " << pose.annotated_sequence() << std::endl;
 
 		vector1< vector1< Real > > logL_values;

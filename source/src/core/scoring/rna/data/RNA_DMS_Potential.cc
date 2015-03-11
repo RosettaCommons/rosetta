@@ -300,6 +300,9 @@ namespace data {
 		working_pose_->set_new_energies_object( scoring::EnergiesOP( new scoring::Energies ) );
 		working_pose_with_probe_->set_new_energies_object( scoring::EnergiesOP( new scoring::Energies ) );
 
+		// I think this needs to be initialized ... 
+		if ( DMS_potential_.size() == 0 ) initialize_DMS_potential();
+
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -619,7 +622,7 @@ RNA_DMS_Potential::get_logL_values( pose::Pose const & pose, Size const i /*, ut
 			logL_values.push_back( log( p_DMS_[k] ) );
 		}
 	}
-
+	
 	return logL_values;
 }
 
