@@ -822,7 +822,23 @@ def get_all_rosetta_objs(mini_path):
     version_add_on = execute("Getting GCC version...", 'gcc -dumpversion', return_='output').strip()[0:3] + '/default/'
 
     # fix this for diferent platform
-    if Platform == "linux": lib_path = 'build/src/'+mode+'/linux/' + re.search( r'(\d\.\d+)\..*', platform.release()).group(1) + '/' + PlatformBits +'/x86/gcc/'
+    if Platform == "linux":
+	platformShort= re.search( r'(\d\.\d+)[\.-].*', platform.release()).group(1)
+	lib_path_1 = 'build/src/'+mode+'/linux/'
+	lib_path = ""
+	if Options.verbose: print 'Finding scons build in ../../../'+lib_path_1+'\n'
+	for filename in sorted(os.listdir('../../../'+lib_path_1)):
+		if filename==platformShort:
+			lib_path=lib_path_1+filename+"/"
+			break
+		elif re.match("^"+platformShort,filename):
+			if Options.verbose: print "Could not find expected libpath '%s', using '%s', instead.\n" % (platformShort, filename)
+			lib_path=lib_path_1+filename
+			break
+	if ""==lib_path:
+		print "No directory in "+lib_path_1+" matches "+platformShort+".\n"
+		sys.exit(1)
+	lib_path += '/' + PlatformBits +'/x86/gcc/'
     elif Platform == "cygwin": lib_path = 'build/src/'+mode+'/cygwin/1.7/32/x86/gcc/'
     else:
         if Platform == "macos" and PlatformBits=='32': lib_path = 'build/src/'+mode+'/macos/10.5/32/x86/gcc/'
