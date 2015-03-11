@@ -67,13 +67,47 @@ namespace core {
 					/// @brief Given a bin name and a residue, find a BinTransitionsData object describing that residue,
 					/// and the index of the bin within that object.
 					/// @details data_index and bin_index are outputs.  Both are set to 0 if the search fails.  Everything
-					/// else is const input.
+					/// else is const input.  If bin_name is set to "", then the bin index that is returned is the index
+					/// corresponding to the residue's mainchain torsion vector.
 					void find_data_and_bin(
 						std::string const &bin_name,
 						core::conformation::Residue const &res,
 						core::Size &data_index,
 						core::Size &bin_index,
 						bool const use_iplus1
+					) const;
+					
+					/// @brief Given residues at positions i and iplus1, find a bin transition probability data object that
+					/// describes the pair.
+					/// @details Inputs are res_i and res_iplus1.  Outputs are data_i and data_iplus1 (BinTransitionData
+					/// indices).  Function returns true if data are found successfully, false if no BinTransitionData object
+					/// could be found describing the residues in question. 
+					bool find_data(
+						core::conformation::Residue const &res_i,
+						core::conformation::Residue const &res_iplus1,
+						core::Size &data_index
+					) const;
+					
+					/// @brief Given two residues (rsd_i and rsd_iplus1 at positions i and i+1, respectively), give me the
+					/// probability of seeing rsd_iplus1 in its bin given that rsd_i is in its bin.
+					/// @details The probability value is set to a number from 0 to 1.  Inputs are rsd_i and rsd_iplus1.
+					/// Function returns true if data are found successfully, false if no BinTransitionData object
+					/// could be found describing the residues in question.
+					bool p_iplus1_given_i(
+						core::conformation::Residue const &rsd_i,
+						core::conformation::Residue const &rsd_iplus1,
+						core::Real &probability
+					) const;
+					
+					/// @brief Given two residues (rsd_i and rsd_iplus1 at positions i and i+1, respectively), give me the
+					/// probability of seeing rsd_i in its bin given that rsd_iplus1 is in its bin.
+					/// @details The probability value is set to a number from 0 to 1.  Inputs are rsd_i and rsd_iplus1.
+					/// Function returns true if data are found successfully, false if no BinTransitionData object
+					/// could be found describing the residues in question.
+					bool p_i_given_iplus1(
+						core::conformation::Residue const &rsd_i,
+						core::conformation::Residue const &rsd_iplus1,
+						core::Real &probability
 					) const;
 					
 					/// @brief Is the given residue in the given bin?

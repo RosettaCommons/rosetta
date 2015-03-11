@@ -93,7 +93,7 @@ namespace core {
 
 						while(getline(infile, curline)) {
 
-							if(TR.visible()) TR << curline << std::endl;  //CONVERT TO DEBUG MODE LATER!
+							if(TR.Debug.visible()) TR.Debug << curline << std::endl;
 
 							if(curline.size() < 1) continue; //Ignore blank lines.
 
@@ -110,10 +110,10 @@ namespace core {
 						runtime_assert_string_msg( lines.size() > 0, "In core::scoring::bin_transitions::BinTransitionCalculator::load_bin_params(): loaded no lines from the specified bin_params file!" );
 
 						//Dump out the lines to parse:
-						if(TR.visible()) { //CONVERT TO DEBUG MODE LATER!
-							TR << std::endl << "Lines to parse:" << std::endl;
-							for(core::Size i=1, imax=lines.size(); i<=imax; ++i) TR << lines[i] << std::endl;
-							TR << std::endl;
+						if(TR.Debug.visible()) { //CONVERT TO DEBUG MODE LATER!
+							TR.Debug << std::endl << "Lines to parse:" << std::endl;
+							for(core::Size i=1, imax=lines.size(); i<=imax; ++i) TR.Debug << lines[i] << std::endl;
+							TR.Debug << std::endl;
 						}
 
 						//Parse the lines in chunks, where each chunk is between a pair of lines that read "BEGIN" and "END":
@@ -131,14 +131,18 @@ namespace core {
 
 						if(TR.Debug.visible()) TR.Debug << summarize_stored_data( true );
 						
-						if(TR.visible()) TR.flush();
+						if(TR.visible()) {
+							TR << "Finished read of " << bin_params_file_ << "." << std::endl;
+							TR.flush();
+						}
 						return;
 					} //load_bin_params()
 					
 					/// @brief Given a bin name and a residue, find a BinTransitionsData object describing that residue,
 					/// and the index of the bin within that object.
 					/// @details data_index and bin_index are outputs.  Both are set to 0 if the search fails.  Everything
-					/// else is const input.
+					/// else is const input.  If bin_name is set to "", then the bin index that is returned is the index
+					/// corresponding to the residue's mainchain torsion vector.
 					void BinTransitionCalculator::find_data_and_bin(
 						std::string const &bin_name,
 						core::conformation::Residue const &res,
@@ -146,8 +150,13 @@ namespace core {
 						core::Size &bin_index,
 						bool const use_iplus1
 					) const {
+						//Initialize data_index and bin_index
+						data_index=0;
+						bin_index=0;
 						
 						if(n_bin_transition_data()==0) return; //If there are no BinTransitionData objects, we've already failed.
+
+						bool const use_tors_vect( bin_name=="" ); //If the bin_name is set to "", use the residue's mainchain torsion vector to fish out the bin.
 						
 						//Loop through all BinTransitionData objects:
 						for(core::Size i=1, imax=n_bin_transition_data(); i<=imax; ++i) {
@@ -158,12 +167,12 @@ namespace core {
 							if(!use_iplus1) {
 								if( !bin_transition_data(i)->criteria_match_i( res ) ) continue;
 								data_index=i;
-								bin_index = bin_transition_data(i)->binname_index_from_string_i(bin_name);
+								bin_index = ( use_tors_vect ?  bin_transition_data(i)->which_bin_i( res.mainchain_torsions() ) : bin_transition_data(i)->binname_index_from_string_i(bin_name) );
 								if(bin_index==0) continue;								
 							} else {
-								if( !bin_transition_data(i)->criteria_match_i( res ) ) continue;
+								if( !bin_transition_data(i)->criteria_match_iplus1( res ) ) continue;
 								data_index=i;
-								bin_index = bin_transition_data(i)->binname_index_from_string_i(bin_name);
+								bin_index = ( use_tors_vect ?  bin_transition_data(i)->which_bin_iplus1( res.mainchain_torsions() ) : bin_transition_data(i)->binname_index_from_string_iplus1(bin_name) );
 								if(bin_index==0) continue;
 							}
 							//If we get to here, then we've found a BinTransitionData object and the bin index,
@@ -175,6 +184,99 @@ namespace core {
 						data_index=0; bin_index=0;					
 						return;
 					} //find_data_and_bin
+					
+					/// @brief Given residues at positions i and iplus1, find a bin transition probability data object that
+					/// describes the pair.
+					/// @details Inputs are res_i and res_iplus1.  Outputs are data_i and data_iplus1 (BinTransitionData
+					/// indices).  Function returns true if data are found successfully, false if no BinTransitionData object
+					/// could be found describing the residues in question.
+					bool BinTransitionCalculator::find_data(
+						core::conformation::Residue const &res_i,
+						core::conformation::Residue const &res_iplus1,
+						core::Size &data_index
+					) const {
+						if(n_bin_transition_data()==0) return 1; //Fail immediately if there are no defined BinTranstionData objects.
+						
+						for(core::Size i=1, imax=n_bin_transition_data(); i<=imax; ++i ) {
+							if(!bin_transition_data(i)->criteria_match_i( res_i )) continue;
+							if(!bin_transition_data(i)->criteria_match_iplus1( res_iplus1 )) continue;
+							//At this point, we've found a match.				
+							data_index=i;
+							return true;			
+						}
+						
+						//At this point, we've failed to find a match.
+						data_index=0;
+						return false;
+					}
+					
+					/// @brief Given two residues (rsd_i and rsd_iplus1 at positions i and i+1, respectively), give me the
+					/// probability of seeing rsd_iplus1 in its bin given that rsd_i is in its bin.
+					/// @details The probability value is set to a number from 0 to 1.  Inputs are rsd_i and rsd_iplus1.
+					/// Function returns true if data are found successfully, false if no BinTransitionData object
+					/// could be found describing the residues in question.
+					bool BinTransitionCalculator::p_iplus1_given_i(
+						core::conformation::Residue const &res_i,
+						core::conformation::Residue const &res_iplus1,
+						core::Real &probability
+					) const {
+						if(!bin_params_loaded()) utility_exit_with_message(
+								"In core::scoring::bin_transitions::BinTransitionCalculator::p_iplus1_given_i(): Bin transition parameters have not yet been loaded!"
+						);
+					
+						core::Size data_index(0);
+						core::Size bin_i(0);
+						core::Size bin_iplus1(0);
+						
+						if(!find_data( res_i, res_iplus1, data_index ) || data_index==0 ) {
+							if(TR.Warning.visible()) {
+								TR.Warning << "No bin transition probability data could be found for residues " << res_i.seqpos() << " and " << res_iplus1.seqpos() << "." << std::endl;
+								TR.Warning.flush();
+							}
+							return false;
+						}
+						
+						bin_i = bin_transition_data(data_index)->which_bin_i( res_i.mainchain_torsions() );
+						bin_iplus1 = bin_transition_data(data_index)->which_bin_iplus1( res_iplus1.mainchain_torsions() );
+						
+						probability = bin_transition_data(data_index)->probability_matrix( bin_i, bin_iplus1 ) / bin_transition_data(data_index)->binsums_i( bin_i );
+						
+						return true;
+					}
+					
+					/// @brief Given two residues (rsd_i and rsd_iplus1 at positions i and i+1, respectively), give me the
+					/// probability of seeing rsd_i in its bin given that rsd_iplus1 is in its bin.
+					/// @details The probability value is set to a number from 0 to 1.  Inputs are rsd_i and rsd_iplus1.
+					/// Function returns true if data are found successfully, false if no BinTransitionData object
+					/// could be found describing the residues in question.
+					bool BinTransitionCalculator::p_i_given_iplus1(
+						core::conformation::Residue const &res_i,
+						core::conformation::Residue const &res_iplus1,
+						core::Real &probability
+					) const {
+						if(!bin_params_loaded()) utility_exit_with_message(
+								"In core::scoring::bin_transitions::BinTransitionCalculator::p_iplus1_given_i(): Bin transition parameters have not yet been loaded!"
+						);
+					
+						core::Size data_index(0);
+						core::Size bin_i(0);
+						core::Size bin_iplus1(0);
+						
+						if(!find_data( res_i, res_iplus1, data_index ) || data_index==0 ) {
+							if(TR.Warning.visible()) {
+								TR.Warning << "No bin transition probability data could be found for residues " << res_i.seqpos() << " and " << res_iplus1.seqpos() << "." << std::endl;
+								TR.Warning.flush();
+							}
+							return false;
+						}
+						
+						bin_i = bin_transition_data(data_index)->which_bin_i( res_i.mainchain_torsions() );
+						bin_iplus1 = bin_transition_data(data_index)->which_bin_iplus1( res_iplus1.mainchain_torsions() );
+						
+						probability = bin_transition_data(data_index)->probability_matrix( bin_i, bin_iplus1 ) / bin_transition_data(data_index)->binsums_iplus1( bin_iplus1 );
+						
+						return true;
+					}
 					
 					/// @brief Is the given residue in the given bin?
 					/// @details For the bin definitions, this uses the first BinTransitionsData object that it finds where residue i matches the properties of the given
@@ -489,14 +591,14 @@ namespace core {
 						if(data_index_iplus1 == 0) utility_exit_with_message(
 							"In BinTransitionCalculator::random_bin_based_on_prev_and_next(): Could not find a suitable transition probability matrix (BinTransitionData object) describing the transition from the previous residue to the current residue.");
 
-						if(TR.visible()) {
-							TR << "Number of bins for this residue based on this->next BinTransitionData object: " << bin_transition_data(data_index_i)->n_bins_i() << std::endl;
-							TR << "Number of bins for this residue based on prev->this BinTransitionData object: " << bin_transition_data(data_index_iplus1)->n_bins_iplus1() << std::endl;
+						if(TR.Debug.visible()) {
+							TR.Debug << "Number of bins for this residue based on this->next BinTransitionData object: " << bin_transition_data(data_index_i)->n_bins_i() << std::endl;
+							TR.Debug << "Number of bins for this residue based on prev->this BinTransitionData object: " << bin_transition_data(data_index_iplus1)->n_bins_iplus1() << std::endl;
 						}
 						if( bin_transition_data(data_index_i)->n_bins_i() != bin_transition_data(data_index_iplus1)->n_bins_iplus1() ) {
 							utility_exit_with_message( "In BinTransitionCalculator::random_bin_based_on_prev_and_next(): The number of bins for this residue when considering the prev->this transition does not match the number of bins when considering the this->next transition.  Are bin definitions consistent in the bin_params file?" );
 						} else {
-							if(TR.visible()) TR << "Bin counts match.  Assuming bin identities are identical, too." << std::endl;
+							if(TR.Debug.visible()) TR.Debug << "Bin counts match.  Assuming bin identities are identical, too." << std::endl;
 						}
 						
 						//Figure out which bin the residue is currently in.
@@ -509,14 +611,6 @@ namespace core {
 						core::Size const prevbin_index( bin_transition_data(data_index_iplus1)->which_bin_i( prevres.mainchain_torsions() ) );
 						core::Size const nextbin_index( bin_transition_data(data_index_i)->which_bin_iplus1( nextres.mainchain_torsions() ) );
 						
-						//Debug output -- DELETE ME:
-						/*if(TR.visible()) {
-							TR << "curbin_index_i:\t" << curbin_index_i << std::endl;
-							TR << "prevbin_index:\t" << prevbin_index << std::endl;
-							TR << "nextbin_index:\t" << nextbin_index << std::endl;
-							TR.flush();
-						}*/
-
 						//Construct the probability vector.  Each entry corresponds to a bin at this position.
 						utility::vector1 < core::Real > probvect;
 						probvect.resize( bin_transition_data(data_index_i)->n_bins_i() , 0.0 );
@@ -524,7 +618,6 @@ namespace core {
 						for(core::Size i=1, imax=probvect.size(); i<=imax; ++i) { //Loop through and populate the probability vector:
 							if(must_switch_bins && i==curbin_index_i) probvect[i]=0; //Set the probability of the current bin to zero if must_switch_bins is true.
 							else { //Calculate the probability of the current bin as the product of probabilities:
-								//if(TR.visible()) TR << "i=" << i << std::endl;
 								probvect[i] = bin_transition_data(data_index_iplus1)->probability_matrix(prevbin_index, i) / bin_transition_data(data_index_iplus1)->binsums_i(prevbin_index)
 															* bin_transition_data(data_index_i)->probability_matrix(i, nextbin_index) / bin_transition_data(data_index_i)->binsums_iplus1(nextbin_index);
 								probvect_sum += probvect[i];
@@ -540,17 +633,10 @@ namespace core {
 						}
 						
 						//Now use the cdf to pick a bin:
-						core::Size const random_bin (numeric::random::pick_random_index_from_cdf( probvect_cdf, numeric::random::rg() ) );						
-						
-						//DELETE ME -- just to test:
-						/*if(TR.visible()) {
-							TR << "probvect\tprobvect_cdf" << std::endl;
-							for(core::Size i=1, imax=probvect.size(); i<=imax; ++i) {
-								TR << probvect[i] << "\t" << probvect_cdf[i] << std::endl;
-							}
-						}*/
-					
+						core::Size const random_bin (numeric::random::pick_random_index_from_cdf( probvect_cdf, numeric::random::rg() ) );							
+			
 						if(TR.visible()) TR.flush();
+						if(TR.Debug.visible()) TR.Debug.flush();
 						return random_bin;
 					} //random_bin_based_on_prev_and_next
 					
@@ -650,7 +736,7 @@ namespace core {
 								if(lines[i].substr(0,5)=="BEGIN") {
 									begin_found=true;
 									firstline=i;
-									if(TR.visible()) TR << "BEGIN found at line " << firstline << "." << std::endl; //DELETE ME
+									if(TR.Debug.visible()) TR.Debug << "BEGIN found at line " << firstline << "." << std::endl; //DELETE ME
 									continue;
 								}
 							} else {
@@ -658,7 +744,7 @@ namespace core {
 									end_found=true;
 									has_another=true;
 									lastline=i;
-									if(TR.visible()) TR << "END found at line " << lastline << "." << std::endl; //DELETE ME
+									if(TR.Debug.visible()) TR.Debug << "END found at line " << lastline << "." << std::endl; //DELETE ME
 									break;
 								}
 							}
@@ -763,7 +849,7 @@ namespace core {
 							l >> tag;
 							
 							if(tag=="I_BIN") {
-								if(TR.visible()) TR << "Found bin: \"" << lines[i] << "\"" << std::endl; //DELETE ME
+								if(TR.Debug.visible()) TR.Debug << "Found bin: \"" << lines[i] << "\"" << std::endl; //DELETE ME
 							
 								++bins_i_found; //We've found a bin definition for residue i.
 								runtime_assert_string_msg(!l.eof(), "In core::scoring::bin_transitions::BinTransitionCalculator::set_up_bins(): could not get bin name!");
@@ -781,7 +867,7 @@ namespace core {
 									curdata->set_binrange_i( bins_i_found, curtors, rangestart, rangeend );
 								}
 							} else if (tag=="IPLUS1_BIN") {
-								if(TR.visible()) TR << "Found bin: \"" << lines[i] << "\"" << std::endl; //DELETE ME
+								if(TR.Debug.visible()) TR.Debug << "Found bin: \"" << lines[i] << "\"" << std::endl; //DELETE ME
 								
 								++bins_iplus1_found; //We've found a bin definition for residue iplus1.
 								runtime_assert_string_msg(!l.eof(), "In core::scoring::bin_transitions::BinTransitionCalculator::set_up_bins(): could not get bin name!");
@@ -808,10 +894,10 @@ namespace core {
 						}
 						
 						//At this point, all bins for residue i should be defined:
-						if(TR.visible()) { //DELETE ME
-							TR << "bins_i_found=" << bins_i_found << "\tn_bins_i=" << n_bins_i << std::endl; //DELETE ME
-							TR << "bins_iplus1_found=" << bins_iplus1_found << "\tn_bins_iplus1=" << n_bins_iplus1 << std::endl; //DELETE ME
-							TR.flush(); //DELETE ME
+						if(TR.Debug.visible()) { //DELETE ME
+							TR.Debug << "bins_i_found=" << bins_i_found << "\tn_bins_i=" << n_bins_i << std::endl; //DELETE ME
+							TR.Debug << "bins_iplus1_found=" << bins_iplus1_found << "\tn_bins_iplus1=" << n_bins_iplus1 << std::endl; //DELETE ME
+							TR.Debug.flush(); //DELETE ME
 						}
 						runtime_assert_string_msg( bins_i_found == n_bins_i,
 							"In core::scoring::bin_transitions::BinTransitionCalculator::set_up_bins(): not all bins for residue i were defined in the bin_params file!" );
@@ -855,7 +941,7 @@ namespace core {
 							l >> tag;
 							
 							if(tag=="MATRIX") {
-								if(TR.visible()) TR << "Found a matrix line:\t\"" << lines[iline] << "\"" << std::endl; //DELETE ME
+								if(TR.Debug.visible()) TR.Debug << "Found a matrix line:\t\"" << lines[iline] << "\"" << std::endl; //DELETE ME
 								matrix_lines_found++;
 								for(core::Size j=1; j<=n_bins_iplus1; ++j) { //Loop through the horizontal bins corresponding to the i+1 position
 									runtime_assert_string_msg(!l.eof(), "In core::scoring::bin_transitions::BinTransitionCalculator::populate_matrix(): too few entries in a \"MATRIX\" line in the bin_params file.");
@@ -870,15 +956,15 @@ namespace core {
 							"In core::scoring::bin_transitions::BinTransitionCalculator::populate_matrix(): Too few \"MATRIX\" lines found in the bin_params file." );
 							
 						//TEMPORARY -- write out the probability matrix:
-						if(TR.visible()) { //DELETE ME
-							TR << "Set matrix to the following:" << std::endl;
+						if(TR.Debug.visible()) { //DELETE ME
+							TR.Debug << "Set matrix to the following:" << std::endl;
 							for(core::Size i=1; i<=n_bins_i; ++i) {
 								for(core::Size j=1; j<=n_bins_iplus1; ++j) {
-									TR << curdata->probability_matrix(i,j) << "\t";
+									TR.Debug << curdata->probability_matrix(i,j) << "\t";
 								}
-								TR << std::endl;
+								TR.Debug << std::endl;
 							}
-							TR.flush();
+							TR.Debug.flush();
 						}
 						
 						return;

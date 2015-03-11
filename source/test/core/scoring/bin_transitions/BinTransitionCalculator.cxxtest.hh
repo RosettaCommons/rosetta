@@ -23,10 +23,14 @@
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 
 // Other Rosetta libraries:
+#include <core/types.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
 
 // C++ headers
 #include <utility>
 #include <iostream>
+#include <iomanip>
 
 // --------------- Test Class --------------- //
 
@@ -36,11 +40,14 @@ class BinTransitionCalculatorTests : public CxxTest::TestSuite {
 
 private:
 
+	core::pose::PoseOP pose_;
+
 public:
 
 	void setUp() {
 		core_init();
-
+		pose_ = core::pose::PoseOP( new core::pose::Pose );
+		core::pose::make_pose_from_sequence(*pose_, "AAAAGAPAGPAA", "fa_standard", false);		
 	}
 
 	void tearDown() {
@@ -136,4 +143,93 @@ public:
 		return;
 	}
 
-}; //class BinTransitionCalculator_Tests
+	/// @brief Test the probability transition calculator.
+	/// @details This test will fail if the bin transition probability data change.
+	void test_BinTransitionCalculator_p_iplus1_given_i()
+  { //AAAAGAPAGPAA
+    using namespace core::scoring::bin_transitions;
+    using namespace std;
+    
+		BinTransitionCalculatorOP bt( new BinTransitionCalculator );
+		bt->load_bin_params( "ABBA" );
+		
+		//A->A
+		core::pose::PoseOP temppose = pose_->clone();
+		for(core::Size i=1, imax=temppose->n_residue(); i<=imax; ++i) {
+			if(i>1) temppose->set_phi( i, -64.8 );
+			if(i<imax) {
+				temppose->set_psi( i, -41.0 );
+				temppose->set_omega( i, 180.0 );
+			}
+		}
+		
+		core::Real prob1(0);
+		core::Real prob2(0);
+		core::Real prob3(0);
+		bool calc1_success(false);
+		bool calc2_success(false);
+		bool calc3_success(false);
+		core::Real prob1_expected(0.8416743620);
+		core::Real prob2_expected(0.5110111721);
+		core::Real prob3_expected(0.9446337308);
+		
+		calc1_success = bt->p_iplus1_given_i( temppose->residue(2), temppose->residue(3), prob1 ); //ala->ala, A->A
+		calc2_success = bt->p_iplus1_given_i( temppose->residue(5), temppose->residue(6), prob2 ); //gly->ala, A->A
+		calc3_success = bt->p_i_given_iplus1( temppose->residue(9), temppose->residue(10), prob3 ); //gly->pro, A->A
+		
+		//B->Aprime
+		for(core::Size i=1, imax=temppose->n_residue(); i<=imax; ++i) {
+			if(i>1) temppose->set_phi( i, -135 );
+			if(i<imax) {
+				temppose->set_psi( i, 135.0 );
+				temppose->set_omega( i, 180.0 );
+			}
+		}
+		temppose->set_phi(3, 64.8);
+		temppose->set_psi(3, 41.0);
+		temppose->set_phi(6, 64.8);
+		temppose->set_psi(6, 41.0);
+		temppose->set_phi(10, 64.8);
+		temppose->set_psi(10, 41.0);
+		
+		core::Real prob4(1);
+		core::Real prob5(1);
+		core::Real prob6(1);
+		bool calc4_success(false);
+		bool calc5_success(false);
+		bool calc6_success(false);
+		core::Real prob4_expected(0.0330397173);
+		core::Real prob5_expected(0.4578725398);
+		core::Real prob6_expected(0.6347031963);
+		
+		calc4_success = bt->p_iplus1_given_i( temppose->residue(2), temppose->residue(3), prob4 ); //ala->ala, B->Aprime
+		calc5_success = bt->p_iplus1_given_i( temppose->residue(5), temppose->residue(6), prob5 ); //gly->ala, B->Aprime
+		calc6_success = bt->p_i_given_iplus1( temppose->residue(9), temppose->residue(10), prob6 ); //gly->pro, B->Aprime
+		
+		if(TR.visible()) {
+			TR << "Residues\tA-A\tB-A'" << std::endl;
+			TR << "ala->ala\t" << setprecision(6) << prob1 << "\t" << setprecision(6) << prob4 << std::endl;
+			TR << "gly->ala\t" << setprecision(6) << prob2 << "\t" << setprecision(6) << prob5 << std::endl;
+			TR << "gly<-pro\t" << setprecision(6) << prob3 << "\t" << setprecision(6) << prob6 << std::endl;
+		}
+		
+		//Confirm that bin transition probabilities were found for all of these:
+		TS_ASSERT(calc1_success);
+		TS_ASSERT(calc2_success);
+		TS_ASSERT(calc3_success);
+		TS_ASSERT(calc4_success);
+		TS_ASSERT(calc5_success);
+		TS_ASSERT(calc6_success);
+		
+		//Confirm that the values are right. This will have to be updated if the database file changes.
+		TS_ASSERT_DELTA( prob1, prob1_expected, 1e-8 );
+		TS_ASSERT_DELTA( prob2, prob2_expected, 1e-8 );
+		TS_ASSERT_DELTA( prob3, prob3_expected, 1e-8 );
+		TS_ASSERT_DELTA( prob4, prob4_expected, 1e-8 );
+		TS_ASSERT_DELTA( prob5, prob5_expected, 1e-8 );
+		TS_ASSERT_DELTA( prob6, prob6_expected, 1e-8 );
+		
+    return;
+	}
+
+}; //class BinTransitionCalculatorTests

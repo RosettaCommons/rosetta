@@ -641,7 +641,7 @@ namespace core {
 							}
 						}
 						
-						if(TR.visible()) TR << "Residue " << rsd.name3() << rsd.seqpos() << " matches!" << std::endl; //DELETE ME!
+						//if(TR.visible()) TR << "Residue " << rsd.name3() << rsd.seqpos() << " matches!" << std::endl; //DELETE ME!
 						
 						return true; //Nothing has failed at this point, so it's a match!
 					} //criteria_match_iplus1
