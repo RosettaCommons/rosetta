@@ -29,6 +29,7 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
 //// C++ headers
@@ -109,9 +110,11 @@ protected:
 
 	/// @brief sets constraint weights -- used with constraint ramping
 	virtual void
-	set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
-												 core::scoring::EnergyMap const & full_weights,
-												 core::Real const weight ) const;
+	set_constraint_weight(
+			core::scoring::ScoreFunctionOP local_scorefxn,
+			core::scoring::EnergyMap const & full_weights,
+			core::Real const weight,
+			core::pose::Pose & pose ) const;
 
 /// @brief outputs a pdb file with sequential numbering, with the specified prefix
 	void dump_pdb( core::pose::Pose const & pose, std::string const & prefix = "dump" );
@@ -175,6 +178,7 @@ private:   // other data
 	core::Size regions_to_design_;
 	core::Size run_count_;
 	std::string cached_sequence_;
+	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
 	//RestrictWorstRegionOP worst_region_mover_;
 };
 

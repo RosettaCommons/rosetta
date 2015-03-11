@@ -30,6 +30,7 @@
 
 //Protocol Headers
 #include <basic/datacache/DataMap.hh>
+#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
@@ -118,6 +119,7 @@ FastDesign::FastDesign() :
 	allowed_aas_.clear();
 	num_redesigns_.clear();
 	set_enable_design( true );
+	rcgs_.clear();
 	//read_script_file( "", default_repeats_ );
 }
 
@@ -191,6 +193,18 @@ FastDesign::parse_my_tag(
 	}
 
 	max_redesigns_ = tag->getOption< core::Size >( "max_redesigns", max_redesigns_ );
+
+	utility::vector1< std::string > rcgs = utility::string_split( tag->getOption< std::string >( "rcgs", "" ), ',' );
+	for ( core::Size i=1, endi=rcgs.size(); i<=endi; ++i ) {
+ 		if ( rcgs[i] == "" ) continue;
+ 		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( rcgs[i], movers );
+		// check to make sure the mover provided is a RemodelConstraintGenerator and if so, add it to the list
+		assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
+ 		protocols::forge::remodel::RemodelConstraintGeneratorOP newrcg =
+			utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover );
+ 		rcgs_.push_back( newrcg );
+	}
+
 	/*std::string const filters_str( tag->getOption< std::string >( "filters", "," ) );
 	utility::vector1< std::string > const filter_list( utility::string_split( filters_str, ',' ) );
 	for ( core::Size i=1; i<= filter_list.size(); ++i ) {
@@ -434,16 +448,28 @@ FastDesign::check_num_redesigns( core::pose::Pose const & pose, core::Size const
 
 /// @brief sets constraint weights -- used with constraint ramping
 void
-FastDesign::set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
-																	 core::scoring::EnergyMap const & full_weights,
-																	 core::Real const weight ) const
+FastDesign::set_constraint_weight(
+		core::scoring::ScoreFunctionOP local_scorefxn,
+		core::scoring::EnergyMap const & full_weights,
+		core::Real const weight,
+		core::pose::Pose & pose ) const
 {
 	runtime_assert( local_scorefxn != 0 );
-	local_scorefxn->set_weight( core::scoring::coordinate_constraint, full_weights[ core::scoring::coordinate_constraint ] * weight );
-	local_scorefxn->set_weight( core::scoring::atom_pair_constraint, full_weights[ core::scoring::atom_pair_constraint ] * weight );
-	local_scorefxn->set_weight( core::scoring::angle_constraint, full_weights[ core::scoring::angle_constraint ] * weight );
-	local_scorefxn->set_weight( core::scoring::dihedral_constraint, full_weights[ core::scoring::dihedral_constraint ] * weight );
-	TR << "[coordinate:atom_pair:angle:dihedral] = " << local_scorefxn->get_weight( core::scoring::coordinate_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::atom_pair_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::angle_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::dihedral_constraint ) << std::endl;
+	if ( rcgs_.size() ) {
+		for ( core::Size i=1, endi=rcgs_.size(); i<=endi; ++i ) {
+			rcgs_[i]->remove_remodel_constraints_from_pose( pose );
+			if ( weight > 0.0001 ) {
+				rcgs_[i]->add_remodel_constraints_to_pose( pose );
+			}
+			TR << "Changed weight of " << rcgs_[i]->get_name() << " to " << weight << std::endl;
+		}
+	} else {
+		local_scorefxn->set_weight( core::scoring::coordinate_constraint, full_weights[ core::scoring::coordinate_constraint ] * weight );
+		local_scorefxn->set_weight( core::scoring::atom_pair_constraint, full_weights[ core::scoring::atom_pair_constraint ] * weight );
+		local_scorefxn->set_weight( core::scoring::angle_constraint, full_weights[ core::scoring::angle_constraint ] * weight );
+		local_scorefxn->set_weight( core::scoring::dihedral_constraint, full_weights[ core::scoring::dihedral_constraint ] * weight );
+		TR << "[coordinate:atom_pair:angle:dihedral] = " << local_scorefxn->get_weight( core::scoring::coordinate_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::atom_pair_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::angle_constraint ) << " : " << local_scorefxn->get_weight( core::scoring::dihedral_constraint ) << std::endl;
+	}
 }
 
 } // namespace denovo_design

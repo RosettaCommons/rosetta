@@ -173,7 +173,9 @@ protected:
 	virtual void
 	set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
 												 core::scoring::EnergyMap const & full_weights,
-												 core::Real const weight ) const;
+												 core::Real const weight,
+												 core::pose::Pose & pose ) const;
+
 	void do_md(
 		core::pose::Pose &pose,
 		core::Real nstep,

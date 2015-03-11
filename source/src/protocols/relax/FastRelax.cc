@@ -872,7 +872,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 			// The third paramter is the coordinate constraint weight
 			if( ( constrain_coords() || ramp_down_constraints() ) && (cmd.nparams >= 3) ){
-				set_constraint_weight( local_scorefxn, full_weights, cmd.param3 );
+				set_constraint_weight( local_scorefxn, full_weights, cmd.param3, pose );
 			}
 
 			// The fourth paramter is the minimization
@@ -1687,7 +1687,8 @@ void FastRelax::batch_apply(
 void
 FastRelax::set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
 											 core::scoring::EnergyMap const & full_weights,
-											 core::Real const weight ) const {
+											 core::Real const weight,
+											 core::pose::Pose & ) const {
 	local_scorefxn->set_weight( scoring::coordinate_constraint,  full_weights[ scoring::coordinate_constraint ] * weight );
 }
 
