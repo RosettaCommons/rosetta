@@ -219,7 +219,7 @@ HDmakerMover::bb_score(pose::Pose & pose, core::Size aligned_chain_num, core::sc
   //NOW SCORE!
   // get instance of etable energy method
   core::scoring::methods::EnergyMethodOptions const & emo(scorefxn->energy_method_options());
-  core::scoring::etable::Etable const & et(*(core::scoring::ScoringManager::get_instance()->etable(emo.etable_type()).lock()));
+  core::scoring::etable::Etable const & et(*(core::scoring::ScoringManager::get_instance()->etable(emo).lock()));
 
 	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || emo.analytic_etable_evaluation() ) {
 		utility_exit_with_message("homodimer_maker is incompatible with analytic_etable_evaluation. Please either fix the code or add '-analytic_etable_evalution 0' to the command line.");

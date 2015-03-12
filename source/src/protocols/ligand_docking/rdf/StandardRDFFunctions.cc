@@ -71,7 +71,7 @@ void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache:
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	core::scoring::ScoreFunctionOP scorefxn(data_map.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
-	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
+	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ));
 	etable_evaluator_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator(*etable) );
 
 }

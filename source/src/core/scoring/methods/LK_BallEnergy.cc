@@ -296,12 +296,12 @@ retrieve_lkb_resdata_ptr(
 
 LK_BallEnergy::LK_BallEnergy( EnergyMethodOptions const & options ):
 	parent             ( EnergyMethodCreatorOP( new LK_BallEnergyCreator ) ),
-	etable_            ( ScoringManager::get_instance()->etable( options.etable_type() ).lock() ),
-	solv1_             ( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->solv1()),
-	solv2_             ( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->solv2()),
-	dsolv1_            ( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->dsolv1()),
-	safe_max_dis2_     ( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->get_safe_max_dis2() ),
-	etable_bins_per_A2_( ScoringManager::get_instance()->etable( options.etable_type() ).lock()->get_bins_per_A2() ),
+	etable_            ( ScoringManager::get_instance()->etable( options ).lock() ),
+	solv1_             ( ScoringManager::get_instance()->etable( options ).lock()->solv1()),
+	solv2_             ( ScoringManager::get_instance()->etable( options ).lock()->solv2()),
+	dsolv1_            ( ScoringManager::get_instance()->etable( options ).lock()->dsolv1()),
+	safe_max_dis2_     ( ScoringManager::get_instance()->etable( options ).lock()->get_safe_max_dis2() ),
+	etable_bins_per_A2_( ScoringManager::get_instance()->etable( options ).lock()->get_bins_per_A2() ),
 	slim_etable_       ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ),
 	use_intra_dna_cp_crossover_4_( true )
 {

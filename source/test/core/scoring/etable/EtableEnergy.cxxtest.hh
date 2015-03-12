@@ -22,6 +22,8 @@
 
 // Unit headers
 #include <core/scoring/etable/EtableEnergy.hh>
+#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/EtableOptions.hh>
 
 // Package headers
 #include <core/scoring/ScoringManager.hh>
@@ -56,6 +58,7 @@ static basic::Tracer TR("core.scoring.etable.EtableEnergy.cxxtest");
 using namespace std;
 using namespace core;
 using namespace scoring;
+using namespace etable;
 
 ///////////////////////////////////////////////////////////////////////////
 /// @name EtableEnergyTest
@@ -1114,6 +1117,18 @@ public:
 			}
 		}
 		//std::cout << "Total energy comparisons: " << count_comparisons << std::endl;
+	}
+
+	void test_retrieve_etables_from_scoring_manager() {
+		methods::EnergyMethodOptions etab_opts1;
+		methods::EnergyMethodOptions etab_opts2;
+		EtableCAP etable1 = ScoringManager::get_instance()->etable( etab_opts1 );
+		EtableCAP etable2 = ScoringManager::get_instance()->etable( etab_opts2 );
+
+		EtableCOP etable1op = etable1.lock();
+		EtableCOP etable2op = etable2.lock();
+
+		TS_ASSERT_EQUALS( etable1op, etable2op );
 	}
 
 };

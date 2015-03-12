@@ -49,8 +49,6 @@ namespace methods {
 
 EnergyMethodOptions::EnergyMethodOptions():
 	// hard-wired default, but you can set this with etable_type( string )
-	etable_type_(FA_STANDARD_DEFAULT),
-	analytic_etable_evaluation_( false ),
 	atom_vdw_atom_type_set_name_(chemical::CENTROID), // can be set, see below
 	unfolded_energies_type_( UNFOLDED_SCORE12 ),
 	exclude_protein_protein_fa_elec_(false), // rosetta++ defaulted to true!
@@ -98,7 +96,6 @@ EnergyMethodOptions::EnergyMethodOptions():
 }
 
 void EnergyMethodOptions::initialize_from_options() {
-	analytic_etable_evaluation_ = basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ];
 	elec_max_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_max_dis ]();
 	elec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_min_dis ]();
 	elec_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_die ]();
@@ -141,8 +138,6 @@ EnergyMethodOptions::~EnergyMethodOptions() {}
 EnergyMethodOptions const &
 EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 	if ( this != &src ) {
-		etable_type_ = src.etable_type_;
-		analytic_etable_evaluation_ = src.analytic_etable_evaluation_;
 		atom_vdw_atom_type_set_name_ = src.atom_vdw_atom_type_set_name_;
 		unfolded_energies_type_ = src.unfolded_energies_type_;
 		method_weights_ = src.method_weights_;
@@ -194,13 +189,19 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 
 string const &
 EnergyMethodOptions::etable_type() const {
-	return etable_type_;
+	return etable_options_->etable_type;
 }
 
 void
 EnergyMethodOptions::etable_type(string const & type ) {
-	etable_type_ = type;
+	etable_options_->etable_type = type;
 }
+
+bool
+EnergyMethodOptions::analytic_etable_evaluation() const { return etable_options_->analytic_etable_evaluation; }
+
+void
+EnergyMethodOptions::analytic_etable_evaluation( bool setting ) { etable_options_->analytic_etable_evaluation = setting; }
 
 string const &
 EnergyMethodOptions::unfolded_energies_type() const {
@@ -665,9 +666,7 @@ EnergyMethodOptions::bond_angle_residue_type_param_set(core::scoring::mm::MMBond
 bool
 operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 
-	return ( ( a.etable_type_ == b.etable_type_ ) &&
-		( a.analytic_etable_evaluation_ == b.analytic_etable_evaluation_ ) &&
-		( a.atom_vdw_atom_type_set_name_ == b.atom_vdw_atom_type_set_name_ ) &&
+	return (( a.atom_vdw_atom_type_set_name_ == b.atom_vdw_atom_type_set_name_ ) &&
 		( a.unfolded_energies_type_ == b.unfolded_energies_type_ ) &&
 		( a.method_weights_ == b.method_weights_ ) &&
 		( a.ss_weights_ == b.ss_weights_ ) &&
@@ -711,8 +710,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
 		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
 		( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) &&
-		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) )
-		;
+		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) );
 }
 
 /// used inside ScoreFunctionInfo::operator==
@@ -723,8 +721,8 @@ operator!=( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 
 void
 EnergyMethodOptions::show( std::ostream & out ) const {
-	if ( etable_type_.size() ) out << "EnergyMethodOptions::show: etable_type: " << etable_type_ <<'\n';
-	out << "analytic_etable_evaluation: " << analytic_etable_evaluation_ << '\n';
+	if ( etable_options_->etable_type.size() ) out << "EnergyMethodOptions::show: etable_type: " << etable_options_->etable_type <<'\n';
+	out << "analytic_etable_evaluation: " << etable_options_->analytic_etable_evaluation << '\n';
 	for ( MethodWeights::const_iterator it=method_weights_.begin(), ite = method_weights_.end(); it != ite; ++it ) {
 		out << "EnergyMethodOptions::show: method_weights: " << it->first;
 		for ( Size i=1; i<= it->second.size(); ++i ) {
@@ -838,12 +836,12 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	vector1< std::string > option_keys;
 	vector1< std::string > option_values;
-	if(etable_type_.size()){
+	if ( etable_options_->etable_type.size() ){
 		option_keys.push_back("etable_type");
-		option_values.push_back(etable_type_);
+		option_values.push_back(etable_options_->etable_type);
 	}
 	option_keys.push_back("analytic_etable_evaluation");
-	option_values.push_back(analytic_etable_evaluation_ ? "1" : "0");
+	option_values.push_back( etable_options_->analytic_etable_evaluation ? "1" : "0" );
 
 	option_keys.push_back("atom_vdw_atom_type_set_name");
 	option_values.push_back(atom_vdw_atom_type_set_name_);

@@ -221,10 +221,6 @@ public:
 	methods::EnergyMethodOP
 	energy_method( ScoreType const & t, methods::EnergyMethodOptions const & options ) const;
 
-	///
-	void
-	add_etable( std::string const & name, etable::EtableOP etable );
-
 	/// @brief make etable for extra partially softies
 	etable::EtableOP
 	make_partially_soft_etable( std::string const & name, etable::EtableOptions etable_options ) const;
@@ -237,11 +233,22 @@ public:
 	etable::MembEtableCAP
 	memb_etable( std::string const & table_id ) const;
 
-	// New logic
+	/// @brief Request an etable specifying an EnergyMethodOptions object; internally
+	/// this will retrieve the EtableOptions object, and invoke the EtableOptions
+	/// version of this function.
 	etable::EtableCAP
-	etable( methods::EnergyMethodOptions const &options_in ) const;
+	etable( methods::EnergyMethodOptions const & options_in ) const;
 
-	/// old
+	/// @brief Request an etable specifying an EtableOptions; internally this will
+	/// query the ScoringManager's map from EtableOptions to Etables for the desired
+	/// Etable, and construct a new one if needed.
+	etable::EtableCAP
+	etable( etable::EtableOptions const & options_in ) const;
+
+	/// @brief Create and return an etable specified only by the etable_type of the
+	/// etable::EtableOptions class.  This, internally, will create an EtableOptions object,
+	/// initialized from the command line, set the etable_type of this object, and then
+	/// invoke the etable( EtableOptions ) method.
 	etable::EtableCAP
 	etable( std::string const & etable_id ) const;
 
@@ -309,11 +316,11 @@ private:
 	// data
 
 	// original map using string as key, let's keep it
-	mutable std::map< std::string, etable::EtableOP > etables_by_string_;
+	// mutable std::map< std::string, etable::EtableOP > etables_by_string_;
 
-	// new map for etables using EnergyMethodOptions as key
-	// In order to avoid defining comparison operator, using "vector of std::pair" instead of std::map
-	mutable utility::vector1< std::pair< methods::EnergyMethodOptions, etable::EtableOP > > etables_by_method_;
+	// new map for etables using EtableOptions as key
+	mutable std::map< etable::EtableOptions, etable::EtableOP > etables_by_options_;
+
 	//XRW_B_T1
 	//mutable std::map< std::string, coarse::CoarseEtableOP > coarse_etables_;
 	//XRW_E_T1

@@ -39,9 +39,9 @@ std::string SolvationGridCreator::keyname() const
 GridBaseOP SolvationGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
     GridBaseOP solvation_grid( new SolvationGrid() );
-    
+
     solvation_grid->parse_my_tag(tag);
-    
+
     return solvation_grid;
 }
 
@@ -55,38 +55,36 @@ std::string SolvationGridCreator::grid_name()
 {
     return "SolvationGrid";
 }
-    
+
 SolvationGrid::SolvationGrid() :SingleGrid("SolvationGrid")
 {
-    
+
 }
-    
+
 SolvationGrid::~SolvationGrid()
 {
-    
+
 }
 
 void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & /*center*/)
 {
-    core::scoring::etable::EtableCOP etable(
-        core::scoring::ScoringManager::get_instance()->etable("FA_STANDARD_DEFAULT"));
-    
-    core::scoring::etable::TableLookupEvaluator etable_evaluator(*etable);
-    
-    //put all the atoms in a list so we don't have to deal with extracting them all more than once
-    
-    std::list<core::conformation::Atom> atom_list;
-    for(core::Size resnum = 1; resnum <=pose.total_residue();++resnum)
-    {
-        core::conformation::Residue current_residue = pose.residue(resnum);
-        
-        for(core::Size atomnum = 1; atomnum <= current_residue.natoms();++atomnum)
-        {
-            atom_list.push_back(current_residue.atom(atomnum));
-        }
-        
-    }
-    
+	core::scoring::methods::EnergyMethodOptions default_options; // initialized from the command line
+	core::scoring::etable::EtableCOP etable(
+		core::scoring::ScoringManager::get_instance()->etable( default_options ));
+
+	core::scoring::etable::TableLookupEvaluator etable_evaluator(*etable);
+
+	//put all the atoms in a list so we don't have to deal with extracting them all more than once
+
+	std::list<core::conformation::Atom> atom_list;
+	for(core::Size resnum = 1; resnum <=pose.total_residue();++resnum) {
+		core::conformation::Residue current_residue = pose.residue(resnum);
+
+		for(core::Size atomnum = 1; atomnum <= current_residue.natoms();++atomnum) {
+			atom_list.push_back(current_residue.atom(atomnum));
+		}
+	}
+
     numeric::xyzVector<core::Size> dimensions = get_dimensions();
 	for(core::Size x_index =0; x_index < dimensions.x(); ++x_index)
 	{
@@ -96,10 +94,10 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
 			{
                 core::Vector pdb_coords(get_pdb_coords(x_index,y_index,z_index));
                 core::conformation::Atom probe(pdb_coords,probe_atom_type_,1);
-                
+
                 core::Real total_solvation = 0.0;
-                
-                
+
+
                 for(std::list<core::conformation::Atom>::iterator it = atom_list.begin();it != atom_list.end();++it)
                 {
                     //the interface for the etable evaluator gets atr,rep,distance and solvation at once
@@ -108,18 +106,18 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
                     core::Real rep = 0.0;
                     core::Real sol = 0.0;
                     core::Real d2 = 0.0;
-                    
+
                     etable_evaluator.atom_pair_energy(probe, *it, 1.0, atr, rep, sol, d2);
                     total_solvation += sol;
                 }
-                
+
                 set_point(pdb_coords,total_solvation);
-               
+
             }
         }
     }
 
-    
+
 }
 
 void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & )
@@ -161,7 +159,7 @@ void SolvationGrid::deserialize(utility::json_spirit::mObject data )
     probe_atom_type_ = data["probe_type"].get_int();
     SingleGrid::deserialize(data["base_data"].get_obj());
 }
-    
+
 void SolvationGrid::set_probe_atom_type(core::ShortSize const & atom_type)
 {
     probe_atom_type_ = atom_type;

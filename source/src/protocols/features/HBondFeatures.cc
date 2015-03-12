@@ -1059,7 +1059,7 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 	if ( !(scfxn_->energy_method_options().analytic_etable_evaluation()) ) {
 		core::scoring::etable::EtableCOP etable(
 			ScoringManager::get_instance()->etable(
-				scfxn_->energy_method_options().etable_type() ) );
+				scfxn_->energy_method_options() ) );
 		TableLookupEtableEnergy const etable_energy( *etable,
     		scfxn_->energy_method_options(), false /*do_classic_intrares*/ );
 
@@ -1088,7 +1088,7 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 			bb_dummy, dsq_dummy );
 	} else {
 		core::scoring::etable::EtableCOP etable( ScoringManager::get_instance()->etable(
-				scfxn_->energy_method_options().etable_type() ) );
+				scfxn_->energy_method_options() ) );
 		AnalyticEtableEnergy const etable_energy(
 			*etable,
 			scfxn_->energy_method_options(), false /*do_classic_intrares*/ );

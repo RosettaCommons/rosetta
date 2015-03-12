@@ -54,7 +54,7 @@ methods::EnergyMethodOP
 RNA_LJ_BaseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options.etable_type() ) );
+	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options ) );
 	return methods::EnergyMethodOP( new RNA_LJ_BaseEnergy( *etable ) );
 }
 

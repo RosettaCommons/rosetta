@@ -55,8 +55,8 @@ Fa_MbsolvEnergyCreator::create_energy_method(
   methods::EnergyMethodOptions const & options
 ) const {
   return methods::EnergyMethodOP( new Fa_MbsolvEnergy(
-  	*( ScoringManager::get_instance()->etable( options.etable_type() ).lock() ),
-  	*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() ) 
+  	*( ScoringManager::get_instance()->etable( options ).lock() ),
+  	*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() )
   ) );
 }
 

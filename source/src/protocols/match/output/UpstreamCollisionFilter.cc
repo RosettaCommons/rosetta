@@ -71,7 +71,7 @@ void MatchCollisionFilter::set_filter_by_lj( bool setting )
 		using namespace core::scoring::methods;
 		EnergyMethodOptions eopts;
 		etable_energy_ = core::scoring::methods::ShortRangeTwoBodyEnergyOP( new TableLookupEtableEnergy(
-			*ScoringManager::get_instance()->etable( eopts.etable_type() ).lock(), eopts, false /*do_classic_intrares*/ ) ); // FIXME: passing reference of a temporairly locked AP
+			*ScoringManager::get_instance()->etable( eopts ).lock(), eopts, false /*do_classic_intrares*/ ) ); // FIXME: passing reference of a temporairly locked AP
 	}
 }
 

@@ -87,8 +87,8 @@ public:
 	void
 	etable_type( std::string const & type );
 
-	bool analytic_etable_evaluation() const { return analytic_etable_evaluation_; }
-	void analytic_etable_evaluation( bool setting ) { analytic_etable_evaluation_ = setting; }
+	bool analytic_etable_evaluation() const;
+	void analytic_etable_evaluation( bool setting );
 
 	///
 	std::string const &
@@ -267,11 +267,11 @@ public:
  	void
  	hbond_options( hbonds::HBondOptions const & opts );
 
- 	/// @brief Read access to the hbond options object
+ 	/// @brief Read access to the etable options object
  	etable::EtableOptions const &
  	etable_options() const;
 
- 	/// @brief non-const access to the hbond options object
+ 	/// @brief non-const access to the etable options object
  	etable::EtableOptions &
  	etable_options();
 
@@ -442,8 +442,6 @@ private:
 	// IMPORTANT NOTE!  If you add an option, make sure you also update the constructor,
 	// the assignment operator, the == comparison operator, and the show method in the .cc file!
 	/////////////////////////////////////////////////
-	std::string etable_type_;
-	bool analytic_etable_evaluation_;
 	std::string atom_vdw_atom_type_set_name_;
 	std::string unfolded_energies_type_;
 	MethodWeights method_weights_;

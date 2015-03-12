@@ -489,9 +489,6 @@ ScoreFunction::set_etable(
 	std::string const & etable_name
 )
 {
-	// ensure that this has been done before the relevant EnergyMethod is created
-	// this needs to be fixed to be smarter
-	//debug_assert( weights_[ fa_atr ] == 0.0 && weights_[ fa_rep ] == 0.0 && weights_[ fa_sol ] == 0.0 );
 	energy_method_options_->etable_type( etable_name );
 	reset_energy_methods();
 	score_function_info_current_ = false;

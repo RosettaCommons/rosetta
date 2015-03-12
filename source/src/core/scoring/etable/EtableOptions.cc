@@ -32,6 +32,8 @@ namespace scoring {
 namespace etable {
 
 EtableOptions::EtableOptions() :
+	etable_type( "FA_STANDARD_DEFAULT" ), // this string must be kept the same as the variable in ScoringManager.cc named FA_STANDARD_DEFAULT
+	analytic_etable_evaluation( false ),
 	max_dis( 6.0 ),
 	bins_per_A2( 20 ),
 	Wradius( 1.0 ),
@@ -43,6 +45,7 @@ EtableOptions::EtableOptions() :
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	analytic_etable_evaluation = option[ score::analytic_etable_evaluation ];
 	max_dis = option[ score::fa_max_dis ];
 	if( option[ score::no_smooth_etables ] && !option[ score::fa_max_dis ].user() ) {
 		basic::T("core.scoring.etable") << "no_smooth_etables requested and fa_max_dis not specified: using 5.5 as default" << std::endl;
@@ -69,28 +72,69 @@ EtableOptions::~EtableOptions(){}
 EtableOptions const &
 EtableOptions::operator=( EtableOptions const & src )
 {
-	max_dis = src.max_dis;
-	bins_per_A2 = src.bins_per_A2;
-	Wradius = src.Wradius;
-	lj_switch_dis2sigma = src.lj_switch_dis2sigma;
-	no_lk_polar_desolvation = src.no_lk_polar_desolvation;
-	lj_hbond_OH_donor_dis = src.lj_hbond_OH_donor_dis;
-	lj_hbond_hdis = src.lj_hbond_hdis;
-	enlarge_h_lj_wdepth = src.enlarge_h_lj_wdepth;
+	if ( this != & src ) {
+		etable_type = src.etable_type;
+		analytic_etable_evaluation = src.analytic_etable_evaluation;
+		max_dis = src.max_dis;
+		bins_per_A2 = src.bins_per_A2;
+		Wradius = src.Wradius;
+		lj_switch_dis2sigma = src.lj_switch_dis2sigma;
+		no_lk_polar_desolvation = src.no_lk_polar_desolvation;
+		lj_hbond_OH_donor_dis = src.lj_hbond_OH_donor_dis;
+		lj_hbond_hdis = src.lj_hbond_hdis;
+		enlarge_h_lj_wdepth = src.enlarge_h_lj_wdepth;
+	}
 	return *this;
 }
 
 bool
+operator < ( EtableOptions const & a, EtableOptions const & b )
+{
+	if      (a.etable_type < b.etable_type )  { return true;  }
+	else if (a.etable_type != b.etable_type ) { return false; }
+
+	if      (a.analytic_etable_evaluation < b.analytic_etable_evaluation ) { return true; }
+	else if (a.analytic_etable_evaluation != b.analytic_etable_evaluation ) { return false; }
+
+	if      ( a.max_dis < b.max_dis )  { return true;  }
+	else if ( a.max_dis != b.max_dis ) { return false; }
+
+	if      ( a.bins_per_A2 < b.bins_per_A2 )  { return true;  }
+	else if ( a.bins_per_A2 != b.bins_per_A2 ) { return false; }
+
+	if      ( a.Wradius < b.Wradius )  { return true;  }
+	else if ( a.Wradius != b.Wradius ) { return false; }
+
+	if      ( a.lj_switch_dis2sigma < b.lj_switch_dis2sigma )  { return true;  }
+	else if ( a.lj_switch_dis2sigma != b.lj_switch_dis2sigma ) { return false; }
+
+	if      ( a.no_lk_polar_desolvation < b.no_lk_polar_desolvation )  { return true;  }
+	else if ( a.no_lk_polar_desolvation != b.no_lk_polar_desolvation ) { return false; }
+
+	if      ( a.lj_hbond_OH_donor_dis < b.lj_hbond_OH_donor_dis )  { return true;  }
+	else if ( a.lj_hbond_OH_donor_dis != b.lj_hbond_OH_donor_dis ) { return false; }
+
+	if      ( a.lj_hbond_hdis < b.lj_hbond_hdis )  { return true;  }
+	else if ( a.lj_hbond_hdis != b.lj_hbond_hdis ) { return false; }
+
+	if      ( a.enlarge_h_lj_wdepth < b.enlarge_h_lj_wdepth ) { return true; }
+	else return false;
+}
+
+
+bool
 operator==( EtableOptions const & a, EtableOptions const & b )
 {
-	return (( a.max_dis == b.max_dis ) &&
-					( a.bins_per_A2 == b.bins_per_A2 ) &&
-					( a.Wradius == b.Wradius ) &&
-					( a.lj_switch_dis2sigma == b.lj_switch_dis2sigma ) &&
-					( a.no_lk_polar_desolvation == b.no_lk_polar_desolvation ) &&
-					( a.lj_hbond_OH_donor_dis == b.lj_hbond_OH_donor_dis ) &&
-					( a.lj_hbond_hdis == b.lj_hbond_hdis ) &&
-					( a.enlarge_h_lj_wdepth == b.enlarge_h_lj_wdepth ) ) ;
+	return ((a.etable_type == b.etable_type ) &&
+		(a.analytic_etable_evaluation == b.analytic_etable_evaluation ) &&
+		( a.max_dis == b.max_dis ) &&
+		( a.bins_per_A2 == b.bins_per_A2 ) &&
+		( a.Wradius == b.Wradius ) &&
+		( a.lj_switch_dis2sigma == b.lj_switch_dis2sigma ) &&
+		( a.no_lk_polar_desolvation == b.no_lk_polar_desolvation ) &&
+		( a.lj_hbond_OH_donor_dis == b.lj_hbond_OH_donor_dis ) &&
+		( a.lj_hbond_hdis == b.lj_hbond_hdis ) &&
+		( a.enlarge_h_lj_wdepth == b.enlarge_h_lj_wdepth ));
 }
 
 

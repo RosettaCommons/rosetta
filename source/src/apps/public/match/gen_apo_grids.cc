@@ -61,16 +61,9 @@
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-//from
-// AUTO-REMOVED #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/etable/Etable.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -205,7 +198,8 @@ int main( int argc, char * argv [] )
 	core::Size n_atomtypes = atom_set->n_atomtypes();
 
 	//for pair energy
-	etable::EtableCOP et( ScoringManager::get_instance()->etable( "FA_STANDARD_DEFAULT") );
+	methods::EnergyMethodOptions default_options; // initialized from the command line
+	etable::EtableCOP et( ScoringManager::get_instance()->etable( default_options ) );
 	core::Real min_dis = 0.01;
 	core::Real min_dis2 = min_dis*min_dis;
 	core::Real max_dis = 6.0;

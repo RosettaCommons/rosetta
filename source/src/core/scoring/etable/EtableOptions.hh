@@ -38,6 +38,10 @@ public:
 
 	friend
 	bool
+	operator < ( EtableOptions const & a, EtableOptions const & b );
+
+	friend
+	bool
 	operator==( EtableOptions const & a, EtableOptions const & b );
 
 	friend
@@ -52,6 +56,8 @@ public:
 
 public:
 
+	std::string etable_type;
+	bool analytic_etable_evaluation;
 	Real max_dis;
 	int  bins_per_A2;
 	Real Wradius;

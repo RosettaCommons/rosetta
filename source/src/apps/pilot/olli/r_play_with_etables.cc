@@ -82,6 +82,7 @@ my_main( void *)
   return 0 ;
 }
 
+/// NOTE! THIS FUNCTION IS NOW BROKEN -- APL
 void make_etable( float weight, std::string const& name ) {
   using namespace scoring;
   using namespace etable;
@@ -92,7 +93,7 @@ void make_etable( float weight, std::string const& name ) {
   chemical::AtomTypeSetCOP ptr_atom_type_set( local_atom_type_set );
 	options.lj_switch_dis2sigma = 0.6*(1.0-weight)+weight*0.91;
 	scoring::etable::EtableOP etable0( new Etable( ptr_atom_type_set, options, name ) );
-	scoring::ScoringManager::get_instance()->add_etable( "FA_STANDARD_"+name, etable0 );
+	// APL TEMP TEMP TEMP !!! scoring::ScoringManager::get_instance()->add_etable( "FA_STANDARD_"+name, etable0 );
 }
 
 
