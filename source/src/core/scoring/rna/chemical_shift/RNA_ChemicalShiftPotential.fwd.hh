@@ -14,12 +14,17 @@
 #ifndef INCLUDED_core_scoring_rna_chemical_shift_RNA_ChemicalShiftPotential_FWD_HH
 #define INCLUDED_core_scoring_rna_chemical_shift_RNA_ChemicalShiftPotential_FWD_HH
 
+// Utility headers
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 namespace rna {
 namespace chemical_shift {
 
 class RNA_ChemicalShiftPotential;
+typedef utility::pointer::shared_ptr< RNA_ChemicalShiftPotential > RNA_ChemicalShiftPotentialOP;
+typedef utility::pointer::shared_ptr< RNA_ChemicalShiftPotential const > RNA_ChemicalShiftPotentialCOP;
 
 } //chemical_shift
 } //rna

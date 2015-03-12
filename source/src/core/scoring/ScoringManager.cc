@@ -142,14 +142,16 @@ ScoringManager::ScoringManager() :
 	mm_lj_energy_table_( /* 0 */ ),
 	mm_torsion_library_( /* 0 */ ),
 	mm_bondangle_library_( /* 0 */ ),
-	dnabform_( 0 ),
-	dna_torsion_potential_( 0 ),
+	mm_bondlength_library_( /* 0 */ ),
+	dnabform_( /* 0 */ ),
+	dna_torsion_potential_( /* 0 */ ),
 	DNA_base_potential_( /* 0 */ ),
 	carbon_hbond_potential_( /* 0 */ ),
 	rna_low_resolution_potential_( /* 0 */ ),
 //	rna_torsion_potential_( /* 0 */ ),
-	rna_chemical_shift_potential_( 0 ),
+	rna_chemical_shift_potential_( /* 0 */ ),
 	rna_dms_potential_( /* 0 */ ),
+	rna_dms_low_resolution_potential_( /* 0 */ ),
 	p_aa_( /* 0 */ ),
 	water_adduct_hbond_potential_( /* 0 */ ),
 	gen_born_potential_( /* 0 */ ),
@@ -158,6 +160,7 @@ ScoringManager::ScoringManager() :
 	disulfide_matching_potential_( /* 0 */ ),
 	membrane_potential_( /* 0 */ ),
   membrane_fapotential_( /* 0 */ ), //pba
+	ProQ_potential_(/* 0 */),
 	PB_potential_(/* 0 */),
 	unf_state_( /* 0 */ ),
 	NV_lookup_table_(/* 0 */),
@@ -293,7 +296,7 @@ ScoringManager::get_ProQPotential() const
 {
 	if (ProQ_potential_ == 0 )
 	{
-		ProQ_potential_ = new ProQPotential();
+		ProQ_potential_ = ProQPotentialOP( new ProQPotential() );
 	}
 	return *ProQ_potential_;
 }
@@ -434,7 +437,7 @@ ScoringManager::get_RNA_ChemicalShiftPotential() const
 {
 	if (rna_chemical_shift_potential_ == 0 )
 	{
-		rna_chemical_shift_potential_= new rna::chemical_shift::RNA_ChemicalShiftPotential();
+		rna_chemical_shift_potential_= rna::chemical_shift::RNA_ChemicalShiftPotentialOP( new rna::chemical_shift::RNA_ChemicalShiftPotential() );
 	}
 	return *rna_chemical_shift_potential_;
 }
@@ -488,20 +491,6 @@ ScoringManager::get_WaterAdductHBondPotential() const
 	return *water_adduct_hbond_potential_;
 }
 
-
-/////////////////////////////////////
-//////////////////////////////
-////////////
-//ScoringManager::RotamerLibrary &
-//ScoringManager::get_RotamerLibrary() const
-//{
-//	if (rotamer_Library_ == 0 )
-//	{
-//		rotamer_Library_ = new RotamerLibrary();
-//		read_dunbrack_library( *rotamer_Library_ );
-//	}
-//	return *rotamer_Library_;
-//}
 
 ///////////////////////////////////////////////////////////////////////////////
 RamachandranCOP
@@ -565,7 +554,7 @@ ScoringManager::get_DNABFormPotential() const
 {
 	if( dnabform_ == 0 )
 	{
-		dnabform_ =  new dna::DNABFormPotential;
+		dnabform_ =  dna::DNABFormPotentialOP( new dna::DNABFormPotential );
 	}
 	return *dnabform_;
 }
@@ -577,7 +566,7 @@ ScoringManager::get_DNATorsionPotential() const
 {
 	if (dna_torsion_potential_ == 0 )
 	{
-		dna_torsion_potential_ = new dna::DNATorsionPotential();
+		dna_torsion_potential_ = dna::DNATorsionPotentialOP( new dna::DNATorsionPotential() );
 	}
 	return *dna_torsion_potential_;
 }
@@ -972,72 +961,6 @@ ScoringManager::coarse_etable( std::string const & table_id ) const
 }
 */
  //XRW_E_T1
-
-///////////////////////////////////////////////////////////////////////////////
-/// alot of this was pulled from RotamerLibrary.cc
-/*pack::dunbrack::SingleResidueRotamerLibraryCAP
-ScoringManager::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type )
-{
-	using namespace pack::dunbrack;
-
-	// get some info about amino acid type
-	std::string aa_name3( rsd_type.name3() );
-	Size n_rotlib_chi( rsd_type.nchi() - rsd_type.n_proton_chi() );
-	chemical::AA aan( rsd_type.aa() );
-	bool dun02( true );
-
-	if ( ncaa_rotlibs_.find( aa_name3 ) == ncaa_rotlibs_.end() ) {
-
-		// create izstream from path
-		std::string dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
-		std::string file_name = rsd_type.get_ncaa_rotlib_path();
-		utility::io::izstream rotlib_in( dir_name + file_name );
-		std::cout << "Reading in rot lib " << dir_name + file_name << "...";
-
-		// get an instance of RotamericSingleResidueDunbrackLibrary, but need a RotamerLibrary to do it
-		// this means that when ever you read in the NCAA libraries you will also read in the Dunbrack libraries
-		// this may need to be a pointer to the full type and not just a SRRLOP
-		std::string empty_string("");
-
-		// this comes almost directally from RotmerLibrary.cc::create_rotameric_dunlib()
-		SingleResidueRotamerLibraryOP ncaa_rotlib;
-		RotamericSingleResidueDunbrackLibrary< ONE > * r1;
- 		RotamericSingleResidueDunbrackLibrary< TWO > * r2;
- 		RotamericSingleResidueDunbrackLibrary< THREE > * r3;
- 		RotamericSingleResidueDunbrackLibrary< FOUR > * r4;
-
-		switch ( n_rotlib_chi ) {
-		case 1:
-			r1 = new RotamericSingleResidueDunbrackLibrary< ONE >( aan, dun02 );
-			r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
-			r1->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r1; break;
-		case 2:
-			r2 = new RotamericSingleResidueDunbrackLibrary< TWO >( aan, dun02 );
-			r2->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
-			r2->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r2; break;
-		case 3:
-			r3 = new RotamericSingleResidueDunbrackLibrary< THREE >( aan, dun02 );
-			r3->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
-			r3->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r3; break;
-		case 4:
-			r4 = new RotamericSingleResidueDunbrackLibrary< FOUR >( aan, dun02 );
-			r4->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
-			r4->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r4; break;
-		default:
-			utility_exit_with_message( "ERROR: too many chi angles desired for ncaa library: " + n_rotlib_chi );
-			break;
-		}
-
-		// add new rotamer library to map
-		ncaa_rotlibs_[ aa_name3 ] = ncaa_rotlib;
-		std::cout << "done!" << std::endl;
-	}
-	return ( ncaa_rotlibs_.find( aa_name3 )->second)();
-}*/
 
 /// @details Test if there is an EnergyMethod class defined for a
 /// given score type.

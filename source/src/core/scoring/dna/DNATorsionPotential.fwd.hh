@@ -14,11 +14,16 @@
 #ifndef INCLUDED_core_scoring_dna_DNATorsionPotential_FWD_HH
 #define INCLUDED_core_scoring_dna_DNATorsionPotential_FWD_HH
 
+// Utility headers
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 namespace dna {
 
 class DNATorsionPotential;
+typedef utility::pointer::shared_ptr< DNATorsionPotential > DNATorsionPotentialOP;
+typedef utility::pointer::shared_ptr< DNATorsionPotential const > DNATorsionPotentialCOP;
 
 }
 }

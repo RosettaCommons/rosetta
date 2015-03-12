@@ -264,7 +264,6 @@ private:
 
 	// WARNING -- if you add something here don't forget to initialize to 0 in the constructor
 	mutable PairEPotentialOP pairE_potential_;
-	//mutable RotamerLibrary * rotamer_Library_;
 	mutable RamachandranOP rama_;
 	mutable Ramachandran2BOP rama2b_;
 	mutable Rama2BOffsetOP rama2bo_;
@@ -284,15 +283,15 @@ private:
 	mutable mm::MMBondAngleLibraryOP mm_bondangle_library_;
 	mutable mm::MMBondLengthLibraryOP mm_bondlength_library_;
 	//P_AA                     Paa_ppPotential_;
-	mutable dna::DNABFormPotential * dnabform_;
-	mutable dna::DNATorsionPotential * dna_torsion_potential_;
+	mutable dna::DNABFormPotentialOP dnabform_;
+	mutable dna::DNATorsionPotentialOP dna_torsion_potential_;
 	mutable dna::DNA_BasePotentialOP DNA_base_potential_;
 	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
 	//	mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
 	//	mutable rna::RNA_SuitePotentialOP rna_suite_potential_;
 	//	mutable rna::RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
-	mutable rna::chemical_shift::RNA_ChemicalShiftPotential * rna_chemical_shift_potential_;
+	mutable rna::chemical_shift::RNA_ChemicalShiftPotentialOP rna_chemical_shift_potential_;
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
 	mutable rna::data::RNA_DMS_LowResolutionPotentialOP rna_dms_low_resolution_potential_;
 	mutable P_AAOP p_aa_;
@@ -305,7 +304,7 @@ private:
 	mutable MembranePotentialOP membrane_potential_;
 	mutable membrane::MembraneDataOP mp_base_potential_;
 	mutable Membrane_FAPotentialOP membrane_fapotential_; //pba
-	mutable ProQPotential * ProQ_potential_;
+	mutable ProQPotentialOP ProQ_potential_;
 	mutable PoissonBoltzmannPotentialOP PB_potential_;
 	//ReferenceEnergyPotential referenceEnergyPotential_;
 	mutable UnfoldedStatePotentialOP unf_state_;
@@ -325,10 +324,6 @@ private:
 	//mutable std::map< std::string, coarse::CoarseEtableOP > coarse_etables_;
 	//XRW_E_T1
 	mutable std::map< std::string, etable::MembEtableOP > memb_etables_; //pba
-
-
-	// NCAA rot lib map
-	/// mutable std::map< std::string, pack::dunbrack::SingleResidueRotamerLibraryCOP > ncaa_rotlibs_;
 
 	utility::vector1< methods::EnergyMethodCreatorOP > method_creator_map_;
 
