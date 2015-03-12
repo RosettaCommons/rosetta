@@ -88,11 +88,20 @@ public:
 	inline HBSeqSep sequence_sep() const { return seq_sep_; }
 	inline HBEvalType eval_type() const { return eval_type_; }
 
+	void
+	show( std::ostream & out ) const;
 
 private:
 	void update_hbevaltype();
 
 };
+
+inline
+std::ostream &
+operator<<(std::ostream & out, HBEvalTuple const & hbt) {
+	hbt.show(out);
+	return out;
+}
 
 } // namespace hbonds
 } // namespace scoring

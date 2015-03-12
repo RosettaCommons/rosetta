@@ -122,7 +122,7 @@ public:
 			for ( Size jj = 1; jj <= hbacc_MAX; ++jj ) {
 				for ( Size kk = 1; kk <= seq_sep_MAX; ++kk ) {
 					HBEvalTuple hbt = HBEvalTuple( HBDonChemType(ii), HBAccChemType(jj), HBSeqSep(kk) );
-					if ( hbt.eval_type() == 0 ) continue;
+					if ( hbt.eval_type() == hbe_UNKNOWN ) continue;
 					for (Real AHdis = MIN_R; AHdis <MAX_R; AHdis += .8){
 						for (Real xD = MIN_xD; xD <= MAX_xD; xD += .5){
 							for (Real xH = MIN_xH; xH <= MAX_xH; xH += .5){
@@ -233,8 +233,8 @@ public:
 		fill_hbond_set(pose,
 			true, /* calculate derivative */
 			hbond_set);
-		
-		
+
+
 		for (Size i = 1; i <= pose.total_residue(); ++i){
 		    if (hbond_set.nhbonds(i, false) > 0){
 			utility::vector1< HBondCOP > const residue_hbonds = hbond_set.residue_hbonds(i, false /* include all*/);
@@ -247,11 +247,11 @@ public:
 				break;
 			    }
 			}
-			
+
 			break;
 		    }
 		}
-		
+
 		for( Size i=1; i <= hbond_set.nhbonds(); ++i ){
 			const HBond hbond( hbond_set.hbond(i) );
 			const Residue acc_res( pose.residue(hbond.acc_res()));

@@ -15,11 +15,13 @@
 #include <core/scoring/hbonds/types.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <utility/exit.hh>
+#include <basic/Tracer.hh>
 
 namespace core {
 namespace scoring {
 namespace hbonds {
 
+static thread_local basic::Tracer TR("core.scoring.hbonds.types");
 
 Size
 hb_eval_type(
@@ -37,6 +39,8 @@ hb_eval_type(
 void
 HBEval_lookup_initializer( ObjexxFCL::FArray3D<HBEvalType> & hbe )
 {
+	hbe = hbe_UNKNOWN; // General Default - If not otherwise redone below.
+
 	hbe(hbdon_NONE, hbacc_NONE, seq_sep_other) = hbe_NONE;
 	hbe(hbdon_PBA, hbacc_NONE, seq_sep_other) = hbe_NONE;
 	hbe(hbdon_CXA, hbacc_NONE, seq_sep_other) = hbe_NONE;
@@ -727,6 +731,9 @@ get_hbe_acc_hybrid( HBEvalType const & hbe )
 		case hbe_GENERIC_SP3SCSC_LR: return SP3_HYBRID; break;
 		case hbe_GENERIC_RINGSCSC_SR: return RING_HYBRID; break;
 		case hbe_GENERIC_RINGSCSC_LR: return RING_HYBRID; break;
+		case hbe_UNKNOWN:
+			TR.Warning << "WARNING: Attempted to find hybrid status of Unknown HBEvalType" << std::endl;
+			return UNKNOWN_HYBRID; break;
 	}
 	return UNKNOWN_HYBRID;
 }
@@ -986,7 +993,11 @@ hbe_is_BB_type( HBEvalType hbe )
 		case hbe_GENERIC_SP3SCSC_LR: return false; break;
 		case hbe_GENERIC_RINGSCSC_SR: return false; break;
 		case hbe_GENERIC_RINGSCSC_LR: return false; break;
+		case hbe_UNKNOWN:
+			TR.Error << "ERROR: Attempted to find backbone status of Unknown HBEvalType" << std::endl;
+			break;
 	}
+	utility_exit_with_message("Unhandled HBEvalType");
 	return false; // <- to assure gcc a bool will be returned
 }
 bool hbe_is_SC_type( HBEvalType hbe ){return !hbe_is_BB_type(hbe);}
@@ -1225,7 +1236,11 @@ get_hbond_weight_type( HBEvalType const & hbe_type )
 		case hbe_GENERIC_SP3SCSC_LR: return hbw_SC; break;
 		case hbe_GENERIC_RINGSCSC_SR: return hbw_SC; break;
 		case hbe_GENERIC_RINGSCSC_LR: return hbw_SC; break;
+		case hbe_UNKNOWN:
+			TR.Error << "ERROR: Attempted to find weight type Unknown HBEvalType" << std::endl;
+			break;
 	}
+	utility_exit_with_message("Unhandled HBEvalType");
 	return hbw_NONE; // <- to assure gcc an HBondWeightType is returned
 }
 

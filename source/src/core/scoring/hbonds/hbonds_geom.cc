@@ -584,6 +584,11 @@ hbond_compute_energy(
 )
 {
 	HBEvalType hbe = hbt.eval_type();
+	if( hbe == hbe_UNKNOWN ) {
+		tr.Error << "ERROR: Unknown HBEvalType for: " << hbt << std::endl;
+		utility_exit_with_message("Can't get energy for hbond interaction.");
+	}
+
 	energy = MAX_HB_ENERGY + 1.0f;
 	apply_chi_torsion_penalty = false;
 	dE_dr = dE_dxD = dE_dxH = dE_dBAH = dE_dchi = 0.0;
@@ -1147,6 +1152,11 @@ hb_energy_deriv(
 	Vector BAunit;
 	// the pseudo-base xyz coordinate
 	Vector PBxyz;
+	HBEvalType eval_type( hbt.eval_type() );
+	if( eval_type == hbe_UNKNOWN ) {
+		tr.Error << "ERROR: Unknown HBEvalType for " << hbt << std::endl;
+		utility_exit_with_message("Cannot compute derivative for hbond interaction");
+	}
 	chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) );
 	make_hbBasetoAcc_unitvector(hbondoptions, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit);
 	hb_energy_deriv_u2(database, hbondoptions, hbt, deriv_type, Hxyz, Dxyz, HDunit, Axyz, PBxyz, BAunit, B2xyz, energy, deriv );

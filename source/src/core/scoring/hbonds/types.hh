@@ -123,6 +123,7 @@ enum HBDonChemType {
 
 
 enum HBEvalType{
+	hbe_UNKNOWN = 0,
 	hbe_NONE=1,
 	hbe_dPBAaPBAsepM4helix, hbe_dPROTEIN_BB_AMIDEaPROTEIN_BB_AMIDEsepM4helix = hbe_dPBAaPBAsepM4helix,
 	hbe_dPBAaPBAsepM3turn, hbe_dPROTEIN_BB_AMIDEaPROTEIN_BB_AMIDEsepM3turn = hbe_dPBAaPBAsepM3turn,

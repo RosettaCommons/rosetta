@@ -87,6 +87,11 @@ void HBEvalTuple::update_hbevaltype()
 }
 
 
+void
+HBEvalTuple::show( std::ostream & out ) const {
+	out << "HBEvalTuple( " << don_type_ << ", " << acc_type_ << ", " << seq_sep_ << ", " << eval_type_ << ")";
+}
+
 
 } // namespace hbonds
 } // namespace scoring

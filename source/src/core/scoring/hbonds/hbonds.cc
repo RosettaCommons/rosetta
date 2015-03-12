@@ -860,16 +860,16 @@ identify_hbonds_1way_membrane(
 				unweighted_energy, evaluate_derivative, derivs);
 
 			if (unweighted_energy >= MAX_HB_ENERGY) continue;
-            
+
             Real environmental_weight(0);
-            
+
             // if membrane framework - use data from the framework to correct hydrogen bonds
             if ( !pose.conformation().is_membrane() ) {
                 Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
                 Vector const center( pose.conformation().membrane_info()->membrane_center() );
                 Real const thickness( pose.conformation().membrane_info()->membrane_thickness() );
                 Real const steepness( pose.conformation().membrane_info()->membrane_steepness() );
-                
+
                 environmental_weight = get_membrane_depth_dependent_weight( normal, center, thickness, steepness, don_nb, acc_nb, hatm_xyz, acc_rsd.atom( aatm ).xyz() );
             // Make the hydrogen bonding correction using the old data
             } else {
@@ -972,7 +972,7 @@ identify_hbonds_1way_membrane(
                 Vector const center( pose.conformation().membrane_info()->membrane_center() );
                 Real const thickness( pose.conformation().membrane_info()->membrane_thickness() );
                 Real const steepness( pose.conformation().membrane_info()->membrane_steepness() );
-                
+
                 environmental_weight = get_membrane_depth_dependent_weight( normal, center, thickness, steepness, don_nb, acc_nb, hatm_xyz, acc_rsd.atom( aatm ).xyz() );
                 // Make the hydrogen bonding correction using the old data
             } else {
@@ -1032,6 +1032,10 @@ get_hbond_energies(
 
 		HBond const & hbond_(hbond_set.hbond(i));
 		HBEvalType const hbe_type = hbond_.eval_type();
+		if( hbe_type == hbe_UNKNOWN ) {
+			tr.Error << "ERROR: Unknown HBEvalType for " << hbond_.eval_tuple() << std::endl;
+			utility_exit_with_message("Can't get energy for hbond interactions.");
+		}
 
 		Real hbE = hbond_.energy() /*raw energy*/ * hbond_.weight() /*env-dep-wt*/;
 		emap[hbond] += hbE;
@@ -1211,7 +1215,7 @@ get_membrane_depth_dependent_weight(
 
 	// water phase smooth_hb_env_dep
 	wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
-    
+
     Vector const normal(MembraneEmbed_from_pose( pose ).normal());
     Vector const center(MembraneEmbed_from_pose( pose ).center());
     Real const thickness(Membrane_FAEmbed_from_pose( pose ).thickness());

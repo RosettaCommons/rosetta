@@ -1351,7 +1351,9 @@ HBondDatabase::report_parameter_features(
 				string const & separation(HBondTypeManager::name_from_seq_sep_type(HBSeqSep(hbseq_sep)));
 
 				HBEvalType const hbe(HBEval_lookup(hbdon, hbacc, hbseq_sep));
-				if(!hbe) continue;
+				if(hbe == hbe_UNKNOWN) {
+					continue;
+				}
 
 				hbond_evaluation_statement.bind(1,database_tag);
 				hbond_evaluation_statement.bind(2,don_chem_type);
