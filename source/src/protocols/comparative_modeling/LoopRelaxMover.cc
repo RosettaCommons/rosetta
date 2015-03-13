@@ -586,12 +586,9 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						throw utility::excn::EXCN_BadInput(": No fragment libraries loaded.");
 					}
 
-					Size sfxn_cycles = 3;
+					Size sfxn_cycles = option[ OptionKeys::loops::perturb_outer_cycles ]();
 					Size temp_cycles = min<Size>(20 * loops->loop_size(), 1000);
 
-					if ( option[ OptionKeys::loops::outer_cycles ].user() ) {
-						sfxn_cycles = option[ OptionKeys::loops::outer_cycles ]();
-					}
 					if ( option[ OptionKeys::loops::fast ].user() ) {;
 						temp_cycles = min<Size>(5 * loops->loop_size(), 250);
 					}
@@ -1163,13 +1160,10 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					throw utility::excn::EXCN_BadInput(": No fragment libraries loaded.");
 				}
 
-				Size sfxn_cycles = 3;
+				Size sfxn_cycles = option[ OptionKeys::loops::refine_outer_cycles ]();
 				Size temp_cycles = 10 * loops->loop_size();
 				Size repack_period = 20;
 
-				if (option[OptionKeys::loops::outer_cycles].user()) {
-					sfxn_cycles = option[ OptionKeys::loops::outer_cycles ]();
-				}
 				if (option[OptionKeys::loops::max_inner_cycles].user()) {
 					Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
 					temp_cycles = std::max(temp_cycles, max_cycles);

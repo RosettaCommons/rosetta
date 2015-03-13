@@ -210,8 +210,7 @@ void
 LoopMover_Refine_CCD::read_options()
 {
 	using namespace basic::options;
-	if ( option[ OptionKeys::loops::outer_cycles ].user() )
-		outer_cycles_ = option[ OptionKeys::loops::outer_cycles ]();
+	outer_cycles_ = option[ OptionKeys::loops::refine_outer_cycles ]();
 	if ( option[ OptionKeys::loops::max_inner_cycles ].user() )
 		max_inner_cycles_ = option[ OptionKeys::loops::max_inner_cycles ]();
 	if ( option[ OptionKeys::loops::repack_period ].user() )
@@ -240,6 +239,7 @@ core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const 
 
 void
 LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
+	using namespace basic::options;
   packing_isolated_to_active_loops_ = false;
 	//using parser implies that the fold tree probably isn't set correctly
 	set_fold_tree_from_loops( tag->getOption< bool >( "set_fold_tree_from_loops", true ) );
@@ -269,7 +269,7 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 
 	if( tag->hasOption( "loops_from_cache" ) ) set_use_loops_from_observer_cache( tag->getOption<bool>( "loops_from_cache", 1 ) );
 
-	if( tag->hasOption( "outer_cycles" ) ) outer_cycles_ = tag->getOption<core::Size>( "outer_cycles", 3 );
+	if( tag->hasOption( "outer_cycles" ) ) outer_cycles_ = tag->getOption<core::Size>( "outer_cycles", option[ OptionKeys::loops::refine_outer_cycles ]() );
 	if( tag->hasOption( "max_inner_cycles" ) ) max_inner_cycles_ = tag->getOption<core::Size>( "max_inner_cycles", 250 );
 	temp_initial( tag->getOption< core::Real >( "temp_initial", 1.5 ) );
 	temp_final( tag->getOption< core::Real >( "temp_final", 0.5 ) );

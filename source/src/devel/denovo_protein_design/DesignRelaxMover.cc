@@ -154,11 +154,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 			// changing the number of inner and outer cycles for LoopMover_Refine_KIC
 			// giving the user the chance to increase or decrease cycles
 			// with the default LoopMover_Refine_KIC cycles a designrelax simulation takes ~ 60 min
-			// without much/any decrease in energy
-			if ( !basic::options::option[ basic::options::OptionKeys::loops::outer_cycles ].user() ) {
-				basic::options::option[ basic::options::OptionKeys::loops::outer_cycles ].value(3);
-			}
-
+			// without much/any decrease in energy (number of outer cycles is set through the option system)
 			if ( !basic::options::option[ basic::options::OptionKeys::loops::max_inner_cycles ].user() ) {
 				basic::options::option[ basic::options::OptionKeys::loops::max_inner_cycles ].value(3);
 			}

@@ -332,7 +332,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 
 	// scheduler
 	bool const fast = option[OptionKeys::loops::fast];
-	int outer_cycles( 3 );
+	int outer_cycles = option[ OptionKeys::loops::perturb_outer_cycles ]();
 	int inner_cycles( fast ? std::min( Size(250), loop_size*5 ) : std::min( Size(1000), loop_size*20 ) );
 
 	if ( option[OptionKeys::loops::debug] ) inner_cycles = 10;

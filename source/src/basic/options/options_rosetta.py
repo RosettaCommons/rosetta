@@ -2266,11 +2266,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Number of alanine residues to append after cutpoint in loopextend app',
 			default = '0', lower = '0'
 		),
-		Option( 'outer_cycles', 'Integer',
-			desc='outer cycles in perturbation', default = '5', lower = '1'
+		Option( 'perturb_outer_cycles', 'Integer',
+			desc='number of outer cycles in the perturbation (centroid) stage', default = '5', lower = '1'
 		),
 		Option( 'refine_outer_cycles', 'Integer',
-			desc='outer cycles in fullatom loop refinement', default = '5', lower = '1'
+			desc='number of outer cycles in the fullatom refinement stage', default = '5', lower = '1'
 		),
 		Option( 'max_inner_cycles', 'Integer',
 			desc='maxium number of inner cycles in fullatom loop refinement',

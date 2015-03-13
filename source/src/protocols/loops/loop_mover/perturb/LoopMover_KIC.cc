@@ -235,10 +235,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 	// scheduler
 	bool const fast = option[OptionKeys::loops::fast];
-	int outer_cycles( 3 );
-	if ( option[ OptionKeys::loops::outer_cycles ].user() ) {
-		outer_cycles = option[ OptionKeys::loops::outer_cycles ]();
-	}
+	int outer_cycles = option[ OptionKeys::loops::perturb_outer_cycles ]();
 	if ( option[ OptionKeys::run::test_cycles ]() ) {
 		outer_cycles = 3;
 	}

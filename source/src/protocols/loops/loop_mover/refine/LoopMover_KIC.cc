@@ -225,10 +225,7 @@ void LoopMover_Refine_KIC::apply(
 
 	// scheduler
 	int const fast = option[OptionKeys::loops::fast];
-	int outer_cycles(3);
-	if ( option[ OptionKeys::loops::refine_outer_cycles ].user() ) {
-		outer_cycles = option[ OptionKeys::loops::refine_outer_cycles ]();
-	}
+	int outer_cycles = option[ OptionKeys::loops::refine_outer_cycles ]();
 	if ( option[ OptionKeys::run::test_cycles ]() ) {
 		outer_cycles = 3;
 	}

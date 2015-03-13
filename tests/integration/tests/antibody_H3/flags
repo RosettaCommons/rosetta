@@ -35,15 +35,15 @@
 -kic_bump_overlap_factor 0.36 
 -loops:ramp_fa_rep
 -loops:ramp_rama
--loops:outer_cycles 1
 
 #special flags for benchmarking -- keep the run short and failproof
 -overwrite
 -loops:fast
 -loops:max_kic_build_attempts 1
--loops:outer_cycles 1
 -loops:max_inner_cycles 1
 -docking:dock_mcm_first_cycles 1
 -docking:dock_mcm_second_cycles 1
 -run:test_cycles
+-loops:perturb_outer_cycles 1
+-loops:refine_outer_cycles 1
 
