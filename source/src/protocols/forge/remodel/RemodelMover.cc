@@ -592,7 +592,7 @@ void RemodelMover::apply( Pose & pose ) {
 		//TR << "After working_model_" << std::endl;
 
 		// test PyMol viewer
-		if (option[OptionKeys::run::show_simulation_in_pymol] ) {
+		if ( option[OptionKeys::run::show_simulation_in_pymol].active() ) {
 			moves::AddPyMolObserver( pose, false, core::Real( 0.50 ) );
 		}
 
