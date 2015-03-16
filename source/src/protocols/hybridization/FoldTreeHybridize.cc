@@ -12,12 +12,10 @@
 /// @author Yifan Song, David Kim
 
 #include <protocols/hybridization/FoldTreeHybridize.hh>
-#include <protocols/hybridization/FoldTreeHybridizeCreator.hh>
 #include <protocols/hybridization/ChunkTrialMover.hh>
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.hh>
 #include <protocols/hybridization/util.hh>
 #include <protocols/hybridization/AllResiduesChanged.hh>
-#include <protocols/hybridization/HybridizeSetup.hh>
 #include <protocols/hybridization/DomainAssembly.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -96,12 +94,6 @@
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-//add for cenrot
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-
 #include <numeric/random/DistributionSampler.hh>
 #include <numeric/util.hh>
 
@@ -141,8 +133,78 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
+//
+// convergence checker from ClassicAbinitio
+
+/// @brief (helper) functor class which keeps track of old pose for the
+/// convergence check in stage3 cycles
+/// @detail
+/// Similar to Classic Abinitio's convergence check but checks moves
+/// with big fragments for 3 angstrom rmsd convergence and for small
+/// fragments, 1.5 angstrom rmsd convergence. It checks after 200 cycles
+/// compared to 100 used in ClassicAbinitio
+class hConvergenceCheck;
+typedef  utility::pointer::shared_ptr< hConvergenceCheck >  hConvergenceCheckOP;
+
+class hConvergenceCheck : public moves::PoseCondition {
+public:
+  hConvergenceCheck() : bInit_( false ), ct_( 0 ) {}
+  void reset() { ct_ = 0; bInit_ = false; residue_selection_big_frags_.clear(); residue_selection_small_frags_.clear(); }
+  void set_trials( moves::TrialMoverOP trin ) {
+		trials_ = trin;
+		runtime_assert( trials_->keep_stats_type() < moves::no_stats );
+		last_move_ = 0;
+  }
+	void set_residue_selection_big_frags( std::list< core::Size > const & residue_selection ) {
+		residue_selection_big_frags_ = residue_selection;
+	}
+	void set_residue_selection_small_frags( std::list< core::Size > const & residue_selection ) {
+		residue_selection_small_frags_ = residue_selection;
+	}
+  virtual bool operator() ( const core::pose::Pose & pose );
+private:
+  core::pose::Pose very_old_pose_;
+  bool bInit_;
+  core::Size ct_;
+	std::list< core::Size > residue_selection_big_frags_;
+	std::list< core::Size > residue_selection_small_frags_;
+  moves::TrialMoverOP trials_;
+  core::Size last_move_;
+};
+
+// keep going --> return true
+bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
+  if ( !bInit_ ) {
+		bInit_ = true;
+		TR.Trace << "hConvergenceCheck residue_selection_small_frags size: " << residue_selection_small_frags_.size() << std::endl;
+		TR.Trace << "hConvergenceCheck residue_selection_big_frags size: " << residue_selection_big_frags_.size() << std::endl;
+		very_old_pose_ = pose;
+		return true;
+  }
+  runtime_assert( trials_ != 0 );
+  TR.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
+  if ( numeric::mod(trials_->num_accepts(),200) != 0 ) return true;
+  if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
+  last_move_ = trials_->num_accepts();
+  core::Real converge_rms_small = (residue_selection_small_frags_.size()) ?
+		core::scoring::CA_rmsd( very_old_pose_, pose, residue_selection_small_frags_ ) : 0.0;
+  core::Real converge_rms_big = (residue_selection_big_frags_.size()) ?
+		core::scoring::CA_rmsd( very_old_pose_, pose, residue_selection_big_frags_ ) : 0.0;
+  very_old_pose_ = pose;
+  if ( converge_rms_big >= 3.0 || converge_rms_small >= 1.5 || (!converge_rms_small && !converge_rms_big)) {
+		TR.Trace << "hConvergenceCheck continue, converge_rms_big: " << converge_rms_big << " converge_rms_small: " << converge_rms_small <<  std::endl;
+		return true;
+  }
+  // if we get here thing is converged stop the While-Loop
+  TR.Info << "stop cycles due to convergence, converge_rms_big: " << converge_rms_big << " converge_rms_small: " << converge_rms_small <<  std::endl;
+  return false;
+}
+
+
+////
+//// fold tree hybridize
+
 FoldTreeHybridize::FoldTreeHybridize() :
-		hybridize_setup_(/* NULL */),
 		foldtree_mover_()
 {
 	init();
@@ -178,38 +240,6 @@ FoldTreeHybridize::FoldTreeHybridize (
 	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
 }
 
-/// Extract information from a setup mover
-void FoldTreeHybridize::setup_for_parser()
-{
-	initial_template_index_ = hybridize_setup_->initial_template_index();
-
-	if (realign_domains_) {
-		hybridize_setup_->realign_templates(hybridize_setup_->template_poses()[initial_template_index_]);
-	}
-
-
-	for (core::Size ipose=1; ipose<=hybridize_setup_->template_poses().size(); ++ipose) {
-		template_poses_.push_back( core::pose::PoseOP( new core::pose::Pose( *(hybridize_setup_->template_poses()[ipose]) ) ) );
-	}
-	template_wts_ = hybridize_setup_->template_wts();
-	template_chunks_ = hybridize_setup_->template_chunks();
-	template_contigs_ = hybridize_setup_->template_contigs();
-
-	// normalize weights
-	normalize_template_wts();
-
-	// abinitio frags
-	frag_libs_small_ = hybridize_setup_->fragments_small();
-	frag_libs_big_ = hybridize_setup_->fragments_big();
-	frag_libs_1mer_.push_back( core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( 1 ) ) );
-	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
-
-	std::string cst_fn = hybridize_setup_->template_cst_fn()[initial_template_index_];
-	set_constraint_file( cst_fn );
-	set_domain_assembly( hybridize_setup_->domain_assembly() );
-	set_add_hetatm( hybridize_setup_->add_hetatm(), hybridize_setup_->hetatm_self_cst_weight(), hybridize_setup_->hetatm_prot_cst_weight() );
-}
-
 void
 FoldTreeHybridize::init() {
 	using namespace basic::options;
@@ -235,7 +265,6 @@ FoldTreeHybridize::init() {
 
 	top_n_big_frag_ = 25;
 	top_n_small_frag_ = 200;
-	domain_assembly_ = false;
 	add_hetatm_ = false;
 	hetatm_self_cst_weight_ = 10.;
 	hetatm_prot_cst_weight_ = 0.;
@@ -276,107 +305,6 @@ void FoldTreeHybridize::set_task_factory( core::pack::task::TaskFactoryOP task_f
 }
 
 void
-FoldTreeHybridize::set_loops_to_virt_ala(core::pose::Pose & pose, Loops loops)
-{
-	chemical::ResidueTypeSet const& restype_set( pose.residue(1).residue_type_set() );
-
-	for (Size iloop=1; iloop<=loops.num_loop(); ++iloop) {
-		for (Size ires=loops[iloop].start(); ires<=loops[iloop].stop(); ++ires) {
-
-			// Create the new residue and replace it
-			conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-																							 restype_set.name_map("VBB"), pose.residue(ires),
-																							 pose.conformation());
-			// Make sure we retain as much info from the previous res as possible
-			conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue(ires),
-																			 *new_res, pose.conformation() );
-			pose.replace_residue(ires, *new_res, false );
-			//core::pose::add_variant_type_to_pose_residue(pose, "VIRTUAL_BB", ires);
-		}
-	}
-}
-
-void
-FoldTreeHybridize::revert_loops_to_original(core::pose::Pose & pose, Loops loops)
-{
-	std::string sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
-
-	for (Size iloop=1; iloop<=loops.num_loop(); ++iloop) {
-		for (Size ires=loops[iloop].start(); ires<=loops[iloop].stop(); ++ires) {
-			utility::vector1< std::string > variant_types = pose.residue_type(ires).properties().get_list_of_variants();
-			MutateResidue mutate_mover(ires, sequence[ires-1]);
-			mutate_mover.apply(pose);
-			for (Size i_var = 1; i_var <=variant_types.size(); ++i_var) {
-				core::pose::add_variant_type_to_pose_residue(pose,
-						core::chemical::ResidueProperties::get_variant_from_string( variant_types[i_var] ), ires);
-			}
-		}
-	}
-}
-
-
-Real
-FoldTreeHybridize::gap_distance(Size Seq_gap)
-{
-	core::Real gap_torr_0( 4.0);
-	core::Real gap_torr_1( 7.5);
-	core::Real gap_torr_2(11.0);
-	core::Real gap_torr_3(14.5);
-	core::Real gap_torr_4(18.0);
-	core::Real gap_torr_5(21.0);
-	core::Real gap_torr_6(24.5);
-	core::Real gap_torr_7(27.5);
-	core::Real gap_torr_8(31.0);
-
-	switch (Seq_gap) {
-		case 0:
-			return gap_torr_0; break;
-		case 1:
-			return gap_torr_1; break;
-		case 2:
-			return gap_torr_2; break;
-		case 3:
-			return gap_torr_3; break;
-		case 4:
-			return gap_torr_4; break;
-		case 5:
-			return gap_torr_5; break;
-		case 6:
-			return gap_torr_6; break;
-		case 7:
-			return gap_torr_7; break;
-		case 8:
-			return gap_torr_8; break;
-		default:
-			return 9999.;
-	}
-	return 9999.;
-}
-
-void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loops const & chunks, int gap_edge_shift, Real stdev) {
-	using namespace ObjexxFCL::format;
-	for (Size i=1; i<chunks.num_loop(); ++i) {
-		int gap_start = chunks[i].stop()	+ gap_edge_shift;
-		int gap_stop  = chunks[i+1].start() - gap_edge_shift;
-		int gap_size = gap_stop - gap_start - 1;
-		if (gap_size < 0) continue;
-		if (gap_size > 8) continue;
-		if (!pose.residue_type(gap_start).is_protein()) continue;
-		if (!pose.residue_type(gap_stop ).is_protein()) continue;
-		Size iatom = pose.residue_type(gap_start).atom_index("CA");
-		Size jatom = pose.residue_type(gap_stop ).atom_index("CA");
-
-		TR << "Add constraint to residue " << I(4,gap_start) << " and residue " << I(4,gap_stop) << std::endl;
-		core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc( 0, gap_distance(gap_size), stdev, "gap" ) );
-		pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint(
-				core::id::AtomID(iatom,gap_start),
-				core::id::AtomID(jatom,gap_stop),
-				fx ) ) ) );
-
-	}
-}
-
-void
 FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	// Add secondary structure information to the pose. Because the number of residues
 	// in the pose and secondary structure differ (because of virtual residues), we need
@@ -398,10 +326,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 	// combine:
 	// (a) contigs in the current template
-
 	core::Size nres = pose.total_residue();
-
-	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
@@ -424,7 +349,6 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	}
 
 	// strand pairings
-
 	// keep track of strand pairs
 	strand_pairs_.clear();
 	std::set<core::Size> strand_pair_library_positions; // chunk positions from the strand pair library
@@ -461,7 +385,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	TR.Debug << "Chunks from initial template: " << std::endl;
 	TR.Debug << my_chunks << std::endl;
 
-	if ( add_non_init_chunks_ || domain_assembly_ ) {
+	if ( add_non_init_chunks_ ) {
 		// (b) probabilistically sampled chunks from all other templates _outside_ these residues
 		utility::vector1< std::pair< core::Real, protocols::loops::Loop > >  wted_insertions_to_consider;
 		for (core::Size itempl = 1; itempl<=template_chunks_.size(); ++itempl) {
@@ -497,7 +421,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 			if (!uncovered) continue;
 
 			core::Real selector = numeric::random::uniform();
-			if (domain_assembly_) selector = 0.; // always add additional domain if in domain assembly
+
 			TR << "Consider " << wted_insertions_to_consider[i].second.start() << "," << wted_insertions_to_consider[i].second.stop() << std::endl;
 			if (selector <= wted_insertions_to_consider[i].first) {
 				TR << " ====> taken!" << std::endl;
@@ -569,69 +493,20 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 			continue;
 		}
 
-		if (domain_assembly_) {
-			bool residue_in_template = false;
-			for (Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
-				protocols::loops::Loops renumbered_template_chunks = renumber_with_pdb_info(
-										template_contigs_[i_template], template_poses_[i_template]);
-				if (renumbered_template_chunks.has(ires)) {
-					residue_in_template = true;
-					break;
-				}
-			}
-			if (! residue_in_template ) {
+		protocols::loops::Loops renumbered_template_chunks
+		= renumber_with_pdb_info(
+									 template_contigs_[initial_template_index_], template_poses_[initial_template_index_]);
+
+		if (residue_sample_abinitio_[ires]) {
+			if (! renumbered_template_chunks.has(ires) ) {
 				residue_weights[ires] = 1.0;
-			}
-			else {
+			} else {
 				residue_weights[ires] = frag_weight_aligned_;
 			}
 		}
-		else {
-			protocols::loops::Loops renumbered_template_chunks
-			= renumber_with_pdb_info(
-										 template_contigs_[initial_template_index_], template_poses_[initial_template_index_]);
-
-			if (residue_sample_abinitio_[ires]) {
-				if (! renumbered_template_chunks.has(ires) ) {
-						residue_weights[ires] = 1.0;
-				}
-				else {
-					residue_weights[ires] = frag_weight_aligned_;
-				}
-			}
-		}
 		TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
- }
-
-	// reset linker fragment insertion weights
-	if (domain_assembly_) {
-		for (Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
-			int coverage_start = template_poses_[i_template]->pdb_info()->number(1);
-			int coverage_end   = template_poses_[i_template]->pdb_info()->number(1);
-			for (Size ires = 1; ires <= template_poses_[i_template]->total_residue(); ++ires) {
-				if (template_poses_[i_template]->pdb_info()->number(ires) < coverage_start) {
-					coverage_start = template_poses_[i_template]->pdb_info()->number(ires);
-				}
-				if (template_poses_[i_template]->pdb_info()->number(ires) > coverage_end) {
-					coverage_end = template_poses_[i_template]->pdb_info()->number(ires);
-				}
-			}
-
-			for (int shift = -5; shift<=5; ++shift) {
-				int ires = coverage_start + shift;
-				if (ires >= 1 && ires <= (int)num_residues_nonvirt) {
-					residue_weights[ires] = 1.;
-					TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
-				}
-
-				ires = coverage_end + shift;
-				if (ires >= 1 && ires <= (int)num_residues_nonvirt) {
-					residue_weights[ires] = 1.;
-					TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
-				}
-			}
-		}
 	}
+
 	return residue_weights;
 }
 
@@ -1162,85 +1037,17 @@ std::set< core::Size > FoldTreeHybridize::get_pairings_residues() {
 }
 
 
-// end of strand pairings methods
-
-// convergence checker from ClassicAbinitio
-/// @brief (helper) functor class which keeps track of old pose for the
-/// convergence check in stage3 cycles
-/// @detail
-/// Similar to Classic Abinitio's convergence check but checks moves
-/// with big fragments for 3 angstrom rmsd convergence and for small
-/// fragments, 1.5 angstrom rmsd convergence. It checks after 200 cycles
-/// compared to 100 used in ClassicAbinitio
-class hConvergenceCheck;
-typedef  utility::pointer::shared_ptr< hConvergenceCheck >  hConvergenceCheckOP;
-
-class hConvergenceCheck : public moves::PoseCondition {
-public:
-  hConvergenceCheck() : bInit_( false ), ct_( 0 ) {}
-  void reset() { ct_ = 0; bInit_ = false; residue_selection_big_frags_.clear(); residue_selection_small_frags_.clear(); }
-  void set_trials( moves::TrialMoverOP trin ) {
-		trials_ = trin;
-		runtime_assert( trials_->keep_stats_type() < moves::no_stats );
-		last_move_ = 0;
-  }
-	void set_residue_selection_big_frags( std::list< core::Size > const & residue_selection ) {
-		residue_selection_big_frags_ = residue_selection;
-	}
-	void set_residue_selection_small_frags( std::list< core::Size > const & residue_selection ) {
-		residue_selection_small_frags_ = residue_selection;
-	}
-  virtual bool operator() ( const core::pose::Pose & pose );
-private:
-  core::pose::Pose very_old_pose_;
-  bool bInit_;
-  core::Size ct_;
-	std::list< core::Size > residue_selection_big_frags_;
-	std::list< core::Size > residue_selection_small_frags_;
-  moves::TrialMoverOP trials_;
-  core::Size last_move_;
-};
-
-// keep going --> return true
-bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
-  if ( !bInit_ ) {
-		bInit_ = true;
-		TR.Trace << "hConvergenceCheck residue_selection_small_frags size: " << residue_selection_small_frags_.size() << std::endl;
-		TR.Trace << "hConvergenceCheck residue_selection_big_frags size: " << residue_selection_big_frags_.size() << std::endl;
-		very_old_pose_ = pose;
-		return true;
-  }
-  runtime_assert( trials_ != 0 );
-  TR.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
-  if ( numeric::mod(trials_->num_accepts(),200) != 0 ) return true;
-  if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
-  last_move_ = trials_->num_accepts();
-  core::Real converge_rms_small = (residue_selection_small_frags_.size()) ?
-		core::scoring::CA_rmsd( very_old_pose_, pose, residue_selection_small_frags_ ) : 0.0;
-  core::Real converge_rms_big = (residue_selection_big_frags_.size()) ?
-		core::scoring::CA_rmsd( very_old_pose_, pose, residue_selection_big_frags_ ) : 0.0;
-  very_old_pose_ = pose;
-  if ( converge_rms_big >= 3.0 || converge_rms_small >= 1.5 || (!converge_rms_small && !converge_rms_big)) {
-		TR.Trace << "hConvergenceCheck continue, converge_rms_big: " << converge_rms_big << " converge_rms_small: " << converge_rms_small <<  std::endl;
-		return true;
-  }
-  // if we get here thing is converged stop the While-Loop
-  TR.Info << "stop cycles due to convergence, converge_rms_big: " << converge_rms_big << " converge_rms_small: " << converge_rms_small <<  std::endl;
-  return false;
-}
-
-
-
 void
 FoldTreeHybridize::apply(core::pose::Pose & pose) {
-	if (hybridize_setup_) {
-		setup_for_parser();
-	} else {
-		core::Size nres_nonvirt = get_num_residues_nonvirt(pose);
+	core::Size nres_nonvirt = get_num_residues_nonvirt(pose);
+
+	// if no movement specified, make everything movable by default (no seq shift)
+	if (residue_sample_template_.size() == 0)
 		residue_sample_template_.resize(nres_nonvirt, true);
+	if (residue_sample_abinitio_.size() == 0)
 		residue_sample_abinitio_.resize(nres_nonvirt, true);
+	if (residue_max_registry_shift_.size() == 0)
 		residue_max_registry_shift_.resize(nres_nonvirt, 0);
-	}
 
 	// save target sequence
 	target_sequence_ = pose.sequence();
@@ -1249,7 +1056,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// this will add pairings templates and may remove templates that are missing strand pairings if filter_templates option is used
 	add_strand_pairings();
 
-	setup_foldtree(pose); // easier said than done!
+	// use chunks to initialize foldtree
+	setup_foldtree(pose);
 
 	// strand pairings - superimpose pairings to templates to place them in the same coordinate frame
   superimpose_strand_pairings_to_templates(pose);
@@ -1266,11 +1074,11 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 
 	// Initialize the structure
-	bool use_random_template = false;
 	if (initialize_pose_by_templates_) {
-		ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks, max_registry_shift_);
+		ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, false /*use_random_template*/, all_chunks, max_registry_shift_);
 		initialize_chunk_mover.set_template(initial_template_index_);
-		initialize_chunk_mover.apply(pose);
+		if (initialize_chunk_mover.has_valid_moves())
+			initialize_chunk_mover.apply(pose);
 
 		// strand pairings
 		if (has_strand_pairings) {
@@ -1306,10 +1114,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		}
 	}
 
-	use_random_template = true;
-	//Size max_registry_shift = max_registry_shift_;
-	ChunkTrialMoverOP random_sample_chunk_mover( new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, residue_sample_template_,  residue_max_registry_shift_) );
-	//random_sample_chunk_mover->set_movable_region(allowed_to_move_);
+	ChunkTrialMoverOP random_sample_chunk_mover(
+		new ChunkTrialMover(template_poses_, template_chunks_, true /*use_random_template*/, random_chunk, residue_sample_template_,  residue_max_registry_shift_) );
 
 	// ignore strand pair templates, they will be sampled by a jump mover
 	random_sample_chunk_mover->set_templates_to_ignore(strand_pairings_template_indices_);
@@ -1341,7 +1147,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	auto_frag_insertion_weight(frag_1mer_mover, small_frag_gaps_mover, top_big_frag_mover);
 
 	core::Real total_frag_insertion_weight = small_frag_insertion_weight_+big_frag_insertion_weight_+frag_1mer_insertion_weight_;
-	if ( total_frag_insertion_weight < 1. ) {
+	if ( total_frag_insertion_weight < 1. && random_sample_chunk_mover->has_valid_moves() ) {
 		random_chunk_and_frag_mover->add_mover(random_sample_chunk_mover, 1.-total_frag_insertion_weight);
 		random_chunk_and_small_frag_mover->add_mover(random_sample_chunk_mover, 1.-total_frag_insertion_weight);
 		random_chunk_and_small_frag_smooth_mover->add_mover(random_sample_chunk_mover, 1.-total_frag_insertion_weight);
@@ -1604,106 +1410,43 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if (!option[cm::hybridize::stage1_4_cenrot_score].user())
-	{
-		// stage 4 -- ramp up chainbreak
-		//    this version: 3 steps, 4000 cycles (only small fragments and last 2 steps smooth moves)
-		//  casp10 version: 4 steps, 500 cycles
-		TR.Info <<  "\n===================================================================\n";
-		TR.Info <<  "   Stage 4                                                         \n";
-		TR.Info <<  "   Folding with score3 for " << stage4_max_cycles <<std::endl;
-		for (int nmacro=1; nmacro<=3; ++nmacro) {
+	// stage 4 -- ramp up chainbreak
+	//    this version: 3 steps, 4000 cycles (only small fragments and last 2 steps smooth moves)
+	//  casp10 version: 4 steps, 500 cycles
+	TR.Info <<  "\n===================================================================\n";
+	TR.Info <<  "   Stage 4                                                         \n";
+	TR.Info <<  "   Folding with score3 for " << stage4_max_cycles <<std::endl;
+	for (int nmacro=1; nmacro<=3; ++nmacro) {
 
-			// ramp chainbreak weight as in KinematicAbinitio
-			Real progress( 1.0* nmacro/3 );
-			Real const setting( ( 1.5*progress+2.5 ) * ( 1.0/3) * option[ jumps::increase_chainbreak ]);
-			TR.Debug << scoring::name_from_score_type(scoring::linear_chainbreak) << " " << setting << std::endl;
-			score3->set_weight( core::scoring::linear_chainbreak, setting );
-			if (overlap_chainbreaks_) {
-				TR.Debug << scoring::name_from_score_type(scoring::overlap_chainbreak) << " " << progress << std::endl;
-				score3->set_weight( core::scoring::overlap_chainbreak, progress );
-			}
-
-			protocols::moves::MonteCarloOP mc4( new protocols::moves::MonteCarlo( pose, *score3, temp ) );
-			mc4->set_autotemp( true, temp );
-			mc4->set_temperature( temp );
-			mc4->reset( pose );
-			(*score3)( pose );
-			moves::TrialMoverOP stage4_trials;
-			if ( nmacro == 1 ) {
-				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments trials" << std::endl;
-				stage4_trials = moves::TrialMoverOP( new moves::TrialMover( random_chunk_and_small_frag_mover, mc4 ) );
-			} else {
-				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments smooth trials" << std::endl;
-				stage4_trials = moves::TrialMoverOP( new moves::TrialMover(random_chunk_and_small_frag_smooth_mover,  mc4) );
-			}
-			moves::RepeatMover( stage4_trials, stage4_max_cycles ).apply(pose);
-			TR.Debug << "finished" << std::endl;
-			mc4->show_scores();
-			mc4->show_counters();
-			mc4->recover_low(pose);
-			mc4->reset( pose );
+		// ramp chainbreak weight as in KinematicAbinitio
+		Real progress( 1.0* nmacro/3 );
+		Real const setting( ( 1.5*progress+2.5 ) * ( 1.0/3) * option[ jumps::increase_chainbreak ]);
+		TR.Debug << scoring::name_from_score_type(scoring::linear_chainbreak) << " " << setting << std::endl;
+		score3->set_weight( core::scoring::linear_chainbreak, setting );
+		if (overlap_chainbreaks_) {
+			TR.Debug << scoring::name_from_score_type(scoring::overlap_chainbreak) << " " << progress << std::endl;
+			score3->set_weight( core::scoring::overlap_chainbreak, progress );
 		}
-	}
-	else { // cenrot version stage4
-		// switch to cenrot model
-		protocols::moves::MoverOP tocenrot( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT ) );
-		tocenrot->apply( pose );
-		// setup score
-		core::scoring::ScoreFunctionOP score_cenrot =
-			core::scoring::ScoreFunctionFactory::create_score_function( option[cm::hybridize::stage1_4_cenrot_score]() );
-		// packer
-		using namespace core::pack::task;
-		simple_moves::PackRotamersMoverOP pack_rotamers;
-		pack_rotamers = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
-		TaskFactoryOP main_task_factory( new TaskFactory );
-		main_task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) );
-		pack_rotamers->task_factory(main_task_factory);
-		pack_rotamers->score_function(score_cenrot);
-		pack_rotamers->apply(pose);
-		//setup mover
-		moves::SequenceMoverOP combo_small( new moves::SequenceMover() );
-		combo_small->add_mover(random_chunk_and_small_frag_mover);
-		combo_small->add_mover(pack_rotamers);
-		moves::SequenceMoverOP combo_smooth( new moves::SequenceMover() );
-		combo_smooth->add_mover(random_chunk_and_small_frag_smooth_mover);
-		combo_smooth->add_mover(pack_rotamers);
 
-		TR.Info <<  "\n===================================================================\n";
-		TR.Info <<  "   Stage 4                                                         \n";
-		TR.Info <<  "   Folding with score_cenrot for " << stage4_max_cycles <<std::endl;
-		for (int nmacro=1; nmacro<=3; ++nmacro) {
-
-			// ramp chainbreak weight as in KinematicAbinitio
-			Real progress( 1.0* nmacro/3 );
-			Real const setting( ( 1.5*progress+2.5 ) * ( 1.0/3) * option[ jumps::increase_chainbreak ]);
-			TR.Debug << scoring::name_from_score_type(scoring::linear_chainbreak) << " " << setting << std::endl;
-			score_cenrot->set_weight( core::scoring::linear_chainbreak, setting );
-			if (overlap_chainbreaks_) {
-				TR.Debug << scoring::name_from_score_type(scoring::overlap_chainbreak) << " " << progress << std::endl;
-				score_cenrot->set_weight( core::scoring::overlap_chainbreak, progress );
-			}
-
-			protocols::moves::MonteCarloOP mc4( new protocols::moves::MonteCarlo( pose, *score_cenrot, temp ) );
-			mc4->set_autotemp( true, temp );
-			mc4->set_temperature( temp );
-			mc4->reset( pose );
-			(*score_cenrot)( pose );
-			moves::TrialMoverOP stage4_trials;
-			if ( nmacro == 1 ) {
-				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments trials" << std::endl;
-				stage4_trials = moves::TrialMoverOP( new moves::TrialMover( combo_small, mc4 ) );
-			} else {
-				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments smooth trials" << std::endl;
-				stage4_trials = moves::TrialMoverOP( new moves::TrialMover( combo_smooth,  mc4) );
-			}
-			moves::RepeatMover( stage4_trials, stage4_max_cycles ).apply(pose);
-			TR.Debug << "finished" << std::endl;
-			mc4->show_scores();
-			mc4->show_counters();
-			mc4->recover_low(pose);
-			mc4->reset( pose );
+		protocols::moves::MonteCarloOP mc4( new protocols::moves::MonteCarlo( pose, *score3, temp ) );
+		mc4->set_autotemp( true, temp );
+		mc4->set_temperature( temp );
+		mc4->reset( pose );
+		(*score3)( pose );
+		moves::TrialMoverOP stage4_trials;
+		if ( nmacro == 1 ) {
+			TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments trials" << std::endl;
+			stage4_trials = moves::TrialMoverOP( new moves::TrialMover( random_chunk_and_small_frag_mover, mc4 ) );
+		} else {
+			TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments smooth trials" << std::endl;
+			stage4_trials = moves::TrialMoverOP( new moves::TrialMover(random_chunk_and_small_frag_smooth_mover,  mc4) );
 		}
+		moves::RepeatMover( stage4_trials, stage4_max_cycles ).apply(pose);
+		TR.Debug << "finished" << std::endl;
+		mc4->show_scores();
+		mc4->show_counters();
+		mc4->recover_low(pose);
+		mc4->reset( pose );
 	}
 
 	// evaluation
@@ -1768,147 +1511,6 @@ std::string FoldTreeHybridize::get_name() const
 protocols::moves::MoverOP FoldTreeHybridize::clone() const { return protocols::moves::MoverOP( new FoldTreeHybridize( *this ) ); }
 protocols::moves::MoverOP FoldTreeHybridize::fresh_instance() const { return protocols::moves::MoverOP( new FoldTreeHybridize ); }
 
-void
-FoldTreeHybridize::parse_my_tag(
-								utility::tag::TagCOP tag,
-								basic::datacache::DataMap & data,
-								filters::Filters_map const &,
-								moves::Movers_map const &,
-								core::pose::Pose const & pose )
-{
-	if( tag->hasOption( "initialize_pose_by_templates" ) )
-		initialize_pose_by_templates_ = tag->getOption< bool >( "initialize_pose_by_templates" );
-
-	if (tag->hasOption( "realign_domains" )){
-		realign_domains_ = tag->getOption< bool >( "realign_domains" );
-	}
-
-	if( tag->hasOption( "add_non_init_chunks" ) )
-		add_non_init_chunks_ = tag->getOption< bool >( "add_non_init_chunks" );
-
-	if( tag->hasOption( "increase_cycles" ) )
-		set_increase_cycles( tag->getOption< core::Real >( "increase_cycles" ) );
-
-	if( tag->hasOption( "stage1_cycles" ) )
-		stage1_1_cycles_ = tag->getOption< core::Size >( "stage1_cycles" );
-	if( tag->hasOption( "stage2_cycles" ) )
-		stage1_2_cycles_ = tag->getOption< core::Size >( "stage2_cycles" );
-	if( tag->hasOption( "stage3_cycles" ) )
-		stage1_3_cycles_ = tag->getOption< core::Size >( "stage3_cycles" );
-	if( tag->hasOption( "stage4_cycles" ) )
-		stage1_4_cycles_ = tag->getOption< core::Size >( "stage4_cycles" );
-
-	if( tag->hasOption( "auto_frag_insertion_weight" ) )
-		auto_frag_insertion_weight_ = tag->getOption< bool >( "auto_frag_insertion_weight" );
-	if( tag->hasOption( "frag_weight_aligned" ) )
-		frag_weight_aligned_ = tag->getOption< core::Real >( "frag_weight_aligned" );
-	if( tag->hasOption( "frag_1mer_insertion_weight" ) )
-		frag_1mer_insertion_weight_ = tag->getOption< core::Real >( "frag_1mer_insertion_weight" );
-	if( tag->hasOption( "small_frag_insertion_weight" ) )
-		small_frag_insertion_weight_ = tag->getOption< core::Real >( "small_frag_insertion_weight" );
-	if( tag->hasOption( "big_frag_insertion_weight" ) )
-		big_frag_insertion_weight_ = tag->getOption< core::Real >( "big_frag_insertion_weight" );
-	if( tag->hasOption( "max_registry_shift" ) )
-		max_registry_shift_ = tag->getOption< core::Size >( "max_registry_shift" );
-
-
-	if( tag->hasOption( "scorefxn" ) ) {
-		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
-		set_scorefunction ( (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone() );
-	}
-
-	if( tag->hasOption( "hybridize_setup" ) ) {
-		std::string const setup_data_name( tag->getOption<std::string>( "hybridize_setup" ) );
-		hybridize_setup_ = (data.get< protocols::hybridization::HybridizeSetup * >( "HybridizeSetup", setup_data_name ))->clone();
-		TR << hybridize_setup_->nres_tgt_asu() << std::endl;
-	}
-	else {
-		utility_exit_with_message("Fatal error: hybridize_setup needs to be defined!");
-	}
-
-	residue_sample_template_.resize(hybridize_setup_->nres_tgt_asu(), true);
-	residue_sample_abinitio_.resize(hybridize_setup_->nres_tgt_asu(), true);
-	residue_max_registry_shift_.resize(hybridize_setup_->nres_tgt_asu(), 0);
-
-	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
-	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
-		// per-residue control
-		if ( (*tag_it)->getName() == "DetailedControls" ) {
-				if( (*tag_it)->hasOption( "task_operations" ) ){
-						core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( *tag_it, data );
-						core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
-
-						for( core::Size ires = 1; ires <= hybridize_setup_->nres_tgt_asu(); ++ires ){
-
-								if( task->residue_task( ires ).being_designed() && task->residue_task( ires ).being_packed() ) {
-										// residue_cst_cross_chain_[ires] = true;
-								}
-								else {
-										residue_sample_template_[ires] = false;
-										residue_sample_abinitio_[ires] = false;
-								}
-						}
-				}
-				else {
-						core::Size start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
-						core::Size stop_res = (*tag_it)->getOption<core::Size>( "stop_res", hybridize_setup_->nres_tgt_asu() );
-						if( (*tag_it)->hasOption( "sample_template" ) ){
-								bool sample_template = (*tag_it)->getOption<bool>( "sample_template", true );
-								for (core::Size ires=start_res; ires<=stop_res; ++ires) {
-										residue_sample_template_[ires] = sample_template;
-								}
-						}
-						if( (*tag_it)->hasOption( "sample_abinitio" ) ){
-								bool sample_abinitio = (*tag_it)->getOption<bool>( "sample_abinitio", true );
-								for (core::Size ires=start_res; ires<=stop_res; ++ires) {
-										residue_sample_abinitio_[ires] = sample_abinitio;
-								}
-						}
-						if( (*tag_it)->hasOption( "max_registry_shift" ) ){
-								core::Size max_registry_shift = (*tag_it)->getOption<core::Size>( "max_registry_shift", 0 );
-								for (core::Size ires=start_res; ires<=stop_res; ++ires) {
-										residue_max_registry_shift_[ires] = max_registry_shift; // restraints within the domain
-								}
-						}
-				}
-		}
-
-		// strand pairings
-		if ( (*tag_it)->getName() == "Pairings" ) {
-			pairings_file_ = (*tag_it)->getOption< std::string >( "file", "" );
-			if ( (*tag_it)->hasOption("sheets") ) {
-				core::Size sheets = (*tag_it)->getOption< core::Size >( "sheets" );
-				sheets_.clear();
-				random_sheets_.clear();
-				sheets_.push_back(sheets);
-			} else if ( (*tag_it)->hasOption("random_sheets") ) {
-				core::Size random_sheets = (*tag_it)->getOption< core::Size >( "random_sheets" );
-				sheets_.clear();
-				random_sheets_.clear();
-				random_sheets_.push_back(random_sheets);
-			}
-			filter_templates_ = (*tag_it)->getOption<bool>( "filter_templates" , 0 );
-		}
-	}
-}
-
-/////////////
-// creator
-std::string
-FoldTreeHybridizeCreator::keyname() const {
-	return FoldTreeHybridizeCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-FoldTreeHybridizeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FoldTreeHybridize );
-}
-
-std::string
-FoldTreeHybridizeCreator::mover_name() {
-	return "FoldTreeHybridize";
-}
 
 } // hybridization
 } // protocols

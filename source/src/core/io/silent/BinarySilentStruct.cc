@@ -619,14 +619,17 @@ void BinarySilentStruct::fill_pose (
 										<< "  natoms_pose=" << natoms_pose
 										<< "atm_seqpos " << atm_seqpos << "  natoms_struct="
 										<< natoms_struct << ")" << tr.Reset << std::endl;
-			tr.flush();
+				tr.flush();
 			}
 		}
 
-		//natoms_pose  = pose.residue(seqpos).natoms();
-		//natoms_total = std::min( natoms_pose, natoms_struct );
 		Size count( 0 );
-		for ( Size j = 1; j <= natoms_struct; ++j ){
+
+		// fpd
+		Size natoms_total = natoms_struct;
+		if (!fixup) natoms_total = std::min( natoms_struct, natoms_pose );
+
+		for ( Size j = 1; j <= natoms_total; ++j ){
 
 			// hydrogens that were present in old rosetta, now removed.
 			if ( fixup && rsd.has_variant_type( chemical::C_METHYLAMIDATION ) && (j > rsd.nheavyatoms()+3) && (j < rsd.nheavyatoms()+7 ) ) continue;

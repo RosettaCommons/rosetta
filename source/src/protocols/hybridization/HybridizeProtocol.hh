@@ -48,16 +48,21 @@ public:
 		std::string cst_fn,
 		std::string symmdef_file = "NULL",
 		core::Real weight = 1.,
-		core::Real domain_assembly_weight = 0.,
 		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0) );
+
+	void add_null_template(
+		core::pose::PoseOP template_pose,
+		std::string cst_fn,
+		std::string symmdef_file = "NULL",
+		core::Real weight = 1.,
+		core::Size cluster_id = 1 );
 
 	void add_template(
 		core::pose::PoseOP template_pose,
 		std::string cst_fn,
 		std::string symmdef_file = "NULL",
 		core::Real weight = 1.,
-		core::Real domain_assembly_weight = 0.,
 		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0),
 		std::string filename="default" );
@@ -85,13 +90,17 @@ public:
 	void
 	align_by_domain(core::pose::Pose & pose, core::pose::Pose const & ref_pose, utility::vector1 <Loops> domains);
 
-	//fpd optionally do not hybridize in stage 1
+	//fpd  alternate version of stage 1 with no hybridization
 	void
 	initialize_and_sample_loops(
 		core::pose::Pose &pose,
 		core::pose::PoseOP chosen_templ,
 		protocols::loops::Loops template_contigs_icluster,
 		core::scoring::ScoreFunctionOP scorefxn);
+
+	//fpd add fragment-derived constraints
+	void
+	add_fragment_csts( core::pose::Pose &pose );
 
 	// check fragments ... if they do not exist dynamically allocate them
 	void check_and_create_fragments( Pose & );
@@ -111,6 +120,8 @@ public:
 	void add_small_fragments( core::fragment::FragSetOP newval ) { fragments_small_.push_back(newval); }
 	void set_stage1_scorefxn( core::scoring::ScoreFunctionOP newval ) { stage1_scorefxn_ = newval; }
 	void set_stage2_scorefxn( core::scoring::ScoreFunctionOP newval ) { stage2_scorefxn_ = newval; }
+	void set_stage2pack_scorefxn( core::scoring::ScoreFunctionOP newval ) { stage2pack_scorefxn_ = newval; }
+	void set_stage2min_scorefxn( core::scoring::ScoreFunctionOP newval ) { stage2min_scorefxn_ = newval; }
 	void set_stage1_increase_cycles( core::Real newval ) { stage1_increase_cycles_ = newval; }
 	void set_stage2_increase_cycles( core::Real newval ) { stage2_increase_cycles_ = newval; }
 	void set_fullatom_scorefxn( core::scoring::ScoreFunctionOP newval ) { fa_scorefxn_ = newval; }
@@ -121,23 +132,31 @@ private:
 
 	core::Real stage1_probability_, stage1_increase_cycles_, stage2_increase_cycles_, stage25_increase_cycles_;
 	core::Size stage1_1_cycles_, stage1_2_cycles_, stage1_3_cycles_, stage1_4_cycles_;
+	core::Real stage2_temperature_;
 
-	// 1mer fragment insertion weight where fragments are not allowed (across anchors) , vs. chunk insertion + big and small frags
-	core::Real frag_1mer_insertion_weight_;
-	// small fragment insertion weight where big fragments are not allowed (across anchors) , vs. chunk insertion + big frags
-	core::Real small_frag_insertion_weight_;
-	core::Real big_frag_insertion_weight_; // fragment insertion weight, vs. chunk insertion + small gap frags
-	core::Real chunk_insertion_weight_; // re-weight chunk insertion
-	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
-	bool auto_frag_insertion_weight_; // automatically set fragment insertion weights
+	core::Real frag_1mer_insertion_weight_;   // 1mer insertion weights
+	core::Real small_frag_insertion_weight_;  // 3mer insertion weights
+	core::Real big_frag_insertion_weight_;    // 9mer insertion weights
+	core::Real chunk_insertion_weight_;       // chunk insertion weights
+	core::Real frag_weight_aligned_;          // fragment insertion rate in templates
+	bool auto_frag_insertion_weight_;         // automatically set fragment insertion weights
 	core::Size max_registry_shift_;
-	bool domain_assembly_, add_hetatm_, realign_domains_, realign_domains_stage2_, add_non_init_chunks_, no_global_frame_, linmin_only_;
+
+	bool add_hetatm_, realign_domains_, realign_domains_stage2_, add_non_init_chunks_, no_global_frame_, linmin_only_;
 	bool seqfrags_only_, nofragbias_, skip_long_min_;
 	core::Real hetatm_self_cst_weight_, hetatm_prot_cst_weight_;
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;
+	core::scoring::ScoreFunctionOP stage2pack_scorefxn_, stage2min_scorefxn_;  // cenrot
 	std::string fa_cst_fn_;
 	std::string disulf_file_;
 	core::Size cartfrag_overlap_;
+
+	// more options
+	bool csts_from_frags_;  // generate dihedral constraints from fragments
+	int max_contig_insertion_;  // don't insert contigs larger than this size
+
+	// use cenrot mode
+	bool cenrot_;
 
 	// ddomain options
 	core::Real pcut_,hcut_;
@@ -160,7 +179,6 @@ private:
 	utility::vector1 < std::string > template_cst_fn_;
 	utility::vector1 < std::string > symmdef_files_;
 	utility::vector1 < core::Real > template_weights_;
-	utility::vector1 < core::Real > domain_assembly_weights_;
 	utility::vector1 < core::Size > template_clusterID_;
 	utility::vector1 < protocols::loops::Loops > template_chunks_;
 	utility::vector1 < protocols::loops::Loops > template_contigs_;
@@ -177,10 +195,15 @@ private:
 	bool filter_templates_;
 	utility::vector1< std::pair< core::Size, core::Size > > strand_pairs_;
 
-	// task operations
+
+	// per-residue controls
+	utility::vector1<bool> residue_sample_template_; // using template fragments
+	utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
+	utility::vector1<core::Size> residue_max_registry_shift_; // restraints between chains
+
+	// per-residue controls: task operations
   core::pack::task::TaskFactoryOP task_factory_;
   core::pack::task::PackerTaskOP task_;
-  utility::vector1<bool> allowed_to_move_;
 
   // jump move
 	bool jump_move_;

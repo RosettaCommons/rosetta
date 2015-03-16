@@ -257,14 +257,15 @@ DDomainParse::ddomain_pot(
 }
 
 utility::vector1< loops::Loops >
-DDomainParse::split( core::pose::Pose const &templ, core::Size nres ) {
-	runtime_assert( nres >= templ.total_residue() );
+DDomainParse::split( core::pose::Pose const &templ ) {
+	//runtime_assert( nres >= templ.total_residue() );
 
 	utility::vector1< loops::Loops > retval;
 
 	std::string fname;
 	mseq_ = templ.total_residue();
-	nseq_ = templ.total_residue();
+	while (!templ.residue(mseq_).is_protein() && mseq_>0) mseq_--;
+	nseq_ = mseq_;
 
 	utility::vector1<int> ipdom(mseq_,0);
 	utility::vector1< numeric::xyzVector<core::Real> > xs(mseq_, numeric::xyzVector<core::Real>(0,0,0));

@@ -13,8 +13,6 @@
 /// @author Frank DiMaio
 
 #include <protocols/hybridization/CartesianHybridize.hh>
-#include <protocols/hybridization/CartesianHybridizeCreator.hh>
-#include <protocols/hybridization/HybridizeSetup.hh>
 
 #include <protocols/hybridization/TemplateHistory.hh>
 #include <protocols/hybridization/util.hh>
@@ -130,7 +128,6 @@ const core::Size DEFAULT_NCYCLES=400;
 static thread_local basic::Tracer TR( "protocols.hybridization.CartesianHybridize" );
 
 CartesianHybridize::CartesianHybridize( ) :
-	hybridize_setup_(/* NULL */),
 	ncycles_(DEFAULT_NCYCLES)
 {
 	init();
@@ -201,67 +198,6 @@ CartesianHybridize::CartesianHybridize(
 	}
 }
 
-void CartesianHybridize::setup_for_parser()
-{
-	// RosettaScripts uses default constructor. Need to set up everything using datamap at the beginning of apply()
-	templates_ = hybridize_setup_->template_poses();
-	template_wts_ = hybridize_setup_->template_wts();
-	template_contigs_ = hybridize_setup_->template_contigs();
-	fragments9_ = hybridize_setup_->fragments_big()[numeric::random::random_range(1,hybridize_setup_->fragments_big().size())];
-
-	// make sure all data is there
-	runtime_assert( templates_.size() == template_wts_.size() );
-	runtime_assert( templates_.size() == template_contigs_.size() );
-
-	// normalize weights
-	core::Real weight_sum = 0.0;
-	for (int i=1; i<=(int)templates_.size(); ++i) weight_sum += template_wts_[i];
-	for (int i=1; i<=(int)templates_.size(); ++i) template_wts_[i] /= weight_sum;
-
-	// map resids to frames
-	for (core::fragment::ConstFrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
-		core::Size position = (*i)->start();
-		library_[position] = **i;
-	}
-
-	// use chunks to subdivide contigs
-	core::Size ntempls = templates_.size();
-	utility::vector1 < protocols::loops::Loops > template_chunks_in (hybridize_setup_->template_chunks());
-	for( core::Size tmpl = 1; tmpl <= ntempls; ++tmpl) {
-		core::Size ncontigs = template_contigs_[tmpl].size();  // contigs to start
-		for (int i=1; i<=(int)ncontigs; ++i) {
-			core::Size cstart = template_contigs_[tmpl][i].start(), cstop = template_contigs_[tmpl][i].stop();
-			bool spilt_chunk=false;
-
-			// assumes sorted
-			for (int j=2; j<=(int)template_chunks_in[tmpl].size(); ++j) {
-				core::Size j0start = template_chunks_in[tmpl][j-1].start(), j0stop = template_chunks_in[tmpl][j-1].stop();
-				core::Size j1start = template_chunks_in[tmpl][j].start(), j1stop = template_chunks_in[tmpl][j].stop();
-
-				bool j0incontig = ((j0start>=cstart) && (j0stop<=cstop));
-				bool j1incontig = ((j1start>=cstart) && (j1stop<=cstop));
-
-				if (j0incontig && j1incontig) {
-					spilt_chunk=true;
-					core::Size cutpoint = (j0stop+j1start)/2;
-					template_contigs_[tmpl].add_loop( cstart, cutpoint-1 );
-					TR.Debug << "Make subfrag " << cstart << " , " << cutpoint-1 << std::endl;
-					cstart=cutpoint;
-				} else if(spilt_chunk && j0incontig && !j1incontig) {
-					spilt_chunk=false;
-					template_contigs_[tmpl].add_loop( cstart, cstop );
-					TR.Debug << "Make subfrag " << cstart << " , " << cstop << std::endl;
-				}
-			}
-		}
-		template_contigs_[tmpl].sequential_order();
-	}
-	TR.Debug << "template_contigs:" << std::endl;
-	for (int i=1; i<= (int)template_contigs_.size(); ++i) {
-		TR.Debug << "templ. " << i << std::endl << template_contigs_[i] << std::endl;
-	}
-}
-
 void
 CartesianHybridize::init() {
 	using namespace basic::options;
@@ -270,8 +206,10 @@ CartesianHybridize::init() {
 	increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
 	no_global_frame_ = option[cm::hybridize::no_global_frame]();
 	linmin_only_ = option[cm::hybridize::linmin_only]();
+	cenrot_ = option[corrections::score::cenrot]();
+	max_contig_insertion_ = -1;
 
-	// only adjustable via methods (for now)
+	// only adjustable via methods
 	cartfrag_overlap_ = 2;
 	align_templates_to_pose_ = false;
 
@@ -279,47 +217,36 @@ CartesianHybridize::init() {
 	nofragbias_ = false;
 	skip_long_min_ = false;
 
-	// default scorefunction
-	if (option[corrections::score::cenrot]) {
-		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_relax_cart" ) );
-	}
-	else {
-		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+	temperature_ = option[cm::hybridize::stage2_temperature]();
+
+	// default scorefunctions
+	if (cenrot_) {
+		set_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_relax_cart" ) );
+		set_min_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_cartmin" ) );
+		set_pack_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_repack" ) );
+	}	else {
+		set_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+		set_min_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+		set_pack_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
 	}
 }
 
+// set all three
 void
-CartesianHybridize::set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	if (option[corrections::score::cenrot]) {
-		// score using input score func
-		lowres_scorefxn_ = scorefxn_in->clone();
-		// minimize using score4_cenrot_cartmin
-		min_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_cartmin");
+CartesianHybridize::set_scorefunction( core::scoring::ScoreFunctionOP scorefxn_in) {
+	lowres_scorefxn_ = scorefxn_in->clone();
+	min_scorefxn_ = scorefxn_in->clone();
+	cenrot_repack_scorefxn_ = scorefxn_in->clone();
+}
 
-		//copy cst and elec_dens term from lowres_scorefxn_
-		Real w_den = lowres_scorefxn_->get_weight( core::scoring::elec_dens_fast );
-		Real w_cst = lowres_scorefxn_->get_weight( core::scoring::atom_pair_constraint );
-		min_scorefxn_->set_weight( core::scoring::elec_dens_fast, w_den );
-		min_scorefxn_->set_weight( core::scoring::atom_pair_constraint, w_cst );
-	}
-	else {
-		lowres_scorefxn_ = scorefxn_in->clone();
-		min_scorefxn_ = scorefxn_in->clone();
-	}
+void
+CartesianHybridize::set_min_scorefunction( core::scoring::ScoreFunctionOP scorefxn_in) {
+	min_scorefxn_ = scorefxn_in->clone();
+}
 
-	//bonds_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
-	bonds_scorefxn_ = scorefxn_in->clone();
-	bonds_scorefxn_->reset();
-	bonds_scorefxn_->set_weight( core::scoring::vdw, lowres_scorefxn_->get_weight( core::scoring::vdw ) );
-	bonds_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
-	bonds_scorefxn_->set_weight( core::scoring::cart_bonded_angle, lowres_scorefxn_->get_weight( core::scoring::cart_bonded_angle ) );
-	bonds_scorefxn_->set_weight( core::scoring::cart_bonded_length, lowres_scorefxn_->get_weight( core::scoring::cart_bonded_length ) );
-	bonds_scorefxn_->set_weight( core::scoring::cart_bonded_torsion, lowres_scorefxn_->get_weight( core::scoring::cart_bonded_torsion ) );
-
-	nocst_scorefxn_ = lowres_scorefxn_->clone();
-	nocst_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.0 );
+void
+CartesianHybridize::set_pack_scorefunction( core::scoring::ScoreFunctionOP scorefxn_in) {
+	cenrot_repack_scorefxn_ = scorefxn_in->clone();
 }
 
 void
@@ -526,44 +453,30 @@ CartesianHybridize::apply( Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
-
-	if (hybridize_setup_) {
-		if (align_templates_to_pose_) {
-			TR << "Realigning template domains to the current pose." << std::endl;
-			core::pose::PoseOP pose_copy( new core::pose::Pose( pose ) );
-			hybridize_setup_->realign_templates(pose_copy);
-		}
-
-		setup_for_parser();
-	}
-    else {
-        core::Size nres_nonvirt = get_num_residues_nonvirt(pose);
-        residue_sample_template_.resize(nres_nonvirt, true);
-        residue_sample_abinitio_.resize(nres_nonvirt, true);
-    }
-
-	//protocols::viewer::add_conformation_viewer(  pose.conformation(), "hybridize" );
-
-	///////////////////////////////
-	// added by yuan 06-28-2013
-	// packer
 	using namespace core::pack::task;
 	using core::pack::task::operation::TaskOperationCOP;
-	simple_moves::PackRotamersMoverOP pack_rotamers;
-	pack_rotamers = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
-	TaskFactoryOP main_task_factory( new TaskFactory );
-	main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
-	pack_rotamers->task_factory(main_task_factory);
-	//repack using score4_cenrot_repack
-	core::scoring::ScoreFunctionOP scorefxn_cenrot_repack_ = core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_repack" );
-	pack_rotamers->score_function( scorefxn_cenrot_repack_ );
 
-	if (option[corrections::score::cenrot]) {
+	core::Size nres_nonvirt = get_num_residues_nonvirt(pose);
+
+	// if no movement specified, make everything movable by default
+	if (residue_sample_template_.size() == 0)
+		residue_sample_template_.resize(nres_nonvirt, true);
+	if (residue_sample_abinitio_.size() == 0)
+		residue_sample_abinitio_.resize(nres_nonvirt, true);
+
+	simple_moves::PackRotamersMoverOP pack_rotamers;
+
+	if (cenrot_) {
+		pack_rotamers = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
+		pack_rotamers->task_factory( main_task_factory );
+		pack_rotamers->score_function( cenrot_repack_scorefxn_ );
+
 		protocols::moves::MoverOP tocenrot( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT ) );
 		tocenrot->apply( pose );
 		pack_rotamers->apply(pose);
-	}
-	else {
+	}	else {
 		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	}
@@ -616,12 +529,44 @@ CartesianHybridize::apply( Pose & pose ) {
 
 	core::Size n_prot_res = nres;
 	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
-	TR << "   nprotres=" << n_prot_res << " totalres=" << pose.total_residue() << std::endl;
+	TR << " total_res=" << pose.total_residue() << "   prot_res=" << n_prot_res << std::endl;
 
-	// 10% of the time, skip moves in the global frame
-	bool no_ns_moves = no_global_frame_; // (numeric::random::uniform() <= 0.1);
+	bool no_ns_moves = no_global_frame_;
 
-sampler:
+	// given current movement definitions, figure out what template insertions are allowed
+	int nvalid_contigs = 0;
+	utility::vector1 < protocols::loops::Loops > template_contigs_valid( template_contigs_.size() );
+	for (int i=1; i<=(int)template_contigs_.size(); ++i) {
+		for (int j=1; j<=(int)template_contigs_[i].num_loop(); ++j) {
+			int start_ij = (int) templates_[i]->pdb_info()->number( template_contigs_[i][j].start() );
+			int stop_ij = (int) templates_[i]->pdb_info()->number( template_contigs_[i][j].stop() );
+
+			if (max_contig_insertion_>=0 && stop_ij-start_ij+1 >= max_contig_insertion_) continue;
+
+			if  ( start_ij > (int)n_prot_res) continue;
+			bool movable = true;
+			for (int k=start_ij; k<=stop_ij && movable; ++k) {
+				if (!residue_sample_template_[k]) movable = false;
+			}
+			if (!movable) continue;
+
+			template_contigs_valid[i].add_loop( template_contigs_[i][j] );
+			nvalid_contigs++;
+		}
+	}
+
+	if (nvalid_contigs == 0) {
+		TR << "Warning!  No valid template fragments found.  Turning on option seqfrags_only_" << std::endl;
+		seqfrags_only_ = true;
+	}
+
+	// move probabilities, make these parsable!
+	core::Real PROB_FRAGMENT_CYC1 = 0.3;
+	core::Real PROB_FRAGMENT_CYC2 = 0.3;
+	core::Real PROB_FRAGMENT_CYC3 = 0.3;
+	core::Real PROB_FRAGMENT_CYC4 = 1.0;
+	core::Real PROB_RAND_FRAGMENT = nofragbias_? 1 : 0.5;
+
 	for (core::Size m=1; m<=NMACROCYCLES; ++m) {
 		core::Real bonded_weight = max_cart;
 		if (m==1) bonded_weight = 0.0*max_cart;
@@ -644,9 +589,9 @@ sampler:
 		if (m==3) bonded_weight_torsion = 0.1*max_cart_torsion;
 
 		core::Real cst_weight = max_cst;
-		if (m==1)  cst_weight = 2*max_cst;
-		if (m==2)  cst_weight = 2*max_cst;
-		if (m==3)  cst_weight = 2*max_cst;
+		if (m==1)  cst_weight = max_cst;
+		if (m==2)  cst_weight = max_cst;
+		if (m==3)  cst_weight = max_cst;
 
 		core::Real vdw_weight = max_vdw;
 		if (m==1) vdw_weight = 0.1*max_vdw;
@@ -669,70 +614,63 @@ sampler:
 		lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
 
 		(*lowres_scorefxn_)(pose);
-		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_,
-			option[cm::hybridize::stage2_temperature]() ) ); //cenrot may use higher temp
+		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, temperature_ ) );
+			//cenrot may use higher temp
 
 		core::Size neffcycles = (core::Size)(ncycles_*increase_cycles_);
-		if (m==4 || seqfrags_only_) neffcycles /=2;
+		if (m==4) neffcycles /= 2;
+
 		for (int n=1; n<=(int)neffcycles; ++n) {
 			// possible actions:
 			//  1 - insert homologue frag, global frame
 			//  2 - insert homologue frag, local frame
-			//  3 - insert sequence frag
+			//  3 - insert sequence frag at chainbreak position
+			//  4 - insert sequence frag at random position
+
 			core::Real action_picker = numeric::random::uniform();
 			core::Size action = 0;
-			if (m==1) {
+			if ( seqfrags_only_ ) {
+					if (action_picker < PROB_RAND_FRAGMENT) { action = 3; } else { action = 4; }
+			} else if (m==1) {
 				action = no_ns_moves?2:1;
-				if (action_picker < 0.2) action = 3;
+				if (action_picker <= PROB_FRAGMENT_CYC1) {
+					if (action_picker <= PROB_RAND_FRAGMENT*PROB_FRAGMENT_CYC1) { action = 3; } else { action = 4; }
+				}
 			} else if (m==2) {
 				action = 2;
-				if (action_picker < 0.2) action = 3;
+				if (action_picker <= PROB_FRAGMENT_CYC2) {
+					if (action_picker <= PROB_RAND_FRAGMENT*PROB_FRAGMENT_CYC2) { action = 3; } else { action = 4; }
+				}
 			} else if (m==3) {
 				action = 2;
-				if (action_picker < 0.2) action = 3;
-			} else if (m==4) {
-				action = 3;
+				if (action_picker <= PROB_FRAGMENT_CYC3) {
+					if (action_picker <= PROB_RAND_FRAGMENT*PROB_FRAGMENT_CYC3) { action = 3; } else { action = 4; }
+				}
+			} else {  // m>=4
+				action = 2;
+				if (action_picker < PROB_FRAGMENT_CYC4) {
+					if (action_picker <= PROB_RAND_FRAGMENT*PROB_FRAGMENT_CYC4) { action = 3; } else { action = 4; }
+				}
 			}
-
-			if ( seqfrags_only_ ) action = 3;
 
 			std::string action_string;
 			if (action == 1) action_string = "fragNS";
 			if (action == 2) action_string = "frag";
 			if (action == 3) action_string = "picker";
+			if (action == 4) action_string = "picker_rand";
 
 			if (action == 1 || action == 2) {
-				core::Size max_templates_trial=templates_.size()*5;
-				bool movable_loop=false;
-				protocols::loops::LoopOP frag;
+				core::Size templ_id = numeric::random::random_range( 1, templates_.size() );
 
-				core::Size templ_id=1;
-				for (core::Size i=1; i<=max_templates_trial; ++i) {
-                    templ_id = numeric::random::random_range( 1, templates_.size() );
-                    core::Size nfrags = template_contigs_[templ_id].num_loop();
-                    // remove non-protein frags
-                    while (templates_[templ_id]->pdb_info()->number(template_contigs_[templ_id][nfrags].start()) >
-                           (int)n_prot_res) {
-                        --nfrags;
-                    }
+				// guaranteed to have at least one valid fragment (due to check above)
+				while (template_contigs_valid[templ_id].size() == 0) {
+					templ_id = numeric::random::random_range( 1, templates_.size() );
+				}
 
-                    core::Size frag_id;
-                    core::Size max_frag_trial=nfrags*3;
-                    for (core::Size ii=1; ii<=max_frag_trial; ++ii) {
-                        frag_id = numeric::random::random_range( 1, nfrags );
-                        frag = protocols::loops::LoopOP( new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] ) );
-                        for (core::Size iii=frag->start(); iii<=frag->stop(); ++iii) {
-                            if ( residue_sample_template_[templates_[templ_id]->pdb_info()->number(iii)]==true ) {
-                                movable_loop=true;
-                                break;
-                            }
-                        }
-                        if ( movable_loop==true)
-                            break;
-                    } //trial different frags in a tempalte
-				    if ( movable_loop==true)
-                        break;
-                } //end of trial different templates
+				//randomly pick frag
+				core::Size nfrags = template_contigs_[templ_id].num_loop();
+				core::Size frag_id = numeric::random::random_range( 1, nfrags );
+				protocols::loops::LoopOP frag =  protocols::loops::LoopOP( new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] ) );
 
 				if (frag->size() > 14)
 					action_string = action_string+"_15+";
@@ -748,25 +686,24 @@ sampler:
 					//fpd assume this was initialized elsewhere
 					runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 					TemplateHistory &history =
-                    *( utility::pointer::static_pointer_cast< protocols::hybridization::TemplateHistory > ( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) ));
+                    *( utility::pointer::static_pointer_cast< protocols::hybridization::TemplateHistory > (
+										pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) ));
 					history.set( frag->start(), frag->stop(), templ_id );
 				}
-			}
+			} else {
+				int to_insert=0;
 
-			if (action == 3) {
-				// pick an insert position based on gap
-				utility::vector1<core::Real> residuals( n_prot_res , 0.0 );
-				utility::vector1<core::Real> max_residuals(3,0);
-				utility::vector1<int> max_poses(4,-1);
-				if (!nofragbias_) {
+				if (action == 3) {
+					// pick an insert position based on gap
+					utility::vector1<core::Real> residuals( n_prot_res , 0.0 );
+					utility::vector1<core::Real> max_residuals(3,0);
+					utility::vector1<int> max_poses(4,-1);
 					for (int i=1; i<(int)n_prot_res; ++i) {
-						if (!pose.residue_type(i).is_protein() || !pose.residue_type(i+1).is_protein()){
+						if (!pose.residue_type(i).is_protein() || !pose.residue_type(i+1).is_protein()) {
 							residuals[i] = -1;
-						} else if (pose.fold_tree().is_cutpoint(i+1)) {
+						} else if (pose.fold_tree().is_cutpoint(i+1)) {  //?  multichain i guess???
 							residuals[i] = -1;
-						} else if ( i > static_cast <int> (residue_sample_abinitio_.size()) ) {
-							residuals[i] = -1;
-                        } else if ( residue_sample_abinitio_[i]==false ) {
+						} else if ( i > (int)(residue_sample_abinitio_.size()) || residue_sample_abinitio_[i]==false ) {
 							residuals[i] = -1;
 						} else {
 							numeric::xyzVector< core::Real > c0 , n1;
@@ -786,63 +723,47 @@ sampler:
 							}
 						}
 					}
-				} else {
-					max_poses[3] = max_poses[2] = max_poses[1] = 0;
+
+					to_insert = max_poses[ numeric::random::random_range(1,3) ];
+				}
+				if (action == 4) {
+					to_insert=numeric::random::random_range(1, residue_sample_abinitio_.size());
+					int ntrials=100;
+
+					while (!residue_sample_abinitio_[to_insert] && --ntrials>0) {
+						to_insert=numeric::random::random_range(1, residue_sample_abinitio_.size());
+					}
+
+					if (ntrials<=0) {
+						TR << "Warning! Fail to find a free residue for sampling." << std::endl;
+						continue;
+					}
 				}
 
-				// 25% chance of random position
-				int random_residue_move=numeric::random::random_range(1, residue_sample_abinitio_.size());
-				int ntrials=500;
-				while (!residue_sample_abinitio_[random_residue_move] && --ntrials>0) {
-					random_residue_move=numeric::random::random_range(1, residue_sample_abinitio_.size());
-				}
-				if (ntrials<=0) {
-					TR << "Warning! Fail to find a free residue for sampling." << std::endl;
-					continue;
-				}
-				max_poses[ 4 ] = random_residue_move;
-				int select_position = numeric::random::random_range(1,4);
-
-				//fpd  hack
-				if (nofragbias_) select_position=4;
-
-				if (select_position == 4)
-					action_string = action_string+"_rand";
-				core::Size max_pos = max_poses[ select_position ];
-
-				// select random pos in [i-8,i]
-				core::Size insert_pos = max_pos - numeric::random::random_range(3,5);
-				insert_pos = std::min( insert_pos, n_prot_res-8);
+				// select random insert point covering this residue
+				//fpd  WARNING THIS LOGIC ASSUMES 9MERS
+				int insert_pos = to_insert - numeric::random::random_range(3,5);
+				insert_pos = std::min( insert_pos, (int)n_prot_res-8);
 				insert_pos = std::max( (int)insert_pos, 1);
 
-				if (library_.find(insert_pos) != library_.end())
+				if (library_.find(insert_pos) != library_.end()) {
 					apply_frame (pose, library_[insert_pos]);
+				} else {
+					TR << "Warning! Fragment not found at position " << insert_pos << "." << std::endl;
+				}
 			}
 
-			//////////////////////////////
-			// added by yuan 06-28-2013
-			// repack after fragment insertion
-			//////////////////////////////
-			if (option[corrections::score::cenrot]) {
-				pack_rotamers->apply(pose);
-			}
+			if (cenrot_) pack_rotamers->apply(pose);
 
-			// MC
-			try {
-				(*min_scorefxn_)(pose);
-				if ( m<4 || linmin_only_ )
-					minimizer.run( pose, mm, *min_scorefxn_, options );
-				else
-					minimizer.run( pose, mm, *min_scorefxn_, options_minilbfgs );
+			(*min_scorefxn_)(pose);
+			if ( m<4 || linmin_only_ )
+				minimizer.run( pose, mm, *min_scorefxn_, options );
+			else
+				minimizer.run( pose, mm, *min_scorefxn_, options_minilbfgs );
 
-				mc->boltzmann( pose , action_string );
-			} catch( utility::excn::EXCN_Base& excn ) {
-				//fpd hbond fail? start over
-				pose = pose_in;
-				goto sampler;
-			}
+			mc->boltzmann( pose , action_string );
 
-			if (n%100 == 0) {
+			if (n%100 == 0 || n == (int)neffcycles) {
 				mc->show_scores();
 				mc->show_counters();
 			}
@@ -850,24 +771,9 @@ sampler:
 		mc->recover_low(pose);
 	}
 
-	//for (int i=1; i<=templates_.size(); ++i) {
-	//	std::ostringstream oss;
-	//	oss << "templ"<<i<<".pdb";
-	//	templates_[i]->dump_pdb( oss.str() );
-	//}
-
 	// final minimization
-	try {
-		if (!skip_long_min_) {
-				(*min_scorefxn_)(pose); minimizer.run( pose, mm, *min_scorefxn_, options_lbfgs );
-				(*nocst_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
-				(*bonds_scorefxn_)(pose); minimizer.run( pose, mm, *bonds_scorefxn_, options_lbfgs );
-				(*nocst_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
-		}
-	} catch( utility::excn::EXCN_Base& excn ) {
-		//fpd hbond fail? start over
-		pose = pose_in;
-		goto sampler;
+	if (!skip_long_min_) {
+			(*min_scorefxn_)(pose); minimizer.run( pose, mm, *min_scorefxn_, options_lbfgs );
 	}
 
 	lowres_scorefxn_->set_weight( core::scoring::cart_bonded, max_cart );
@@ -882,101 +788,7 @@ sampler:
 protocols::moves::MoverOP CartesianHybridize::clone() const { return protocols::moves::MoverOP( new CartesianHybridize( *this ) ); }
 protocols::moves::MoverOP CartesianHybridize::fresh_instance() const { return protocols::moves::MoverOP( new CartesianHybridize ); }
 
-void
-CartesianHybridize::parse_my_tag(
-								utility::tag::TagCOP tag,
-								basic::datacache::DataMap & data,
-								filters::Filters_map const &,
-								moves::Movers_map const &,
-								core::pose::Pose const & pose)
-{
-	if( tag->hasOption( "hybridize_setup" ) ) {
-		std::string const setup_data_name( tag->getOption<std::string>( "hybridize_setup" ) );
-		hybridize_setup_ = (data.get< protocols::hybridization::HybridizeSetup * >( "HybridizeSetup", setup_data_name ))->clone();
-	}
-	else {
-		utility_exit_with_message("Fatal error: hybridize_setup needs to be defined!");
-	}
 
-	if( tag->hasOption( "increase_cycles" ) ) {
-		set_increase_cycles( tag->getOption< core::Real >( "increase_cycles" ) );
-	}
-
-	if( tag->hasOption( "scorefxn" ) ) {
-		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
-		set_scorefunction( (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone() );
-	}
-
-	if( tag->hasOption( "no_global_frame" ) )
-		set_no_global_frame( tag->getOption< bool >( "no_global_frame" ) );
-	if( tag->hasOption( "linmin_only" ) )
-		set_linmin_only( tag->getOption< bool >( "linmin_only" ) );
-	if( tag->hasOption( "cartfrag_overlap" ) )
-		set_cartfrag_overlap( tag->getOption< core::Size >( "cartfrag_overlap" ) );
-	if( tag->hasOption( "align_templates_to_pose" ) ) {
-		align_templates_to_pose_ = tag->getOption< bool >( "align_templates_to_pose" );
-	}
-
-    residue_sample_template_.resize(hybridize_setup_->nres_tgt_asu(), true);
-    residue_sample_abinitio_.resize(hybridize_setup_->nres_tgt_asu(), true);
-
-    utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-		utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
-		for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
-        // per-residue control
-        if ( (*tag_it)->getName() == "DetailedControls" ) {
-            if( (*tag_it)->hasOption( "task_operations" ) ){
-                core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( *tag_it, data );
-                core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
-
-                for( core::Size ires = 1; ires <= hybridize_setup_->nres_tgt_asu(); ++ires ){
-
-                    if( task->residue_task( ires ).being_designed() && task->residue_task( ires ).being_packed() ) {
-                        // residue_cst_cross_chain_[ires] = true;
-                    }
-                    else {
-                        residue_sample_template_[ires] = false;
-                        residue_sample_abinitio_[ires] = false;
-                    }
-                }
-            }
-            else {
-                core::Size start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
-                core::Size stop_res = (*tag_it)->getOption<core::Size>( "stop_res", hybridize_setup_->nres_tgt_asu() );
-                if( (*tag_it)->hasOption( "sample_template" ) ){
-                    bool sample_template = (*tag_it)->getOption<bool>( "sample_template", true );
-                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
-                        residue_sample_template_[ires] = sample_template;
-                    }
-                }
-                if( (*tag_it)->hasOption( "sample_abinitio" ) ){
-                    bool sample_abinitio = (*tag_it)->getOption<bool>( "sample_abinitio", true );
-                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
-                        residue_sample_abinitio_[ires] = sample_abinitio;
-                    }
-                }
-            }
-        }
-
-    }
-}
-
-/////////////
-// creator
-std::string
-CartesianHybridizeCreator::keyname() const {
-	return CartesianHybridizeCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-CartesianHybridizeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CartesianHybridize );
-}
-
-std::string
-CartesianHybridizeCreator::mover_name() {
-	return "CartesianHybridize";
-}
 
 }
 }

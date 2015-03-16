@@ -97,6 +97,7 @@ OPT_1GRP_KEY(Boolean, min, pack)
 OPT_1GRP_KEY(Integer, min, repeats)
 OPT_1GRP_KEY(String, min, minimizer)
 
+static thread_local basic::Tracer TR( "min_test" );
 
 class MinTestMover : public protocols::moves::Mover {
 public:
@@ -157,7 +158,7 @@ public:
 
 		pose::PoseOP start_pose( new pose::Pose(pose) );
 		(*scorefxn)(pose);
-		scorefxn->show(std::cout, pose);
+		scorefxn->show(TR, pose);
 
 		if ( option[ OptionKeys::min::pack ]() )  {
 			TaskFactoryOP local_tf( new TaskFactory() );
@@ -173,7 +174,7 @@ public:
 			pack_full_repack->apply( pose );
 
 			(*scorefxn)(pose);
-			scorefxn->show(std::cout, pose);
+			scorefxn->show(TR, pose);
 		}
 
 
@@ -186,42 +187,42 @@ public:
 			if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 				core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_derivs );
 				core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
-				std::cout << "SYMTORSION MINTEST: " << "\n";
-				std::cout << "start score: " << (*scorefxn)(pose) << "\n";
+				TR << "SYMTORSION MINTEST: " << "\n";
+				TR << "start score: " << (*scorefxn)(pose) << "\n";
 				long t1=clock();
 				for (int i=1; i<=(int)repeats; ++i) minimizer.run( pose, mm, *scorefxn, options );
 				long t2=clock();
 				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-				std::cout << "end score: " << (*scorefxn)(pose) << "\n";
-				std::cout << "MIN TIME: " << time << " sec \n";
+				TR << "end score: " << (*scorefxn)(pose) << "\n";
+				TR << "MIN TIME: " << time << " sec \n";
 			} else {
 				core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
 				options.nblist_auto_update( false );
 				core::optimization::AtomTreeMinimizer minimizer;
-				std::cout << "TORSION MINTEST: " << "\n";
-				std::cout << "start score: " << (*scorefxn)(pose) << "\n";
+				TR << "TORSION MINTEST: " << "\n";
+				TR << "start score: " << (*scorefxn)(pose) << "\n";
 				long t1=clock();
 				for (int i=1; i<=(int)repeats; ++i) minimizer.run( pose, mm, *scorefxn, options );
 				long t2=clock();
 				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-				std::cout << "end score: " << (*scorefxn)(pose) << "\n";
-				std::cout << "MIN TIME: " << time << " sec \n";
+				TR << "end score: " << (*scorefxn)(pose) << "\n";
+				TR << "MIN TIME: " << time << " sec \n";
 				(*scorefxn)(pose);
-				scorefxn->show(std::cout, pose);
+				scorefxn->show(TR, pose);
 			}
 		} else {
 			core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
 			core::optimization::CartesianMinimizer minimizer;
-			std::cout << "CART MINTEST: " << "\n";
-			std::cout << "start score: " << (*scorefxn)(pose) << "\n";
+			TR << "CART MINTEST: " << "\n";
+			TR << "start score: " << (*scorefxn)(pose) << "\n";
 			long t1=clock();
 			minimizer.run( pose, mm, *scorefxn, options );
 			long t2=clock();
 			double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-			std::cout << "end score: " << (*scorefxn)(pose) << "\n";
-			std::cout << "MIN TIME: " << time << " sec \n";
+			TR << "end score: " << (*scorefxn)(pose) << "\n";
+			TR << "MIN TIME: " << time << " sec \n";
 			(*scorefxn)(pose);
-			scorefxn->show(std::cout, pose);
+			scorefxn->show(TR, pose);
 		}
 	}
 	virtual std::string get_name() const {

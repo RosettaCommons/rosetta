@@ -100,34 +100,32 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	}
 
 	core::pose::Pose pose1 = const_pose1;
-	core::pose::Pose pose2 = const_pose2;	
+	core::pose::Pose pose2 = const_pose2;
 	core::Size nres = pose1.total_residue();
 
 	protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 	dockindens->apply( pose1 );
 	dockindens->apply( pose2 );
-	
+
+	// setup density scoring
 	core::scoring::electron_density::getDensityMap().set_nres( nres );
 	core::scoring::electron_density::getDensityMap().setScoreWindowContext( true );
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ].user() )
 		core::scoring::electron_density::getDensityMap().setWindow( basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ] );
-	
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	scorefxn->set_weight( core::scoring::elec_dens_fast, 1.0 );
+
+	// score to set energy graph
+	core::scoring::ScoreFunctionOP scorefxn ( new core::scoring::ScoreFunction );
+	scorefxn->set_weight( core::scoring::fa_atr, 1.0 );
 	(*scorefxn)(pose1);
 	(*scorefxn)(pose2);
-	
-	// electron density score - make this an option later (how to deal with recovery_threshold_?)
-	//Real pose1_score = pose1.energies().residue_total_energies(ii)[ core::scoring::elec_dens_window ];
-	//Real pose2_score = pose2.energies().residue_total_energies(ii)[ core::scoring::elec_dens_window ];
-	
+
 	// electron density correlation
 	Real pose1_corr = core::scoring::electron_density::getDensityMap().matchRes( res1.seqpos(), res1, pose1, NULL , false);
 	Real pose2_corr = core::scoring::electron_density::getDensityMap().matchRes( res2.seqpos(), res2, pose2, NULL , false);
 	Real corr_diff = pose1_corr - pose2_corr;				//if Rosetta fixes an error in native density fitting, count as recovered
 																									//pose1 must be native
 
-	TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " corr diff: " << corr_diff << std::endl;	
+	TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " corr diff: " << corr_diff << std::endl;
 
 	if ( corr_diff > recovery_threshold_ )
 		recovered = false;

@@ -199,6 +199,7 @@ sources = {
 		"CircularHarmonicFunc",
 		"CircularPowerFunc",
 		"CircularSigmoidalFunc",
+		"CircularSplineFunc",
 		"ConstantFunc",
 		"CountViolFunc",
 		"EtableFunc",
@@ -369,7 +370,7 @@ sources = {
 		"FACTSPotential",
 		"FACTSEnergy",
 	],
-	
+
 	"core/scoring/fiber_diffraction" : [
 		"CentroidScatter",
 		"FAScatter",
@@ -523,7 +524,7 @@ sources = {
 		"RamachandranEnergy",
 		"RamachandranEnergy2B",
 		"ReferenceEnergy",
-		"ReferenceEnergyNoncanonical",				    		
+		"ReferenceEnergyNoncanonical",
         "ResidualDipolarCouplingEnergy",
 		"ResidualDipolarCouplingEnergy_Rohl",
 		"ChemicalShiftAnisotropyEnergy",

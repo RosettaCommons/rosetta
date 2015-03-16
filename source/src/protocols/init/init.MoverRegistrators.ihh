@@ -45,9 +45,9 @@ static MoverRegistrator< cryst::SetRefinementOptionsMoverCreator > reg_SetRefine
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 static MoverRegistrator< hybridization::HybridizeProtocolCreator > reg_HybridizeProtocolCreator;
 static MoverRegistrator< hybridization::CartesianSamplerCreator > reg_CartesianSamplerCreator;
-static MoverRegistrator< hybridization::CartesianHybridizeCreator > reg_CartesianHybridizeCreator;
-static MoverRegistrator< hybridization::HybridizeSetupMoverCreator > reg_HybridizeSetupMoverCreator;
-static MoverRegistrator< hybridization::FoldTreeHybridizeCreator > reg_FoldTreeHybridizeCreator;
+//static MoverRegistrator< hybridization::CartesianHybridizeCreator > reg_CartesianHybridizeCreator;
+//static MoverRegistrator< hybridization::HybridizeSetupMoverCreator > reg_HybridizeSetupMoverCreator;
+//static MoverRegistrator< hybridization::FoldTreeHybridizeCreator > reg_FoldTreeHybridizeCreator;
 static MoverRegistrator< hybridization::BackboneTorsionSamplerCreator > reg_BackboneTorsionSamplerCreator;
 static MoverRegistrator< hybridization::BackboneTorsionPerturbationCreator > reg_BackboneTorsionPerturbationCreator;
 
@@ -391,7 +391,7 @@ static MoverRegistrator< abinitio::abscript::AbscriptLoopCloserCMCreator > reg_A
 static MoverRegistrator< abinitio::abscript::StructPerturberCMCreator > reg_StructPerturberCMCreator;
 static MoverRegistrator< abinitio::abscript::RigidChunkCMCreator > reg_RigidChunkCMCreator;
 
-static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator; 
+static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator;
 static MoverRegistrator< membrane::FlipMoverCreator > reg_FlipMoverCreator;
 static MoverRegistrator< membrane::MembranePositionFromTopologyMoverCreator > reg_MembranePositionFromTopologyMoverCreator;
 static MoverRegistrator< membrane::SetMembranePositionMoverCreator > reg_SetMembranePositionMoverCreator;
@@ -402,10 +402,10 @@ static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_Trans
 static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
 static MoverRegistrator< membrane::visualize::VisualizeEmbeddingMoverCreator > reg_VisualizeEmbeddingMoverCreator;
 
-static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator; 
-static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator; 
+static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator;
+static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator;
 
-static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator; 
+static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 
 static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreatorr;
 

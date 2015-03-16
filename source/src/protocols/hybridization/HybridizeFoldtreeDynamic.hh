@@ -92,15 +92,13 @@ private:
 private:
 	// DATA
 
-	// segment the entire pose, defining cutpoints
-	protocols::loops::Loops chunks_last_;
+	// chunks cover the whole pose
 	protocols::loops::Loops chunks_;
 
-	// segment pose into "core regions" where anchors may lie
-	protocols::loops::Loops core_chunks_last_;
+	// core chunks cover "rigid segments" (generally SS elts)
 	protocols::loops::Loops core_chunks_;
 
-	utility::vector1 < core::Size > anchor_positions_last_;
+	// anchor positions are within core chunks
 	utility::vector1 < core::Size > anchor_positions_;
 
 	/// index of the virtual residue we added to the pose in set_up()

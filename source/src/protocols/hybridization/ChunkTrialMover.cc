@@ -62,7 +62,6 @@ using namespace basic::options::OptionKeys;
 ChunkTrialMover::ChunkTrialMover(
 					utility::vector1 < core::pose::PoseCOP > const & template_poses,
 					utility::vector1 < protocols::loops::Loops > const & template_chunks,
-					Loops ss_chunks_pose,
 					bool random_template,
 					AlignOption align_option,
 					Size max_registry_shift ) :
@@ -74,34 +73,22 @@ ChunkTrialMover::ChunkTrialMover(
 		max_registry_shift_global_(max_registry_shift)
 {
 	moves::Mover::type( "ChunkTrialMover" );
-	bool alignment_from_template = option[cm::hybridize::alignment_from_template_seqpos]();
 
 	Size count = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		if (template_chunks_[i_template].size() != 0) ++count;
 	}
 	if (count == 0) {
-		utility_exit_with_message("Template structures need at least one secondary structure for this protocol");
+		has_valid_moves_ = false;
+		return;
 	}
+	has_valid_moves_ = true;
 
 	sequence_alignments_.clear();
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		std::map <core::Size, core::Size> sequence_alignment;
-		//TR << "template: " << i_template << std::endl;
 		sequence_alignment.clear();
-		if (alignment_from_template) {
-			get_alignment_from_template(template_poses_[i_template], sequence_alignment);
-		}
-		else {
-			std::map <core::Size, core::Size> chunk_mapping;
-			if (option[cm::hybridize::alignment_from_chunk_mapping].user()) {
-				for (Size i=1;i<=option[cm::hybridize::alignment_from_chunk_mapping]().size();++i) {
-					chunk_mapping[i] = option[cm::hybridize::alignment_from_chunk_mapping]()[i];
-				}
-			}
-
-			get_alignment_from_chunk_mapping(chunk_mapping, template_chunks_[i_template], ss_chunks_pose, sequence_alignment);
-		}
+		get_alignment_from_template(template_poses_[i_template], sequence_alignment);
 		sequence_alignments_.push_back(sequence_alignment);
 	}
 	highest_tmpl_resnum_ = 0;
@@ -124,7 +111,6 @@ ChunkTrialMover::ChunkTrialMover(
 ChunkTrialMover::ChunkTrialMover(
 			utility::vector1 < core::pose::PoseCOP > const & template_poses,
 			utility::vector1 < protocols::loops::Loops > const & template_chunks,
-			Loops ss_chunks_pose,
 			bool random_template,
 			AlignOption align_option,
 			utility::vector1<bool> sampling_chunk_in,
@@ -136,34 +122,23 @@ ChunkTrialMover::ChunkTrialMover(
 	align_chunk_()
 {
 	moves::Mover::type( "ChunkTrialMover" );
-	bool alignment_from_template = option[cm::hybridize::alignment_from_template_seqpos]();
 
 	Size count = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		if (template_chunks_[i_template].size() != 0) ++count;
 	}
 	if (count == 0) {
-		utility_exit_with_message("Template structures need at least one secondary structure for this protocol");
+		has_valid_moves_ = false;
+		return;
 	}
+	has_valid_moves_ = true;
 
 	sequence_alignments_.clear();
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		std::map <core::Size, core::Size> sequence_alignment;
 		//TR << "template: " << i_template << std::endl;
 		sequence_alignment.clear();
-		if (alignment_from_template) {
-			get_alignment_from_template(template_poses_[i_template], sequence_alignment);
-		}
-		else {
-			std::map <core::Size, core::Size> chunk_mapping;
-			if (option[cm::hybridize::alignment_from_chunk_mapping].user()) {
-				for (Size i=1;i<=option[cm::hybridize::alignment_from_chunk_mapping]().size();++i) {
-					chunk_mapping[i] = option[cm::hybridize::alignment_from_chunk_mapping]()[i];
-				}
-			}
-
-			get_alignment_from_chunk_mapping(chunk_mapping, template_chunks_[i_template], ss_chunks_pose, sequence_alignment);
-		}
+		get_alignment_from_template(template_poses_[i_template], sequence_alignment);
 		sequence_alignments_.push_back(sequence_alignment);
 	}
 
@@ -192,44 +167,11 @@ ChunkTrialMover::get_alignment_from_template(
 	}
 }
 
-void
-ChunkTrialMover::get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
-								 Loops const template_ss_chunks,
-								 Loops const target_ss_chunks,
-								 std::map <core::Size, core::Size> & sequence_alignment)
-{
-	residue_max_registry_shift_.resize(target_ss_chunks.size(), max_registry_shift_global_);
-	for (Size i_chunk_pose = 1; i_chunk_pose <= target_ss_chunks.size(); ++i_chunk_pose) {
-		if (chunk_mapping.find(i_chunk_pose) == chunk_mapping.end()) continue;
-		core::Size j_chunk_template = chunk_mapping.find(i_chunk_pose)->second;
-
-		Size respos_mid_pose = (target_ss_chunks[i_chunk_pose].start() + target_ss_chunks[i_chunk_pose].stop()) / 2;
-		Size respos_mid_template = (template_ss_chunks[j_chunk_template].start() + template_ss_chunks[j_chunk_template].stop()) / 2;
-		int offset = respos_mid_template - respos_mid_pose;
-
-		using namespace ObjexxFCL::format;
-		if (target_ss_chunks[i_chunk_pose].length() <= template_ss_chunks[j_chunk_template].length()) {
-			//max_registry_shift_[i_chunk_pose] = max_registry_shift_input_ + template_ss_chunks[j_chunk_template].length() - target_ss_chunks[i_chunk_pose].length();
-			for (Size ires=target_ss_chunks[i_chunk_pose].start(); ires<=target_ss_chunks[i_chunk_pose].stop(); ++ires) {
-				sequence_alignment[ires] = ires+offset;
-				//std::cout << I(4, ires) << I(4, ires+offset) << std::endl;
-			}
-		}
-		else {
-			//max_registry_shift_[i_chunk_pose] = max_registry_shift_input_ + target_ss_chunks[i_chunk_pose].length() - template_ss_chunks[j_chunk_template].length();
-			for (Size ires_templ=template_ss_chunks[j_chunk_template].start(); ires_templ<=template_ss_chunks[j_chunk_template].stop(); ++ires_templ) {
-				sequence_alignment[ires_templ-offset] = ires_templ;
-				//std::cout << I(4, ires_templ) << I(4, ires_templ-offset) << std::endl;
-			}
-		}
-	}
-}
-
 void ChunkTrialMover::pick_random_template()
 {
 	assert(template_poses_.size() != 0);
 	set_template(0);
-	int ntrials=500;
+	int ntrials=100;
 	while (!template_number() && --ntrials>0) {
 		set_template( numeric::random::rg().random_range(1, template_poses_.size()) );
 		if (template_chunks_[template_number()].size() == 0 || ignore_template_indices_.count(template_number())) set_template(0);

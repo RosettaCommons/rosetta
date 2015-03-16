@@ -117,10 +117,21 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// get sses & choose cutpoints
-	core::scoring::dssp::Dssp dssp_obj( pose );
-	dssp_obj.insert_ss_into_pose( pose );
-	protocols::loops::Loops SSEs = protocols::loops::extract_secondary_structure_chunks( pose, "HE", 3, 6, 3, 4);
+	protocols::loops::Loops SSEs;
+
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::pose::Pose pose_asu;
+		core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
+		core::scoring::dssp::Dssp dssp_obj( pose_asu );
+		dssp_obj.insert_ss_into_pose( pose_asu );
+		SSEs = protocols::loops::extract_secondary_structure_chunks( pose_asu, "HE", 3, 6, 3, 4);
+	} else {
+		core::scoring::dssp::Dssp dssp_obj( pose );
+		dssp_obj.insert_ss_into_pose( pose );
+		SSEs = protocols::loops::extract_secondary_structure_chunks( pose, "HE", 3, 6, 3, 4);
+	}
 	SSEs.sequential_order();
+
 
 	// penalize insertions/deletions in the middle of SSEs
 	utility::vector1< bool > sse_core(nres,false);
@@ -136,6 +147,12 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	for (int j=2; j<=(int)SSEs.num_loop(); ++j) {
 		core::Size j0stop = SSEs[j-1].stop();
 		core::Size j1start = SSEs[j].start();
+
+		char chain0 = pose.pdb_info()->chain(j0stop);
+		char chain1 = pose.pdb_info()->chain(j1start);
+
+		if (chains_.size()>0 && std::find(chains_.begin(), chains_.end(), chain0) == chains_.end() ) continue;
+		if (chains_.size()>0 && std::find(chains_.begin(), chains_.end(), chain1) == chains_.end() ) continue;
 
 		// see if there is a cut between the two and use that instead
 		bool found_cuts = false;
@@ -329,9 +346,9 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 				}
 			}
 			*loops_ = *best_loops;
-			if (recover_low_) {
-				pose = best_pose;
-			}
+		}
+		if (recover_low_) {
+			pose = best_pose;
 		}
 	}
 
@@ -489,6 +506,12 @@ void OptimizeThreadingMover::parse_my_tag(
 		std::string ref_model_pdb = tag->getOption<std::string>( "native" );
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native_, ref_model_pdb );
+	}
+
+	if( tag->hasOption( "chains" ) ) {
+		std::string chain_str = tag->getOption<std::string>( "chains" );
+		utility::vector1< std::string > chns = utility::string_split(chain_str, ',');
+		for (int i=1; i<=(int)chns.size(); ++i) chains_.push_back( chns[i][0] );
 	}
 
 	nsteps_ = tag->getOption<core::Size>( "nsteps", 5000 );

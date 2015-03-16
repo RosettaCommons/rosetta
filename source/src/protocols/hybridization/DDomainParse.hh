@@ -50,7 +50,7 @@ public:
 	}
 
 	// domain splitting
-	utility::vector1< loops::Loops > split( core::pose::Pose const &templ, core::Size nres );
+	utility::vector1< loops::Loops > split( core::pose::Pose const &templ );
 
 private:
 	// functions
@@ -71,8 +71,8 @@ private:
 };
 
 
-} // hybridize 
-//} // comparative_modeling 
+} // hybridize
+//} // comparative_modeling
 } // protocols
 
 #endif

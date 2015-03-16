@@ -66,6 +66,7 @@ private:
 	core::Size nsteps_, rebuild_cycles_, max_shift_;
 	core::Real weight_,temperature_;
 	bool recover_low_,step_penalty_,greedy_;
+	utility::vector1< char > chains_;
 
 	protocols::loops::LoopsOP loops_;
 

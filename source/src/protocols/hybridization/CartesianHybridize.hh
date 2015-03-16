@@ -18,7 +18,6 @@
 
 #include <protocols/hybridization/InsertChunkMover.hh>
 #include <protocols/hybridization/CartesianHybridize.fwd.hh>
-#include <protocols/hybridization/HybridizeSetup.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -68,30 +67,37 @@ public:
 	// initialize options to defaults
 	void init();
 
-	void setup_for_parser();
-
 	// run the protocol
 	void apply(core::pose::Pose & pose);
 
-	// set the centroid scorefunction
+	// set the centroid scorefunctions
 	void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in);
+	void set_min_scorefunction( core::scoring::ScoreFunctionOP scorefxn_in );
+	void set_pack_scorefunction( core::scoring::ScoreFunctionOP scorefxn_in );
 
 	// set options
 	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
 	void set_no_global_frame(bool no_global_frame_in) { no_global_frame_=no_global_frame_in; }
 	void set_linmin_only(bool linmin_only_in) { linmin_only_=linmin_only_in; }
 	void set_cartfrag_overlap(core::Size cartfrag_overlap_in) { cartfrag_overlap_=cartfrag_overlap_in; }
-    //void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 	void set_seqfrags_only(bool seqfrags_only_in) { seqfrags_only_=seqfrags_only_in; }
 	void set_nofragbias(bool nofragbias_in) { nofragbias_=nofragbias_in; }
 	void set_skip_long_min(bool skip_long_min_in) { skip_long_min_=skip_long_min_in; }
+	void set_cenrot(bool cenrot_in) { cenrot_=cenrot_in; }
+	void set_temperature(core::Real temp_in) { temperature_ = temp_in; }
+	void set_max_contig_insertion(int max_in) { max_contig_insertion_ = max_in; }
 
-	//
+	void set_per_residue_controls(
+			utility::vector1<bool> const &residue_sample_template_in,
+			utility::vector1<bool> const &residue_sample_abinitio_in) {
+		residue_sample_template_ = residue_sample_template_in;
+		residue_sample_abinitio_ = residue_sample_abinitio_in;
+	}
+
 	std::string	get_name() const { return "CartesianHybridize"; }
 
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
 protected:
 	// apply a homologue fragment
@@ -102,7 +108,6 @@ protected:
 
 private:
 	// parser
-	HybridizeSetupOP hybridize_setup_;
 	bool align_templates_to_pose_;
 
 	// parameters
@@ -111,6 +116,9 @@ private:
 	bool no_global_frame_, linmin_only_;
 	bool seqfrags_only_, nofragbias_;
 	bool skip_long_min_;
+	bool cenrot_;
+	core::Real temperature_;
+	int max_contig_insertion_;  // don't insert contigs larger than this size
 
 	// fragments
 	utility::vector1 < core::pose::PoseOP > templates_;
@@ -119,15 +127,13 @@ private:
 	core::fragment::FragSetOP fragments9_;
 	boost::unordered_map<core::Size, core::fragment::Frame> library_;
 
-    // per-residue controls
-    utility::vector1<bool> residue_sample_template_; // using template fragments
-    utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
+	// per-residue controls
+	utility::vector1<bool> residue_sample_template_; // using template fragments
+	utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
 
 	// scorefunctions
-	core::scoring::ScoreFunctionOP lowres_scorefxn_, min_scorefxn_, bonds_scorefxn_, nocst_scorefxn_;
+	core::scoring::ScoreFunctionOP lowres_scorefxn_, min_scorefxn_, cenrot_repack_scorefxn_;
 
-	// allowed to move regions
-	//utility::vector1<bool> allowed_to_move_;
 }; //class CartesianHybridize
 
 } // hybridize

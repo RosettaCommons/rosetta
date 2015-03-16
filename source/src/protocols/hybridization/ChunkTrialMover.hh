@@ -58,32 +58,24 @@ class ChunkTrialMover: public protocols::moves::Mover
 
 public:
 	ChunkTrialMover(
-		utility::vector1 < core::pose::PoseCOP > const & template_poses,
-		utility::vector1 < protocols::loops::Loops > const & template_chunks,
-		Loops ss_chunks_pose,
-		bool random_template = true,
-		AlignOption align_option = all_chunks,
-		Size max_registry_shift = 0);
+			utility::vector1 < core::pose::PoseCOP > const & template_poses,
+			utility::vector1 < protocols::loops::Loops > const & template_chunks,
+			bool random_template = true,
+			AlignOption align_option = all_chunks,
+			Size max_registry_shift = 0);
 
-    ChunkTrialMover(
-        utility::vector1 < core::pose::PoseCOP > const & template_poses,
-        utility::vector1 < protocols::loops::Loops > const & template_chunks,
-        Loops ss_chunks_pose,
-        bool random_template,
-        AlignOption align_option,
-        utility::vector1<bool> residue_sample_template,
-        utility::vector1<Size> residue_max_registry_shift );
+	ChunkTrialMover(
+			utility::vector1 < core::pose::PoseCOP > const & template_poses,
+			utility::vector1 < protocols::loops::Loops > const & template_chunks,
+			bool random_template,
+			AlignOption align_option,
+			utility::vector1<bool> residue_sample_template,
+			utility::vector1<Size> residue_max_registry_shift );
 
 	void
 	get_alignment_from_template(
 			core::pose::PoseCOP  template_pose,
 			std::map <core::Size, core::Size> & seqpos_alignment );
-
-	void
-	get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
-									 Loops const template_ss_chunks,
-									 Loops const target_ss_chunks,
-									 std::map <core::Size, core::Size> & sequence_alignment);
 
 	void set_template(core::Size const template_number);
 	core::Size template_number();
@@ -92,18 +84,20 @@ public:
 	Size trial_counter(Size ires);
 	void apply(core::pose::Pose & pose);
 	std::string get_name() const;
+	bool has_valid_moves( ) { return has_valid_moves_; }
 
-	void set_templates_to_ignore(
-			std::set< core::Size> template_indices_in // to ignore
-	) {
+	void set_templates_to_ignore( std::set< core::Size> template_indices_in ) {
 		ignore_template_indices_ = template_indices_in;
 	}
-	//void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 
 private:
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
 	utility::vector1 < Loops > template_chunks_;
+
 	bool random_template_;
+
+	bool has_valid_moves_;
+
 	AlignOption align_option_;
 	InsertChunkMover align_chunk_;
 	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;

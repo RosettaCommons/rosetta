@@ -71,7 +71,7 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 	// cutpoints in the middle of the loop
 	// cut number is the residue before the cut
 	std::string cut_point_decision = "middle_L";
-	
+
 	using utility::vector1;
 	vector1<core::Size> cuts_orig;
 	vector1<std::pair<core::Size, core::Size> > jumps_orig;
@@ -282,11 +282,16 @@ void HybridizeFoldtreeDynamic::initialize(
 	}
 	while (pose.residue_type(num_nonvirt_residues_).aa() == core::chemical::aa_vrt ) num_nonvirt_residues_--;
 	while (!pose.residue(num_protein_residues_).is_protein()) num_protein_residues_--;
-	set_core_chunks(core_chunks);
 
-	// save previous
-	chunks_last_ = chunks_;
-	anchor_positions_last_ = anchor_positions_;
+	// special case for ab initio
+	if (core_chunks.size() == 0) {
+		protocols::loops::Loops pseudochunk;
+		pseudochunk.push_back( protocols::loops::Loop(1,1) );
+		set_core_chunks(pseudochunk);
+	} else {
+		set_core_chunks(core_chunks);
+	}
+
 
 	// set new
 	choose_anchors();
@@ -355,7 +360,7 @@ void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
 	using namespace core::chemical;
 	for (core::Size ir=1; ir< pose.total_residue() ; ++ir) {
 		if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
-			
+
 			bool is_cut = false;
 			for (int ic=1; ic<=pose.fold_tree().num_cutpoint() ; ++ic) {
 				core::Size cutpoint = pose.fold_tree().cutpoint(ic);
@@ -367,21 +372,21 @@ void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
 			if (!is_cut) {
 				pose_changed = true;
 				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, ir );
-				
+
 				if ( pose.residue(ir+1).has_variant_type(CUTPOINT_UPPER) ) {
 					core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, ir+1 );
 				}
 			}
 		}
 	}
-	
+
 	if ( pose_changed == true ) pose.constraint_set( init_pose.constraint_set()->remapped_clone( init_pose, pose ) );
 
 }
 
 // stolen from protocols::forge::methods::jumps_and_cuts_from_pose
 void HybridizeFoldtreeDynamic::jumps_and_cuts_from_foldtree( core::kinematics::FoldTree & ft, utility::vector1< std::pair< core::Size, core::Size > > & jumps, utility::vector1< core::Size > & cuts) {
-	
+
 	for ( core::Size i = 1; i<= ft.num_jump(); ++i ) {
 		core::Size down ( ft.downstream_jump_residue(i) );
 		core::Size up ( ft.upstream_jump_residue(i) );
@@ -417,9 +422,9 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 	//if (!use_symm) {
 	//if ( ! initial_asymm_foldtree_.is_simple_tree() ) {
-	
+
 	jumps_and_cuts_from_foldtree(initial_asymm_foldtree_, jumps_old, cuts_old);
-	
+
 	for (Size i = 1; i <= jumps_old.size(); ++i) {
 		//if (jumps_old[i].first == jump_root) continue; // no need to skip this any more
 		//if (jumps_old[i].second == jump_root) continue;
@@ -459,13 +464,13 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		const Loop& chunk = chunks_[i];
 		const Size cut_point  = chunk.stop();
 		const Size jump_point = anchor_positions_[i];
-		
+
 		Size j_root = num_nonvirt_residues_+1;
 		if (use_symm && i>1) j_root = anchor_positions_[1];
-		
+
 		TR.Debug << "Adding chunk cut: " << cut_point << std::endl;
 		cuts.push_back(cut_point);
-		
+
 		if (root_chunk_indices.count(i)) {
 			rooted_chunk_indices_.insert(i);
 			TR.Debug << "Adding root jump: " << j_root << " " << jump_point << std::endl;
@@ -739,7 +744,6 @@ void HybridizeFoldtreeDynamic::remove_cut( core::Size const cut, utility::vector
 }
 
 void HybridizeFoldtreeDynamic::set_core_chunks(const protocols::loops::Loops & chunks) {
-	core_chunks_last_ = core_chunks_;
 	core_chunks_ = chunks;
 }
 

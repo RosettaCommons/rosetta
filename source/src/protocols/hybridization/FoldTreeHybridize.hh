@@ -17,7 +17,6 @@
 
 #include <protocols/hybridization/InsertChunkMover.hh>
 #include <protocols/hybridization/FoldTreeHybridize.fwd.hh>
-#include <protocols/hybridization/HybridizeSetup.fwd.hh>
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.hh>
 #include <protocols/hybridization/WeightedFragmentTrialMover.hh>
 #include <protocols/hybridization/WeightedFragmentSmoothTrialMover.hh>
@@ -83,18 +82,8 @@ public:
 
 	// initialize options to defaults
 	void init();
-	void setup_for_parser();
-
-	void revert_loops_to_original(core::pose::Pose & pose, Loops loops);
-
-	void set_loops_to_virt_ala(core::pose::Pose & pose, Loops loops);
-
-	Real gap_distance(Size Seq_gap);
-
-	void add_gap_constraints_to_pose(core::pose::Pose & pose, Loops const & chunks, int gap_edge_shift=0, Real stdev=0.1);
 
 	void restore_original_foldtree(core::pose::Pose & pose);
-
 	void setup_foldtree(core::pose::Pose & pose);
 
 	numeric::xyzVector<Real> center_of_mass(core::pose::Pose const & pose);
@@ -112,8 +101,14 @@ public:
 	void set_stage1_3_cycles(core::Size stage1_3_cycles_in) { stage1_3_cycles_=stage1_3_cycles_in; }
 	void set_stage1_4_cycles(core::Size stage1_4_cycles_in) { stage1_4_cycles_=stage1_4_cycles_in; }
 	void set_add_non_init_chunks(bool add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
-	void set_domain_assembly(bool domain_assembly_in) { domain_assembly_=domain_assembly_in; }
-	void set_add_hetatm(bool add_hetatm_in, core::Real hetatm_self_cst_weight_in, core::Real hetatm_prot_cst_weight_in) { add_hetatm_=add_hetatm_in; hetatm_self_cst_weight_=hetatm_self_cst_weight_in; hetatm_prot_cst_weight_=hetatm_prot_cst_weight_in;}
+	void set_add_hetatm(
+			bool add_hetatm_in,
+			core::Real hetatm_self_cst_weight_in,
+			core::Real hetatm_prot_cst_weight_in) {
+		add_hetatm_=add_hetatm_in;
+		hetatm_self_cst_weight_=hetatm_self_cst_weight_in;
+		hetatm_prot_cst_weight_=hetatm_prot_cst_weight_in;
+	}
 	void set_frag_1mer_insertion_weight(core::Real frag_1mer_insertion_weight_in) { frag_1mer_insertion_weight_=frag_1mer_insertion_weight_in; }
 	void set_small_frag_insertion_weight(core::Real small_frag_insertion_weight_in) { small_frag_insertion_weight_=small_frag_insertion_weight_in; }
 	void set_big_frag_insertion_weight(core::Real big_frag_insertion_weight_in) { big_frag_insertion_weight_=big_frag_insertion_weight_in; }
@@ -132,9 +127,18 @@ public:
 
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) { scorefxn_ = scorefxn; }
 
-	//void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 	void set_task_factory( core::pack::task::TaskFactoryOP task_factory_in );
 	void set_user_csts(  utility::vector1< core::Size > user_csts_in ) { user_csts_=user_csts_in; }
+
+	void set_per_residue_controls(
+			utility::vector1<bool> const &residue_sample_template_in,
+			utility::vector1<bool> const &residue_sample_abinitio_in,
+			utility::vector1<core::Size> const &residue_max_registry_shift_in) {
+		residue_sample_template_ = residue_sample_template_in;
+		residue_sample_abinitio_ = residue_sample_abinitio_in;
+		residue_max_registry_shift_ = residue_max_registry_shift_in;
+	}
+
 
 	void setup_scorefunctions(
 		core::scoring::ScoreFunctionOP score0,
@@ -174,12 +178,9 @@ private:
 
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual void parse_my_tag( utility::tag::TagCOP const, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
 
 private:
-	HybridizeSetupOP hybridize_setup_;
-
 	core::Real increase_cycles_;
 	core::Size stage1_1_cycles_;
 	core::Size stage1_2_cycles_;
@@ -196,7 +197,6 @@ private:
 	core::Real chunk_insertion_weight_;
 
 	bool add_non_init_chunks_;
-	bool domain_assembly_;
 	bool add_hetatm_;
 	core::Real hetatm_self_cst_weight_, hetatm_prot_cst_weight_;
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
@@ -244,12 +244,8 @@ private:
 	utility::vector1<bool> residue_sample_template_; // using template fragments
 	utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
 	utility::vector1<core::Size> residue_max_registry_shift_; // restraints between chains
-	//utility::vector1<bool> residue_cst_in_domain_; // restraints within the domain
-	//utility::vector1<bool> residue_cst_cross_domain_; // restraints between domains, within a chain
-	//utility::vector1<bool> residue_cst_cross_chain_; // restraints between chains
 
 	// task operations
-	//utility::vector1<bool> allowed_to_move_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1 < core::Size > user_csts_;
 }; //class FoldTreeHybridize
