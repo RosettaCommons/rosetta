@@ -63,8 +63,12 @@ namespace loop_graph {
 		utility::vector1< char >
 		missing_residues( pose::Pose const & pose ) const;
 
+		//////////////////////////////////////////////////////////////////
+		/// @details Returns a vector of loop_suites
+		/// @brief   If include_free_loops is turned off, loops with 
+		/// takeoff_domain == 0 or landing_domain == 0 will not be included
 		utility::vector1< utility::vector1< Size > >
-		loop_suites() const;
+		loop_suites( bool include_free_loops = true ) const;
 
 	private:
 

@@ -462,13 +462,17 @@ namespace loop_graph {
 	}
 
 	//////////////////////////////////////////////////////////////////
+	/// @details Returns a vector of loop_suites
+	/// @brief   If include_free_loops is turned off, loops with 
+	/// takeoff_domain == 0 or landing_domain == 0 will not be included
 	utility::vector1< utility::vector1< Size > >
-	LoopGraph::loop_suites() const {
+	LoopGraph::loop_suites( bool include_free_loops /* = true */ ) const {
 		utility::vector1< utility::vector1< Size > > loop_suites;
 		for ( Size n = 1; n <= loops_.size(); n++ ) {
 			Loop const & loop = loops_[ n ];
+			if ( !include_free_loops && ( loop.takeoff_domain() == 0 || loop.landing_domain() == 0 ) ) continue;
 			utility::vector1< Size > loop_suite_set;
-			for ( Size k = loop.takeoff_pos(); k < loop.landing_pos(); k++ )	loop_suite_set.push_back( k );
+			for ( Size k = loop.takeoff_pos()+1 ; k < loop.landing_pos(); k++ )	loop_suite_set.push_back( k );
 			loop_suites.push_back( loop_suite_set );
 		}
 		return loop_suites;
