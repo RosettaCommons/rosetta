@@ -69,6 +69,8 @@ private:
 	core::Size max_poses_;
 	core::Size max_attempts_;
 	core::Size n_poses_;
+	bool keep_mover_state_;
+	protocols::moves::MoverOP mover_;
 
 protected:
 	bool generate_pose(core::pose::Pose &);

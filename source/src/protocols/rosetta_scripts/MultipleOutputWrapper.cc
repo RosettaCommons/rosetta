@@ -77,7 +77,9 @@ MultipleOutputWrapper::MultipleOutputWrapper() :
 	reference_pose_(/* NULL */),
 	max_poses_(0),
 	max_attempts_(10),
-	n_poses_(0)
+	n_poses_(0),
+	keep_mover_state_(false),
+	mover_()
 {
 }
 
@@ -116,25 +118,27 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 	basic::datacache::DataMap data;
 	protocols::filters::Filters_map filters;
 	protocols::moves::Movers_map movers;
-	MoverOP mover(NULL);
+	if ( !keep_mover_state_ ) {
+		mover_ = NULL;
+	}
 
-	if(!mover && rosetta_scripts_tag_) {
+	if(!mover_ && rosetta_scripts_tag_) {
 		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		mover = parser.parse_protocol_tag( pose, rosetta_scripts_tag_ );
+		mover_ = parser.parse_protocol_tag( pose, rosetta_scripts_tag_ );
 	}
 
-	if(!mover && mover_tag_) {
-		mover = MoverFactory::get_instance()->newMover(mover_tag_, data, filters, movers, pose );
+	if(!mover_ && mover_tag_) {
+		mover_ = MoverFactory::get_instance()->newMover(mover_tag_, data, filters, movers, pose );
 	}
 
-	runtime_assert( mover != 0 );
+	runtime_assert( mover_ != 0 );
 
 	core::Size attempts;
 	for(attempts = 1; attempts <= max_attempts_; ++attempts) {
 
-		mover->apply(pose);
+		mover_->apply(pose);
 
-		protocols::moves::MoverStatus status = mover->get_last_move_status();
+		protocols::moves::MoverStatus status = mover_->get_last_move_status();
 		set_last_move_status(status);
 		if(status != protocols::moves::MS_SUCCESS) {
 			TR << "Sub-mover or protocol reported failure on attempt " << attempts << " of " << max_attempts_ << std::endl;
@@ -181,6 +185,9 @@ void MultipleOutputWrapper::parse_my_tag(
 
 	if(tag->hasOption("max_attempts"))
 		max_attempts_ = tag->getOption<int>("max_attempts", 0);
+
+	if(tag->hasOption("keep_mover_state"))
+		keep_mover_state_ = tag->getOption<bool>("keep_mover_state");
 
 	try {
 
