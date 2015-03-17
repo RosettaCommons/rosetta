@@ -132,11 +132,9 @@ public:
 
 	void set_per_residue_controls(
 			utility::vector1<bool> const &residue_sample_template_in,
-			utility::vector1<bool> const &residue_sample_abinitio_in,
-			utility::vector1<core::Size> const &residue_max_registry_shift_in) {
+			utility::vector1<bool> const &residue_sample_abinitio_in) {
 		residue_sample_template_ = residue_sample_template_in;
 		residue_sample_abinitio_ = residue_sample_abinitio_in;
-		residue_max_registry_shift_ = residue_max_registry_shift_in;
 	}
 
 
@@ -243,7 +241,6 @@ private:
 	// per-residue controls
 	utility::vector1<bool> residue_sample_template_; // using template fragments
 	utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
-	utility::vector1<core::Size> residue_max_registry_shift_; // restraints between chains
 
 	// task operations
 	core::pack::task::TaskFactoryOP task_factory_;

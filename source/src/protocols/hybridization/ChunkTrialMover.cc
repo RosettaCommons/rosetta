@@ -113,8 +113,7 @@ ChunkTrialMover::ChunkTrialMover(
 			utility::vector1 < protocols::loops::Loops > const & template_chunks,
 			bool random_template,
 			AlignOption align_option,
-			utility::vector1<bool> sampling_chunk_in,
-			utility::vector1<Size> residue_max_registry_shift ) :
+			utility::vector1<bool> sampling_chunk_in ) :
 	template_poses_(template_poses),
 	template_chunks_(template_chunks),
 	random_template_(random_template),
@@ -152,7 +151,6 @@ ChunkTrialMover::ChunkTrialMover(
 	}
 
 	sampling_chunk_ = sampling_chunk_in;
-	residue_max_registry_shift_ = residue_max_registry_shift;
 }
 
 void
@@ -238,8 +236,6 @@ Size ChunkTrialMover::trial_counter(Size ires) {
 
 void
 ChunkTrialMover::apply(core::pose::Pose & pose) {
-	//max_registry_shift_.resize(pose.num_jump(), max_registry_shift_input_);
-
 	// pick a random template
 	if (random_template_) {
 		pick_random_template();
@@ -263,8 +259,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 		align_chunk_.set_aligned_chunk(pose, jump_number_, false);
 
 		// apply alignment
-		//int registry_shift = numeric::random::rg().random_range(-max_registry_shift_[jump_number_], max_registry_shift_[jump_number_]);
-		int registry_shift = 0;
+		int registry_shift = numeric::random::rg().random_range(-max_registry_shift_global_, max_registry_shift_global_);
 		align_chunk_.set_registry_shift(registry_shift);
 		align_chunk_.apply(pose);
 	} else {

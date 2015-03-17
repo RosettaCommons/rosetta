@@ -64,7 +64,6 @@ sources = {
         "FragmentBiasAssigner",
 		"HybridizeFoldtreeDynamic",
 		"HybridizeProtocol",
-        #"HybridizeSetup",
 		"InsertChunkMover",
 		"MRMover",
 		"TemplateHistory",

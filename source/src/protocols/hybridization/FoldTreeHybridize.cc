@@ -1046,8 +1046,6 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		residue_sample_template_.resize(nres_nonvirt, true);
 	if (residue_sample_abinitio_.size() == 0)
 		residue_sample_abinitio_.resize(nres_nonvirt, true);
-	if (residue_max_registry_shift_.size() == 0)
-		residue_max_registry_shift_.resize(nres_nonvirt, 0);
 
 	// save target sequence
 	target_sequence_ = pose.sequence();
@@ -1115,7 +1113,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 
 	ChunkTrialMoverOP random_sample_chunk_mover(
-		new ChunkTrialMover(template_poses_, template_chunks_, true /*use_random_template*/, random_chunk, residue_sample_template_,  residue_max_registry_shift_) );
+		new ChunkTrialMover(template_poses_, template_chunks_, true /*use_random_template*/, random_chunk, residue_sample_template_) );
 
 	// ignore strand pair templates, they will be sampled by a jump mover
 	random_sample_chunk_mover->set_templates_to_ignore(strand_pairings_template_indices_);

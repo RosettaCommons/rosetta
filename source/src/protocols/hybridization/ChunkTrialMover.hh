@@ -69,8 +69,7 @@ public:
 			utility::vector1 < protocols::loops::Loops > const & template_chunks,
 			bool random_template,
 			AlignOption align_option,
-			utility::vector1<bool> residue_sample_template,
-			utility::vector1<Size> residue_max_registry_shift );
+			utility::vector1<bool> residue_sample_template );
 
 	void
 	get_alignment_from_template(
@@ -110,7 +109,6 @@ private:
 	std::set< core::Size > ignore_template_indices_;
 	utility::vector1<bool> sampling_chunk_;
 	Size max_registry_shift_global_;
-	utility::vector1 < Size > residue_max_registry_shift_;
 }; //class ChunkTrialMover
 
 } // hybridization

@@ -1061,7 +1061,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				ft_hybridize->set_filter_templates( filter_templates_ );
 
 				// allowed movement
-				ft_hybridize->set_per_residue_controls( residue_sample_template_, residue_sample_abinitio_, residue_max_registry_shift_ );
+				ft_hybridize->set_per_residue_controls( residue_sample_template_, residue_sample_abinitio_ );
 
 				// other cst stuff
 				ft_hybridize->set_task_factory( task_factory_ );
@@ -1672,7 +1672,6 @@ HybridizeProtocol::parse_my_tag(
 
 			residue_sample_template_.resize(nres_nonvirt, true);
 			residue_sample_abinitio_.resize(nres_nonvirt, true);
-			residue_max_registry_shift_.resize(nres_nonvirt, 0);
 
 			if( (*tag_it)->hasOption( "task_operations" ) ){
 				core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( *tag_it, data );
@@ -1697,12 +1696,6 @@ HybridizeProtocol::parse_my_tag(
 					bool sample_abinitio = (*tag_it)->getOption<bool>( "sample_abinitio", true );
 					for (core::Size ires=start_res; ires<=stop_res; ++ires) {
 						residue_sample_abinitio_[ires] = sample_abinitio;
-					}
-				}
-				if( (*tag_it)->hasOption( "max_registry_shift" ) ){
-					core::Size max_registry_shift = (*tag_it)->getOption<core::Size>( "max_registry_shift", 0 );
-					for (core::Size ires=start_res; ires<=stop_res; ++ires) {
-							residue_max_registry_shift_[ires] = max_registry_shift; // restraints within the domain
 					}
 				}
 			} // if tag == DetailedControls
