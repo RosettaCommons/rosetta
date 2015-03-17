@@ -65,6 +65,8 @@ namespace core {
 				BTSB_NONE=1,
 				BTSB_L_AA,
 				BTSB_D_AA,
+				BTSB_L_PRO,
+				BTSB_D_PRO,
 				BTSB_GLY,
 				
 				BTSB_UNKNOWN, //Keep second-to-last

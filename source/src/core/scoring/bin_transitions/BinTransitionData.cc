@@ -125,7 +125,7 @@ namespace core {
 						if(!matrix_initialized() || matrix_finalized()) utility_exit_with_message( "In BinTransitionData::set_up_subbins(): The matrix must be initialized but not finalized before calling this function.\n" );
 
 						/////////// FOR RESIDUE I ///////////
-						if( subbin_type_i() == BTSB_L_AA || subbin_type_i() == BTSB_D_AA || subbin_type_i() == BTSB_GLY) { 
+						if( subbin_type_i() == BTSB_L_AA || subbin_type_i() == BTSB_D_AA || subbin_type_i() == BTSB_L_PRO || subbin_type_i() == BTSB_D_PRO || subbin_type_i() == BTSB_GLY) { 
 							runtime_assert_string_msg( n_mainchain_torsions_i()==3, "In BinTransitionData::set_up_subbins(): The " + get_subbin_type_name(subbin_type_i()) + " sub-bin type requires that there be 3 mainchain torsions." );
 
 							core::Real phipsi_multiplier(1.0);
@@ -134,6 +134,11 @@ namespace core {
 								aatype=core::chemical::aa_ala;
 							} else if (subbin_type_i() == BTSB_D_AA) {
 								aatype=core::chemical::aa_ala;
+								phipsi_multiplier=-1.0;
+							} else if (subbin_type_i() == BTSB_L_PRO) {
+								aatype=core::chemical::aa_pro;
+							} else if (subbin_type_i() == BTSB_D_PRO) {
+								aatype=core::chemical::aa_pro;
 								phipsi_multiplier=-1.0;
 							} else if (subbin_type_i() == BTSB_GLY) {
 								aatype=core::chemical::aa_gly;
@@ -225,7 +230,7 @@ namespace core {
 						/////////// END FOR RESIDUE I ///////////
 
 						/////////// FOR RESIDUE I+1 ///////////
-						if( subbin_type_iplus1() == BTSB_L_AA || subbin_type_iplus1() == BTSB_D_AA || subbin_type_iplus1() == BTSB_GLY) { 
+						if( subbin_type_iplus1() == BTSB_L_AA || subbin_type_iplus1() == BTSB_D_AA || subbin_type_iplus1() == BTSB_L_PRO || subbin_type_iplus1() == BTSB_D_PRO || subbin_type_iplus1() == BTSB_GLY) { 
 							runtime_assert_string_msg( n_mainchain_torsions_iplus1()==3, "In BinTransitionData::set_up_subbins(): The " + get_subbin_type_name(subbin_type_iplus1()) + " sub-bin type requires that there be 3 mainchain torsions." );
 
 							core::Real phipsi_multiplier(1.0);
@@ -234,6 +239,11 @@ namespace core {
 								aatype=core::chemical::aa_ala;
 							} else if (subbin_type_iplus1() == BTSB_D_AA) {
 								aatype=core::chemical::aa_ala;
+								phipsi_multiplier=-1.0;
+							} else if (subbin_type_iplus1() == BTSB_L_PRO) {
+								aatype=core::chemical::aa_pro;
+							} else if (subbin_type_iplus1() == BTSB_D_PRO) {
+								aatype=core::chemical::aa_pro;
 								phipsi_multiplier=-1.0;
 							} else if (subbin_type_iplus1() == BTSB_GLY) {
 								aatype=core::chemical::aa_gly;
@@ -438,6 +448,12 @@ namespace core {
 							case BTSB_D_AA:
 								returnstring="D_AA";
 								break;
+							case BTSB_L_PRO:
+								returnstring="L_PRO";
+								break;
+							case BTSB_D_PRO:
+								returnstring="D_PRO";
+								break;	
 							case BTSB_GLY:
 								returnstring="GLY";
 								break;
