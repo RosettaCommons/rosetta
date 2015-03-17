@@ -45,6 +45,7 @@ public:
 
 	void set_score_function( core::scoring::ScoreFunctionOP sfxn );
 	void set_filter( core::Real filter );
+	core::Real get_filter() const;
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -63,7 +64,9 @@ public:
 
 	void set_cluster_by_all_atom( bool const & setting ) {  cluster_by_all_atom_ = setting; }
 
-	int processed() const { return processed_; }
+	/// @brief Return the number of poses gathered by this mover
+	/// This is the post-filtered number of poses.
+	core::Size nposes() const { return poselist.size(); }
 
 	std::vector< core::pose::Pose > & get_pose_list() { return poselist; }
 
@@ -87,7 +90,6 @@ private:
 
 	std::map< std::string, core::Real > template_scores;
 
-	int processed_;
 };
 
 
@@ -323,11 +325,9 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-	int processed() const { return processed_; }
 
 protected:
 	ClusterBaseOP cluster_base_;
-	int processed_;
 };
 
 } //namespace cluster

@@ -1,0 +1,14 @@
+-in:file:silent t288_.score.50.out
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack
+-score:weights score13_env_hb
+-in:file:fullatom
+-in:file:silent_struct_type binary
+-limit_cluster_size 15
+-limit_clusters 60
+-limit_total_structures 200
+-cluster:radius 4.0
+-out:prefix output/test_
+-cluster:input_score_filter -163

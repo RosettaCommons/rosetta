@@ -69,7 +69,7 @@ main( int argc, char * argv [] ) {
 	using namespace protocols::cluster;
 	using namespace basic::options::OptionKeys::cluster;
 
-	//option.add_relevant( OptionKeys::cluster::input_score_filter           );
+	option.add_relevant( OptionKeys::cluster::input_score_filter           );
 	option.add_relevant( OptionKeys::cluster::output_score_filter          );
 	option.add_relevant( OptionKeys::cluster::exclude_res                  );
 	option.add_relevant( OptionKeys::cluster::thinout_factor               );
@@ -109,7 +109,7 @@ main( int argc, char * argv [] ) {
 	std::cout << "                   -out:prefix  myprefix                       prefix the output structures with a string " << std::endl;
 	std::cout << "   Clustering:     -cluster:radius  <float>                    Cluster radius in A (for RMS clustering) or in inverse GDT_TS for GDT clustering. Use \"-1\" to trigger automatic radius detection" << std::endl;
 	std::cout << "                   -cluster:gdtmm                              Cluster by gdtmm instead of rms" << std::endl;
-	//std::cout << "                   -cluster:input_score_filter  <float>        Ignore structures above certain energy " << std::endl;
+	std::cout << "                   -cluster:input_score_filter  <float>        Ignore structures above certain energy " << std::endl;
 	std::cout << "                   -cluster:exclude_res <int> [<int> <int> ..] Exclude residue numbers               " << std::endl;
 	std::cout << "                   -cluster:radius        <float>              Cluster radius" << std::endl;
 	std::cout << "                   -cluster:limit_cluster_size      <int>      Maximal cluster size" << std::endl;
@@ -153,6 +153,9 @@ main( int argc, char * argv [] ) {
 	}
 
 	clustering->set_score_function( sfxn );
+	if( option[ basic::options::OptionKeys::cluster::input_score_filter ].user() ) {
+		clustering->set_filter( option[ basic::options::OptionKeys::cluster::input_score_filter ] );
+	}
 	clustering->set_cluster_radius(
 		option[ basic::options::OptionKeys::cluster::radius ]()
 	);
@@ -190,17 +193,14 @@ main( int argc, char * argv [] ) {
 
 
 	// Cluster the first up-to-400 structures by calculating a full rms matrix
-	mover = clustering;
-
 	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
-	core::Size count = 0;
-	while( input.has_another_pose() && (count < 400 ) ) {
+	while( input.has_another_pose() && (clustering->nposes() < 400 ) ) {
 		core::pose::Pose pose;
 		input.fill_pose( pose, *rsd_set );
-		mover->apply( pose );
-		count ++;
+		clustering->apply( pose );
 	}
 
+	mover = clustering;
 
 	int time_readin = time(NULL);
 	clustering->do_clustering( option[ OptionKeys::cluster::max_total_cluster ]() );

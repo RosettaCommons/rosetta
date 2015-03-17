@@ -125,7 +125,6 @@ class PoseComparator_RMSD : public PoseComparator {
 GatherPosesMover::GatherPosesMover() : Mover()
 {
 	filter_ = 1000000.0;
-	processed_ = 0;
 	cluster_by_protein_backbone_ = false;
 	cluster_by_all_atom_ = false;
 
@@ -209,20 +208,25 @@ void GatherPosesMover::set_filter( Real filter ) {
 	filter_ = filter;
 }
 
+core::Real GatherPosesMover::get_filter() const {
+	return filter_;
+}
+
 void GatherPosesMover::apply( Pose & pose ) {
 
-	core::Real score;
+	core::Real score(0.0);
 	// does pose already have score set ?
 	if ( !getPoseExtraScore( pose, "silent_score", score ) ) {
 		// if not do we have scoring function ?
+		// (Should we be falling back to score or total_score as well?)
 
 		if ( !sfxn_ ) {
-			//oh well - can't do enything ... just set it to 0.
+			//oh well - can't do anything ... just leave it at 0.
 		} else {
 			// if so - try and score the structure and set that energy column
 			////////////////// add constraints if specified by user.
 			scoring::constraints::add_constraints_from_cmdline( pose, *sfxn_ );
-			Real score = (*sfxn_)(pose)	;
+			score = (*sfxn_)(pose);
 			tr.Info << "RESCORING: " << core::pose::extract_tag_from_pose( pose )<< std::endl;
 			setPoseExtraScore( pose, "silent_score", score );
 
@@ -235,6 +239,7 @@ void GatherPosesMover::apply( Pose & pose ) {
 		}
 
 		// remember tag!
+		// RM: Should this be outside the getPoseExtraScore block?
 		tag_list.push_back( core::pose::extract_tag_from_pose( pose ) );
 	}
 
@@ -252,14 +257,16 @@ void GatherPosesMover::apply( Pose & pose ) {
 		setPoseExtraScore( pose, "silent_score", score );
 	}
 
-	tr.Info << "Adding struc: " << score << std::endl;
-
 	// filter structures if the filter is active
-	if ( score > filter_ ) return; // ignore pose if filter value is too high
+	if ( score > filter_ ) {
+		tr.Info << "Ignoring structure " << core::pose::extract_tag_from_pose( pose ) << " because score " << score << " is greater than threshold " << filter_ << std::endl;
+		return; // ignore pose if filter value is too high
+	}
+
+	tr.Info << "Adding struc: " << score << std::endl;
 
 	// now save the structure.
 	poselist.push_back( pose );
-	processed_ ++;
 	//tr.Info << "Read " << poselist.size() << " structures" << std::endl;
 }
 
@@ -391,7 +398,7 @@ void ClusterBase::add_structure( Pose & pose ) {
 
 void Cluster::shuffle(){
 	// fisher-yates
-	for(int i=member.size()-1; i>-1; i--) { 
+	for(int i=member.size()-1; i>-1; i--) {
 			 int j = numeric::random::rg().random_range(0, 100000000) % (i + 1);
 			 if(i != j) {
 				 std::swap(member[j], member[i]);
@@ -1013,7 +1020,7 @@ get_distance_measure(
 	// thing (and get_native_pose()) non-cost. For now, it's a copy unless it proves to be too slow.
 	Pose pose1_copy(pose1);
 	Pose pose2_copy(pose2);
-	
+
 	return reporter_->report_property(pose1_copy, pose2_copy);
 }
 
@@ -1051,7 +1058,6 @@ get_distance_measure(
 AssignToClustersMover::AssignToClustersMover( ClusterBaseOP cluster_base): GatherPosesMover()
 {
 	cluster_base_ = cluster_base;
-	processed_ = 0;
 }
 
 void AssignToClustersMover::apply( Pose & pose ) {
@@ -1066,18 +1072,23 @@ void AssignToClustersMover::apply( Pose & pose ) {
 		return;
 	}
 
+	//silent_score shoud be assigned in the GatherPosesMover::apply() step.
+	Real score;
+	getPoseExtraScore( pose , "silent_score", score );
+
+	if ( score > cluster_base_->get_filter() ) {
+		tr.Info << "Ignoring structure " << core::pose::extract_tag_from_pose( pose ) << " because score " << score << " is greater than threshold " << cluster_base_->get_filter() << std::endl;
+		return; // ignore pose if filter value is too high
+	}
+
 	// find the best group by looping round all the existing groups and comparing
 	// protected:
 	cluster_base_->add_structure( pose );
-	processed_ ++;
-
 
 	// to prevent memory crazyness, periodically limit back to the number of
 	// desired structures!  giving preference to low energy clusters
 	static int count=0;
 
-	Real score;
-	getPoseExtraScore(                        pose , "silent_score", score );
 	tr.Info << "Adding a "
 		<< core::pose::extract_tag_from_pose( pose )
 		<< "  " << score
