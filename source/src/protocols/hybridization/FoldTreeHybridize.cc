@@ -255,7 +255,6 @@ FoldTreeHybridize::init() {
 	auto_frag_insertion_weight_ = option[cm::hybridize::auto_frag_insertion_weight]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
 
-	initialize_pose_by_templates_ = true;
 	realign_domains_ = true;
 
 	frag_1mer_insertion_weight_ = 0.0;
@@ -1071,25 +1070,22 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		}
 	}
 
-	// Initialize the structure
-	if (initialize_pose_by_templates_) {
-		ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, false /*use_random_template*/, all_chunks, max_registry_shift_);
-		initialize_chunk_mover.set_template(initial_template_index_);
-		if (initialize_chunk_mover.has_valid_moves())
-			initialize_chunk_mover.apply(pose);
+	// Initialize the structure by stealing all chunks from one template
+	ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, false /*use_random_template*/, all_chunks);
+	initialize_chunk_mover.set_template(initial_template_index_);
+	if (initialize_chunk_mover.has_valid_moves()) initialize_chunk_mover.apply(pose);
 
-		// strand pairings
-		if (has_strand_pairings) {
-			// apply strand pairing jumps to place floating pairs
-			protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
-			jump_mover->apply_at_all_positions( pose );
-			// insert strand pairing template chunks (to place template pairs)
-			for (std::set<core::Size>::iterator pairings_iter = strand_pairings_template_indices_.begin();
-					pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter) {
-				if (floating_pairs_.count(*pairings_iter)) continue;
-				initialize_chunk_mover.set_template(*pairings_iter);
-				initialize_chunk_mover.apply(pose);
-			}
+	// strand pairings
+	if (has_strand_pairings) {
+		// apply strand pairing jumps to place floating pairs
+		protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
+		jump_mover->apply_at_all_positions( pose );
+		// insert strand pairing template chunks (to place template pairs)
+		for (std::set<core::Size>::iterator pairings_iter = strand_pairings_template_indices_.begin();
+				pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter) {
+			if (floating_pairs_.count(*pairings_iter)) continue;
+			initialize_chunk_mover.set_template(*pairings_iter);
+			initialize_chunk_mover.apply(pose);
 		}
 	}
 
@@ -1114,6 +1110,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	ChunkTrialMoverOP random_sample_chunk_mover(
 		new ChunkTrialMover(template_poses_, template_chunks_, true /*use_random_template*/, random_chunk, residue_sample_template_) );
+	random_sample_chunk_mover->set_max_registry_shift(max_registry_shift_);
 
 	// ignore strand pair templates, they will be sampled by a jump mover
 	random_sample_chunk_mover->set_templates_to_ignore(strand_pairings_template_indices_);

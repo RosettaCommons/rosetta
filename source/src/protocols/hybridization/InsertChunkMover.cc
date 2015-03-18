@@ -119,7 +119,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 								int registry_shift,
 								Size MAX_TRIAL) {
 	core::Size counter = 0;
-	TR.Debug << sequence_alignment_ << std::endl;
+	//TR.Debug << sequence_alignment_ << std::endl;
 	while (counter < MAX_TRIAL) {
 		++counter;
 		sequence_alignment_local_.clear();
@@ -132,14 +132,14 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			seqpos_pose = pose.fold_tree().downstream_jump_residue( jump_number_ );
 		}
 
-		TR.Debug << "Align Seqpos: " << seqpos_pose << std::endl;
+		//TR.Debug << "Align Seqpos: " << seqpos_pose << std::endl;
 		if (sequence_alignment_.find(seqpos_pose+registry_shift) == sequence_alignment_.end()) continue;
 		core::Size seqpos_template = sequence_alignment_.find(seqpos_pose+registry_shift)->second;
-		TR.Debug << "Found Seqpos: " << seqpos_pose+registry_shift << " -> " << seqpos_template << std::endl;
+		//TR.Debug << "Found Seqpos: " << seqpos_pose+registry_shift << " -> " << seqpos_template << std::endl;
 
 		if (align_to_ss_only_ && template_pose_->secstruct(seqpos_template) == 'L') continue;
 
-		TR.Debug << "Passed SS" << std::endl;
+		//TR.Debug << "Passed SS" << std::endl;
 
 		if (template_pose_->secstruct(seqpos_template) != 'L') {
 			secstruct_ = template_pose_->secstruct(seqpos_template);
@@ -162,7 +162,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			seqpos_aligned_start_ = ires_pose;
 
 			if (discontinued_upper(*template_pose_,jres_template)) {
-				TR.Debug << "Disconnect upper: " << ires_pose << " "  << jres_template << std::endl;
+				//TR.Debug << "Disconnect upper: " << ires_pose << " "  << jres_template << std::endl;
 				break;
 			}
 		}
@@ -180,7 +180,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			seqpos_aligned_stop_ = ires_pose;
 
 			if (discontinued_lower(*template_pose_,jres_template)) {
-				TR.Debug << "Disconnect lower: " << ires_pose << " "  << jres_template << std::endl;
+				//TR.Debug << "Disconnect lower: " << ires_pose << " "  << jres_template << std::endl;
 				break;
 			}
 		}
@@ -225,7 +225,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 
 		// fpd we need at least 3 residues aligned
 		if (atom_map_count >=3) {
-			TR.Debug << sequence_alignment_local_ << std::endl;
+			//TR.Debug << sequence_alignment_local_ << std::endl;
 			return true;
 		}
 	}

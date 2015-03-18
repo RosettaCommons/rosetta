@@ -202,7 +202,6 @@ private:
 	core::Size max_registry_shift_;
 	std::string cst_file_;
 
-	bool initialize_pose_by_templates_;
 	bool realign_domains_;
 	core::Size initial_template_index_;
 	core::scoring::ScoreFunctionOP scorefxn_;

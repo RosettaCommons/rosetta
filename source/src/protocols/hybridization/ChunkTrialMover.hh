@@ -62,26 +62,21 @@ public:
 			utility::vector1 < protocols::loops::Loops > const & template_chunks,
 			bool random_template = true,
 			AlignOption align_option = all_chunks,
-			Size max_registry_shift = 0);
-
-	ChunkTrialMover(
-			utility::vector1 < core::pose::PoseCOP > const & template_poses,
-			utility::vector1 < protocols::loops::Loops > const & template_chunks,
-			bool random_template,
-			AlignOption align_option,
-			utility::vector1<bool> residue_sample_template );
+			utility::vector1<bool> residue_sample_template=utility::vector1<bool>() );
 
 	void
 	get_alignment_from_template(
 			core::pose::PoseCOP  template_pose,
 			std::map <core::Size, core::Size> & seqpos_alignment );
 
+	void apply(core::pose::Pose & pose);
+
 	void set_template(core::Size const template_number);
+	void set_max_registry_shift( core::Size max_registry_shift_in );
 	core::Size template_number();
 	void pick_random_template();
 	void pick_random_chunk(core::pose::Pose & pose);
 	Size trial_counter(Size ires);
-	void apply(core::pose::Pose & pose);
 	std::string get_name() const;
 	bool has_valid_moves( ) { return has_valid_moves_; }
 
@@ -93,9 +88,7 @@ private:
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
 	utility::vector1 < Loops > template_chunks_;
 
-	bool random_template_;
-
-	bool has_valid_moves_;
+	bool random_template_, has_valid_moves_;
 
 	AlignOption align_option_;
 	InsertChunkMover align_chunk_;

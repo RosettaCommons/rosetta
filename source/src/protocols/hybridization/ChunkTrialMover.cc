@@ -64,13 +64,13 @@ ChunkTrialMover::ChunkTrialMover(
 					utility::vector1 < protocols::loops::Loops > const & template_chunks,
 					bool random_template,
 					AlignOption align_option,
-					Size max_registry_shift ) :
+					utility::vector1<bool> sampling_chunk_in ) :
 		template_poses_(template_poses),
 		template_chunks_(template_chunks),
 		random_template_(random_template),
 		align_option_(align_option),
 		align_chunk_(),
-		max_registry_shift_global_(max_registry_shift)
+		max_registry_shift_global_(0)
 {
 	moves::Mover::type( "ChunkTrialMover" );
 
@@ -84,6 +84,7 @@ ChunkTrialMover::ChunkTrialMover(
 	}
 	has_valid_moves_ = true;
 
+	// sequence mapping
 	sequence_alignments_.clear();
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		std::map <core::Size, core::Size> sequence_alignment;
@@ -91,6 +92,8 @@ ChunkTrialMover::ChunkTrialMover(
 		get_alignment_from_template(template_poses_[i_template], sequence_alignment);
 		sequence_alignments_.push_back(sequence_alignment);
 	}
+
+	// template coverage
 	highest_tmpl_resnum_ = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		for (core::Size ires=1; ires<=template_poses_[i_template]->total_residue(); ++ires) {
@@ -106,52 +109,11 @@ ChunkTrialMover::ChunkTrialMover(
 			residue_covered_by_template_[ires_template] += 1;
 		}
 	}
-}
 
-ChunkTrialMover::ChunkTrialMover(
-			utility::vector1 < core::pose::PoseCOP > const & template_poses,
-			utility::vector1 < protocols::loops::Loops > const & template_chunks,
-			bool random_template,
-			AlignOption align_option,
-			utility::vector1<bool> sampling_chunk_in ) :
-	template_poses_(template_poses),
-	template_chunks_(template_chunks),
-	random_template_(random_template),
-	align_option_(align_option),
-	align_chunk_()
-{
-	moves::Mover::type( "ChunkTrialMover" );
-
-	Size count = 0;
-	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
-		if (template_chunks_[i_template].size() != 0) ++count;
-	}
-	if (count == 0) {
-		has_valid_moves_ = false;
-		return;
-	}
-	has_valid_moves_ = true;
-
-	sequence_alignments_.clear();
-	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
-		std::map <core::Size, core::Size> sequence_alignment;
-		//TR << "template: " << i_template << std::endl;
-		sequence_alignment.clear();
-		get_alignment_from_template(template_poses_[i_template], sequence_alignment);
-		sequence_alignments_.push_back(sequence_alignment);
-	}
-
-	highest_tmpl_resnum_ = 0;
-	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
-		for (core::Size ires=1; ires<=template_poses_[i_template]->total_residue(); ++ires) {
-			if (template_poses_[i_template]->pdb_info()->number(ires) > static_cast<int>(highest_tmpl_resnum_)) {
-				highest_tmpl_resnum_ = template_poses_[i_template]->pdb_info()->number(ires);
-			}
-		}
-	}
-
+	// allowed positions
 	sampling_chunk_ = sampling_chunk_in;
 }
+
 
 void
 ChunkTrialMover::get_alignment_from_template(
@@ -179,19 +141,21 @@ void ChunkTrialMover::pick_random_template()
 	}
 }
 
-void ChunkTrialMover::set_template(core::Size const template_number)
-{
+void ChunkTrialMover::set_template(core::Size const template_number) {
 	template_number_ = template_number;
 }
 
-core::Size ChunkTrialMover::template_number()
-{
+core::Size ChunkTrialMover::template_number() {
 	return template_number_;
 }
 
+void ChunkTrialMover::set_max_registry_shift( core::Size max_registry_shift_in ) {
+	max_registry_shift_global_ = max_registry_shift_in;
+}
+
+
 void
-ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
-{
+ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
 	int ntrials=500;
 
 	bool chosen_good_jump=false;
@@ -215,12 +179,17 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
 		}
 		if (! chosen_good_jump ) continue;
 
+		// check if we're allowed to insert here
 		chosen_good_jump = false;
-		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
-			if ( *it > sampling_chunk_.size() ) continue;
-			if (sampling_chunk_[*it]==true) {
-				chosen_good_jump=true;
-				break;
+		if (sampling_chunk_.size() == 0) {
+				chosen_good_jump = true;
+		} else {
+			for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
+				if (*it > sampling_chunk_.size() ) continue;
+				if (sampling_chunk_[*it]==true) {
+					chosen_good_jump=true;
+					break;
+				}
 			}
 		}
 	}
