@@ -37,10 +37,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <core/import_pose/pose_stream/util.cc>
+#include <core/import_pose/pose_stream/util.hh>
+#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -133,7 +131,6 @@ int main(int argc, char* argv[]) {
 	// define protocol specific options
 	OPT(contactMap::prefix);
 	OPT(contactMap::distance_cutoff);
-	OPT(contactMap::energy_cutoff);
 	OPT(contactMap::region_def);
 	OPT(contactMap::row_format);
 	OPT(contactMap::distance_matrix);
@@ -153,54 +150,35 @@ int main(int argc, char* argv[]) {
 	// options, random initialization
 	devel::init(argc, argv);
 
-	// usage declaration
-	std::string usage("");
-	usage
-			+= "\n\nusage:  create_heatmap [options]\n";
-	usage += "\tTo see a list of other valid options, use the option -help.\n";
-
-	// check if files to process have been specified
-	if (!option[in::file::silent].user() && !option[in::file::s].user() && !option[in::file::l].user()) {
-		std::cerr << usage << std::endl;
-		std::exit(1);
-	}
-
 	// initialize variables
 	core::chemical::ResidueTypeSetCOP rsd_set =
 			ChemicalManager::get_instance()->residue_type_set(
 					option[in::file::residue_type_set]());
 
-	PoseInputStreamOP input;
 	core::pose::Pose pose;
 
 	// instantiate PoseInputStream based on input option
-	if (option[in::file::silent].user()) {
-		if (option[in::file::tags].user()) {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream(option[in::file::silent](),
-					option[in::file::tags](), option[contactMap::energy_cutoff]()) );
-		} else {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream(option[in::file::silent](),
-					option[contactMap::energy_cutoff]()) );
-		}
-	} else if (option[in::file::s].user()) {
-		input = PoseInputStreamOP( new PDBPoseInputStream(option[in::file::s]()) );
-	}else if ( option[ in::file::l ].user() ) {
-		input = PoseInputStreamOP( new PDBPoseInputStream( core::import_pose::pose_stream::filenames_from_list_file( option[ in::file::l ]() ) ) );
+	MetaPoseInputStream input( streams_from_cmd_line() );
+
+	// exit if no poses are supplied
+	if (! input.has_another_pose()) {
+		tr.Info << "No pose supplied - exiting without further action! "<< std::endl;
+		return 0;
 	}
 
-	// use first pose initialize ContactMaps
-	input->fill_pose(pose, *rsd_set);
+	// use first pose to initialize ContactMaps
+	input.fill_pose(pose, *rsd_set);
 
 	// process region_def option and initialize ContactMaps
 	utility::vector1<ContactMap> maps;
 	maps = processRegions(option[contactMap::region_def](), pose);
 
 	// reset PoseInputStream
-	input->reset();
+	input.reset();
 
 	// process poses
-	while (input->has_another_pose()) {
-		input->fill_pose(pose, *rsd_set);
+	while (input.has_another_pose()) {
+		input.fill_pose(pose, *rsd_set);
 		// loop over ContactMaps and call apply function
 		for (core::Size i=1 ; i <= maps.size(); i++) {
 			maps[i].apply(pose);

@@ -3736,11 +3736,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default = '10.0',
 			desc = "Cutoff Backbone distance for two atoms to be considered interacting"
 		),
-		Option( 'energy_cutoff', 'Real',
-			default = '1.0',
-			lower = '0.0', upper = '1.0',
-			desc= "Energy_Cutoff (percentage value - only affecting silent file input)"
-		),
 		Option( 'region_def', 'String',
 			default = '',
 			desc = "Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X"
