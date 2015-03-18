@@ -2411,7 +2411,10 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 	// amw: this should come from somewhere else that has the opportunity to define how many bbs the rotlib depends on!
 	// amw: it could come from the rsd type via the params file but doesn't currently; it could also come from the rotlib
 	// this is compatible with THREE backbone torsion beta rotlibs
-	Size n_rotlib_bb( rsd_type.mainchain_atoms().size() - 1 ); // 2 for alpha 3 for beta
+	//Size n_rotlib_bb( rsd_type.mainchain_atoms().size() - 1 ); // 2 for alpha 3 for beta
+	// because of the prohibitive size of proper beta AA rotamer libraries
+	// we have to keep using the bad ones for a while...
+	Size n_rotlib_bb( 2 );
 	chemical::AA aan( rsd_type.aa() );
 
 	if ( ncaa_rotlibs_.find( aa_name3 ) == ncaa_rotlibs_.end() ) {
