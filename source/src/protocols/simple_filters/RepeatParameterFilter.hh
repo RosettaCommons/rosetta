@@ -61,8 +61,9 @@ namespace protocols {
             void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
         private:
             Size numb_repeats_;
+						Size startAtRepeat_;
             std::string param_type_;
-            Real min_;
+						Real min_;
             Real max_;
             bool r_handed_;
             bool filter_;
