@@ -32,12 +32,34 @@
 
 #include <devel/init.hh>
 
+// C++ implementation of PyRosetta T400_Refinement test
+#include <core/fragment/ConstantLengthFragSet.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
+void T400_Refinement()
+{
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
+	movemap->set_bb(true);
+	movemap->set_bb(10, false);
+
+	core::pose::PoseOP pose_frag = core::import_pose::pose_from_pdb("src/python/bindings/test/data/test_fragments.pdb"); // pose_frag = pose_from_pdb("../test/data/test_fragments.pdb")
+
+	core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet(3, "src/python/bindings/test/data/test3_fragments") ); 	// fragset3mer = ConstantLengthFragSet(3, "../test/data/test3_fragments")# "aatestA03_05.200_v1_3")
+	core::fragment::ConstantLengthFragSetOP fragset9mer( new core::fragment::ConstantLengthFragSet(9, "src/python/bindings/test/data/test9_fragments") ); 	// fragset9mer = ConstantLengthFragSet(9, "../test/data/test9_fragments")# "aatestA09_05.200_v1_3")
+
+	movemap->set_bb(1);
+	protocols::simple_moves::ClassicFragmentMoverOP mover_3mer( new protocols::simple_moves::ClassicFragmentMover(fragset3mer, movemap) );
+	mover_3mer->apply( *pose_frag.get() );
+}
+
+
 int main( int argc, char * argv [] )
 {
 	using basic::T;
 	using namespace core;
 
 	devel::init(argc, argv);
+
+	T400_Refinement();
 
 	core::pose::Pose pose;
 	core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");

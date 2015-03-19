@@ -31,7 +31,7 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     TR = Tracer(verbose)
     TR('Running Rosetta source release: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    release_name = 'rosetta.source.{}:{}'.format(config['branch'], config['revision'])
+    release_name = 'rosetta.source.{}-{}'.format(config['branch'], config['revision'])
     archive = working_dir + '/' + release_name + '.tar.bz2'
 
     # Creating git repository with source code, only for regular (not 'commits') branches
@@ -89,7 +89,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     TR = Tracer(verbose)
     TR('Running Rosetta source release: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    release_name = 'rosetta.binary.{}.{}:{}'.format(platform['os'], config['branch'], config['revision'])
+    release_name = 'rosetta.binary.{}.{}-{}'.format(platform['os'], config['branch'], config['revision'])
     archive = working_dir + '/' + release_name + '.tar.bz2'
 
     # Creating git repository with source code, only for regular (not 'commits') branches
@@ -210,7 +210,7 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
             #results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
             json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
         else:
-            release_name = 'PyRosetta.{kind}.{os}.{branch}:{revision}'.format(kind=kind, os=platform['os'], branch=config['branch'], revision=config['revision'])
+            release_name = 'PyRosetta.{kind}.{os}.{branch}-{revision}'.format(kind=kind, os=platform['os'], branch=config['branch'], revision=config['revision'])
             archive = working_dir + '/' + release_name + '.tar.bz2'
 
             file_list = 'app database demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python rosetta.so'.split()  # rosetta dir is spefial, we omit it here  # ignore_list: _build_ .test.output

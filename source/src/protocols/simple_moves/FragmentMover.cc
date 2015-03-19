@@ -277,6 +277,8 @@ ClassicFragmentMover::set_defaults() {
 	min_overlap_ = 0;
 	min_frag_length_ = 0;
 	use_predefined_window_start_ = false;
+
+	predefined_window_start_ = 0;
 }
 
 // accept with probability 1 if the fragment window is centered on the center of the protein.

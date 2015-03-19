@@ -26,6 +26,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>

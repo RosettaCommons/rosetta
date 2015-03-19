@@ -39,6 +39,17 @@ void __core_by_hand_ending__()
     expose_pair_types<core::Real, std::string>("Real", "string");
     expose_pair_types<std::string, core::Real>("string", "Real");
 
+
+    expose_pair_types<core::Size, core::Real>("Size", "Real");
+
+
+	// Some types for core/conformation/symmetry/SymmetryInfo.hh templates
+    expose_pair_types<core::Size, std::string>("Size", "string");
+	expose_pair_types<core::Size, core::conformation::symmetry::SymDof>("Size", "SymDof");
+	//expose_pair_types<core::Size, core::conformation::symmetry::SymmetryInfo::WtedClones>("Size", "SymmetryInfo_WtedClones");
+	expose_pair_types<char, std::pair<core::Size, core::Size> >("char", "pair_Size_Size");
+
+
     wrap_vector1<core::scoring::ScoreType,  CP_CNCR, CP_CCR>("vector1_ScoreType");
     wrap_vector1<core::id::AtomID, CP_REF,CP_REF>("vector1_AtomID");
 

@@ -846,9 +846,10 @@ def get_all_rosetta_objs(mini_path):
             if   platform.release()[:2] == '10': lib_path = 'build/src/'+mode+'/macos/10.6/64/x86/gcc/'
             elif platform.release()[:2] == '11': lib_path = 'build/src/'+mode+'/macos/10.7/64/x86/gcc/'
             elif platform.release()[:2] == '12': lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
-            elif platform.release()[:2] == '13':
+            elif platform.release()[:2] == '13': lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/gcc/'
+            elif platform.release()[:2] == '14':
                 #lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/clang/';  version_add_on = execute("Getting GCC version...", 'clang --version', return_='output').split()[3] + '/default/'  #'5.0/default/'
-                lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/gcc/'
+                lib_path = 'build/src/'+mode+'/macos/10.10/64/x86/gcc/'
 
             else: print 'Unknown MacOS version:', platform.release()[:2];  sys.exit(1)  #lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
 
@@ -1736,7 +1737,9 @@ class ModuleBuilder:
             if os.path.isfile(self.all_at_once_lib): os.remove(self.all_at_once_lib)
 
             def generate():
-                if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_55_0 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (self.gccxml_options, self.all_at_once_source_cpp, self.all_at_once_xml, self.cpp_defines), Options.continue_ ): return
+                # --gccxml-cxxflags "--sysroot=$HOME/prefix/macports.yosemite"
+                if execute('Generating XML representation...', 'gccxml {gccxml_options} {source} -fxml={xml} {defines} -I. -I../external/include -I../external/boost_1_55_0 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS {includes} ' \
+                           .format(gccxml_options=self.gccxml_options, source=self.all_at_once_source_cpp, xml=self.all_at_once_xml, defines=self.cpp_defines, includes=self.include_paths), Options.continue_ ): return
 
                 namespaces_to_wrap = ['::'+self.path.replace('/', '::')+'::']
                 # Temporary injecting Mover in to protocols level
