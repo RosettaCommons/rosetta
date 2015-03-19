@@ -765,6 +765,7 @@ sources = {
 		"SaltBridgeCalculator",
 		"SemiExplicitWaterUnsatisfiedPolarsCalculator",
 		"SequenceComparison",
+		"SHOBuriedUnsatisfiedPolarsCalculator",
 		"SurfaceCalculator",
 	],
         "protocols/toolbox/rigid_body": [

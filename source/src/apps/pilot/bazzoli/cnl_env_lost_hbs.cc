@@ -697,7 +697,7 @@ try {
 	// find hbonds between constellation partners and ligand in the mutant pose.
 	// The output is a list of N blocks, where N is the size of env_hb_ptns. The
 	// ith block lists the hbond partners in the mutant pose of the constellation
-	// partner atom at env_hb_ptnsp[i] (i=0,...,N-1). For each block, partners
+	// partner atom at env_hb_ptns[i] (i=0,...,N-1). For each block, partners
 	// are listed according to function hbonds_to_ptnres()
 	std::cout << std::endl << "### conserved H-bonds to the ligand in the mutant pose: "
 		<< std::endl;
@@ -728,7 +728,8 @@ try {
 		std::cout << ':' << std::endl;
 
 		Size hbs = hbonds_to_ptnres(envat, LIGIDX, mut_ps, hb_db, hb_set, std::cout);
-		lost_hbs += (i->second.size() - hbs);
+		if(i->second.size() > hbs)
+			lost_hbs += (i->second.size() - hbs);
 	}
 
 	std::cout << std::endl << "### number of H-bonds lost by the environment: " <<

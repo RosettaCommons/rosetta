@@ -15,6 +15,8 @@
 #ifndef INCLUDED_core_scoring_geometric_solvation_ExactOccludedHbondSolEnergy_hh
 #define INCLUDED_core_scoring_geometric_solvation_ExactOccludedHbondSolEnergy_hh
 
+#include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.fwd.hh>
+
 #include <core/types.hh>
 
 // Package headers
@@ -163,6 +165,20 @@ public:
 	  hbonds::HBEvalTuple const & hbond_eval_type
 	) const;
 
+	/// @brief computes the SHO energy of a donor atom
+	core::Real compute_donor_atom_energy(
+		conformation::Residue const & polar_rsd,
+		core::Size polar_resnum,
+		core::Size const polar_atom,
+		pose::Pose const & pose) const;
+
+	/// @brief computes the SHO energy of an acceptor atom
+	core::Real compute_acceptor_atom_energy(
+		conformation::Residue const & polar_rsd,
+		core::Size polar_resnum,
+		core::Size const polar_atom,
+		pose::Pose const & pose) const;
+
 	core::Real compute_polar_group_sol_energy(
 		pose::Pose const & pose,
 		conformation::Residue const & polar_rsd,
@@ -189,6 +205,8 @@ public:
 
 private:
 
+	void allocate_grid_of_occluded_sites();
+
 	bool const exact_occ_skip_Hbonders_;
 	bool const exact_occ_include_Hbond_contribution_;
 	bool const exact_occ_pairwise_;
@@ -209,8 +227,11 @@ private:
 
 	virtual
 	core::Size version() const;
-
 };
+
+extern core::Real const LK_MATCHING_WEIGHT_EXACT;
+
+ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline();
 
 } // geometric_solvation
 } // scoring

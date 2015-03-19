@@ -2689,7 +2689,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'neighbor_by_distance_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator'),
 		Option( 'inter_group_neighbors_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator'),
 		Option( 'semiex_water_burial_cutoff', 'Real', default='0.25', desc='water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)' ),
-	),
+		Option_Group('shobuns', # SHOBuriedUnsatisfiedPolarsCalculator
+			Option('tgt_amino', 'String', desc = 'Target amino acid type', default = '_none_'),
+			Option('tgt_atom', 'String', desc = 'Target atom name', default = '_none_'),
+			Option('tgt_res', 'File', desc = 'File specifying a subset of target residues', default = ''),
+			Option('sho_cutoff', 'Real', desc = 'max SHO value for an atom to be considered solvent exposed', default = '4.9'),
+		), # shobuns
+	), # pose_metrics
 
 	# Rigid body motion options ---------------------------------------------------------------------------------------
 	Option_Group( 'rigid',

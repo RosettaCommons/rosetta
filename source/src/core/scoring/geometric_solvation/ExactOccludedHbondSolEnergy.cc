@@ -112,22 +112,15 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
+
 /// @details This must return a fresh instance of the ExactOccludedHbondSolEnergy class,
 /// never an instance already in use
 methods::EnergyMethodOP
 ExactOccludedHbondSolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ExactOccludedHbondSolEnergy(
-		basic::options::option[ basic::options::OptionKeys::score::exact_occ_skip_Hbonders ],
-		basic::options::option[ basic::options::OptionKeys::score::exact_occ_include_Hbond_contribution ],
-		basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise ],
-		basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise_by_res ],
-		basic::options::option[ basic::options::OptionKeys::score::exact_occ_split_between_res ],
-		! basic::options::option[ basic::options::OptionKeys::score::exact_occ_self_res_no_occ ],
-		basic::options::option[basic::options::OptionKeys::score::exact_occ_radius_scaling]
- ) );
 
+	return create_ExactSHOEnergy_from_cmdline();
 }
 
 ScoreTypes
@@ -340,6 +333,19 @@ WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_
 
 ExactOccludedHbondSolEnergy::~ExactOccludedHbondSolEnergy() {}
 
+
+void ExactOccludedHbondSolEnergy::allocate_grid_of_occluded_sites() {
+	occluded_sites_.clear();
+	occluded_sites_.resize(GridInfo::get_instance()->xnum_points());
+	for (core::Size tx=0;tx<GridInfo::get_instance()->xnum_points();tx++){
+		occluded_sites_[tx].resize(GridInfo::get_instance()->ynum_points());
+		for (core::Size ty=0;ty<GridInfo::get_instance()->ynum_points();ty++){
+			occluded_sites_[tx][ty].resize(GridInfo::get_instance()->znum_points());
+		}
+	}
+}
+
+
 ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	bool const exact_occ_skip_Hbonders,
 	bool const exact_occ_include_Hbond_contribution,
@@ -358,7 +364,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	exact_occ_split_between_res_( exact_occ_split_between_res ),
 	exact_occ_self_res_occ_( exact_occ_self_res_occ ),
 	occ_radius_scaling_( occ_radius_scaling ),
-	hbondoptions_(hbonds::HBondOptionsOP( new HBondOptions ) ),
+	hbondoptions_( hbonds::HBondOptionsOP( new HBondOptions ) ),
 	hb_database_(HBondDatabase::get_database()),
 	verbose_( verbose )
 {
@@ -373,19 +379,9 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	// Keep a copy of the AtomTypeSet (to lookup atomic radii)
 	atom_type_set_ptr_ = chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD );
 
-
-
-	// Allocate memory for grid of occluded sites
-	occluded_sites_.clear();
-	occluded_sites_.resize(GridInfo::get_instance()->xnum_points());
-	for (core::Size tx=0;tx<GridInfo::get_instance()->xnum_points();tx++){
-		occluded_sites_[tx].resize(GridInfo::get_instance()->ynum_points());
-		for (core::Size ty=0;ty<GridInfo::get_instance()->ynum_points();ty++){
-			occluded_sites_[tx][ty].resize(GridInfo::get_instance()->znum_points());
-		}
-	}
-
+	allocate_grid_of_occluded_sites();
 }
+
 
 ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolEnergy const & src ):
 	parent( src ),
@@ -396,33 +392,21 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolE
 	exact_occ_split_between_res_( src.exact_occ_split_between_res_ ),
 	exact_occ_self_res_occ_( src.exact_occ_self_res_occ_ ),
 	occ_radius_scaling_( src.occ_radius_scaling_ ),
-  hb_database_(HBondDatabase::get_database()),
+	hbondoptions_(src.hbondoptions_),
+  hb_database_(src.hb_database_),
 	verbose_( src.verbose_ ),
 	atom_type_set_ptr_( src.atom_type_set_ptr_ )
 {
-	if ( verbose_ ) TR <<"ExactOccludedHbondSolEnergy constructor" << std::endl;
-	if ( exact_occ_split_between_res_ && ! exact_occ_pairwise_ ) {
-		TR << "Error - cannot split occ energy between residues unless pairwise calculations are used!" << std::endl;
-		exit(1);
-	}
-
-	// Allocate memory for grid of occluded sites
-	occluded_sites_.clear();
-	occluded_sites_.resize(GridInfo::get_instance()->xnum_points());
-	for (core::Size tx=0;tx<GridInfo::get_instance()->xnum_points();tx++){
-		occluded_sites_[tx].resize(GridInfo::get_instance()->ynum_points());
-		for (core::Size ty=0;ty<GridInfo::get_instance()->ynum_points();ty++){
-			occluded_sites_[tx][ty].resize(GridInfo::get_instance()->znum_points());
-		}
-	}
-
+	allocate_grid_of_occluded_sites();
 }
+
 
 methods::EnergyMethodOP
 ExactOccludedHbondSolEnergy::clone() const
 {
 	return methods::EnergyMethodOP( new ExactOccludedHbondSolEnergy( *this ) );
 }
+
 
 void
 ExactOccludedHbondSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
@@ -466,139 +450,23 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 	core::Size polar_resnum = (core::Size) polar_rsd.seqpos();
 	core::Real residue_geosol(0.);
-	chemical::AtomTypeSetCOP atom_type_set_ptr( atom_type_set_ptr_ );
 
 	// loop over donors in polar_rsd
 	for ( chemical::AtomIndices::const_iterator
-					hnum  = polar_rsd.Hpos_polar().begin(),
-					hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+		hnum  = polar_rsd.Hpos_polar().begin(),
+		hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+
 		Size const polar_atom( *hnum );
-		Size const base_atom( polar_rsd.atom_base( polar_atom ) );
-		HBEvalTuple const curr_hbond_eval_type( get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other );
-
-		// Figure out max LK energy
-		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-		core::Real max_possible_LK = (*atom_type_set_ptr)[polar_rsd.atom_type_index(base_atom)].lj_radius();
-		if ( ( base_atom_name == " N  " ) && polar_rsd.is_lower_terminus() ) max_possible_LK /= 3; // charged N-terminus
-		if ( base_atom_name == " NZ " ) max_possible_LK /= 3; // Lys
-		if ( base_atom_name == " ND2" ) max_possible_LK /= 2; // Asn
-		if ( base_atom_name == " NE2" ) max_possible_LK /= 2; // Gln
-		if ( base_atom_name == " NH1" ) max_possible_LK /= 2; // Arg
-		if ( base_atom_name == " NH2" ) max_possible_LK /= 2; // Arg
-		// Note: inner nitrogen of Arg (NE) is extra strong, since it's the same atom type as the other two but doesn't get
-		// cut in half because there's only one proton...
-		//			TR << "jk max LK for donor with base " << base_atom_name << " is  " << max_possible_LK << std::endl;
-
-		// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
-		max_possible_LK = -5.;
-
-		// Compute Ebulk (using the LK energy)
-		core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
-		core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type.eval_type());
-		core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
-
-		// This grid constant is the denominator in computing solvation energies,
-		// it depends on the grid dimensions, and sets the max possible solvation energy (in this case to match LK)
-		core::Real const grid_constant = sum_water_weights + Ebulk_weight;
-
-		core::Real polar_group_energy = 0.;
-		if ( ! exact_occ_pairwise_ && ! exact_occ_pairwise_by_res_ ) {
-			polar_group_energy = compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
-		} else {
-			// loop over all atoms of neighboring residues, INCLUDING SELF
-			core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
-			utility::vector1 <core::Size> neighborlist;
-			neighborlist.push_back( polar_resnum);
-			for ( core::graph::Graph::EdgeListConstIter
-							neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
-							neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
-						neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
-				neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
-			}
-			for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
-				core::Size const occ_resnum( neighborlist[occ_inx] );
-				conformation::Residue const occ_rsd = pose.residue(occ_resnum);
-				if ( exact_occ_pairwise_by_res_ ) {
-					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
-						true, occ_resnum );
-				} else {
-					for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
-						polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-							grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
-							true, occ_resnum, true, occ_atomno );
-					}
-				}
-			}
-		}
-		residue_geosol += polar_group_energy;
-
-		//solvation energy for donor
-		//		std::cout << "jk EXACT Donor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
-
+		residue_geosol += compute_donor_atom_energy(polar_rsd, polar_resnum, polar_atom, pose);
 	}
 
 	// loop over acceptors in polar_rsd
 	for ( chemical::AtomIndices::const_iterator
-					anum  = polar_rsd.accpt_pos().begin(),
-					anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
+		anum  = polar_rsd.accpt_pos().begin(),
+		anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
+
 		Size const polar_atom( *anum );
-		Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
-		hbonds::HBEvalTuple const curr_hbond_eval_type( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
-
-		// Figure out max LK energy
-		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-		core::Real max_possible_LK = (*atom_type_set_ptr)[ polar_rsd.atom_type_index( polar_atom ) ].lk_dgfree();
-		//			TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
-
-		// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
-		max_possible_LK = -5.;
-
-		// Compute Ebulk (using the LK energy)
-		core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
-		core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type.eval_type() );
-		core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
-		// This grid constant is the denominator in computing solvation energies,
-		// it depends on the grid dimensions, and sets the max possible solvation energy (in this case to match LK)
-		core::Real const grid_constant = sum_water_weights + Ebulk_weight;
-
-		core::Real polar_group_energy = 0.;
-		if ( ! exact_occ_pairwise_ && ! exact_occ_pairwise_by_res_ ) {
-			polar_group_energy = compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
-		} else {
-			// loop over all atoms of neighboring residues, INCLUDING SELF
-			core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
-			utility::vector1 <core::Size> neighborlist;
-			neighborlist.push_back( polar_resnum);
-			for ( core::graph::Graph::EdgeListConstIter
-							neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
-							neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
-						neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
-				neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
-			}
-			for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
-				core::Size const occ_resnum( neighborlist[occ_inx] );
-				conformation::Residue const occ_rsd = pose.residue(occ_resnum);
-				if ( exact_occ_pairwise_by_res_ ) {
-					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-																															 grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
-																															 true, occ_resnum );
-				} else {
-					for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
-						polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-																																 grid_constant,  WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
-																																 true, occ_resnum, true, occ_atomno );
-					}
-				}
-			}
-		}
-		residue_geosol += polar_group_energy;
-
-		//solvation energy for acceptor
-		//		std::cout << "jk EXACT Acceptor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
-
+		residue_geosol += compute_acceptor_atom_energy(polar_rsd, polar_resnum, polar_atom, pose);
 	}
 
 	if ( exact_occ_split_between_res_ ) {
@@ -610,6 +478,168 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 	emap[ occ_sol_exact ] += LK_MATCHING_WEIGHT_EXACT * residue_geosol;
 
+}
+
+///
+/// @brief computes the SHO energy of a donor atom
+///
+/// @param[in] polar_rsd residue to which the atom belongs
+/// @param[in] polar_resnum index of the residue in its pose
+/// @param[in] polar_atom index of the atom in the residue
+/// @param[in] pose the pose
+///
+/// @author John Karanicolas
+/// @author Andrea Bazzoli (bazzoli@ku.edu)
+///
+core::Real ExactOccludedHbondSolEnergy::compute_donor_atom_energy(
+	conformation::Residue const & polar_rsd,
+	core::Size polar_resnum,
+	core::Size const polar_atom,
+	pose::Pose const & pose) const {
+
+	Size const base_atom( polar_rsd.atom_base( polar_atom ) );
+	chemical::AtomTypeSetCOP atom_type_set_ptr( atom_type_set_ptr_ );
+
+	HBEvalTuple const curr_hbond_eval_type( get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other );
+
+	// Figure out max LK energy
+	std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+
+	core::Real max_possible_LK = (*atom_type_set_ptr)[polar_rsd.atom_type_index(base_atom)].lj_radius();
+	if ( ( base_atom_name == " N  " ) && polar_rsd.is_lower_terminus() ) max_possible_LK /= 3; // charged N-terminus
+	if ( base_atom_name == " NZ " ) max_possible_LK /= 3; // Lys
+	if ( base_atom_name == " ND2" ) max_possible_LK /= 2; // Asn
+	if ( base_atom_name == " NE2" ) max_possible_LK /= 2; // Gln
+	if ( base_atom_name == " NH1" ) max_possible_LK /= 2; // Arg
+	if ( base_atom_name == " NH2" ) max_possible_LK /= 2; // Arg
+	// Note: inner nitrogen of Arg (NE) is extra strong, since it's the same atom type as the other two but doesn't get
+	// cut in half because there's only one proton...
+	//			TR << "jk max LK for donor with base " << base_atom_name << " is  " << max_possible_LK << std::endl;
+
+	// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
+	max_possible_LK = -5.;
+
+	// Compute Ebulk (using the LK energy)
+	core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
+	core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type.eval_type());
+	core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
+
+	// This grid constant is the denominator in computing solvation energies,
+	// it depends on the grid dimensions, and sets the max possible solvation energy (in this case to match LK)
+	core::Real const grid_constant = sum_water_weights + Ebulk_weight;
+
+	core::Real polar_group_energy = 0.;
+	if ( ! exact_occ_pairwise_ && ! exact_occ_pairwise_by_res_ ) {
+		polar_group_energy = compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
+				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
+	}
+	else {
+		// loop over all atoms of neighboring residues, INCLUDING SELF
+		core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
+		utility::vector1 <core::Size> neighborlist;
+		neighborlist.push_back( polar_resnum);
+		for ( core::graph::Graph::EdgeListConstIter
+			neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
+			neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
+			neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
+				neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
+		}
+		for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
+			core::Size const occ_resnum( neighborlist[occ_inx] );
+			conformation::Residue const occ_rsd = pose.residue(occ_resnum);
+			if ( exact_occ_pairwise_by_res_ ) {
+				polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
+						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
+						true, occ_resnum );
+			}
+			else {
+				for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
+					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
+							grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
+							true, occ_resnum, true, occ_atomno );
+				}
+			}
+		}
+	}
+
+	//		std::cout << "jk EXACT Donor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
+	return  polar_group_energy;
+}
+
+
+///
+/// @brief computes the SHO energy of an acceptor atom
+///
+/// @param[in] polar_rsd residue to which the atom belongs
+/// @param[in] polar_resnum index of the residue in its pose
+/// @param[in] polar_atom index of the atom in the residue
+/// @param[in] pose the pose
+///
+/// @author John Karanicolas
+/// @author Andrea Bazzoli (bazzoli@ku.edu)
+///
+core::Real ExactOccludedHbondSolEnergy::compute_acceptor_atom_energy(
+	conformation::Residue const & polar_rsd,
+	core::Size polar_resnum,
+	core::Size const polar_atom,
+	pose::Pose const & pose) const {
+
+	Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
+	chemical::AtomTypeSetCOP atom_type_set_ptr( atom_type_set_ptr_ );
+	hbonds::HBEvalTuple const curr_hbond_eval_type( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
+
+	// Figure out max LK energy
+	std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+	core::Real max_possible_LK = (*atom_type_set_ptr)[ polar_rsd.atom_type_index( polar_atom ) ].lk_dgfree();
+		//			TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
+
+	// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
+	max_possible_LK = -5.;
+
+	// Compute Ebulk (using the LK energy)
+	core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
+	core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type.eval_type() );
+	core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
+	// This grid constant is the denominator in computing solvation energies,
+	// it depends on the grid dimensions, and sets the max possible solvation energy (in this case to match LK)
+	core::Real const grid_constant = sum_water_weights + Ebulk_weight;
+
+	core::Real polar_group_energy = 0.;
+	if ( ! exact_occ_pairwise_ && ! exact_occ_pairwise_by_res_ ) {
+		polar_group_energy = compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
+				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
+	}
+	else {
+		// loop over all atoms of neighboring residues, INCLUDING SELF
+		core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
+		utility::vector1 <core::Size> neighborlist;
+		neighborlist.push_back( polar_resnum);
+		for ( core::graph::Graph::EdgeListConstIter
+			neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
+			neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
+			neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
+			neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
+		}
+		for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
+			core::Size const occ_resnum( neighborlist[occ_inx] );
+			conformation::Residue const occ_rsd = pose.residue(occ_resnum);
+			if ( exact_occ_pairwise_by_res_ ) {
+				polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
+					grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
+					true, occ_resnum );
+			}
+			else {
+				for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
+					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
+						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
+						true, occ_resnum, true, occ_atomno );
+				}
+			}
+		}
+	}
+
+	//		std::cout << "jk EXACT Acceptor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
+	return polar_group_energy;
 }
 
 
@@ -1210,6 +1240,26 @@ ExactOccludedHbondSolEnergy::version() const
 	return 1; // Initial versioning
 }
 
+
+///
+/// @brief creates an ExactOccludedHbondSolEnergy object according to command-line options
+///
+ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline() {
+
+	ExactOccludedHbondSolEnergyOP sho_op(
+		new ExactOccludedHbondSolEnergy(
+			basic::options::option[ basic::options::OptionKeys::score::exact_occ_skip_Hbonders ],
+			basic::options::option[ basic::options::OptionKeys::score::exact_occ_include_Hbond_contribution ],
+			basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise ],
+			basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise_by_res ],
+			basic::options::option[ basic::options::OptionKeys::score::exact_occ_split_between_res ],
+			! basic::options::option[ basic::options::OptionKeys::score::exact_occ_self_res_no_occ ],
+			basic::options::option[basic::options::OptionKeys::score::exact_occ_radius_scaling]
+		)
+	);
+
+	return sho_op;
+}
 
 
 } // geometric_solvation

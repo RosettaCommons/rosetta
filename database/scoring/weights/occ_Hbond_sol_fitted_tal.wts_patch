@@ -1,0 +1,4 @@
+fa_sol = 0
+occ_sol_exact = 0
+occ_sol_fitted = 0.75
+lk_nonpolar = 0.75

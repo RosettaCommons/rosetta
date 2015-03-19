@@ -73,14 +73,15 @@ sources = {
 		#"compare_rms_byres"
 	],
 	"pilot/bazzoli" : [
-		"constel",
-		"nrg_res_set",
-		"lig_low_sasa",
-		"sel_hbonds",
-		"list_cnl_ngbs",
-		"lig_polar_sat",
-		"cnl_env_lost_hbs",
 		"bou-min-ubo-nrg-jump",
+		"cnl_env_lost_hbs",
+		"constel",
+		"lig_low_sasa",
+		"lig_polar_sat",
+		"list_cnl_ngbs",
+		"nrg_res_set",
+		"sel_hbonds",
+		"shobuns",
 	],
 	"pilot/bcorreia" : [
 		#"iterative_design", # /* Correia,Documentation Location,Demo Location */
