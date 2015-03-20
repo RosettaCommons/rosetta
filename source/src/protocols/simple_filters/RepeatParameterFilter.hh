@@ -44,7 +44,7 @@ namespace protocols {
             core::Real report_sm( core::pose::Pose const & pose ) const;
             void report( std::ostream & out,const core::pose::Pose & pose ) const;
             void calculate_helical_parameters( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
-            void align_to_frame(core::pose::Pose & pose) const;
+            //void align_to_frame(core::pose::Pose & pose) const; //This seems to have been prototyped but never used.  Removing -- VKM, 19 March 2015.
             void apply_transformation(core::pose::Pose & mod_pose, std::list <core::Size> const & residue_list, numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT) const;
             void matrix3f_to_xyzMatrix( Eigen::Matrix3f const & Re, numeric::xyzMatrix< core::Real> & R  ) const;
             void identity_matrix( numeric::xyzMatrix< core::Real> & R ) const;
