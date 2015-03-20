@@ -59,6 +59,8 @@ static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideSt
 
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 
+static MoverRegistrator< denovo_design::DisulfidizeMoverCreator > reg_DisulfidizeMoverCreator;
+
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
 static MoverRegistrator< design_opt::ParetoOptMutationMoverCreator > reg_ParetoOptMutationMoverCreator;
 

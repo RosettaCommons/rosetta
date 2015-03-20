@@ -122,6 +122,10 @@ sources = {
 		"RemodelConstraintGenerator",
 	],
 
+	"denovo_design" :[
+		"DisulfidizeMover",
+	],
+
 	"generalized_kinematic_closure" : [
 		"GeneralizedKIC",
 	],
@@ -443,6 +447,7 @@ testinputfiles = [
 	"comparative_modeling/1f4pA.pdb",
 	"comparative_modeling/4gat_all.pdb",
 	"comparative_modeling/4gat_protein.pdb",
+	"denovo_design/disulf_test.pdb",
 	"docking/DockingTest.pdb",
 	"docking/DockingDecoy.pdb",
 	"docking/DockingMultiChain.pdb",

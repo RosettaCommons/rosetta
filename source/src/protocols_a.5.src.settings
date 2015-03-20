@@ -10,6 +10,12 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"protocols/denovo_design" : [
+		"util",
+	],
+	"protocols/denovo_design/movers" : [
+		"DisulfidizeMover",
+	],
 	"protocols/denovo_design/filters": [
 		"ExposedHydrophobicsFilter",
 	],
