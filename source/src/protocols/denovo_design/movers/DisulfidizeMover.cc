@@ -142,7 +142,7 @@ DisulfidizeMover::apply( core::pose::Pose & pose )
 			accumulator_.clear();
 		}
 		generate_results( pose );
-		last_pose_ = core::pose::PoseCOP( new core::pose::Pose(pose) );
+		last_pose_ = pose.clone();
 	}
 
 	// if this is the same pose we saw last time, pop a result off the accumulator
