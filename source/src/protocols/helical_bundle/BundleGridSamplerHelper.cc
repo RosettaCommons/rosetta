@@ -130,7 +130,7 @@ namespace protocols {
 				TR << outstring << std::endl;
 
 				for(core::Size i=1, imax=nDoFs(); i<=imax; ++i) {
-					sprintf(outstring, "%lu\t%s\t", allowed_dof_helix_indices_[i], DoF_name(allowed_dof_types_[i]).c_str() );
+					sprintf(outstring, "%lu\t%s\t", (unsigned long) allowed_dof_helix_indices_[i], DoF_name(allowed_dof_types_[i]).c_str() );
 					TR << outstring;
 					for(core::Size j=1, jmax=dof_sample_vals_[i].size(); j<=jmax; ++j) {
 						sprintf(outstring, "%.4f\t", dof_sample_vals_[i][j]);

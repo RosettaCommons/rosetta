@@ -342,7 +342,7 @@ namespace protocols {
 					for(core::Size j=1, jmax=n_helices(); j<=jmax; ++j) {
 						MakeBundleHelixCOP curhelix( makebundle_copy->helix_cop( j ) );
 						runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
-						sprintf(outchar, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", j, curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
+						sprintf(outchar, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", (unsigned long) j, curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
 						TR << outchar << std::endl;
 					}
 					TR << std::endl;
@@ -384,7 +384,7 @@ namespace protocols {
 					}
 					if(!filterpassed) continue; //Go on to the next grid sample.
 				}
-				
+
 				at_least_one_success = true; //At this point, we've successfully generated at least one helical bundle.
 
 				// Score the pose:
@@ -410,7 +410,7 @@ namespace protocols {
 						for(core::Size j=1, jmax=n_helices(); j<=jmax; ++j) {
 							MakeBundleHelixCOP curhelix( makebundle_copy->helix_cop( j ) );
 							runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
-							sprintf(outstring, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", j, curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
+							sprintf(outstring, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", (unsigned long) j, curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
 							final_report << outstring << std::endl;
 						}
 						final_report << std::endl;
@@ -426,7 +426,7 @@ namespace protocols {
 				//Dump a PDB file, if the user has specified that this mover should do so:
 				if(pdb_output()) {
 					char outfile[1024];
-					sprintf( outfile, "%s_%05lu.pdb", pdb_prefix().c_str(), i );
+					sprintf( outfile, "%s_%05lu.pdb", pdb_prefix().c_str(), (unsigned long) i );
 					TR << "Writing " << outfile << std::endl;
 					temppose.dump_scored_pdb( outfile, *sfxn_ );
 				}
@@ -536,7 +536,7 @@ namespace protocols {
 			if(TR.visible()) TR << "Setting reset mode to " << (resetmode ? "true." : "false.") << std::endl;
 			set_reset_mode(resetmode);
 			make_bundle_->set_reset_pose( reset_mode() );
-			
+
 			//Set nstruct mode and options:
 			bool nstructmode = tag->getOption<bool>("nstruct_mode", false);
 			if(TR.visible()) TR << "Setting nstruct mode to " << (nstructmode ? "true." : "false.") << "  This means that " << (nstructmode ? "each job will sample a different set of Crick parameters." : "every job will sample all sets of Crick parameters.") << std::endl;
@@ -566,7 +566,7 @@ namespace protocols {
 				runtime_assert_string_msg( val1>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an r0_min value less than 0." );
 				runtime_assert_string_msg( val2>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an r0_max value less than 0." );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an r0_max value less than or equal to the r0_min value.");
-				if(TR.visible()) TR << "Setting default r0_min and r0_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+				if(TR.visible()) TR << "Setting default r0_min and r0_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				default_r0()->set_lower_value(val1);
 				default_r0()->set_upper_value(val2);
 				default_r0()->set_perturbable(true);
@@ -599,7 +599,7 @@ namespace protocols {
 				core::Real const val1( tag->getOption<core::Real>("omega0_min", 0.0) );
 				core::Real const val2( tag->getOption<core::Real>("omega0_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an omega0_max value less than or equal to the omega0_min value.");
-				if(TR.visible()) TR << "Setting default omega0_min and omega0_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+				if(TR.visible()) TR << "Setting default omega0_min and omega0_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				default_omega0()->set_lower_value(val1);
 				default_omega0()->set_upper_value(val2);
 				default_omega0()->set_perturbable(true);
@@ -632,7 +632,7 @@ namespace protocols {
 				core::Real const val1( tag->getOption<core::Real>("delta_omega0_min", 0.0) );
 				core::Real const val2( tag->getOption<core::Real>("delta_omega0_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega0_max value less than or equal to the delta_omega0_min value.");
-				if(TR.visible()) TR << "Setting default delta_omega0_min and delta_omega0_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+				if(TR.visible()) TR << "Setting default delta_omega0_min and delta_omega0_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				default_delta_omega0()->set_lower_value(val1);
 				default_delta_omega0()->set_upper_value(val2);
 				default_delta_omega0()->set_perturbable(true);
@@ -665,7 +665,7 @@ namespace protocols {
 				core::Real const val1( tag->getOption<core::Real>("delta_omega1_min", 0.0) );
 				core::Real const val2( tag->getOption<core::Real>("delta_omega1_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega1_max value less than or equal to the delta_omega1_min value.");
-				if(TR.visible()) TR << "Setting default delta_omega1_min and delta_omega1_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+				if(TR.visible()) TR << "Setting default delta_omega1_min and delta_omega1_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				default_delta_omega1()->set_lower_value(val1);
 				default_delta_omega1()->set_upper_value(val2);
 				default_delta_omega1()->set_perturbable(true);
@@ -698,7 +698,7 @@ namespace protocols {
 				core::Real const val1( tag->getOption<core::Real>("delta_t_min", 0.0) );
 				core::Real const val2( tag->getOption<core::Real>("delta_t_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_t_max value less than or equal to the delta_t_min value.");
-				if(TR.visible()) TR << "Setting default delta_t_min and delta_t_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+				if(TR.visible()) TR << "Setting default delta_t_min and delta_t_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				default_delta_t()->set_lower_value(val1);
 				default_delta_t()->set_upper_value(val2);
 				default_delta_t()->set_perturbable(true);
@@ -713,7 +713,7 @@ namespace protocols {
 			} else if ( tag->hasOption("delta_t_max") ) {
 				runtime_assert_string_msg(tag->hasOption("delta_t_min"),
 					"When parsing options for the BundleGridSampler mover, found delta_t_max but no delta_t_min.  This does not make sense.");
-			}	
+			}
 
 			//Check that at least one helix is defined:
 			bool at_least_one_helix = false;
@@ -761,7 +761,7 @@ namespace protocols {
 						runtime_assert_string_msg( val1>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an r0_min value less than 0." );
 						runtime_assert_string_msg( val2>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an r0_max value less than 0." );
 						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an r0_max value less than or equal to the r0_min value.");
-						if(TR.visible()) TR << "Setting r0_min and r0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+						if(TR.visible()) TR << "Setting r0_min and r0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 						r0(helix_index)->set_lower_value(val1);
 						r0(helix_index)->set_upper_value(val2);
 						r0(helix_index)->set_perturbable(true);
@@ -808,7 +808,7 @@ namespace protocols {
 						core::Real const val1( (*tag_it)->getOption<core::Real>("omega0_min", 0.0) );
 						core::Real const val2( (*tag_it)->getOption<core::Real>("omega0_max", 0.0) );
 						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an omega0_max value less than or equal to the omega0_min value.");
-						if(TR.visible()) TR << "Setting omega0_min and omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+						if(TR.visible()) TR << "Setting omega0_min and omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 						omega0(helix_index)->set_lower_value(val1);
 						omega0(helix_index)->set_upper_value(val2);
 						omega0(helix_index)->set_perturbable(true);
@@ -855,7 +855,7 @@ namespace protocols {
 						core::Real const val1( (*tag_it)->getOption<core::Real>("delta_omega0_min", 0.0) );
 						core::Real const val2( (*tag_it)->getOption<core::Real>("delta_omega0_max", 0.0) );
 						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega0_max value less than or equal to the delta_omega0_min value.");
-						if(TR.visible()) TR << "Setting delta_omega0_min and delta_omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+						if(TR.visible()) TR << "Setting delta_omega0_min and delta_omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 						delta_omega0(helix_index)->set_lower_value(val1);
 						delta_omega0(helix_index)->set_upper_value(val2);
 						delta_omega0(helix_index)->set_perturbable(true);
@@ -902,7 +902,7 @@ namespace protocols {
 						core::Real const val1( (*tag_it)->getOption<core::Real>("delta_omega1_min", 0.0) );
 						core::Real const val2( (*tag_it)->getOption<core::Real>("delta_omega1_max", 0.0) );
 						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega1_max value less than or equal to the delta_omega1_min value.");
-						if(TR.visible()) TR << "Setting delta_omega1_min and delta_omega1_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+						if(TR.visible()) TR << "Setting delta_omega1_min and delta_omega1_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 						delta_omega1(helix_index)->set_lower_value(val1);
 						delta_omega1(helix_index)->set_upper_value(val2);
 						delta_omega1(helix_index)->set_perturbable(true);
@@ -949,7 +949,7 @@ namespace protocols {
 						core::Real const val1( (*tag_it)->getOption<core::Real>("delta_t_min", 0.0) );
 						core::Real const val2( (*tag_it)->getOption<core::Real>("delta_t_max", 0.0) );
 						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_t_max value less than or equal to the delta_t_min value.");
-						if(TR.visible()) TR << "Setting delta_t_min and delta_t_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;			
+						if(TR.visible()) TR << "Setting delta_t_min and delta_t_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 						delta_t(helix_index)->set_lower_value(val1);
 						delta_t(helix_index)->set_upper_value(val2);
 						delta_t(helix_index)->set_perturbable(true);
@@ -974,8 +974,8 @@ namespace protocols {
 						delta_t(helix_index)->set_use_defaults(false);
 						delta_t(helix_index)->set_helix_to_copy(val);
 					}
-					
-					
+
+
 				} //if ( (*tag_it)->getName() == "Helix" )
 			}
 			runtime_assert_string_msg(at_least_one_helix, "When parsing options for the BundleGridSampler mover, found no helices!  Define at least one helix with a <Helix...> sub-tag.");
