@@ -125,7 +125,9 @@ public:
 	void set_random_sheets( utility::vector1< core::Size > random_sheets_in ) { random_sheets_ = random_sheets_in; }
 	void set_filter_templates( bool filter_templates_in ) { filter_templates_ = filter_templates_in; }
 
-	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) { scorefxn_ = scorefxn; }
+	inline void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn) { scorefxn_ = core::scoring::ScoreFunctionOP(scorefxn->clone()); }
+	inline void set_minimize_at_end( bool min_at_end_in ) { min_at_end_ = min_at_end_in; }
+	inline void set_minimize_sf( core::scoring::ScoreFunctionOP minscorefxn_in ) { minscorefxn_ = core::scoring::ScoreFunctionOP(minscorefxn_in->clone()); }
 
 	void set_task_factory( core::pack::task::TaskFactoryOP task_factory_in );
 	void set_user_csts(  utility::vector1< core::Size > user_csts_in ) { user_csts_=user_csts_in; }
@@ -202,9 +204,11 @@ private:
 	core::Size max_registry_shift_;
 	std::string cst_file_;
 
+	bool min_at_end_;
+
 	bool realign_domains_;
 	core::Size initial_template_index_;
-	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_, minscorefxn_;
 	utility::vector1 < core::Real > template_wts_;
 	utility::vector1 < core::pose::PoseOP > template_poses_;
 	utility::vector1 < protocols::loops::Loops > template_chunks_;

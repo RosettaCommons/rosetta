@@ -81,11 +81,14 @@ public:
 	void set_linmin_only(bool linmin_only_in) { linmin_only_=linmin_only_in; }
 	void set_cartfrag_overlap(core::Size cartfrag_overlap_in) { cartfrag_overlap_=cartfrag_overlap_in; }
 	void set_seqfrags_only(bool seqfrags_only_in) { seqfrags_only_=seqfrags_only_in; }
-	void set_nofragbias(bool nofragbias_in) { nofragbias_=nofragbias_in; }
 	void set_skip_long_min(bool skip_long_min_in) { skip_long_min_=skip_long_min_in; }
 	void set_cenrot(bool cenrot_in) { cenrot_=cenrot_in; }
 	void set_temperature(core::Real temp_in) { temperature_ = temp_in; }
 	void set_max_contig_insertion(int max_in) { max_contig_insertion_ = max_in; }
+	void set_fragment_probs(core::Real prob, core::Real randprob) {
+			fragprob_ = prob;
+			randfragprob_ = randprob;
+	}
 
 	void set_per_residue_controls(
 			utility::vector1<bool> const &residue_sample_template_in,
@@ -114,11 +117,13 @@ private:
 	core::Real increase_cycles_;
 	core::Size ncycles_, cartfrag_overlap_;
 	bool no_global_frame_, linmin_only_;
-	bool seqfrags_only_, nofragbias_;
+	bool seqfrags_only_;
 	bool skip_long_min_;
 	bool cenrot_;
 	core::Real temperature_;
 	int max_contig_insertion_;  // don't insert contigs larger than this size
+	core::Real fragprob_;
+	core::Real randfragprob_;
 
 	// fragments
 	utility::vector1 < core::pose::PoseOP > templates_;

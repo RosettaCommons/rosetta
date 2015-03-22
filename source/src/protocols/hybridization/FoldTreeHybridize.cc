@@ -43,6 +43,10 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
+#include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/util/kinematics_util.hh>
@@ -256,6 +260,7 @@ FoldTreeHybridize::init() {
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
 
 	realign_domains_ = true;
+	min_at_end_ = false;
 
 	frag_1mer_insertion_weight_ = 0.0;
 	small_frag_insertion_weight_ = 0.0;
@@ -267,8 +272,10 @@ FoldTreeHybridize::init() {
 	add_hetatm_ = false;
 	hetatm_self_cst_weight_ = 10.;
 	hetatm_prot_cst_weight_ = 0.;
+
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
+	set_minimize_sf( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth" ) );
 
 	// strand pairings
 	pairings_file_ = "";
@@ -1449,6 +1456,39 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_4", gdtmm);
 		TR << "GDTMM_after_stage1_4" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
+	}
+
+	// (optional) final minimization
+	if (min_at_end_) {
+		// few SF adjustments
+		minscorefxn_->set_weight( core::scoring::cart_bonded, 0.0 );
+		minscorefxn_->set_weight( core::scoring::cart_bonded_angle, 0.0 );
+		minscorefxn_->set_weight( core::scoring::cart_bonded_length, 0.0 );
+		minscorefxn_->set_weight( core::scoring::cart_bonded_torsion, 0.0 );
+		minscorefxn_->set_weight( core::scoring::linear_chainbreak, score3->get_weight( core::scoring::linear_chainbreak) );
+
+		// movemap
+		core::kinematics::MoveMap mm;
+		mm.set_bb  ( true );
+		mm.set_chi ( true );
+		mm.set_jump( true );
+
+		// minimizer setup
+		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
+			core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
+			minimizer.run( pose, mm, *minscorefxn_, options );
+		} else {
+			core::optimization::AtomTreeMinimizer minimizer;
+			minimizer.run( pose, mm, *minscorefxn_, options );
+		}
+
+		// evaluation
+		if (native_ && native_->total_residue()) {
+			gdtmm = get_gdtmm(*native_, pose, native_aln);
+			core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1min", gdtmm);
+			TR << "GDTMM_after_stage1min" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
+		}
 	}
 
 	pose.remove_constraints();

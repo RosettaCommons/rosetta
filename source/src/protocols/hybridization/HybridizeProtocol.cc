@@ -229,7 +229,6 @@ HybridizeProtocol::init() {
 	hetatm_prot_cst_weight_ = 0.;
 	cartfrag_overlap_ = 2;
 	seqfrags_only_ = false;
-	nofragbias_ = false;
 	skip_long_min_ = true;   //fpd  this is no longer necessary and seems to hurt model accuracy
 	keep_pose_constraint_ = false;   //fpd PLEASE INITIALIZE NEW VARIABLES
 
@@ -237,6 +236,9 @@ HybridizeProtocol::init() {
 
 	csts_from_frags_ = false;  // generate dihedral constraints from fragments
 	max_contig_insertion_ = -1;  // don't insert contigs larger than this size (-1 ==> don't limit)
+	min_after_stage1_ = false;   // tors min after stage1
+	fragprob_stage2_ = 0.3;  // ratio of fragment vs. template moves
+	randfragprob_stage2_ = 0.5; // given a fragmove, how often is it applied to a random position (as opposed to a chainbreak position)
 
 
 	// domain parsing options
@@ -1062,6 +1064,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 				// allowed movement
 				ft_hybridize->set_per_residue_controls( residue_sample_template_, residue_sample_abinitio_ );
+				ft_hybridize->set_minimize_at_end( min_after_stage1_ );
+				ft_hybridize->set_minimize_sf( stage2_scorefxn_ );
 
 				// other cst stuff
 				ft_hybridize->set_task_factory( task_factory_ );
@@ -1176,11 +1180,12 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_increase_cycles( stage2_increase_cycles_ );
 			cart_hybridize->set_no_global_frame( no_global_frame_ );
 			cart_hybridize->set_linmin_only( linmin_only_ );
-			cart_hybridize->set_nofragbias( nofragbias_ );
 			cart_hybridize->set_seqfrags_only( seqfrags_only_ );
 			cart_hybridize->set_cartfrag_overlap( cartfrag_overlap_ );
 			cart_hybridize->set_skip_long_min( skip_long_min_ );
 			cart_hybridize->set_cenrot( cenrot_ );
+			cart_hybridize->set_fragment_probs(fragprob_stage2_, randfragprob_stage2_);
+
 
 			// per-residue controls
 			cart_hybridize->set_per_residue_controls( residue_sample_template_, residue_sample_abinitio_ );
@@ -1512,6 +1517,14 @@ HybridizeProtocol::parse_my_tag(
 	if( tag->hasOption( "max_contig_insertion" ) )
 		max_contig_insertion_ = tag->getOption< int >( "max_contig_insertion" );
 
+	if( tag->hasOption( "min_after_stage1" ) )
+		min_after_stage1_ = tag->getOption< bool >( "min_after_stage1" );
+	if( tag->hasOption( "fragprob_stage2" ) )
+		fragprob_stage2_ = tag->getOption< core::Real >( "fragprob_stage2" );
+	if( tag->hasOption( "randfragprob_stage2" ) )
+		randfragprob_stage2_ = tag->getOption< core::Real >( "randfragprob_stage2" );
+
+
 	// tons of ab initio options
 	if( tag->hasOption( "stage1_1_cycles" ) )
 		stage1_1_cycles_ = tag->getOption< core::Size >( "stage1_1_cycles" );
@@ -1563,8 +1576,6 @@ HybridizeProtocol::parse_my_tag(
 		cartfrag_overlap_ = tag->getOption< core::Size >( "cartfrag_overlap" );
 	if( tag->hasOption( "seqfrags_only" ) )
 		seqfrags_only_ = tag->getOption< core::Size >( "seqfrags_only" );
-	if( tag->hasOption( "nofragbias" ) )
-		nofragbias_ = tag->getOption< core::Size >( "nofragbias" );
 	if( tag->hasOption( "skip_long_min" ) )
 		skip_long_min_ = tag->getOption< core::Size >( "skip_long_min" );
 

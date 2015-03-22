@@ -154,6 +154,9 @@ private:
 	// more options
 	bool csts_from_frags_;  // generate dihedral constraints from fragments
 	int max_contig_insertion_;  // don't insert contigs larger than this size
+	bool min_after_stage1_; // tors min after stage1
+	core::Real fragprob_stage2_;
+	core::Real randfragprob_stage2_;
 
 	// use cenrot mode
 	bool cenrot_;

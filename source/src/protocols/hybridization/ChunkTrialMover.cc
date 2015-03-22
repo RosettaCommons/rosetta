@@ -77,6 +77,9 @@ ChunkTrialMover::ChunkTrialMover(
 	Size count = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		if (template_chunks_[i_template].size() != 0) ++count;
+
+TR << "Chunks: " << i_template << std::endl <<  template_chunks_[i_template] << std::endl;
+
 	}
 	if (count == 0) {
 		has_valid_moves_ = false;

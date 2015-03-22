@@ -66,6 +66,7 @@
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -90,7 +91,6 @@
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -212,9 +212,10 @@ CartesianHybridize::init() {
 	// only adjustable via methods
 	cartfrag_overlap_ = 2;
 	align_templates_to_pose_ = false;
+	fragprob_ = 0.3;
+	randfragprob_ = 0.5;
 
 	seqfrags_only_ = false;
-	nofragbias_ = false;
 	skip_long_min_ = false;
 
 	temperature_ = option[cm::hybridize::stage2_temperature]();
@@ -561,11 +562,11 @@ CartesianHybridize::apply( Pose & pose ) {
 	}
 
 	// move probabilities, make these parsable!
-	core::Real PROB_FRAGMENT_CYC1 = 0.3;
-	core::Real PROB_FRAGMENT_CYC2 = 0.3;
-	core::Real PROB_FRAGMENT_CYC3 = 0.3;
+	core::Real PROB_FRAGMENT_CYC1 = fragprob_;
+	core::Real PROB_FRAGMENT_CYC2 = fragprob_;
+	core::Real PROB_FRAGMENT_CYC3 = fragprob_;
 	core::Real PROB_FRAGMENT_CYC4 = 1.0;
-	core::Real PROB_RAND_FRAGMENT = nofragbias_? 1 : 0.5;
+	core::Real PROB_RAND_FRAGMENT = randfragprob_;
 
 	for (core::Size m=1; m<=NMACROCYCLES; ++m) {
 		core::Real bonded_weight = max_cart;
