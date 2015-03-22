@@ -29,3 +29,4 @@ pro_close 1.0
 e_pH 1.0
 rama  0.2
 omega  0.5
+fa_elec 0.875
