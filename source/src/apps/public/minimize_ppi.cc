@@ -6,7 +6,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 /// @brief
-/// @author jk
+/// @author jk, ragul, skelow, bazzoli (bazzoli@ku.edu)
 
 // Project Headers
 #include <devel/init.hh>
@@ -106,7 +106,7 @@ OPT_KEY( Boolean, iface_rmsd )
 OPT_KEY( String, ref_decoy )
 OPT_KEY( Boolean, score_only )
 
-static basic::Tracer TR( "apps.pilot.ragul_darc_minimize.main" );
+static basic::Tracer TR( "apps.pilot.minimize_ppi" );
 
 //set to store pdb info keys
 std::set <std::string> interface;
@@ -554,9 +554,10 @@ int main( int argc, char * argv [] ){
 
 		outstream.close();
 		outstream.clear();
+
+		return 0;
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-	return 0;
-
 }
