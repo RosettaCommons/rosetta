@@ -116,6 +116,7 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 	return protocol;
 }
 
+// RosettaMembrane from 2006
 void setup_membrane_topology( pose::Pose & pose, std::string spanfile ) {
   //using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
   core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );

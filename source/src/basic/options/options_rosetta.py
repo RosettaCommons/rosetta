@@ -412,10 +412,6 @@ Options = Option_Group( '',
 			Option('spanfile', 'String', desc='Membrane spanning file'),
 			Option('lipofile', 'String', desc='Membrane exposure file'),
 
-			# Option for new membrane input system (Added by Rebecca: 1/12/14)
-#			Option('membrane_input', 'String', desc='File containing all user inputs for membrane modeling'),
-#			Option('membrane_chains', 'String', desc='Membrane chains to initialize full pose'),
-#			Option('embedfile', 'String', desc='Embedding definition file'),
 			Option('HDX', 'String', desc='HDX (Hydrogen exchange data file'),
 			Option('d2h_sa_reweight', 'Real', desc='d2h_sa reweight', default ='1.00'),
 			Option( 'sucker_params', 'File',

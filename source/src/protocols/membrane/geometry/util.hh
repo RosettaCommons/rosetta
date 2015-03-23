@@ -98,6 +98,11 @@ return_nearest_residue(
 ///				vector2 is chainID of CA atoms of the pose
 std::pair< utility::vector1< Real >, utility::vector1< Real > > get_chain_and_z( pose::Pose const & pose );
 
+/// @brief		Get secondary structure of the pose
+/// @details	Helper function that gets the secondary structure vector from the pose
+utility::vector1< char > get_secstruct( pose::Pose & pose );
+
+
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
 void compute_structure_based_embedding(

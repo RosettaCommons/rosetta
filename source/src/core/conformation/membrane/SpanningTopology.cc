@@ -14,7 +14,7 @@
 ///				Spanning regions can be determined either from an input spanfile, xyz coordinates
 ///				in the pose, or sequence. Object is constructed from span regions and will do internal
 ///				checking for validity.
-///				Last Modified: 7/20/14
+///				Last Modified: 3/18/15
 ///
 /// @author		Julia Koehler (julia.koehler1982@gmail.com)
 /// @author		Rebecca Alford (rfalford12@gmail.com)
@@ -38,6 +38,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
+
+#include <numeric/numeric.functions.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -80,11 +82,13 @@ SpanningTopology::SpanningTopology(
 /// @details Use coordinates of residue CA and thickness to determine the spanning regions in the pose
 SpanningTopology::SpanningTopology(
 	utility::vector1< Real > res_z_coord,
-	utility::vector1< Size > chainID, Real thickness
+	utility::vector1< Size > chainID,
+	utility::vector1< char > secstruct,
+	Real thickness
 	) : utility::pointer::ReferenceCount(),
 	topology_()
 {
-	create_from_structure( res_z_coord, chainID, thickness);
+	create_from_structure( res_z_coord, chainID, secstruct, thickness);
 
 } // topology from pose and thickness
 
@@ -130,9 +134,11 @@ void SpanningTopology::fill_from_spanfile( std::string spanfile, Size total_resi
 
 // fill from structure - can be used after creating empty object
 void SpanningTopology::fill_from_structure( utility::vector1< Real > res_z_coord,
-						 utility::vector1< Size > chainID, Real thickness ) {
+						 utility::vector1< Size > chainID,
+						 utility::vector1< char > secstruct,
+						 Real thickness ) {
 	TR << "Filling membrane spanning topology from structure with thickness " << thickness << std::endl;
-	create_from_structure( res_z_coord, chainID, thickness );
+	create_from_structure( res_z_coord, chainID, secstruct, thickness );
 	
 	this->show();
 	
@@ -223,11 +229,15 @@ void SpanningTopology::add_span( Size start, Size end, Size offset ){
 	nres_topo_ += end - start + 1;
 }// add span
 
+//////////////////////////////////////////////////////////////////////////////
+
 /// @brief Sort Spans
 /// @details  Sort spans in ascending order from begin to end anchor
 void SpanningTopology::reorder_spans() {
 	std::sort( topology_.begin(), topology_.end() );
 }// reorder spans
+
+//////////////////////////////////////////////////////////////////////////////
 
 /// @brief Return Transmembrane Span
 /// @details Return transmembrane span by it's index in the spanning topology object
@@ -235,10 +245,14 @@ SpanOP SpanningTopology::span( Size span_number ) const {
 	return topology_[ span_number ];
 } // get span
 
+//////////////////////////////////////////////////////////////////////////////
+
 /// @brief Get total number of spans
 /// @details Return the number of transmembrane spanning regions in this object
 Size
 SpanningTopology::nspans() const { return topology_.size(); } // total_spans
+
+//////////////////////////////////////////////////////////////////////////////
 
 /// @brief Is the residue in the membrane region?
 /// @details Return true if this residue is in a transmembrane span
@@ -255,6 +269,8 @@ bool SpanningTopology::in_span( Size resnum ) const {
     return false;
 
 } // in_span?
+
+//////////////////////////////////////////////////////////////////////////////
 
 /// @brief Does the span cross the membrane
 /// @details Determine if the membrane spanning region crosses the whole membrane
@@ -274,6 +290,8 @@ SpanningTopology::spanning( utility::vector1< Real > res_z_coord, Span const & s
 	return true;
 	
 }// spanning?
+
+//////////////////////////////////////////////////////////////////////////////
 
 /// @brief Determine if this Spanning Topology Object is Valid
 /// @details Check that spans still span the membrane
@@ -306,6 +324,7 @@ bool SpanningTopology::is_valid() const {
     return valid;
 }// is_valid?
 
+//////////////////////////////////////////////////////////////////////////////
 
 /// @brief Return the number of residues represented by this topology object
 Size SpanningTopology::nres_topo() const {
@@ -395,76 +414,126 @@ SpanningTopology::create_from_spanfile( std::string spanfile, Size nres ){
 	return *this;
 } // create from spanfile
 
-/// @brief Create Transmembrane SPan OBject from structure
+//////////////////////////////////////////////////////////////////////////////
+
+/// @brief Create span object from structure
 SpanningTopology
 SpanningTopology::create_from_structure(
 	utility::vector1< Real > res_z_coord,
 	utility::vector1< Size > chainID,
+	utility::vector1< char > secstruct,
 	Real thickness )
 {
-    
-	// counter
-    Size num_spans( 0 );
-	Size start(1);
-	Size end(1);
+	TR << "create topology from structure" << std::endl;
+
+	// variables
 	nres_topo_ = res_z_coord.size();
+	utility::vector1< bool > spans;
 	
 	// cry if vectors are not the same length
-	if ( res_z_coord.size() != chainID.size() ){
-		utility_exit_with_message( "z_coord and chainID vectors are not the same length!" );
+	if ( res_z_coord.size() != chainID.size() || secstruct.size() != chainID.size() ){
+		utility_exit_with_message( "Input vectors for create_from_structure are not the same length!" );
 	}
 	
-	// At each z-coord, get start/end positions
-    for ( Size j = 1; j <= res_z_coord.size()-1; ++j ){
+	// At each z-coord, get membrane position, then add to spans vector
+    for ( Size j = 1; j <= res_z_coord.size(); ++j ){
 		
 		TR.Debug << "going through residue " << j << std::endl;
-        
-		// set start position for a new chain
+		
+		// take all TM positions that are either helix or strand
+		if ( -thickness <= res_z_coord[ j ] && res_z_coord[ j ] <= thickness &&
+			secstruct[ j ] != 'L' ) {
+			
+			spans.push_back( true );
+		}
+		else {
+			spans.push_back( false );
+		}
+	}
+	
+	// more variables
+	Size num_spans( 0 );
+	Size start(1);
+	Size end(1);
+	Size prev_start(0);
+	Size prev_end(0);
+	Real dir_prev(1.0);
+	
+	// go through newly written vector and identify spans
+	for ( Size j = 1; j <= spans.size()-1; ++j ){
+
+		// add start
+		if ( spans[ j ] == false && spans[ j+1 ] == true ){
+			TR << "TMspan start at " << j+1 << std::endl;
+			start = j+1;
+		}
+		
+		// add end
+		if ( ( spans[ j ] == true && spans[ j+1 ] == false ) ||
+		     ( spans[ j ] == true && j == spans.size()-1 ) ){
+			
+			TR << "TMspan end at " << j << std::endl;
+			end = j;
+			
+			// compute vector between previous span and this span
+			// if the vectors are "antiparallel", keep the loop in between because these
+			// are different spans
+			if ( prev_start != 0 ) {
+				dir_prev = res_z_coord[ prev_end ] - res_z_coord[ prev_start ];
+			}
+			Real dir_this = res_z_coord[ end ] - res_z_coord[ start ];
+			bool parallel( false );
+
+			// check if they are "parallel"
+			if ( ( dir_prev < 0 && dir_this < 0 ) ||
+			     ( dir_prev > 0 && dir_this > 0 ) ) {
+				parallel = true;
+			}
+
+			// compute projection: if to short, span is amphipathic and won't be added
+			Size length = end - start + 1;
+			Real z_dist = numeric::abs_difference( res_z_coord[ end ], res_z_coord[ start ] );
+
+			// if span is longer than 3 residues, and it's not ampipathic, it will be added
+			if ( length >= 3 && z_dist > 5 ){
+	
+				TR << "prev_end: " << prev_end << ", end: " << end << std::endl;
+
+				// last span will be extended if there are only 2 residue in between and
+				// the span vectors aren't facing the same direction
+				if ( nspans() > 0 && prev_end >= start-4 && parallel == true ){
+				
+					topology_.pop_back();
+					TR << "Extending TMspan from " << prev_start << " to " << end << std::endl;
+					add_span( prev_start, end );
+					prev_start = start;
+					prev_end = end;
+				}
+				else {
+			
+					TR << "Adding TMspan from " << start << " to " << end << std::endl;
+					add_span( start, end );
+					++num_spans;
+					prev_start = start;
+					prev_end = end;
+				}
+			}
+		}
+		
+		// set new start position for each chain
 		if ( j > 1 && chainID[ j ] != chainID[ j-1 ]){
 			TR.Debug << "setting new start position: " << j << std::endl;
+			end = j-1;
 			start = j;
 		}
-		
-		// get start position: from outside into membrane
-        if ( ( chainID[ j ] == chainID[ j+1 ] ) &&
-            (( res_z_coord[ j ] <= -thickness && res_z_coord[ j+1 ] > -thickness ) ||
-             ( res_z_coord[ j ] >= thickness && res_z_coord[ j+1 ] < thickness )) ){
-                
-				TR.Debug << "Adding TMspan start at " << j+1 << std::endl;
-				start = j+1;
-		}
-		TR.Debug << "start: " << start << std::endl;
-		
-		// get end position: from inside to out of the membrane
-        if ( ( chainID[ j ] == chainID[ j+1 ] ) &&
-            (( res_z_coord[ j ] >= -thickness && res_z_coord[ j+1 ] < -thickness ) ||
-             ( res_z_coord[ j ] <= thickness && res_z_coord[ j+1 ] > thickness )) ){
-                
-				TR.Debug << "Adding TMspan end at " << j << std::endl;
-				end = j;
-				SpanOP span( new Span( start, end ) );
-				
-				// if span spans the membrane
-				if ( spanning( res_z_coord, *span ) ){
-					TR << "Adding TMspan " << std::endl;
-					span->show();
-					topology_.push_back( span );
-					++num_spans;
-					start = end + 1;
-				}
-				if ( ! spanning( res_z_coord, *span )){
-					span->show();
-					TR << "...thrown out because it doesn't span the membrane!" << std::endl;
-				}
-		}
-		TR.Debug << "end: " << end << std::endl;
 	}
-		
-	// If no helices predicted, throw an error
+	
+	// If no helices predicted, throw a warning
+	// we don't want it to quit because MPs with large helical domains also need
+	// split spanfiles from the spanfile_from_pdb application
 	TR.Debug << "Are spans predicted?" << std::endl;
 	if ( num_spans == 0 ) {
-		TR << "No spans calculated from structure" << std::endl;
-		utility_exit_with_message( "No transmembrane helices predicted from pose!" );
+		TR << "WARNING: No spans calculated from structure for chain " << chainID[1] << std::endl;
 	}
 	
 	// check created object for validity
@@ -476,6 +545,8 @@ SpanningTopology::create_from_structure(
 	return *this;
 	
 } // create from structure
+
+//////////////////////////////////////////////////////////////////////////////
 
 /// @brief Show Spanning topology
 /// @details For PyRosetta!

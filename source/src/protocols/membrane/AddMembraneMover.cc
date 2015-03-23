@@ -45,6 +45,8 @@
 
 #include <protocols/membrane/SetMembranePositionMover.hh>
 
+#include <protocols/moves/DsspMover.hh>
+
 // Package Headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -435,10 +437,11 @@ AddMembraneMover::apply( Pose & pose ) {
 			std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( geometry::get_chain_and_z( pose ) );
 			utility::vector1< Real > z_coord = pose_info.first;
 			utility::vector1< Size > chainID = pose_info.second;
+			utility::vector1< char > secstruct( protocols::membrane::geometry::get_secstruct( pose ) );
 			Real thickness = mem_thickness;
 			
 			// set topology from structure
-			topology_->fill_from_structure( z_coord, chainID, thickness );
+			topology_->fill_from_structure( z_coord, chainID, secstruct, thickness );
 		}
 	}
 

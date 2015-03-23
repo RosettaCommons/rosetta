@@ -9,7 +9,7 @@
 
 /// @file    spanfile_from_pdb.cc
 /// @brief   Write a spanfile from a PDB file
-/// @details last Modified: 10/17/14
+/// @details last Modified: 03/18/15
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // App headers
@@ -74,7 +74,7 @@ void show( utility::vector1< T_ > vector){
 
 ////////////////////////////////////////////////////////////////////////////////
 
-PoseOP read_pose() {
+Pose read_pose() {
 	
 	// cry if PDB not given
 	if ( ! option[OptionKeys::in::file::s].user() ){
@@ -82,9 +82,9 @@ PoseOP read_pose() {
 	}
 	
 	// read in pose
-	PoseOP pose = core::import_pose::pose_from_pdb(
-												   option[OptionKeys::in::file::s].value_string() );
-	TR.Debug << "got pose of length " << pose->total_residue() << std::endl;
+	Pose pose;
+	core::import_pose::pose_from_pdb( pose, option[OptionKeys::in::file::s].value_string() );
+	TR.Debug << "got pose of length " << pose.total_residue() << std::endl;
 	
 	return pose;
 	
@@ -112,10 +112,10 @@ Real read_thickness() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void spanfile_for_each_chain( PoseOP pose, Real thickness, std::string spanfile) {
+void spanfile_for_each_chain( Pose & pose, Real thickness, std::string spanfile) {
 	
 	// split pose into chains
-	utility::vector1< PoseOP > split_poses = pose->split_by_chain();
+	utility::vector1< PoseOP > split_poses = pose.split_by_chain();
 	
 	// loop over chains
 	for ( Size i = 1; i <= split_poses.size(); ++i ){
@@ -124,9 +124,10 @@ void spanfile_for_each_chain( PoseOP pose, Real thickness, std::string spanfile)
 		std::pair< utility::vector1< Real >, utility::vector1< Size > > split_pose_info( get_chain_and_z( *split_poses[i] ));
 		utility::vector1< Real > split_z_coord( split_pose_info.first );
 		utility::vector1< Size > split_chain_info( split_pose_info.second );
-		
+		utility::vector1< char > split_secstruct( get_secstruct( *split_poses[i] ) );
+
 		// create SpanningTopology from poses
-		SpanningTopologyOP topo_pose( new SpanningTopology( split_z_coord, split_chain_info, thickness ) );
+		SpanningTopologyOP topo_pose( new SpanningTopology( split_z_coord, split_chain_info, split_secstruct, thickness ) );
 		
 		// get filename for spanfile for each chain
 		char chain( split_poses[i]->pdb_info()->chain(i) );
@@ -134,7 +135,7 @@ void spanfile_for_each_chain( PoseOP pose, Real thickness, std::string spanfile)
 		utility::trim( split_spanfile, ".span" );
 		
 		// output filename depends on number of chains
-		if ( pose->chain( pose->total_residue() ) > 1 ){
+		if ( pose.chain( pose.total_residue() ) > 1 ){
 			split_spanfile = split_spanfile + chain + ".span";
 		}
 		else{
@@ -154,16 +155,22 @@ void spanfile_from_pdb(){
 	TR << "spanfile_from_pdb" << std::endl;
 
 	// read input
-	PoseOP pose = read_pose();
+	Pose pose = read_pose();
 	Real thickness = read_thickness();
 	
 	// get pose info
-	std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( *pose ));
+	std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));
 	utility::vector1< Real > z_coord = pose_info.first;
 	utility::vector1< Size > chain_info = pose_info.second;
+	utility::vector1< char > secstruct = get_secstruct( pose );
+
+	// for debugging
+//	for ( Size i = 1; i <= secstruct.size(); ++i ) {
+//		TR << "i: " << i << ", z: " << z_coord[i] << ", chain: " << chain_info[i] << ", SSE: " << secstruct[i] << std::endl;
+//	}
 
 	// create SpanningTopology from pose
-	SpanningTopologyOP topo_whole_pose( new SpanningTopology( z_coord, chain_info, thickness ) );
+	SpanningTopologyOP topo_whole_pose( new SpanningTopology( z_coord, chain_info, secstruct, thickness ) );
 	
 	// get filename for spanfile containing whole topology info
 	std::string pdbfile( option[OptionKeys::in::file::s].value_string() );
@@ -173,7 +180,7 @@ void spanfile_from_pdb(){
 	spanfile = spanfile + ".span";
 
 	// if more than one chain, write SpanningTopology for whole pose
-	if ( pose->chain( pose->total_residue() ) > 1 ){
+	if ( pose.chain( pose.total_residue() ) > 1 ){
 		topo_whole_pose->write_spanfile( spanfile );
 	}
 

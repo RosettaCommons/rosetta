@@ -278,7 +278,7 @@ public: // test functions
 		}
 	}
 	
-	// average embeddings
+	// average  embeddings
 	void test_average_embeddings() {
 		
 		TS_TRACE("Test average embeddings");
@@ -296,21 +296,49 @@ public: // test functions
 		EmbeddingDefOP emb2( new EmbeddingDef( v2, v3 ) );
 		EmbeddingDefOP emb3( new EmbeddingDef( v3, v4 ) );
 		
-		// put them into a vector
+			// put them into a vector
 		utility::vector1< EmbeddingDefOP > embeddings;
 		embeddings.push_back( emb1 );
 		embeddings.push_back( emb2 );
 		embeddings.push_back( emb3 );
 		
-		// average them
+			// average them
 		EmbeddingDefOP avg = average_embeddings( embeddings );
+		
+			// check for equality
+		TS_ASSERT( position_equal_within_delta( avg->center(), avg_center, 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( avg->normal(), avg_normal, 0.001 ) );
+	}
+
+	// average antiparallel embeddings
+	void test_average_antiparallel_embeddings() {
+		
+		TS_TRACE("Test average antiparallel embeddings");
+		
+		// define vectors
+		Vector v1(1, 2, 3);
+		Vector v2(4, 5, 6);
+		Vector v3(1, 2, 9);
+		Vector v4(3, 4, -8);
+		Vector avg_center(2.5, 3.5, 4.5);
+		Vector avg_normal(-1.7407, -1.7407, 14.7966);
+		
+		// create embedding objects
+		EmbeddingDefOP emb1( new EmbeddingDef( v1, v3 ) );
+		EmbeddingDefOP emb2( new EmbeddingDef( v2, v4 ) );
+		
+		// put them into a vector
+		utility::vector1< EmbeddingDefOP > embeddings;
+		embeddings.push_back( emb1 );
+		embeddings.push_back( emb2 );
+		
+		// average them
+		EmbeddingDefOP avg = average_antiparallel_embeddings( embeddings );
 		
 		// check for equality
 		TS_ASSERT( position_equal_within_delta( avg->center(), avg_center, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( avg->normal(), avg_normal, 0.001 ) );
 	}
-	
-	// TODO: average antiparallel embeddings!!!
 	
 	// split topology by jump
 	void test_split_topology_by_jump() {

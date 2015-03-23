@@ -41,6 +41,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/moves/DsspMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -183,6 +184,33 @@ get_chain_and_z( pose::Pose const & pose ) {
 	return pose_info;
 	
 } // get chain and z from pose
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief		Get secondary structure of the pose
+/// @details	Helper function that gets the secondary structure vector from the pose
+utility::vector1< char > get_secstruct( pose::Pose & pose ) {
+
+	TR.Debug << "get_secstruct" << std::endl;
+	using namespace core::pose;
+	
+	// set secondary structure in pose with DSSP
+	protocols::moves::DsspMover dssp = protocols::moves::DsspMover();
+	dssp.apply( pose );
+	
+	// initialize variable
+	utility::vector1< char > secstruct;
+	
+	// loop over residues, get chain info and z_coord
+	for ( Size i = 1; i <= pose.total_residue(); ++i ){
+		
+		// get info
+		secstruct.push_back( pose.conformation().secstruct( i ) );
+	}
+	
+	return secstruct;
+	
+}// get_secstruct
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Compute Membrane Center/Normal from Membrane Spanning

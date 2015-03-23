@@ -14,7 +14,7 @@
 ///				Spanning regions can be determined either from an input spanfile, xyz coordinates
 ///				in the pose, or sequence. Object is constructed from span regions and will do internal
 ///				checking for validity.
-///				Last Modified: 7/20/14
+///				Last Modified: 3/18/15
 ///
 /// @author		Julia Koehler (julia.koehler1982@gmail.com)
 /// @author		Rebecca Alford (rfalford12@gmail.com)
@@ -71,6 +71,7 @@ public: // constructors
     SpanningTopology(
 		utility::vector1< Real > res_z_coord,
 		utility::vector1< Size > chainID,
+		utility::vector1< char > secstruct,
 		Real thickness
 		);
 
@@ -116,7 +117,9 @@ public: // methods
 
 	// fill from structure - can be used after creating empty object
 	void fill_from_structure( utility::vector1< Real > res_z_coord,
-							 utility::vector1< Size > chainID, Real thickness );
+							 utility::vector1< Size > chainID,
+							 utility::vector1< char > secstruct,
+							 Real thickness );
 	
 	// concatenate 2nd topology object
 	SpanningTopology & concatenate_topology( SpanningTopology const & topo );
@@ -153,7 +156,7 @@ private: // methods
 	SpanningTopology create_from_spanfile( std::string spanfile, Size nres);
 
 	/// @brief Create Transmembrane SPan OBject from structure
-	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, Real thickness = mem_thickness );
+	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, utility::vector1< char > secstruct, Real thickness = mem_thickness );
 
 private: // data
 

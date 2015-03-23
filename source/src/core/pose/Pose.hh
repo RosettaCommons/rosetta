@@ -649,6 +649,8 @@ public:
 	/// 'H' = helical
 	/// 'S' = strand or sheet
 	/// 'E' = loop
+	/// JKL: is this correct? DsspDesignOperations says that
+	/// H = helix, E = strand, and L = loop
 	///
 	/// example(s):
 	///     pose.secstruct(3)

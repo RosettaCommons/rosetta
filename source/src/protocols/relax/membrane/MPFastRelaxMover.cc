@@ -95,7 +95,7 @@ MPFastRelaxMover::show_protocol( Pose & pose ) {
 	relax_protocol_->get_movemap()->show();
     TR << "FoldTree: " << pose.fold_tree() << std::endl;
     TR << "Initial membrane position: " << std::endl;
-    TR << "Membrane Posiiton: " << "center=(" << center.x() << "," << center.y() << "," << center.z() << "); normal=(" << normal.x() << "," << normal.y() << "," << center.z() << ")" << std::endl;
+    TR << "Membrane Position: " << "center=(" << center.x() << "," << center.y() << "," << center.z() << "); normal=(" << normal.x() << "," << normal.y() << "," << center.z() << ")" << std::endl;
     
 }
 
@@ -216,12 +216,12 @@ MPFastRelaxMover::setup_relax_foldtree( Pose & pose ) {
     
     // Setup a new simple foldtree
     FoldTree ft;
-    ft.simple_tree( pose.total_residue() ); // Don't create a simple tree that includes the memrbane residue!!!
+    ft.simple_tree( pose.total_residue() ); // Don't create a simple tree that includes the membrane residue!!!
     
     // Count the number of jumps added
     core::Size njumps( 1 );
     
-    // Add a jump between the protein COM and the memrbane residue
+    // Add a jump between the protein COM and the membrane residue
     core::Size membrane_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
     core::Size rsd_com( residue_center_of_mass( pose, 1, pose.total_residue()-1 ) ); // Get the center of mass and don't include the membrane residue!
     ft.new_jump( rsd_com, membrane_rsd, rsd_com );
@@ -234,7 +234,7 @@ MPFastRelaxMover::setup_relax_foldtree( Pose & pose ) {
     Size chain_begin(0), chain_end(0);
     // i == 1: not possible if I am a membrane pose
     // i == 2: i am a membrane pose, but don't rebuild my membrane jump
-    // i == 3: 2 real polymer chains, 1 for the memrbane...now start counting
+    // i == 3: 2 real polymer chains, 1 for the membrane...now start counting
     // also - the membrane chain will be the last one
     if ( pose.conformation().num_chains() > 2 ) {
         for ( core::Size i = 1; i <= pose.conformation().num_chains()-2; i++ ) {
