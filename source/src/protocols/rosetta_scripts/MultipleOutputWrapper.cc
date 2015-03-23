@@ -151,7 +151,7 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 			// Add new output tag
 			using basic::datacache::DataCache_CacheableData;
 			std::ostringstream tag;
-			tag << name_ << "_" << (n_poses_+1);
+			tag << name_ << "_" << std::setw(4) << std::setfill('0') << (n_poses_+1);
 			pose.data().set(
 				core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
 				DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( tag.str() ) )
