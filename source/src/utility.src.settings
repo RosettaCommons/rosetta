@@ -43,6 +43,7 @@ sources = {
 		"ocstream",
 		"ozstream",
 		"FileContentsMap",
+		"util",
 	],
 	"utility/libsvm":[
 		"Svm_rosetta",

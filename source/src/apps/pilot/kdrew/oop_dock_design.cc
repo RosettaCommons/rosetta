@@ -44,6 +44,7 @@
 // Mover headers
 
 #include <protocols/ncbb/oop/OopDockDesignProtocol.hh>
+#include <protocols/ncbb/util.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -280,7 +281,7 @@ main( int argc, char* argv[] )
 	option[ oddm::keep_history].value()
 	) );
 
-	ODDM_mover->setup_filter_stats();
+	protocols::ncbb::setup_filter_stats();
 
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( ODDM_mover );

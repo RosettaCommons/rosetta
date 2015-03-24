@@ -226,30 +226,23 @@ OopCreatorMover::apply(
     
 	utility::vector1< Size > const low_e_puck_positions = oop_low_e_puck_positions_;//option[ oop_creator::oop_low_e_puck_positions ].value();
 	all_positions.insert( all_positions.end(), low_e_puck_positions.begin(), low_e_puck_positions.end() );
-	for ( Size i = 1; i <= low_e_puck_positions.size(); ++i)
-	{
+	for ( Size i = 1; i <= low_e_puck_positions.size(); ++i ) {
 		OopPatcherOP oop_patcher( new OopPatcher( low_e_puck_positions[i] ) );
 		oop_patcher->apply( pose );
 		//kdrew: poor man's version for now, if L use PuckPlus, if D use DPuckPlus
-		if( is_l_chiral( pose.residue_type( low_e_puck_positions[i] ) ) )
-		{
+		if ( pose.residue_type( low_e_puck_positions[i] ).is_l_aa() ) {
         	//kdrew: use PuckPlus
 			OopPuckPlusMoverOP opm_plus( new OopPuckPlusMover( low_e_puck_positions[i] ) );
 			opm_plus->apply( pose );
-		}
-		else if( is_d_chiral( pose.residue_type( low_e_puck_positions[i] ) ) )
-		{
+		} else if ( pose.residue_type( low_e_puck_positions[i] ).is_d_aa() ) {
         	//kdrew: use DPuckPlus
 			OopDPuckPlusMoverOP opm_plus( new OopDPuckPlusMover( low_e_puck_positions[i] ) );
 			opm_plus->apply( pose );
-		}
-		else
-		{
+		} else {
 			TR << " residue: " << pose.residue_type( low_e_puck_positions[i] ).name() << " not found in chiral map" <<  std::endl;
 			TR << " possibly achiral (ex GLY) or not listed in map" <<  std::endl;
 			TR << " not changing" << std::endl;
 		}
-        
 	}
     
 	//kdrew: sets oop_post phi/psi near low energy well
@@ -258,14 +251,11 @@ OopCreatorMover::apply(
 		for( Size i = 1; i <= all_positions.size(); ++i )
 		{
 			//kdrew: the +1 is to get the oop_post position
-			if( is_d_chiral( pose.residue_type( all_positions[i] +1 ) ) )
+			if( pose.residue_type( all_positions[i] +1 ).is_d_aa() )
 			{
 				pose.set_phi( all_positions[i] +1, 135.0 ) ;
 				pose.set_psi( all_positions[i] +1, -70.0 ) ;
-			}
-			//kdrew: defaults to L conformation
-			else
-			{
+			} else {
 				pose.set_phi( all_positions[i] +1, -135.0 ) ;
 				pose.set_psi( all_positions[i] +1, 70.0 ) ;
 			}
@@ -328,7 +318,7 @@ OopCreatorMover::apply(
 			TR << "resid: " << i << " is OOP_PRE: " << pose.residue(i).has_variant_type(chemical::OOP_PRE) << std::endl;
 
 			if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1 ) {
-				if ( is_l_chiral( pose.residue_type( i ) ) ) {
+				if ( pose.residue_type( i ).is_l_aa() ) {
 					TR << "setting small movable resid: "<< i<<std::endl;
 				} else {
 					oop_pre_positions.push_back(i);

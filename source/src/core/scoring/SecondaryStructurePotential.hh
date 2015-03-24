@@ -82,6 +82,13 @@ public: // scoring
 		Real & rsigma_score,
 		Real & sheet_score
 	) const;
+	
+	
+	static
+	void
+	rsigma_dot_initializer(
+		FArray4D_real & rsigma_dot
+	);
 
 private:
 
@@ -252,11 +259,11 @@ private: // initializers for static data
 		FArray1D_real & hs_dp
 	);
 
-	static
+	/*static
 	void
 	rsigma_dot_initializer(
 		FArray4D_real & rsigma_dot
-	);
+	);*/
 
 	static
 	void

@@ -53,9 +53,13 @@ public:
 	    }
 	    TS_ASSERT_EQUALS( dm.size(), nData)
 	    TS_ASSERT_EQUALS( dm[1].size(),nData)
-
+		
+		SingleLinkClusterer slc;
+		AverageLinkClusterer alc;
+		CompleteLinkClusterer clc;
+		
 	    //---------- try single link
-	    utility::vector1<ClusteringTreeNodeOP> clusters = single_link_clustering(dm,4);
+	    utility::vector1<ClusteringTreeNodeOP> clusters = slc.cluster(dm,4);
 	    TS_ASSERT_EQUALS( clusters.size(), 4)
 	    for(Size i=1;i<=4;i++) {
 		utility::vector1<core::Size> data_out;
@@ -69,7 +73,7 @@ public:
 	    }
 
 	    //---------- try complete link
-	    clusters = complete_link_clustering(dm,4);
+	    clusters = clc.cluster(dm,4);
 	    TS_ASSERT_EQUALS( clusters.size(), 4)
 	    for(Size i=1;i<=4;i++) {
 		utility::vector1<core::Size> data_out;
@@ -83,7 +87,7 @@ public:
 	    }
 
 	    //---------- try average link
-	    clusters = average_link_clustering(dm,4);
+	    clusters = alc.cluster(dm,4);
 	    TS_ASSERT_EQUALS( clusters.size(), 4)
 	    for(Size i=1;i<=4;i++) {
 		utility::vector1<core::Size> data_out;

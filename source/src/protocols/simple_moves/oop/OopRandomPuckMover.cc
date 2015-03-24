@@ -97,25 +97,17 @@ void OopRandomPuckMover::apply( core::pose::Pose & pose ){
 	//kdrew: determine which mover should be used, use D puck movers for chiral D oops
 	if ( random_pucker == "OOP_PUCK_PLUS" ) 
 	{
-		if ( is_d_chiral( restype ) )
-		{
-			oop_mover = oop::OopMoverOP( new oop::OopDPuckPlusMover( random_pos ) ) ;
-		}
+		if ( restype.is_d_aa() )
+			oop_mover = oop::OopMoverOP( new oop::OopDPuckPlusMover( random_pos ) );
 		else
-		{
-			oop_mover = oop::OopMoverOP( new oop::OopPuckPlusMover( random_pos ) ) ;
-		}
+			oop_mover = oop::OopMoverOP( new oop::OopPuckPlusMover( random_pos ) );
 	}
 	else if (random_pucker == "OOP_PUCK_MINUS" )
 	{
-		if ( is_d_chiral ( restype ) )
-		{
-			oop_mover = oop::OopMoverOP( new oop::OopDPuckMinusMover( random_pos ) ) ;
-		}
+		if ( restype.is_d_aa() )
+			oop_mover = oop::OopMoverOP( new oop::OopDPuckMinusMover( random_pos ) );
 		else
-		{
-			oop_mover = oop::OopMoverOP( new oop::OopPuckMinusMover( random_pos ) ) ;
-		}
+			oop_mover = oop::OopMoverOP( new oop::OopPuckMinusMover( random_pos ) );
 	}
 
 	oop_mover->apply( pose );

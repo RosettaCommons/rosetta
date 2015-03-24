@@ -1626,6 +1626,20 @@ public:
 	{
 		name1_ = code;
 	}
+	
+	/// @brief get our chiral equivalent name
+	std::string const &
+	chiral_equivalent_name() const
+	{
+		return chiral_equivalent_name_;
+	}
+	
+	/// @brief set our chiral equivalent  name
+	void
+	chiral_equivalent_name( std::string const & name_in )
+	{
+		chiral_equivalent_name_ = name_in;
+	}
 
 	/// @brief get our interchangeability-group id.  Used to
 	/// determine if two residue types are equivalent, except
@@ -2367,13 +2381,12 @@ private:
 
 	/// @brief the number of non-hydrogen chi angles in the NCAA rotlib -- Primary
 	Size ncaa_rotlib_n_rots_;
-	
-	bool nrchi_symmetric_;
-	Real nrchi_start_angle_;
 
 	/// @brief the number of rotamer bins for each chi angle in the NCAA rotlib -- Primary
 	utility::vector1< Size > ncaa_rotlib_n_bins_per_rot_;
 
+	bool nrchi_symmetric_;
+	Real nrchi_start_angle_;
 
 	/////////////////////////////////////
 	// peptoid rotlib stuff: some of this is hardcoded elsewhere for the CAAs
@@ -2411,6 +2424,9 @@ private:
 
 	/// @brief one-letter code, also not necessarily unique -- Primary
 	char name1_;
+
+	/// @brief name of chiral equivalent residue
+	std::string chiral_equivalent_name_;
 
 	/// @brief interchangeability group lets a ResidueType claim to be functionally
 	/// interchangeable with any other ResidueType in the same group.  This

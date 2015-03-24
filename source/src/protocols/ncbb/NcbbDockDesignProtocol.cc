@@ -57,6 +57,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ncbb/NcbbDockDesignProtocol.hh>
+#include <protocols/ncbb/util.hh>
 #include <protocols/ncbb/NcbbDockDesignProtocolCreator.hh>
 
 // Filter headers
@@ -90,6 +91,7 @@ using namespace chemical;
 using namespace scoring;
 using namespace pose;
 using namespace protocols;
+using namespace protocols::ncbb;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::oop;
@@ -427,13 +429,11 @@ NcbbDockDesignProtocol::apply(
 	for ( Size k = 1; k <= Size( dock_design_loop_num_ ); ++k ) {
 		pert_mc->reset(pose);
 
-		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector
-		//kdrew: and do not want to perturb away until designed in hotspot residue
-		if( k == 1 && ncbb_design_first_ )
+		if ( k == 1 && ncbb_design_first_ )
 			desn_sequence->apply( pose );
 
 		// Perturbation phase - loop
-		for( Size j = 1; j <= Size( pert_num_ ); ++j ) {
+		for ( Size j = 1; j <= Size( pert_num_ ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
 			curr_job->add_string_real_pair( "ENERGY_PERT (pert score)", (*pert_score_fxn)(pose) );
@@ -446,9 +446,7 @@ NcbbDockDesignProtocol::apply(
 		desn_sequence->apply( pose );
 		curr_job->add_string_real_pair( "ENERGY_DESN (hard score)", (*score_fxn_)(pose) );
 
-		//kdrew: reset mc after first cycle if not considering initial pose
-		if( !mc_initial_pose_  && k == 1 )
-		{
+		if ( !mc_initial_pose_  && k == 1 ) {
 			mc->reset(pose);
 			TR << "after mc->reset" << std::endl;
 			mc->show_state();
@@ -492,8 +490,8 @@ NcbbDockDesignProtocol::apply(
 
 	TR << "Energy less than cutoff, doing final design and running filters..." << std::endl;
 
-	if ( final_design_min_ )
-	{
+	if ( final_design_min_ ) {
+		
 		// get packer task from task factory
 		PackerTaskOP final_desn_packer_task( desn_tf->create_task_and_apply_taskoperations( pose ) );
 
@@ -605,73 +603,7 @@ NcbbDockDesignProtocol::apply(
 	curr_job->add_string_real_pair( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
 
 }
-
-// this only works for two chains and assumes the protein is first and the peptide is second
-// inspired by protocols/docking/DockingProtocol.cc
-void
-NcbbDockDesignProtocol::setup_pert_foldtree(
-	core::pose::Pose & pose
-)
-{
-	using namespace kinematics;
-
-	// get current fold tree
-	FoldTree f( pose.fold_tree() );
-	f.clear();
-
-	// get the start and end for both chains
-	Size pro_start( pose.conformation().chain_begin( 1 ) );
-	Size pro_end( pose.conformation().chain_end( 1 ) );
-	Size pep_start( pose.conformation().chain_begin( 2 ) );
-	Size pep_end( pose.conformation().chain_end( 2 ) );
-
-	// get jump positions based on the center of mass of the chains
-	Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
-	Size dock_jump_pos_pep( core::pose::residue_center_of_mass( pose, pep_start, pep_end ) );
-
-	// build fold tree
-	Size jump_index( f.num_jump() + 1 );
-	f.add_edge( pro_start, dock_jump_pos_pro, Edge::PEPTIDE );
-	f.add_edge( dock_jump_pos_pro, pro_end, Edge::PEPTIDE );
-	f.add_edge( pep_start, dock_jump_pos_pep, Edge::PEPTIDE );
-	f.add_edge( dock_jump_pos_pep, pep_end, Edge::PEPTIDE );
-	f.add_edge( dock_jump_pos_pro, dock_jump_pos_pep, jump_index );
-
-	// set pose foldtree to foldtree we just created
-	f.reorder(1);
-	f.check_fold_tree();
-	assert( f.check_fold_tree() );
-
-	std::cout << "AFTER: " << f << std::endl;
-
-	pose.fold_tree( f );
-}
-
-void
-NcbbDockDesignProtocol::setup_filter_stats()
-{
-	// create and register sasa calculator
-	pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
-	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ))
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
-
-	// create and register hb calculator
-	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
-	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ))
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
-
-	// create and register unsat calculator
-	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
-	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "unsat" ))
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
-
-	// create and register packstat calculator
-	pose::metrics::PoseMetricCalculatorOP pack_calculator( new pose_metric_calculators::PackstatCalculator() );
-	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "pack" ))
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "pack", pack_calculator );
-}
-
-
+	
 protocols::moves::MoverOP
 NcbbDockDesignProtocol::clone() const
 {
@@ -712,123 +644,16 @@ NcbbDockDesignProtocol::parse_my_tag
 	core::pose::Pose const &
 ) {
 
-	if(tag->hasOption( "scorefxn"))
-	{
-		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn" ) );
-		if ( ! data.has( "scorefxns", scorefxn_key ) )
-			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
-		score_fxn_ = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_key );
-	}
-
-	if(tag->hasOption( "mc_temp"))
-		this->mc_temp_ = tag->getOption<core::Real>("mc_temp", mc_temp_);
-	else
-		mc_temp_ = 1.0;
-
-	if(tag->hasOption( "pert_mc_temp"))
-		pert_mc_temp_ = tag->getOption<core::Real>("pert_mc_temp", pert_mc_temp_);
-	else
-		pert_mc_temp_ = 0.8;
-
-	if(tag->hasOption( "pert_dock_rot_mag"))
-		pert_dock_rot_mag_ = tag->getOption<core::Real>("pert_dock_rot_mag", pert_dock_rot_mag_);
-	else
-		pert_dock_rot_mag_ = 1.0;
-
-	if(tag->hasOption( "pert_dock_trans_mag"))
-		pert_dock_trans_mag_ = tag->getOption<core::Real>("pert_dock_trans_mag", pert_dock_trans_mag_);
- 	else
-		pert_dock_trans_mag_ = 0.5;
-
-	if(tag->hasOption( "pert_pep_small_temp"))
-		pert_pep_small_temp_ = tag->getOption<core::Real>("pert_pep_small_temp", pert_pep_small_temp_);
- 	else
-		pert_pep_small_temp_ = 0.8;
-
-	if(tag->hasOption( "pert_pep_small_H"))
-		pert_pep_small_H_ = tag->getOption<core::Real>("pert_pep_small_H", pert_pep_small_H_);
-	else
-		pert_pep_small_H_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_small_L"))
-		pert_pep_small_L_ = tag->getOption<core::Real>("pert_pep_small_L", pert_pep_small_L_);
- 	else
-		pert_pep_small_L_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_small_E"))
-		pert_pep_small_E_ = tag->getOption<core::Real>("pert_pep_small_E", pert_pep_small_E_);
- 	else
-		pert_pep_small_E_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_shear_temp"))
-		pert_pep_shear_temp_ = tag->getOption<core::Real>("pert_pep_shear_temp", pert_pep_shear_temp_);
- 	else
-		pert_pep_shear_temp_ = 0.8;
-
-	if(tag->hasOption( "pert_pep_shear_H"))
-		pert_pep_shear_H_ = tag->getOption<core::Real>("pert_pep_shear_H", pert_pep_shear_H_);
- 	else
-		pert_pep_shear_H_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_shear_L"))
-		pert_pep_shear_L_ = tag->getOption<core::Real>("pert_pep_shear_L", pert_pep_shear_L_);
- 	else
-		pert_pep_shear_L_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_shear_E"))
-		pert_pep_shear_E_ = tag->getOption<core::Real>("pert_pep_shear_E", pert_pep_shear_E_);
- 	else
-		pert_pep_shear_E_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_num_rep"))
-		pert_pep_num_rep_ = tag->getOption<core::Size>("pert_pep_num_rep", pert_pep_num_rep_);
- 	else
-		pert_pep_num_rep_ = 100;
-
-	if(tag->hasOption( "pert_num"))
-		pert_num_ = tag->getOption<core::Size>("pert_num", pert_num_);
- 	else
-		pert_num_ = 10;
-
-	if(tag->hasOption( "dock_design_loop_num"))
-		dock_design_loop_num_ = tag->getOption<core::Size>("dock_design_loop_num", dock_design_loop_num_);
- 	else
-		dock_design_loop_num_ = 10;
-
-	if(tag->hasOption( "no_design"))
-		no_design_ = tag->getOption<bool>("no_design", no_design_);
- 	else
-		no_design_ = false;
-
-	if(tag->hasOption( "final_design_min"))
-		final_design_min_ = tag->getOption<bool>("final_design_min", final_design_min_);
- 	else
-		final_design_min_ = true;
-
-	if(tag->hasOption( "use_soft_rep"))
-		use_soft_rep_ = tag->getOption<bool>("use_soft_rep", use_soft_rep_);
- 	else
-		use_soft_rep_ = false;
-
-	if(tag->hasOption( "mc_initial_pose"))
-		mc_initial_pose_ = tag->getOption<bool>("mc_initial_pose", mc_initial_pose_);
- 	else
-		mc_initial_pose_ = false;
-
+	init_common_options( tag, data, score_fxn_, mc_temp_, pert_mc_temp_, pert_dock_rot_mag_, pert_dock_trans_mag_, pert_pep_small_temp_,
+						pert_pep_small_H_, pert_pep_small_L_, pert_pep_small_E_, pert_pep_shear_temp_,
+						pert_pep_shear_H_, pert_pep_shear_L_, pert_pep_shear_E_, pert_pep_num_rep_, pert_num_, dock_design_loop_num_,
+						no_design_, final_design_min_, use_soft_rep_, mc_initial_pose_, pymol_, keep_history_ );
+	
 	if(tag->hasOption( "ncbb_design_first"))
 		ncbb_design_first_ = tag->getOption<bool>("ncbb_design_first", ncbb_design_first_);
  	else
 		ncbb_design_first_ = false;
 
-	if(tag->hasOption( "pymol"))
-		pymol_ = tag->getOption<bool>("pymol", pymol_);
- 	else
-		pymol_ = false;
-
-	if(tag->hasOption( "keep_history"))
-		keep_history_ = tag->getOption<bool>("keep_history", keep_history_);
- 	else
-		keep_history_ = false;
 }
 
 // MoverCreator

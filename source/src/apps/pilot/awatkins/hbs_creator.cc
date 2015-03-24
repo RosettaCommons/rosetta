@@ -42,6 +42,7 @@
 #include <protocols/jd2/Job.hh>
 
 // Mover headers
+#include <protocols/ncbb/util.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -86,6 +87,7 @@ using namespace chemical;
 using namespace scoring;
 using namespace pose;
 using namespace protocols;
+using namespace protocols::ncbb;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::hbs;
@@ -103,11 +105,6 @@ using utility::file::FileName;
 
 // tracer - used to replace cout
 static thread_local basic::Tracer TR( "HBS_Creator" );
-
-void
-setup_pert_foldtree(
-					core::pose::Pose & pose
-					);
 
 // application specific options
 namespace hbs_creator{
@@ -200,7 +197,7 @@ HbsCreatorMover::apply(
 	core::Size final_res = option[hbs_creator::hbs_final_res].value();
 	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 
-	for(Size i=1; i<=pose.total_residue(); ++i) {
+	for ( Size i = 1; i <= pose.total_residue(); ++i) {
 		char chn = pdb_info->chain(i);
 		if (chn == hbs_chain) { // correct chain to be truncated and prepped
 
@@ -209,15 +206,11 @@ HbsCreatorMover::apply(
 			// hbs pre is the smallest number of what we want to preserve
 			if (pdb_res_num < final_res) {
 				TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
-
 				while (pdb_res_num < final_res) {
-          pose.delete_polymer_residue(i);
-				  pdb_res_num = pdb_info->number(i);
-        }
-
-        setup_pert_foldtree(pose);
-
-
+					pose.delete_polymer_residue(i);
+					pdb_res_num = pdb_info->number(i);
+				}
+				setup_pert_foldtree(pose);
 			}
 			else if (pdb_res_num == final_res) { // also applies the post patch
 				hbs::HbsPatcherOP hbs_patcher( new hbs::HbsPatcher( i ) );
@@ -227,14 +220,11 @@ HbsCreatorMover::apply(
 			}
 			else if (pdb_res_num > final_res + option[hbs_creator::hbs_length].value()) {
 				TR << "deleting residue " << pdb_res_num << std::endl;
-
 				while (pdb_res_num > final_res) {
-          pose.delete_polymer_residue(i);
-				  pdb_res_num = pdb_info->number(i);
-        }
-
+					pose.delete_polymer_residue(i);
+					pdb_res_num = pdb_info->number(i);
+				}
 				setup_pert_foldtree(pose);
-
 			}
 
 			if (pdb_res_num >= final_res && pdb_res_num <= final_res+2) {
@@ -252,11 +242,6 @@ HbsCreatorMover::apply(
 				//	pose.set_phi(i+2, -55);
 				//	pose.set_psi(i+2, -45);
 				//}
-
-				/*
-				pose.set_psi( i, -57) ;
-				pose.set_phi( i, -48) ;
-				*/
 			}
 		}
 	}
@@ -266,18 +251,15 @@ HbsCreatorMover::apply(
 
 	//pose.dump_pdb( "postdihedrals.pdb");
 
-	//kdrew: since we added new connection types (i.e. hbs atoms) above, need to reset connections
 	pose.conformation().detect_bonds();
 	pose.conformation().detect_pseudobonds();
-	for(core::Size i=1; i<=pose.total_residue(); ++i){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		pose.conformation().update_polymeric_connection(i);
 	}
 
 	//pose.dump_pdb( "postpseudobonds.pdb");
 
-	//kdrew: monte carlo phi/psi of hbs to find low energy
-	if( option[ hbs_creator::final_mc ].value() )
-	{
+	if( option[ hbs_creator::final_mc ].value() ) {
 		moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
 
@@ -289,22 +271,14 @@ HbsCreatorMover::apply(
 
 		// core::Size hbs_position = 1;
 
-		//kdrew: load all hbs-affected positions into vector and make all other positions movable by small mover
-		for( Size i = 1; i <= pose.total_residue(); ++i )
-		{
-			//TR << "resid: " << i << " is last in the HBS macrocycle." << std::endl;
-			//if( i < option[hbs_creator::hbs_final_res] || i>option[hbs_creator::hbs_final_res+2] ) // maybe 3 someday?
-			if (i != ((unsigned) (option[hbs_creator::hbs_final_res].value())))
-			{
-				if( is_l_chiral( pose.residue_type( i ) ) )
-				{
+		for( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( i != ( ( unsigned ) ( option[ hbs_creator::hbs_final_res ].value() ) ) ) {
+				if ( pose.residue_type( i ).is_l_aa() ) {
 					TR << "setting small movable resid: "<< i<<std::endl;
 					//kdrew: commenting out because small mover fails randomly
 					//pert_pep_mm->set_bb( i );
 				}
 			}
-			//else
-			//{ hbs_position = i; }
 		}
 
 		pert_sequence->add_mover( pert_pep_small );
@@ -318,12 +292,11 @@ HbsCreatorMover::apply(
 		moves::TrialMoverOP pert_trial( new moves::TrialMover( pert_sequence, pert_mc ) );
 
 		pert_trial->apply( pose );
-    	pert_mc->recover_low( pose );
+		pert_mc->recover_low( pose );
 
 	}
 
-	if( option[ hbs_creator::final_repack ].value() )
-	{
+	if( option[ hbs_creator::final_repack ].value() ) {
 
 		// create a task factory and task operations
 		using core::pack::task::operation::TaskOperationCOP;
@@ -331,14 +304,12 @@ HbsCreatorMover::apply(
 		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
-		{
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
 			tf->push_back( rrop );
 		}
-		else
-		{
+		else {
 			//kdrew: do not do design, makes NATAA if res file is not specified
 			operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 			tf->push_back( rtrp );
@@ -354,16 +325,14 @@ HbsCreatorMover::apply(
 	}
 
 
-	if( option[ hbs_creator::final_minimize ].value() )
-	{
+	if ( option[ hbs_creator::final_minimize ].value() ) {
 		using namespace core::id;
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;
 
 		//kdrew: add constraints to omega angle, (this problem might have been fixed and these constraints are unnecessary)
 		//iwatkins: this is general stuff, not hbs or oop specific
-		for( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i )
-		{
+		for( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i ) {
 			id::AtomID id1,id2,id3,id4;
 			core::id::TorsionID torsion_id = TorsionID( i, id::BB, 3 ); //kdrew: 3 is omega angle
 
@@ -380,14 +349,10 @@ HbsCreatorMover::apply(
 		}
 		//kdrew: if constraint weight is not set on commandline or elsewhere, set to 1.0
 		if( score_fxn->has_zero_weight( dihedral_constraint ) )
-		{
-        	score_fxn->set_weight( dihedral_constraint, 1.0 );
-		}
-		if( score_fxn->has_zero_weight( atom_pair_constraint ) )
-		{
-        	score_fxn->set_weight( atom_pair_constraint, 1.0 );
-		}
+			score_fxn->set_weight( dihedral_constraint, 1.0 );
 
+		if( score_fxn->has_zero_weight( atom_pair_constraint ) )
+			score_fxn->set_weight( atom_pair_constraint, 1.0 );
 
 		// create move map for minimization
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
@@ -398,13 +363,6 @@ HbsCreatorMover::apply(
 		// create minimization mover
 		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
 
-	//kdrew: only turn on pymol observer in debug mode
-	//#ifndef NDEBUG
-	 //   protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose);
-	//#endif
-
-		//kdrew: minimizer not working after appending/prepending residues, not sure why
-		// final min (okay to use ta min here)
 		minM->apply( pose );
 	}
 }
@@ -412,10 +370,7 @@ HbsCreatorMover::apply(
 // this only works for two chains and assumes the protein is first and the peptide is second
 // inspired by protocols/docking/DockingProtocol.cc
 void
-setup_pert_foldtree(
-												core::pose::Pose & pose
-												)
-{
+setup_pert_foldtree( core::pose::Pose & pose ) {
 	using namespace kinematics;
 
 	// get current fold tree

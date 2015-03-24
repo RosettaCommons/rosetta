@@ -9,7 +9,7 @@
 
 /// @file    core/chemical/carbohydrates/database_io.cc
 /// @brief   Database input/output function definitions for carbohydrate-specific data.
-/// @author  Labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 // Unit header
 #include <core/chemical/carbohydrates/database_io.hh>
@@ -18,11 +18,11 @@
 #include <core/types.hh>
 
 // Utility headers
-//#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
+#include <utility/io/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -39,51 +39,15 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
-// Local method that opens a file and returns its data as a list of lines after checking for errors.
-/// @details  Blank and commented lines are not returned and the file is closed before returning the lines.
-utility::vector1<std::string>
-get_lines_from_file_data(std::string const & filename)
-{
-	using namespace std;
-	using namespace utility;
-	using namespace utility::file;
-	using namespace utility::io;
-
-	// Check if file exists.
-	if(!file_exists(filename)) {
-		utility_exit_with_message("Cannot find database file: '" + filename + "'");
-	}
-
-	// Open file.
-	izstream data((filename.c_str()));
-	if (!data.good()) {
-		utility_exit_with_message("Unable to open database file: '" + filename + "'");
-	}
-
-	string line;
-	vector1<string> lines;
-
-	while (getline(data, line)) {
-		trim(line, " \t\n");  // Remove leading and trailing whitespace.
-		if ((line.size() < 1) || (line[0] == '#')) continue;  // Skip comments and blank lines.
-
-		lines.push_back(line);
-	}
-
-	data.close();
-
-	return lines;
-}
-
-
 // Return a list of strings, which are saccharide-specific properties and modifications, read from a database file.
-utility::vector1<std::string>
-read_properties_from_database_file(std::string const & filename)
+// Note: This method is deleted in master as of 26.02.15. ~Labonte
+utility::vector1< std::string >
+read_properties_from_database_file( std::string const & filename )
 {
 	using namespace std;
 	using namespace utility;
 
-	vector1<string> properties = get_lines_from_file_data(filename);
+	vector1< string > const properties( io::get_lines_from_file_data( filename ) );
 
 	TR.Debug << "Read " << properties.size() << " properties from the carbohydrate database." << endl;
 
@@ -92,24 +56,24 @@ read_properties_from_database_file(std::string const & filename)
 
 // Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read from a
 // database file.
-std::map<std::string, std::string>
-read_codes_and_roots_from_database_file(std::string const & filename)
+std::map< std::string, std::string >
+read_codes_and_roots_from_database_file( std::string const & filename )
 {
 	using namespace std;
 	using namespace utility;
 
-	vector1<string> lines = get_lines_from_file_data(filename);
-	map<string, string> codes_to_roots;
+	vector1< string > const lines( io::get_lines_from_file_data( filename ) );
+	map< string, string > codes_to_roots;
 
-	Size n_lines = lines.size();
-	for (uint i = 1; i <= n_lines; ++i) {
-		istringstream line_word_by_word(lines[i]);
+	Size const n_lines( lines.size() );
+	for ( uint i( 1 ); i <= n_lines; ++i ) {
+		istringstream line_word_by_word( lines[ i ] );
 		string key;  // The map key is the 3-letter code, e.g., "Glc", for "glucose".
 		string value;  // The map value is the IUPAC root, e.g., "gluc", for " glucose".
 
 		line_word_by_word >> key >> value;
 
-		codes_to_roots[key] = value;
+		codes_to_roots[ key ] = value;
 	}
 
 	TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database." << endl;

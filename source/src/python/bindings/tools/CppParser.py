@@ -440,7 +440,7 @@ class CppFunction:
         if (not self.public): return False
 
         #  check if return result is sane. Some types (like int *) mean that we actully have an iterator functions and this one should be taked care at class abstraction level
-        for t in ['void *', 'void const *', 'char *', 'int *', 'int const *', 'double *', 'double const *', 'Real *', 'Real const *',
+        for t in ['void *', 'void const *', 'char *', 'int *', 'int const *', 'double *', 'double const *', 'Real *', 'Real const *', 'Size *',
                   'kiss_fft_cpx *', 'kiss_fft_cfg', 'kiss_fftnd_cfg', 'kiss_fftr_cfg', ]:
             if (self.returnType.T() or '').endswith(t): return False
 
@@ -518,7 +518,7 @@ class CppFunction:
                 #if (not self.constructor) and a.type_.T()[-1] == '&' and False: return 'boost::python::ptr( & __a%s )' % i
                 # and  not a.type_.T().endswith(' const &') \
                 if (not self.constructor) and a.type_.T()[-1] == '&' \
-                   and a.type_.T() not in 'bool &  ::platform::Size &  ::platform::Size const &  ::numeric::Real &  ::core::Size &  ::core::Size const &  ::core::Real &  ::core::chemical::AA const &':
+                   and a.type_.T() not in 'bool &  ::platform::Size &  ::platform::Size const &  ::numeric::Real &  ::core::Size &  ::core::Size const &  ::core::Real &  ::core::chemical::AA const &  ::numeric::Size &':
                     return 'boost::python::ptr( & __a%s )' % i
                 else: return '__a%s' % i
 

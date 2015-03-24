@@ -46,6 +46,7 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/scoring/SecondaryStructurePotential.hh>
 
 
 
@@ -455,7 +456,10 @@ SSPairPotential::rsigma_dot_initializer(
 	FArray4D_real & rsigma_dot
 )
 {
-	// section 12
+	core::scoring::SecondaryStructurePotential ssp;
+	ssp.rsigma_dot_initializer( rsigma_dot );
+}
+/*	// section 12
 	//js --------------------------
 	//js new rsigma stats that take into account whether the first
 	//js c=o bond vector points towards away from the other dimer
@@ -1329,7 +1333,7 @@ SSPairPotential::rsigma_dot_initializer(
 	rsigma_dot( 12, 16,  2,  1 ) = -3.643000;
 	rsigma_dot( 12, 17,  2,  1 ) = -1.522700;
 	rsigma_dot( 12, 18,  2,  1 ) = -0.424100;
-}
+}*/
 
 
 } // ns sspot

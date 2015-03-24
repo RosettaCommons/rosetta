@@ -110,13 +110,16 @@ int main( int argc, char * argv [] ) {
     Size n = option[clustering::n]();
     utility::vector1<ClusteringTreeNodeOP> roots;
     if (option[clustering::single].user()) {
-	roots = single_link_clustering(dm,n);
+		SingleLinkClusterer slc;
+		roots = slc.cluster(dm, n);
     }
-    if (option[clustering::complete].user()) {
-	roots = complete_link_clustering(dm,n);
+	if (option[clustering::complete].user()) {
+		CompleteLinkClusterer clc;
+		roots = clc.cluster(dm, n);
     }
-    if (option[clustering::average].user()) {
-	roots = average_link_clustering(dm,n);
+	if (option[clustering::average].user()) {
+		AverageLinkClusterer alc;
+		roots = alc.cluster(dm, n);
     }
 
     std::cout<<"# Here are the "<<n<<" clusters you asked for:\n";

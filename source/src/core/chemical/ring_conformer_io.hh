@@ -9,7 +9,7 @@
 
 /// @file    core/chemical/ring_conformer_io.hh
 /// @brief   Database input/output function declarations for ring-conformer-specific data.
-/// @author  Labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 #ifndef INCLUDED_core_chemical_ring_conformer_io_HH
 #define INCLUDED_core_chemical_ring_conformer_io_HH
@@ -25,20 +25,15 @@
 #include <utility/io/izstream.hh>
 
 // C++ headers
-#include <map>
 #include <string>
 
 
 namespace core {
 namespace chemical {
 
-/// @brief  Local method that opens a file and returns its data as a list of lines after checking for errors.
-utility::vector1<std::string> get_lines_from_file_data(std::string const & filename);
-
-
 /// @brief  Return a list of ring conformers, read from a database file.
-utility::vector1<RingConformer> read_conformers_from_database_file_for_ring_size(std::string const & filename,
-		core::Size ring_size);
+utility::vector1< RingConformer > read_conformers_from_database_file_for_ring_size( std::string const & filename,
+		core::Size ring_size );
 
 }  // namespace chemical
 }  // namespace core

@@ -54,6 +54,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ncbb/oop/OopDockDesignProtocol.hh>
+#include <protocols/ncbb/util.hh>
 #include <protocols/ncbb/oop/OopDockDesignProtocolCreator.hh>
 
 // Filter headers
@@ -87,6 +88,7 @@ using namespace chemical;
 using namespace scoring;
 using namespace pose;
 using namespace protocols;
+using namespace protocols::ncbb;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::oop;
@@ -650,46 +652,6 @@ OopDockDesignProtocol::apply(
 	curr_job->add_string_real_pair( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
 
 }
-// this only works for two chains and assumes the protein is first and the peptide is second
-// inspired by protocols/docking/DockingProtocol.cc
-void
-OopDockDesignProtocol::setup_pert_foldtree(
-	core::pose::Pose & pose
-)
-{
-	using namespace kinematics;
-
-	// get current fold tree
-	FoldTree f( pose.fold_tree() );
-	f.clear();
-
-	// get the start and end for both chains
-	Size pro_start( pose.conformation().chain_begin( 1 ) );
-	Size pro_end( pose.conformation().chain_end( 1 ) );
-	Size pep_start( pose.conformation().chain_begin( 2 ) );
-	Size pep_end( pose.conformation().chain_end( 2 ) );
-
-	// get jump positions based on the center of mass of the chains
-	Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
-	Size dock_jump_pos_pep( core::pose::residue_center_of_mass( pose, pep_start, pep_end ) );
-
-	// build fold tree
-	Size jump_index( f.num_jump() + 1 );
-	f.add_edge( pro_start, dock_jump_pos_pro, Edge::PEPTIDE );
-	f.add_edge( dock_jump_pos_pro, pro_end, Edge::PEPTIDE );
-	f.add_edge( pep_start, dock_jump_pos_pep, Edge::PEPTIDE );
-	f.add_edge( dock_jump_pos_pep, pep_end, Edge::PEPTIDE );
-	f.add_edge( dock_jump_pos_pro, dock_jump_pos_pep, jump_index );
-
-	// set pose foldtree to foldtree we just created
-	f.reorder(1);
-	f.check_fold_tree();
-	assert( f.check_fold_tree() );
-
-	std::cout << "AFTER: " << f << std::endl;
-
-	pose.fold_tree( f );
-}
 
 protocols::moves::MoverOP
 OopDockDesignProtocol::clone() const
@@ -732,8 +694,10 @@ OopDockDesignProtocol::parse_my_tag
 ) {
         
     //score_fxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
-        
-    if(tag->hasOption( "scorefxn"))
+	
+	init_common_options( tag, data, score_fxn_, mc_temp_, pert_mc_temp_, pert_dock_rot_mag_, pert_dock_trans_mag_, pert_pep_small_temp_, pert_pep_small_H_, pert_pep_small_L_, pert_pep_small_E_, pert_pep_shear_temp_,pert_pep_shear_H_, pert_pep_shear_L_, pert_pep_shear_E_,pert_pep_num_rep_, pert_num_, dock_design_loop_num_, no_design_, final_design_min_, use_soft_rep_, mc_initial_pose_, pymol_, keep_history_ );
+	
+    /*if(tag->hasOption( "scorefxn"))
     {
         std::string const scorefxn_key( tag->getOption<std::string>("scorefxn" ) );
         if ( ! data.has( "scorefxns", scorefxn_key ) )
@@ -834,14 +798,14 @@ OopDockDesignProtocol::parse_my_tag
     if(tag->hasOption( "mc_initial_pose"))
         mc_initial_pose_ = tag->getOption<bool>("mc_initial_pose", mc_initial_pose_);
     else
-        mc_initial_pose_ = false;
+        mc_initial_pose_ = false;*/
         
     if(tag->hasOption( "oop_design_first"))
         oop_design_first_ = tag->getOption<bool>("oop_design_first", oop_design_first_);
     else
         oop_design_first_ = false;
         
-    if(tag->hasOption( "pymol"))
+    /*if(tag->hasOption( "pymol"))
         pymol_ = tag->getOption<bool>("pymol", pymol_);
     else
         pymol_ = false;
@@ -849,49 +813,10 @@ OopDockDesignProtocol::parse_my_tag
     if(tag->hasOption( "keep_history"))
         keep_history_ = tag->getOption<bool>("keep_history", keep_history_);
     else
-        keep_history_ = false;
+        keep_history_ = false;*/
         
 }
- 
-    
-    
-void
-OopDockDesignProtocol::setup_filter_stats()
-{
-	/*********************************************************************************************************************
-	Filter / Stats Setup
-	*********************************************************************************************************************/
 
-	// create and register sasa calculator
-	pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
-	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ))
-	{
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
-	}
-
-	// create and register hb calculator
-	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
-	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ))
-	{
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
-	}
-
-	// create and register unsat calculator
-	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
-	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "unsat" ))
-	{
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
-	}
-
-	// create and register packstat calculator
-	pose::metrics::PoseMetricCalculatorOP pack_calcculator( new pose_metric_calculators::PackstatCalculator() );
-	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "pack" ))
-	{
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "pack", pack_calcculator );
-	}
-
-}
-    
 // MoverCreator
 moves::MoverOP OopDockDesignProtocolCreator::create_mover() const {
     return moves::MoverOP( new OopDockDesignProtocol() );

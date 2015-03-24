@@ -50,6 +50,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 //#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
 #include <protocols/simple_moves/hbs/HbsPatcher.hh>
+#include <protocols/ncbb/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -178,8 +179,6 @@ class HbsDockDesignMinimizeMover : public Mover {
 		virtual ~HbsDockDesignMinimizeMover(){}
 
 		//methods
-		void setup_pert_foldtree( core::pose::Pose & pose);
-		void setup_filter_stats();
 		virtual void apply( core::pose::Pose & pose );
 		virtual std::string get_name() const { return "HbsDockDesignMinimizeMover"; }
 
@@ -236,7 +235,7 @@ main( int argc, char* argv[] )
 	//create mover instance
 	HbsDockDesignMinimizeMoverOP HDDM_mover( new HbsDockDesignMinimizeMover() );
 
-	HDDM_mover->setup_filter_stats();
+	protocols::ncbb::setup_filter_stats();
 
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( HDDM_mover );
@@ -277,7 +276,7 @@ HbsDockDesignMinimizeMover::apply(
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
 	// get a fold tree suitable for docking (local helper function)
-	setup_pert_foldtree( pose );
+	protocols::ncbb::setup_pert_foldtree( pose );
 
 
 	//pose.conformation().show_residue_connections();
@@ -685,70 +684,3 @@ if( option[ hddm::pymol ].value() )
 	curr_job->add_string_real_pair( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
 
 }
-// this only works for two chains and assumes the protein is first and the peptide is second
-// inspired by protocols/docking/DockingProtocol.cc
-void
-HbsDockDesignMinimizeMover::setup_pert_foldtree(
-	core::pose::Pose & pose
-)
-{
-	using namespace kinematics;
-
-	// get current fold tree
-	FoldTree f( pose.fold_tree() );
-	f.clear();
-
-	// get the start and end for both chains
-	Size pro_start( pose.conformation().chain_begin( 1 ) );
-	Size pro_end( pose.conformation().chain_end( 1 ) );
-	Size pep_start( pose.conformation().chain_begin( 2 ) );
-	Size pep_end( pose.conformation().chain_end( 2 ) );
-
-	// get jump positions based on the center of mass of the chains
-	Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
-	Size dock_jump_pos_pep( core::pose::residue_center_of_mass( pose, pep_start, pep_end ) );
-
-	// build fold tree
-	Size jump_index( f.num_jump() + 1 );
-	f.add_edge( pro_start, dock_jump_pos_pro, Edge::PEPTIDE );
-	f.add_edge( dock_jump_pos_pro, pro_end, Edge::PEPTIDE );
-	f.add_edge( pep_start, dock_jump_pos_pep, Edge::PEPTIDE);
-	f.add_edge( dock_jump_pos_pep, pep_end, Edge::PEPTIDE );
-	f.add_edge( dock_jump_pos_pro, dock_jump_pos_pep, jump_index );
-
-	// set pose foldtree to foldtree we just created
-	f.reorder(1);
-	f.check_fold_tree();
-	assert( f.check_fold_tree() );
-
-	std::cout << "AFTER: " << f << std::endl;
-
-	pose.fold_tree( f );
-}
-
-void
-HbsDockDesignMinimizeMover::setup_filter_stats()
-{
-	/*********************************************************************************************************************
-	Filter / Stats Setup
-	*********************************************************************************************************************/
-
-	// create and register sasa calculator
-	pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
-
-	// create and register hb calculator
-	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
-
-	// create and register unsat calculator
-	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
-
-	// create and register packstat calculator
-	pose::metrics::PoseMetricCalculatorOP pack_calcculator( new pose_metric_calculators::PackstatCalculator() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "pack", pack_calcculator );
-
-}
-
-

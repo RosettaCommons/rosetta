@@ -63,6 +63,7 @@
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ncbb/oop/OopDockDesignProtocol.hh>
 #include <protocols/ncbb/NcbbDockDesignProtocol.hh>
+#include <protocols/ncbb/util.hh>
 
 // Filter headers
 #include <basic/MetricValue.hh>
@@ -114,7 +115,7 @@ class HotspotPlacementMover : public moves::Mover {
 		//methods
 		void setup_pert_foldtree( core::pose::Pose & pose);
 		void setup_pert_foldtree_byres( core::pose::Pose & pose, Size dock_jump_pos_pro, Size dock_jump_pos_pep );
-		void setup_filter_stats();
+
 		virtual void apply( core::pose::Pose & pose );
 		virtual std::string get_name() const { return "OopHotspotPlacementMover"; }
 
@@ -244,7 +245,7 @@ HotspotPlacementMover::apply(
 
 	//kdrew: mc_temp = 1.0, turn off rotation 0.0 and translation 0.0, outer loop number = 10, no_design = true, final_design = false, pymol=false, keep_history=false
 	protocols::ncbb::NcbbDockDesignProtocolOP NDDP_mover( new protocols::ncbb::NcbbDockDesignProtocol( score_fxn, 0.0, 0.0, 0.0, 10, true, false, false, false ) );
-	NDDP_mover->setup_filter_stats();
+	protocols::ncbb::setup_filter_stats();
 
 	// create move map for minimization
 	core::kinematics::MoveMapOP min_mm( new core::kinematics::MoveMap() );
@@ -259,16 +260,13 @@ HotspotPlacementMover::apply(
 	utility::vector1< bool > aas(20,false);
 	core::chemical::ResidueTypeSetCOP rs( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 	core::pack::task::PackerTaskOP packer_task = core::pack::task::TaskFactory::create_packer_task( start_pose );
-	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum )
-	{
+	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum ) {
 		core::chemical::ResidueType rtype = start_pose.residue_type( resnum );
 		std::list< core::chemical::ResidueTypeCOP > allowed_aas = packer_task->residue_task(resnum).allowed_residue_types();
-		if (protocols::simple_moves::chiral::is_d_chiral(rtype))
-		{
+		if ( rtype.is_d_aa() ) {
 			packer_task->nonconst_residue_task(resnum).restrict_absent_canonical_aas(aas);
 			for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
-					 restype != allowed_aas.end(); ++restype)
-			{
+					 restype != allowed_aas.end(); ++restype) {
 
 				core::chemical::ResidueType allowed_rtype =  **restype;
 				core::chemical::ResidueType const & chiral_aa = protocols::simple_moves::chiral::get_chiral_residue_type(allowed_rtype, protocols::simple_moves::chiral::D_CHIRALITY);

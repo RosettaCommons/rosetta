@@ -92,7 +92,8 @@ void DiversifyCrmsdByClustering::select_fragments(
 	    }
 	    distances[i][i] = 0.0;
 	}
-	utility::vector1<numeric::ClusteringTreeNodeOP> roots = numeric::average_link_clustering(distances,frags_per_pos());
+	numeric::AverageLinkClusterer alc;
+	utility::vector1<numeric::ClusteringTreeNodeOP> roots = alc.cluster(distances,frags_per_pos());
 
 	//----------- Retrieve clusters
 	for(Size i=1;i<=frags_per_pos();i++) {

@@ -53,6 +53,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
+#include <protocols/ncbb/util.hh>
+
 // Filter headers
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -84,6 +86,7 @@ using namespace chemical;
 using namespace scoring;
 using namespace pose;
 using namespace protocols;
+using namespace protocols::ncbb;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::hbs;
@@ -106,11 +109,7 @@ static thread_local basic::Tracer TR( "HbsDesign" );
 // application specific options
 namespace hbs_design {
 	// pert options
-	//RealOptionKey const mc_temp( "hbs_design::mc_temp" );
-	//RealOptionKey const pert_dock_rot_mag( "hbs_design::pert_dock_rot_mag" );
-	//RealOptionKey const pert_dock_trans_mag( "hbs_design::pert_dock_trans_mag" );
-
-	//IntegerOptionKey const pert_pep_num_rep( "hbs_design::pert_pep_num_rep" );
+	
 	IntegerOptionKey const pert_num( "hbs_design::pert_num" );
 	IntegerOptionKey const design_loop_num( "hbs_design::design_loop_num" );
 
@@ -129,8 +128,6 @@ class HbsDesignMover : public Mover {
 		virtual ~HbsDesignMover(){}
 
 		//methods
-		void setup_pert_foldtree( core::pose::Pose & pose);
-		void setup_filter_stats();
 		virtual void apply( core::pose::Pose & pose );
 		virtual std::string get_name() const { return "HbsDesignMover"; }
 
@@ -149,14 +146,7 @@ try{
 	**********************************************************************************************************************/
 
 	// add application specific options to options system
-	// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
-	/*
-	option.add( hbs_design::mc_temp, "The temperature to use for the outer loop of the ODDM protocol. Defaults to 1.0." ).def( 1.0 );
-	option.add( hbs_design::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 1.0." ).def( 1 );
-	option.add( hbs_design::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 0.5." ).def( 0.5 );
-	*/
-
-	//option.add( hbs_design::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
+	
 	option.add( hbs_design::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
 	option.add( hbs_design::design_loop_num, "Number of iterations of pertubation and design" ).def(10);
 
@@ -170,7 +160,7 @@ try{
 	//create mover instance
 	HbsDesignMoverOP OD_mover( new HbsDesignMover() );
 
-	OD_mover->setup_filter_stats();
+	setup_filter_stats();
 
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( OD_mover );
@@ -216,10 +206,8 @@ HbsDesignMover::apply(
 
 	//kdrew: automatically find hbs positions
 	utility::vector1< core::Size > hbs_seq_positions;
-	for ( Size i = 1; i <= pose.total_residue(); ++i )
-	{
-		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1)
-		{
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1) {
 			hbs_seq_positions.push_back( i );
 			//kdrew: set up constraints
 			add_hbs_constraint( pose, i );
@@ -227,10 +215,8 @@ HbsDesignMover::apply(
 			pert_pep_mm->set_bb( i, false );
 
 			if( score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) )
-			{
 				score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
-			}
-
+			
 		}
 	}
 
@@ -286,259 +272,29 @@ HbsDesignMover::apply(
 
 	TR << "Main loop..." << std::endl;
 
-	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-
-	//pose.dump_pdb("pre_main_loop.pdb");
-	for ( Size k = 1; k <= Size( option[ hbs_design::design_loop_num ].value() ); ++k ) {
-
-		mc->reset(pose);
-
-		// pert loop
-		for( Size j = 1; j <= Size( option[ hbs_design::pert_num ].value() ); ++j ) {
-			TR << "PERTURB: " << k << " / "  << j << std::endl;
-			pert_trial->apply( pose );
-		}
-		mc->recover_low( pose );
-
-		// design
-		TR << "DESIGN: " << k << std::endl;
-		//kdrew: treating packer task as throw away object because it becomes invalid after design substitutions.
-		PackerTaskOP task( TaskFactory::create_packer_task( pose ));
-		//PackerTaskOP task = desn_tf->create_packer_task( pose ) ;
-
-		utility::vector1<bool> allowed_aas(20, true);
-		allowed_aas[aa_cys] = false;
-		allowed_aas[aa_gly] = false;
-		allowed_aas[aa_pro] = false;
-
-		for (Size i=1; i<=pep_start-1; i++)
-		{
-			//TR << "  not designed" << std::endl;
-			task->nonconst_residue_task(i).restrict_to_repacking();
-			task->nonconst_residue_task(i).initialize_from_command_line();
-		}
-
-		utility::vector1<Size> hbs_designable_positions = option[ hbs_design::hbs_design_positions ].value();
-		//kdrew: internal indexing for hbs chain
-		Size hbs_pos = 0;
-		// Set which residues can be designed
-		for (Size i=pep_start; i<=pep_end; i++) {
-			hbs_pos++;
-			TR << "hbs postion " << hbs_pos << std::endl;
-			if ( hbs_designable_positions.end() == find(hbs_designable_positions.begin(), hbs_designable_positions.end(), hbs_pos ))
-			{
-				TR << "  not designed" << std::endl;
-				task->nonconst_residue_task(i).restrict_to_repacking();
-				task->nonconst_residue_task(i).initialize_from_command_line();
-			}
-			else {
-				TR << "  designed" << std::endl;
-				bool temp = allowed_aas[pose.residue(i).aa()];
-				allowed_aas[pose.residue(i).aa()] = true;
-				task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
-				task->nonconst_residue_task(i).or_include_current(true);
-				task->nonconst_residue_task(i).initialize_from_command_line();
-				allowed_aas[pose.residue(i).aa()] = temp;
-			}
-		}
-
-		//desn_tf->modify_task(pose, task);
-
-		// create a pack rotamers mover
-		simple_moves::PackRotamersMoverOP desn_pr( new simple_moves::PackRotamersMover(score_fxn, task) );
-
-		// create a sequence mover to hold pack rotamers and minimization movers
-		moves::SequenceMoverOP desn_sequence( new moves::SequenceMover() );
-		desn_sequence->add_mover( desn_pr );
-		desn_sequence->add_mover( desn_ta_min );
-		desn_sequence->apply( pose );
-
-		TR<< "pre mc->boltzmann" << std::endl;
-		mc->show_state();
-		mc->boltzmann( pose );
-		TR<< "post mc->boltzmann" << std::endl;
-		mc->show_state();
-
-	}//dock_design for loop
-
-	mc->recover_low( pose );
-
-	curr_job->add_string_real_pair( "ENERGY_FINAL ", (*score_fxn)(pose) );
+	ncbb_design_main_loop( Size( option[ hbs_design::design_loop_num ].value() ),
+						   Size( option[ hbs_design::pert_num ].value() ),
+						   pose,
+						   pert_trial,
+						   option[ hbs_design::hbs_design_positions ].value(),
+						   pep_start,
+						   pep_end,
+						   desn_ta_min,
+						   score_fxn,
+						   mc
+						  );
+	
+	
 
 	TR << "Ending main loop..." << std::endl;
 
 	TR << "Checking pose energy..." << std::endl;
+	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-		// create  MetricValues
-	basic::MetricValue< core::Real > mv_sasa_complex;
-	basic::MetricValue< core::Real > mv_sasa_seperated;
-	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_complex;
-	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_seperated;
-	basic::MetricValue< core::Real > mv_pack_complex;
-	basic::MetricValue< core::Real > mv_pack_seperated;
-
-	basic::MetricValue< core::Real > mv_repack_sasa_seperated;
-	basic::MetricValue< utility::vector1< core::Size > > mv_repack_unsat_res_seperated;
-	basic::MetricValue< core::Real > mv_repack_pack_seperated;
-	core::Real repack_energy_seperated;
-	core::Real repack_hbond_ener_sum_seperated;
-
-	core::Real energy_complex;
-	core::Real energy_seperated;
-	core::Real hbond_ener_sum_complex;
-	core::Real hbond_ener_sum_seperated;
-
-	// calc energy
-	energy_complex = (*score_fxn)(pose);
-
-	// make copy of pose to calc stats
-	Pose stats_pose( pose );
-
-	// complex stats
-	energy_complex = (*score_fxn)(stats_pose);
-	stats_pose.metric("sasa","total_sasa",mv_sasa_complex);
-	stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_unsat_res_complex);
-	utility::vector1< core::Size > const unsat_res_complex(mv_unsat_res_complex.value());
-	stats_pose.metric( "pack", "total_packstat", mv_pack_complex );
-	scoring::EnergyMap complex_emap( stats_pose.energies().total_energies() );
-	hbond_ener_sum_complex = complex_emap[ hbond_sr_bb ] + complex_emap[ hbond_lr_bb ] + complex_emap[ hbond_bb_sc ] + complex_emap[ hbond_sc ];
-
-	// seperate designed chain from other chains
-	protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( pose, 1 ) ); // HARDCODED JUMP NUMBER
-	translate->step_size( 1000.0 );
-	translate->apply( stats_pose );
-	//stats_pose.dump_pdb("stats_trans1000.pdb");
-
-	Pose repack_stats_pose( stats_pose );
-
-	//kdrew: probably should repack and minimize here after separation
-	TaskFactoryOP tf( new TaskFactory() );
-	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
-	//kdrew: do not do design, makes NATAA if res file is not specified
-	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
-	tf->push_back( rtrp );
-	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
-	packer->task_factory( tf );
-	packer->score_function( score_fxn );
-	packer->apply( repack_stats_pose );
-
-	// create move map for minimization
-	kinematics::MoveMapOP separate_min_mm( new kinematics::MoveMap() );
-	separate_min_mm->set_bb( true );
-	separate_min_mm->set_chi( true );
-	separate_min_mm->set_jump( 1, true );
-
-	// create minimization mover
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
-	// final min (okay to use ta min here)
-	separate_min->apply( repack_stats_pose );
-
-	// seperate stats
-	energy_seperated = (*score_fxn)(stats_pose);
-	repack_energy_seperated = (*score_fxn)(repack_stats_pose);
-	stats_pose.metric("sasa","total_sasa",mv_sasa_seperated);
-	repack_stats_pose.metric("sasa","total_sasa",mv_repack_sasa_seperated);
-	stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_unsat_res_seperated);
-	repack_stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_repack_unsat_res_seperated);
-	utility::vector1< core::Size > const unsat_res_seperated(mv_unsat_res_seperated.value());
-	stats_pose.metric( "pack", "total_packstat", mv_pack_seperated );
-	repack_stats_pose.metric( "pack", "total_packstat", mv_repack_pack_seperated );
-	scoring::EnergyMap seperated_emap( stats_pose.energies().total_energies() );
-	hbond_ener_sum_seperated = seperated_emap[ hbond_sr_bb ] + seperated_emap[ hbond_lr_bb ] + seperated_emap[ hbond_bb_sc ] + seperated_emap[ hbond_sc ];
-	scoring::EnergyMap repack_seperated_emap( repack_stats_pose.energies().total_energies() );
-	repack_hbond_ener_sum_seperated = repack_seperated_emap[ hbond_sr_bb ] + repack_seperated_emap[ hbond_lr_bb ] + repack_seperated_emap[ hbond_bb_sc ] + repack_seperated_emap[ hbond_sc ];
-
-	// add values to job so that they will be output in the pdb
-	curr_job->add_string_real_pair( "ENERGY_COMPLEX:\t\t", energy_complex );
-	curr_job->add_string_real_pair( "ENERGY_SEPERATE:\t\t", energy_seperated );
-	curr_job->add_string_real_pair( "ENERGY_DIFF:\t\t", energy_complex - energy_seperated );
-	curr_job->add_string_real_pair( "REPACK_ENERGY_SEPERATE:\t\t", repack_energy_seperated );
-	curr_job->add_string_real_pair( "REPACK_ENERGY_DIFF:\t\t", energy_complex - repack_energy_seperated );
-
-	curr_job->add_string_real_pair( "SASA_COMPLEX:\t\t", mv_sasa_complex.value() );
-	curr_job->add_string_real_pair( "SASA_SEPERATE:\t\t", mv_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_SASA_SEPERATE:\t\t", mv_repack_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_repack_sasa_seperated.value() );
-
-	curr_job->add_string_real_pair( "HB_ENER_COMPLEX:\t\t", hbond_ener_sum_complex );
-	curr_job->add_string_real_pair( "HB_ENER_SEPERATE:\t\t", hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "REPACK_HB_ENER_SEPERATE:\t\t", repack_hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "REPACK_HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - repack_hbond_ener_sum_seperated );
-
-	curr_job->add_string_real_pair( "PACK_COMPLEX:\t\t", mv_pack_complex.value() );
-	curr_job->add_string_real_pair( "PACK_SEPERATE:\t\t", mv_pack_seperated.value() );
-	curr_job->add_string_real_pair( "PACK_DIFF:\t\t", mv_pack_complex.value() - mv_pack_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_PACK_SEPERATE:\t\t", mv_repack_pack_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
-
-}
-// this only works for two chains and assumes the protein is first and the peptide is second
-// inspired by protocols/docking/DockingProtocol.cc
-void
-HbsDesignMover::setup_pert_foldtree(
-	core::pose::Pose & pose
-)
-{
-	using namespace kinematics;
-
-	// get current fold tree
-	FoldTree f( pose.fold_tree() );
-	f.clear();
-
-	// get the start and end for both chains
-	Size pro_start( pose.conformation().chain_begin( 1 ) );
-	Size pro_end( pose.conformation().chain_end( 1 ) );
-	Size pep_start( pose.conformation().chain_begin( 2 ) );
-	Size pep_end( pose.conformation().chain_end( 2 ) );
-
-	// get jump positions based on the center of mass of the chains
-	Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
-	Size dock_jump_pos_pep( core::pose::residue_center_of_mass( pose, pep_start, pep_end ) );
-
-	// build fold tree
-	Size jump_index( f.num_jump() + 1 );
-	//-1 is a magic number for PEPTIDE EDGE.  There is a constant defined with the fold tree that should have been used here.
-	f.add_edge( pro_start, dock_jump_pos_pro, -1 );
-	f.add_edge( dock_jump_pos_pro, pro_end, -1 );
-	f.add_edge( pep_start, dock_jump_pos_pep, -1);
-	f.add_edge( dock_jump_pos_pep, pep_end, -1 );
-	f.add_edge( dock_jump_pos_pro, dock_jump_pos_pep, jump_index );
-
-	// set pose foldtree to foldtree we just created
-	f.reorder(1);
-	f.check_fold_tree();
-	assert( f.check_fold_tree() );
-
-	std::cout << "AFTER: " << f << std::endl;
-
-	pose.fold_tree( f );
-}
-
-void
-HbsDesignMover::setup_filter_stats()
-{
-	/*********************************************************************************************************************
-	Filter / Stats Setup
-	*********************************************************************************************************************/
-
-	// create and register sasa calculator
-	pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
-
-	// create and register hb calculator
-	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
-
-	// create and register unsat calculator
-	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
-
-	// create and register packstat calculator
-	pose::metrics::PoseMetricCalculatorOP pack_calcculator( new pose_metric_calculators::PackstatCalculator() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "pack", pack_calcculator );
-
+	curr_job->add_string_real_pair( "ENERGY_FINAL ", (*score_fxn)(pose) );
+	
+	calculate_statistics( curr_job, pose, score_fxn );
+	
 }
 
 

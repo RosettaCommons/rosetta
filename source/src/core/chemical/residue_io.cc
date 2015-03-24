@@ -387,6 +387,18 @@ read_topology_file(
 /// E.g., "NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 2" from
 /// d-ncaa/d-5-fluoro-tryptophan.params
 ///
+/// NCAA_SEMIROTAMERIC:
+/// Indicates if a NCAA is semirotameric (this is hard coded for canonicals)
+///
+/// NRCHI_START_ANGLE:
+/// The lower bound for non rotameric chi sampling (sometimes you don't want
+/// 0 or 180 to be minimum so you get both sides of these critical values;
+/// take this from the input file you used with MakeRotLib
+///
+/// NRCHI_SYMMETRIC:
+/// Indicates if the nonrotameric chi is symmetric (PHE); if absent it is
+/// assumed not (ASN)
+///
 /// NU:
 /// Declares an internal ring dihedral, its index, and the four atoms that define it.
 /// E.g., "NU 2  C1   C2   C3   C4 ".
@@ -871,7 +883,11 @@ debug_assert( rsd_type_set != 0 ); // not really needed
 			Real angle(-180);
 			l >> angle;
 			rsd->set_nrchi_start_angle( angle );
-		}	else if ( tag == "PEPTOID_ROTLIB_PATH" ) {
+		} else if ( tag == "CHIRAL_EQUIVALENT_NAME" ) {
+			std::string cen;
+			l >> cen;
+			rsd->chiral_equivalent_name( cen );
+		} else if ( tag == "PEPTOID_ROTLIB_PATH" ) {
 			std::string path;
 			l >> path;
 			rsd->set_peptoid_rotlib_path( path );

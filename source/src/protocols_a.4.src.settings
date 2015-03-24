@@ -88,6 +88,7 @@ sources = {
 	],
 	"protocols/ncbb": [
 		"NcbbDockDesignProtocol",
+		"util",
 	],
 	"protocols/pack_daemon": [
 		"DynamicAggregateFunction",

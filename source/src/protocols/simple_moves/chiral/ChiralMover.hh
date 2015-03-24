@@ -36,9 +36,6 @@ enum Chirality {
 	FLIP_CHIRALITY //flip to the other chirality, ie L->D or D->L
 };
 
-
-bool is_d_chiral( core::chemical::ResidueType restype );
-bool is_l_chiral( core::chemical::ResidueType restype );
 core::chemical::ResidueType const & get_chiral_residue_type( core::chemical::ResidueType const & , Chirality );
 
 ///@details
