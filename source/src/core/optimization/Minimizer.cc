@@ -271,7 +271,7 @@ Minimizer::dfpmin(
 			for ( int i = 1; i <= N; ++i ) {
 				 HDG[i] = 0.0;
 				 for ( int j = 1; j <= N; ++j ) {
-						HDG[i] += HESSIN(i,j)*DG[j];
+						HDG[i] += HESSIN(j,i)*DG[j];
 				 }
 			}
 
@@ -293,13 +293,13 @@ Minimizer::dfpmin(
 			}
 			for ( int i = 1; i <= N; ++i ) {
 				 for ( int j = 1; j <= N; ++j ) {
-						HESSIN(i,j) += FAC*XI[i]*XI[j] - FAD*HDG[i]*HDG[j] + FAE*DG[i]*DG[j];
+						HESSIN(j,i) += FAC*XI[i]*XI[j] - FAD*HDG[i]*HDG[j] + FAE*DG[i]*DG[j];
 				 }
 			}
 			for ( int i = 1; i <= N; ++i ) {
 				 XI[i] = 0.;
 				 for ( int j = 1; j <= N; ++j ) {
-						XI[i] -= HESSIN(i,j)*G[j];
+						XI[i] -= HESSIN(j,i)*G[j];
 				 }
 			}
 	 }
@@ -420,10 +420,10 @@ Minimizer::dfpmin_armijo(
 							 line_min->_deriv_sum = 0.0;
 							 for ( int i = 1; i <= N; ++i ) {
 									for ( int j = 1; j < i; ++j ) {
-										 HESSIN(i,j) = 0.0;
+										 HESSIN(j,i) = 0.0;
 									}
 									for ( int j = i+1; j <= N; ++j ) {
-										 HESSIN(i,j) = 0.0;
+										 HESSIN(j,i) = 0.0;
 									}
 									if ( HESSIN(i,i) < 0.01 ) HESSIN(i,i) = 0.01;
 									std::cerr << "HESSIN for (i,i): " << i << ' ' << HESSIN(i,i) << std::endl;
@@ -489,7 +489,7 @@ Minimizer::dfpmin_armijo(
 				 for ( int i = 1; i <= N; ++i ) {
 						HDG[i] = 0.0;
 						for ( int j = 1; j <= N; ++j ) {
-							 HDG[i] += HESSIN(i,j)*DG[j];
+							 HDG[i] += HESSIN(j,i)*DG[j];
 						}
 				 }
 				 FAC = 0.0;
@@ -508,7 +508,7 @@ Minimizer::dfpmin_armijo(
 				 }
 				 for ( int i = 1; i <= N; ++i ) {
 						for ( int j = 1; j <= N; ++j ) {
-							 HESSIN(i,j) += FAC*XI[i]*XI[j] - FAD*HDG[i]*HDG[j] + FAE*DG[i]*DG[j];
+							 HESSIN(j,i) += FAC*XI[i]*XI[j] - FAD*HDG[i]*HDG[j] + FAE*DG[i]*DG[j];
 						}
 				 }
 			}									//needed if HOPT = 2
@@ -516,7 +516,7 @@ Minimizer::dfpmin_armijo(
 			for ( int i = 1; i <= N; ++i ) {
 				 XI[i] = 0.0;
 				 for ( int j = 1; j <= N; ++j ) {
-						XI[i] -= HESSIN(i,j)*G[j];
+						XI[i] -= HESSIN(j,i)*G[j];
 				 }
 			}
 
@@ -531,7 +531,7 @@ Minimizer::dfpmin_armijo(
 						if (FAF<0.01) FAF=0.01;
 						for ( int i = 1; i <= N; ++i ) {
 							 for ( int j = 1; j <= N; ++j ) {
-									HESSIN(i,j) = 0;
+									HESSIN(j,i) = 0;
 							 }
 							 HESSIN(i,i) = FAF;
 							 XI[i] = -FAF*G[i];

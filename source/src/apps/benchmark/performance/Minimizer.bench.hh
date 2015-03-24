@@ -47,11 +47,11 @@ public:
 
 		scorefxn = core::scoring::get_score_function();
 
-				//kinematics::MoveMap mm;
-				for ( int i=30; i<= 35; ++i ) {
-						mm.set_bb ( i, true );
-						mm.set_chi( i, true );
-				}
+		//kinematics::MoveMap mm;
+		for ( core::Size i=1; i<= start_pose->total_residue(); ++i ) {
+			mm.set_bb ( i, true );
+			mm.set_chi( i, true );
+		}
 
 		(*scorefxn)( *start_pose ); // to triger dunbrack loading/calcualtion
 	};
@@ -64,7 +64,7 @@ public:
 			if( sft == SFT_dfpmin ) stype = "dfpmin";
 			if( sft == SFT_dfpmin_armijo ) stype = "dfpmin_armijo";
 			if( sft == SFT_dfpmin_armijo_nonmonotone ) stype = "dfpmin_armijo_nonmonotone";
-			core::optimization::MinimizerOptions options( stype/*"dfpmin"*/, 1e-1, true, true );
+			core::optimization::MinimizerOptions options( stype/*"dfpmin"*/, 0, true );
 			core::pose::Pose pose;
 			pose = *start_pose;
 			minimizer.run( pose, mm, *scorefxn, options );
@@ -74,7 +74,7 @@ public:
 	virtual void tearDown() {};
 };
 
-typedef MinimizerBenchmark<SFT_dfpmin, 12> MinimizerBenchmark_dfpmin;
+typedef MinimizerBenchmark<SFT_dfpmin, 1> MinimizerBenchmark_dfpmin;
 typedef MinimizerBenchmark<SFT_dfpmin_armijo, 1> MinimizerBenchmark_dfpmin_armijo;
 typedef MinimizerBenchmark<SFT_dfpmin_armijo_nonmonotone, 1> MinimizerBenchmark_dfpmin_armijo_nonmonotone;
 
