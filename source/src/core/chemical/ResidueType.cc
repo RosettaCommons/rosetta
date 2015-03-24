@@ -119,6 +119,8 @@ ResidueType::ResidueType(
 		nrchi_start_angle_( 0 ),
 		use_peptoid_rotlib_( false ),
 		peptoid_rotlib_n_rots_( 0 ),
+		lowest_ring_conformer_( "" ),
+		low_ring_conformers_(),
 		properties_( ResiduePropertiesOP( new ResidueProperties( this ) ) ),
 		aa_( aa_unk ),
 		rotamer_aa_( aa_unk ),
@@ -151,7 +153,7 @@ ResidueType::~ResidueType()
 	tr.Trace << "Residue dstor" << std::endl;
 }
 
-ResidueType::ResidueType(ResidueType const & residue_type):
+ResidueType::ResidueType( ResidueType const & residue_type ):
 		utility::pointer::ReferenceCount(),
 		utility::pointer::enable_shared_from_this< ResidueType >(),
 		atom_types_( residue_type.atom_types_ ),
@@ -224,6 +226,8 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		peptoid_rotlib_path_( residue_type.peptoid_rotlib_path_),
 		peptoid_rotlib_n_rots_( residue_type.peptoid_rotlib_n_rots_ ),
 		peptoid_rotlib_n_bins_per_rot_(residue_type.peptoid_rotlib_n_bins_per_rot_),
+		lowest_ring_conformer_( residue_type.lowest_ring_conformer_ ),
+		low_ring_conformers_( residue_type.low_ring_conformers_ ),
 		properties_( ResiduePropertiesOP( new ResidueProperties( *residue_type.properties_, this ) ) ),
 		aa_( residue_type.aa_ ),
 		rotamer_aa_( residue_type.rotamer_aa_ ),
@@ -1450,6 +1454,28 @@ ResidueType::add_nu(core::uint const nu_index,
 	}
 	nu_atoms_[nu_index] = atoms;
 }
+
+
+// Set this cyclic residue's lowest-energy ring conformer by IUPAC name.
+void
+ResidueType::set_lowest_energy_ring_conformer( std::string const & conformer )
+{
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
+	lowest_ring_conformer_ = conformer;
+}
+
+// Set this cyclic residue's low-energy ring conformers by IUPAC name.
+void
+ResidueType::set_low_energy_ring_conformers( utility::vector1< std::string > const & conformers )
+{
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
+	low_ring_conformers_ = conformers;
+}
+
 
 /// @details Describe proton behavior for residue type; where should rotamer samples be considered,
 /// and if expanded rotamers are desired, what deviations from the original rotamer samples
@@ -2724,8 +2750,9 @@ ResidueType::update_derived_data()
 		// ring_size could be made a private datum, but it only really makes sense for monocyclics.  Since its only use
 		// for the time being is to set the proper RingConformerSet, I'll just leave it as a local variable here.
 		// ~Labonte
-		Size const ring_size = nu_atoms_indices_.size() + 2;
-		conformer_set_ = RingConformerSetOP( new RingConformerSet( ring_size ) );
+		Size const ring_size( nu_atoms_indices_.size() + 1 );
+		conformer_set_ = RingConformerSetOP( new RingConformerSet(
+				ring_size, lowest_ring_conformer_, low_ring_conformers_ ) );
 	}
 
 	if ( properties_->has_property( RNA ) ){ //reinitialize and RNA derived data.

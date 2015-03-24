@@ -11,9 +11,10 @@
 /// @brief   Database input/output function definitions for ring-conformer-specific data.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
+
 // Unit header
 #include <core/chemical/ring_conformer_io.hh>
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/RingConformer.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -62,11 +63,11 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 		// We need 3 less than the number of nu angles to define a ring conformer by Cremer-Pople parameters.
 		conformer.CP_parameters.resize( ring_size - 3 );
 
-		// We only need 2 less than the number of nu angles to define a ring conformer by internal angles.
-		conformer.nu_angles.resize( ring_size - 2 );
+		// We need 1 less than the number of nu angles to define a ring conformer by internal angles.
+		conformer.nu_angles.resize( ring_size - 1 );
 
-		// We only need 1 less than the ring size for tau angles.
-		conformer.tau_angles.resize( ring_size - 1 );
+		// We need all the tau angles.
+		conformer.tau_angles.resize( ring_size );
 
 		line_word_by_word >> conformer.specific_name >> conformer.general_name >> conformer.degeneracy;
 
@@ -74,19 +75,16 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 			line_word_by_word >> conformer.CP_parameters[ parameter ];
 		}
 
-		for ( uint nu( 1 ); nu <= ring_size - 2; ++nu ) {
+		for ( uint nu( 1 ); nu <= ring_size - 1; ++nu ) {
 			line_word_by_word >> conformer.nu_angles[ nu ];
 		}
 
-		// Ignore the last two nu angle values.
-		line_word_by_word >> junk >> junk;
+		// Ignore the last nu angle value.
+		line_word_by_word >> junk;
 
-		for ( uint tau( 1 ); tau <= ring_size - 1; ++tau ) {
+		for ( uint tau( 1 ); tau <= ring_size; ++tau ) {
 			line_word_by_word >> conformer.tau_angles[ tau ];
 		}
-
-		// Ignore the last tau angle value.
-		line_word_by_word >> junk;
 
 		conformers.push_back( conformer );
 	}

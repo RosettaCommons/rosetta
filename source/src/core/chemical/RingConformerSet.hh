@@ -9,12 +9,14 @@
 
 /// @file    core/chemical/RingConformerSet.hh
 /// @brief   Declarations and simple accessor/mutator definitions for RingConformerSet.
-/// @author  Labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
+
 
 #ifndef INCLUDED_core_chemical_RingConformerSet_HH
 #define INCLUDED_core_chemical_RingConformerSet_HH
 
 // Unit header
+#include <core/chemical/RingConformer.hh>
 #include <core/chemical/RingConformerSet.fwd.hh>
 
 // Project headers
@@ -41,36 +43,20 @@ enum CPParameter {
 };
 
 
-struct RingConformer {
-	std::string specific_name;  // e.g., "1C4"
-	std::string general_name;  // e.g., "chair"
-
-	core::uint degeneracy; // E.g., 1C4 has a degeneracy of 3, since 3CO and 5C2 are equivalent.
-
-	// a list of 1 (for 4-membered rings), 2 (for 5-membered rings), or 3 (for 6-membered rings) Cremer-Pople "ring
-	// puckering" parameters
-	// TODO: This could be expanded to include parameters for 7-membered rings and larger.
-	utility::vector1<core::Real> CP_parameters;  // phi and theta are angles in degrees; q is a distance in Angstroms
-
-	// a list of the 1st n-2 nu angles, where n is the ring size.  Nu angles are internal ring torsions.
-	utility::vector1<core::Angle> nu_angles;
-
-	// a list of the 1st n-1 tau angles, where n is the ring size.  Tau angles are internal ring bond angles.
-	utility::vector1<core::Angle> tau_angles;
-};  // struct RingConformer
-
-
 class RingConformerSet : public utility::pointer::ReferenceCount {
 public:
 	// Standard methods //////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief  Standard constructor
-	RingConformerSet(core::uint const ring_size);
+	RingConformerSet(
+			core::Size const ring_size,
+			std::string const & lowest_conformer,
+			utility::vector1< std::string > const & low_conformers );
 
 	/// @brief  Copy constructor
-	RingConformerSet(RingConformerSet const & object_to_copy);
+	RingConformerSet( RingConformerSet const & object_to_copy );
 
 	// Assignment operator
-	RingConformerSet & operator=(RingConformerSet const & object_to_copy);
+	RingConformerSet & operator=( RingConformerSet const & object_to_copy );
 
 	// Destructor
 	virtual ~RingConformerSet();
@@ -78,44 +64,42 @@ public:
 
 	// Standard Rosetta methods //////////////////////////////////////////////////////////////////////////////////////
 	/// @brief  Generate string representation of RingConformerSet for debugging purposes.
-	virtual void show(std::ostream & output=std::cout) const;
+	virtual void show( std::ostream & output=std::cout ) const;
 
 
 	// Accessors/Mutators ////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief  Return the ring size of the conformers in this set.
-	core::Size
-	ring_size() const
-	{
-		return ring_size_;
-	}
+	core::Size ring_size() const { return ring_size_; }
 
 	/// @brief  Return the size of the conformer set.
 	core::Size size() const;
 
+	/// @brief  Are the low-energy conformers known for this set?
+	bool low_energy_conformers_are_known() const;
+
 
 	/// @brief  Return a list of all nondegenerate conformers in the set.
-	utility::vector1<RingConformer> const & get_all_nondegenerate_conformers() const;
+	utility::vector1< RingConformer > const & get_all_nondegenerate_conformers() const;
 
 
 	/// @brief  Return the conformer corresponding to the requested name.
-	RingConformer const & get_ideal_conformer_by_name(std::string const name) const;
+	RingConformer const & get_ideal_conformer_by_name( std::string const name ) const;
 
 	/// @brief  Return the conformer that is the best fit for the provided Cremer-Pople parameters.
-	RingConformer const & get_ideal_conformer_by_CP_parameters(utility::vector1<core::Real> const parameters) const;
+	RingConformer const & get_ideal_conformer_by_CP_parameters( utility::vector1< core::Real > const parameters ) const;
 
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.
-	RingConformer /*const &*/ get_ideal_conformer_from_nus(utility::vector1<core::Angle> const angles) const;
+	//RingConformer const & get_ideal_conformer_from_nus( utility::vector1< core::Angle > const angles ) const;
 
 
 	/// @brief  Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.
-	RingConformer /*const &*/ get_lowest_energy_conformer() const;
+	RingConformer const & get_lowest_energy_conformer() const;
 
 	/// @brief  Return a random conformer from the set.
 	RingConformer const & get_random_conformer() const;
 
 	/// @brief  Return a random conformer from the subset of conformers that are local minima.
-	// TODO: better?: overload get_random_conformer and pass enum, such as "LOCAL_MIN"
-	RingConformer /*const &*/ get_random_local_min_conformer() const;
+	RingConformer const & get_random_local_min_conformer() const;
 
 
 private:
@@ -124,33 +108,30 @@ private:
 	RingConformerSet();
 
 	// Initialize data members for the given ring size.
-	void init(core::uint const ring_size);
+	void init(
+			core::Size const ring_size,
+			std::string const & lowest_conformer_in,
+			utility::vector1< std::string > const & low_conformers );
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-	void copy_data(RingConformerSet & object_to_copy_to, RingConformerSet const & object_to_copy_from);
-
-
-	// Static constant data access
-	/// @brief A set of ring conformers for the requested ring size.
-	static utility::vector1<RingConformer> const & conformers_for_ring_size(core::Size ring_size);
+	void copy_data( RingConformerSet & object_to_copy_to, RingConformerSet const & object_to_copy_from );
 
 
 	// Private data //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::Size ring_size_;  // almost always 5 or 6, but one could make a RingConformerSet for other sizes
 
-	// TODO: Make these map<uint, vector1<RingConformer> >s, with the vectors indexed by an enum?
 	// Ring Conformer Subsets
-	utility::vector1<RingConformer> nondegenerate_conformers_;
-	utility::vector1<RingConformer> degenerate_conformers_;  // includes multiple copies of degenerate conformers
-	utility::vector1<RingConformer> energy_minima_conformers_;
-	utility::vector1<RingConformer> energy_maxima_conformers_;
+	utility::vector1< RingConformer > nondegenerate_conformers_;
+	utility::vector1< RingConformer > degenerate_conformers_;  // includes multiple copies of degenerate conformers
+	RingConformer energy_minimum_conformer_;  // the global minimum conformer
+	utility::vector1< RingConformer > energy_minima_conformers_;  // other relatively stable ring conformers
 };  // class RingConformerSet
 
 
 // Insertion operators (overloaded so that RingConformer and RingConformerSet can be "printed" in PyRosetta).
-std::ostream & operator<<(std::ostream & output, RingConformer const & object_to_output);
+std::ostream & operator<<( std::ostream & output, RingConformer const & object_to_output );
 
-std::ostream & operator<<(std::ostream & output, RingConformerSet const & object_to_output);
+std::ostream & operator<<( std::ostream & output, RingConformerSet const & object_to_output );
 
 }  // namespace chemical
 }  // namespace core

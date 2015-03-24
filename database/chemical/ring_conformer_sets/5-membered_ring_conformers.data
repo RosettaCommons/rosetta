@@ -3,6 +3,9 @@
 # Conformer nomenclature is explained in French & Dowd (1994) J. Comp. Chem.,
 # 15(5), 561-70 and Cremer & Pople (1974) JACS, 97(6), 1354-8.
 
+# The following describes a carbohydrate system, as an example, but the system
+# is general for any monocyclic, saturated five-atom ring.
+
 # In general, numbers (or the letter O) represent ring position.  Three atoms
 # are found for the conformer in question that form a plane, and the atoms are
 # arranged in a clockwise fashion from oxygen (O).  Numbers (or O) given before
@@ -26,8 +29,8 @@
 # It should be noted that the specific names here are for aldoses.  Ketoses
 # will have different labels, since C1 is exocyclic.
 
-# We only need 3 torsion angles to define a 5-membered conformer, so only the
-# 1st 3 nu values will be stored in Rosetta.  However, all 5 angles are listed
+# We only need 4 torsion angles to define a 5-membered conformer, so only the
+# 1st 4 nu values will be stored in Rosetta.  However, all 5 angles are listed
 # here for completeness.
 
 # nu1 is defined using only internal ring atoms, so in the above example, nu1 is
@@ -42,10 +45,6 @@
 
 # tau1 is defined as the internal ring bond angle about C1, so in the above ex-
 # ample, tau1 is the O-C1-C2 angle.
-
-# We only need 4 bond angles for each 5-membered conformer, so only the 1st 4
-# tau values will be stored in Rosetta.  However, all 5 angles are listed here
-# for completeness.
 
 # Technically, a strained ring should experience exocyclic bond angle distor-
 # tions as well.  It is strongly recommended that minimizations of both bond

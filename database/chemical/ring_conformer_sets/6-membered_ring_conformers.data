@@ -3,6 +3,9 @@
 # Conformer nomenclature is explained in French & Dowd (1994) J. Comp. Chem.,
 # 15(5), 561-70 and Cremer & Pople (1974) JACS, 97(6), 1354-8.
 
+# The following describes a carbohydrate system, as an example, but the system
+# is general for any monocyclic, saturated five-atom ring.
+
 # In general, numbers (or the letter O) represent ring position.  Four atoms
 # are found for the conformer in question that form a plane, and the atoms are
 # arranged in a clockwise fashion from oxygen (O).  Numbers (or O) given before
@@ -33,8 +36,8 @@
 # necessarily be different.  Check the topology file.  Within Rosetta, if there
 # is a CUT_BOND, it will be between position 0 and position 1.
 
-# We only need 4 torsion angles to define a 6-membered conformer, so only the
-# 1st 4 nu values will be stored in Rosetta.  However, all 6 angles are listed
+# We only need 5 torsion angles to define a 6-membered conformer, so only the
+# 1st 5 nu values will be stored in Rosetta.  However, all 6 angles are listed
 # here for completeness.
 
 # nu1 is defined using only internal ring atoms, so in the above example, nu1 is
@@ -48,10 +51,6 @@
 
 # tau1 is defined as the internal ring bond angle about C1, so in the above ex-
 # ample, tau1 is the O-C1-C2 angle.
-
-# We only need 5 bond angles for each 6-membered conformer, so only the 1st 5
-# tau values will be stored in Rosetta.  However, all 6 angles are listed here
-# for completeness.
 
 # Ideal tau angles were determined from a combination of tools: the 6ring pro-
 # gram from [whom?], the Cremer-Pople parameter calculator found at

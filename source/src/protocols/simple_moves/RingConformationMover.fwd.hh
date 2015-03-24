@@ -9,7 +9,7 @@
 
 /// @file    protocols/simple_moves/RingConformationMover.fwd.hh
 /// @brief   Forward declarations for RingConformationMover.
-/// @author  labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 #ifndef INCLUDED_protocols_simple_moves_RingConformationMover_FWD_HH
 #define INCLUDED_protocols_simple_moves_RingConformationMover_FWD_HH
@@ -23,8 +23,8 @@ namespace simple_moves {
 /// @brief  A Mover class for switching among various ring conformations.
 class RingConformationMover;
 
-typedef utility::pointer::shared_ptr<RingConformationMover> RingConformationMoverOP;
-typedef utility::pointer::shared_ptr<RingConformationMover const> RingConformationMoverCOP;
+typedef utility::pointer::shared_ptr< RingConformationMover > RingConformationMoverOP;
+typedef utility::pointer::shared_ptr< RingConformationMover const > RingConformationMoverCOP;
 
 }  // namespace simple_moves
 }  // namespace protocols

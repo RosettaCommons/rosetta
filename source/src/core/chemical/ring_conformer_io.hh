@@ -11,11 +11,12 @@
 /// @brief   Database input/output function declarations for ring-conformer-specific data.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
+
 #ifndef INCLUDED_core_chemical_ring_conformer_io_HH
 #define INCLUDED_core_chemical_ring_conformer_io_HH
 
 // Unit header
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/RingConformer.hh>
 
 // Project headers
 #include <core/types.hh>

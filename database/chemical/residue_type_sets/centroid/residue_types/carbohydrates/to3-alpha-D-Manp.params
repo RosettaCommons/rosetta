@@ -14,6 +14,7 @@ ATOM  C5  CH1  CT1   0.11
 ATOM  O5  OOC   OS  -0.34
 ATOM_ALIAS  O5   O  
 ATOM  VO5 VIRT VIRT 0.00   # to O5; allows for consistent chi angles
+ATOM  VC1 VIRT VIRT  0.00  # to C1; required for ring flipping
 # Side-chain heavy atoms:
 ATOM  O1  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
 ATOM  O2  OH   OH1  -0.39
@@ -47,6 +48,7 @@ BOND  C4   C5
 BOND  C5   O5
 BOND  O5   C1              # cyclic bond
 CUT_BOND  O5   C1          # cyclic bond
+BOND  O5   VC1             # cyclic bond
 BOND  C5   C6
 BOND  C1   O1
 BOND  C2   O2
@@ -65,6 +67,7 @@ BOND  C6  2H6              # pro-R
 BOND  O6   HO6
 
 VIRTUAL_SHADOW VO5   O5
+VIRTUAL_SHADOW VC1   C1
 
 CHI 1  VO5  C1   O1   HO1  # cannot use O5 to define torsion, since atom tree doesn't treat it as connected
 CHI_ROTAMERS 1   0 0
@@ -106,6 +109,9 @@ NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
 NU 2  C1   C2   C3   C4    # duplicates BB 2
 NU 3  C2   C3   C4   C5
 NU 4  C3   C4   C5   O5
+NU 5  C4   C5   O5   VC1
+#NU 6 is across the CUT_BOND
+LOWEST_RING_CONFORMER  4C1
 
 PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE D_SUGAR PYRANOSE ALPHA_SUGAR
 
@@ -126,6 +132,7 @@ ICOOR_INTERNAL    C4   -62.556893   74.464186    1.518591   C3    C2    C1
 ICOOR_INTERNAL    C5    60.023516   70.036253    1.562526   C4    C3    C2
 ICOOR_INTERNAL    O5   -57.917154   70.697608    1.443028   C5    C4    C3
 ICOOR_INTERNAL    VO5   60.755967   71.897802    1.457688   C1    C2    C3  # must build as branch from main chain, unlike O5
+ICOOR_INTERNAL    VC1   56.8        66.2         1.457688   O5    C5    C4  # must build from end of ring, unlike C1
 ICOOR_INTERNAL  LOWER  -63.396951   71.218273    1.456186   C1    C2    C3
 # now the side-chain heavy atoms
 ICOOR_INTERNAL    O1   -63.396951   71.218273    1.456186   C1    C2    C3

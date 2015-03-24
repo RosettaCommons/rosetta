@@ -7,27 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/RingConformerSet.fwd.hh
-/// @brief   Forward declarations for RingConformerSet.
+/// @file    core/chemical/RingConformerManager.fwd.hh
+/// @brief   Forward declaration for RingConformerManager.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_chemical_RingConformerSet_FWD_HH
-#define INCLUDED_core_chemical_RingConformerSet_FWD_HH
-
-// Utility header
-#include <utility/pointer/owning_ptr.hh>
+#ifndef INCLUDED_core_chemical_RingConformerManager_FWD_HH
+#define INCLUDED_core_chemical_RingConformerManager_FWD_HH
 
 namespace core {
 namespace chemical {
 
-/// @brief  A class containing data and methods for the set of possible ring conformations for a cyclic residue.
-class RingConformerSet;
-
-typedef utility::pointer::shared_ptr< RingConformerSet > RingConformerSetOP;
-typedef utility::pointer::shared_ptr< RingConformerSet const > RingConformerSetCOP;
+/// @brief  A singleton class for handling static const ring conformer data.
+class RingConformerManager;
 
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_RingConformerSet_FWD_HH
+#endif  // INCLUDED_core_chemical_RingConformerManager_FWD_HH

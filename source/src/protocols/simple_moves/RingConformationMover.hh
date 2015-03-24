@@ -9,7 +9,7 @@
 
 /// @file    protocols/simple_moves/RingConformationMover.hh
 /// @brief   Declarations and simple accessor/mutator definitions for RingConformationMover.
-/// @author  Labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 #ifndef INCLUDED_protocols_simple_moves_RingConformationMover_HH
 #define INCLUDED_protocols_simple_moves_RingConformationMover_HH
@@ -36,7 +36,6 @@ namespace simple_moves {
 
 /// @details  Based on a given MoveMap, this mover selects movable cyclic residues and flips their rings to an
 /// idealized ring conformer.
-/// @remarks  This class is a work in progress....
 class RingConformationMover: public moves::Mover {
 public:  // Standard methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
@@ -72,6 +71,13 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
+	virtual void parse_my_tag(
+			TagCOP tag,
+			basic::datacache::DataMap & data,
+			Filters_map const & /*filters*/,
+			moves::Movers_map const & /*movers*/,
+			Pose const & pose );
+
 	/// @brief  Apply the corresponding move to <input_pose>.
 	virtual void apply( core::pose::Pose & input_pose );
 
@@ -83,7 +89,17 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 	/// @brief  Set the MoveMap.
 	void movemap( core::kinematics::MoveMapOP new_movemap );
 
+	/// @brief  Get whether or not this Mover will sample all ring conformers, regardless of energy.
+	bool sample_all_conformers() const { return sample_all_conformers_; }
+
+	/// @brief  Set whether or not this Mover will sample all ring conformers, regardless of energy.
+	void sample_all_conformers( bool setting ) { sample_all_conformers_ = setting; }
+
+
 private:  // Private methods //////////////////////////////////////////////////
+	// Set command-line options.  (Called by init())
+	void set_commandline_options();
+
 	// Initialize data members from arguments.
 	void init( core::kinematics::MoveMapOP movemap );
 
@@ -97,6 +113,8 @@ private:  // Private methods //////////////////////////////////////////////////
 private:  // Private data /////////////////////////////////////////////////////
 	core::kinematics::MoveMapOP movemap_;
 	utility::vector1<core::Size> residue_list_;  // list of movable cyclic residues by residue number
+	bool locked_;  // Is this mover locked from the command line?
+	bool sample_all_conformers_;  // Does this Mover sample both energy maxima and minima among ring conformers?
 
 };  // class RingConformationMover
 

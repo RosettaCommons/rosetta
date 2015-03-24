@@ -148,12 +148,6 @@ Options = Option_Group( '',
 				short="Load mineral surface residues into memory?",
 				legal=["true", "false"],
 				default="false"),
-#		Option("enable_branching", "Boolean",
-#				desc='Sets whether or not polymer branching is allowed.  '
-#						'The default value is false.',
-#				short="Allow polymer branching?",
-#				legal=["true", "false"],
-#				default="false"),
 
 		## Membrane JD2 Option
 		## Last Modified: 8/23/14
@@ -1789,14 +1783,29 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 #	###########################################################################
 #	# Carbohydrate Options
 #	Option_Group("carbohydrates",
-#		Option("lock_rings", "Boolean",
-#			desc='Sets whether or not alternative ring conformations'
-#			'will be sampled by the protocol, (e.g, ring flips or'
-#			'puckering).  The default value is false.',
-#			short='Are saccharide rings allowed to flip or pucker?',
-#			legal=["true", "false"],
-#			default="false"),
 #	), # -carbohydrates
+
+	##########################################################################
+	Option_Group('rings',
+		Option('lock_rings', 'Boolean',
+			desc='Sets whether or not alternative ring conformations '
+				'will be sampled by the protocol, (e.g, ring flips or '
+				'puckering).  Only low-energy conformers will be sampled, if '
+				'known.  Otherwise, all ideal ring conformers will be '
+				'sampled.  The default value is false.',
+			short='Are rings allowed to flip or pucker?',
+			legal=['true', 'false'],
+			default='false'),
+		Option('sample_high_energy_conformers', 'Boolean',
+			desc='Sets whether or not even ring conformations that are energy '
+				'energy maxima will be sampled by the protocol.  The default '
+				'value is false; however, if the low energy ring conformers '
+				'are not listed in the topology files, all ideal ring '
+				'conformers will be sampled anyway.',
+			short='Are rings allowed to flip or pucker?',
+			legal=['true', 'false'],
+			default='false'),
+	),  # -rings
 
 	# chemical settings -----------------------------------------------------------
 	Option_Group( 'chemical',

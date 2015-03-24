@@ -9,7 +9,7 @@
 
 /// @file	 ring_conformer_io.cxxtest.hh
 /// @brief   Test suite for ring conformer database loading
-/// @author  Labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -47,28 +47,27 @@ public:
 		using namespace utility;
 		using namespace core::chemical;
 
-		TS_TRACE("Testing read_conformers_from_database_file_for_ring_size() method.");
+		TS_TRACE( "Testing read_conformers_from_database_file_for_ring_size() method." );
 
-		vector1<RingConformer> conformers =
-				read_conformers_from_database_file_for_ring_size(
-						"core/chemical/dummy_conformers.data", 8);
+		vector1< RingConformer > const conformers(
+				read_conformers_from_database_file_for_ring_size( "core/chemical/dummy_conformers.data", 8 ) );
 
-		TS_ASSERT_EQUALS(conformers.size(), 3);
-		TS_ASSERT_EQUALS(conformers[1].specific_name, "1F2");
-		TS_ASSERT_EQUALS(conformers[2].general_name, "bar");
-		TS_ASSERT_EQUALS(conformers[3].degeneracy, 3);
-		TS_ASSERT_EQUALS(conformers[1].CP_parameters.size(), 5);  // 3 fewer parameters than the ring size.
-		TS_ASSERT_EQUALS(conformers[2].CP_parameters[q], 0.5);
-		TS_ASSERT_EQUALS(conformers[3].CP_parameters[PHI], 135.0);
-		TS_ASSERT_EQUALS(conformers[1].CP_parameters[THETA], 30.0);
-		TS_ASSERT_EQUALS(conformers[2].CP_parameters[5], 120.0);
-		TS_ASSERT_EQUALS(conformers[3].nu_angles.size(), 6);  // 2 fewer angles than the ring size should be read.
-		TS_ASSERT_EQUALS(conformers[1].nu_angles[1], -60.0);
-		TS_ASSERT_EQUALS(conformers[2].nu_angles[3], 60.0);
-		TS_ASSERT_EQUALS(conformers[3].nu_angles[5], 30.0);
-		TS_ASSERT_EQUALS(conformers[3].tau_angles.size(), 7);  // 1 fewer angles than the ring size should be read.
-		TS_ASSERT_EQUALS(conformers[1].tau_angles[1], 123.4);
-		TS_ASSERT_EQUALS(conformers[2].tau_angles[4], 345.6);
-		TS_ASSERT_EQUALS(conformers[3].tau_angles[6], 123.4);
+		TS_ASSERT_EQUALS( conformers.size(), 3);
+		TS_ASSERT_EQUALS( conformers[ 1 ].specific_name, "1F2" );
+		TS_ASSERT_EQUALS( conformers[ 2 ].general_name, "bar" );
+		TS_ASSERT_EQUALS( conformers[ 3 ].degeneracy, 3 );
+		TS_ASSERT_EQUALS( conformers[ 1 ].CP_parameters.size(), 5 );  // 3 fewer parameters than the ring size.
+		TS_ASSERT_EQUALS( conformers[ 2 ].CP_parameters[ q ], 0.5 );
+		TS_ASSERT_EQUALS( conformers[ 3 ].CP_parameters[ PHI ], 135.0 );
+		TS_ASSERT_EQUALS( conformers[ 1 ].CP_parameters[ THETA ], 30.0 );
+		TS_ASSERT_EQUALS( conformers[ 2 ].CP_parameters[ 5 ], 120.0 );
+		TS_ASSERT_EQUALS( conformers[ 3 ].nu_angles.size(), 7 );  // 1 fewer angles than the ring size should be read.
+		TS_ASSERT_EQUALS( conformers[ 1 ].nu_angles[ 1 ], -60.0 );
+		TS_ASSERT_EQUALS( conformers[ 2 ].nu_angles[ 3 ], 60.0 );
+		TS_ASSERT_EQUALS( conformers[ 3 ].nu_angles[ 5 ], 30.0 );
+		TS_ASSERT_EQUALS( conformers[ 3 ].tau_angles.size(), 8 );  // same number of angles as ring size should be read.
+		TS_ASSERT_EQUALS( conformers[ 1 ].tau_angles[ 1 ], 123.4 );
+		TS_ASSERT_EQUALS( conformers[ 2 ].tau_angles[ 4 ], 345.6 );
+		TS_ASSERT_EQUALS( conformers[ 3 ].tau_angles[ 6 ], 123.4 );
 	}
 };  // class RingConformerIOTests

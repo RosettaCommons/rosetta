@@ -335,6 +335,19 @@ read_topology_file(
 /// connection (chemical bond), i.e., the bond to residue i-1.  E.g.,
 /// "LOWER_CONNECT N" from SER.params.
 ///
+/// LOWEST_RING_CONFORMER:
+/// For a cyclic residue, declares which ideal ring conformation is most stable by IUPAC name.
+/// There is no check in place for valid IUPAC conformer names; if the name is not found in the database, no lowest
+/// conformer will be set.
+/// E.g., "LOWEST_RING_CONFORMER  4C1" from to3-alpha-D-Glcp.params.
+///
+/// LOW_RING_CONFORMERS:
+/// For a cyclic residue, declares which ideal ring conformations are local minima/stable by IUPAC name.
+/// (If present, the LOWEST_RING_CONFORMER will automatically included to this subset within RingConformerSet.)
+/// There is no check in place for valid IUPAC conformer names; if the name is not found in the database, that conform-
+/// er will not be added to the subset.
+/// E.g., "LOW_RING_CONFORMERS  O3B B14 3S1 5S1 2SO BO3 1S3 14B 1S5 B25 OS2 1C4" from to3-alpha-D-Glcp.params.
+///
 /// MAINCHAIN_ATOMS:
 /// This is a list of atom names that define the main chain.  The main chain describes the linear connection of atoms
 /// from the lower-terminus to the upper-terminus in a residue.  This is NOT synonymous with "backbone atoms".
@@ -495,11 +508,9 @@ read_topology_file(
 		chemical::MMAtomTypeSetCAP mm_atom_types,
 		chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
 		//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
-		chemical::ResidueTypeSetCAP rsd_type_set_ap
-)
+		chemical::ResidueTypeSetCAP rsd_type_set_ap )
 {
 	chemical::ResidueTypeSetCOP rsd_type_set( rsd_type_set_ap );
-debug_assert( rsd_type_set != 0 ); // not really needed
 
 	using id::AtomID;
 	using id::DOF_ID;
@@ -685,6 +696,18 @@ debug_assert( rsd_type_set != 0 ); // not really needed
 			uint nu_num;
 			l >> nu_num >> atom1 >> atom2 >> atom3 >> atom4;
 			rsd->add_nu(nu_num, atom1, atom2, atom3, atom4);
+		} else if ( tag == "LOWEST_RING_CONFORMER" ) {
+			std::string conformer;
+			l >> conformer;
+			rsd->set_lowest_energy_ring_conformer( conformer );
+		} else if ( tag == "LOW_RING_CONFORMERS" ) {
+			utility::vector1< std::string > conformers;
+			l >> tag;
+			while ( ! l.fail() ) {
+				conformers.push_back( tag );
+				l >> tag;
+			}
+			rsd->set_low_energy_ring_conformers( conformers );
 		} else if ( tag == "PROTON_CHI") {
 			Size chino, nsamples, nextra_samples;
 			std::string dummy;

@@ -1294,6 +1294,14 @@ public:
 			std::string const & atom_name3,
 			std::string const & atom_name4);
 
+
+	/// @brief  Set this cyclic residue's lowest-energy ring conformer by IUPAC name.
+	void set_lowest_energy_ring_conformer( std::string const & conformer );
+
+	/// @brief  Set this cyclic residue's low-energy ring conformers by IUPAC name.
+	void set_low_energy_ring_conformers( utility::vector1< std::string > const & conformers );
+
+
 	/// @brief redefine a chi angle based on four atoms
 	//    Added by Andy M. Chen in June 2009
 	//    This is needed for certain PTM's
@@ -2366,7 +2374,6 @@ private:
 	/// @brief The filename of the PDBRotamersLibrary -- Primary.
 	std::string rotamer_library_name_;
 
-
 	////////
 	/// NCAA rotlib stuff some of this is hardcoded elsewhere for the CAAs
 
@@ -2402,6 +2409,17 @@ private:
 
 	/// @brief the number of rotamer bins for each chi angle in the peptoid rotlib -- Primary
 	utility::vector1< Size > peptoid_rotlib_n_bins_per_rot_;
+
+
+	///////////////////////////////////////////////////////////////////////////
+
+	/// @brief   Lowest-energy ring conformer -- Primary
+	/// @details used for setting up the RingConformerSet
+	std::string lowest_ring_conformer_;
+
+	/// @brief   Low-energy ring conformers -- Primary
+	/// @details used for setting up the RingConformerSet
+	utility::vector1< std::string > low_ring_conformers_;
 
 
 	///////////////////////////////////////////////////////////////////////////

@@ -14,6 +14,7 @@ ATOM  C6  CH2  CT2   0.08
 ATOM  O6  OOC   OS  -0.36
 ATOM_ALIAS  O6   O  
 ATOM  VO6 VIRT VIRT  0.00
+ATOM  VC2 VIRT VIRT  0.00  # to C2; required for ring flipping
 # Side-chain heavy atoms:
 ATOM  C1  CH2  CT2   0.15
 ATOM  O1  OH   OH1  -0.65
@@ -51,6 +52,7 @@ BOND  C5   C6
 BOND  C6   O6
 BOND  O6   C2              # cyclic bond
 CUT_BOND  O6   C2          # cyclic bond
+BOND  O6   VC2             # cyclic bond
 BOND  C1   O1
 BOND  C1  1H1
 BOND  C1  2H1
@@ -65,6 +67,7 @@ BOND  C6  1H6
 BOND  C6  2H6
 
 VIRTUAL_SHADOW VO6   O6
+VIRTUAL_SHADOW VC2   C2
 
 CHI 1  C2   C1   O1   HO1
 CHI_ROTAMERS 1   0 0
@@ -106,6 +109,9 @@ NU 1  VO6  C2   C3   C4    # duplicates BB 1, but defined differently
 NU 2  C2   C3   C4   C5    # duplicates BB 2
 NU 3  C3   C4   C5   C6    # duplicates BB 3, but defined differently
 NU 4  C4   C5   C6   O6
+NU 5  C5   C6   O6   VC2
+#NU 6 is across the CUT_BOND
+LOWEST_RING_CONFORMER  4C1  # in this case, actually 5C2
 
 PROPERTIES  POLAR CYCLIC CARBOHYDRATE KETOSE D_SUGAR PYRANOSE BETA_SUGAR
 
@@ -125,7 +131,8 @@ ICOOR_INTERNAL  UPPER   77.908216   66.144493    1.490711   O5    C5    C4
 # then the rest of the backbone heavy atoms
 ICOOR_INTERNAL    C6   -58.633512   75.278652    1.576050   C5    C4    C3
 ICOOR_INTERNAL    O6    59.276113   69.354076    1.493092   C6    C5    C4
-ICOOR_INTERNAL    VO6  -55.8657     72.77        1.447      C2    C3    C4  # must build as branch from main chain, unlike O5
+ICOOR_INTERNAL    VO6  -55.8657     72.77        1.447      C2    C3    C4  # must build as branch from main chain, unlike O6
+ICOOR_INTERNAL    VC2  -62.8        66.7         1.447      O6    C6    C5  # must build from end of ring, unlike C2
 # now the side-chain heavy atoms
 ICOOR_INTERNAL    C1  -179.873347   66.003162    1.545188   C2    C3    C4
 ICOOR_INTERNAL  LOWER -113.553634   64.612569    1.431041   C2    C3    C1  # (I should redefine without C1 to put this with the BB atoms.)

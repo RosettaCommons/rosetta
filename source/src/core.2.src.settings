@@ -50,6 +50,7 @@ sources = {
 		"ResidueTypeSet",
 		"residue_support",
 		"ring_conformer_io",
+		"RingConformerManager",
 		"RingConformerSet",
 		"util",
 		"VariantType_mappings",
