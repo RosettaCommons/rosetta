@@ -57,6 +57,7 @@ def do_compile(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None
 
     return res, output, build_command_line
 
+
 def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     ''' Run TestSuite.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}

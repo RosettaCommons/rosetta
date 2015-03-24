@@ -104,11 +104,21 @@ def main(args):
     for test in Options.args:
         if test.startswith('tests/'): test = test.partition('tests/')[2][:-3]  # removing dir prefix and .py suffix
 
-        #if test.count('.'): suite_name, _, test_name = test.partition('.')
-        #else: suite_name, test_name = test, ''
-        suite_name, _, test_name = test.partition('.')
+        suite_name = ''
+        while test:
+            suite_name_add_on, _, test_name = test.partition('.')
+            #print 'suite_name: {suite_name}, suite_name_add_on: {suite_name_add_on}'.format(**vars())
+            suite_name += '/' + suite_name_add_on
 
-        file_name = 'tests/' + suite_name + '.py'
+            file_name = 'tests' + suite_name + '.py'
+            if os.path.isfile(file_name): break
+
+            file_name = 'tests' + suite_name + '/command.py'
+            if os.path.isfile(file_name): break
+
+            test = test_name
+
+        print 'Loading test from: ', file_name
         test_suite = imp.load_source('test_suite', file_name)
 
         if Options.compare:
