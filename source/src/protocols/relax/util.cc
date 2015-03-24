@@ -118,17 +118,16 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 
 // RosettaMembrane from 2006
 void setup_membrane_topology( pose::Pose & pose, std::string spanfile ) {
-  //using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-  core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
-  pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
-  core::scoring::MembraneTopology & topology=*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
-  topology.initialize(spanfile);
+	core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
+	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
+	core::scoring::MembraneTopology & topology=*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
+	topology.initialize(spanfile);
 }
 
 void make_dna_rigid( pose::Pose & pose, core::kinematics::MoveMap & mm){
 	using namespace core::conformation;
 	//if DNA present set so it doesn't move
-	for ( core::Size i=1; i<=pose.total_residue() ; ++i )      {
+	for ( core::Size i=1; i<=pose.total_residue() ; ++i ) {
 	    if( pose.residue(i).is_DNA()){
 		TR << "turning off DNA bb and chi move" << std::endl;
 		mm.set_bb( i, false );

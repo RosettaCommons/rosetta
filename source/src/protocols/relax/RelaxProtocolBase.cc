@@ -134,11 +134,11 @@ void RelaxProtocolBase::initialize_movemap(
 {
 	using namespace core::id;
 
-  if ( fix_omega_ ) {
-			for (Size i=1; i<=pose.total_residue(); ++i) {
-					movemap.set( TorsionID(i, BB, 3),false );
-			}
-  }
+	if ( fix_omega_ ) {
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			movemap.set( TorsionID( i, BB, 3 ), false );
+		}
+	}
 
 	if ( minimize_bond_lengths_ ) {
 		// 0 Default  all bondlengths
@@ -152,13 +152,7 @@ void RelaxProtocolBase::initialize_movemap(
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
 				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
-					//if ( jj == 1 ) {
-					//	if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
-					//		movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
-					//	}
-					//} else {
-						movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
-					//}
+					movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
 				}
 			}
 		} else if ( minimize_bondlength_subset_ == 2) {
@@ -183,26 +177,19 @@ void RelaxProtocolBase::initialize_movemap(
 	}
 
 	if ( minimize_bond_angles_ ) {
-
-
 		// 0 Default  all bondangles
 		// 1          backbone only
 		// 2          sidechain only
 		// 3          tau only
 		// 4          Ca-Cb only
+		
 		if (minimize_bondangle_subset_ == 0) {
 			movemap.set( core::id::THETA, true );
 		} else if ( minimize_bondangle_subset_ == 1) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
 				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
-					//if ( jj == 1 || jj == 2 ) {  //fpd  add jj==2
-					//	if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
-					//		movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
-					//	}
-					//} else {
-						movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
-					//}
+					movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
 				}
 			}
 		} else if ( minimize_bondangle_subset_ == 2) {
@@ -227,7 +214,6 @@ void RelaxProtocolBase::initialize_movemap(
 			}
 		}
  	}
-
 }
 
 void RelaxProtocolBase::set_defaults(){
@@ -336,11 +322,10 @@ void RelaxProtocolBase::register_options()
 //
 // -rvernon
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ){
+void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ) {
  	using namespace moves;
 	using namespace scoring;
 	using namespace core::pose::datacache;
-
 
 	if ( ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) ||
 			 ( basic::options::option[ basic::options::OptionKeys::in::detect_disulf ].user() ) ) {
@@ -389,7 +374,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 	using namespace protocols::moves;
 	using namespace core::scoring;
 
-  if ( constrain_coords_ ) {
+	if ( constrain_coords_ ) {
 		//fpd  Make ramping on by default if one of -constrain_relax_* is specified
 		//fpd  Let it be overridden if '-ramp_constraints false' is specified
 		if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
@@ -443,7 +428,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 			std::string const filename = cst_files( i_cst );
 			ConstraintSetOP user_csts
 				= ConstraintIO::get_instance()->read_constraints_new( filename,
-          ConstraintSetOP( new ConstraintSet ), pose );
+																	  ConstraintSetOP( new ConstraintSet ), pose );
 			pose.constraint_set( user_csts );
 		}
 	} // if constrain_user_defined_

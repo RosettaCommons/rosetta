@@ -232,6 +232,9 @@ private:   // options
 	/// @brief Use dualspace (Dihedral + Cartesian) Relax?
 	bool dualspace_;
 
+	/// @brief Minimize nrchi after every packing step?
+	bool nrchi_min_;
+
 	/// @brief Enable design -- if false, a RestrictToRepacking task will be added to the TaskFactory
 	bool enable_design_;
 

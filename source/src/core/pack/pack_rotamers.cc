@@ -260,8 +260,7 @@ setup_IG_res_res_weights(
 {
 	task::IGEdgeReweightContainerCOP edge_reweights = task->IGEdgeReweights();
 
-	if( edge_reweights ){
-
+	if ( edge_reweights ){
 		for( Size ii = 1; ii<= rotsets->nmoltenres(); ++ii){
 			Size const res1id = rotsets->moltenres_2_resid( ii );
 
@@ -313,7 +312,7 @@ pack_rotamers_run(
 //		}
 
 		conformation::ResidueOP newresidue( bestrot->create_residue() );
-		pose.replace_residue ( iiresid, *newresidue, false );
+		pose.replace_residue( iiresid, *newresidue, false );
 	}
 	return bestenergy;
 }
@@ -519,15 +518,6 @@ symmetric_pack_rotamers_run(
 		conformation::ResidueOP newresidue( bestrot->create_residue() );
 		pose.replace_residue ( iiresid, *newresidue, false );
 
-	//fpd replace residue is symmetric now
-	//for ( std::vector< Size>::const_iterator
-	//      clone     = symm_info.bb_clones( iiresid ).begin(),
-	//      clone_end = symm_info.bb_clones( iiresid ).end();
-	//      clone != clone_end; ++clone ){
-	//	conformation::ResidueOP sym_rsd = newresidue->clone();
-	// 	sym_rsd->orient_onto_residue(pose.residue( *clone) );
-	// 	pose.replace_residue ( *clone, *sym_rsd, false );
-	// }
 	}
 	return bestenergy;
 }

@@ -150,37 +150,6 @@ find_residue_max_radii(
 
 	for ( Size ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii ) {
 		Distance max_radius_for_res( 0.0 );
-		/*
-		if ( task->design_residue( ii ) ) {
-
-			for ( ResidueTypeSet::AAsIter iter = residue_set.aas_defined_begin(),
-				eiter = residue_set.aas_defined_end(); iter != eiter; ++iter ) {
-
-				if ( task->allow_aa( ii, *iter )) {
-					ResidueTypeCOPs const & concrete_residues( residue_set.aa_map( *iter ) );
-					for ( ResidueTypeCOPs::const_iterator resiter = concrete_residues.begin(),
-							eresiter = concrete_residues.end(); resiter != eresiter; ++resiter ) {
-						if ( task->allow_concrete( pose.residue(ii), **resiter )) {
-							if ( (*resiter)->nbr_radius() > max_radius_for_res ) {
-								max_radius_for_res = (*resiter)->nbr_radius();
-							}
-						}
-					}
-				}
-			}
-		} else if ( task->pack_residue( ii ) ) {
-
-			chemical::AA const resaa( pose.residue( ii ).aa());
-			ResidueTypeCOPs const & concrete_residues( residue_set.aa_map( resaa ) );
-			for ( ResidueTypeCOPs::const_iterator resiter = concrete_residues.begin(),
-					eresiter = concrete_residues.end(); resiter != eresiter; ++resiter ) {
-				if ( task->repacking_allow_concrete( pose.residue(ii), **resiter)) {
-					if ( (*resiter)->nbr_radius() > max_radius_for_res ) {
-						max_radius_for_res = (*resiter)->nbr_radius();
-					}
-				}
-			}
-		} */
 		if ( the_task->pack_residue( ii ) ) {
 			for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
 					allowed_iter = the_task->residue_task( ii ).allowed_residue_types_begin(),

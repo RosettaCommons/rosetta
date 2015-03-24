@@ -264,8 +264,8 @@ FastRelax::FastRelax(
 	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
-	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	if( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
+	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
+	if ( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
 		read_script_file( "NO CST RAMPING", standard_repeats );
 	} else {
 		read_script_file( "", standard_repeats );
@@ -283,8 +283,8 @@ FastRelax::FastRelax(
 	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
-	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	if( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
+	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
+	if ( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
 		read_script_file( "NO CST RAMPING", standard_repeats );
 	} else {
 		read_script_file( "", standard_repeats );
@@ -308,10 +308,10 @@ FastRelax::FastRelax(
 FastRelax::FastRelax(
 	core::scoring::ScoreFunctionOP scorefxn_in,
 	core::Size                     standard_repeats,
-	const std::string &          script_file
+	const std::string &            script_file
 ) :
-	RelaxProtocolBase("FastRelax", scorefxn_in ),
-	checkpoints_("FastRelax"),
+	RelaxProtocolBase( "FastRelax", scorefxn_in ),
+	checkpoints_( "FastRelax" ),
 	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
@@ -323,15 +323,14 @@ FastRelax::FastRelax(
 //// nothing needs to be cleaned. C++ will take care of that for us.
 FastRelax::~FastRelax() {}
 
-
 /// Return a copy of ourselves
 protocols::moves::MoverOP
 FastRelax::clone() const {
-	return protocols::moves::MoverOP( new FastRelax(*this) );
+	return protocols::moves::MoverOP( new FastRelax( *this ) );
 }
 
 void
-FastRelax::dualspace(bool val){
+FastRelax::dualspace( bool val ){
 	dualspace_ = val;
 }
 
@@ -358,7 +357,6 @@ FastRelax::parse_my_tag(
 	mm->set_bb( true );
 	mm->set_jump( true );
 
-
 	//Make sure we have a taskfactory before we overwrite our null in the base class.
 	set_enable_design( !( tag->getOption<bool>("disable_design", !enable_design_ ) ) );
 
@@ -372,7 +370,6 @@ FastRelax::parse_my_tag(
 
 	// initially, all backbone torsions are movable
 	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
-
 
 	default_repeats_ = tag->getOption< int >( "repeats", option[ OptionKeys::relax::default_repeats ]() );
 	std::string script_file = tag->getOption< std::string >("relaxscript", "" );
@@ -397,7 +394,7 @@ FastRelax::parse_my_tag(
 		minimize_bond_lengths( true );
 		mm->set( core::id::D, true );
 	}
-
+	
 	set_movemap(mm);
 
 	if ( tag->hasOption( "min_type" ) ) {
@@ -408,8 +405,13 @@ FastRelax::parse_my_tag(
 		if ( cartesian() || minimize_bond_angles() || minimize_bond_lengths() )
 			min_type( "lbfgs_armijo_nonmonotone" );
 	}
+	
+	if ( tag->getOption< bool >( "nrchi_min", true ) ) {
+		nrchi_min_ = true;
+		//
+	}
 
-	if (batch) {
+	if ( batch ) {
 		set_script_to_batchrelax_default( default_repeats_ );
 	} else if( script_file == "" ) {
 		read_script_file( "", default_repeats_ );
@@ -427,10 +429,10 @@ void FastRelax::parse_def( utility::lua::LuaObject const & def,
 	utility::lua::LuaObject const & score_fxns,
 	utility::lua::LuaObject const & tasks,
 	protocols::moves::MoverCacheSP ) {
-	if( def["scorefxn"] ) {
-		set_scorefxn( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
+	if ( def[ "scorefxn" ] ) {
+		set_scorefxn( protocols::elscripts::parse_scoredef( def[ "scorefxn" ], score_fxns ) );
 	} else {
-		set_scorefxn( score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone()  );
+		set_scorefxn( score_fxns[ "score12" ].to< core::scoring::ScoreFunctionSP >()->clone()  );
 	}
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
@@ -438,25 +440,25 @@ void FastRelax::parse_def( utility::lua::LuaObject const & def,
 	mm->set_bb( true );
 	mm->set_jump( true );
 	// initially, all backbone torsions are movable
-	if( def["movemap"] )
-		protocols::elscripts::parse_movemapdef( def["movemap"], mm );
+	if( def[ "movemap" ] )
+		protocols::elscripts::parse_movemapdef( def[ "movemap" ], mm );
 	set_movemap(mm);
 
-	if( def["tasks"] ) {
+	if( def[ "tasks" ] ) {
 		core::pack::task::TaskFactoryOP new_task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-		if ( new_task_factory == 0) return;
+		if ( new_task_factory == 0 ) return;
 		set_task_factory(new_task_factory);
 	}
 
-	default_repeats_ = def["repeats"] ? def["repeats"].to<int>() : 8;
-	std::string script_file = def["relaxscript"] ? def["relaxscript"].to<std::string>() : "";
+	default_repeats_ = def[ "repeats" ] ? def[ "repeats" ].to<int>() : 8;
+	std::string script_file = def[ "relaxscript" ] ? def[ "relaxscript" ].to< std::string >() : "";
 
-	bool batch = def["batch"] ? def["batch"].to<bool>() : false;
-	cartesian (def["cartesian"] ? def["cartesian"].to<bool>() : false );
+	bool batch = def[ "batch" ] ? def[ "batch" ].to< bool >() : false;
+	cartesian( def[ "cartesian" ] ? def[ "cartesian" ].to< bool >() : false );
 
 	if (batch) {
 		set_script_to_batchrelax_default( default_repeats_ );
-	} else if( script_file == "" ) {
+	} else if ( script_file == "" ) {
 		read_script_file( "", default_repeats_ );
 	} else {
 		read_script_file( script_file );
@@ -485,6 +487,8 @@ void FastRelax::set_to_default( )
 	ramady_force_ = basic::options::option[ OptionKeys::relax::ramady_force ]();
 	ramady_rms_limit_ = basic::options::option[ OptionKeys::relax::ramady_rms_limit ]();
 	dualspace_ = basic::options::option[ basic::options::OptionKeys::relax::dualspace ]();
+	
+	nrchi_min_ = basic::options::option[ basic::options::OptionKeys::relax::nrchi_min ]();
 
 
 	// cartesian
@@ -653,7 +657,30 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		make_dna_rigid( pose, *local_movemap );
 	}
 
-
+	core::kinematics::MoveMapOP nrchi_min_movemap = get_movemap()->clone();
+	set_up_constraints( pose, *nrchi_min_movemap );
+	// go through pose and turn off moveability for every rotameric chi
+	// (have to do this because we can't turn anything ON the user set to off)
+	// we can only turn off chi that the user would otherwise be moving
+	// (i.e. rotameric chi)
+	for ( Size ii = 1; ii <= pose.n_residue(); ++ii ) {
+		std::string name3 = pose.residue( ii ).type().name3();
+		// if we have a semirotameric rotlib, the terminal chi
+		// is nonrotameric and should be minimized
+		// AMW TODO: if we ever treat nonterminal chis as nonrotameric,
+		// we should give type a function that returns a vector of nrchi indices
+		if ( pose.residue( ii ).type().get_semirotameric_ncaa_rotlib() ) {
+			for ( Size jj = 1; jj <= pose.residue( ii ).type().nchi()-1; ++jj ) {
+				id::TorsionID chi( ii, id::CHI, jj );
+				nrchi_min_movemap->set( chi, false );
+			}
+			id::TorsionID chi( ii, id::CHI, pose.residue( ii ).type().nchi() );
+			nrchi_min_movemap->set( chi, true );
+		} else {
+			nrchi_min_movemap->set_chi( ii, false );
+		}
+	}
+	protocols::simple_moves::MinMoverOP nrchi_minmover( new protocols::simple_moves::MinMover( nrchi_min_movemap, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, false ) );
 
 	// Make sure we only allow symmetrical degrees of freedom to move and convert the local_movemap
 	// to a local movemap
@@ -792,6 +819,12 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
 			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
 				pack_full_repack_->apply( pose );
+				// amw: if nrchi_min is on, we minimize nrchi right after every repack and before anything else happens
+				// amw: note change to TR.Debug
+				if ( nrchi_min_ ) {
+					TR << "Non-rotameric chi minimization" << std::endl;
+					nrchi_minmover->apply( pose );
+				}
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}
 			if ( dumpall_ ) {
@@ -896,6 +929,12 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
 			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
 				pack_full_repack_->apply( pose );
+				// amw: if nrchi_min is on, we minimize nrchi right after every repack and before anything else happens
+				// amw: note change to TR.Debug
+				if ( nrchi_min_ ) {
+					TR << "Non-rotameric chi minimization" << std::endl;
+					nrchi_minmover->apply( pose );
+				}
 				do_minimize( pose, cmd.param2, local_movemap, local_scorefxn );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}

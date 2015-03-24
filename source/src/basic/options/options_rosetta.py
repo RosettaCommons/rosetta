@@ -5780,6 +5780,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'ramady_force',              'Boolean', desc='(ramady-only) Force rebuilding of bad ramas (normal skip-rate = 10%)', default='false' ),
 		Option( 'script',                    'File',    desc='Relax script file', default='' ),
 		Option( 'script_max_accept',       'Integer',    desc='Limit number of best accepts', default = '10000000' ),
+				 
+		Option( 'nrchi_min',     'Boolean', desc='Minimize nrchi after each round of packing', default='false' ),
 
 		Option( 'superimpose_to_native',     'Boolean', desc='Superimpose input structure to native', default='false' ),
 		Option( 'superimpose_to_file',     'File', desc='Superimpose input structure to file', default='false' ),

@@ -83,8 +83,7 @@ rotamer_trials(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP input_task
-)
-{
+) {
 	using namespace numeric::random;
 
 	//fpd safety check for symmetry
@@ -93,7 +92,6 @@ rotamer_trials(
 		return;
 	}
 
-	//clock_t starttime = clock();
 	PROF_START( basic::ROTAMER_TRIALS );
 
 	pack_scorefxn_pose_handshake( pose, scfxn);
@@ -101,8 +99,6 @@ rotamer_trials(
 	pose.update_residue_neighbors();
 
 	utility::vector1< uint > residues_for_trials( repackable_residues( *input_task ));
-	// Replace this random shuffle with one based on rosetta's RNG
-	//random__shuffle(residues_for_trials.begin(), residues_for_trials.end() );
 	random_permutation( residues_for_trials, numeric::random::rg() );
 
 	task::PackerTaskOP rottrial_task( input_task->clone() );
@@ -118,7 +114,6 @@ rotamer_trials(
 
 	rotamer_set::RotamerSetFactory rsf;
 
-	//Energy last_energy( 0.0 );
 	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
 
 	bool replaced_residue( false );
@@ -166,7 +161,6 @@ rotamer_trials(
 		rottrial_task->temporarily_set_pack_residue( resid, false );
 
 	}
-	//clock_t stoptime = clock();
 	PROF_STOP ( basic::ROTAMER_TRIALS );
 	//std::cout << "Rotamer trials took " << ((double) stoptime - starttime ) / CLOCKS_PER_SEC << " seconds" << std::endl;
 	if ( replaced_residue ) {
@@ -180,10 +174,8 @@ repackable_residues( task::PackerTask const & the_task )
 {
 	utility::vector1< int > to_be_packed( the_task.num_to_be_packed() );
 	uint count = 0;
-	for (uint ii = 1; ii <= the_task.total_residue(); ++ii )
-	{
-		if ( the_task.pack_residue( ii ) )
-		{
+	for (uint ii = 1; ii <= the_task.total_residue(); ++ii ) {
+		if ( the_task.pack_residue( ii ) ) {
 			++count;
 			to_be_packed[ count ] = ii;
 		}
@@ -196,12 +188,10 @@ symmetric_rotamer_trials(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP non_symmetric_task
-)
-{
+) {
 	using namespace numeric::random;
 	using namespace conformation::symmetry;
 
-//clock_t starttime = clock();
 	PROF_START( basic::ROTAMER_TRIALS );
 
 	task::PackerTaskCOP input_task = make_new_symmetric_PackerTask_by_requested_method( pose, non_symmetric_task );
@@ -211,8 +201,6 @@ symmetric_rotamer_trials(
 	pose.update_residue_neighbors();
 
 	utility::vector1< uint > residues_for_trials( symmetric_repackable_residues( *input_task, pose ));
-	// Replace this random shuffle with one based on rosetta's RNG
-	//random__shuffle(residues_for_trials.begin(), residues_for_trials.end() );
 	random_permutation( residues_for_trials, numeric::random::rg() );
 
 	task::PackerTaskOP rottrial_task( input_task->clone() );
@@ -228,7 +216,6 @@ symmetric_rotamer_trials(
 
 	rotamer_set::symmetry::SymmetricRotamerSetFactory rsf;
 
-	//Energy last_energy( 0.0 );
 	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
 
 	bool replaced_residue( false );
@@ -273,9 +260,6 @@ symmetric_rotamer_trials(
 			    clone     = symm_info->bb_clones( resid ).begin(),
 			    clone_end = symm_info->bb_clones( resid ).end();
 			    clone != clone_end; ++clone ) {
-			//	  	conformation::ResidueOP sym_rsd = newresidue->clone();
-			// 		  sym_rsd->orient_onto_residue(pose.residue( *clone) );
-			//  		pose.replace_residue ( *clone, *sym_rsd, false );
                 scfxn.update_residue_for_packing( pose, *clone );
 			}
 			//			TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
@@ -289,7 +273,6 @@ symmetric_rotamer_trials(
 		}
 		rottrial_task->temporarily_set_pack_residue( resid, false );
 	}
-	//clock_t stoptime = clock();
 	PROF_STOP ( basic::ROTAMER_TRIALS );
 	//std::cout << "Rotamer trials took " << ((double) stoptime - starttime ) / CLOCKS_PER_SEC << " seconds" << std::endl;
 	if ( replaced_residue ) {
@@ -303,8 +286,7 @@ utility::vector1< uint >
 symmetric_repackable_residues(
 	task::PackerTask const & the_task,
 	pose::Pose & pose
-)
-{
+) {
 	using namespace conformation::symmetry;
 
 	// find SymmInfo
@@ -316,8 +298,7 @@ symmetric_repackable_residues(
 	uint num_molten = 0;
 	for (uint res = 1; res <= the_task.total_residue(); ++res ) {
 		if ( the_task.pack_residue( res ) && symm_info->fa_is_independent( res )
-				&& res <= symm_info->num_total_residues() )
-		{
+				&& res <= symm_info->num_total_residues() ) {
 			++num_molten;
 		}
 	}
@@ -326,8 +307,7 @@ symmetric_repackable_residues(
 	for (uint ii = 1; ii <= the_task.total_residue(); ++ii )
 	{
 		if ( the_task.pack_residue( ii ) && symm_info->fa_is_independent( ii )
-					&& ii <= symm_info->num_total_residues() )
-		{
+					&& ii <= symm_info->num_total_residues() ) {
 			++count;
 			to_be_packed[ count ] = ii;
 		}
