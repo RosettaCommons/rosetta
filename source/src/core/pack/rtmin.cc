@@ -500,6 +500,23 @@ RTMin::rtmin(
 		//	*bgres[ iiresid ], scminmap, pose );
 		reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, *bgres[ iiresid ], mingraph );
 
+		/*for ( graph::Graph::EdgeListIter
+				edgeit = mingraph.get_node( iiresid )->edge_list_begin(),
+				edgeit_end = mingraph.get_node( iiresid )->edge_list_end();
+				edgeit != edgeit_end; ++edgeit ) {
+			Size const jjresid = (*edgeit)->get_other_ind( iiresid );
+			if ( residue_is_inactive_neighbor[ jjresid ] ) continue;
+
+			MinimizationEdge & min_edge = static_cast< MinimizationEdge & > ( (**edgeit) );
+			if ( iiresid < jjresid ) {
+				min_edge.reinitialize_active_energy_methods( *bgres[ iiresid ], *bgres[ jjresid ], pose, true);
+				min_edge.setup_for_minimizing( *bgres[ iiresid ], *bgres[ jjresid ], pose, scfxn, scminmap );
+			} else {
+				min_edge.reinitialize_active_energy_methods( *bgres[ jjresid ], *bgres[ iiresid ], pose, true);
+				min_edge.setup_for_minimizing( *bgres[ jjresid ], *bgres[ iiresid ], pose, scfxn, scminmap );
+			}
+
+		}*/
 		active_residue_has_been_visited[ iiresid ] = true;
 		scminmap->clear_active_dofs();
 		pose.replace_residue( iiresid, *bgres[ iiresid ], false );
@@ -516,6 +533,143 @@ RTMin::rtmin(
 	}
 
 }
+
+/*{
+	using namespace numeric::random;
+	using namespace core::optimization;
+
+	PROF_START( basic::ROTAMER_TRIALS );
+	pack_scorefxn_pose_handshake( pose, scfxn);
+	pose.update_residue_neighbors();
+
+	utility::vector1< uint > residues_for_trials( repackable_residues_dup( *input_task ));
+	random_permutation( residues_for_trials, numeric::random::rg() );
+
+	task::PackerTaskOP rottrial_task( input_task->clone() );
+	rottrial_task->set_bump_check( false );
+	rottrial_task->or_include_current( true );
+	rottrial_task->temporarily_fix_everything();
+
+	// this will call setup fxns for each scoring method, eg HBondEnergy will
+	// compute backbone hbonds to prepare for hbchecking,
+	// PairEnergy will update actcoords...
+	scfxn.setup_for_packing( pose, rottrial_task->repacking_residues(),rottrial_task->designing_residues()  );
+
+	rotamer_set::RotamerSetFactory rsf;
+	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
+
+	Size const num_in_trials = residues_for_trials.size();
+	for (Size ii = 1; ii <= num_in_trials; ++ii)
+	{
+		pose.update_residue_neighbors(); // will return if uptodate
+
+		int const resid = residues_for_trials[ ii ];
+		conformation::Residue const & trial_res = pose.residue( resid );
+
+		//pretend this is a repacking and only this residue is being repacked
+		//while all other residues are being held fixed.
+		rottrial_task->temporarily_set_pack_residue( resid, true );
+
+		rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( trial_res );
+		rotset->set_resid( resid );
+		rotset->build_rotamers( pose, scfxn, *rottrial_task, packer_neighbor_graph );
+		scfxn.prepare_rotamers_for_packing( pose, *rotset );
+		TR.Debug << "working on " << resid << " with " << rotset->num_rotamers() << " rotamers" << std::endl;
+
+		// All DOF start false (frozen)
+		kinematics::MoveMap movemap;
+		if( !pose.residue_type( resid ).is_ligand() ) movemap.set_chi(resid, true);
+		else{
+			if( minimize_ligand_chis_ ) movemap.set_chi(resid, true);
+			if( minimize_ligand_jumps_ ){
+				movemap.set_jump( pose.fold_tree().get_jump_that_builds_residue( resid ), true );
+			}
+		}
+		optimization::MinimizerOptions min_options("dfpmin", 0.1, true , false, false);
+
+		Size best_jj = 0;
+		Real best_score = 1e99;
+		conformation::ResidueOP best_rsd;
+		for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
+			conformation::ResidueOP newresidue( rotset->rotamer( jj )->clone() );
+
+			// Assume that protein residues' conformation is fully specified by chi angles.
+			// This is NOT true for e.g. ligands, which may have e.g. various ring puckers.
+			if( newresidue->is_protein() && newresidue->type().name() == pose.residue_type(resid).name() ) {
+				//TR << "Setting chi angles..." << std::endl;
+				for( Size kk = 1; kk <= newresidue->nchi(); ++kk ) {
+					pose.set_chi(kk, resid, newresidue->chi(kk));
+				}
+			} else {
+				pose.replace_residue( resid, *newresidue, false );
+				scfxn.update_residue_for_packing( pose, resid );
+			}
+
+			// Code copied from AtomTreeMinimizer::run()
+			// This has to be repeated for each residue because the ResidueType may change if we're doing design.
+			// Even if not, we get a fatal error if we try to do it outside the loop,
+			// which I think is related to replace_residue() modifying the structure of the atom tree.
+			// It's important that the structure be scored prior to nblist setup -- why?
+			// A:  required for graph state == GOOD;  triggers assert in debug mode.
+			//Real const start_score = scfxn( pose );
+			// Actually, this appears to be sufficient, and is much cheaper (no twobody energy calc)
+			pose.scoring_begin( scfxn );
+			pose.scoring_end( scfxn );
+			// setup the map of the degrees of freedom
+			MinimizerMap min_map;
+			min_map.setup( pose, movemap );
+			// if we are using the nblist, set it up
+			if ( min_options.use_nblist() ) {
+				// setup a mask of the moving dofs
+				pose.energies().set_use_nblist( pose, min_map.domain_map(), min_options.nblist_auto_update() );
+			}
+			scfxn.setup_for_minimizing( pose, min_map );
+			// setup the function that we will pass to the low-level minimizer
+			//AtomTreeMultifunc f( pose, min_map, scfxn, min_options.deriv_check(), min_options.deriv_check_verbose() );
+			SingleResidueMultifunc f( pose, resid, min_map, scfxn, packer_neighbor_graph, min_options.deriv_check(), min_options.deriv_check_verbose() );
+			// starting position -- "dofs" = Degrees Of Freedom
+			Multivec dofs( min_map.nangles() );
+
+			// Code copied from AtomTreeMinimizer::run()
+			min_map.copy_dofs_from_pose( pose, dofs );
+			//Real const start_func = f( dofs );
+
+			// This actually caches the hbonds, etc.
+			for ( scoring::ScoreFunction::AllMethodsIterator it=scfxn.all_energies_begin(),
+					it_end = scfxn.all_energies_end(); it != it_end; ++it ) {
+				(*it)->setup_for_scoring( pose, scfxn );
+			}
+
+			// now do the optimization with the low-level minimizer function
+			Minimizer minimizer( f, min_options );
+			Real const score = minimizer.run( dofs );
+			//Real const end_func = f( dofs );
+			TR.Trace << "Rotamer " << jj << " " << newresidue->name3() <<
+			" nangles= " << min_map.nangles() <<
+			//" start_score: " << F(12,3,start_score) <<
+			//" start_func: " << F(12,3,start_func) <<
+			" score: "      << F(12,3,score     ) <<
+			//" end_func: "   << F(12,3,end_func  ) <<
+			std::endl;
+
+			if ( min_options.use_nblist() ) pose.energies().reset_nblist();
+
+			if(score < best_score) {
+				best_jj = jj;
+				best_score = score;
+				best_rsd = pose.residue(resid).clone();
+			}
+		}
+
+		if ( best_jj > 0 ) {
+			pose.replace_residue ( resid, *best_rsd, false );
+			scfxn.update_residue_for_packing( pose, resid );
+		}
+
+		rottrial_task->temporarily_set_pack_residue( resid, false );
+	}
+	PROF_STOP ( basic::ROTAMER_TRIALS );
+}*/
 
 void reinitialize_mingraph_neighborhood_for_residue(
 	pose::Pose & pose,
