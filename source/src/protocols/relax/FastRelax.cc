@@ -407,7 +407,7 @@ FastRelax::parse_my_tag(
 	}
 	
 	if ( tag->hasOption( "nrchi_min" ) ) {
-		nrchi_min_ = tag->getOption< bool >( "nrchi_min" ) );
+		nrchi_min_ = tag->getOption< bool >( "nrchi_min" );
 	} else {
 		nrchi_min_ = false;
 	}
