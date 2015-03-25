@@ -406,9 +406,10 @@ FastRelax::parse_my_tag(
 			min_type( "lbfgs_armijo_nonmonotone" );
 	}
 	
-	if ( tag->getOption< bool >( "nrchi_min", true ) ) {
-		nrchi_min_ = true;
-		//
+	if ( tag->hasOption( "nrchi_min" ) ) {
+		nrchi_min_ = tag->getOption< bool >( "nrchi_min" ) );
+	} else {
+		nrchi_min_ = false;
 	}
 
 	if ( batch ) {
