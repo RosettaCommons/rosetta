@@ -2523,7 +2523,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'mp',
 
 		#Membrane options
-		Option( 'thickness', 'Real', desc='User-defined membrane thickness. Overwrites default thickness of 60A.'),
+		Option( 'thickness', 'Real', desc='Thickness of the membrane used by the high resolution scoring function. Overwrites default thickness of 30A.'),
+		Option( 'steepness', 'Real', desc='Control transition region between polar and nonpoar phases for the membrane model used by the high resolution energy function. Default = 10 gives a 6A transition region.'),
 
 		#Embedding options - advanced (these are currently not used)
 		Option( 'center_start', 'RealVector', desc='Starting point for center search. Example: 3 2 4.'),

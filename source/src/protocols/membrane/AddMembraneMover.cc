@@ -112,7 +112,9 @@ AddMembraneMover::AddMembraneMover() :
     anchor_rsd_( 1 ),
 	membrane_rsd_( 0 ),
     center_( mem_center ),
-    normal_( mem_normal )
+    normal_( mem_normal ),
+    thickness_( 15 ),
+    steepness_( 10 )
 {
 	register_options();
 	init_from_cmd();
@@ -130,7 +132,9 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
     center_( mem_center ),
-    normal_( mem_normal )
+    normal_( mem_normal ),
+    thickness_( 15 ),
+    steepness_( 10 )
 {
 	register_options();
 	init_from_cmd();
@@ -152,7 +156,9 @@ AddMembraneMover::AddMembraneMover(
     anchor_rsd_( 1 ),
     membrane_rsd_( membrane_rsd ),
     center_( mem_center ),
-    normal_( mem_normal )
+    normal_( mem_normal ),
+    thickness_( 15 ),
+    steepness_( 10 )
 {
 	register_options();
 	init_from_cmd();
@@ -175,7 +181,9 @@ AddMembraneMover::AddMembraneMover(
     anchor_rsd_( anchor_rsd ),
     membrane_rsd_( membrane_rsd ),
     center_( mem_center ),
-    normal_( mem_normal )
+    normal_( mem_normal ),
+    thickness_( 15 ),
+    steepness_( 10 )
 {
     register_options();
     init_from_cmd();
@@ -199,7 +207,9 @@ AddMembraneMover::AddMembraneMover(
     anchor_rsd_( 1 ),
     membrane_rsd_( membrane_rsd ),
     center_( mem_center ),
-    normal_( mem_normal )
+    normal_( mem_normal ),
+    thickness_( 15 ),
+    steepness_( 10 )
 {
 	register_options();
 	init_from_cmd();
@@ -224,7 +234,9 @@ AddMembraneMover::AddMembraneMover(
     anchor_rsd_( 1 ),
     membrane_rsd_( membrane_rsd ),
     center_( init_center ),
-    normal_( init_normal )
+    normal_( init_normal ),
+    thickness_( 15 ),
+    steepness_( 10 )
 {}
 
 /// @brief Copy Constructor
@@ -238,7 +250,9 @@ AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
     anchor_rsd_( src.anchor_rsd_ ),
     membrane_rsd_( src.membrane_rsd_ ),
     center_( src.center_ ),
-    normal_( src.normal_ )
+    normal_( src.normal_ ),
+    thickness_( src.thickness_ ),
+    steepness_( src.steepness_ )
 {}
 
 /// @brief Destructor
@@ -294,6 +308,16 @@ AddMembraneMover::parse_my_tag(
 	if ( tag->hasOption( "membrane_rsd" ) ) {
 		membrane_rsd_ = tag->getOption< core::Size >( "membrane_rsd" );
 	}
+    
+    // Read in membrane thickness
+    if ( tag->hasOption( "thickness" ) ) {
+        thickness_ = tag->getOption< core::Real >( "thickness" );
+    }
+    
+    // Read in membrane steepness
+    if ( tag->hasOption( "steepness" ) ) {
+        steepness_ = tag->getOption< core::Real >( "steepness" );
+    }
     
     // Read in membrane center & normal
     if ( tag->hasOption( "center" ) ) {
@@ -463,6 +487,10 @@ AddMembraneMover::apply( Pose & pose ) {
     // Set initial membrane position
     SetMembranePositionMoverOP set_position = SetMembranePositionMoverOP( new SetMembranePositionMover( center_, normal_ ) );
     set_position->apply( pose );
+    
+    // Set membrane thickness & steepness (Added 3/9/15)
+    pose.conformation().membrane_info()->set_membrane_thickness( thickness_ );
+    pose.conformation().membrane_info()->set_membrane_steepness( steepness_ );
 	
 }
 
@@ -485,6 +513,8 @@ AddMembraneMover::register_options() {
 	option.add_relevant( OptionKeys::mp::setup::spans_from_structure );
 	option.add_relevant( OptionKeys::mp::setup::lipsfile );
 	option.add_relevant( OptionKeys::mp::setup::membrane_rsd );
+    option.add_relevant( OptionKeys::mp::thickness );
+    option.add_relevant( OptionKeys::mp::steepness );
 	
 }
 
@@ -520,7 +550,19 @@ AddMembraneMover::init_from_cmd() {
 	if ( option[ OptionKeys::mp::setup::membrane_rsd ].user() ) {
 		membrane_rsd_ = option[ OptionKeys::mp::setup::membrane_rsd ]();
 	}
-	
+    
+    // Read in membrane thickness parameter
+    if ( option[ OptionKeys::mp::thickness ].user() ) {
+        TR << "Warning: About to set a new membrane thickness not currently optimized for the scoring function" << std::endl;
+        thickness_ = option[ OptionKeys::mp::thickness ]();
+    }
+    
+    // Read in transition steepness parameter
+    if ( option[ OptionKeys::mp::steepness ].user() ) {
+        TR << "Warning: About to set a new membrane steepness not currently optimized for the scoring function" << std::endl;
+        steepness_ = option[ OptionKeys::mp::steepness ]();
+    }
+    
     // Read in Center Parameter
     if ( option[ OptionKeys::mp::setup::center ].user() ) {
         if ( option[ OptionKeys::mp::setup::center ]().size() == 3 ) {

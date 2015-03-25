@@ -267,6 +267,14 @@ core::Real
 MembraneInfo::membrane_thickness() const {
 	return thickness_;
 }
+    
+/// @brief Set Membrane Thickness in memInfo
+/// @details Set the thickness of the membrane to be used by the high resolution
+/// scoring function
+void
+MembraneInfo::set_membrane_thickness( core::Real thk ) {
+    thickness_ = thk;
+}
 
 /// @brief Return the membrane transition steepness
 /// @details Return the steepness betwen isotropic and ansitropic
@@ -274,6 +282,14 @@ MembraneInfo::membrane_thickness() const {
 core::Real
 MembraneInfo::membrane_steepness() const {
 	return steepness_;
+}
+    
+/// @brief Set Membrane Steepness in membrane info
+/// @details Set the steepness of transition between polar and nonpolar phases where
+/// n = 10 gives a transition region of 6A between nonpolar and polar phases.
+void
+MembraneInfo::set_membrane_steepness( core::Real steepness ) {
+    steepness_ = steepness;
 }
 
 /// @brief Return a list of membrane spanning topology objects

@@ -234,6 +234,11 @@ private:
     // Initial Center/Normal Pair
     core::Vector center_;
     core::Vector normal_;
+    
+    // Set membrane thickness & steepness (FOR HIGHRES ONLY!!!)
+    core::Real thickness_;
+    core::Real steepness_;
+    
 };
 
 } // membrane

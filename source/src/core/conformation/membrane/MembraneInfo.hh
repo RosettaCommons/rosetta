@@ -157,11 +157,23 @@ public:
 	/// @details Return the membrane thicnkess used by the
 	/// fullatom energy method (centroid is hard coded for now)
 	core::Real membrane_thickness() const;
-	
+    
+    /// @brief Set Membrane Thickness in memInfo
+    /// @details Set the thickness of the membrane to be used by the high resolution
+    /// scoring function
+    void
+    set_membrane_thickness( core::Real thk );
+
 	/// @brief Return the membrane transition steepness
 	/// @details Return the steepness betwen isotropic and ansitropic
 	/// layers of the membrane used by the fullatom energy methods
 	core::Real membrane_steepness() const;
+    
+    /// @brief Set Membrane Steepness in membrane info
+    /// @details Set the steepness of transition between polar and nonpolar phases where
+    /// n = 10 gives a transition region of 6A between nonpolar and polar phases.
+    void
+    set_membrane_steepness( core::Real steepness );
 	
 	/// @brief Return a list of membrane spanning topology objects
 	/// @details Return a vector1 of spanning topology objects defining
