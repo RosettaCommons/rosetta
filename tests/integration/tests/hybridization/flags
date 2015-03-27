@@ -16,7 +16,6 @@
 -relax:min_type lbfgs_armijo_nonmonotone
 -set_weights cart_bonded 0.5 pro_close 0 elec_dens_fast 5.0
 -hybridize:stage1_probability 1.0
--hybridize:starting_template 1
 
 # density map options
 -edensity:mapfile inputs/1bbh_molmap.mrc
