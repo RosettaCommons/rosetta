@@ -69,10 +69,15 @@ public:
 	///@brief Used by RosettaScripts to set the previous mover to pull poses from
 	void set_previous_mover( protocols::moves::MoverOP const m ) { previous_mover_ = m; }
 
+	/// @brief sets rosettascripts tag
+	void set_rosetta_scripts_tag( utility::tag::TagCOP tag ) { rosetta_scripts_tag_ = tag; }
+
+protected:
+	virtual bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );
+
 private:
 	bool fill_input_cache();
 	core::pose::PoseOP generate_pose();
-	bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );
 	std::deque < core::pose::PoseOP > select_poses( std::deque < core::pose::PoseOP > & poses);
 	std::deque < core::pose::PoseOP > process_poses( std::deque < core::pose::PoseOP > & poses);
 

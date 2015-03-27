@@ -325,7 +325,7 @@ void MultiplePoseMover::parse_my_tag(
 
 		// ROSETTASCRIPTS tag (optional)
 		if(tag->hasTag("ROSETTASCRIPTS")) {
-			rosetta_scripts_tag_ = tag->getTag("ROSETTASCRIPTS");
+			set_rosetta_scripts_tag( tag->getTag("ROSETTASCRIPTS") );
 			// Try parsing the ROSETTASCRIPTS block to avoid tripping die_for_unaccessed_options()
 			protocols::rosetta_scripts::RosettaScriptsParser parser;
 			protocols::moves::MoverOP mover( parser.parse_protocol_tag( rosetta_scripts_tag_ ) );
