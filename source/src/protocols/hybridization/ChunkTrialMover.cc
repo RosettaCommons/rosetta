@@ -78,8 +78,6 @@ ChunkTrialMover::ChunkTrialMover(
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		if (template_chunks_[i_template].size() != 0) ++count;
 
-TR << "Chunks: " << i_template << std::endl <<  template_chunks_[i_template] << std::endl;
-
 	}
 	if (count == 0) {
 		has_valid_moves_ = false;
@@ -215,10 +213,11 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 	if (ignore_template_indices_.count(template_number())) return;
 
 	//TR << "templ number: " << template_number() << std::endl;
-	align_chunk_.set_template(	template_poses_[template_number()],
-												template_number(),
-												sequence_alignments_[template_number()]
-												);
+	align_chunk_.set_template(
+		template_poses_[template_number()],
+		template_number(),
+		sequence_alignments_[template_number()]
+	);
 
 	// random chunk or loop all chunks
 	if (align_option_ == random_chunk) {

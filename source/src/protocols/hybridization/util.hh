@@ -73,12 +73,6 @@ void generate_fullatom_constraints(
 // user-defined coord csts
 void setup_user_coordinate_constraints( core::pose::Pose &pose, utility::vector1<core::Size> reses_to_cst );
 
-// restrict all but interface
-void setup_interface_coordinate_constraints( core::pose::Pose &pose, utility::vector1<bool> ignore_res );
-
-// restrict all but interface
-void setup_interface_atompair_constraints( core::pose::Pose &pose, utility::vector1<bool> ignore_res );
-
 // input strand pairings
 void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > const strand_pairs);
 
@@ -161,8 +155,6 @@ create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, co
 
 core::fragment::FragSetOP
 create_fragment_set_no_ssbias( core::pose::Pose const & pose, std::set<core::Size> user_pos, core::Size len, core::Size nfrag, char force_ss='D' );
-
-
 
 protocols::loops::Loops
 renumber_with_pdb_info( protocols::loops::Loops & template_chunk, core::pose::PoseCOP template_pose );

@@ -41,29 +41,24 @@ public:
 
 	void init();
 
-	void read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames);
-
 	void add_template(
 		std::string template_fn,
 		std::string cst_fn,
 		std::string symmdef_file = "NULL",
 		core::Real weight = 1.,
-		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0) );
 
 	void add_null_template(
 		core::pose::PoseOP template_pose,
 		std::string cst_fn,
 		std::string symmdef_file = "NULL",
-		core::Real weight = 1.,
-		core::Size cluster_id = 1 );
+		core::Real weight = 1. );
 
 	void add_template(
 		core::pose::PoseOP template_pose,
 		std::string cst_fn,
 		std::string symmdef_file = "NULL",
 		core::Real weight = 1.,
-		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0),
 		std::string filename="default" );
 
@@ -73,22 +68,21 @@ public:
 		core::pose::PoseOP template_pose
 	);
 
-	void pick_starting_template(core::Size & initial_template_index,
-		core::Size & initial_template_index_icluster,
-		utility::vector1 < core::Size > & template_index_icluster,
-		utility::vector1 < core::pose::PoseOP > & templates_icluster,
-		utility::vector1 < core::Real > & weights_icluster,
-		utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
-		utility::vector1 < protocols::loops::Loops > & template_contigs_icluster);
+	// pick a starting template using assigned weights
+	core::Size pick_starting_template();
 
-	utility::vector1 <Loops>
-	expand_domains_to_full_length(utility::vector1 < utility::vector1 < Loops > > all_domains, Size ref_domains_index, Size n_residues);
+	// optional rb docking after stage 1
+	void do_intrastage_docking(core::pose::Pose & pose);
 
+	// align all templates to a reference model
 	void
-	align_by_domain(utility::vector1<core::pose::PoseOP> & poses, utility::vector1 < Loops > domains, core::pose::PoseOP & ref_pose);
+	align_templates_by_domain(core::pose::PoseOP & ref_pose, utility::vector1 <Loops> domains=utility::vector1 <Loops>());
 
+	// align 1 templates to a reference model
 	void
 	align_by_domain(core::pose::Pose & pose, core::pose::Pose const & ref_pose, utility::vector1 <Loops> domains);
+
+	void domain_parse_templates(core::Size nres);
 
 	//fpd  alternate version of stage 1 with no hybridization
 	void
@@ -98,7 +92,7 @@ public:
 		protocols::loops::Loops template_contigs_icluster,
 		core::scoring::ScoreFunctionOP scorefxn);
 
-	//fpd add fragment-derived constraints
+	//fpd   add fragment-derived constraints to the pose
 	void
 	add_fragment_csts( core::pose::Pose &pose );
 
@@ -128,8 +122,6 @@ public:
 
 private:
 	// parsible options
-	utility::vector1 < core::Size > starting_templates_;
-
 	core::Real stage1_probability_, stage1_increase_cycles_, stage2_increase_cycles_, stage25_increase_cycles_;
 	core::Size stage1_1_cycles_, stage1_2_cycles_, stage1_3_cycles_, stage1_4_cycles_;
 	core::Real stage2_temperature_;
@@ -161,35 +153,32 @@ private:
 	// use cenrot mode
 	bool cenrot_;
 
-	// ddomain options
+	// ddomain parameters + domain definitions
 	core::Real pcut_,hcut_;
 	core::Size length_;
+	utility::vector1< utility::vector1< protocols::loops::Loops > > domains_all_templ_;
 
-	// relax
+	// relax parameters
 	core::Size batch_relax_, relax_repeats_;
 
-	// abinitio frag9,frag3 flags
-	utility::vector1 <core::fragment::FragSetOP> fragments_big_;  // 9mers/fragA equivalent in AbrelaxApplication
+	// abinitio fragment sets
+	utility::vector1 <core::fragment::FragSetOP> fragments_big_;   // 9mers/fragA equivalent in AbrelaxApplication
 	utility::vector1 <core::fragment::FragSetOP> fragments_small_; // 3mers/fragB equivalent in AbrelaxApplication
 
 	// native pose, aln
 	core::pose::PoseOP native_;
 	core::sequence::SequenceAlignmentOP aln_;
 
-	// template information (all from hybrid.config)
-	utility::vector1 < core::pose::PoseOP > templates_;
-	utility::vector1 < std::string > template_fn_;
-	utility::vector1 < std::string > template_cst_fn_;
-	utility::vector1 < std::string > symmdef_files_;
-	utility::vector1 < core::Real > template_weights_;
-	utility::vector1 < core::Size > template_clusterID_;
-	utility::vector1 < protocols::loops::Loops > template_chunks_;
-	utility::vector1 < protocols::loops::Loops > template_contigs_;
-	utility::vector1 < utility::vector1<core::Size> > template_cst_reses_;
-	core::Real template_weights_sum_;
-	std::map< Size, utility::vector1 < Size > > clusterID_map_;
-
-	utility::vector1< protocols::loops::Loops > domains_;
+	// template information
+	utility::vector1 < core::pose::PoseOP > templates_;  // template poses
+	utility::vector1 < core::pose::PoseOP > templates_aln_;  // aligned template PDBs (deep copy for multidom, shallow for single dom)
+	utility::vector1 < std::string > template_fn_;       // template file tags
+	utility::vector1 < std::string > template_cst_fn_;   // template constraint file tags
+	utility::vector1 < std::string > symmdef_files_;     // template symmdef files
+	utility::vector1 < core::Real > template_weights_;   // template weights
+	utility::vector1 < protocols::loops::Loops > template_chunks_;    // template secstruct definitions
+	utility::vector1 < protocols::loops::Loops > template_contigs_;   // template continuous pieces
+	utility::vector1 < utility::vector1<core::Size> > template_cst_reses_;   // per-template residues to coordinate constrain
 
 	// strand pairings
 	std::string pairings_file_;
@@ -198,17 +187,13 @@ private:
 	bool filter_templates_;
 	utility::vector1< std::pair< core::Size, core::Size > > strand_pairs_;
 
-
-	// per-residue controls
+	// per-residue control
 	utility::vector1<bool> residue_sample_template_; // using template fragments
 	utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
 	utility::vector1<core::Size> residue_max_registry_shift_; // restraints between chains
 
-	// per-residue controls: task operations
-  core::pack::task::TaskFactoryOP task_factory_;
-  core::pack::task::PackerTaskOP task_;
-
-  // jump move
+  // local docking ater stage 1
+	//    this should be incorporated in stage 1 rather than after for fold and dock style sampling!
 	bool jump_move_;
 	core::Size jump_move_repeat_;
 

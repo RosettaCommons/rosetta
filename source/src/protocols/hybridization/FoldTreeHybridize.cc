@@ -207,21 +207,21 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
 
 ////
 //// fold tree hybridize
-
 FoldTreeHybridize::FoldTreeHybridize() :
 		foldtree_mover_()
 {
 	init();
 }
 
+
 FoldTreeHybridize::FoldTreeHybridize (
 		core::Size const initial_template_index,
 		utility::vector1 < core::pose::PoseOP > const & template_poses,
 		utility::vector1 < core::Real > const & template_wts,
 		utility::vector1 < protocols::loops::Loops > const & template_chunks,
-		utility::vector1 < protocols::loops::Loops > const & template_contigs,
 		core::fragment::FragSetOP fragments_small_in,
-		core::fragment::FragSetOP fragments_big_in )
+		core::fragment::FragSetOP fragments_big_in ) :
+	foldtree_mover_()
 {
 	init();
 
@@ -232,17 +232,17 @@ FoldTreeHybridize::FoldTreeHybridize (
 	template_poses_ = template_poses;
 	template_wts_ = template_wts;
 	template_chunks_ = template_chunks;
-	template_contigs_ = template_contigs;
 
 	// normalize weights
 	normalize_template_wts();
 
 	// abinitio frags
-	frag_libs_small_.push_back(fragments_small_in);
 	frag_libs_big_.push_back(fragments_big_in);
+	frag_libs_small_.push_back(fragments_small_in);
 	frag_libs_1mer_.push_back( core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( 1 ) ) );
 	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
 }
+
 
 void
 FoldTreeHybridize::init() {
@@ -295,7 +295,6 @@ FoldTreeHybridize::init() {
 		utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
 		core::import_pose::pose_from_pdb( *native_, align_rmsd_target[1] ); // just use the first one for now
 	}
-
 }
 
 void
@@ -304,10 +303,6 @@ FoldTreeHybridize::normalize_template_wts() {
 	core::Real weight_sum = 0.0;
 	for (Size i=1; i<=template_poses_.size(); ++i) weight_sum += template_wts_[i];
 	for (Size i=1; i<=template_poses_.size(); ++i) template_wts_[i] /= weight_sum;
-}
-
-void FoldTreeHybridize::set_task_factory( core::pack::task::TaskFactoryOP task_factory_in ) {
- 	  task_factory_ = task_factory_in;
 }
 
 void
@@ -488,40 +483,13 @@ FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 }
 
 
-utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_frags(core::pose::Pose & pose) {
-	using namespace ObjexxFCL::format;
-	core::Size num_residues_nonvirt = get_num_residues_nonvirt(pose);
-	utility::vector1< core::Real > residue_weights(num_residues_nonvirt, 0.0);
-	TR.Debug << "Fragment insertion positions and weights:" << std::endl;
-	for ( Size ires=1; ires<= num_residues_nonvirt; ++ires ) {
-		if (!residue_sample_abinitio_[ires]) {
-			residue_weights[ires] = 0.0;
-			continue;
-		}
-
-		protocols::loops::Loops renumbered_template_chunks
-		= renumber_with_pdb_info(
-									 template_contigs_[initial_template_index_], template_poses_[initial_template_index_]);
-
-		if (residue_sample_abinitio_[ires]) {
-			if (! renumbered_template_chunks.has(ires) ) {
-				residue_weights[ires] = 1.0;
-			} else {
-				residue_weights[ires] = frag_weight_aligned_;
-			}
-		}
-		TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
-	}
-
-	return residue_weights;
-}
-
 utility::vector1< core::Size > FoldTreeHybridize::get_jump_anchors() {
 	std::set<core::Size>::iterator iter;
 	utility::vector1< core::Size > jump_anchors = foldtree_mover_.get_anchors();
 	std::set< core::Size > unique;
 	for (core::Size i = 1; i<=jump_anchors.size();++i) unique.insert(jump_anchors[i]);
 	jump_anchors.clear();
+
 	// ignore strand pair residues
 	std::set<core::Size> strand_pair_residues = get_pairings_residues();
 	for (iter = unique.begin(); iter != unique.end(); ++iter) {
@@ -531,81 +499,63 @@ utility::vector1< core::Size > FoldTreeHybridize::get_jump_anchors() {
 	return jump_anchors;
 }
 
-utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(core::pose::Pose & pose) {
-  using namespace ObjexxFCL::format;
-	core::Size num_residues_nonvirt = get_num_residues_nonvirt(pose);
-  utility::vector1< core::Real > residue_weights( get_residue_weights_for_big_frags(pose) );
-  utility::vector1< core::Real > residue_weights_new( num_residues_nonvirt, 0.0 );
-  utility::vector1< core::Size > jump_anchors = get_jump_anchors();
-  core::Size min_small_frag_len = 999999;
-  TR.Debug << "1mer fragment insertion positions and weights:" << std::endl;
+
+
+void FoldTreeHybridize::get_residue_weights(
+			core::pose::Pose & pose,
+			utility::vector1< core::Real > &wt1,
+			utility::vector1< core::Real > &wt3,
+			utility::vector1< core::Real > &wt9)
+{
+	utility::vector1< core::Size > jump_anchors = get_jump_anchors();
+
+	core::Size min_big_frag_len = 999;
+	for (core::Size i = 1; i<=frag_libs_big_.size(); ++i) {
+		if (frag_libs_big_[i]->max_frag_length() < min_big_frag_len) {
+			min_big_frag_len = frag_libs_big_[i]->max_frag_length();
+		}
+	}
+  core::Size min_small_frag_len = 999;
 	for (core::Size i = 1; i<=frag_libs_small_.size(); ++i) {
 		if (frag_libs_small_[i]->max_frag_length() < min_small_frag_len) {
 			min_small_frag_len = frag_libs_small_[i]->max_frag_length();
 		}
 	}
 
-  core::Size last_anchor = 0;
-  for (core::Size i = 1; i<=jump_anchors.size(); ++i) {
-		core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
-		if (anchor_gap && (anchor_gap < min_small_frag_len)) {
-		  for (core::Size ipos = last_anchor+1;ipos<jump_anchors[i];++ipos) {
-			  if (residue_sample_abinitio_[ipos]) {
-					residue_weights_new[ipos] = residue_weights[ipos];
-					TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
-				}
-			}
-		}
-		last_anchor = jump_anchors[i];
-	}
-  core::Size anchor_gap = num_residues_nonvirt-last_anchor;
-  if (anchor_gap && (anchor_gap < min_small_frag_len)) {
-		for (core::Size ipos = last_anchor+1;ipos<=num_residues_nonvirt;++ipos) {
-			if (residue_sample_abinitio_[ipos]) {
-	  		residue_weights_new[ipos] = residue_weights[ipos];
-				TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
-			}
-		}
-  }
-  return residue_weights_new;
-}
-
-utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_small_frags(core::pose::Pose & pose) {
-	using namespace ObjexxFCL::format;
+	// 9mers
 	core::Size num_residues_nonvirt = get_num_residues_nonvirt(pose);
-	utility::vector1< core::Real > residue_weights( get_residue_weights_for_big_frags(pose) );
-	utility::vector1< core::Real > residue_weights_new( num_residues_nonvirt, 0.0 );
-	utility::vector1< core::Size > jump_anchors = get_jump_anchors();
-	core::Size min_big_frag_len = 999999;
-	TR.Debug << "Small fragment insertion positions and weights:" << std::endl;
-	for (core::Size i = 1; i<=frag_libs_big_.size(); ++i) {
-		if (frag_libs_big_[i]->max_frag_length() < min_big_frag_len) {
-			min_big_frag_len = frag_libs_big_[i]->max_frag_length();
-		}
+	wt9.resize(num_residues_nonvirt, 1.0);
+
+	for (core::Size i=1; i<=template_poses_[initial_template_index_]->total_residue(); ++i) {
+		Size ires = template_poses_[initial_template_index_]->pdb_info()->number(i);
+		wt9[ires] = frag_weight_aligned_;  // covered by starting template
 	}
-	core::Size last_anchor = 0;
-	for (core::Size i = 1; i<=jump_anchors.size(); ++i) {
-		core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
-		if (anchor_gap && anchor_gap < min_big_frag_len) {
-			for (core::Size ipos = last_anchor+1;ipos<jump_anchors[i];++ipos) {
-				if (residue_sample_abinitio_[ipos]) {
-					residue_weights_new[ipos] = residue_weights[ipos];
-					TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
-				}
+	for (core::Size i=1; i<=num_residues_nonvirt; ++i) {
+		if (!residue_sample_abinitio_[i])
+			wt9[i] = 0.0;  // disallowed by detailed controls
+	}
+
+	// 3mers / 1mers
+	wt3.resize(num_residues_nonvirt, 0.0);
+	wt1.resize(num_residues_nonvirt, 0.0);
+
+	core::Size prev_anchor = 0;
+	for (core::Size i = 1; i<=jump_anchors.size()+1; ++i) {
+		core::Size curr_anchor = (i<=jump_anchors.size()) ? jump_anchors[i] : num_residues_nonvirt+1;
+		if (curr_anchor-prev_anchor-1 < min_big_frag_len) {
+			for (core::Size ipos = prev_anchor+1;ipos<curr_anchor;++ipos) {
+				if (residue_sample_abinitio_[ipos])
+					wt3[ipos] = wt9[ipos];
 			}
 		}
-		last_anchor = jump_anchors[i];
-	}
-	core::Size anchor_gap = num_residues_nonvirt-last_anchor;
-	if (anchor_gap && anchor_gap < min_big_frag_len) {
-		for (core::Size ipos = last_anchor+1;ipos<=num_residues_nonvirt;++ipos) {
-			if (residue_sample_abinitio_[ipos]) {
-				residue_weights_new[ipos] = residue_weights[ipos];
-				TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+		if (curr_anchor-prev_anchor-1 < min_small_frag_len) {
+			for (core::Size ipos = prev_anchor+1;ipos<curr_anchor;++ipos) {
+				if (residue_sample_abinitio_[ipos])
+					wt1[ipos] = wt9[ipos];
 			}
 		}
+		prev_anchor=curr_anchor;
 	}
-	return residue_weights_new;
 }
 
 void FoldTreeHybridize::restore_original_foldtree(core::pose::Pose & pose) {
@@ -701,10 +651,10 @@ void
 FoldTreeHybridize::add_strand_pairings() {
 	if (pairings_file_.length()==0) return;
 
-// 1. read in the pairings file and get a jump sample (pairing jumps and fragments)
-//    A jump sample is a set of pairings from the pairing file that has either
-//    sheets or random sheets number of pairings.
-//    The code is from protocols/jumping.
+	// 1. read in the pairings file and get a jump sample (pairing jumps and fragments)
+	//    A jump sample is a set of pairings from the pairing file that has either
+	//    sheets or random sheets number of pairings.
+	//    The code is from protocols/jumping.
 
 	TR << "read pairings file: " << pairings_file_ << std::endl;
 
@@ -735,7 +685,7 @@ FoldTreeHybridize::add_strand_pairings() {
 	movemap->set_jump( true );
 	jump_frags_ = jump_def->generate_jump_frags( jump_sample_, *movemap );
 
-// 2. identify templates with incorrect pairings
+	// 2. identify templates with incorrect pairings
 	utility::vector1< core::scoring::dssp::Pairing > pairings_to_add;
 	ObjexxFCL::FArray2D_int jumps = jump_sample_.jumps();
 	for ( core::Size i = 1; i <= jump_sample_.size(); ++i ) {
@@ -746,8 +696,8 @@ FoldTreeHybridize::add_strand_pairings() {
 					ObjexxFCL::string_of(jumpres2) + " from jump sample in HybridizeProtocol::add_strand_pairings()" );
 		pairings_to_add.push_back( pairing );
 		for (core::Size itempl = 1; itempl<=template_chunks_.size(); ++itempl) {
-			protocols::loops::Loops renumbered_template_chunks = renumber_with_pdb_info(
-				template_chunks_[itempl], template_poses_[itempl]);
+			protocols::loops::Loops renumbered_template_chunks =
+				renumber_with_pdb_info( template_chunks_[itempl], template_poses_[itempl] );
 			core::scoring::dssp::StrandPairingSet strand_pairings( *template_poses_[itempl] );
 			if (renumbered_template_chunks.has(jumpres1) && renumbered_template_chunks.has(jumpres2)) {
 				// check template pose for correct pairing
@@ -760,16 +710,16 @@ FoldTreeHybridize::add_strand_pairings() {
 			}
 		}
 	}
+
 	// remove templates with incorrect pairings if desired
 	if (filter_templates_ && templates_with_incorrect_strand_pairings_.size()) {
 		filter_templates(templates_with_incorrect_strand_pairings_);
 		templates_with_incorrect_strand_pairings_.clear();
 	}
 
-// 3. add chunks from pairings (must do after filtering templates for correct indices)
+	// 3. add chunks from pairings (must do after filtering templates for correct indices)
 	for ( core::Size i = 1; i <= pairings_to_add.size(); ++i )
 		add_strand_pairing( pairings_to_add[i] );
-
 }
 
 
@@ -824,13 +774,11 @@ FoldTreeHybridize::add_strand_pairing(
 		protocols::loops::Loops contig;
 		contig.push_back(contigs[1]);
 		template_chunks_.push_back(contig);
-		template_contigs_.push_back(contig);
 		TR << "Templates have been filtered so added first residue of pairing " << pairing << " as initial template " << template_poses_.size() << std::endl;
 	}
 	template_wts_.push_back( 0.0 ); // should not be used
 	template_poses_.push_back( trimmed_pairing_pose );
 	template_chunks_.push_back(contigs);
-	template_contigs_.push_back(contigs);
 	strand_pairings_template_indices_.insert( template_poses_.size() ); // keep track of which templates are pairings
 	TR << "Added pairing " << pairing << " as template " << template_poses_.size() << std::endl;
 }
@@ -996,7 +944,6 @@ void FoldTreeHybridize::filter_templates(std::set< core::Size > const & template
 	utility::vector1 < core::pose::PoseOP > template_poses_filtered;
 	utility::vector1 < core::Real > template_wts_filtered;
 	utility::vector1 < protocols::loops::Loops > template_chunks_filtered;
-	utility::vector1 < protocols::loops::Loops > template_contigs_filtered;
 	for (core::Size i=1; i<=template_poses_.size(); ++i) {
 		if (templates_to_remove.count(i)) {
 			if (i == initial_template_index_) {
@@ -1010,14 +957,12 @@ void FoldTreeHybridize::filter_templates(std::set< core::Size > const & template
 		template_poses_filtered.push_back(template_poses_[i]);
 		template_wts_filtered.push_back(template_wts_[i]);
 		template_chunks_filtered.push_back(template_chunks_[i]);
-		template_contigs_filtered.push_back(template_contigs_[i]);
 	}
 	if (!template_poses_filtered.size())
 		TR << "Warning! all templates were removed." << std::endl;
 	template_poses_ = template_poses_filtered;
 	template_wts_ = template_wts_filtered;
 	template_chunks_ = template_chunks_filtered;
-	template_contigs_ = template_contigs_filtered;
 	normalize_template_wts();
 }
 
@@ -1122,9 +1067,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// ignore strand pair templates, they will be sampled by a jump mover
 	random_sample_chunk_mover->set_templates_to_ignore(strand_pairings_template_indices_);
 
-	utility::vector1< core::Real > residue_weights_1mer_frags( get_residue_weights_for_1mers(pose) );
-	utility::vector1< core::Real > residue_weights_small_frags( get_residue_weights_for_small_frags(pose) );
-	utility::vector1< core::Real > residue_weights( get_residue_weights_for_big_frags(pose) );
+	utility::vector1< core::Real > residue_weights_1mer_frags, residue_weights_small_frags, residue_weights;
+	get_residue_weights( pose, residue_weights_1mer_frags, residue_weights_small_frags, residue_weights );
 
 	utility::vector1< core::Size > jump_anchors = get_jump_anchors();
 
@@ -1143,7 +1087,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	WeightedFragmentTrialMoverOP small_frag_gaps_mover( new WeightedFragmentTrialMover( frag_libs_small_, residue_weights_small_frags, jump_anchors, top_n_big_frag_) );
 	WeightedFragmentTrialMoverOP top_big_frag_mover( new WeightedFragmentTrialMover( frag_libs_big_, residue_weights, jump_anchors, top_n_big_frag_) );
 	WeightedFragmentTrialMoverOP small_frag_mover( new WeightedFragmentTrialMover( frag_libs_small_, residue_weights, jump_anchors, 0) );
-	WeightedFragmentSmoothTrialMoverOP small_frag_smooth_mover( new WeightedFragmentSmoothTrialMover( frag_libs_small_, residue_weights, jump_anchors, 0, simple_moves::FragmentCostOP( new GunnCost ) ) );
+	WeightedFragmentSmoothTrialMoverOP small_frag_smooth_mover(
+			new WeightedFragmentSmoothTrialMover( frag_libs_small_, residue_weights, jump_anchors, 0, simple_moves::FragmentCostOP( new GunnCost ) ) );
 
 	// automatically re-weight the fragment insertions if desired
 	auto_frag_insertion_weight(frag_1mer_mover, small_frag_gaps_mover, top_big_frag_mover);

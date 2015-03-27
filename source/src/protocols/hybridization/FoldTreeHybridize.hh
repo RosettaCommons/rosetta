@@ -76,7 +76,6 @@ public:
 		utility::vector1 < core::pose::PoseOP > const & template_poses,
 		utility::vector1 < core::Real > const & template_weights,
 		utility::vector1 < protocols::loops::Loops > const & template_chunks,
-		utility::vector1 < protocols::loops::Loops > const & template_contigs,
 		core::fragment::FragSetOP fragments_small_in,
 		core::fragment::FragSetOP fragments_big_in );
 
@@ -90,9 +89,11 @@ public:
 
 	void translate_virt_to_CoM(core::pose::Pose & pose);
 
-	utility::vector1< core::Real > get_residue_weights_for_1mers(core::pose::Pose & pose);
-	utility::vector1< core::Real > get_residue_weights_for_small_frags(core::pose::Pose & pose);
-	utility::vector1< core::Real > get_residue_weights_for_big_frags(core::pose::Pose & pose);
+	void get_residue_weights(
+			core::pose::Pose & pose,
+			utility::vector1< core::Real > &wt1,
+			utility::vector1< core::Real > &wt3,
+			utility::vector1< core::Real > &wt9);
 
 	void set_constraint_file(std::string cst_file_in) { cst_file_=cst_file_in; }
 	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
@@ -212,7 +213,6 @@ private:
 	utility::vector1 < core::Real > template_wts_;
 	utility::vector1 < core::pose::PoseOP > template_poses_;
 	utility::vector1 < protocols::loops::Loops > template_chunks_;
-	utility::vector1 < protocols::loops::Loops > template_contigs_;
 	utility::vector1 < core::fragment::FragSetOP > frag_libs_1mer_;
 	utility::vector1 < core::fragment::FragSetOP > frag_libs_small_;
 	utility::vector1 < core::fragment::FragSetOP > frag_libs_big_;

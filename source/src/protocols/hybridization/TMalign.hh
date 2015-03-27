@@ -16,18 +16,9 @@
 
 #define getmax(a,b) a>b?a:b
 #define getmin(a,b) a>b?b:a
-//#define MAXLEN 10000                        //maximum length of filenames
 
-//#include <stdio.h>
-//#include <stdlib.h>
 #include <math.h>
-//#include <time.h>
 #include <string>
-//#include <malloc.h>
-
-//#include <sstream>
-//#include <iostream>
-//#include <fstream>
 #include <vector>
 #include <iterator>
 #include <algorithm>
