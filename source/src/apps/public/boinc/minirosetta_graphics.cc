@@ -46,7 +46,6 @@
 #include "boinc_api.h"
 #include "graphics2.h"
 #include "graphics_data.h"
-#include "ttfont.h"
 
 #include <core/io/serialization/serialize_pose.hh>
 #include <core/pose/Pose.hh>
@@ -84,6 +83,7 @@
 #include "GL/glut.h"
 #endif
 
+#include "txf_util.h"
 
 #ifdef __APPLE__
 #include "boinc_mac_app_icon.hh"
@@ -91,6 +91,7 @@
 
 namespace graphics {
 	float window_size = { 28 };
+	float native_window_size = { 28 };
 	int default_aspect_width = 6;
 	int default_aspect_height = 4;
 	float aspect_width, aspect_height;
@@ -157,7 +158,7 @@ namespace graphics {
 
 }
 
-void scale(int iw, int ih) {
+void scale(const int & iw, const int & ih) {
 	using namespace graphics;
 	float aspect_ratio = (float)aspect_width/(float)aspect_height;
 	float w=(float)iw, h=(float)ih;
@@ -341,15 +342,14 @@ void end_rotate() {
 	glPopMatrix();
 }
 
-void do_the_rotation(	int x, int y, int left, int middle,
-											int right, GLfloat decoyrotation[16] ) {
+void do_the_rotation(	const int & x, const int & y, const int & left, const int & middle,
+											const int & right, GLfloat decoyrotation[16], const float & this_window_size ) {
 	using namespace graphics;
 
 	double delta_y = y-mouse_y;
 	double delta_x = x-mouse_x;
 
 	if (left) {
-		double axis_z = 0.0;
 		double axis_x = delta_y;
 		double axis_y = delta_x;
 		double userangle = sqrt(delta_x*delta_x + delta_y*delta_y);
@@ -383,8 +383,8 @@ void do_the_rotation(	int x, int y, int left, int middle,
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT,viewport);
 		glMatrixMode(GL_MODELVIEW);
-		double xscale = (window_size * 2.0)/(viewport[2]);
-		double yscale = (window_size * 2.0)/(viewport[3]);
+		double xscale = (this_window_size * 2.0)/(viewport[2]);
+		double yscale = (this_window_size * 2.0)/(viewport[3]);
 		glLoadIdentity();
 		glTranslatef( delta_x * xscale, -delta_y * yscale, 0);
 		glMultMatrixf(decoyrotation);
@@ -412,13 +412,13 @@ void boinc_app_mouse_move(int x, int y, int left, int middle, int right) {
 	//if (!native_centered) return; // just rotate native for now
 	// Where are we? In low, native, accepted, or current?
 	if ( where_in_window == "native" )
-	  do_the_rotation( x, y, left, middle, right, nativerotation);
+	  do_the_rotation( x, y, left, middle, right, nativerotation, native_window_size);
 	if ( where_in_window == "low" )
-	  do_the_rotation( x, y, left, middle, right, lowrotation);
+	  do_the_rotation( x, y, left, middle, right, lowrotation, window_size);
 	if ( where_in_window == "current" )
-	  do_the_rotation( x, y, left, middle, right, currentrotation);
+	  do_the_rotation( x, y, left, middle, right, currentrotation, window_size);
 	if ( where_in_window == "best" )
-	  do_the_rotation( x, y, left, middle, right, bestrotation);
+	  do_the_rotation( x, y, left, middle, right, bestrotation, window_size);
 }
 
 // BOINC GRAPHICS API
@@ -553,17 +553,19 @@ void app_graphics_init() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-	// Expects a .ttf file to exist in run directory
+	// Expects a .txf file to exist in run directory
 	// TEXT WILL NOT DISPLAY IF .txf FILE IS MISSING!!
-	TTFont::ttf_load_fonts(".");
+	txf_load_fonts(".");
 }
 
 void
-writeStrokeString( const std::string & text_string, GLfloat *col, float xpos, float ypos, int scalefactor=350 ) {
+writeStrokeString( const std::string & text_string, GLfloat *col, const float & xpos, const float & ypos, int scalefactor=350 ) {
 	// USE NICE FONTS
-	// Requires .ttf file in run directory
+	// Requires .txf file in run directory
+	char buf[256];
+	sprintf(buf, "%s", text_string.c_str());
 	// FROM BOINC API fscale bigger is smaller
-	TTFont::ttf_render_string(xpos, ypos, 0, scalefactor, col, text_string.c_str());
+	txf_render_string(.1, xpos, ypos, 0, scalefactor, col, 0, buf);
 }
 
 void display_text() {
@@ -606,7 +608,7 @@ void display_text() {
 	}
 	mode_ortho_start();
 	glTranslatef( .01, 0.55, 0.0f );
-	writeStrokeString( mode_string, default_text_color, 0, 0 );
+	writeStrokeString( mode_string, default_text_color, 0.0f, 0.0f );
 	mode_ortho_done();
 
 	// CPU TIME TEXT
@@ -619,7 +621,7 @@ void display_text() {
 
 	mode_ortho_start();
 	glTranslatef( .01, 0.45, 0.0f );
-	writeStrokeString( cpu_time_str, default_text_color, 0, 0);
+	writeStrokeString( cpu_time_str, default_text_color, 0.0f, 0.0f);
 	mode_ortho_done();
 
 	// USER TEXT
@@ -631,7 +633,7 @@ void display_text() {
 
 	mode_ortho_start();
 	glTranslatef( .01, 0.35, 0 );
-	writeStrokeString( user_string, default_text_color, 0, 0 );
+	writeStrokeString( user_string, default_text_color, 0.0f, 0.0f );
 	mode_ortho_done();
 
 	// TEAM TEXT
@@ -639,7 +641,7 @@ void display_text() {
 	if (team_string != "") {
 		mode_ortho_start();
 		glTranslatef( .01, .25, 0.0f );
-		writeStrokeString( team_string, default_text_color, 0, 0);
+		writeStrokeString( team_string, default_text_color, 0.0f, 0.0f);
 		mode_ortho_done();
 	}
 
@@ -649,7 +651,7 @@ void display_text() {
 
 	mode_ortho_start();
 	glTranslatef( .01, .01, 0.0 );
-	writeStrokeString( logo_string, default_text_color, 0, 0, 275 );
+	writeStrokeString( logo_string, default_text_color, 0.0f, 0.0f, 275 );
 	mode_ortho_done();
 
 	///////////////////////////////////////////////////////////////
@@ -667,7 +669,7 @@ void display_text() {
 
 	mode_ortho_start();
 	glTranslatef( xshift, .55, 0.0f );
-	writeStrokeString( run_status_str, default_text_color, 0, 0 );
+	writeStrokeString( run_status_str, default_text_color, 0.0f, 0.0f );
 	mode_ortho_done();
 
 	// MODEL AND STEP TEXT
@@ -676,14 +678,14 @@ void display_text() {
 			"  Step: " + string_of(shmem->total_mc_trial_count);
 		mode_ortho_start();
 		glTranslatef( xshift, .45, 0.0f );
-		writeStrokeString( ntrials_string, default_text_color, 0, 0 );
+		writeStrokeString( ntrials_string, default_text_color, 0.0f, 0.0f );
 		mode_ortho_done();
 
 	  // LAST ACCEPTED ENERGY TEXT
 	  std::string score_string2 = "Accepted Energy: " + string_of(shmem->last_accepted_energy, 7);
 	  mode_ortho_start();
 	  glTranslatef( xshift, .35, 0.0f );
-	  writeStrokeString( score_string2, default_text_color, 0, 0 );
+	  writeStrokeString( score_string2, default_text_color, 0.0f, 0.0f );
 	  mode_ortho_done();
 
 		double lowenergytextypos = 0.25;
@@ -694,7 +696,7 @@ void display_text() {
 			std::string acc_rmsd_string = "Accepted RMSD:  " + string_of(last_accepted_rmsd, 4);
 			mode_ortho_start();
 			glTranslatef( xshift, .25, 0.0f );
-			writeStrokeString( acc_rmsd_string, default_text_color, 0, 0 );
+			writeStrokeString( acc_rmsd_string, default_text_color, 0.0f, 0.0f );
 			mode_ortho_done();
 		}
 
@@ -702,7 +704,7 @@ void display_text() {
 		std::string score_string3 = "Low Energy: " + string_of(shmem->low_energy, 7);
 		mode_ortho_start();
 		glTranslatef( xshift, lowenergytextypos, 0.0f );
-		writeStrokeString( score_string3, default_text_color, 0, 0 );
+		writeStrokeString( score_string3, default_text_color, 0.0f, 0.0f );
 		mode_ortho_done();
 
 		// LOW ENERGY RMSD TEXT
@@ -710,25 +712,23 @@ void display_text() {
 			std::string low_rmsd_string = "Low RMSD:  " + string_of(low_energy_rmsd, 4);
 			mode_ortho_start();
 			glTranslatef( xshift, .05, 0.0f );
-			writeStrokeString( low_rmsd_string, default_text_color, 0, 0 );
+			writeStrokeString( low_rmsd_string, default_text_color, 0.0f, 0.0f );
 			mode_ortho_done();
 		}
 	}
 }
 
 void
-Structure_display ( graphics::GraphicsPoseType graphics_pose_type )
+Structure_display ( const graphics::GraphicsPoseType & graphics_pose_type, const float & this_window_size )
 {
 	using namespace graphics;
 	if (!shmem || !current_pose_nres) return;
 
-	float y_min_screen = - window_size;
-	float y_max_screen = + window_size;
-	float x_min_screen = - window_size;
-	float x_max_screen = + window_size;
-	float delta_y = y_max_screen - y_min_screen;
+	float y_min_screen = - this_window_size;
+	float y_max_screen = + this_window_size;
+	float x_min_screen = - this_window_size;
+	float x_max_screen = + this_window_size;
 	float zmax = 300.0;
-	float offset = 0; //.1;
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -752,16 +752,16 @@ Structure_display ( graphics::GraphicsPoseType graphics_pose_type )
 
 	switch( graphics_pose_type ){
 		case CURRENT:
-			protocols::viewer::draw_pose( *currentposeOP, current_gs, true );
+			protocols::viewer::draw_pose( *currentposeOP, current_gs );
 			break;
 		case ACCEPTED:
-			protocols::viewer::draw_pose( *lastacceptedposeOP, current_gs, true );
+			protocols::viewer::draw_pose( *lastacceptedposeOP, current_gs );
 			break;
 		case LOW:
-			protocols::viewer::draw_pose( *lowenergyposeOP, current_gs, true );
+			protocols::viewer::draw_pose( *lowenergyposeOP, current_gs );
 			break;
 		case NATIVE:
-			protocols::viewer::draw_pose( *nativeposeOP, current_gs, true );
+			protocols::viewer::draw_pose( *nativeposeOP, current_gs );
 			break;
 	}
 	glLoadIdentity();
@@ -769,14 +769,13 @@ Structure_display ( graphics::GraphicsPoseType graphics_pose_type )
 }
 
 void
-display_wu_desc( float height ) {
+display_wu_desc( const float & height ) {
 	using namespace graphics;
 	float rowheight = float(small_box)/wu_desc_rows_per_small_box;
 	for(unsigned int i=1;i <= wu_desc_rows.size(); i++) {
 		glViewport( 0, height - 3.0*small_box-rowheight*(float)i, small_box*aspect_width, rowheight);
 		mode_ortho_start();
-		writeStrokeString( wu_desc_rows.at(i-1), default_text_color, .01, 0.0, 55);
-		//writeStrokeString( wu_desc_rows.at(i-1), default_text_color, .01, 0.0, 47);
+		writeStrokeString( wu_desc_rows.at(i-1), default_text_color, 0.01, 0.0, 55);
 		mode_ortho_done();
 	}
 }
@@ -785,9 +784,9 @@ display_wu_desc( float height ) {
 void plot_timeseries(
 	std::vector<float> const & data,
 	std::vector<float> const & data2,
-	bool const vertical,
-	float const min,
-	float const max
+	bool const & vertical,
+	float const & min,
+	float const & max
 ) {
 	using namespace graphics;
 
@@ -830,8 +829,6 @@ void plot_timeseries(
 		glDisable( GL_DEPTH_TEST );
 		glLoadIdentity();
 		glColor3f(.5,.5,.5);
-		float offset = 0; // .1;
-
 
 		glColor3f(0.0f,1.0f,0.0f); // yellow
 		float min_point = 1e12;
@@ -886,7 +883,7 @@ void get_shmem_structures() {
 	using namespace graphics;
 	if (!shmem) return;
 
-	// nead to make sure we are in sync with the worker app
+	// need to make sure we are in sync with the worker app
 	if(!protocols::boinc::Boinc::wait_semaphore()){
 
 		// get native pose
@@ -948,7 +945,7 @@ void get_shmem_structures() {
 }
 
 
-void draw_rosetta_screensaver( int width, int height )
+void draw_rosetta_screensaver( int & width, int & height )
 {
 	using namespace graphics;
 	static int last_time_graphic_switch = time(NULL);
@@ -961,13 +958,8 @@ void draw_rosetta_screensaver( int width, int height )
 
 	// users complaining that they can't see the whole protein...
 	if (max_pose_nres > 0) {
-		// what's total_visible... used for???
-		//int total_visible_protein_size = 0;
-		//for (core::Size i = 1; i <= current_pose_nres; i++) {
-		//	total_visible_protein_size += 1;
-		//}
-		//window_size = (current_pose_nres > 100) ? 0.8*(28 + ( total_visible_protein_size - 100)*0.15) : 28;
-		window_size = (max_pose_nres > 100) ? 0.8*(28 + ( max_pose_nres - 100)*0.15) : 28;
+		window_size = (current_pose_nres > 100) ? 0.7*(28 + ( current_pose_nres - 100)*0.15) : 28;
+		native_window_size = (native_pose_nres > 100) ? 0.7*(28 + ( native_pose_nres - 100)*0.15) : 28;
 	}
 
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -1106,7 +1098,7 @@ void draw_rosetta_screensaver( int width, int height )
 		}
 	}
 
-	writeStrokeString( "Searching...", default_structure_text_color, 0, 0, 280);
+	writeStrokeString( "Searching...", default_structure_text_color, 0.0f, 0.0f, 280);
 	mode_ortho_done();
 	// do slow changes
 	float slowrotate = 0.8;
@@ -1131,7 +1123,7 @@ void draw_rosetta_screensaver( int width, int height )
 	glMultMatrixf(graphics::lowrotation);
 	glGetFloatv(GL_MODELVIEW_MATRIX, graphics::lowrotation);  // Store current model view in decoyrotation
 
-	Structure_display(CURRENT);
+	Structure_display(CURRENT, window_size);
 
 	// ACCEPTED BOX
 	best_viewport_x      = dim_main;
@@ -1144,9 +1136,9 @@ void draw_rosetta_screensaver( int width, int height )
 	glBegin( GL_LINE_STRIP ) ;
 	glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
 	glEnd();
-	writeStrokeString( "Accepted", default_structure_text_color, 0, 0, 280);
+	writeStrokeString( "Accepted", default_structure_text_color, 0.0f, 0.0f, 280);
 	mode_ortho_done();
-	Structure_display(ACCEPTED);
+	Structure_display(ACCEPTED, window_size);
 
 	float rms_min = 0.0;
 	float rms_max = 0.0;
@@ -1177,9 +1169,9 @@ void draw_rosetta_screensaver( int width, int height )
 		glBegin( GL_LINE_STRIP ) ;
 		glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
 		glEnd();
-		writeStrokeString( "Low Energy", default_structure_text_color, 0, 0, 200);
+		writeStrokeString( "Low Energy", default_structure_text_color, 0.0f, 0.0f, 200);
 		mode_ortho_done();
-	  Structure_display(LOW);
+	  Structure_display(LOW, window_size);
 
 	  // NATIVE BOX (SMALL)
 	  native_viewport_x      = 2 * dim_main;
@@ -1192,14 +1184,14 @@ void draw_rosetta_screensaver( int width, int height )
     glBegin( GL_LINE_STRIP ) ;
     glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
     glEnd();
-		writeStrokeString( "Native", default_structure_text_color, 0, 0, 200);
+		writeStrokeString( "Native", default_structure_text_color, 0.0f, 0.0f, 200);
 		mode_ortho_done();
-	  Structure_display(NATIVE);
+	  Structure_display(NATIVE, native_window_size);
 
 	  // RMSD TIME SERIES GRAPH BOX
 	  glViewport( 5*small_box, height-2*small_box, small_box, 2*small_box );
 		mode_ortho_start();
-		writeStrokeString( "RMSD", default_structure_text_color, 0, 0, 180 );
+		writeStrokeString( "RMSD", default_structure_text_color, 0.0f, 0.0f, 180 );
 		mode_ortho_done();
 		plot_timeseries( last_accepted_rmsd_vector,low_rmsd_vector ,true, rms_min, rms_max );
 
@@ -1211,16 +1203,16 @@ void draw_rosetta_screensaver( int width, int height )
 		low_viewport_width  = low_viewport_height = dim_main;
 	  glViewport( 2*dim_main, height-dim_main, dim_main, dim_main );
 		mode_ortho_start();
-		writeStrokeString( "Low Energy", default_structure_text_color, 0, 0, 280);
+		writeStrokeString( "Low Energy", default_structure_text_color, 0.0f, 0.0f, 280);
 		mode_ortho_done();
-	  Structure_display(LOW);
+	  Structure_display(LOW, window_size);
 
 	}
 
 	// ENERGY TIME SERIES GRAPH BOX
 	glViewport( 0, height-3*small_box, 5*small_box, small_box );
 	mode_ortho_start();
-	writeStrokeString( "Accepted Energy", default_structure_text_color, 0, 0, 250 );
+	writeStrokeString( "Accepted Energy", default_structure_text_color, 0.0f, 0.0f, 250 );
 	mode_ortho_done();
 	plot_timeseries( last_accepted_energy_vector, low_energy_vector, false, energy_min, energy_max );
 
@@ -1334,10 +1326,10 @@ int main(int argc, char** argv) {
 	boinc_parse_init_data_file();
 	boinc_get_init_data(app_init_data);
 
-	nativeposeOP = new core::pose::Pose;
-	currentposeOP = new core::pose::Pose;
-	lowenergyposeOP = new core::pose::Pose;
-	lastacceptedposeOP = new core::pose::Pose;
+	nativeposeOP =  core::pose::PoseOP( new core::pose::Pose() );
+	currentposeOP = core::pose::PoseOP( new core::pose::Pose() );
+	lowenergyposeOP = core::pose::PoseOP( new core::pose::Pose() );
+	lastacceptedposeOP = core::pose::PoseOP( new core::pose::Pose() );
 
 	boinc_graphics_loop(argc, argv);
 

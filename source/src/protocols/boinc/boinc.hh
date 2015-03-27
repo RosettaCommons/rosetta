@@ -30,7 +30,7 @@
 #include <shmem.h>
 
 // for pose serialization
-#define SKIP_FOR_EFFICIENCY 50 //100
+#define SKIP_FOR_EFFICIENCY 200
 
 #ifndef _WIN32
 #ifdef __APPLE__
@@ -60,7 +60,7 @@
 #define BOINC_MAX_NO_PROGRESS_INIT_CNT 25 // maximum allowed restarts w/ no progress
 #define BOINC_MAX_NSTRUCT 99  // maximum nstruct that the assimilator should have to handle. More than that is likely too much to sensibly upload anyway!
 #define BOINC_DEFAULT_MAX_CPU_RUN_TIME 10800
-#define BOINC_MAX_GFX_FPS 10.0
+#define BOINC_MAX_GFX_FPS 5.0
 #define BOINC_MAX_GFX_CPU 10.0
 #define BOINC_CHECKPOINT_COUNT_FILE "boinc_checkpoint_count.txt"
 #define BOINC_INIT_COUNT_FILE "boinc_init_count.txt"
@@ -154,10 +154,10 @@ public:
 	static void set_wu_desc( void );
 
 	// The current pose shared memory data will get updated with the observer.
-	static const int attach_graphics_current_pose_observer( core::pose::Pose & pose );
+	static int attach_graphics_current_pose_observer( core::pose::Pose & pose );
 
 	// Sets the native pose
-	static const int set_graphics_native_pose( core::pose::Pose & pose );
+	static int set_graphics_native_pose( core::pose::Pose & pose );
 
 	// Update monte carlo mover trial info
 	static void  update_mc_trial_info( const int & trial_cnt, const std::string & mover_type );
@@ -187,9 +187,9 @@ public:
 	// data synchronization
 #ifdef USE_SYSV_SEMAPHORE
 	// integer key based on the boinc client slot run directory
-	static const key_t get_sema_key( void );
+	static key_t get_sema_key( void );
 
-	static const int destroy_semaphore( void );
+	static int destroy_semaphore( void );
 #endif
 
 	// name based on the boinc client slot run directory

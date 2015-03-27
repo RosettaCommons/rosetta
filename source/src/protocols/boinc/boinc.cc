@@ -29,6 +29,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/basic_sys_util.hh>
 #include <utility/string_util.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>
@@ -245,11 +246,11 @@ bool Boinc::worker_is_finished( const int & total_nstruct ){
 			shmem_->model_low_energy = shmem_->low_energy;
 			if (shmem_->native_pose_exists) {
 				// get native
-				core::pose::PoseOP nativeposeOP = new core::pose::Pose;
+				core::pose::PoseOP nativeposeOP( new core::pose::Pose() );
 				core::io::serialization::BUFFER bn((char*)(&shmem_->native_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 				core::io::serialization::read_binary(*nativeposeOP,bn);
 				if (shmem_->low_energy_pose_exists) {
-					core::pose::PoseOP lowenergyposeOP = new core::pose::Pose;
+					core::pose::PoseOP lowenergyposeOP( new core::pose::Pose() );
 					core::io::serialization::BUFFER bl((char*)(&shmem_->low_energy_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 					core::io::serialization::read_binary(*lowenergyposeOP,bl);
 					shmem_->model_low_energy_rmsd = core::scoring::native_CA_rmsd( *nativeposeOP, *lowenergyposeOP);
@@ -436,7 +437,7 @@ void Boinc::set_wu_desc() {
 						wu_desc_rows.push_back( tmpstr );
 				}
 				if (!wait_semaphore()) {
-					core::io::serialization::BUFFER b((char*)(&shmem_->wu_desc_buf),POSE_BUFSIZE);
+					core::io::serialization::BUFFER b((char*)(&shmem_->wu_desc_buf),WU_DESC_TEXT_BUFSIZE);
 					core::io::serialization::write_binary(wu_desc_rows,b);
 					shmem_->wu_desc_exists = 1;
 					unlock_semaphore();
@@ -451,16 +452,16 @@ void Boinc::set_wu_desc() {
 
 // CURRENT POSE
 // called by worker
-const int Boinc::attach_graphics_current_pose_observer( core::pose::Pose & pose ) {
+int Boinc::attach_graphics_current_pose_observer( core::pose::Pose & pose ) {
 	if (!shmem_) return 0;
-	static BoincCurrentPoseObserverOP bpo = new BoincCurrentPoseObserver();
+	static BoincCurrentPoseObserverOP bpo( new BoincCurrentPoseObserver() );
 	bpo->attach_to( pose );
 	return 1;
 }
 
 // NATIVE POSE
 // called by worker
-const int Boinc::set_graphics_native_pose( core::pose::Pose & pose ) {
+int Boinc::set_graphics_native_pose( core::pose::Pose & pose ) {
 	if (!shmem_) return 0;
 	if (!wait_semaphore()) {
 		boinc_begin_critical_section();
@@ -501,7 +502,13 @@ void Boinc::update_graphics_current( core::pose::Pose & pose ) {
 		boinc_begin_critical_section();
 		if (pose.total_residue() > 0) {
 			core::io::serialization::BUFFER b((char*)(&shmem_->current_pose_buf ),POSE_BUFSIZE);
-			core::io::serialization::write_binary(pose,b);
+			if (core::pose::symmetry::is_symmetric( pose ) && pose.total_residue() > MAX_SYMM_POSE_RESIDUES) {
+				core::pose::Pose asy_pose;
+				core::pose::symmetry::extract_asymmetric_unit(pose, asy_pose);
+				core::io::serialization::write_binary(asy_pose,b);
+			} else {
+				core::io::serialization::write_binary(pose,b);
+			}
 			shmem_->current_pose_exists = 1;
 		}
 		boinc_end_critical_section();
@@ -528,16 +535,22 @@ void Boinc::update_graphics_low_energy( core::pose::Pose & pose, core::Real low_
   count = SKIP_FOR_EFFICIENCY;
 */
 	if (!shmem_ || (persist && update_mode == DEFAULT)) return;
-  if (!trywait_semaphore()) {
+	if (!trywait_semaphore()) {
 		boinc_begin_critical_section();
 		shmem_->low_energy = low_energy;
 		core::io::serialization::BUFFER b((char*)(&shmem_->low_energy_pose_buf ),POSE_BUFSIZE);
-		core::io::serialization::write_binary(pose,b);
+		if (core::pose::symmetry::is_symmetric( pose ) && pose.total_residue() > MAX_SYMM_POSE_RESIDUES) {
+			core::pose::Pose asy_pose;
+			core::pose::symmetry::extract_asymmetric_unit(pose, asy_pose);
+			core::io::serialization::write_binary(asy_pose,b);
+		} else {
+			core::io::serialization::write_binary(pose,b);
+		}
 		shmem_->low_energy_update_cnt++;
 		shmem_->low_energy_pose_exists = 1;
 		boinc_end_critical_section();
 		unlock_semaphore();
-  }
+	}
 }
 
 // MC LAST ACCEPTED POSE
@@ -552,15 +565,21 @@ void Boinc::update_graphics_last_accepted( core::pose::Pose & pose, core::Real l
   count = SKIP_FOR_EFFICIENCY;
 */
 	if (!shmem_) return;
-  if (!trywait_semaphore()) {
+	if (!trywait_semaphore()) {
 		boinc_begin_critical_section();
 		shmem_->last_accepted_energy = last_accepted_energy;
 		core::io::serialization::BUFFER b((char*)(&shmem_->last_accepted_pose_buf ),POSE_BUFSIZE);
-		core::io::serialization::write_binary(pose,b);
+		if (core::pose::symmetry::is_symmetric( pose ) && pose.total_residue() > MAX_SYMM_POSE_RESIDUES) {
+			core::pose::Pose asy_pose;
+			core::pose::symmetry::extract_asymmetric_unit(pose, asy_pose);
+			core::io::serialization::write_binary(asy_pose,b);
+		} else {
+			core::io::serialization::write_binary(pose,b);
+		}
 		shmem_->last_accepted_pose_exists = 1;
 		boinc_end_critical_section();
 		unlock_semaphore();
-  }
+	}
 }
 
 
@@ -579,7 +598,7 @@ void Boinc::attach_shared_memory() {
 	if (shmem_ == NULL) {
 		int attempts = 15;
 		while (attempts>1) {
-			shmem_ = (protocols::boinc::BoincSharedMemory*)boinc_graphics_get_shmem(BOINC_SHMEM_NAME);
+			shmem_ = (BoincSharedMemory*)boinc_graphics_get_shmem(BOINC_SHMEM_NAME);
 			if (!shmem_) {
 #ifdef _WIN32
 				Sleep( 1000 );
@@ -628,7 +647,7 @@ void Boinc::get_sema_name( char * name ) {
 
 #else
 
-const key_t Boinc::get_sema_key() {
+key_t Boinc::get_sema_key() {
 	// make it slot specific since multiple tasks may run simultaneously
 	static int sema_key;
   if (sema_key) return sema_key;
@@ -639,7 +658,7 @@ const key_t Boinc::get_sema_key() {
 	return sema_key;
 }
 
-const int Boinc::destroy_semaphore() {
+int Boinc::destroy_semaphore() {
 	int id = semget(get_sema_key(), 0, 0);
 	if (id < 0) return 0;
 	if (semctl(id, 1, IPC_RMID, 0)) return 0;

@@ -703,7 +703,7 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> charge;
 		if ( l.fail() ) return 0;
 #if defined(WIN32) && !defined(WIN_PYROSETTA)
-		return new AddAtomWIN32( atom_name, atom_type_name, mm_atom_type_name, charge );
+		return PatchOperationOP( new AddAtomWIN32( atom_name, atom_type_name, mm_atom_type_name, charge ) );
 #else
 		return PatchOperationOP( new AddAtom( atom_name, atom_type_name, mm_atom_type_name, charge ) );
 #endif

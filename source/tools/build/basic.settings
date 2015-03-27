@@ -794,6 +794,7 @@ settings = {
             "defines" : [ "BOINC" ],
             "flags" : {
                 "compile" : [ "pthread" ],
+                "warn" : [ "Wno-write-strings" ],
             },
         },
         "removes" : {
@@ -817,6 +818,8 @@ settings = {
                 "/usr/include/GL"
             ],
             "libraries" : [
+                "boinc_graphics2",
+                "glut",
                 "GL",
                 "GLU",
                 "X11",
@@ -2134,7 +2137,7 @@ settings = {
             "defines" : [ "USEBOOSTMPI" ],
         },
     },
-	
+
     "gcc, cuda" : {
         "appends" : {
             "include_path"  : [ "/usr/local/cuda/include", "#external/include/cuda"],

@@ -47,8 +47,8 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -120,8 +120,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -194,8 +194,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -266,8 +266,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -339,8 +339,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -443,15 +443,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\environment\ClaimingMover.cc"
+				RelativePath="..\..\..\src\protocols\environment\ClientMover.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ClaimingMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ClaimingMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ClientMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ClientMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -459,8 +459,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ClaimingMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ClaimingMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ClientMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ClientMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -468,8 +468,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ClaimingMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ClaimingMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ClientMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ClientMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -477,17 +477,69 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ClaimingMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ClaimingMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ClientMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ClientMover.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\environment\ClaimingMover.fwd.hh"
+				RelativePath="..\..\..\src\protocols\environment\ClientMover.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\environment\ClaimingMover.hh"
+				RelativePath="..\..\..\src\protocols\environment\ClientMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\CoMTrackerCM.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__CoMTrackerCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__CoMTrackerCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__CoMTrackerCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__CoMTrackerCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__CoMTrackerCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__CoMTrackerCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__CoMTrackerCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__CoMTrackerCM.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\CoMTrackerCM.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\CoMTrackerCM.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\CoMTrackerCMCreator.hh"
 				>
 			</File>
 			<File
@@ -539,54 +591,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\environment\EnvBeginMover.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvBeginMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvBeginMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvBeginMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvBeginMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvBeginMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvBeginMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvBeginMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvBeginMover.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\environment\EnvBeginMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\environment\EnvBeginMover.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\environment\EnvClaimBroker.cc"
 				>
 				<FileConfiguration
@@ -635,15 +639,19 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\environment\EnvEndMover.cc"
+				RelativePath="..\..\..\src\protocols\environment\EnvExcn.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\EnvMover.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvEndMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvEndMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -651,8 +659,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvEndMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvEndMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -660,8 +668,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvEndMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvEndMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -669,21 +677,21 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvEndMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvEndMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__EnvMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__EnvMover.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\environment\EnvEndMover.fwd.hh"
+				RelativePath="..\..\..\src\protocols\environment\EnvMover.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\environment\EnvEndMover.hh"
+				RelativePath="..\..\..\src\protocols\environment\EnvMover.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\environment\EnvExcn.hh"
+				RelativePath="..\..\..\src\protocols\environment\EnvMoverCreator.hh"
 				>
 			</File>
 			<File
@@ -780,6 +788,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\environment\ProtectedConformation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\ScriptCM.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ScriptCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ScriptCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ScriptCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ScriptCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ScriptCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ScriptCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__ScriptCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__ScriptCM.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\ScriptCM.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\ScriptCM.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\ScriptCMCreator.hh"
 				>
 			</File>
 		</Filter>
@@ -1083,10 +1143,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\filters\HeavyAtomFilter.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\filters\ReplicateFilter.cc"
 				>
 				<FileConfiguration
@@ -1284,10 +1340,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\jd2\archive\ArchiveManager.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\jd2\archive\ArchiveMasterBase.hh"
 				>
 			</File>
 			<File
@@ -2231,18 +2283,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\moves\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\moves\BoolMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\moves\CanonicalSamplingMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\moves\CanonicalSamplingMover.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\moves\ChangeFoldTreeMover.fwd.hh"
 				>
 			</File>
@@ -2492,6 +2532,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\moves\FilterMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\FilterReporterMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__FilterReporterMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__FilterReporterMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__FilterReporterMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__FilterReporterMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__FilterReporterMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__FilterReporterMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__FilterReporterMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__FilterReporterMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\FilterReporterMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\FilterReporterMover.hh"
 				>
 			</File>
 			<File
@@ -2747,6 +2835,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\moves\MoveMapMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__MoveMapMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__MoveMapMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__MoveMapMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__MoveMapMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__MoveMapMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__MoveMapMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__MoveMapMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__MoveMapMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\MoveMapMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\MoveMapMover.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\moves\Mover.cc"
 				>
 				<FileConfiguration
@@ -2792,6 +2928,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\moves\Mover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\MoverApplyingMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__MoverApplyingMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__MoverApplyingMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__MoverApplyingMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__MoverApplyingMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__MoverApplyingMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__MoverApplyingMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__MoverApplyingMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__MoverApplyingMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\MoverApplyingMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\MoverApplyingMover.hh"
 				>
 			</File>
 			<File
@@ -3515,10 +3699,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\moves\TemperatuerController.fwd.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\moves\TrialCounter.cc"
 				>
 				<FileConfiguration
@@ -3612,6 +3792,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\moves\TrialMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\VectorPoseMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__VectorPoseMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__VectorPoseMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__VectorPoseMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__VectorPoseMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__VectorPoseMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__VectorPoseMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__VectorPoseMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__VectorPoseMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\VectorPoseMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\VectorPoseMover.hh"
 				>
 			</File>
 			<File
@@ -3710,6 +3938,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\rosetta_scripts\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\rosetta_scripts\AdditionalOutputWrapper.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__rosetta_scripts__AdditionalOutputWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__rosetta_scripts__AdditionalOutputWrapper.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__rosetta_scripts__AdditionalOutputWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__rosetta_scripts__AdditionalOutputWrapper.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__rosetta_scripts__AdditionalOutputWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__rosetta_scripts__AdditionalOutputWrapper.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__rosetta_scripts__AdditionalOutputWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__rosetta_scripts__AdditionalOutputWrapper.xdc"
+					/>
+				</FileConfiguration>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\rosetta_scripts\AdditionalOutputWrapper.hh"
 				>
@@ -4811,6 +5079,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\environment\claims\EnvLabelSelector.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__claims__EnvLabelSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__claims__EnvLabelSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__claims__EnvLabelSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__claims__EnvLabelSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__claims__EnvLabelSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__claims__EnvLabelSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__claims__EnvLabelSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__claims__EnvLabelSelector.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\claims\EnvLabelSelector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\claims\EnvLabelSelector.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\environment\claims\JumpClaim.cc"
 				>
 				<FileConfiguration
@@ -4952,6 +5268,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\environment\claims\VirtResClaim.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\claims\XYZClaim.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__claims__XYZClaim.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__claims__XYZClaim.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__claims__XYZClaim.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__claims__XYZClaim.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__claims__XYZClaim.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__claims__XYZClaim.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__environment__claims__XYZClaim.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__environment__claims__XYZClaim.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\claims\XYZClaim.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\environment\claims\XYZClaim.hh"
 				>
 			</File>
 		</Filter>
@@ -5496,10 +5860,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\jd2\JD2ResourceManagerCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\jd2\JD2ResourceManagerInputterCreator.hh"
 				>
 			</File>
 			<File
@@ -6223,6 +6583,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\jd2\MSDJobDistributor.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__MSDJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__MSDJobDistributor.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__MSDJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__MSDJobDistributor.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__MSDJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__MSDJobDistributor.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__MSDJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__MSDJobDistributor.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\MSDJobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\MSDJobDistributor.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\jd2\MpiFileBuffer.cc"
 				>
 				<FileConfiguration
@@ -6268,6 +6676,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\jd2\MpiFileBuffer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\MultiThreadedJobDistributor.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__MultiThreadedJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__MultiThreadedJobDistributor.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__MultiThreadedJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__MultiThreadedJobDistributor.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__MultiThreadedJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__MultiThreadedJobDistributor.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__MultiThreadedJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__MultiThreadedJobDistributor.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\MultiThreadedJobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\MultiThreadedJobDistributor.hh"
 				>
 			</File>
 			<File

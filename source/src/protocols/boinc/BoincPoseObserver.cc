@@ -19,7 +19,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/signals/ConformationEvent.hh>
-
+#include <core/pose/symmetry/util.hh>
 #include <core/io/serialization/serialize_pose.hh>
 
 
@@ -74,7 +74,13 @@ BoincCurrentPoseObserver::on_conf_change(
 		boinc_begin_critical_section();
 		if (event.pose->total_residue() > 0) {
 			core::io::serialization::BUFFER b((char*)(&shmem_->current_pose_buf ),POSE_BUFSIZE);
-			write_binary(*event.pose,b);
+			if (core::pose::symmetry::is_symmetric( *event.pose ) && event.pose->total_residue() > MAX_SYMM_POSE_RESIDUES) {
+				core::pose::Pose pose;
+				core::pose::symmetry::extract_asymmetric_unit(*event.pose, pose);
+				write_binary(pose,b);
+			} else {
+				write_binary(*event.pose,b);
+			}
 			shmem_->current_pose_exists = 1;
 		}
 		boinc_end_critical_section();

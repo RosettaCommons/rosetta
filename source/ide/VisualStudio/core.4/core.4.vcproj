@@ -47,8 +47,8 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				StringPooling="false"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -124,8 +124,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -198,8 +198,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -270,8 +270,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -345,8 +345,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -1810,10 +1810,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\pack\task\operation\ResLvlTaskOperations.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\pack\task\operation\RestrictToInterface.hh"
 				>
 			</File>
 			<File
@@ -3325,10 +3321,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\optimization\"
 			>
 			<File
-				RelativePath="..\..\..\src\core\optimization\AtomNode.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\core\optimization\AtomTreeMinimizer.cc"
 				>
 				<FileConfiguration
@@ -4104,14 +4096,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\pack\"
 			>
-			<File
-				RelativePath="..\..\..\src\core\pack\all.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\pack\all.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\core\pack\make_symmetric_task.cc"
 				>
@@ -5409,22 +5393,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\pack\dunbrack\CoarseRotamer.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\pack\dunbrack\CoarseRotamer.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\pack\dunbrack\CoarseSingleResidueLibrary.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\pack\dunbrack\CoarseSingleResidueLibrary.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\core\pack\dunbrack\DunbrackConstraint.cc"
 				>
 				<FileConfiguration
@@ -5733,6 +5701,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\RotamericSingleResiduePeptoidLibrary.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\RotamericSingleResiduePeptoidLibrary.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\RotamericSingleResiduePeptoidLibrary.tmpl.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\pack\dunbrack\SemiRotamericSingleResidueDunbrackLibrary.cc"
 				>
 				<FileConfiguration
@@ -5825,6 +5805,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\SingleLigandRotamerLibrary.fwd.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\pack\dunbrack\SingleLigandRotamerLibrary.hh"
 				>
 			</File>
@@ -5877,7 +5861,99 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibrary.tmpl.hh"
+				RelativePath="..\..\..\src\core\pack\dunbrack\SingleResiduePeptoidLibrary.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\SingleResiduePeptoidLibrary.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\SingleResiduePeptoidLibrary.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\SingleResidueRotamerLibrary.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\SingleResidueRotamerLibrary.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\dunbrack\SingleResidueRotamerLibrary.hh"
 				>
 			</File>
 		</Filter>
@@ -6585,6 +6661,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\pack\task\residue_selector\ClashBasedRepackShellSelector.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\task\residue_selector\ClashBasedRepackShellSelector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\task\residue_selector\ClashBasedRepackShellSelector.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\pack\task\residue_selector\InterGroupInterfaceByVectorSelector.cc"
 				>
 				<FileConfiguration
@@ -7074,6 +7198,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\pack\task\residue_selector\ResidueSelectorRegistrator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\task\residue_selector\TrueResidueSelector.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__residue_selector__TrueResidueSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__residue_selector__TrueResidueSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__residue_selector__TrueResidueSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__residue_selector__TrueResidueSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__residue_selector__TrueResidueSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__residue_selector__TrueResidueSelector.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__residue_selector__TrueResidueSelector.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__residue_selector__TrueResidueSelector.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\task\residue_selector\TrueResidueSelector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\task\residue_selector\TrueResidueSelector.hh"
 				>
 			</File>
 		</Filter>

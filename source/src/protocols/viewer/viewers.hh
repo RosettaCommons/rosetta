@@ -157,7 +157,7 @@ void set_bg_color( core::Vector new_bg_color );
 
 
 void draw_pose(const core::pose::Pose & pose,
-                GraphicsState & gs, bool centered);
+                GraphicsState & gs);
 
 void draw_conformation( utility::vector1< core::conformation::ResidueCOP > const & residues,
                         utility::vector1< char > const & ss,

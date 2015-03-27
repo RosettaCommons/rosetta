@@ -47,8 +47,8 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -120,8 +120,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -194,8 +194,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -266,8 +266,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -339,8 +339,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -570,18 +570,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				RelativePath="..\..\..\src\protocols\loop_build\LoopMover_SlidingWindowCreator.hh"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loop_build\LoopmodelWrapper.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__loop_build__LoopmodelWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__loop_build__LoopmodelWrapper.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__loop_build__LoopmodelWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__loop_build__LoopmodelWrapper.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__loop_build__LoopmodelWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__loop_build__LoopmodelWrapper.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__loop_build__LoopmodelWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__loop_build__LoopmodelWrapper.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loop_build\LoopmodelWrapper.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loop_build\LoopmodelWrapper.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loop_build\LoopmodelWrapperCreator.hh"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="\protocols\noesy_assign\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\noesy_assign\Assignment.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\noesy_assign\Assignment.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\noesy_assign\CovalentCompliance.cc"
 				>
@@ -775,10 +819,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\noesy_assign\CyanaModule.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\noesy_assign\DistanceScoreMover.cc"
 				>
 				<FileConfiguration
@@ -932,6 +972,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\noesy_assign\FragsToAtomDist.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\noesy_assign\LabelResonance.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__noesy_assign__LabelResonance.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__noesy_assign__LabelResonance.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__noesy_assign__LabelResonance.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__noesy_assign__LabelResonance.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__noesy_assign__LabelResonance.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__noesy_assign__LabelResonance.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__noesy_assign__LabelResonance.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__noesy_assign__LabelResonance.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\noesy_assign\LabelResonance.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\noesy_assign\LabelResonance.hh"
 				>
 			</File>
 			<File
@@ -1359,6 +1447,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\noesy_assign\ProtonResonance.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__noesy_assign__ProtonResonance.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__noesy_assign__ProtonResonance.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__noesy_assign__ProtonResonance.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__noesy_assign__ProtonResonance.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__noesy_assign__ProtonResonance.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__noesy_assign__ProtonResonance.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__noesy_assign__ProtonResonance.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__noesy_assign__ProtonResonance.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\noesy_assign\ProtonResonance.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\noesy_assign\ProtonResonance.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\noesy_assign\Resonance.cc"
 				>
 				<FileConfiguration
@@ -1584,6 +1720,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\noesy_assign\util.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\protocols\symmetric_docking\membrane\"
+			>
+			<File
+				RelativePath="..\..\..\src\protocols\symmetric_docking\membrane\MPSymDockMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__symmetric_docking__membrane__MPSymDockMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__symmetric_docking__membrane__MPSymDockMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__symmetric_docking__membrane__MPSymDockMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__symmetric_docking__membrane__MPSymDockMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__symmetric_docking__membrane__MPSymDockMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__symmetric_docking__membrane__MPSymDockMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__symmetric_docking__membrane__MPSymDockMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__symmetric_docking__membrane__MPSymDockMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\symmetric_docking\membrane\MPSymDockMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\symmetric_docking\membrane\MPSymDockMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\symmetric_docking\membrane\MPSymDockMoverCreator.hh"
 				>
 			</File>
 		</Filter>
@@ -2407,10 +2599,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\abinitio\FragmentCost.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\abinitio\FragmentSampler.cc"
 				>
 				<FileConfiguration
@@ -2680,10 +2868,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\abinitio\IterativeFullatom.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\abinitio\JumpingFoldConstraints.hh"
 				>
 			</File>
 			<File
@@ -4411,6 +4595,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\topology_broker\RigidBodyRandomTMHMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__topology_broker__RigidBodyRandomTMHMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__topology_broker__RigidBodyRandomTMHMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__topology_broker__RigidBodyRandomTMHMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__topology_broker__RigidBodyRandomTMHMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__topology_broker__RigidBodyRandomTMHMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__topology_broker__RigidBodyRandomTMHMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__topology_broker__RigidBodyRandomTMHMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__topology_broker__RigidBodyRandomTMHMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\topology_broker\RigidBodyRandomTMHMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\topology_broker\RigidBodyRandomTMHMover.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\topology_broker\RigidChunkClaimer.cc"
 				>
 				<FileConfiguration
@@ -4648,6 +4880,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\topology_broker\SymmetryClaimer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\topology_broker\TMHTopologySamplerClaimer.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__topology_broker__TMHTopologySamplerClaimer.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__topology_broker__TMHTopologySamplerClaimer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__topology_broker__TMHTopologySamplerClaimer.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__topology_broker__TMHTopologySamplerClaimer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__topology_broker__TMHTopologySamplerClaimer.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__topology_broker__TMHTopologySamplerClaimer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__topology_broker__TMHTopologySamplerClaimer.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__topology_broker__TMHTopologySamplerClaimer.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\topology_broker\TMHTopologySamplerClaimer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\topology_broker\TMHTopologySamplerClaimer.hh"
 				>
 			</File>
 			<File
@@ -4983,6 +5263,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\AbscriptLoopCloserCMCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\abinitio\abscript\AbscriptMover.cc"
 				>
 				<FileConfiguration
@@ -5183,6 +5467,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\FragmentCMCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\abinitio\abscript\FragmentJumpCM.cc"
 				>
 				<FileConfiguration
@@ -5287,6 +5575,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\RigidChunkCM.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__RigidChunkCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__RigidChunkCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__RigidChunkCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__RigidChunkCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__RigidChunkCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__RigidChunkCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__RigidChunkCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__RigidChunkCM.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\RigidChunkCM.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\RigidChunkCM.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\RigidChunkCMCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\abinitio\abscript\StageID.hh"
 				>
 			</File>
@@ -5336,6 +5676,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\abinitio\abscript\StagePreparer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\StructPerturberCM.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__StructPerturberCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__StructPerturberCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__StructPerturberCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__StructPerturberCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__StructPerturberCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__StructPerturberCM.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__StructPerturberCM.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__abinitio__abscript__StructPerturberCM.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\StructPerturberCM.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\StructPerturberCM.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\abinitio\abscript\StructPerturberCMCreator.hh"
 				>
 			</File>
 		</Filter>
@@ -5847,6 +6239,102 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\hybridization\BackboneTorsionPerturbation.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\hybridization\BackboneTorsionPerturbation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\hybridization\BackboneTorsionPerturbationCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\hybridization\BackboneTorsionSampler.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionSampler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionSampler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionSampler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionSampler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionSampler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionSampler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionSampler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__BackboneTorsionSampler.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\hybridization\BackboneTorsionSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\hybridization\BackboneTorsionSamplerCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\hybridization\CartesianHybridize.cc"
 				>
 				<FileConfiguration
@@ -6136,6 +6624,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\hybridization\FoldTreeHybridizeCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\hybridization\FragmentBiasAssigner.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__FragmentBiasAssigner.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__FragmentBiasAssigner.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__FragmentBiasAssigner.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__FragmentBiasAssigner.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__FragmentBiasAssigner.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__FragmentBiasAssigner.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_b.5__protocols__hybridization__FragmentBiasAssigner.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_b.5__protocols__hybridization__FragmentBiasAssigner.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\hybridization\FragmentBiasAssigner.hh"
 				>
 			</File>
 			<File

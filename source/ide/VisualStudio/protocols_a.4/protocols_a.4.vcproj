@@ -47,8 +47,8 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -120,8 +120,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -194,8 +194,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -266,8 +266,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -339,8 +339,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -432,18 +432,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\helix_capper\HelixNCapperMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\helix_capper\SS_predictor.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\helix_capper\SS_predictor.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\helix_capper\helix_capper_util.hh"
 				>
 			</File>
 		</Filter>
@@ -928,6 +916,218 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\motifs\motif_utils.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\protocols\grafting\simple_movers\"
+			>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\DeleteRegionMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__DeleteRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__DeleteRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__DeleteRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__DeleteRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__DeleteRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__DeleteRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__DeleteRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__DeleteRegionMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\DeleteRegionMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\DeleteRegionMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\DeleteRegionMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\InsertPoseIntoPoseMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__InsertPoseIntoPoseMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__InsertPoseIntoPoseMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__InsertPoseIntoPoseMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__InsertPoseIntoPoseMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__InsertPoseIntoPoseMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__InsertPoseIntoPoseMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__InsertPoseIntoPoseMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__InsertPoseIntoPoseMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\InsertPoseIntoPoseMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\InsertPoseIntoPoseMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\InsertPoseIntoPoseMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\KeepRegionMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__KeepRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__KeepRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__KeepRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__KeepRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__KeepRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__KeepRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__KeepRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__KeepRegionMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\KeepRegionMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\KeepRegionMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\KeepRegionMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\ReplaceRegionMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__ReplaceRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__ReplaceRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__ReplaceRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__ReplaceRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__ReplaceRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__ReplaceRegionMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__ReplaceRegionMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__simple_movers__ReplaceRegionMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\ReplaceRegionMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\ReplaceRegionMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\simple_movers\ReplaceRegionMoverCreator.hh"
 				>
 			</File>
 		</Filter>
@@ -1632,110 +1832,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\dna\util.hh"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="\protocols\membrane\"
-			>
-			<File
-				RelativePath="..\..\..\src\protocols\membrane\CreateMembranePoseMover.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_a.4__protocols__membrane__CreateMembranePoseMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__membrane__CreateMembranePoseMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_a.4__protocols__membrane__CreateMembranePoseMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__membrane__CreateMembranePoseMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_a.4__protocols__membrane__CreateMembranePoseMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__membrane__CreateMembranePoseMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_a.4__protocols__membrane__CreateMembranePoseMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__membrane__CreateMembranePoseMover.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\membrane\CreateMembranePoseMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\membrane\CreateMembranePoseMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\membrane\CreateMembranePoseMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\membrane\MembraneUnitTestMover.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_a.4__protocols__membrane__MembraneUnitTestMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__membrane__MembraneUnitTestMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_a.4__protocols__membrane__MembraneUnitTestMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__membrane__MembraneUnitTestMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_a.4__protocols__membrane__MembraneUnitTestMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__membrane__MembraneUnitTestMover.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_a.4__protocols__membrane__MembraneUnitTestMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__membrane__MembraneUnitTestMover.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\membrane\MembraneUnitTestMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\membrane\MembraneUnitTestMover.hh"
 				>
 			</File>
 		</Filter>
@@ -2888,6 +2984,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\grafting\AnchoredGraftMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\AnchoredGraftMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\CCDEndsGraftMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__CCDEndsGraftMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__CCDEndsGraftMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__CCDEndsGraftMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__CCDEndsGraftMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__CCDEndsGraftMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__CCDEndsGraftMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.4__protocols__grafting__CCDEndsGraftMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.4__protocols__grafting__CCDEndsGraftMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\CCDEndsGraftMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\CCDEndsGraftMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\grafting\CCDEndsGraftMoverCreator.hh"
 				>
 			</File>
 			<File

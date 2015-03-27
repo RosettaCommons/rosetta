@@ -41,6 +41,13 @@ namespace numeric {
 namespace interpolation {
 namespace spline {
 
+#ifdef WIN32
+inline double pow(Size x, Size y)
+{
+	return pow( (double)x, y);
+}
+#endif
+
 //! train PolycubicSpline
 void PolycubicSpline::train
 (

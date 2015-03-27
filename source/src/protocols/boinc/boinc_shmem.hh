@@ -25,6 +25,8 @@
 namespace protocols {
 namespace boinc {
 
+const std::size_t MAX_NATIVE_POSE_RESIDUES = 500; // large natives cause sluggish graphics
+const std::size_t MAX_SYMM_POSE_RESIDUES = 500;  // only the asymmetric unit will be displayed if greater than this
 const std::size_t POSE_BUFSIZE = 5000000; // size should depend on the largest pose expected to be used //1000000; //99999;
 const std::size_t TEXT_BUFSIZE = 255; //99999;
 const std::size_t WU_DESC_TEXT_BUFSIZE = 1024; //99999;

@@ -47,8 +47,8 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -120,8 +120,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -194,8 +194,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -268,8 +268,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOINC;_LIB;ZLIB_WINAPI"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;BOINC;_LIB;ZLIB_WINAPI"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -344,8 +344,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOINC;ZLIB_WINAPI;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;BOINC;ZLIB_WINAPI;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -391,18 +391,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 	</References>
 	<Files>
 		<Filter
-			Name="\numeric\interpolation\spline\"
+			Name="\numeric\nls\"
 			>
 			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.cc"
+				RelativePath="..\..\..\src\numeric\nls\lmmin.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.xdc"
+						ObjectFile="$(IntDir)\numeric__numeric__nls__lmmin.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__nls__lmmin.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -410,8 +410,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.xdc"
+						ObjectFile="$(IntDir)\numeric__numeric__nls__lmmin.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__nls__lmmin.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -419,8 +419,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.xdc"
+						ObjectFile="$(IntDir)\numeric__numeric__nls__lmmin.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__nls__lmmin.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -428,333 +428,13 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.xdc"
+						ObjectFile="$(IntDir)\numeric__numeric__nls__lmmin.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__nls__lmmin.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\CompoundInterpolator.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\CompoundInterpolator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\Cubic_spline.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\Cubic_spline.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\Cubic_spline.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\Interpolator.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\Interpolator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\SimpleInterpolator.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\SimpleInterpolator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\SplineGenerator.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\SplineGenerator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\TricubicSpline.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\TricubicSpline.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\TricubicSpline.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\spline_functions.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\spline\spline_functions.hh"
+				RelativePath="..\..\..\src\numeric\nls\lmmin.hh"
 				>
 			</File>
 		</Filter>
@@ -1046,19 +726,11 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\numeric\kdtree\WrappedChar.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\numeric\kdtree\WrappedPrimitive.hh"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\kdtree\WrappedReal.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\kdtree\WrappedType.hh"
 				>
 			</File>
 			<File
@@ -1442,6 +1114,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\numeric\MathNTensor.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\numeric\MathTensor.hh"
 				>
 			</File>
@@ -1570,10 +1246,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\numeric\all.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\numeric\angle.functions.hh"
 				>
 			</File>
@@ -1670,11 +1342,47 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\numeric\fast_math.hh"
+				RelativePath="..\..\..\src\numeric\cyclic_coordinate_descent.cc"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__cyclic_coordinate_descent.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__cyclic_coordinate_descent.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__cyclic_coordinate_descent.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__cyclic_coordinate_descent.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__cyclic_coordinate_descent.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__cyclic_coordinate_descent.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__cyclic_coordinate_descent.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__cyclic_coordinate_descent.xdc"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\numeric\gmx_functions.hh"
+				RelativePath="..\..\..\src\numeric\cyclic_coordinate_descent.hh"
 				>
 			</File>
 			<File
@@ -2399,18 +2107,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 		</Filter>
 		<Filter
-			Name="\numeric\nls\"
+			Name="\numeric\interpolation\spline\"
 			>
 			<File
-				RelativePath="..\..\..\src\numeric\nls\lmmin.cc"
+				RelativePath="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__nls__lmmin.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__nls__lmmin.xdc"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2418,8 +2126,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__nls__lmmin.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__nls__lmmin.xdc"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2427,8 +2135,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__nls__lmmin.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__nls__lmmin.xdc"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2436,13 +2144,381 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\numeric__numeric__nls__lmmin.obj"
-						XMLDocumentationFileName="$(IntDir)\numeric__numeric__nls__lmmin.xdc"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Bicubic_spline.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\numeric\nls\lmmin.hh"
+				RelativePath="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\CompoundInterpolator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__CompoundInterpolator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\CompoundInterpolator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\Cubic_spline.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Cubic_spline.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\Cubic_spline.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\Cubic_spline.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\Interpolator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__Interpolator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\Interpolator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\PolycubicSpline.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__PolycubicSpline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__PolycubicSpline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__PolycubicSpline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__PolycubicSpline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__PolycubicSpline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__PolycubicSpline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__PolycubicSpline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__PolycubicSpline.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\PolycubicSpline.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\PolycubicSpline.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\SimpleInterpolator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SimpleInterpolator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\SimpleInterpolator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\SplineGenerator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__SplineGenerator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\SplineGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\TricubicSpline.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__TricubicSpline.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\TricubicSpline.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\TricubicSpline.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\spline_functions.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__interpolation__spline__spline_functions.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\spline_functions.hh"
 				>
 			</File>
 		</Filter>
@@ -2550,6 +2626,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\src\numeric\random\random.functions.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\numeric\random\random.fwd.hh"
 				>
 			</File>
@@ -2559,6 +2639,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\random\random_permutation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\random_xyz.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__random__random_xyz.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__random__random_xyz.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__random__random_xyz.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__random__random_xyz.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__random__random_xyz.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__random__random_xyz.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__random__random_xyz.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__random__random_xyz.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\random_xyz.hh"
 				>
 			</File>
 			<File
@@ -2709,10 +2833,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				RelativePath="..\..\..\src\numeric\model_quality\rms.hh"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\model_quality\util.hh"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="\numeric\interpolation\"
@@ -2723,10 +2843,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\interpolation\Histogram.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\numeric\interpolation\all.hh"
 				>
 			</File>
 			<File
@@ -2911,6 +3027,98 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\fourier\kiss_fft_state.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\numeric\crick_equations\"
+			>
+			<File
+				RelativePath="..\..\..\src\numeric\crick_equations\BundleParams.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__crick_equations__BundleParams.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__crick_equations__BundleParams.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__crick_equations__BundleParams.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__crick_equations__BundleParams.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__crick_equations__BundleParams.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__crick_equations__BundleParams.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__crick_equations__BundleParams.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__crick_equations__BundleParams.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\crick_equations\BundleParams.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\crick_equations\HelixParams.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__crick_equations__HelixParams.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__crick_equations__HelixParams.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__crick_equations__HelixParams.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__crick_equations__HelixParams.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__crick_equations__HelixParams.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__crick_equations__HelixParams.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__crick_equations__HelixParams.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__crick_equations__HelixParams.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\crick_equations\HelixParams.hh"
 				>
 			</File>
 		</Filter>

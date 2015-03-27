@@ -981,7 +981,11 @@ void get_direction( Vector & direction, const int & next_res, const int & prior_
 void get_normal( Vector & normal, const int n, utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 	normal = cross( (residues[ n ]->xyz( "CA" )-residues[ n-1 ]->xyz( "CA" )),
 			(residues[ n+1 ]->xyz( "CA" )-residues[ n ]->xyz( "CA" )) );
+#ifdef BOINC	
+	if (normal.length_squared() > 0.00001) normal.normalize();
+#else
 	if (normal.length_squared() > 0.00001) normal.normalize(15);
+#endif
 }
 
 
@@ -1986,8 +1990,7 @@ get_center( utility::vector1< conformation::ResidueCOP > const & residues ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void draw_pose(
 					const core::pose::Pose & pose,
-					GraphicsState & gs,
-					const bool centered) {
+					GraphicsState & gs) {
 	core::Size nres = pose.total_residue();
 	utility::vector1< char > ss(nres);
 	utility::vector1< conformation::ResidueCOP > residues(nres);

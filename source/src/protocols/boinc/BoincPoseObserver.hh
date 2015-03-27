@@ -46,7 +46,7 @@ public:
 	BoincCurrentPoseObserver();
 
 	/// @brief default destructor
-	~BoincCurrentPoseObserver();
+	virtual ~BoincCurrentPoseObserver();
 
 private: // disallow copy
 

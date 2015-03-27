@@ -190,18 +190,18 @@ void SpanningTopology::write_spanfile( std::string output_filename ) const {
 	TR.Debug << "printing spanfile" << std::endl;
 	
 	// print header
-	utility::io::ozstream OUT;
-	OUT.open( output_filename );
-	OUT << "Rosetta-generated spanfile from SpanningTopology object" << std::endl;
-	OUT << topology_.size() << " " << nres_topo_ << std::endl;
-	OUT << "antiparallel" << std::endl;
-	OUT << "n2c" << std::endl;
+	utility::io::ozstream oz;
+	oz.open( output_filename );
+	oz << "Rosetta-generated spanfile from SpanningTopology object" << std::endl;
+	oz << topology_.size() << " " << nres_topo_ << std::endl;
+	oz << "antiparallel" << std::endl;
+	oz << "n2c" << std::endl;
 	
 	// print spans
 	for ( Size i = 1; i <= topology_.size(); ++i ){
-		OUT << "\t" << topology_[i]->start() << "\t" << topology_[i]->end() << std::endl;
+		oz << "\t" << topology_[i]->start() << "\t" << topology_[i]->end() << std::endl;
 	}
-	OUT.close();
+	oz.close();
 	TR << "wrote " << output_filename << std::endl;
 	
 }// write spanfile

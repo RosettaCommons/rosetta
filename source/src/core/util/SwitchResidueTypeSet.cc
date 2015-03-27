@@ -301,7 +301,7 @@ switch_to_residue_type_set(
 			if ( allow_sloppy_match ){
 				if ( ! new_rsd ) {
 					TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
-					<< "at position " << i << ". Trying to find acceptable match. " << std::endl;
+					<< " at position " << i << ". Trying to find acceptable match. " << std::endl;
 					for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
 						core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
 						if ( rsd.type().name3()  == new_rsd_type.name3()  ) {
@@ -319,7 +319,7 @@ switch_to_residue_type_set(
 		if ( ! new_rsd ) {
 			std::cerr << pose.sequence() << std::endl;
 			std::cerr  << "can not find a residue type that matches the residue " << rsd.name()
-			<< "at position " << i << std::endl;
+			<< " at position " << i << std::endl;
 			utility_exit_with_message( "core::util::switch_to_residue_type_set fails\n" );
 		}
 		// switch to corresponding residue type in the new set.

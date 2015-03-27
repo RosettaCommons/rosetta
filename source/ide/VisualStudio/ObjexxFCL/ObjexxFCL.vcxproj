@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -26,14 +26,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
@@ -41,14 +39,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
@@ -71,23 +67,27 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -95,16 +95,18 @@
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
-      <BrowseInformation />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <BrowseInformation>
+      </BrowseInformation>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -117,8 +119,8 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -126,25 +128,29 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
-      <DebugInformationFormat />
+      <DebugInformationFormat>
+      </DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
-      <BrowseInformation />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <BrowseInformation>
+      </BrowseInformation>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -157,63 +163,33 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost_1_55_0;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio\sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996;4005;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\Cstring.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\Dimension.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\DimensionExpression.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\DimensionExpressionRef.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\Time_Date.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ObjexxFCL\DynamicIndexRange.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DynamicIndexRange.obj</ObjectFileName>
@@ -225,65 +201,15 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DynamicIndexRange.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DynamicIndexRange.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\Fstring.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\IndexRange.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\Observer.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\ObserverGraph.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\ObserverMediator.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\ObserverMulti.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\format.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ObjexxFCL\Star.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Star.obj</ObjectFileName>
@@ -295,15 +221,45 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Star.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Star.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\Time_Date.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Time_Date.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\ObserverGraph.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverGraph.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\DimensionExpression.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpression.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\ObserverMediator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMediator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\Dimension.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Dimension.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ObjexxFCL\char.functions.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__char.functions.obj</ObjectFileName>
@@ -315,16 +271,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__char.functions.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__char.functions.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\ObjexxFCL\format.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__format.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\ObjexxFCL\string.functions.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__string.functions.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__string.functions.xdc</XMLDocumentationFileName>
@@ -335,164 +281,224 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__string.functions.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__string.functions.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\Cstring.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Cstring.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\ObserverMulti.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__ObserverMulti.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\IndexRange.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__IndexRange.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\DimensionExpressionRef.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__DimensionExpressionRef.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\Fstring.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Fstring.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ObjexxFCL\Observer.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)ObjexxFCL__ObjexxFCL__Observer.xdc</XMLDocumentationFileName>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\ObjexxFCL\CArray.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\CArray.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\CArray.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\CArrayP.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\CArrayP.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\CArrayP.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Chunk.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ChunkExponent.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ChunkVector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ChunkVector.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ChunkVector.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Cstring.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Cstring.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Dimension.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Dimension.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpression.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionCon.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionCube.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionDiv.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionMax.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionMin.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionMul.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionPow.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionRef.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionSquare.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionSub.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionSum.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressions.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DynamicIndexRange.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\DynamicIndexRange.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.all.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.all.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1A.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1A.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1P.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1P.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.all.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2A.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2A.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2P.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2P.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.all.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3A.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3A.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3P.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3P.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.all.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4A.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4A.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4P.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4P.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.all.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5A.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5A.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5P.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5P.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.all.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.io.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6A.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6A.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6P.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6P.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArrayInitializer.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArrayInitializer.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArraySection.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArraySection.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArrayTraits.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\FArrayTraits.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Fmath.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\Fstring.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Fstring.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.all.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\string.functions.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArrayTraits.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1A.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionMax.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6D.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\IndexRange.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\IndexRange.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\InitializerSentinel.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray1D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray1D.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray2D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray2D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray3D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray3D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray4D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray4D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray5D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray5D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray6D.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray6D.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ObjexxFCL.Project.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ObjexxFCL.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ObjexxFCL.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Observer.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Observer.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ObserverGraph.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Fstring.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionSub.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\char.functions.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4P.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.all.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5P.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6A.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\rvalue_cast.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\CArray.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1A.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\sbyte.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.io.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\ObserverMediator.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ObserverMulti.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ObserverSingle.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ProxySentinel.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\SetWrapper.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\SetWrapper.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Cstring.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3P.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray6D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\CArrayP.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6A.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5P.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.all.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\CArray.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5A.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4A.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.all.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\CArrayP.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.all.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.all.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\IndexRange.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\proxy_const_assert.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Observer.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2A.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\byte.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3P.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6P.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionRef.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1P.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray5D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArraySection.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.all.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3A.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ubyte.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\InitializerSentinel.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DynamicIndexRange.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ObjexxFCL.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray4D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\byte.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray3D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4P.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.all.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\Star.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\Star.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\StaticIndexRange.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\StaticIndexRange.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ObserverMulti.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray2D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ObserverSingle.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ChunkExponent.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\Time_Date.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\TypeTraits.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\array.iterator.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\byte.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\byte.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\char.functions.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\floops.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\format.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\proxy_const_assert.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\rvalue_cast.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\sbyte.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\sbyte.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\string.functions.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.all.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.all.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray1D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\StaticIndexRange.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\floops.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ChunkVector.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray5D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\CArray.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5A.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1P.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionSum.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionMul.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2P.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionPow.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ObjexxFCL.Project.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.all.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3.all.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionMin.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray3D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\SetWrapper.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Chunk.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\array.iterator.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ChunkVector.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\SetWrapper.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Fmath.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2P.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ObserverGraph.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ProxySentinel.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\CArrayP.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray6D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArraySection.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray3A.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray1D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Cstring.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArrayInitializer.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.all.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ObjexxFCL.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpression.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\format.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\StaticIndexRange.fwd.hh" />
     <ClInclude Include="..\..\..\src\ObjexxFCL\ubyte.fwd.hh" />
-    <ClInclude Include="..\..\..\src\ObjexxFCL\ubyte.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DynamicIndexRange.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Dimension.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray5D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2D.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\KeyFArray4D.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray6P.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressions.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray4A.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray1.all.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArrayInitializer.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Dimension.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionCube.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Star.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArray2A.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\Observer.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionDiv.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionSquare.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\ChunkVector.io.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\FArrayTraits.fwd.hh" />
+    <ClInclude Include="..\..\..\src\ObjexxFCL\DimensionExpressionCon.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -30,14 +30,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
@@ -45,21 +43,18 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
@@ -85,27 +80,32 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,16 +113,18 @@
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
-      <BrowseInformation />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <BrowseInformation>
+      </BrowseInformation>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -135,8 +137,8 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -144,9 +146,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
-      <DebugInformationFormat />
+      <DebugInformationFormat>
+      </DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -157,8 +161,8 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -166,25 +170,29 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
-      <DebugInformationFormat />
+      <DebugInformationFormat>
+      </DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
-      <BrowseInformation />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <BrowseInformation>
+      </BrowseInformation>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -197,34 +205,27 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost_1_55_0;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio\sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996;4005;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\utility\libsvm\Svm.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__libsvm__Svm.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__libsvm__Svm.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__libsvm__Svm.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__libsvm__Svm.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__libsvm__Svm.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__libsvm__Svm.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__libsvm__Svm.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__libsvm__Svm.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\utility\libsvm\Svm_rosetta.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__libsvm__Svm_rosetta.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__libsvm__Svm_rosetta.xdc</XMLDocumentationFileName>
@@ -235,6 +236,76 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__libsvm__Svm_rosetta.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__libsvm__Svm_rosetta.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\libsvm\Svm.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__libsvm__Svm.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__libsvm__Svm.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__libsvm__Svm.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__libsvm__Svm.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__libsvm__Svm.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__libsvm__Svm.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__libsvm__Svm.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__libsvm__Svm.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\sql_database\DatabaseSessionManager.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\sql_database\types.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__sql_database__types.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__sql_database__types.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__sql_database__types.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__sql_database__types.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__sql_database__types.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__sql_database__types.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__sql_database__types.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__sql_database__types.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\options\OptionCollection.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__OptionCollection.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__OptionCollection.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__OptionCollection.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__OptionCollection.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__OptionCollection.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__OptionCollection.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__OptionCollection.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__OptionCollection.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\options\mpi_stderr.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__mpi_stderr.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__mpi_stderr.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__mpi_stderr.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__mpi_stderr.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__mpi_stderr.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__mpi_stderr.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__mpi_stderr.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__mpi_stderr.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\options\ResidueChainVectorOption.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__ResidueChainVectorOption.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__ResidueChainVectorOption.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__ResidueChainVectorOption.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__ResidueChainVectorOption.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__ResidueChainVectorOption.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__ResidueChainVectorOption.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__ResidueChainVectorOption.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__ResidueChainVectorOption.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\py\PyExitCallback.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__py__PyExitCallback.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__py__PyExitCallback.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__py__PyExitCallback.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__py__PyExitCallback.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__py__PyExitCallback.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__py__PyExitCallback.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__py__PyExitCallback.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__py__PyExitCallback.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\utility\tag\Tag.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__tag__Tag.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__tag__Tag.xdc</XMLDocumentationFileName>
@@ -244,6 +315,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__tag__Tag.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__tag__Tag.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__tag__Tag.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\boinc\boinc_util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__boinc__boinc_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__boinc__boinc_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__boinc__boinc_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__boinc__boinc_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__boinc__boinc_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__boinc__boinc_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__boinc__boinc_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__boinc__boinc_util.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\utility\lua\LuaIterator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__lua__LuaIterator.obj</ObjectFileName>
@@ -265,25 +346,55 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__lua__LuaObject.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__lua__LuaObject.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\pointer\ReferenceCount.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__pointer__ReferenceCount.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__pointer__ReferenceCount.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__pointer__ReferenceCount.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__pointer__ReferenceCount.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__pointer__ReferenceCount.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__pointer__ReferenceCount.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__pointer__ReferenceCount.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__pointer__ReferenceCount.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\utility\io\icstream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__icstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__icstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__icstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__icstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__icstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__icstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__icstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__icstream.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\pointer\ReferenceCountMI_.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__pointer__ReferenceCountMI_.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__pointer__ReferenceCountMI_.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__pointer__ReferenceCountMI_.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__pointer__ReferenceCountMI_.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__pointer__ReferenceCountMI_.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__pointer__ReferenceCountMI_.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__pointer__ReferenceCountMI_.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__pointer__ReferenceCountMI_.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\utility\io\ocstream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__ocstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__ocstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__ocstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__ocstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__ocstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__ocstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__ocstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__ocstream.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\io\FileContentsMap.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__FileContentsMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__FileContentsMap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__FileContentsMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__FileContentsMap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__FileContentsMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__FileContentsMap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__FileContentsMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__FileContentsMap.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\io\izstream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__izstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__izstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__izstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__izstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__izstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__izstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__izstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__izstream.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\io\ozstream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__ozstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__ozstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__ozstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__ozstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__ozstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__ozstream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__ozstream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__ozstream.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\utility\options\keys\OptionKeys.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__keys__OptionKeys.obj</ObjectFileName>
@@ -315,6 +426,26 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__thread__ReadWriteMutex.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__thread__ReadWriteMutex.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\json_spirit\json_spirit_writer.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\json_spirit\json_spirit_value.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\utility\json_spirit\json_spirit_reader.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_reader.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_reader.xdc</XMLDocumentationFileName>
@@ -335,285 +466,15 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_tools.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_tools.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\json_spirit\json_spirit_value.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_value.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\json_spirit\json_spirit_writer.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__json_spirit__json_spirit_writer.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\Binary_Util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__Binary_Util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__Binary_Util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__Binary_Util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__Binary_Util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__Binary_Util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__Binary_Util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__Binary_Util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__Binary_Util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\LexicographicalIterator.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__LexicographicalIterator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__LexicographicalIterator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__LexicographicalIterator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__LexicographicalIterator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__LexicographicalIterator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__LexicographicalIterator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__LexicographicalIterator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__LexicographicalIterator.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\PyExitCallback.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__PyExitCallback.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__PyExitCallback.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__PyExitCallback.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__PyExitCallback.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__PyExitCallback.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__PyExitCallback.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__PyExitCallback.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__PyExitCallback.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\SimulateMPI.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__SimulateMPI.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__SimulateMPI.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__SimulateMPI.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__SimulateMPI.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__SimulateMPI.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__SimulateMPI.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__SimulateMPI.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__SimulateMPI.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\basic_sys_util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__basic_sys_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__basic_sys_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__basic_sys_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__basic_sys_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__basic_sys_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__basic_sys_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__basic_sys_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__basic_sys_util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\curl.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__curl.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__curl.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__curl.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__curl.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__curl.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__curl.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__curl.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__curl.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\exit.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__exit.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__exit.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__exit.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__exit.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__exit.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__exit.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__exit.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__exit.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\heap.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__heap.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__heap.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__heap.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__heap.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__heap.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__heap.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__heap.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__heap.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\inline_file_provider.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__inline_file_provider.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__inline_file_provider.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__inline_file_provider.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__inline_file_provider.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__inline_file_provider.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__inline_file_provider.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__inline_file_provider.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__inline_file_provider.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\integer_mapping.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__integer_mapping.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__integer_mapping.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__integer_mapping.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__integer_mapping.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__integer_mapping.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__integer_mapping.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__integer_mapping.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__integer_mapping.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\mpi_util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__mpi_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__mpi_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__mpi_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__mpi_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__mpi_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__mpi_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__mpi_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__mpi_util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\recent_history_queue.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__recent_history_queue.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__recent_history_queue.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__recent_history_queue.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__recent_history_queue.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__recent_history_queue.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__recent_history_queue.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__recent_history_queue.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__recent_history_queue.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\static_database.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__static_database.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__static_database.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__static_database.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__static_database.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__static_database.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__static_database.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__static_database.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__static_database.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\string_util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__string_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__string_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__string_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__string_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__string_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__string_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__string_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__string_util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\options\OptionCollection.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__OptionCollection.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__OptionCollection.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__OptionCollection.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__OptionCollection.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__OptionCollection.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__OptionCollection.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__OptionCollection.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__OptionCollection.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\options\mpi_stderr.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__mpi_stderr.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__options__mpi_stderr.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__mpi_stderr.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__options__mpi_stderr.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__mpi_stderr.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__options__mpi_stderr.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__mpi_stderr.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__options__mpi_stderr.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\sql_database\DatabaseSessionManager.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__sql_database__DatabaseSessionManager.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\sql_database\types.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__sql_database__types.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__sql_database__types.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__sql_database__types.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__sql_database__types.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__sql_database__types.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__sql_database__types.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__sql_database__types.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__sql_database__types.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\boinc\boinc_util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__boinc__boinc_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__boinc__boinc_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__boinc__boinc_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__boinc__boinc_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__boinc__boinc_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__boinc__boinc_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__boinc__boinc_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__boinc__boinc_util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\io\FileContentsMap.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__FileContentsMap.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__FileContentsMap.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__FileContentsMap.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__FileContentsMap.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__FileContentsMap.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__FileContentsMap.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__FileContentsMap.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__FileContentsMap.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\io\icstream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__icstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__icstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__icstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__icstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__icstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__icstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__icstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__icstream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\io\izstream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__izstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__izstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__izstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__izstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__izstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__izstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__izstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__izstream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\io\ocstream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__ocstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__ocstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__ocstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__ocstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__ocstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__ocstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__ocstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__ocstream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\io\ozstream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__ozstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__io__ozstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__ozstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__io__ozstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__ozstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__io__ozstream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__ozstream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__io__ozstream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\file\FileName.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__FileName.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__FileName.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__FileName.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__FileName.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__FileName.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__FileName.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__FileName.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__FileName.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\file\PathName.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__PathName.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__PathName.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__PathName.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__PathName.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__PathName.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__PathName.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__PathName.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__PathName.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\utility\file\gzip_util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__gzip_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__gzip_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__gzip_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__gzip_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__gzip_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__gzip_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__gzip_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__gzip_util.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\utility\file\file_sys_util.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__file_sys_util.obj</ObjectFileName>
@@ -625,234 +486,374 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__file_sys_util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__file_sys_util.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utility\file\gzip_util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__gzip_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__gzip_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__gzip_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__gzip_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__gzip_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__gzip_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__gzip_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__gzip_util.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\utility\file\PathName.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__PathName.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__PathName.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__PathName.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__PathName.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__PathName.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__PathName.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__PathName.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__PathName.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\file\FileName.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__FileName.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__file__FileName.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__FileName.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__file__FileName.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__FileName.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__file__FileName.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__FileName.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__file__FileName.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\curl.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__curl.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__curl.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__curl.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__curl.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__curl.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__curl.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__curl.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__curl.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\LexicographicalIterator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__LexicographicalIterator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__LexicographicalIterator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__LexicographicalIterator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__LexicographicalIterator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__LexicographicalIterator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__LexicographicalIterator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__LexicographicalIterator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__LexicographicalIterator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\static_database.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__static_database.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__static_database.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__static_database.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__static_database.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__static_database.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__static_database.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__static_database.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__static_database.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\SimulateMPI.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__SimulateMPI.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__SimulateMPI.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__SimulateMPI.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__SimulateMPI.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__SimulateMPI.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__SimulateMPI.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__SimulateMPI.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__SimulateMPI.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\exit.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__exit.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__exit.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__exit.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__exit.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__exit.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__exit.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__exit.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__exit.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\inline_file_provider.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__inline_file_provider.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__inline_file_provider.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__inline_file_provider.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__inline_file_provider.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__inline_file_provider.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__inline_file_provider.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__inline_file_provider.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__inline_file_provider.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\Binary_Util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__Binary_Util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__Binary_Util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__Binary_Util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__Binary_Util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__Binary_Util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__Binary_Util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__Binary_Util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__Binary_Util.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\recent_history_queue.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__recent_history_queue.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__recent_history_queue.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__recent_history_queue.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__recent_history_queue.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__recent_history_queue.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__recent_history_queue.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__recent_history_queue.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__recent_history_queue.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\basic_sys_util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__basic_sys_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__basic_sys_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__basic_sys_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__basic_sys_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__basic_sys_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__basic_sys_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__basic_sys_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__basic_sys_util.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\integer_mapping.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__integer_mapping.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__integer_mapping.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__integer_mapping.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__integer_mapping.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__integer_mapping.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__integer_mapping.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__integer_mapping.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__integer_mapping.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\string_util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__string_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__string_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__string_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__string_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__string_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__string_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__string_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__string_util.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\heap.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__heap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__heap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__heap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__heap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__heap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__heap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__heap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__heap.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utility\mpi_util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__mpi_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)utility__utility__mpi_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__mpi_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)utility__utility__mpi_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__mpi_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)utility__utility__mpi_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__mpi_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)utility__utility__mpi_util.xdc</XMLDocumentationFileName>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\utility\libsvm\Svm.hh" />
     <ClInclude Include="..\..\..\src\utility\libsvm\Svm_rosetta.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\libsvm\Svm_rosetta.hh" />
-    <ClInclude Include="..\..\..\src\utility\tag\Tag.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\tag\Tag.hh" />
-    <ClInclude Include="..\..\..\src\utility\lua\LuaIterator.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\lua\LuaIterator.hh" />
-    <ClInclude Include="..\..\..\src\utility\lua\LuaObject.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\lua\LuaObject.hh" />
+    <ClInclude Include="..\..\..\src\utility\sql_database\DatabaseSessionManager.hh" />
+    <ClInclude Include="..\..\..\src\utility\sql_database\DatabaseSessionManager.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\sql_database\util.hh" />
+    <ClInclude Include="..\..\..\src\utility\sql_database\types.hh" />
     <ClInclude Include="..\..\..\src\utility\pointer\ReferenceCount.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\ReferenceCount.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\ReferenceCountMI.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\ReferenceCountMI.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\ReferenceCountMI_.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\ReferenceCountMI_.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\access_ptr.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\access_ptr.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\all.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\owning_ptr.functions.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\owning_ptr.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\pointer\owning_ptr.hh" />
-    <ClInclude Include="..\..\..\src\utility\pointer\pointer.functions.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\AnyOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\AnyOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\AnyVectorOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\AnyVectorOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\BooleanOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\BooleanOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\BooleanVectorOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\BooleanVectorOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\FileOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\FileOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\FileVectorOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\FileVectorOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\IntegerOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\IntegerOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\IntegerVectorOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\IntegerVectorOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\OptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\OptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\OptionKeys.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\PathOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\PathOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\PathVectorOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\PathVectorOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\RealOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\RealOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\RealVectorOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\RealVectorOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\ScalarOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\ScalarOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\StringOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\StringOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\StringVectorOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\StringVectorOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\VectorOptionKey.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\VectorOptionKey.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\keys\all.hh" />
-    <ClInclude Include="..\..\..\src\utility\excn\EXCN_Base.hh" />
-    <ClInclude Include="..\..\..\src\utility\excn\Exceptions.hh" />
-    <ClInclude Include="..\..\..\src\utility\thread\ReadWriteMutex.hh" />
-    <ClInclude Include="..\..\..\src\utility\thread\threadsafe_creation.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\thread\threadsafe_creation.hh" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_error_position.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_reader.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_reader_template.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_stream_reader.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_tools.hh" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_utils.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_value.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_writer.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_writer_options.h" />
-    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_writer_template.h" />
-    <ClInclude Include="..\..\..\src\utility\Binary_Util.hh" />
-    <ClInclude Include="..\..\..\src\utility\BitSet.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\BitSet.hh" />
-    <ClInclude Include="..\..\..\src\utility\BitVector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\BitVector.hh" />
-    <ClInclude Include="..\..\..\src\utility\Bound.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\Bound.hh" />
-    <ClInclude Include="..\..\..\src\utility\DereferenceIterator.hh" />
-    <ClInclude Include="..\..\..\src\utility\Factory.hh" />
-    <ClInclude Include="..\..\..\src\utility\FixedSizeLexicographicalIterator.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\FixedSizeLexicographicalIterator.hh" />
-    <ClInclude Include="..\..\..\src\utility\FixedSizeLexicographicalIterator.tmpl.hh" />
-    <ClInclude Include="..\..\..\src\utility\IndirectSorter.hh" />
-    <ClInclude Include="..\..\..\src\utility\LexicographicalIterator.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\LexicographicalIterator.hh" />
-    <ClInclude Include="..\..\..\src\utility\OrderedTuple.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\OrderedTuple.hh" />
-    <ClInclude Include="..\..\..\src\utility\PeriodicSplineReader.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\PeriodicSplineReader.hh" />
-    <ClInclude Include="..\..\..\src\utility\PyAssert.hh" />
-    <ClInclude Include="..\..\..\src\utility\PyExitCallback.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\PyExitCallback.hh" />
-    <ClInclude Include="..\..\..\src\utility\PyHelper.hh" />
-    <ClInclude Include="..\..\..\src\utility\Show.hh" />
-    <ClInclude Include="..\..\..\src\utility\SimulateMPI.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\SimulateMPI.hh" />
-    <ClInclude Include="..\..\..\src\utility\TopScoreSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\TopScoreSelector.hh" />
-    <ClInclude Include="..\..\..\src\utility\all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\all.hh" />
-    <ClInclude Include="..\..\..\src\utility\assert.hh" />
-    <ClInclude Include="..\..\..\src\utility\basic_sys_util.hh" />
-    <ClInclude Include="..\..\..\src\utility\curl.hh" />
-    <ClInclude Include="..\..\..\src\utility\down_cast.hh" />
-    <ClInclude Include="..\..\..\src\utility\exit.hh" />
-    <ClInclude Include="..\..\..\src\utility\fix_boinc_read.hh" />
-    <ClInclude Include="..\..\..\src\utility\fixedsizearray1.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\fixedsizearray1.hh" />
-    <ClInclude Include="..\..\..\src\utility\heap.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\heap.hh" />
-    <ClInclude Include="..\..\..\src\utility\in_place_list.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\in_place_list.hh" />
-    <ClInclude Include="..\..\..\src\utility\inline_file_provider.hh" />
-    <ClInclude Include="..\..\..\src\utility\integer_mapping.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\integer_mapping.hh" />
-    <ClInclude Include="..\..\..\src\utility\iter_util.hh" />
-    <ClInclude Include="..\..\..\src\utility\minmax.hh" />
-    <ClInclude Include="..\..\..\src\utility\mpi_util.hh" />
-    <ClInclude Include="..\..\..\src\utility\recent_history_queue.hh" />
-    <ClInclude Include="..\..\..\src\utility\sort_predicates.hh" />
-    <ClInclude Include="..\..\..\src\utility\static_database.hh" />
-    <ClInclude Include="..\..\..\src\utility\stream_util.hh" />
-    <ClInclude Include="..\..\..\src\utility\string_util.hh" />
-    <ClInclude Include="..\..\..\src\utility\utility.functions.hh" />
-    <ClInclude Include="..\..\..\src\utility\vector0.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\vector0.hh" />
-    <ClInclude Include="..\..\..\src\utility\vector0_bool.hh" />
-    <ClInclude Include="..\..\..\src\utility\vector1.functions.hh" />
-    <ClInclude Include="..\..\..\src\utility\vector1.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\vector1.hh" />
-    <ClInclude Include="..\..\..\src\utility\vector1_bool.hh" />
-    <ClInclude Include="..\..\..\src\utility\vectorL.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\vectorL.hh" />
-    <ClInclude Include="..\..\..\src\utility\vectorL_Selector.hh" />
-    <ClInclude Include="..\..\..\src\utility\vectorL_bool.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\AnyOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\AnyOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\AnyVectorOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\AnyVectorOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\BooleanOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\BooleanOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\ReferenceCount.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\owning_ptr.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\access_ptr.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\owning_ptr.functions.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\access_ptr.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\mpi_stderr.hh" />
     <ClInclude Include="..\..\..\src\utility\options\BooleanVectorOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\BooleanVectorOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\FileOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\AnyOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\AnyVectorOption.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\options\FileOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\FileVectorOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\FileVectorOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\IntegerOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\IntegerOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\IntegerVectorOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\IntegerVectorOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\Option.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\PathVectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\VariantOption.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\options\Option.hh" />
     <ClInclude Include="..\..\..\src\utility\options\OptionCollection.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\options\OptionCollection.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\PathOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\PathOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\PathVectorOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\PathVectorOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\RealOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\RealOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\RealVectorOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\RealVectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\ResidueChainVectorOption.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\options\ScalarOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\ScalarOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\ScalarOption_T_.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\ScalarOption_T_.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\AnyVectorOption.hh" />
     <ClInclude Include="..\..\..\src\utility\options\StringOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\StringOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\StringVectorOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\StringVectorOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\VariantOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\VariantOption.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\VectorOption.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\VectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\RealOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\FileOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\RealVectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\PathOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\Option.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\AnyOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\RealVectorOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\ResidueChainVectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\ScalarOption.hh" />
     <ClInclude Include="..\..\..\src\utility\options\VectorOption_T_.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\IntegerOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\VectorOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\StringVectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\PathOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\BooleanOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\BooleanVectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\PathVectorOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\IntegerVectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\IntegerVectorOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\StringOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\ScalarOption_T_.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\options\VectorOption_T_.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\all.hh" />
-    <ClInclude Include="..\..\..\src\utility\options\mpi_stderr.hh" />
-    <ClInclude Include="..\..\..\src\utility\sql_database\DatabaseSessionManager.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\sql_database\DatabaseSessionManager.hh" />
-    <ClInclude Include="..\..\..\src\utility\sql_database\types.hh" />
-    <ClInclude Include="..\..\..\src\utility\sql_database\util.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\ScalarOption_T_.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\IntegerOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\StringVectorOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\FileVectorOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\BooleanOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\FileVectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\VariantOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\RealOption.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\VectorOption.hh" />
+    <ClInclude Include="..\..\..\src\utility\py\PyAssert.hh" />
+    <ClInclude Include="..\..\..\src\utility\py\Inheritance.hh" />
+    <ClInclude Include="..\..\..\src\utility\py\PyExitCallback.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\py\PyHelper.hh" />
+    <ClInclude Include="..\..\..\src\utility\py\PyExitCallback.hh" />
+    <ClInclude Include="..\..\..\src\utility\tag\Tag.hh" />
+    <ClInclude Include="..\..\..\src\utility\tag\Tag.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\std\ReferenceCount.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\std\access_ptr.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\std\owning_ptr.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\std\ReferenceCount.hh" />
     <ClInclude Include="..\..\..\src\utility\boinc\boinc_util.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\FileContentsMap.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\lua\LuaObject.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\lua\LuaIterator.hh" />
+    <ClInclude Include="..\..\..\src\utility\lua\LuaIterator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\lua\LuaObject.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\orstream.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\izstream.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\ocstream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\orstream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\ocstream.hh" />
     <ClInclude Include="..\..\..\src\utility\io\FileContentsMap.hh" />
     <ClInclude Include="..\..\..\src\utility\io\all.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\all.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\icstream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\icstream.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\irstream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\irstream.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\izstream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\izstream.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\mpistream.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\ocstream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\ocstream.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\orstream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\orstream.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\ozstream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\ozstream.hh" />
-    <ClInclude Include="..\..\..\src\utility\io\util.hh" />
     <ClInclude Include="..\..\..\src\utility\io\zipstream.hpp" />
+    <ClInclude Include="..\..\..\src\utility\io\util.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\ozstream.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\izstream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\icstream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\ozstream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\mpistream.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\icstream.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\irstream.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\FileContentsMap.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\io\irstream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\StringOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\AnyVectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\OptionKeys.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\ResidueChainVectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\StringOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\StringVectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\IntegerOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\FileOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\VectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\PathOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\PathOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\OptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\RealOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\VectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\IntegerVectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\all.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\BooleanVectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\ScalarOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\BooleanOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\AnyOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\StringVectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\IntegerVectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\BooleanVectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\FileVectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\AnyOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\PathVectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\OptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\all.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\PathVectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\RealVectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\FileVectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\RealVectorOptionKey.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\RealOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\AnyVectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\FileOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\ResidueChainVectorOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\BooleanOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\ScalarOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\options\keys\IntegerOptionKey.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\excn\Exceptions.hh" />
+    <ClInclude Include="..\..\..\src\utility\excn\EXCN_Base.hh" />
+    <ClInclude Include="..\..\..\src\utility\thread\backwards_thread_local.hh" />
+    <ClInclude Include="..\..\..\src\utility\thread\ReadWriteMutex.hh" />
+    <ClInclude Include="..\..\..\src\utility\thread\threadsafe_creation.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\thread\threadsafe_creation.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\boost\ReferenceCount.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\boost\access_ptr.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\boost\owning_ptr.hh" />
+    <ClInclude Include="..\..\..\src\utility\pointer\boost\ReferenceCount.hh" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_utils.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_tools.hh" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_writer_template.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_error_position.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_value.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_writer.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_reader_template.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_stream_reader.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_reader.h" />
+    <ClInclude Include="..\..\..\src\utility\json_spirit\json_spirit_writer_options.h" />
+    <ClInclude Include="..\..\..\src\utility\file\PathName.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\file\FileName.fwd.hh" />
     <ClInclude Include="..\..\..\src\utility\file\FileName.hh" />
-    <ClInclude Include="..\..\..\src\utility\file\PathName.fwd.hh" />
-    <ClInclude Include="..\..\..\src\utility\file\PathName.hh" />
     <ClInclude Include="..\..\..\src\utility\file\file_sys_util.hh" />
+    <ClInclude Include="..\..\..\src\utility\file\PathName.hh" />
     <ClInclude Include="..\..\..\src\utility\file\gzip_util.hh" />
+    <ClInclude Include="..\..\..\src\utility\integer_mapping.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\SimulateMPI.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\in_place_list.hh" />
+    <ClInclude Include="..\..\..\src\utility\Factory.hh" />
+    <ClInclude Include="..\..\..\src\utility\backtrace.hh" />
+    <ClInclude Include="..\..\..\src\utility\minmax.hh" />
+    <ClInclude Include="..\..\..\src\utility\FixedSizeLexicographicalIterator.hh" />
+    <ClInclude Include="..\..\..\src\utility\DereferenceIterator.hh" />
+    <ClInclude Include="..\..\..\src\utility\Bound.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\BitSet.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\BitVector.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\vectorL.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\sort_predicates.hh" />
+    <ClInclude Include="..\..\..\src\utility\exit.hh" />
+    <ClInclude Include="..\..\..\src\utility\recent_history_queue.hh" />
+    <ClInclude Include="..\..\..\src\utility\Bound.hh" />
+    <ClInclude Include="..\..\..\src\utility\mpi_util.hh" />
+    <ClInclude Include="..\..\..\src\utility\vector0.hh" />
+    <ClInclude Include="..\..\..\src\utility\SimulateMPI.hh" />
+    <ClInclude Include="..\..\..\src\utility\heap.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\assert.hh" />
+    <ClInclude Include="..\..\..\src\utility\basic_sys_util.hh" />
+    <ClInclude Include="..\..\..\src\utility\stream_util.hh" />
+    <ClInclude Include="..\..\..\src\utility\Binary_Util.hh" />
+    <ClInclude Include="..\..\..\src\utility\vector1_bool.hh" />
+    <ClInclude Include="..\..\..\src\utility\vector0.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\FixedSizeLexicographicalIterator.tmpl.hh" />
+    <ClInclude Include="..\..\..\src\utility\string_util.hh" />
+    <ClInclude Include="..\..\..\src\utility\fix_boinc_read.hh" />
+    <ClInclude Include="..\..\..\src\utility\numbers.hh" />
+    <ClInclude Include="..\..\..\src\utility\vectorL_bool.hh" />
+    <ClInclude Include="..\..\..\src\utility\iter_util.hh" />
+    <ClInclude Include="..\..\..\src\utility\inline_file_provider.hh" />
+    <ClInclude Include="..\..\..\src\utility\vector1.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\in_place_list.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\LexicographicalIterator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\OrderedTuple.hh" />
+    <ClInclude Include="..\..\..\src\utility\heap.hh" />
+    <ClInclude Include="..\..\..\src\utility\fixedsizearray1.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\FixedSizeLexicographicalIterator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\OrderedTuple.fwd.hh" />
+    <ClInclude Include="..\..\..\src\utility\vectorL_Selector.hh" />
+    <ClInclude Include="..\..\..\src\utility\Show.hh" />
+    <ClInclude Include="..\..\..\src\utility\vector1.functions.hh" />
+    <ClInclude Include="..\..\..\src\utility\utility.functions.hh" />
+    <ClInclude Include="..\..\..\src\utility\vectorL.hh" />
+    <ClInclude Include="..\..\..\src\utility\BitSet.hh" />
+    <ClInclude Include="..\..\..\src\utility\integer_mapping.hh" />
+    <ClInclude Include="..\..\..\src\utility\BitVector.hh" />
+    <ClInclude Include="..\..\..\src\utility\vector0_bool.hh" />
+    <ClInclude Include="..\..\..\src\utility\SingletonBase.hh" />
+    <ClInclude Include="..\..\..\src\utility\vector1.hh" />
+    <ClInclude Include="..\..\..\src\utility\fixedsizearray1.hh" />
+    <ClInclude Include="..\..\..\src\utility\static_database.hh" />
+    <ClInclude Include="..\..\..\src\utility\curl.hh" />
+    <ClInclude Include="..\..\..\src\utility\down_cast.hh" />
+    <ClInclude Include="..\..\..\src\utility\LexicographicalIterator.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

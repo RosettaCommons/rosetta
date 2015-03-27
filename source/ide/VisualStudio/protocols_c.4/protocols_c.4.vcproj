@@ -47,8 +47,8 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -120,8 +120,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -194,8 +194,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -266,8 +266,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -339,8 +339,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -715,7 +715,51 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\features\BatchFeaturesCreator.hh"
+				RelativePath="..\..\..\src\protocols\features\BetaTurnDetection.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__BetaTurnDetection.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__BetaTurnDetection.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__BetaTurnDetection.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__BetaTurnDetection.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__BetaTurnDetection.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__BetaTurnDetection.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__BetaTurnDetection.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__BetaTurnDetection.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\BetaTurnDetection.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\BetaTurnDetection.hh"
 				>
 			</File>
 			<File
@@ -1096,6 +1140,98 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\features\DatabaseStatements.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\DdGFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__DdGFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__DdGFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__DdGFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__DdGFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__DdGFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__DdGFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__DdGFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__DdGFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\DdGFeatures.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\DdGFeatures.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\DdGFeaturesCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__DdGFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__DdGFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__DdGFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__DdGFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__DdGFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__DdGFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__DdGFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__DdGFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\DdGFeaturesCreator.hh"
 				>
 			</File>
 			<File
@@ -2955,10 +3091,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\features\ProtocolFeaturesCreator.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\features\RadiusOfGyrationFeatures.cc"
 				>
 				<FileConfiguration
@@ -4123,6 +4255,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\features\RuntimeFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__RuntimeFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__RuntimeFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__RuntimeFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__RuntimeFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__RuntimeFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__RuntimeFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__RuntimeFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__RuntimeFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\RuntimeFeatures.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\RuntimeFeatures.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\RuntimeFeaturesCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\features\SaltBridgeFeatures.cc"
 				>
 				<FileConfiguration
@@ -4859,6 +5043,294 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\features\TaskOperationFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TaskOperationFeatures.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TaskOperationFeatures.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TaskOperationFeaturesCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TaskOperationFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TaskOperationFeaturesCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TotalScoreFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TotalScoreFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TotalScoreFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TotalScoreFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TotalScoreFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TotalScoreFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TotalScoreFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TotalScoreFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TotalScoreFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TotalScoreFeatures.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TotalScoreFeatures.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TotalScoreFeaturesCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryMapFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryMapFeatures.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryMapFeatures.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryMapFeaturesCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryMapFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryMapFeaturesCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryReportToDB.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryReportToDB.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryReportToDB.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryReportToDB.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryReportToDB.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryReportToDB.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryReportToDB.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__TrajectoryReportToDB.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__TrajectoryReportToDB.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryReportToDB.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryReportToDB.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\TrajectoryReportToDBCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\features\UnrecognizedAtomFeatures.cc"
 				>
 				<FileConfiguration
@@ -4948,6 +5420,98 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\features\UnrecognizedAtomFeaturesCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\WaterFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__WaterFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__WaterFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__WaterFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__WaterFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__WaterFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__WaterFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__WaterFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__WaterFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\WaterFeatures.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\WaterFeatures.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\WaterFeaturesCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__WaterFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__WaterFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__WaterFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__WaterFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__WaterFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__WaterFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__WaterFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__WaterFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\WaterFeaturesCreator.hh"
 				>
 			</File>
 			<File
@@ -6107,6 +6671,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\features\strand_assembly\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\features\strand_assembly\CheckForSandwichFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__CheckForSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__CheckForSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__CheckForSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__CheckForSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__CheckForSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__CheckForSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__CheckForSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__CheckForSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\strand_assembly\CheckForSandwichFeatures.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\features\strand_assembly\SandwichFeatures.cc"
 				>
 				<FileConfiguration
@@ -6243,6 +6851,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\features\strand_assembly\StrandAssemblyCommon.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\features\strand_assembly\StrandBundleFeatures.cc"
 				>
 				<FileConfiguration
@@ -6376,6 +6988,94 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\features\strand_assembly\StrandFragment.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\strand_assembly\WriteToDBFromSandwichFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToDBFromSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToDBFromSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToDBFromSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToDBFromSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToDBFromSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToDBFromSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToDBFromSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToDBFromSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\strand_assembly\WriteToDBFromSandwichFeatures.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\strand_assembly\WriteToFileFromSandwichFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToFileFromSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToFileFromSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToFileFromSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToFileFromSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToFileFromSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToFileFromSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToFileFromSandwichFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_c.4__protocols__features__strand_assembly__WriteToFileFromSandwichFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\features\strand_assembly\WriteToFileFromSandwichFeatures.hh"
 				>
 			</File>
 		</Filter>

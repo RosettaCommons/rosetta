@@ -28,8 +28,7 @@ namespace boinc {
 
 // base class
 class BoincCurrentPoseObserver;
-
-typedef utility::pointer::owning_ptr< BoincCurrentPoseObserver > BoincCurrentPoseObserverOP;
+typedef utility::pointer::shared_ptr< BoincCurrentPoseObserver > BoincCurrentPoseObserverOP;
 
 } // boinc
 } // protocols

@@ -11,7 +11,7 @@
 /// @brief
 
 #ifdef BOINC
-#include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
 #include <utility/boinc/boinc_util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <protocols/boinc/boinc.hh>
@@ -84,6 +84,18 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+class DummyMover : public protocols::moves::Mover {
+public:
+	DummyMover() : protocols::moves::Mover( "DummyMover" ) {}
+	virtual ~DummyMover(){}
+	virtual void apply( core::pose::Pose & ) {
+		std::cerr << "DummyMover::apply() should never have been called!"
+			<< " (JobDistributor/Parser should have replaced DummyMover.)" << std::endl;
+		runtime_assert(false); // will enable a backtrace in gdb
+	}
+	virtual std::string get_name() const { return "DummyMover"; }
+};
+
 int
 main( int argc, char * argv [] )
 {
@@ -105,7 +117,8 @@ main( int argc, char * argv [] )
 	for (int i=0; i<argc; ++i) {
 		if (!strcmp(argv[i], "-use_filters")) {
 			std::cerr << "Fixing ambiguous flag " << argv[i];
-			argv[i] = "-abinitio::use_filters";
+			char tmpstr[] = "-abinitio::use_filters";
+			argv[i] = tmpstr;
 			std::cerr << " to " << argv[i] << std::endl;
 		}
 	}
@@ -163,13 +176,24 @@ main( int argc, char * argv [] )
 	// unzip an archive?
 	if (option[ in::file::zip ].user()) {
 		std::string resolvedfile = option[ in::file::zip ]();
-		utility::boinc::resolve_filename( resolvedfile );
-		if (!utility::file::file_exists( resolvedfile )) {
-			utility_exit_with_message("in::file::zip "+
-				option[ in::file::zip ]()+" does not exist!");
+		bool is_database = false;
+		if (resolvedfile == "minirosetta_database.zip") {
+			is_database = true;
+		}
+		if (is_database && utility::file::file_exists( "minirosetta_database.zip.is_extracted" )) {
+			std::cerr << "Using previously extracted minirosetta_database." << std::endl;std::cerr.flush();
 		} else {
-			std::cerr << "Unpacking zip data: " << resolvedfile << std::endl;std::cerr.flush();
-			boinc_zip(UNZIP_IT, resolvedfile, "./");
+			utility::boinc::resolve_filename( resolvedfile );
+			if (!utility::file::file_exists( resolvedfile )) {
+				utility_exit_with_message("in::file::zip "+
+					option[ in::file::zip ]()+" does not exist!");
+			} else {
+				std::cerr << "Unpacking zip data: " << resolvedfile << std::endl;std::cerr.flush();
+				boinc_zip(UNZIP_IT, resolvedfile, "./");
+				if (is_database) {
+					utility::io::ozstream data( "minirosetta_database.zip.is_extracted" );
+				}
+			}
 		}
 	}
 
@@ -206,10 +230,12 @@ main( int argc, char * argv [] )
 	std::cerr << "Setting up graphics native ..." << std::endl;std::cerr.flush();
 	// set native for graphics
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose_ = new core::pose::Pose;
+		core::pose::PoseOP native_pose_( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
-		core::pose::set_ss_from_phipsi( *native_pose_ );
-		protocols::boinc::Boinc::set_graphics_native_pose( *native_pose_ );
+		if (native_pose_->total_residue() <= protocols::boinc::MAX_NATIVE_POSE_RESIDUES) {
+			core::pose::set_ss_from_phipsi( *native_pose_ );
+			protocols::boinc::Boinc::set_graphics_native_pose( *native_pose_ );
+		}
 	}
 #endif
 
@@ -246,7 +272,7 @@ main( int argc, char * argv [] )
 		} else if ( option[ run::protocol ]() == "flxbb" ) {
 			protocols::flxbb::FlxbbDesign_main();
 		} else if ( option[ run::protocol ]() == "jd2_scripting" ){
-			protocols::moves::MoverOP mover;
+			protocols::moves::MoverOP mover( new DummyMover );
 			option[ jd2::dd_parser ].value( true ); // This option MUST be set true if we're using rosetta_scripts.
 																							// To avoid accidental crashes, we'll do so programatically
 			protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -30,14 +30,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
@@ -45,21 +43,18 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
@@ -85,27 +80,32 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,16 +113,18 @@
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
-      <BrowseInformation />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <BrowseInformation>
+      </BrowseInformation>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -135,8 +137,8 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -144,9 +146,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
-      <DebugInformationFormat />
+      <DebugInformationFormat>
+      </DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -157,8 +161,8 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -166,25 +170,29 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
-      <DebugInformationFormat />
+      <DebugInformationFormat>
+      </DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
-      <BrowseInformation />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <BrowseInformation>
+      </BrowseInformation>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -197,43 +205,33 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost_1_55_0;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio\sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996;4005;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\HSPairPotential.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelicesSheetPotential.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSecondaryStructureEnergy.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelixPairPotential.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelixPairPotential.obj</ObjectFileName>
@@ -245,16 +243,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelixPairPotential.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelixPairPotential.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSecondaryStructureEnergy.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasSecondaryStructureEnergy.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasStrandPairPotential.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasStrandPairPotential.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasStrandPairPotential.xdc</XMLDocumentationFileName>
@@ -264,6 +252,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasStrandPairPotential.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasStrandPairPotential.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasStrandPairPotential.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\HSPairPotential.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__HSPairPotential.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\SSPairPotential.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__SSPairPotential.obj</ObjectFileName>
@@ -275,6 +273,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__SSPairPotential.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__SSPairPotential.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelicesSheetPotential.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__NatbiasHelicesSheetPotential.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\sspot\util.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__util.xdc</XMLDocumentationFileName>
@@ -284,16 +292,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__util.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__sspot__util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\BluePrintBDR.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\CircularPermutation.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__CircularPermutation.obj</ObjectFileName>
@@ -305,15 +303,15 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__CircularPermutation.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__CircularPermutation.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\MatchResidues.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\BluePrintBDR.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__BluePrintBDR.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\MatchResiduesMover.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResiduesMover.obj</ObjectFileName>
@@ -325,16 +323,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResiduesMover.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResiduesMover.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\NcontactsCalculator.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\SheetConstraintsRCG.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__SheetConstraintsRCG.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__SheetConstraintsRCG.xdc</XMLDocumentationFileName>
@@ -345,15 +333,25 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__SheetConstraintsRCG.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__SheetConstraintsRCG.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\AACompositionEnergy.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\MatchResidues.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__MatchResidues.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\NcontactsCalculator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__NcontactsCalculator.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\SetAACompositionPotential.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__SetAACompositionPotential.obj</ObjectFileName>
@@ -365,6 +363,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__SetAACompositionPotential.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__SetAACompositionPotential.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\AACompositionEnergy.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__AACompositionEnergy.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\potentials\SetSecStructEnergies.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__SetSecStructEnergies.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__SetSecStructEnergies.xdc</XMLDocumentationFileName>
@@ -374,16 +382,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__SetSecStructEnergies.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__SetSecStructEnergies.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__potentials__SetSecStructEnergies.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\flxbb\DesignTask.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\flxbb\FilterStructs.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FilterStructs.obj</ObjectFileName>
@@ -395,26 +393,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FilterStructs.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FilterStructs.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\flxbb\FlxbbDesign.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\flxbb\FlxbbDesign_main.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\flxbb\InterlockAroma.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__InterlockAroma.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__InterlockAroma.xdc</XMLDocumentationFileName>
@@ -425,15 +403,15 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__InterlockAroma.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__InterlockAroma.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\flxbb\LayerDesignOperation.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flxbb\FlxbbDesign.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\flxbb\utility.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__utility.obj</ObjectFileName>
@@ -445,105 +423,35 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__utility.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__utility.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flxbb\DesignTask.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__DesignTask.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\FragQualFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flxbb\LayerDesignOperation.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__LayerDesignOperation.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\HSSTripletFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\HelixKinkFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\HelixPairingFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\InterlockingAromaFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\NcontactsFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\ParallelBetaPairingPreferenceFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureCountFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flxbb\FlxbbDesign_main.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__flxbb__FlxbbDesign_main.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\SheetTopologyFilter.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SheetTopologyFilter.obj</ObjectFileName>
@@ -555,35 +463,115 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SheetTopologyFilter.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SheetTopologyFilter.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\BB_Pos.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureHasResidueFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureHasResidueFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureHasResidueFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureHasResidueFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureHasResidueFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureHasResidueFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureHasResidueFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureHasResidueFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureHasResidueFilter.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\BetaAlphaBetaMotif.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureFilter.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\DimerPairing.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureCountFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__SecondaryStructureCountFilter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\ParallelBetaPairingPreferenceFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__ParallelBetaPairingPreferenceFilter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\FragQualFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__FragQualFilter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\InterlockingAromaFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__InterlockingAromaFilter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\HelixPairingFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixPairingFilter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__CoreDunbrackFilter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\HSSTripletFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HSSTripletFilter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\NcontactsFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__NcontactsFilter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\filters\HelixKinkFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__filters__HelixKinkFilter.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\HSSTriplet.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HSSTriplet.obj</ObjectFileName>
@@ -595,55 +583,15 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HSSTriplet.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HSSTriplet.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\HelixPairing.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\SS_Info2.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\Sheet.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\SheetFoldTypeManager.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\StrandPairing.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\BB_Pos.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BB_Pos.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\util.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__util.obj</ObjectFileName>
@@ -655,114 +603,185 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__util.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\HelixPairing.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__HelixPairing.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\BetaAlphaBetaMotif.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__BetaAlphaBetaMotif.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\SS_Info2.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SS_Info2.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\StrandPairing.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__StrandPairing.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\Sheet.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__Sheet.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\DimerPairing.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__DimerPairing.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fldsgn\topology\SheetFoldTypeManager.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__fldsgn__topology__SheetFoldTypeManager.xdc</XMLDocumentationFileName>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\HSPairPotential.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\HSPairPotential.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelicesSheetPotential.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelicesSheetPotential.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelixPairPotential.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelixPairPotential.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSecondaryStructureEnergy.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSecondaryStructureEnergy.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSecondaryStructureEnergyCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSheetPotential.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSheetPotential.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasStrandPairPotential.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasStrandPairPotential.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\SSPairPotential.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\SSPairPotential.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelicesSheetPotential.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasStrandPairPotential.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasStrandPairPotential.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelicesSheetPotential.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSecondaryStructureEnergyCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\util.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\HSPairPotential.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSecondaryStructureEnergy.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\HSPairPotential.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelixPairPotential.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasHelixPairPotential.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\sspot\NatbiasSecondaryStructureEnergy.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\BluePrintBDR.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\BluePrintBDR.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\BluePrintBDRCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\CircularPermutation.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\CircularPermutation.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\CircularPermutationCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\MatchResidues.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\MatchResiduesMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\MatchResiduesMover.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\MatchResiduesMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\NcontactsCalculator.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\SheetConstraintsRCG.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\BluePrintBDRCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\MatchResidues.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\SheetConstraintsRCG.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\BluePrintBDR.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\MatchResiduesMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\SheetCstGeneratorCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\AACompositionEnergy.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\MatchResiduesMover.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\CircularPermutationCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\CircularPermutation.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\AACompositionEnergy.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\AACompositionEnergyCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetSecStructEnergiesCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\AACompositionEnergy.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetAACompositionPotential.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetAACompositionPotential.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetAACompositionPotentialCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetSecStructEnergies.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetSecStructEnergies.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetSecStructEnergiesCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\DesignTask.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\DesignTask.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\FilterStructs.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\FilterStructs.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetSecStructEnergies.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\AACompositionEnergyCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\potentials\SetAACompositionPotentialCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\flxbb\FlxbbDesign.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\FlxbbDesign.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\FlxbbDesignCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\LayerDesignOperationCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\flxbb\FlxbbDesign_main.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\LayerDesignOperation.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\FlxbbDesignCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\flxbb\InterlockAroma.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\FilterStructs.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\DesignTask.hh" />
     <ClInclude Include="..\..\..\src\protocols\flxbb\InterlockAroma.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\FlxbbDesign.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\DesignTask.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\FilterStructs.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flxbb\utility.hh" />
     <ClInclude Include="..\..\..\src\protocols\flxbb\InterlockAromaCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\flxbb\LayerDesignOperation.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\LayerDesignOperation.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\LayerDesignOperationCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\flxbb\utility.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\FragQualFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\FragQualFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\FragQualFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HSSTripletFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HSSTripletFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HSSTripletFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixKinkFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixKinkFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixKinkFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixPairingFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixPairingFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixPairingFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\InterlockingAromaFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\InterlockingAromaFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\InterlockingAromaFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\NcontactsFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\NcontactsFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\NcontactsFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\ParallelBetaPairingPreferenceFilter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\ParallelBetaPairingPreferenceFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\ParallelBetaPairingPreferenceFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixKinkFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureCountFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureCountFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\FragQualFilter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureCountFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\NcontactsFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\InterlockingAromaFilter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SheetTopologyFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SheetTopologyFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\InterlockingAromaFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixKinkFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixPairingFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\ParallelBetaPairingPreferenceFilter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\NcontactsFilter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\FragQualFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\NcontactsFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SheetTopologyFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\BB_Pos.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\BB_Pos.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\BetaAlphaBetaMotif.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\BetaAlphaBetaMotif.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureHasResidueFilter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureHasResidueFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HSSTripletFilter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixKinkFilter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SheetTopologyFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureCountFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HSSTripletFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\FragQualFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureHasResidueFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\InterlockingAromaFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HelixPairingFilter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\SecondaryStructureFilter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\HSSTripletFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\filters\ParallelBetaPairingPreferenceFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\DimerPairing.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\DimerPairing.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\HSSTriplet.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\HSSTriplet.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\HelixPairing.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\BetaAlphaBetaMotif.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\HelixPairing.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\SS_Info2.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\SS_Info2.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\Sheet.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\Sheet.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\BetaAlphaBetaMotif.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\SheetFoldTypeManager.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\SheetFoldTypeManager.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\Sheet.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\StrandPairing.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\StrandPairing.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\HSSTriplet.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\SS_Info2.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\SheetFoldTypeManager.hh" />
     <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\util.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\StrandPairing.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\BB_Pos.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\BB_Pos.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\HSSTriplet.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\SS_Info2.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\HelixPairing.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\Sheet.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fldsgn\topology\DimerPairing.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

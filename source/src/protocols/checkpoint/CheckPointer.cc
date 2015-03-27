@@ -106,7 +106,7 @@ void FileBuffer::dump(){
 bool pose_to_binary_silent_file( std::ostream &output, const std::string &tag, const pose::Pose &pose ){
 	using namespace io::silent;
 	SilentFileData outsfd;
-	SilentStructOP pss( new BinarySilentStruct );
+	SilentStructOP pss( new BinarySilentStruct() );
 	pss->fill_struct( pose, tag );
 
 	pss->print_header( output );
@@ -204,7 +204,7 @@ void CheckPointer::checkpoint(
 	std::stringstream bail_structure_header;
 	SilentStructOP ss = SilentStructFactory::get_instance()->get_silent_struct_out();
 	ss->fill_struct( pose,  "W_00000001" );
-	SilentFileDataOP sfd = new SilentFileData();
+	SilentFileDataOP sfd( new SilentFileData() );
 
 	// write the structure to the bailout buffer
 	sfd->write_silent_struct( *ss, bail_structure );

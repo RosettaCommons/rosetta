@@ -58,8 +58,12 @@ void hankel_set_alpha
 	Hankel *p_hankel		
 ){
   debug_assert( p_hankel->n != 0);
-	core::Real X_MIN(0.0);	
+	core::Real X_MIN(0.0);
+#ifdef WIN32
+	p_hankel->alpha = NRbisafe(p_hankel->n, p_hankel->k1, p_hankel->k2, X_MIN, 30 * log(10.) / p_hankel->n);
+#else
 	p_hankel->alpha = NRbisafe(p_hankel->n, p_hankel->k1, p_hankel->k2, X_MIN, 30 * log(10) / p_hankel->n);
+#endif
 }
 
 void c_array_mult
@@ -324,14 +328,18 @@ void set_r_array (
         ObjexxFCL::FArray1D<float> & rc
 ) {
 	core::Real X_MIN(0.0);
-        core::Real alpha = NRbisafe(num_r_points, k1, k2, X_MIN , 30 * log(10) / num_r_points);
-        core::Real rp0 = max_r * exp( -alpha * num_r_points );
+#ifdef WIN32
+	core::Real alpha = NRbisafe(num_r_points, k1, k2, X_MIN , 30 * log(10.) / num_r_points);
+#else
+	core::Real alpha = NRbisafe(num_r_points, k1, k2, X_MIN , 30 * log(10) / num_r_points);
+#endif
+	core::Real rp0 = max_r * exp( -alpha * num_r_points );
 
-       debug_assert( num_r_points <= rc.size() );
-        for( core::Size count = 0 ; count < num_r_points; count++ ){
-                core::Real r = rp0 * exp( alpha * count );
-                rc(count+1) = r;
-        }
+	debug_assert( num_r_points <= rc.size() );
+	for( core::Size count = 0 ; count < num_r_points; count++ ){
+		core::Real r = rp0 * exp( alpha * count );
+		rc(count+1) = r;
+	}
 }
 
 void set_r_inv_array (
@@ -342,16 +350,20 @@ void set_r_inv_array (
         ObjexxFCL::FArray1D<float> & Rinv
 ) {
 	core::Real X_MIN(0.0);
-        core::Real alpha = NRbisafe(num_r_points, k1, k2, X_MIN , 30 * log(10) / num_r_points );
-        core::Real rp0 = max_r * exp( -alpha * num_r_points );
-        core::Real Rp0_new ( k2 * alpha /
-        ( k1 * k1 * rp0 ) );
+#ifdef WIN32
+	core::Real alpha = NRbisafe(num_r_points, k1, k2, X_MIN , 30 * log(10.) / num_r_points );
+#else
+	core::Real alpha = NRbisafe(num_r_points, k1, k2, X_MIN , 30 * log(10) / num_r_points );
+#endif
+	core::Real rp0 = max_r * exp( -alpha * num_r_points );
+	core::Real Rp0_new ( k2 * alpha /
+		( k1 * k1 * rp0 ) );
 
-       debug_assert( num_r_points <= Rinv.size() );
-        for( core::Size count = 0 ; count < num_r_points; count++ ){
-                core::Real R = Rp0_new * exp( alpha * count );
-                Rinv(count+1) = R;
-        }
+	debug_assert( num_r_points <= Rinv.size() );
+	for( core::Size count = 0 ; count < num_r_points; count++ ){
+		core::Real R = Rp0_new * exp( alpha * count );
+		Rinv(count+1) = R;
+	}
 }
 
 void dfour1_plan(double *data, core::Size nn, int isign, std::complex<double> *in)

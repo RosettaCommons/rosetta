@@ -47,8 +47,8 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				StringPooling="false"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -124,8 +124,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -198,8 +198,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -270,8 +270,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -345,8 +345,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -538,10 +538,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\conformation\symmetry\SymmData.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\conformation\symmetry\SymmDataFactory.hh"
 				>
 			</File>
 			<File
@@ -753,10 +749,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\conformation\symmetry\VirtualCoordinates.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\core\conformation\symmetry\util.cc"
 				>
 				<FileConfiguration
@@ -945,15 +937,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\rna\RNA_Util.cc"
+				RelativePath="..\..\..\src\core\chemical\rna\util.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__rna__RNA_Util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__rna__RNA_Util.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__rna__util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__rna__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -961,8 +953,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__rna__RNA_Util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__rna__RNA_Util.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__rna__util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__rna__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -970,8 +962,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__rna__RNA_Util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__rna__RNA_Util.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__rna__util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__rna__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -979,13 +971,13 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__rna__RNA_Util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__rna__RNA_Util.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__rna__util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__rna__util.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\rna\RNA_Util.hh"
+				RelativePath="..\..\..\src\core\chemical\rna\util.hh"
 				>
 			</File>
 		</Filter>
@@ -1642,14 +1634,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\kinematics\Stub.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\kinematics\all.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\kinematics\all.hh"
 				>
 			</File>
 			<File
@@ -3097,6 +3081,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\chemical\ResidueConnection.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueConnection.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueConnection.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueConnection.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueConnection.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueConnection.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueConnection.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueConnection.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueConnection.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\chemical\ResidueConnection.fwd.hh"
 				>
 			</File>
@@ -3301,6 +3325,98 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\chemical\ResidueProperties.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueProperties.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueProperties.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueProperties.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueProperties.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueProperties.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueProperties.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueProperties.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueProperties.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\ResidueProperties.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\ResidueProperties.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\ResidueProperty.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\ResidueProperty_mappings.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueProperty_mappings.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueProperty_mappings.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueProperty_mappings.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueProperty_mappings.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueProperty_mappings.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueProperty_mappings.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueProperty_mappings.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueProperty_mappings.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\chemical\ResidueSelector.cc"
 				>
 				<FileConfiguration
@@ -3346,50 +3462,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\chemical\ResidueSelector.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\ResidueSupport.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueSupport.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueSupport.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueSupport.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueSupport.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueSupport.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueSupport.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__ResidueSupport.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__ResidueSupport.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\ResidueSupport.hh"
 				>
 			</File>
 			<File
@@ -3585,15 +3657,19 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\VariantType.cc"
+				RelativePath="..\..\..\src\core\chemical\VariantType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\VariantType_mappings.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__VariantType.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__VariantType.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__VariantType_mappings.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__VariantType_mappings.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3601,8 +3677,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__VariantType.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__VariantType.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__VariantType_mappings.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__VariantType_mappings.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3610,8 +3686,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__VariantType.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__VariantType.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__VariantType_mappings.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__VariantType_mappings.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3619,18 +3695,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__VariantType.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__VariantType.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__VariantType_mappings.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__VariantType_mappings.xdc"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\VariantType.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\VariantType.hh"
-				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\chemical\adduct_util.cc"
@@ -3674,6 +3742,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\chemical\adduct_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\atomtype_support.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__atomtype_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__atomtype_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__atomtype_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__atomtype_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__atomtype_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__atomtype_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__atomtype_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__atomtype_support.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\atomtype_support.hh"
 				>
 			</File>
 			<File
@@ -3765,6 +3877,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\chemical\icoor_support.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__icoor_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__icoor_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__icoor_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__icoor_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__icoor_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__icoor_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__icoor_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__icoor_support.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\icoor_support.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\chemical\residue_io.cc"
 				>
 				<FileConfiguration
@@ -3806,6 +3962,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\chemical\residue_io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\residue_support.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__residue_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__residue_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__residue_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__residue_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__residue_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__residue_support.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__residue_support.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__residue_support.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\residue_support.hh"
 				>
 			</File>
 			<File
@@ -3946,6 +4146,106 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\conformation\orbitals\OrbitalXYZCoords.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\core\conformation\parametric\"
+			>
+			<File
+				RelativePath="..\..\..\src\core\conformation\parametric\Parameters.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__parametric__Parameters.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__parametric__Parameters.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__parametric__Parameters.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__parametric__Parameters.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__parametric__Parameters.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__parametric__Parameters.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__parametric__Parameters.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__parametric__Parameters.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\parametric\Parameters.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\parametric\Parameters.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\parametric\ParametersSet.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__parametric__ParametersSet.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__parametric__ParametersSet.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__parametric__ParametersSet.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__parametric__ParametersSet.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__parametric__ParametersSet.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__parametric__ParametersSet.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__parametric__ParametersSet.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__parametric__ParametersSet.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\parametric\ParametersSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\parametric\ParametersSet.hh"
 				>
 			</File>
 		</Filter>
@@ -4149,6 +4449,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\conformation\membrane\MembraneParams.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\membrane\Span.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__Span.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__Span.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__Span.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__Span.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__Span.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__Span.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__Span.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__Span.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\membrane\Span.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\membrane\Span.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\conformation\membrane\SpanningTopology.cc"
 				>
 				<FileConfiguration
@@ -4197,23 +4549,19 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\conformation\membrane\definitions.fwd.hh"
+				RelativePath="..\..\..\src\core\conformation\membrane\types.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\conformation\membrane\definitions.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\conformation\membrane\definitions_util.cc"
+				RelativePath="..\..\..\src\core\conformation\membrane\util.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__definitions_util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__definitions_util.xdc"
+						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -4221,8 +4569,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__definitions_util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__definitions_util.xdc"
+						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -4230,8 +4578,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__definitions_util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__definitions_util.xdc"
+						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -4239,13 +4587,13 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__definitions_util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__definitions_util.xdc"
+						ObjectFile="$(IntDir)\core.2__core__conformation__membrane__util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__membrane__util.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\conformation\membrane\definitions_util.hh"
+				RelativePath="..\..\..\src\core\conformation\membrane\util.hh"
 				>
 			</File>
 		</Filter>
@@ -4495,6 +4843,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<File
 				RelativePath="..\..\..\src\core\conformation\AbstractRotamerTrie.hh"
 				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\Atom.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__Atom.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__Atom.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__Atom.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__Atom.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__Atom.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__Atom.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__Atom.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__Atom.xdc"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\conformation\Atom.fwd.hh"
@@ -5053,6 +5441,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\conformation\ppo_torsion_bin.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__ppo_torsion_bin.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__ppo_torsion_bin.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__ppo_torsion_bin.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__ppo_torsion_bin.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__ppo_torsion_bin.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__ppo_torsion_bin.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__conformation__ppo_torsion_bin.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__conformation__ppo_torsion_bin.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\ppo_torsion_bin.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\ppo_torsion_bin.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\residue_datacache.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\conformation\util.cc"
 				>
 				<FileConfiguration
@@ -5233,10 +5673,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\id\DOF_ID_Mask.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\core\id\DOF_ID_Range.cc"
 				>
 				<FileConfiguration
@@ -5382,6 +5818,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\id\NamedAtomID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\NamedAtomID_Map.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\NamedAtomID_Map.hh"
 				>
 			</File>
 			<File
@@ -5585,15 +6029,23 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\chemical\sdf\"
 			>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\MolData.cc"
+				RelativePath="..\..\..\src\core\chemical\sdf\CtabParserBase.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\CtabParserBase.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\CtabV2000Parser.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolData.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolData.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__CtabV2000Parser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__CtabV2000Parser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5601,8 +6053,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolData.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolData.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__CtabV2000Parser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__CtabV2000Parser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5610,8 +6062,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolData.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolData.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__CtabV2000Parser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__CtabV2000Parser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5619,29 +6071,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolData.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolData.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__CtabV2000Parser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__CtabV2000Parser.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\MolData.fwd.hh"
+				RelativePath="..\..\..\src\core\chemical\sdf\CtabV2000Parser.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\MolData.hh"
+				RelativePath="..\..\..\src\core\chemical\sdf\CtabV2000Parser.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\ctab_base.cc"
+				RelativePath="..\..\..\src\core\chemical\sdf\CtabV3000Parser.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__ctab_base.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__ctab_base.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__CtabV3000Parser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__CtabV3000Parser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5649,8 +6101,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__ctab_base.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__ctab_base.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__CtabV3000Parser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__CtabV3000Parser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5658,8 +6110,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__ctab_base.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__ctab_base.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__CtabV3000Parser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__CtabV3000Parser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5667,37 +6119,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__ctab_base.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__ctab_base.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__CtabV3000Parser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__CtabV3000Parser.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\ctab_base.fwd.hh"
+				RelativePath="..\..\..\src\core\chemical\sdf\CtabV3000Parser.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\ctab_base.hh"
+				RelativePath="..\..\..\src\core\chemical\sdf\CtabV3000Parser.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\ctab_parser.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\ctab_parser.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\ctab_typer.cc"
+				RelativePath="..\..\..\src\core\chemical\sdf\MolFileIOData.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__ctab_typer.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__ctab_typer.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolFileIOData.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolFileIOData.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5705,8 +6149,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__ctab_typer.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__ctab_typer.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolFileIOData.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolFileIOData.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5714,8 +6158,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__ctab_typer.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__ctab_typer.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolFileIOData.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolFileIOData.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5723,29 +6167,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__ctab_typer.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__ctab_typer.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolFileIOData.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolFileIOData.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\ctab_typer.fwd.hh"
+				RelativePath="..\..\..\src\core\chemical\sdf\MolFileIOData.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\ctab_typer.hh"
+				RelativePath="..\..\..\src\core\chemical\sdf\MolFileIOData.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\mol_parser.cc"
+				RelativePath="..\..\..\src\core\chemical\sdf\MolFileIOReader.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__mol_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__mol_parser.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolFileIOReader.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolFileIOReader.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5753,8 +6197,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__mol_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__mol_parser.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolFileIOReader.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolFileIOReader.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5762,8 +6206,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__mol_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__mol_parser.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolFileIOReader.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolFileIOReader.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -5771,17 +6215,65 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__mol_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__mol_parser.xdc"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__MolFileIOReader.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__MolFileIOReader.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\mol_parser.fwd.hh"
+				RelativePath="..\..\..\src\core\chemical\sdf\MolFileIOReader.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\mol_parser.hh"
+				RelativePath="..\..\..\src\core\chemical\sdf\MolFileIOReader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\SDFParser.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__SDFParser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__SDFParser.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__SDFParser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__SDFParser.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__SDFParser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__SDFParser.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__SDFParser.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__SDFParser.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\SDFParser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\SDFParser.hh"
 				>
 			</File>
 			<File
@@ -5878,110 +6370,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\chemical\sdf\mol_writer.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\sdf_parser.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\sdf_parser.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\v2_parser.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__v2_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__v2_parser.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__v2_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__v2_parser.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__v2_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__v2_parser.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__v2_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__v2_parser.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\v2_parser.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\v2_parser.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\v3_parser.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__v3_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__v3_parser.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__v3_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__v3_parser.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__v3_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__v3_parser.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.2__core__chemical__sdf__v3_parser.obj"
-						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__sdf__v3_parser.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\v3_parser.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\chemical\sdf\v3_parser.hh"
 				>
 			</File>
 		</Filter>

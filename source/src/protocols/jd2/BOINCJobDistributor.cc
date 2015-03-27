@@ -127,7 +127,7 @@ BOINCJobDistributor::checkpoint_write()
 #ifdef BOINC
 		// BOINC automatically handles begin/end_critical_section() calls.
 		utility::io::ozstream ozs("rng.state.gz");
-		numeric::random::RandomGenerator::saveAllStates(ozs);
+		numeric::random::rg().saveState(ozs);
 		ozs.close();
 #endif // BOINC
 		protocols::checkpoint::Timer::reset();
@@ -143,7 +143,7 @@ BOINCJobDistributor::checkpoint_read()
 #ifdef BOINC
 	if( utility::file::file_exists("rng.state.gz") ) {
 		utility::io::izstream izs("rng.state.gz");
-		numeric::random::RandomGenerator::restoreAllStates(izs);
+		numeric::random::rg().restoreState(izs);
 		izs.close();
 	}
 #endif // BOINC
