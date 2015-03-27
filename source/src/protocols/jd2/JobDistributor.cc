@@ -765,7 +765,7 @@ void JobDistributor::write_output_from_job(
 		if ( additional_pose ) {
 			// Attach tag to main pose as well for consistent numbering
 			std::ostringstream s;
-			s << i_additional_pose;
+			s << std::setfill('0') << std::setw(4) << i_additional_pose;
 			tag = s.str();
 			++i_additional_pose;
 		}
@@ -776,7 +776,7 @@ void JobDistributor::write_output_from_job(
 		// Collect additional poses from mover
 		while(additional_pose) {
 			std::ostringstream s;
-			s << i_additional_pose;
+			s << std::setfill('0') << std::setw(4) << i_additional_pose;
 			job_succeeded_additional_output(*additional_pose, s.str());
 			++i_additional_pose;
  			additional_pose = mover_copy->get_additional_output();
