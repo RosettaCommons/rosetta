@@ -172,6 +172,7 @@ void PerformanceBenchmark::perform_until_set_found (
 	
 	while ( ! average_found ) {
 		
+		TR << "Running test again " << std::endl;
 		B->execute( 1 );
 
 		results.insert( B->result_ );
@@ -180,7 +181,10 @@ void PerformanceBenchmark::perform_until_set_found (
 		// within 5% of their mutual mean
 		// clearly need only consider adjacent values in the set
 		Size size = results.size();
-		if ( size < scaleFactor ) continue;
+		if ( size < scaleFactor ) {
+			B->result_ = 0;
+			continue;
+		}
 		
 		Size counter = 0;
 		for ( std::multiset< Real >::iterator it( results.begin() ),
@@ -188,13 +192,13 @@ void PerformanceBenchmark::perform_until_set_found (
 			 it != end;
 			 ++it, ++counter ) {
 			
-			//TR << "at counter " << counter << std::endl;
+			TR << "Evaluating elements " << counter << " to " << (counter + scaleFactor-1) << std::endl;
 			if ( counter == size - scaleFactor+1 ) break;
 			
 			std::multiset< Real >::iterator avg_iter = it;
 			
 			average = 0;
-			//TR << " among ";
+			TR << "Values are ";
 			
 			Real final_value = 0;
 			for ( Size i = 1; i <= scaleFactor; ++i, ++avg_iter ) {
@@ -202,12 +206,14 @@ void PerformanceBenchmark::perform_until_set_found (
 				average += final_value;
 				TR << final_value << " ";
 			}
+			TR << std::endl;
 			average /= scaleFactor;
 			
 			Real spread = final_value - *it;
-			//TR << " spread is " << spread << " and average is " << average << std::endl;
+			TR << " spread is " << spread << " and average is " << average << std::endl;
 			
 			if ( spread < 0.1 * average ) {
+				//TR << "Acceptable; we're done!" << std::endl;
 				average_found = true;
 				break;
 			}
