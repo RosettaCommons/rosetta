@@ -59,7 +59,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
         #performance_benchmark_sh = os.path.abspath(working_dir + '/performance_benchmark.sh')
         #with file(performance_benchmark_sh, 'w') as f: f.write('#!/bin/bash\n{}\n'.format(command_line));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
-        if debug and False: res, output = 0, 'run_performance_tests: debug is enabled, skippig actual run...\n'
+        if debug and False: res, output = 0, 'run_performance_tests: debug is enabled, skipping actual run...\n'
         else:
             if os.path.isfile(json_results_file): os.remove(json_results_file)
             hpc_driver.execute(command_line, '{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), 'performance_benchmark')
