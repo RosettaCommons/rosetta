@@ -130,7 +130,6 @@ public:
 	inline void set_minimize_at_end( bool min_at_end_in ) { min_at_end_ = min_at_end_in; }
 	inline void set_minimize_sf( core::scoring::ScoreFunctionOP minscorefxn_in ) { minscorefxn_ = core::scoring::ScoreFunctionOP(minscorefxn_in->clone()); }
 
-	void set_task_factory( core::pack::task::TaskFactoryOP task_factory_in );
 	void set_user_csts(  utility::vector1< core::Size > user_csts_in ) { user_csts_=user_csts_in; }
 
 	void set_per_residue_controls(
@@ -246,7 +245,6 @@ private:
 	utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
 
 	// task operations
-	core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1 < core::Size > user_csts_;
 }; //class FoldTreeHybridize
 
