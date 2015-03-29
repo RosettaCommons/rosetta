@@ -78,6 +78,7 @@ namespace options {
 		virtual_sugar_legacy_mode_ = false;
 		virtual_sugar_keep_base_fixed_ = true;
 		virtual_sugar_do_minimize_ = true;
+		virtual_sugar_do_screens_ = true;
 		kic_modeler_if_relevant_ = false;
 		force_centroid_interaction_ = false;
 		minimize_and_score_sugar_ = true;
@@ -102,6 +103,7 @@ namespace options {
 		minimizer_rename_tag_ = false;
 		tether_jump_ = true;
 		turn_off_rna_chem_map_during_optimize_ = true;
+		allow_rebuild_bulge_mode_ = true;
 	}
 
 	/// @brief clone the options

@@ -14,8 +14,8 @@
 ///  @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarSampler_HH
-#define INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarSampler_HH
+#ifndef INCLUDED_protocols_stepwise_rna_VirtualSugarSampler_HH
+#define INCLUDED_protocols_stepwise_rna_VirtualSugarSampler_HH
 
 #include <protocols/moves/MoverForPoseList.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
@@ -46,15 +46,15 @@ namespace rna {
 namespace sugar {
 
 
-	class StepWiseRNA_VirtualSugarSampler: public protocols::moves::MoverForPoseList {
+	class VirtualSugarSampler: public protocols::moves::MoverForPoseList {
 
 	public:
 
 		//constructor
-		StepWiseRNA_VirtualSugarSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters, SugarModeling & sugar_modeling	);
+		VirtualSugarSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters, SugarModeling & sugar_modeling	);
 
 		//destructor
-		~StepWiseRNA_VirtualSugarSampler();
+		~VirtualSugarSampler();
 
 		virtual void apply( core::pose::Pose & pose_to_visualize );
 
@@ -74,6 +74,8 @@ namespace sugar {
 		void set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting;	}
 
 		void set_do_minimize( bool const & setting ) { do_minimize_ = setting;	}
+
+		void set_do_screens( bool const & setting ) { do_screens_ = setting;	}
 
 		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
 
@@ -144,6 +146,7 @@ namespace sugar {
 		bool keep_base_fixed_;
 		bool choose_random_;
 		bool do_minimize_;
+		bool do_screens_;
 		bool integration_test_mode_;
 		bool virtual_sugar_is_from_prior_step_;
 		bool legacy_mode_;

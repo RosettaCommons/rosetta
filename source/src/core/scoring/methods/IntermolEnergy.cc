@@ -107,82 +107,16 @@ IntermolEnergy::get_num_chains_frozen( pose::Pose const & pose ) const {
 	using namespace core::pose::full_model_info;
 	Size const num_chains = const_full_model_info( pose ).cutpoint_open_in_full_model().size() + 1;
 
-	// OPTION #1 -- original. Prefer to replace with OPTION 2.
-	utility::vector1< utility::vector1< Size > > chains_connected;
-	utility::vector1< Size > blank_vector;
-	for ( Size n = 1; n <= num_chains; n++ ) blank_vector.push_back( false );
-	for ( Size n = 1; n <= num_chains; n++ ) chains_connected.push_back( blank_vector );
-
-	get_chains_connected( pose, chains_connected );
-
-	// alternatively, there must be a graph/ sublibrary somewhere that does this.
-	Size const num_subgraphs = get_number_of_connected_subgraphs( chains_connected );
-	runtime_assert( num_subgraphs <= num_chains );
-
-	// OPTION #2
-	// alternative calculation --
-	// Reuses code that  will be used in FullModelInfoSetup to define docking domain, cutpoints, etc.
-	// Replace above with this in 2015 if we don't see any runtime_assert fails...
 	utility::vector1< std::pair< Size, Size > > chain_connections = get_chain_connections( pose );
 	utility::vector1< Size > connection_domains = get_connection_domains( chain_connections, num_chains  );
-	runtime_assert( num_subgraphs == max( connection_domains ) );
-	return ( num_chains - num_subgraphs );
+
+	// there used to be an alternative way to calculate # chains frozen, but I discovered
+	// a bug in it & deprecated it -- rhiju.
+	//	runtime_assert( num_subgraphs == max( connection_domains ) );
+
+	return ( num_chains - max( connection_domains ) );
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-// DEPRECATE SOON
-Size
-IntermolEnergy::get_number_of_connected_subgraphs( utility::vector1< utility::vector1< Size > > const & chains_connected ) const {
-	Size const num_chains = chains_connected.size();
-	utility::vector1< Size > colors( num_chains, 0 );
-	Size current_color = 0;
-	for ( Size n = 1; n <= num_chains; n++ ){
-		if ( colors[ n ] ) continue;
-		current_color++;
-		colors[ n ] =  current_color;
-		color_connected( colors, chains_connected, n, current_color );
-	}
-	return current_color;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// There's a faster way to do this -- will import later from
-// FullModelInfoSetupFromCommandLine.
-// DEPRECATE SOON
-void
-IntermolEnergy::color_connected( utility::vector1< Size > & colors,
-																 utility::vector1< utility::vector1< Size > > const & chains_connected,
-																 Size const n, Size const current_color ) const {
-	Size const num_chains = chains_connected.size();
-	for ( Size m = (n+1); m <= num_chains; m++ ){
-		if ( chains_connected[ n ][ m ] && !colors[ m ] ){
-			colors[ m ] = current_color;
-			color_connected( colors, chains_connected, m, current_color );
-		}
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// DEPRECATE SOON
-void
-IntermolEnergy::get_chains_connected( pose::Pose const & pose, utility::vector1< utility::vector1< Size > > &  chains_connected ) const {
-	using namespace core::pose::full_model_info;
-	utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
-	utility::vector1< Size > frozen_chains;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-		if ( !frozen_chains.has_value( chains[ n ] ) ) frozen_chains.push_back( chains[ n ] );
-	}
-	for ( Size i = 1; i <= frozen_chains.size(); i++ ){
-		for ( Size j = 1; j <= frozen_chains.size(); j++ ){
-			chains_connected[ frozen_chains[ i ] ][ frozen_chains[ j ] ] = true;
-			chains_connected[ frozen_chains[ j ] ][ frozen_chains[ i ] ] = true;
-		}
-	}
-	// recurse through any daughter poses.
-	utility::vector1< pose::PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
-	for ( Size k = 1; k <= other_pose_list.size(); k++ )	get_chains_connected( *other_pose_list[ k ], chains_connected );
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 void

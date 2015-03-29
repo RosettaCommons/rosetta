@@ -181,8 +181,9 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	utility::vector1< Size > const & calc_rms_res = full_model_info.calc_rms_res();
 	utility::vector1< Size > const & terminal_res = full_model_info.rna_terminal_res();
 	utility::vector1< Size > const & syn_chi_res_list = full_model_info.rna_syn_chi_res();
-
-	TR.Debug << pose.fold_tree() << std::endl;
+	utility::vector1< Size > const & anti_chi_res_list = full_model_info.rna_anti_chi_res();
+	utility::vector1< Size > const & north_sugar_list = full_model_info.full_model_parameters()->get_res_list( RNA_NORTH_SUGAR );
+	utility::vector1< Size > const & south_sugar_list = full_model_info.full_model_parameters()->get_res_list( RNA_SOUTH_SUGAR );
 
 	Size moving_res( rebuild_res ), rebuild_suite( 0 );
 	bool floating_base( false ), is_internal( false );
@@ -300,6 +301,9 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	working_parameters->set_native_alignment( full_model_info.sub_to_full( working_fixed_res_guess ) ); // is this in use?
 	working_parameters->set_global_sample_res_list( full_model_info.sub_to_full( make_vector1( moving_res ) ) );
 	working_parameters->set_force_syn_chi_res_list( syn_chi_res_list ); // will get automatically converted to working numbering.
+	working_parameters->set_force_anti_chi_res_list( anti_chi_res_list ); // will get automatically converted to working numbering.
+	working_parameters->set_force_north_sugar_list( north_sugar_list ); // will get automatically converted to working numbering.
+	working_parameters->set_force_south_sugar_list( south_sugar_list ); // will get automatically converted to working numbering.
 	working_parameters->set_fold_tree( pose.fold_tree() );
 
 	TR.Debug << "past working_parameters initialization " << std::endl;
@@ -311,6 +315,13 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 bool
 figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res ){
 	kinematics::FoldTree const & f = pose.fold_tree();
+
+	// if the rebuild_res is connected to anything by a jump, better not virtualize it.
+	for ( Size n = 1; n <= f.num_jump(); n++ ){
+		if ( f.upstream_jump_residue( n )   == static_cast<int>(rebuild_res) ) return false;
+		if ( f.downstream_jump_residue( n ) == static_cast<int>(rebuild_res) ) return false;
+	}
+
 	if ( rebuild_res > 1 &&
 			 pose.residue( rebuild_res - 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
 			 ( !f.is_cutpoint( rebuild_res - 1 ) ||
@@ -328,7 +339,9 @@ figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res )
 
 /////////////////////////////////////////////////////////////////////////
 bool
-figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose, bool const floating_base, Size const rebuild_suite ){
+figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose,
+																					 bool const floating_base,
+																					 Size const rebuild_suite ){
 	if ( !floating_base &&
 			 sampler::rna::modeler_sugar_at_five_prime(  pose, rebuild_suite ) &&
 			 sampler::rna::modeler_sugar_at_three_prime( pose, rebuild_suite ) ){

@@ -99,7 +99,10 @@ namespace options {
 	StepWiseModelerOptionsOP
 	StepWiseModelerOptions::get_sampler_options() const {
 		StepWiseModelerOptionsOP sampler_options = clone();
-		if ( sampler_options->choose_random() )	sampler_options->set_cluster_rmsd( 0.0 ); // don't cluster.
+
+		// this wasn't even active -- StepWiseClusterer took 0.0 to mean 'default' and goes to 0.5 A.
+		//		if ( sampler_options->choose_random() )	sampler_options->set_cluster_rmsd( 0.0 ); // don't cluster.
+
 		if ( sampler_options->integration_test_mode() ){
 			sampler_options->set_sampler_num_pose_kept( 2 );
 			sampler_options->set_rmsd_screen( 1.0 ); // StepWiseConnectionSampler will initially have this off, but toggle true later in integration test.

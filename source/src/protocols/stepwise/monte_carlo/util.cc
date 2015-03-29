@@ -17,9 +17,9 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -28,6 +28,7 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -85,7 +86,7 @@ prepare_silent_struct( std::string const & out_tag,
 		rms = superimpose_with_stepwise_aligner( pose, *native_pose, superimpose_over_all_instantiated_ );
 
 		if ( do_rms_fill_calculation ){
-			TR << TR.Blue << "Generating filled-in model for rms_fill... " << TR.Reset << std::endl;
+			TR <<  "Generating filled-in model for rms_fill... " << std::endl;
 			if ( full_model_pose == 0 ) full_model_pose = build_full_model( pose );
 			rms_fill = superimpose_with_stepwise_aligner( *full_model_pose, *native_pose, superimpose_over_all_instantiated_ );
 		}
@@ -107,7 +108,7 @@ void
 output_to_silent_file( std::string const & out_tag,
 											 std::string const & silent_file,
 											 pose::Pose const & pose ){
-	Pose pose_copy = pose;
+	pose::Pose pose_copy = pose;
 	output_to_silent_file( out_tag, silent_file, pose_copy, 0 /*no native -- no superimpose*/ );
 }
 
@@ -126,35 +127,47 @@ output_to_silent_file( std::string const & silent_file,
 // given pose, build in other residues in a deterministic manner. No optimization.
 // used to estimate 'rms_fill' in stepwise_monte_carlo.
 void
-build_full_model( pose::Pose const & start_pose, Pose & full_model_pose ){
-
-	// pretty inelegant -- using stepwise monte carlo object, since it has
-	// all the functionality we need. though we're not really doing monte carlo.
+build_full_model( pose::Pose const & start_pose, pose::Pose & full_model_pose ){
 	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
-	StepWiseMonteCarlo stepwise_monte_carlo( scorefxn );
 	options::StepWiseMonteCarloOptionsOP options( new options::StepWiseMonteCarloOptions );
 	options->set_skip_deletions( true );
-	stepwise_monte_carlo.set_options( options );
-	stepwise_monte_carlo.build_full_model( start_pose, full_model_pose );
+	options->set_enumerate( true ); // prevent randomness.
+	options->set_skip_bulge_frequency( 0.2 ); // to avoid getting stuck
+	mover::StepWiseMasterMover master_mover( scorefxn, options );
+	master_mover.build_full_model( start_pose, full_model_pose );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 core::pose::PoseOP
 build_full_model( pose::Pose const & start_pose ){
-	PoseOP full_model_pose( new Pose );
+	pose::PoseOP full_model_pose( new pose::Pose );
 	build_full_model( start_pose, *full_model_pose );
 	return full_model_pose;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////
-void
-filter_out_bulge_res(  utility::vector1< Size > & sample_res,
- 											 utility::vector1< Size > const & bulge_res ) {
-	utility::vector1< Size > sample_res_new;
-	for ( Size n = 1; n <= sample_res.size(); n++ ) {
-		if ( !bulge_res.has_value( sample_res[ n ] ) ) sample_res_new.push_back( sample_res[ n ] );
+std::string
+get_move_type_string( mover::StepWiseMove const & swa_move ) {
+	std::string move_type_string = to_string( swa_move.move_type() );
+	std::transform(move_type_string.begin(), move_type_string.end(), move_type_string.begin(), ::tolower); // this is why we love C
+	return move_type_string;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+std::string
+get_all_res_list( pose::Pose & pose ) {
+	std::string out_string;
+	out_string = make_tag_with_dashes( get_res_list_from_full_model_info_const( pose ) );
+	utility::vector1< pose::PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
+	if ( other_pose_list.size() == 0 ) return out_string;
+	out_string += " [ other_pose: ";
+	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
+		out_string += get_all_res_list( *other_pose_list[n] );
+		if ( n < other_pose_list.size() ) out_string += "; ";
 	}
-	sample_res = sample_res_new;
+	out_string += "]";
+	return out_string;
 }
 
 } //monte_carlo

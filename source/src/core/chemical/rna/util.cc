@@ -12,6 +12,7 @@
 
 // Unit headers
 #include <core/chemical/rna/util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/types.hh>
 
 // Package headers
@@ -33,6 +34,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/angle.functions.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
@@ -450,6 +452,32 @@ is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::
 
 	return is_base_phosphate_atom_pair;
 
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+ChiState
+get_residue_base_state( conformation::Residue const & rsd ) {
+	Real const CHI_CUTOFF = 15.0; //Kinda RANDOM..ROUGH average between north chi_anti (~79) and north chi_syn (~-50)
+	Real const chi = numeric::principal_angle_degrees( rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
+	if ( chi <= CHI_CUTOFF ){
+		return SYN;
+	} else{
+		return ANTI;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+PuckerState
+get_residue_pucker_state( conformation::Residue const & rsd ) {
+	static RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+	Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
+	Real delta = numeric::principal_angle_degrees( rsd.mainchain_torsion( DELTA ) );
+	if ( delta <= DELTA_CUTOFF ) {
+		return NORTH;
+	} else {
+		return SOUTH;
+	}
 }
 
 

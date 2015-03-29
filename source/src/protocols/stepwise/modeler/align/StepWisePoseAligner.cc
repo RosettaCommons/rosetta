@@ -16,6 +16,7 @@
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -23,6 +24,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/scoring/rms_util.hh>
@@ -117,7 +119,7 @@ namespace align {
 			natoms_pose = natoms_superimpose_rmsd();
 		}
 
-		Real const total_sd = ( rmsd_over_all* rmsd_over_all* natoms_over_all) + (rmsd_pose * rmsd_pose * natoms_pose );
+		Real const total_sd = ( rmsd_over_all * rmsd_over_all * natoms_over_all) + (rmsd_pose * rmsd_pose * natoms_pose );
 		natoms_over_all += natoms_pose;
 		if ( natoms_over_all > 0 ) {
 			rmsd_over_all = std::sqrt( total_sd / Real( natoms_over_all ) );
@@ -209,20 +211,40 @@ namespace align {
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// where each residue in pose ends up in the reference_pose
+	//  a little cumbersome -- actually convert to full_model and then to
+	//  conventional number/chain, and then back.
+	//
+	// Have to do this since we no longer guarantee that reference_pose has
+	//  same full_model numbering (e.g., from a fasta file) as working pose --
+	//  instead need to match up number & chain.
+	//
+	// Could also use PDBInfo for this.
+	//
 	utility::vector1< Size >
 	StepWisePoseAligner::get_res_list_in_reference( pose::Pose const & pose ) const {
 
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 		utility::vector1< Size > const & reference_pose_res_list = get_res_list_const( reference_pose_ );
+		FullModelParameters const & full_model_parameters =  *(const_full_model_info( pose ).full_model_parameters());
+		FullModelParameters const & reference_full_model_parameters =  *(const_full_model_info( reference_pose_ ).full_model_parameters());
 
 		utility::vector1< Size > res_list_in_reference;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
-			//			runtime_assert( reference_pose_res > 0 );
-			if ( reference_pose_res_list.has_value( res_list[ n ] ) ) {
-				res_list_in_reference.push_back( reference_pose_res_list.index( res_list[ n ] ) );
-			} else {
-				res_list_in_reference.push_back( 0 );
+
+			bool found_it( false );
+			std::pair< int, char > const resnum_and_chain = full_model_parameters.full_to_conventional_resnum_and_chain( res_list[ n ] );
+			Size const & resnum( resnum_and_chain.first );
+			Size const & chain( resnum_and_chain.second );
+			if ( reference_full_model_parameters.has_conventional_residue( resnum, chain ) ) {
+				Size const reference_resnum = reference_full_model_parameters.conventional_to_full( resnum, chain );
+				if ( reference_pose_res_list.has_value( reference_resnum ) ) {
+					found_it = true;
+					res_list_in_reference.push_back( reference_pose_res_list.index( reference_resnum ) );
+				}
 			}
+
+			if ( !found_it ) res_list_in_reference.push_back( 0 );
+
 		}
 		return res_list_in_reference;
 	}
@@ -312,7 +334,7 @@ namespace align {
 			}
 		}
 
-		// output_atom_id_map( calc_rms_atom_id_map );
+		//		output_atom_id_map( calc_rms_atom_id_map, pose, *reference_pose_local_ );
 	}
 
 
@@ -329,11 +351,13 @@ namespace align {
 		superimpose_atom_id_map_.clear();
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( !superimpose_res_in_pose_.has_value( n ) ) continue;
+			bool const sample_sugar = check_sample_sugar_in_full_model_info( pose, n );
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
 				if ( complete_moving_atom_id_map_.find( AtomID( q, n ) ) != complete_moving_atom_id_map_.end() ) continue;
 				std::string const atom_name = pose.residue_type( n ).atom_name( q );
 				if ( extra_suite_atoms_upper.has_value( atom_name ) ) continue; // never use phosphates to superimpose
 				if ( extra_suite_atoms_lower.has_value( atom_name ) ) continue; // never use carbonyl oxygens to superimpose
+				if ( sample_sugar && core::chemical::rna::sugar_atoms.has_value( atom_name ) ) continue;
 				add_to_atom_id_map_after_checks( superimpose_atom_id_map_,
 																				 atom_name,
 																				 n, res_list_in_reference[n],
@@ -547,6 +571,7 @@ namespace align {
 					it != atom_id_map.end(); it++ ){
 			TR << it->first << " mapped to " << it->second << std::endl;
 		}
+		TR << std::endl;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -560,6 +585,7 @@ namespace align {
 				" mapped to " <<
 				it->second << " " << pose2.residue( it->second.rsd() ).atom_name( it->second.atomno() ) << std::endl;
 		}
+		TR << std::endl;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

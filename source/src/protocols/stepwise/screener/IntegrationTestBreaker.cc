@@ -13,7 +13,7 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <protocols/stepwise/screener/IntegrationTestBreaker.hh>
-#include <protocols/stepwise/screener/NativeRMSD_Screener.hh>
+#include <protocols/stepwise/screener/AlignRMSD_Screener.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <basic/Tracer.hh>
@@ -29,11 +29,11 @@ namespace screener {
 
 	//Constructor
 	IntegrationTestBreaker::IntegrationTestBreaker( StepWiseScreenerOP screener_whose_counts_to_check,
-																									StepWiseScreenerOP final_screener /*total_count -- for turning on native screen*/,
-																									NativeRMSD_ScreenerOP native_rmsd_screener ):
+																									StepWiseScreenerOP final_screener /*total_count -- for turning on align screen*/,
+																									AlignRMSD_ScreenerOP align_rmsd_screener ):
 		screener_whose_counts_to_check_( screener_whose_counts_to_check ),
 		final_screener_( final_screener ),
-		native_rmsd_screener_( native_rmsd_screener )
+		align_rmsd_screener_( align_rmsd_screener )
 	{}
 
 	//Destructor
@@ -48,9 +48,9 @@ namespace screener {
 	IntegrationTestBreaker::check_screen() {
 		if ( screener_whose_counts_to_check_ && screener_whose_counts_to_check_->count() >= 100 ) 	return false;
 
-		if ( native_rmsd_screener_ != 0 ){
-			if ( final_screener_->count() >= 10 ) native_rmsd_screener_->set_do_screen( true );
-			if ( native_rmsd_screener_->pass_count() >= 10 ) return false;
+		if ( align_rmsd_screener_ != 0 ){
+			if ( final_screener_->count() >= 10 ) align_rmsd_screener_->set_do_screen( true );
+			if ( align_rmsd_screener_->pass_count() >= 10 ) return false;
 		}
 		return true;
 	}

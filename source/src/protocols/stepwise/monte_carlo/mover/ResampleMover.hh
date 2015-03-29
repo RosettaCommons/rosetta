@@ -18,8 +18,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.fwd.hh>
-#include <protocols/stepwise/monte_carlo/SWA_MoveSelector.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.fwd.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -57,11 +57,11 @@ namespace mover {
 
 		bool
 		apply( pose::Pose & pose,
-					 SWA_Move const & swa_move );
+					 StepWiseMove const & swa_move );
 
 		bool
 		apply( pose::Pose & pose,
-					 SWA_Move const & swa_move,
+					 StepWiseMove const & swa_move,
 					 std::string & move_type );
 
 		void set_minimize_single_res( bool const & setting ){ minimize_single_res_ = setting; }
@@ -71,7 +71,7 @@ namespace mover {
 		set_options( options::StepWiseMonteCarloOptionsCOP options );
 
 		Size
-		get_remodel_res( SWA_Move const & swa_move, pose::Pose const & pose ) const;
+		get_remodel_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const;
 
 		void
 		slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) const;
@@ -79,7 +79,7 @@ namespace mover {
 	private:
 
 		protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
-		SWA_MoveSelectorOP swa_move_selector_;
+		StepWiseMoveSelectorOP swa_move_selector_;
 		options::StepWiseMonteCarloOptionsCOP options_;
 
 		bool minimize_single_res_;

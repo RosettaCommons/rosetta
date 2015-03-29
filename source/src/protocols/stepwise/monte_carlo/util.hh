@@ -19,8 +19,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-
-using namespace core;
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -29,15 +28,15 @@ namespace monte_carlo {
 void
 output_to_silent_file( std::string const & out_tag,
 											 std::string const & silent_file,
-											 pose::Pose & pose,
-											 pose::PoseCOP native_pose,
+											 core::pose::Pose & pose,
+											 core::pose::PoseCOP native_pose,
 											 bool const superimpose_over_all_instantiated = false,
 											 bool const do_rms_fill_calculation = false );
 
 core::io::silent::SilentStructOP
 prepare_silent_struct( std::string const & out_tag,
-											 pose::Pose & pose,
-											 pose::PoseCOP native_pose,
+											 core::pose::Pose & pose,
+											 core::pose::PoseCOP native_pose,
 											 bool const superimpose_over_all_instantiated = false,
 											 bool const do_rms_fill_calculation = false,
 											 core::pose::PoseOP full_model_pose  = 0 );
@@ -45,22 +44,24 @@ prepare_silent_struct( std::string const & out_tag,
 void
 output_to_silent_file( std::string const & out_tag,
 											 std::string const & silent_file,
-											 pose::Pose const & pose );
+											 core::pose::Pose const & pose );
 
 void
 output_to_silent_file( std::string const & silent_file,
-											 utility::vector1< pose::PoseOP > & pose_list,
-											 pose::PoseCOP native_pose );
+											 utility::vector1< core::pose::PoseOP > & pose_list,
+											 core::pose::PoseCOP native_pose );
 
 void
 build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
 
 core::pose::PoseOP
-build_full_model( pose::Pose const & start_pose );
+build_full_model( core::pose::Pose const & start_pose );
 
-void
-filter_out_bulge_res(  utility::vector1< core::Size > & sample_res,
-											 utility::vector1< core::Size > const & bulge_res );
+std::string
+get_move_type_string( mover::StepWiseMove const & swa_move );
+
+std::string
+get_all_res_list( core::pose::Pose & pose );
 
 } //monte_carlo
 } //stepwise

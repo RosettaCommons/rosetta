@@ -80,7 +80,6 @@ namespace options {
 		ccd_close_ = false; // should this be in here, or in job parameters?
 		cluster_by_all_atom_rmsd_ = false;
 		pack_weights_ = "";
-		use_packer_instead_of_rotamer_trials_ = false;
 		expand_loop_takeoff_ = false;
 		skip_coord_constraints_ = false;
 	}
@@ -114,7 +113,6 @@ namespace options {
 		ghost_loops_ = option[ basic::options::OptionKeys::stepwise::protein::ghost_loops ]();
 		ccd_close_ = option[ basic::options::OptionKeys::stepwise::protein::ccd_close ]();
 		cluster_by_all_atom_rmsd_ = option[ basic::options::OptionKeys::stepwise::protein::cluster_by_all_atom_rmsd ]();
-		use_packer_instead_of_rotamer_trials_ = option[ basic::options::OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials ]();
 		expand_loop_takeoff_ = option[ basic::options::OptionKeys::stepwise::protein::expand_loop_takeoff ]() ;
 		skip_coord_constraints_ = option[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
 		frag_files_ = option[ OptionKeys::in::file::frag_files ]();

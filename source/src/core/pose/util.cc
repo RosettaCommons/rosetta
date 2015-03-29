@@ -576,6 +576,28 @@ dump_comment_pdb(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+hasPoseExtraScore(
+	core::pose::Pose const & pose,
+	std::string const name )
+{
+	using basic::datacache::CacheableStringFloatMap;
+	using basic::datacache::CacheableStringFloatMapCOP;
+
+	// make sure that the pose has one of these.
+	if( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ){
+		return false;
+	}
+
+	CacheableStringFloatMapCOP data
+		= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+	assert( data.get() != NULL );
+
+	return (  data->map().find( name ) != data->map().end() );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const name,
@@ -601,6 +623,16 @@ debug_assert( data.get() != NULL );
 	}
 	value = it->second;
 	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+Real
+getPoseExtraScore(
+	core::pose::Pose const & pose,
+	std::string const name ) {
+	Real value;
+	runtime_assert( getPoseExtraScore( pose, name, value ) );
+	return value;
 }
 
 bool getPoseExtraScore(

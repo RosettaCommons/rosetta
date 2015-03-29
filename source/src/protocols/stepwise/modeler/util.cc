@@ -46,6 +46,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/loop_graph/LoopGraph.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <numeric/xyz.functions.hh>
@@ -1059,12 +1060,18 @@ void
 fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res ) {
 
 	if ( !pose.residue(res ).is_RNA() ) return;
+	remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, res );
+	remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, res );
+
+
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 	utility::vector1< Size > const & sample_res = full_model_info.sample_res();
+	utility::vector1< Size > const & sample_sugar_res = full_model_info.rna_sample_sugar_res();
 
-	if ( !sample_res.has_value( res_list[ res ] ) ) return;
+	if ( !sample_res.has_value( res_list[ res ] ) &&
+			 !sample_sugar_res.has_value( res_list[ res ] ) ) return;
 
 	if ( res > 1 &&
 			 res_list[ res ] - 1 == res_list[ res - 1 ] &&
@@ -1142,13 +1149,57 @@ fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix ) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// trying to track down a discrepancy in pose scores after switching pose focus...
 void
-switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx ){
+check_scores_from_parts( std::string const tag,
+												 Real const original_score,
+												 pose::Pose & pose,
+												 pose::PoseOP original_pose_clone,
+												 utility::vector1< PoseOP > const & other_pose_list,
+												 core::scoring::ScoreFunctionCOP scorefxn ) {
+
+	using namespace core::scoring;
+
+	TR << tag << std::endl;
+
+	Real const pose_score = ( *scorefxn )( pose );
+	scorefxn->show( pose );
+	Real score = pose.energies().total_energies()[ intermol ] + pose.energies().total_energies()[ loop_close ];
+
+	// "manual" check on each pose to track down discrepancies in scores after switching pose focus.
+	ScoreFunctionOP scorefxn2 = scorefxn->clone();
+	scorefxn2->set_weight( intermol, 0.0 );
+	scorefxn2->set_weight( loop_close, 0.0 );
+	TR << "EACH PART 0 " << std::endl;
+	score += ( *scorefxn2 )( *original_pose_clone );
+	scorefxn2->show( *original_pose_clone );
+
+	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
+		score += ( *scorefxn2 )( *( other_pose_list[ n ] ) );
+		TR << "EACH PART " << n << std::endl;
+		scorefxn2->show( *other_pose_list[ n ]  );
+	}
+
+	TR << TR.Magenta << tag << ":  ORIGINAL " << original_score << "  RESCORE " << pose_score << "  SUM OF PARTS " << score << TR.Reset << std::endl;
+
+	core::scoring::loop_graph::LoopGraph loop_graph;
+	loop_graph.update( pose, true /*verbose*/ );
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void
+switch_focus_to_other_pose( pose::Pose & pose,
+														Size const & focus_pose_idx,
+														scoring::ScoreFunctionCOP scorefxn /* = 0 */ )
+{
 
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
 
 	if ( focus_pose_idx == 0 ) return;
+
+	Real const score_before_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
 
 	utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
 
@@ -1157,6 +1208,9 @@ switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx ){
 	PoseOP original_pose_clone = pose.clone();
 	utility::vector1< PoseOP > blank_pose_list;
 	nonconst_full_model_info( *original_pose_clone ).set_other_pose_list( blank_pose_list );
+
+	// debugging verbiage.
+	//	if ( scorefxn != 0 ) check_scores_from_parts(  "BEFORE_SWITCH_FOCUS", score_before_switch_focus, pose, original_pose_clone, other_pose_list, scorefxn );
 
 	// need to shift focus to the other pose. It will now be responsible for holding
 	// pointers to the other poses.
@@ -1179,12 +1233,26 @@ switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx ){
 	pose = ( *other_pose ); // makes a copy.
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, new_full_model_info );
 
+	Real const score_after_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
+
+	// debugging verbiage.
+	// if ( scorefxn != 0 ) {
+	// 	PoseOP other_pose_clone = other_pose->clone();
+	// 	if ( scorefxn != 0 ) check_scores_from_parts(  "AFTER_SWITCH_FOCUS", score_after_switch_focus, pose, other_pose_clone, new_other_pose_list, scorefxn );
+	// }
+
+	if (  std::abs( score_before_switch_focus - score_after_switch_focus ) > 1.0e-3 ){
+		utility_exit_with_message( "Energy change after switching pose focus: " + string_of( score_before_switch_focus ) + " to " +string_of( score_after_switch_focus ) );
+	}
+
+
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn,
+switch_focus_among_poses_randomly( pose::Pose & pose,
+																	 scoring::ScoreFunctionCOP scorefxn /* = 0 */,
 																	 bool force_switch /* = false */ ) {
 
 	using namespace core::pose;
@@ -1199,15 +1267,8 @@ switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP s
 		numeric::random::rg().random_range( 0, num_other_poses );
 	if ( focus_pose_idx == 0 ) return false;
 
-	Real const score_before_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
 	TR.Debug << TR.Green << "SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! to: " << focus_pose_idx << TR.Reset << std::endl;
-	switch_focus_to_other_pose( pose, focus_pose_idx );
-	Real const score_after_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
-
-	// originally set threshold at 0.001, but triggered rare errors. At some point worth tracking down...
-	if (  std::abs( score_before_switch_focus - score_after_switch_focus ) > 0.10 ){
-		utility_exit_with_message( "Energy change after switching pose focus: " + string_of( score_before_switch_focus ) + " to " +string_of( score_after_switch_focus ) );
-	}
+	switch_focus_to_other_pose( pose, focus_pose_idx, scorefxn );
 
 	return true;
 }
@@ -1812,6 +1873,7 @@ get_unique_connection_res( pose::Pose const & pose,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 map_constraints_from_original_pose( pose::Pose const & original_pose, pose::Pose & pose ) {
+	if ( pose.annotated_sequence() == original_pose.annotated_sequence() ) return;
 	runtime_assert( original_pose.total_residue() == pose.total_residue() );
 	id::SequenceMappingOP sequence_map( new id::SequenceMapping );
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) sequence_map->push_back( n );

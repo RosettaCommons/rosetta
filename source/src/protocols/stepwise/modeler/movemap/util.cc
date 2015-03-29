@@ -89,7 +89,6 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 														 bool const move_takeoff_torsions /* = true */ ) {
 	using namespace core::id;
 	Size const nres( pose.total_residue() );
-	//	TR << "WORKING MINIMIZE RES " << working_minimize_res << std::endl;
 	for ( Size n = 1; n <= nres; n++ ) {
 		if ( working_minimize_res.has_value( n ) ) allow_insert->set( n, true );
 		if ( !working_minimize_res.has_value( n ) ) {
@@ -118,6 +117,8 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 							 allow_insert->get_domain( NamedAtomID( " P  ", n )  , pose ) ) allow_insert->set_phosphate( n, pose, true );
 				}
 			}
+
+			if ( check_sample_sugar_in_full_model_info( pose, n ) ) allow_insert->set_sugar( n, pose, true );
 		}
 		if ( pose.residue_type(n).is_protein() ){
 			if ( move_takeoff_torsions ){
@@ -146,7 +147,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	}
 
 	allow_insert->setup_movemap( mm, pose );
-	//output_movemap( mm, pose, TR );
+	//	output_movemap( mm, pose, TR );
 }
 
 /////////////////////////////////////////////////////////

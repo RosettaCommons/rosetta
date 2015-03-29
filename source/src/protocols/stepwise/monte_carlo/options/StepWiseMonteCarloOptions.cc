@@ -48,16 +48,17 @@ namespace options {
 		allow_internal_local_moves_( true ),
 		cycles_( 500 ),
 		add_delete_frequency_( 0.5 ),
+		submotif_frequency_( 0.5 ),
 		docking_frequency_( 0.2 ),
 		minimize_single_res_frequency_( 0.0 ),
 		switch_focus_frequency_( 0.5 ),
 		just_min_after_mutation_frequency_( 0.5 ),
 		temperature_( 1.0 ),
-		allow_skip_bulge_( false ),
+		skip_bulge_frequency_( 0.0 ),
 		from_scratch_frequency_( 0.0 ),
 		allow_split_off_( true ),
 		virtual_sugar_keep_base_fixed_( false ),
-		virtual_sugar_do_minimize_( true ),
+		virtual_sugar_do_minimize_( false /*true*/ ),
 		make_movie_( false ),
 		sampler_perform_phosphate_pack_( true ),
 		force_phosphate_instantiation_( true ),
@@ -73,8 +74,13 @@ namespace options {
 		protein_prepack_( false ),
 		o2prime_legacy_mode_( false ),
 		recover_low_( false ),
+		enumerate_( false ),
+		preminimize_( false ),
+		new_move_selector_( false ),
+		test_all_moves_( false ),
 		save_times_( false ),
-		use_precomputed_library_( false )
+		use_precomputed_library_( true ),
+		minimize_after_delete_( true )
 	{
 		StepWiseBasicOptions::initialize_variables();
 		set_silent_file( "default.out" );
@@ -113,6 +119,7 @@ namespace options {
 		set_erraser( option[ OptionKeys::stepwise::rna::erraser ]() );
 		set_cycles( option[ OptionKeys::stepwise::monte_carlo::cycles ]() );
 		set_add_delete_frequency( option[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
+		set_submotif_frequency( option[ OptionKeys::stepwise::monte_carlo::submotif_frequency ]() );
 		set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::docking_frequency ]() );
 		if ( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ].user() ){
 			TR << TR.Red << "Use -docking_frequency instead of -intermolecular_frequency -- will be deprecated soon." << TR.Reset << std::endl;
@@ -123,12 +130,19 @@ namespace options {
 		set_just_min_after_mutation_frequency( option[ OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency ]() );
 		set_allow_internal_hinge_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves ]() );
 		set_allow_internal_local_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves ]() );
-		set_allow_skip_bulge( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() );
+
+		if ( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ].user() ) { // old option.
+			set_skip_bulge_frequency( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ? 0.2 : 0.0 );
+		}
+		if ( option[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ].user() ) set_skip_bulge_frequency( option[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ]() );
+
 		set_from_scratch_frequency( option[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
 		set_allow_split_off( option[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
 		set_temperature( option[ OptionKeys::stepwise::monte_carlo::temperature ]() );
 		set_virtual_sugar_keep_base_fixed( option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
-		set_virtual_sugar_do_minimize( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]() );
+		if ( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ].user() ) {
+			set_virtual_sugar_do_minimize( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]() );
+		}
 		force_centroid_interaction_ = true; // note default is different from stepwise enumeration
 		if ( option[ OptionKeys::stepwise::rna::force_centroid_interaction ].user() ) set_force_centroid_interaction( option[ OptionKeys::stepwise::rna::force_centroid_interaction ]() );
 		sampler_max_centroid_distance_ = option[ OptionKeys::stepwise::rna::sampler_max_centroid_distance ]();
@@ -140,6 +154,10 @@ namespace options {
 		tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
 		o2prime_legacy_mode_ = option[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
 		recover_low_ = option[ OptionKeys::stepwise::monte_carlo::recover_low ]();
+		enumerate_ = option[ OptionKeys::stepwise::enumerate ]();
+		preminimize_ = option[ OptionKeys::stepwise::preminimize ]();
+ 		new_move_selector_ = option[ OptionKeys::stepwise::new_move_selector ]();
+ 		test_all_moves_ = option[ OptionKeys::stepwise::test_all_moves ]();
 		save_times_ = option[ OptionKeys::stepwise::monte_carlo::save_times ]();
 		use_precomputed_library_ = option[ OptionKeys::stepwise::monte_carlo::use_precomputed_library ]();
 		local_redock_only_ = option[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
@@ -150,6 +168,10 @@ namespace options {
 		n_sample_ = option[ OptionKeys::stepwise::protein::n_sample ]();
 		protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
 		virtualize_packable_moieties_in_screening_pose_ = option[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
+		if ( test_all_moves_ ) {
+			set_num_random_samples( 0 );
+			set_minimize_after_delete( false );
+		}
 	}
 
 
@@ -168,8 +190,10 @@ namespace options {
 		options_basic_new = options_basic_this;
 
 		// general
-		options->set_choose_random( true );
+		options->set_choose_random( !enumerate_ );
 		options->set_virtualize_packable_moieties_in_screening_pose( virtualize_packable_moieties_in_screening_pose() );
+		if ( preminimize_ )	options->set_use_packer_instead_of_rotamer_trials( true );  // to match SWA for proteins.
+		if ( enumerate_ ) options->set_output_minimized_pose_list( true ); // to match legacy SWA
 
 		// protein-specific
 		options->set_skip_coord_constraints( skip_coord_constraints() );
@@ -193,6 +217,8 @@ namespace options {
 		options->set_o2prime_legacy_mode( o2prime_legacy_mode() );
 		options->set_sampler_perform_phosphate_pack( sampler_perform_phosphate_pack() );
 		options->set_force_phosphate_instantiation( force_phosphate_instantiation() );
+		options->set_allow_rebuild_bulge_mode( false );
+		options->set_virtual_sugar_do_screens( false );
 
 		return options;
 	}

@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
-#include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
@@ -57,10 +57,10 @@ namespace mover {
 	//Constructor
 	ResampleMover::ResampleMover(	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ):
 		stepwise_modeler_( stepwise_modeler ),
-		swa_move_selector_( SWA_MoveSelectorOP( new SWA_MoveSelector ) ),
+		swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
 		options_( options::StepWiseMonteCarloOptionsCOP( options::StepWiseMonteCarloOptionsOP( new options::StepWiseMonteCarloOptions ) ) ),
 		minimize_single_res_( false ),
-		slide_docking_jumps_( true )
+		slide_docking_jumps_( false )
 	{}
 
 	//Destructor
@@ -82,18 +82,21 @@ namespace mover {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// This version randomly chooses the move element.
+	// This may be deprecated soon since we are moving move selection out
+	// to StepWiseMasterMover.
+  //////////////////////////////////////////////////////////////////////////
 	bool
 	ResampleMover::apply( pose::Pose & pose,
 												std::string & move_type ){
 
-		utility::vector1< SWA_Move > swa_moves;
+		utility::vector1< StepWiseMove > swa_moves;
 		swa_move_selector_->set_allow_internal_hinge( options_->allow_internal_hinge_moves() );
 		swa_move_selector_->set_allow_internal_local( options_->allow_internal_local_moves() );
 		swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
 		swa_move_selector_->get_resample_move_elements( pose, swa_moves );
 
 		if ( swa_moves.size() == 0 ) return false;
-		SWA_Move const & swa_move = numeric::random::rg().random_element( swa_moves );
+		StepWiseMove const & swa_move = numeric::random::rg().random_element( swa_moves );
 
 		return apply( pose, swa_move, move_type );
 	}
@@ -101,7 +104,7 @@ namespace mover {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	ResampleMover::apply( pose::Pose & pose,
-												SWA_Move const & swa_move ){
+												StepWiseMove const & swa_move ){
 		std::string dummy_move_type;
 		return apply( pose, swa_move, dummy_move_type );
 	}
@@ -109,7 +112,7 @@ namespace mover {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	ResampleMover::apply( pose::Pose & pose,
-												SWA_Move const & swa_move,
+												StepWiseMove const & swa_move,
 												std::string & move_type ){
 
 		using namespace protocols::stepwise;
@@ -188,7 +191,7 @@ namespace mover {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Size
-	ResampleMover::get_remodel_res( SWA_Move const & swa_move, pose::Pose const & pose ) const {
+	ResampleMover::get_remodel_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const {
 		using namespace core::pose::full_model_info;
 		runtime_assert( swa_move.attachments().size() == 1 );
 

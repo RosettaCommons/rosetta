@@ -115,6 +115,9 @@ namespace options {
 		core::Real const & add_delete_frequency() const { return add_delete_frequency_; }
 		void set_add_delete_frequency( core::Real const & setting ){ add_delete_frequency_ = setting; }
 
+		core::Real const & submotif_frequency() const { return submotif_frequency_; }
+		void set_submotif_frequency( core::Real const & setting ){ submotif_frequency_ = setting; }
+
 		core::Real const & docking_frequency() const { return docking_frequency_; }
 		void set_docking_frequency( core::Real const & setting ){ docking_frequency_ = setting; }
 
@@ -136,8 +139,8 @@ namespace options {
 		core::Real const & chainbreak_weight() const { return chainbreak_weight_; }
 		void set_chainbreak_weight(  core::Real const & setting ){ chainbreak_weight_ = setting; }
 
-		bool const & allow_skip_bulge() const { return allow_skip_bulge_; }
-		void set_allow_skip_bulge( bool const & setting ){ allow_skip_bulge_ = setting; }
+		core::Real const & skip_bulge_frequency() const { return skip_bulge_frequency_; }
+		void set_skip_bulge_frequency( core::Real const & setting ){ skip_bulge_frequency_ = setting; }
 
 		core::Real const & from_scratch_frequency() const { return from_scratch_frequency_; }
 		void set_from_scratch_frequency( core::Real const & setting ){ from_scratch_frequency_ = setting; }
@@ -196,11 +199,26 @@ namespace options {
 		bool const & recover_low() const { return recover_low_; }
 		void set_recover_low( bool const & setting ){ recover_low_ = setting; }
 
+		bool const & enumerate() const { return enumerate_; }
+		void set_enumerate( bool const & setting ){ enumerate_ = setting; }
+
+		bool const & preminimize() const { return preminimize_; }
+		void set_preminimize( bool const & setting ){ preminimize_ = setting; }
+
+		bool const & new_move_selector() const { return new_move_selector_; }
+		void set_new_move_selector( bool const & setting ){ new_move_selector_ = setting; }
+
+		bool const & test_all_moves() const { return test_all_moves_; }
+		void set_test_all_moves( bool const & setting ){ test_all_moves_ = setting; }
+
 		bool const & save_times() const { return save_times_; }
 		void set_save_times( bool const & setting ){ save_times_ = setting; }
 
 		bool const & use_precomputed_library() const { return use_precomputed_library_; }
 		void set_use_precomputed_library( bool const & setting ){ use_precomputed_library_ = setting; }
+
+		bool const & minimize_after_delete() const { return minimize_after_delete_; }
+		void set_minimize_after_delete( bool const & setting ){ minimize_after_delete_ = setting; }
 
 	private:
 
@@ -215,6 +233,7 @@ namespace options {
 		bool allow_internal_local_moves_;
 		core::Size cycles_;
 		core::Real add_delete_frequency_;
+		core::Real submotif_frequency_;
 		core::Real docking_frequency_;
 		core::Real minimize_single_res_frequency_;
 		core::Real switch_focus_frequency_;
@@ -222,7 +241,7 @@ namespace options {
 		core::Real temperature_;
 		core::Real max_missing_weight_;
 		core::Real chainbreak_weight_;
-		bool allow_skip_bulge_;
+		core::Real skip_bulge_frequency_;
 		core::Real from_scratch_frequency_;
 		bool allow_split_off_;
 		bool virtual_sugar_keep_base_fixed_;
@@ -242,8 +261,13 @@ namespace options {
 		bool protein_prepack_;
 		bool o2prime_legacy_mode_;
 		bool recover_low_;
+		bool enumerate_;
+		bool preminimize_;
+		bool new_move_selector_;
+		bool test_all_moves_;
 		bool save_times_;
 		bool use_precomputed_library_;
+		bool minimize_after_delete_;
 	};
 
 } //options

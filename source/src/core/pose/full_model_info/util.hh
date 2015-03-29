@@ -196,6 +196,10 @@ namespace full_model_info {
 	get_connection_domains( utility::vector1< std::pair< core::Size, core::Size > > const & chain_connections,
 													core::Size const nchains );
 
+	bool
+	check_sample_sugar_in_full_model_info( core::pose::Pose const & pose,
+																				 core::Size const i );
+
 } //full_model_info
 } //pose
 } //core

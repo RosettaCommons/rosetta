@@ -123,6 +123,7 @@ sources = {
 	"StepWiseBasicOptions",
     ],
     "protocols/stepwise/screener": [
+	"AlignRMSD_Screener",
 	"AnchorSugarScreener",
 	"BaseBinMapUpdater",
 	"BaseCentroidScreener",
@@ -131,7 +132,6 @@ sources = {
 	"FastForwardToNextRigidBody",
 	"FastForwardToNextResidueAlternative",
 	"IntegrationTestBreaker",
-	"NativeRMSD_Screener",
 	"O2PrimeScreener",
 	"PackScreener",
 	"PartitionContactScreener",
@@ -247,17 +247,15 @@ sources = {
 	"RNA_VDW_BinChecker",
     ],
     "protocols/stepwise/modeler/rna/sugar/": [
-	"StepWiseRNA_VirtualSugarJustInTimeInstantiator",
-	"StepWiseRNA_VirtualSugarSampler",
-	"StepWiseRNA_VirtualSugarSamplerFromStringList",
+	"VirtualSugarJustInTimeInstantiator",
+	"VirtualSugarSampler",
+	"VirtualSugarSamplerFromStringList",
 	"SugarModeling",
 	"SugarInstantiateMover",
 	"SugarVirtualizeMover",
 	"util",
     ],
     "protocols/stepwise/monte_carlo": [
-	"SWA_Move",
-	"SWA_MoveSelector",
 	"StepWiseMonteCarlo",
 	"util",
     ],
@@ -267,6 +265,9 @@ sources = {
 	"DeleteMover",
 	"FromScratchMover",
 	"ResampleMover",
+	"StepWiseMasterMover",
+	"StepWiseMove",
+	"StepWiseMoveSelector",
 	"TransientCutpointHandler",
     ],
     "protocols/stepwise/monte_carlo/options": [
@@ -276,6 +277,9 @@ sources = {
 	"RNA_AddDeleteMonteCarlo",
 	"RNA_O2PrimeMover",
 	"RNA_TorsionMover",
+    ],
+    "protocols/stepwise/monte_carlo/submotif": [
+	"SubMotifLibrary",
     ],
 }
 include_path = [

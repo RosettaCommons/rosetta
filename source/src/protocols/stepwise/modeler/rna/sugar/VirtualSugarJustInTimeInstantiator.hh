@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.hh
+/// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarJustInTimeInstantiator_HH
-#define INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarJustInTimeInstantiator_HH
+#ifndef INCLUDED_protocols_stepwise_rna_VirtualSugarJustInTimeInstantiator_HH
+#define INCLUDED_protocols_stepwise_rna_VirtualSugarJustInTimeInstantiator_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.fwd.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.fwd.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
@@ -34,15 +34,15 @@ namespace modeler {
 namespace rna {
 namespace sugar {
 
-	class StepWiseRNA_VirtualSugarJustInTimeInstantiator: public protocols::moves::Mover {
+	class VirtualSugarJustInTimeInstantiator: public protocols::moves::Mover {
 
 	public:
 
 		//constructor
-		StepWiseRNA_VirtualSugarJustInTimeInstantiator( working_parameters::StepWiseWorkingParametersCOP & working_parameters_ );
+		VirtualSugarJustInTimeInstantiator( working_parameters::StepWiseWorkingParametersCOP & working_parameters_ );
 
 		//destructor
-		~StepWiseRNA_VirtualSugarJustInTimeInstantiator();
+		~VirtualSugarJustInTimeInstantiator();
 
 		virtual void apply( pose::Pose & pose_to_visualize );
 
@@ -134,8 +134,6 @@ namespace sugar {
 
 		options::StepWiseModelerOptionsCOP options_;
 		core::scoring::ScoreFunctionCOP scorefxn_;
-
-		std::map< Size, Size > reference_res_for_each_virtual_sugar_;
 
 		bool success_;
 	};

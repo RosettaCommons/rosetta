@@ -63,7 +63,10 @@ namespace full_model_info {
 		full_sequence_( full_sequence )
 	{
 		initialize_parameters( *this );
-		for ( Size n = 1; n <= full_sequence.size(); n++ ) conventional_numbering_.push_back( n );
+		for ( Size n = 1; n <= full_sequence.size(); n++ ) {
+			conventional_numbering_.push_back( n );
+			conventional_chains_.push_back( ' ' );
+		}
 	}
 
 	//Constructor
@@ -82,6 +85,7 @@ namespace full_model_info {
 				fixed_domain_map.push_back( 0 );
 			}
 			conventional_numbering_.push_back( static_cast<int>( n ) );
+			conventional_chains_.push_back( ' ' );
 		}
 		set_parameter( FIXED_DOMAIN, fixed_domain_map );
 		set_parameter( INPUT_DOMAIN, fixed_domain_map );
@@ -246,12 +250,20 @@ namespace full_model_info {
 			for ( int i = prev_res_num+1; i < current_res_num; i++ ) {
 				sequence.push_back( 'n' );
 				conventional_numbering.push_back( i );
-				if ( pose.pdb_info() ) conventional_chains.push_back( pose.pdb_info()->chain( n ) );
+				if ( pose.pdb_info() ) {
+					conventional_chains.push_back( pose.pdb_info()->chain( n ) );
+				} else {
+					conventional_chains.push_back( ' ' );
+				}
 				count++;
 			}
 			sequence.push_back( pose.sequence()[ n-1 ] );
 			conventional_numbering.push_back( current_res_num );
-			if ( pose.pdb_info() ) conventional_chains.push_back( pose.pdb_info()->chain( n ) );
+			if ( pose.pdb_info() ) {
+				conventional_chains.push_back( pose.pdb_info()->chain( n ) );
+			} else {
+				conventional_chains.push_back( ' ' );
+			}
 			res_list.push_back( ++count );
 		}
 	}
@@ -409,9 +421,13 @@ namespace full_model_info {
 		for ( Size n = 1; n <= res_list.size(); n++ ){
 			Size const & res_num = res_list[ n ];
 			runtime_assert( res_num >= 1 && res_num <= conventional_numbering_.size() );
-			runtime_assert( res_num >= 1 && res_num <= conventional_chains_.size() );
+			runtime_assert( res_num <= conventional_chains_.size() || conventional_chains_.size() == 0 );
 			conventional_numbering_in_res_list.push_back( conventional_numbering_[ res_num ] );
-			conventional_chains_in_res_list.push_back( conventional_chains_[ res_num ] );
+			if ( conventional_chains_.size() > 0 ) {
+				conventional_chains_in_res_list.push_back( conventional_chains_[ res_num ] );
+			} else {
+				conventional_chains_in_res_list.push_back( ' ' );
+			}
 		}
 		return std::make_pair( conventional_numbering_in_res_list, conventional_chains_in_res_list );
 	}
@@ -421,6 +437,18 @@ namespace full_model_info {
 	FullModelParameters::full_to_conventional( Size const res_num ) const {
 		runtime_assert( res_num >= 1 && res_num <= conventional_numbering_.size() );
 		return conventional_numbering_[ res_num ];
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	std::pair< int, char >
+	FullModelParameters::full_to_conventional_resnum_and_chain( Size const res_num ) const {
+		runtime_assert( res_num >= 1 && res_num <= conventional_numbering_.size() );
+		runtime_assert( res_num <= conventional_chains_.size() || conventional_chains_.size() == 0 );
+		if ( conventional_chains_.size() > 0 ) { 
+			return std::make_pair( conventional_numbering_[ res_num ], conventional_chains_[ res_num ] );
+		}
+		return std::make_pair( conventional_numbering_[ res_num ], ' ' );
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

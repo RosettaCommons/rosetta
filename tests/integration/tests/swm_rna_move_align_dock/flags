@@ -1,0 +1,10 @@
+-s gaaa_minor_fixed_2oiu_RNAQ.pdb gaaa_minor_fixed_2oiu_RNAP.pdb 
+-align_pdb ALIGN_2bp_gaaa_minor_free_2oiu_RNA.pdb 
+-move ADD P:63 JUMP_DOCK Q:48 
+-fasta gaaa_minor_free.fasta 
+-jump_res P:63 Q:48 
+-rmsd_screen 4.0 
+# could be -enumerate, but this is for speed.
+-num_random_samples 5
+# for speed:
+-virtualize_free_moieties_in_native false 

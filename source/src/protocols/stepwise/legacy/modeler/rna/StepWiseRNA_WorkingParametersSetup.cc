@@ -1718,6 +1718,16 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
 
 	void
+	StepWiseWorkingParametersSetup::set_force_anti_chi_res_list( utility::vector1 < core::Size > const & setting ){
+
+		utility::vector1< Size > const force_anti_chi_res_list = setting;
+		working_parameters_->set_force_anti_chi_res_list(  force_anti_chi_res_list );
+
+	}
+
+  //////////////////////////////////////////////////////////////////////////
+
+	void
 	StepWiseWorkingParametersSetup::set_force_north_sugar_list( utility::vector1 < core::Size > const & setting ){
 
 		utility::vector1 < core::Size > const force_north_sugar_list = setting;

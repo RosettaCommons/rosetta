@@ -33,6 +33,8 @@
 
 #include <utility/thread/backwards_thread_local.hh>
 
+#include <utility/CSI_Sequence.hh>
+
 #include <cassert>
 #include <cstddef>
 #include <iosfwd>
@@ -50,21 +52,6 @@ enum TracerPriority {
 	t_info    = 300, //< The INFO level designates informational messages that highlight the progress of the application at coarse-grained level.
 	t_debug   = 400, //< The DEBUG level designates fine-grained informational events that are most useful to debug an application.
 	t_trace   = 500  //< The TRACE level designates finer-grained informational events than the DEBUG level.
-};
-
-
-/// @brief Class to hold all Terminal ASCII codes as static data for Tracer.
-///        Note: that on non-tty terminals all codes will initialized as empty to avoid polution of Rosetta logs.
-class CSI_Sequence
-{
-public:
-	CSI_Sequence(std::string sequence_);
-
-	/// @brief operator to output our sequence so we can write: std::cout << CSI_SequenceObject
-	friend std::ostream & operator << ( std::ostream & os, CSI_Sequence const &sq) { os << sq.sequence; return os; }
-
-private:
-	std::string sequence;
 };
 
 
@@ -261,10 +248,8 @@ public: /// Inner Classes
 	/// @brief channels with predefined priority levels.
 	TracerProxy Fatal, Error, Warning, Info, Debug, Trace;
 
-	/// @brief pre-created objects to hold various ASCII CSI codes, treat them as almost-const's
-	///        Codes below is all Hogwarts-approved magic numbers, so do not modify them.
-	///        For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
-	static CSI_Sequence Reset, Bold, Underline,
+	/// @details Static objects holding various ASCII CSI codes (see utility/CSI_Sequence.hh)
+	static utility::CSI_Sequence Reset, Bold, Underline,
 		  Black,   Red,   Green,   Yellow,   Blue,   Magenta,   Cyan,   White,
 		bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite;
 

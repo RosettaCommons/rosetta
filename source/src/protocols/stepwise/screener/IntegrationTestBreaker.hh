@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_stepwise_screener_IntegrationTestBreaker_HH
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
-#include <protocols/stepwise/screener/NativeRMSD_Screener.fwd.hh>
+#include <protocols/stepwise/screener/AlignRMSD_Screener.fwd.hh>
 #include <protocols/stepwise/screener/IntegrationTestBreaker.fwd.hh>
 
 namespace protocols {
@@ -30,8 +30,8 @@ namespace screener {
 
 		//constructor
 		IntegrationTestBreaker( StepWiseScreenerOP screener_whose_counts_to_check,
-														StepWiseScreenerOP final_screener /*total_count -- for turning on native screen*/,
-														NativeRMSD_ScreenerOP native_rmsd_screener );
+														StepWiseScreenerOP final_screener /*total_count -- for turning on align screen*/,
+														AlignRMSD_ScreenerOP align_rmsd_screener );
 
 		//destructor
 		~IntegrationTestBreaker();
@@ -54,7 +54,7 @@ namespace screener {
 
 		StepWiseScreenerOP screener_whose_counts_to_check_;
 		StepWiseScreenerOP final_screener_;
-		NativeRMSD_ScreenerOP native_rmsd_screener_;
+		AlignRMSD_ScreenerOP align_rmsd_screener_;
 
 	};
 

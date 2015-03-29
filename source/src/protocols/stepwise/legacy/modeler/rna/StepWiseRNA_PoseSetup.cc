@@ -1020,6 +1020,7 @@ StepWiseRNA_PoseSetup::setup_full_model_info( pose::Pose & pose ) const {
 	full_model_parameters->set_parameter_as_res_list( CALC_RMS,     working_parameters_->calc_rms_res() );
 	full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, working_parameters_->terminal_res() );
 	full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  working_parameters_->force_syn_chi_res_list() );
+	full_model_parameters->set_parameter_as_res_list( RNA_ANTI_CHI,  working_parameters_->force_anti_chi_res_list() );
 	full_model_parameters->set_parameter_as_res_list( RNA_NORTH_SUGAR, working_parameters_->force_north_sugar_list() );
 	full_model_parameters->set_parameter_as_res_list( RNA_SOUTH_SUGAR, working_parameters_->force_south_sugar_list() );
 	full_model_info->set_full_model_parameters( full_model_parameters );

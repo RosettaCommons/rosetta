@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -694,6 +695,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 					utility::vector1< core::Size > const & force_north_sugar_list = working_parameters_->working_force_north_sugar_list();
 					utility::vector1< core::Size > const & force_south_sugar_list = working_parameters_->working_force_south_sugar_list();
 					utility::vector1< core::Size > const & force_syn_chi_res_list = working_parameters_->working_force_syn_chi_res_list();
+					utility::vector1< core::Size > const & force_anti_chi_res_list = working_parameters_->working_force_anti_chi_res_list();
 
 					for ( Size n = 1; n <= force_north_sugar_list.size(); n++ ){
 						Size const seq_num = force_north_sugar_list[n];
@@ -706,7 +708,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 							continue;
 						}
-						if ( get_residue_pucker_state( (*pose_op), seq_num ) != NORTH ){
+						if ( core::pose::rna::get_residue_pucker_state( (*pose_op), seq_num ) != NORTH ){
 							pass_filter = false;
 							if ( filter_verbose ) TR << "pose = " << tag << " doesn't have north_sugar at seq_num = " << seq_num << std::endl;
 						}
@@ -723,7 +725,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 							continue;
 						}
-						if ( get_residue_pucker_state( (*pose_op), seq_num ) != SOUTH ){
+						if ( core::pose::rna::get_residue_pucker_state( (*pose_op), seq_num ) != SOUTH ){
 							 pass_filter = false;
 							if ( filter_verbose ) TR << "pose = " << tag << " doesn't have south_sugar at seq_num = " << seq_num << std::endl;
 						}
@@ -740,9 +742,26 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 							continue;
 						}
-						if ( get_residue_base_state( (*pose_op), seq_num ) != SYN ){
+						if ( core::pose::rna::get_residue_base_state( (*pose_op), seq_num ) != SYN ){
 						 	pass_filter = false;
 							if ( filter_verbose ) TR << "pose = " << tag << " doesn't have syn_chi at seq_num = " << seq_num << std::endl;
+						}
+					}
+
+					for ( Size n = 1; n <= force_anti_chi_res_list.size(); n++ ){
+						Size const seq_num = force_anti_chi_res_list[n];
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
+							continue;
+						}
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+							continue;
+						}
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+							continue;
+						}
+						if ( core::pose::rna::get_residue_base_state( (*pose_op), seq_num ) != ANTI ){
+						 	pass_filter = false;
+							if ( filter_verbose ) TR << "pose = " << tag << " doesn't have anti_chi at seq_num = " << seq_num << std::endl;
 						}
 					}
 
@@ -758,7 +777,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 						Size num_south_sugar = 0;
 						for ( Size n = 1; n <= working_global_sample_res_list.size(); n++ ){
 							Size const seq_num = working_global_sample_res_list[n];
-							if ( get_residue_pucker_state( (*pose_op), seq_num ) == SOUTH ){
+							if ( core::pose::rna::get_residue_pucker_state( (*pose_op), seq_num ) == SOUTH ){
 								num_south_sugar += 1;
 							}
 						}
@@ -1026,8 +1045,8 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 				output_boolean( " is_prepend = ", is_prepend, TR );
 				output_boolean( " both_pose_res_is_virtual = ", both_pose_res_is_virtual, TR );
 				TR << " same_pucker[" << i << "] = "; output_boolean( same_sugar_pucker_list[i], TR );
-				print_sugar_pucker_state( " curr_pucker = ", get_residue_pucker_state( current_pose, seq_num ), TR );
-				print_sugar_pucker_state( " center_pucker = ", get_residue_pucker_state( cluster_center_pose, seq_num ), TR );
+				print_sugar_pucker_state( " curr_pucker = ", core::pose::rna::get_residue_pucker_state( current_pose, seq_num ), TR );
+				print_sugar_pucker_state( " center_pucker = ", core::pose::rna::get_residue_pucker_state( cluster_center_pose, seq_num ), TR );
 				TR << " rmsd_list[" << i << "] = " << rmsd_list[i];
 
 				if ( ignore_unmatched_virtual_res_ ){

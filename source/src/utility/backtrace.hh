@@ -40,6 +40,8 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include <utility/CSI_Sequence.hh>
+
 //////////////////////////////////////////////////////////////////////
 //
 // See note above if this is causing your build to not compile.
@@ -103,12 +105,15 @@ inline
 bool
 print_backtrace() {
 
-  void* callstack[128];
-	int i, frames = backtrace(callstack, 128);
+	size_t const callstack_size = 128;
+  void* callstack[callstack_size];
+	int i, frames = backtrace(callstack, callstack_size);
 	char** strs = backtrace_symbols(callstack, frames);
+	std::cerr << utility::CSI_Magenta; // set color of cerr to magenta
 	for (i = 0; i < frames; ++i) {
 		std::cerr << demangle( strs[i] ).c_str() << std::endl;
 	}
+	std::cerr << utility::CSI_Sequence(utility::CSI_Reset); // reset color of cerr
 	free(strs);
 	return false; // allows use in debug_assert
 }

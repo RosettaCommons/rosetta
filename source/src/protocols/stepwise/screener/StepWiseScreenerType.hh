@@ -22,6 +22,7 @@ namespace screener {
 
 	enum StepWiseScreenerType{
 		NONE,
+		ALIGN_RMSD,
 		ANCHOR_SUGAR,
     ATR_REP,
 		BASE_BIN_MAP,
@@ -31,7 +32,6 @@ namespace screener {
 		FAST_FORWARD_TO_NEXT_RIGID_BODY,
 		FAST_FORWARD_TO_NEXT_RESIDUE_ALTERNATIVE,
 		INTEGRATION_TEST,
-		NATIVE_RMSD,
 		O2PRIME_PACK,
 		PACK,
 		PARTITION_CONTACT,

@@ -111,6 +111,15 @@ public:
 								 bool const & setting );
 
 	void
+	set_sugar_domain( core::Size const & i,
+										core::pose::Pose const & pose,
+										Size const & setting );
+	void
+	set_sugar( core::Size const & i,
+						 core::pose::Pose const & pose,
+						 bool const & setting );
+
+	void
 	set( Size const & i, bool const & setting  );
 
 	void

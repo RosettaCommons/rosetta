@@ -252,12 +252,10 @@ rna_score_test()
 	}
 
 	// native pose setup
-	pose::Pose native_pose;
+	pose::PoseOP native_pose;
 	bool native_exists( false );
 	if ( option[ in::file::native ].user() ) {
-		std::string native_pdb_file  = option[ in::file::native ];
-		core::import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
-		cleanup( native_pose );
+		native_pose = get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
 		native_exists = true;
 	}
 
@@ -302,7 +300,7 @@ rna_score_test()
 
 	Size i( 0 );
 
-	if ( native_exists ) (*scorefxn)( native_pose );
+	if ( native_exists ) (*scorefxn)( *native_pose );
 
 	while ( input->has_another_pose() ){
 
@@ -328,7 +326,7 @@ rna_score_test()
 				}
 				my_model->set_res_list( resnum );
 				my_model->set_other_pose_list( other_poses );
-				pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, my_model );
+				set_full_model_info( pose, my_model );
 			}
 		}
 
@@ -349,8 +347,8 @@ rna_score_test()
 		BinarySilentStruct s( pose, tag );
 
 		if ( native_exists ){
-			//Real const rmsd      = all_atom_rmsd( native_pose, pose );
-			Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+			//Real const rmsd      = all_atom_rmsd( *native_pose, pose );
+			Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "new_rms", rmsd );
 
@@ -358,7 +356,7 @@ rna_score_test()
 			if ( option[params_file].user() ) {
 				std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
 				if ( stem_residues.size() > 0 ) {
-					Real const rmsd_stems = all_atom_rmsd( native_pose, pose, stem_residues );
+					Real const rmsd_stems = all_atom_rmsd( *native_pose, pose, stem_residues );
 					s.add_energy( "rms_stem", rmsd_stems );
 					std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
 				}

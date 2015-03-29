@@ -42,8 +42,9 @@ namespace checker {
 
 	//Constructor
 	RNA_AtrRepChecker::RNA_AtrRepChecker( pose::Pose const & pose,
-																working_parameters::StepWiseWorkingParametersCOP & working_parameters,
-																bool loose_rep_cutoff ):
+																				working_parameters::StepWiseWorkingParametersCOP & working_parameters,
+																				bool loose_rep_cutoff,
+																				scoring::methods::EnergyMethodOptionsCOP energy_method_options /* = 0 */ ):
 		moving_res_(     working_parameters->working_moving_res() ),
 		reference_res_(  working_parameters->working_reference_res() ),
 		gap_size_(    working_parameters->gap_size() ),
@@ -55,31 +56,29 @@ namespace checker {
 		extra_loose_rep_cutoff_( false )
 	{
 		initialize_parameters();
-		initialize_scorefxn();
+		initialize_scorefxn( energy_method_options );
 		get_base_atr_rep_score( pose );
 	}
 
 	//Constructor
 	RNA_AtrRepChecker::RNA_AtrRepChecker( pose::Pose const & pose,
-																	Size const moving_res,
-																	Size const reference_res,
-																	Size const gap_size,
-																	bool const is_internal /* = false */,
-																	bool const separate_moving_residue_to_estimate_baseline, /* = true */
-																	bool const sample_both_sugar_base_rotamer /* = false */
+																				Size const moving_res,
+																				Size const reference_res,
+																				Size const gap_size,
+																				scoring::methods::EnergyMethodOptionsCOP energy_method_options /* = 0 */
 																	):
 		moving_res_( moving_res    ),
 		reference_res_( reference_res ),
 		gap_size_( gap_size ),
 		is_prepend_(  reference_res_ > moving_res_ ),
-		is_internal_( is_internal ),
-		sample_both_sugar_base_rotamer_( sample_both_sugar_base_rotamer ),
-		separate_moving_residue_to_estimate_baseline_( separate_moving_residue_to_estimate_baseline  ),
+		is_internal_( false  ),
+		sample_both_sugar_base_rotamer_( false ),
+		separate_moving_residue_to_estimate_baseline_( true ),
 		loose_rep_cutoff_( false ),
 		extra_loose_rep_cutoff_( false )
 	{
 		initialize_parameters();
-		initialize_scorefxn();
+		initialize_scorefxn( energy_method_options );
 		get_base_atr_rep_score( pose );
 	}
 
@@ -89,9 +88,10 @@ namespace checker {
 
 	///////////////////////////////////////////
 	void
-	RNA_AtrRepChecker::initialize_scorefxn(){
+	RNA_AtrRepChecker::initialize_scorefxn( scoring::methods::EnergyMethodOptionsCOP energy_method_options /* = 0 */ ){
 		// Bare minimum to check for contact (fa_atr) but not clash (fa_rep)
 		atr_rep_screening_scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		if ( energy_method_options != 0 ) atr_rep_screening_scorefxn_->set_energy_method_options( *energy_method_options );
 		atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_atr , 0.23 );
 		atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_rep , 0.12 );
 	}

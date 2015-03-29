@@ -25,6 +25,7 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/FadeFunc.hh>
+#include <numeric/angle.functions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
@@ -184,12 +185,6 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 	Size const c2prime_index = rsd.RNA_type().c2prime_atom_index();
 	Size const c4prime_index = rsd.RNA_type().c4prime_atom_index();
 
-	//consistency_check
-	if ( o4prime_index != 7 )  utility_exit_with_message( "o4prime_id = " + ObjexxFCL::string_of( o4prime_index ) + " != 7" );
-	if ( c1prime_index != 10 ) utility_exit_with_message( "c1prime_id = " + ObjexxFCL::string_of( c1prime_index ) + " != 10" );
-	if ( c2prime_index != 11 ) utility_exit_with_message( "c2prime_id = " + ObjexxFCL::string_of( c2prime_index ) + " != 11" );
-	if ( c4prime_index != 6 )  utility_exit_with_message( "c4prime_id = " + ObjexxFCL::string_of( c4prime_index ) + " != 16" );
-
 	id::AtomID const o4prime_id( o4prime_index, i );
 	id::AtomID const c1prime_id( c1prime_index, i );
 	id::AtomID const c2prime_id( c2prime_index, i );
@@ -198,7 +193,7 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 
 	constraints::ConstraintOP dist_cst, angle1, angle2, angle3;
 	if ( use_phenix_sugar_close_ ) {
-		Real const & delta = rsd.mainchain_torsion( DELTA );
+		Real const & delta = numeric::principal_angle_degrees( rsd.mainchain_torsion( DELTA ) );
 		Real const & delta_cutoff = rna_fitted_torsion_info_->delta_cutoff();
 		if ( delta < delta_cutoff ) { //NORTH
 			func::FuncOP f_dist_cst( new func::HarmonicFunc( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ) );

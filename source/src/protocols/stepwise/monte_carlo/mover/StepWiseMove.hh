@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/monte_carlo/SWA_Move.hh
+/// @file protocols/stepwise/monte_carlo/mover/StepWiseMove.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_monte_carlo_SWA_Move_HH
-#define INCLUDED_protocols_stepwise_monte_carlo_SWA_Move_HH
+#ifndef INCLUDED_protocols_stepwise_monte_carlo_StepWiseMove_HH
+#define INCLUDED_protocols_stepwise_monte_carlo_StepWiseMove_HH
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <utility/vector1.hh>
@@ -29,19 +29,30 @@ using namespace core;
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
+namespace mover {
 
 	typedef utility::vector1< core::Size >  MoveElement;
 	typedef utility::vector1< Attachment> Attachments;
 
-	// If you add something here, update to_string( AttachmenType ) in SWA_Move.cc
-	enum AttachmentType{ NO_ATTACHMENT = 0,
-											 BOND_TO_PREVIOUS, BOND_TO_NEXT,
-											 JUMP_TO_PREV_IN_CHAIN, JUMP_TO_NEXT_IN_CHAIN,
-											 JUMP_DOCK,
-											 LAST_ATTACHMENT_TYPE };
+	// If you add something here, update to_string( AttachmenType ) in StepWiseMove.cc
+	enum AttachmentType { NO_ATTACHMENT = 0,
+											  BOND_TO_PREVIOUS,
+												BOND_TO_NEXT,
+												JUMP_TO_PREV_IN_CHAIN,
+												JUMP_TO_NEXT_IN_CHAIN,
+												JUMP_DOCK,
+												SUBMOTIF, // special, used to fill submotif_tag_
+												LAST_ATTACHMENT_TYPE };
 
-	// If you add something here, update to_string( MoveType ) in SWA_Move.cc
-	enum MoveType{ NO_MOVE = 0, ADD, DELETE, FROM_SCRATCH, RESAMPLE, RESAMPLE_INTERNAL_LOCAL, LAST_ADD_OR_DELETE_CHOICE };
+	// If you add something here, update to_string( MoveType ) in StepWiseMove.cc
+	enum MoveType { NO_MOVE = 0,
+									ADD, // create new suite or jump
+									DELETE, // split existing suite or jump
+									FROM_SCRATCH, // create new residues (several)
+									RESAMPLE, // resample existing suite or jump between two partitions
+									RESAMPLE_INTERNAL_LOCAL, // ERRASER-style, KIC move.
+									ADD_SUBMOTIF, // may be deprecated in factor of FROM_SCRATCH
+									LAST_ADD_OR_DELETE_CHOICE };
 
 	std::string to_string( AttachmentType const & attachment_type );
 
@@ -66,8 +77,9 @@ namespace monte_carlo {
 
 		Attachment( Attachment const & src );
 
-		Attachment &
-		operator=( Attachment const & src );
+		friend
+		bool
+		operator==( Attachment const & a, Attachment const & b );
 
 		//destructor
 		~Attachment();
@@ -88,39 +100,45 @@ namespace monte_carlo {
 	};
 
 	/////////////////////////////////////////////////////////////////////
-	class SWA_Move: public utility::pointer::ReferenceCount {
+	class StepWiseMove: public utility::pointer::ReferenceCount {
 
 	public:
 
 		//constructor
-		SWA_Move();
+		StepWiseMove();
 
-		SWA_Move( MoveElement const & move_element,
+		StepWiseMove( MoveElement const & move_element,
 							Attachments const & attachments,
 							MoveType const & move_type );
 
-		SWA_Move( MoveElement const & move_element,
+		StepWiseMove( MoveElement const & move_element,
+							Attachments const & attachments,
+							MoveType const & move_type,
+							std::string const submotif_tag );
+
+		StepWiseMove( MoveElement const & move_element,
 							Attachment const & attachment,
 							MoveType const & move_type );
 
-		SWA_Move( Size const moving_res,
+		StepWiseMove( Size const moving_res,
 							Attachments const & attachments,
 							MoveType const & move_type );
 
-		SWA_Move( Size const moving_res,
+		StepWiseMove( Size const moving_res,
 							Attachment const & attachment,
 							MoveType const & move_type );
 
-		SWA_Move( SWA_Move const & src );
+		StepWiseMove( StepWiseMove const & src );
 
-		SWA_Move( utility::vector1< std::string > swa_move_string_vector,
+		StepWiseMove( utility::vector1< std::string > swa_move_string_vector,
 							core::pose::full_model_info::FullModelParametersCOP full_model_parameters = 0 /* to convert resnum, chain to Rosetta res */ );
 
-		SWA_Move &
-		operator=( SWA_Move const & src );
+		friend
+		bool
+		operator==( StepWiseMove const & a, StepWiseMove const & b );
 
 		//destructor
-		~SWA_Move();
+		~StepWiseMove();
 
 	public:
 
@@ -143,20 +161,26 @@ namespace monte_carlo {
 															attachment_type() == JUMP_TO_PREV_IN_CHAIN ||
 															attachment_type() == JUMP_DOCK ); }
 
+		std::string const & submotif_tag() const { return submotif_tag_; }
+
 	private:
 
 		MoveElement move_element_;
 		Attachments attachments_;
 		MoveType move_type_;
 
+		//kind of ad hoc. only filled in submotif creation.
+		std::string submotif_tag_;
+
 	};
 
 	std::ostream &
-	operator <<( std::ostream & os, SWA_Move const & swa_move );
+	operator <<( std::ostream & os, StepWiseMove const & swa_move );
 
 	std::ostream &
 	operator <<( std::ostream & os, Attachment const & attachment );
 
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

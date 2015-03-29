@@ -13,10 +13,10 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarUtil_HH
-#define INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarUtil_HH
+#ifndef INCLUDED_protocols_stepwise_rna_VirtualSugarUtil_HH
+#define INCLUDED_protocols_stepwise_rna_VirtualSugarUtil_HH
 
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.fwd.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
@@ -66,6 +66,9 @@ namespace sugar {
 	std::map< Size, Size > const
 	get_reference_res_for_each_virtual_sugar_based_on_fold_tree( pose::Pose const & pose );
 
+	Size
+	get_reference_res_for_virtual_sugar_based_on_fold_tree( pose::Pose const & pose, Size const n );
+
 	utility::vector1< Size >
 	get_possible_reference_res_list_from_pose_without_fold_tree( Size const virtual_sugar_res,
 																															 pose::Pose const & pose,
@@ -97,7 +100,7 @@ namespace sugar {
 
 	sampler::copy_dofs::ResidueAlternativeSetOP convert_sugar_modeling_to_residue_alternative_set( SugarModeling const & sugar_modeling );
 
-	StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP
+	VirtualSugarJustInTimeInstantiatorOP
 	instantiate_any_virtual_sugars( pose::Pose & pose,
 																	working_parameters::StepWiseWorkingParametersCOP working_parameters,
 																	core::scoring::ScoreFunctionCOP scorefxn,

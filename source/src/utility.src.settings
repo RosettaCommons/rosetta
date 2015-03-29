@@ -24,6 +24,7 @@ sources = {
 		"static_database",
 		"string_util",
 		"curl",
+		"CSI_Sequence",
 	],
 	"utility/boinc": [
 		"boinc_util",

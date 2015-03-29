@@ -261,7 +261,7 @@ namespace modeler {
 	StepWiseModeler::sampling_successful() {
 		Size const num_sampled = pose_list_.size();
 		if ( num_sampled == 0 ){
-			TR << "WARNING! WARNING! WARNING! pose_list_.size() == 0! " << std::endl;
+			if ( options_->num_random_samples() > 0 ) TR << TR.Red << "WARNING! WARNING! WARNING! pose_list_.size() == 0! " << TR.Reset << std::endl;
 			if ( options_ && !options_->output_minimized_pose_list() ) return false; // don't do a minimize...
 		}
 		return true;
@@ -278,6 +278,10 @@ namespace modeler {
 	////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseModeler::look_for_precompute_move( pose::Pose & pose ) {
+		//////////////////////////////////////////////////////////////
+		// This should now be deprecated in favor of SubMotifLibrary!
+		//              -- rhiju, feb 2015
+		//////////////////////////////////////////////////////////////
 		if ( moving_res_ == 0 ) return; // a deletion -- don't trigger any kind of structural change.
 		if ( precomputed_library_mover_ == 0 ) return;
 		if ( !precomputed_library_mover_->has_precomputed_move( pose ) ) return;

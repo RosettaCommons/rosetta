@@ -36,6 +36,40 @@
 
 static thread_local basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// For Stepwise modeling, full model has several instantiated poses whose covalent loop interconnections
+//  have not been instantiated. This LoopGraph keeps track of those loops, and any that form cycles
+//  lead to a 'loop_close' term (see LoopCloseEnergy in this namespace).
+//
+// Full models like this are OK:
+//
+//            Loop
+//       ---- ~ ~ ~ -- ~ ~ ~
+//       ||||  cycA || cycB  ~  Loop
+//       ---- ~ ~ ~ -- ~ ~ ~
+//     POSE 1  |     POSE 2
+//            Loop
+//
+//         ~ ~ = loops that are not created yet.
+//
+//
+// Note: models like this are currently a problem:
+//
+//     POSE 1      POSE 2
+//       ---- ~ ~ ~  -- ~ ~
+//       |||| cycA   ||     ~
+//       ---- ~ -- ~ -- ~   ~
+//   POSE 3 --> ||  cycB  ~  ~
+//            ~ -- ~ ~ ~ ~   ~
+//           ~     cycC     ~
+//            ~ ~ ~ ~ ~ ~ ~
+//
+//  Note that some loops are shared between cycles -- that's the issue.
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 namespace core {
 namespace scoring {
 namespace loop_graph {
@@ -45,7 +79,9 @@ namespace loop_graph {
 		rna_gaussian_variance_per_residue_( 5.0 * 5.0 ), // in Angstroms^2
 		protein_gaussian_variance_per_residue_( 3.0 * 3.0 ), // in Angstroms^2
 		loop_fixed_cost_( basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]() ), // -0.29 default, in Rosetta energy units
-		total_energy_( 0.0 )
+		total_energy_( 0.0 ),
+		error_out_on_complex_cycles_( true ),
+		has_just_simple_cycles_( true )
 	{
 	}
 
@@ -55,7 +91,7 @@ namespace loop_graph {
 
 	/////////////////////////////////////////////////////////////////////
 	void
-	LoopGraph::update( pose::Pose & pose ){
+	LoopGraph::update( pose::Pose & pose, bool const verbose /* = false */ ){
 
 		using namespace core::id;
 		using namespace core::pose;
@@ -138,7 +174,7 @@ namespace loop_graph {
 			core::scoring::func::FuncOP func( new core::scoring::func::GaussianChainFunc( total_gaussian_variance, loop_fixed_cost_, other_distances ) );
 			Real const loop_closure_energy = func->func( main_distance );
 			total_energy_ += loop_closure_energy;
-			//			TR << "Variance " << total_gaussian_variance << "  distance: " << main_distance << " ==> " << loop_closure_energy << std::endl;
+			if ( verbose ) TR << TR.Blue << "Cycle " << k << ": " <<  all_distances << " ==> " << loop_closure_energy << TR.Reset << std::endl;
 
 			if ( current_pose_idx_in_cycle ){
 				// save information to allow derivative computation.
@@ -151,6 +187,8 @@ namespace loop_graph {
 			}
 
 		} // loop_cycles
+
+		if ( verbose ) TR << TR.Blue << "Total loop close energy  ==> " << total_energy_ << TR.Reset << std::endl;
 
 	}
 
@@ -277,12 +315,25 @@ namespace loop_graph {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	LoopGraph::check_loop_cycles_are_disjoint() {
+	LoopGraph::check_loop_cycles_are_disjoint( bool const verbose /* = false */) {
+
+		has_just_simple_cycles_ = true;
+
+		if ( verbose ) {
+			TR << "Looking through loop cycles " << std::endl;
+			for ( Size i = 1; i <= loop_cycles_.size(); i++ ){
+				TR << "CYCLE " << i << loop_cycles_[ i ].loops() << std::endl;
+			}
+		}
 
 		// check that cycles are disjoint from each other...
 		for ( Size i = 1; i <= loop_cycles_.size(); i++ ){
 			for ( Size j = i+1; j <= loop_cycles_.size(); j++ ){
-				check_disjoint( loop_cycles_[i], loop_cycles_[j] );
+				if ( !check_disjoint( loop_cycles_[i], loop_cycles_[j] ) ) {
+					if ( verbose ) TR << "NOT DISJOINT! CYCLE " << i << " CYCLE " << j << std::endl;
+					has_just_simple_cycles_ = false;
+					return;
+				}
 			}
 		}
 	}
@@ -290,17 +341,19 @@ namespace loop_graph {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	LoopGraph::check_disjoint( LoopCycle loop_cycle1, LoopCycle loop_cycle2 ) {
+	LoopGraph::check_disjoint( LoopCycle loop_cycle1, LoopCycle loop_cycle2 ) const {
 
 		for ( Size i = 1; i <= loop_cycle1.size(); i++ ){
-			for ( Size j = (i + 1); j <= loop_cycle2.size(); j++ ){
+			for ( Size j = 1; j <= loop_cycle2.size(); j++ ){
 				if ( loop_cycle1.loop(i) == loop_cycle2.loop( j ) ){
-					std::cerr << "loop # " << loop_cycle1.loop(i) << " shared between different cycles: "  << std::endl;
-					std::cerr << "Cycle1: " << std::endl;
-					std::cerr << loop_cycle1 << std::endl;
-					std::cerr << "Cycle2: " << std::endl;
-					std::cerr << loop_cycle2 << std::endl;
-					utility_exit_with_message( "Cannot handle multiloops beyond simple cycles!" );
+					if ( error_out_on_complex_cycles_ ) {
+					  TR << "loop # " << loop_cycle1.loop(i) << " shared between different cycles: "  << std::endl;
+						TR << "Cycle1: " << std::endl;
+						TR << loop_cycle1 << std::endl;
+						TR << "Cycle2: " << std::endl;
+						TR << loop_cycle2 << std::endl;
+						utility_exit_with_message( "Cannot handle multiloops beyond simple cycles!" );
+					}
 					return false;
 				}
 			}
@@ -364,12 +417,10 @@ namespace loop_graph {
 		}
 
 		for ( Size k = 1; k <= loops_.size(); k++ ){
-			//			TR.Debug << loops_[ k ] << std::endl;
 			Size const & takeoff_domain = loops_[ k ].takeoff_domain();
 			if ( takeoff_domain == 0 ) continue;
 			loops_from_domain_[ takeoff_domain ].push_back( k );
 		}
-		//		TR.Debug << "NUM_DOMAINS " << num_domains << " " << loops_from_domain_.size() << std::endl;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -432,7 +483,6 @@ namespace loop_graph {
 					}
 				}
 			}
-			//			TR << loop << " --> " << nmissing_total << std::endl;
 		}
 		return nmissing_total;
 	}

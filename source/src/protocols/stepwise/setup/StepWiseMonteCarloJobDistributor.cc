@@ -18,6 +18,7 @@
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <core/io/silent/util.hh>
+#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.setup.StepWiseMonteCarloJobDistributor" );

@@ -13,8 +13,8 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_FWD_HH
-#define INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_setup_FullModelInfoSetupFromCommandLine_FWD_HH
+#define INCLUDED_protocols_stepwise_setup_FullModelInfoSetupFromCommandLine_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 

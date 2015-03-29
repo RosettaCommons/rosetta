@@ -61,10 +61,12 @@ namespace options {
 		atr_rep_screen_ = true;
 		rmsd_screen_ = 0.0;
 		output_minimized_pose_list_ = false;
+		output_cluster_size_ = false;
 		min_type_ = "dfpmin_armijo_nonmonotone"; // used to be dfpmin
 		min_tolerance_ = 0.000025;
 		vary_rna_bond_geometry_ = false;
 		vary_polar_hydrogen_geometry_ = false;
+		use_packer_instead_of_rotamer_trials_ = false;
 	}
 
 	/// @brief clone the options
@@ -90,7 +92,10 @@ namespace options {
 		min_tolerance_ = option[ basic::options::OptionKeys::stepwise::min_tolerance ]();
 		vary_rna_bond_geometry_ = option[ basic::options::OptionKeys::rna::vary_geometry ]();
 		vary_polar_hydrogen_geometry_ = option[ basic::options::OptionKeys::stepwise::vary_polar_hydrogen_geometry ]();
+		use_packer_instead_of_rotamer_trials_ = option[ basic::options::OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials ]();
 		output_minimized_pose_list_ = option[ basic::options::OptionKeys::stepwise::output_minimized_pose_list ]();
+		output_cluster_size_ = option[ basic::options::OptionKeys::stepwise::output_cluster_size ]();
+
 	}
 
 

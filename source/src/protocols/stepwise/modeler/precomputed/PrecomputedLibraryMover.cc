@@ -19,12 +19,13 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <numeric/random/random.hh>
 
 #include <basic/database/open.hh>
-#include <basic/Tracer.hh>
 #include <utility/file/file_sys_util.hh>
+#include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.precomputed.PrecomputedLibraryMover" );
 using namespace core::io::silent;
@@ -98,12 +99,18 @@ namespace precomputed {
 	///////////////////////////////////////////////////////////////////
 	// for now, only can apply precomputed library moves to
 	//  poses that are totally 'free' -- could be generalized easily.
+	//
+	// Appropriate generalization is in SubMotifLibrary!
+	//
 	bool
 	PrecomputedLibraryMover::has_precomputed_move( core::pose::Pose const & pose ) const {
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 		utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
 		for ( Size i = 1; i <= res_list.size(); i++ ) {
 			if ( !sample_res.has_value( res_list[ i ] ) ) return false;
+		}
+		for ( Size n = 1; n < pose.total_residue(); n++ ) {
+			if ( pose.fold_tree().is_cutpoint( n ) ) return false;
 		}
 		return ( library_map_.find( pose.sequence() ) != library_map_.end() );
 	}
@@ -121,8 +128,11 @@ namespace precomputed {
 		SilentStructOP silent_struct = numeric::random::rg().random_element( library->structure_list() );
 
 		Pose pose_scratch;
-		silent_struct->fill_pose( pose_scratch );
+		silent_struct->fill_pose( pose_scratch, pose.residue( 1 ).residue_type_set() );
 		pose.conformation() = pose_scratch.conformation();
+
+		//simple fold_tree --> generalized in SubMotifLibrary.
+		for ( Size n = 1; n < pose.total_residue(); n++ ) runtime_assert( !pose.fold_tree().is_cutpoint( n ) );
 	}
 
 

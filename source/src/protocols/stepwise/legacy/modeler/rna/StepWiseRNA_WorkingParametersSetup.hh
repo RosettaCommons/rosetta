@@ -93,6 +93,9 @@ namespace rna {
 		set_force_syn_chi_res_list( utility::vector1 < core::Size > const & setting );
 
 		void
+		set_force_anti_chi_res_list( utility::vector1 < core::Size > const & setting );
+
+		void
 		set_force_north_sugar_list( utility::vector1 < core::Size > const & setting );
 
 		void

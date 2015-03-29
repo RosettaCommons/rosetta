@@ -23,6 +23,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
@@ -121,7 +122,6 @@ namespace toolbox{
 	}
 
 
-
 	//////////////////////////////////////////////////////////////////
 	void
 	AllowInsert::initialize( core::pose::Pose const & pose )
@@ -154,7 +154,6 @@ namespace toolbox{
 				map_to_original_[ atom_id ] = atom_id;
 
 				atom_ids.push_back( atom_id );
-
 			}
 
 			atom_ids_in_res_.push_back( atom_ids );
@@ -188,7 +187,6 @@ namespace toolbox{
 
 		if (fail) return false;
 
-		//		TR << torsion_id << ": " << id1 << " " << get_domain( id1 ) << " -- " << id4 << " " << get_domain( id4 ) << std::endl;
 		if  ( !get( id1 ) && !get( id4 ) && ( get_domain( id1 ) == get_domain( id4 ) ) ) return false;
 
 		return true;
@@ -204,7 +202,6 @@ namespace toolbox{
 		if ( fail ) return false;
 
 		bool fixed_jump = ( !get( id1 ) && !get( id2 ) && ( get_domain( id1 ) == get_domain( id2 ) ) );
-		//TR << TR.Cyan << jump_number << ": " << id1 << " " << get_domain( id1 ) << " -- " << id2 << " " << get_domain( id2 ) << "  MOVE? " << (!fixed_jump) << TR.Reset << std::endl;
 
 		return ( !fixed_jump );
 	}
@@ -235,7 +232,9 @@ namespace toolbox{
 	AllowInsert::get_domain( core::id::AtomID const & atom_id  ) const{
 
 		std::map< AtomID, AtomID >::const_iterator it_original =	map_to_original_.find( atom_id );
-		if ( it_original == map_to_original_.end() ) return FIXED_DOMAIN;
+		if ( it_original == map_to_original_.end() ) {
+			return FIXED_DOMAIN;
+		}
 		AtomID original_atom_id = it_original->second;
 
 		std::map< core::id::AtomID, Size >::const_iterator it =	allow_insert_.find( original_atom_id );
@@ -312,6 +311,19 @@ namespace toolbox{
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////
+	void
+	AllowInsert::set_sugar_domain( Size const & i,
+																		 pose::Pose const & pose,
+																		 Size const & setting ){
+
+		runtime_assert( !pose.residue(i).is_coarse() );
+		utility::vector1< std::string > const & atoms_involved = core::chemical::rna::sugar_atoms;
+		for ( Size n = 1; n <= atoms_involved.size(); n++ ){
+			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( atoms_involved[ n ], i ), pose ) ), setting );
+		}
+
+	}
 
 	//////////////////////////////////////////////////////////////////
 	void
@@ -345,6 +357,15 @@ namespace toolbox{
 															bool const & setting ){
 
 		set_phosphate_domain( i, pose, ( ( setting ) ? 0 : FIXED_DOMAIN ) );
+	}
+
+	//////////////////////////////////////////////////////////////////
+	void
+	AllowInsert::set_sugar( Size const & i,
+													pose::Pose const & pose,
+													bool const & setting ){
+
+		set_sugar_domain( i, pose, ( ( setting ) ? 0 : FIXED_DOMAIN ) );
 	}
 
 	//////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
@@ -37,7 +37,7 @@ namespace mover {
 class AddMover: public protocols::moves::Mover {
 public:
 
-	AddMover( core::scoring::ScoreFunctionOP scorefxn );
+	AddMover( core::scoring::ScoreFunctionCOP scorefxn );
 
 	//destructor
 	~AddMover();
@@ -50,7 +50,7 @@ public:
 	apply( core::pose::Pose & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering );
 
 	void
-	apply( core::pose::Pose & pose, SWA_Move const & swa_move );
+	apply( core::pose::Pose & pose, StepWiseMove const & swa_move );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
@@ -109,10 +109,13 @@ private:
 	void
 	setup_initial_torsions( pose::Pose & pose );
 
+	Size
+	get_add_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const;
+
 private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set_;
-	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
 	bool presample_added_residue_;
 	bool presample_by_swa_;
 	bool minimize_single_res_;
@@ -128,7 +131,7 @@ private:
 
 	Size suite_num_, nucleoside_num_;
 	Size res_to_add_in_full_model_numbering_, res_to_build_off_in_full_model_numbering_;
-	SWA_Move swa_move_;
+	StepWiseMove swa_move_;
 
 };
 

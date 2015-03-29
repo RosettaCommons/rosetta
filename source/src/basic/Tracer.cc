@@ -22,6 +22,7 @@
 //#include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
 
+#include <utility/CSI_Sequence.hh>
 #include <utility/string_util.hh>
 #include <utility/basic_sys_util.hh>
 #include <utility/tools/make_vector.hh>
@@ -98,15 +99,6 @@ std::recursive_mutex tracer_static_data_mutex;
 #endif
 
 
-CSI_Sequence::CSI_Sequence(std::string sequence_)
-{
-#ifdef WIN32
-	if( _isatty(fileno(stdout)) ) sequence = sequence_;
-#else
-	if( isatty(fileno(stdout)) ) sequence = sequence_;
-#endif
-}
-
 Tracer::OstreamPointer &Tracer::final_stream()
 {
 	static std::ostream * final_stream_ = &std::cout;
@@ -157,11 +149,10 @@ bool & Tracer::super_mute_()
 int Tracer::mpi_rank_( 0 );
 
 
-/// @details Static objects to hold various ASCII CSI codes, treat them as almost-const's
-///          Codes below is all Hogwarts-approved magic numbers, so do not modify them. For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
-CSI_Sequence Tracer::Reset("\x1b[0m"), Tracer::Bold("\x1b[1m"), Tracer::Underline("\x1b[4m"),
-	  Tracer::Black("\x1b[30m"),   Tracer::Red("\x1b[31m"),   Tracer::Green("\x1b[32m"),   Tracer::Yellow("\x1b[33m"),   Tracer::Blue("\x1b[34m"),   Tracer::Magenta("\x1b[35m"),   Tracer::Cyan("\x1b[36m"),   Tracer::White("\x1b[37m"),
-	Tracer::bgBlack("\x1b[40m"), Tracer::bgRed("\x1b[41m"), Tracer::bgGreen("\x1b[42m"), Tracer::bgYellow("\x1b[43m"), Tracer::bgBlue("\x1b[44m"), Tracer::bgMagenta("\x1b[45m"), Tracer::bgCyan("\x1b[46m"), Tracer::bgWhite("\x1b[47m");
+/// @details Static objects holding various ASCII CSI codes (see utility/CSI_Sequence.hh)
+utility::CSI_Sequence Tracer::Reset(utility::CSI_Reset), Tracer::Bold(utility::CSI_Bold), Tracer::Underline(utility::CSI_Underline),
+	  Tracer::Black(utility::CSI_Black),   Tracer::Red(utility::CSI_Red),   Tracer::Green(utility::CSI_Green),   Tracer::Yellow(utility::CSI_Yellow),   Tracer::Blue(utility::CSI_Blue),   Tracer::Magenta(utility::CSI_Magenta),   Tracer::Cyan(utility::CSI_Cyan),   Tracer::White(utility::CSI_White),
+	Tracer::bgBlack(utility::CSI_bgBlack), Tracer::bgRed(utility::CSI_bgRed), Tracer::bgGreen(utility::CSI_bgGreen), Tracer::bgYellow(utility::CSI_bgYellow), Tracer::bgBlue(utility::CSI_bgBlue), Tracer::bgMagenta(utility::CSI_bgMagenta), Tracer::bgCyan(utility::CSI_bgCyan), Tracer::bgWhite(utility::CSI_bgWhite);
 
 Tracer::TracerProxy::TracerProxy(
 	Tracer & tracer,

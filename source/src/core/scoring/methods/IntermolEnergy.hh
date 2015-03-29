@@ -83,18 +83,6 @@ private:
 Size
 get_num_chains_frozen( pose::Pose const & pose ) const;
 
-Size
-get_number_of_connected_subgraphs( utility::vector1< utility::vector1< Size > > const & chains_connected ) const;
-
-void
-color_connected( utility::vector1< Size > & colors,
-																 utility::vector1< utility::vector1< Size > > const & chains_connected,
-																 Size const n, Size const current_color ) const;
-
-
-void
-get_chains_connected( pose::Pose const & pose, utility::vector1< utility::vector1< Size > > &  chains_connected ) const;
-
 private:
 
 	virtual

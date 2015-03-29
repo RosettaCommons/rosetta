@@ -87,12 +87,6 @@ setup_bulge_jump_point( pose::Pose & pose, Size const & moving_base, Size const 
 void
 apply_rotamer( pose::Pose & pose, utility::vector1< protocols::stepwise::modeler::rna::Torsion_Info >  const & rotamer_list );
 
-Size
-get_residue_base_state( pose::Pose const & pose, Size const seq_num );
-
-Size
-get_residue_pucker_state( pose::Pose const & pose, Size const seq_num, bool verbose = false );
-
 bool
 is_same_sugar_pucker( pose::Pose const & current_pose, pose::Pose const & cluster_center_pose, Size const seq_num );
 

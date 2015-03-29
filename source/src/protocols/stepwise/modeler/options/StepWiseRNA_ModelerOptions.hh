@@ -107,6 +107,9 @@ namespace options {
 		bool const & virtual_sugar_do_minimize() const { return virtual_sugar_do_minimize_; }
 		void set_virtual_sugar_do_minimize( bool const & setting ){ virtual_sugar_do_minimize_ = setting; }
 
+		bool const & virtual_sugar_do_screens() const { return virtual_sugar_do_screens_; }
+		void set_virtual_sugar_do_screens( bool const & setting ){ virtual_sugar_do_screens_ = setting; }
+
 		bool const & kic_modeler_if_relevant() const { return kic_modeler_if_relevant_; }
 		void set_kic_modeler_if_relevant( bool const & setting ){ kic_modeler_if_relevant_ = setting; }
 
@@ -182,6 +185,9 @@ namespace options {
 		bool const & turn_off_rna_chem_map_during_optimize() const { return turn_off_rna_chem_map_during_optimize_; }
 		void set_turn_off_rna_chem_map_during_optimize( bool const & setting ){ turn_off_rna_chem_map_during_optimize_ = setting; }
 
+		bool const & allow_rebuild_bulge_mode() const { return allow_rebuild_bulge_mode_; }
+		void set_allow_rebuild_bulge_mode( bool const & setting ){ allow_rebuild_bulge_mode_ = setting; }
+
 	protected:
 
 		void
@@ -203,6 +209,7 @@ namespace options {
 		bool virtual_sugar_legacy_mode_;
 		bool virtual_sugar_keep_base_fixed_;
 		bool virtual_sugar_do_minimize_;
+		bool virtual_sugar_do_screens_;
 		bool kic_modeler_if_relevant_;
 		bool force_centroid_interaction_;
 		bool minimize_and_score_sugar_;
@@ -228,6 +235,7 @@ namespace options {
 		bool minimizer_rename_tag_;
 		bool tether_jump_;
 		bool turn_off_rna_chem_map_during_optimize_;
+		bool allow_rebuild_bulge_mode_;
 	};
 
 } //options

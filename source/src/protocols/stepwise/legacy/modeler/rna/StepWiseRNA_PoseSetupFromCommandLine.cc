@@ -98,7 +98,7 @@
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSampler.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarSampler.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.hh>
@@ -601,6 +601,7 @@ setup_simple_full_length_rna_working_parameters(){
 	working_parameters->set_working_fixed_res(  get_fixed_res( nres ) );
 	working_parameters->set_global_sample_res_list(  option[ OptionKeys::stepwise::rna::global_sample_res_list ]() );
 	working_parameters->set_force_syn_chi_res_list(  option[ OptionKeys::full_model::rna::force_syn_chi_res_list]() );
+	working_parameters->set_force_anti_chi_res_list(  option[ OptionKeys::full_model::rna::force_anti_chi_res_list]() );
 	working_parameters->set_force_north_sugar_list(  option[ OptionKeys::full_model::rna::force_north_sugar_list ]() );
 	working_parameters->set_force_south_sugar_list(  option[ OptionKeys::full_model::rna::force_south_sugar_list ]() );
 	working_parameters->set_protonated_H1_adenosine_list( option[ OptionKeys::stepwise::rna::protonated_H1_adenosine_list ]() );
@@ -766,6 +767,7 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 	stepwise_rna_working_parameters_setup.set_global_sample_res_list( option[ OptionKeys::stepwise::rna::global_sample_res_list ]() ); //March 20, 2011
 
 	stepwise_rna_working_parameters_setup.set_force_syn_chi_res_list( option[ OptionKeys::full_model::rna::force_syn_chi_res_list]() ); //April 29, 2011
+	stepwise_rna_working_parameters_setup.set_force_anti_chi_res_list( option[ OptionKeys::full_model::rna::force_anti_chi_res_list]() ); //April 29, 2011
 	stepwise_rna_working_parameters_setup.set_force_north_sugar_list( option[ OptionKeys::full_model::rna::force_north_sugar_list ]() ); //April 29, 2011
 	stepwise_rna_working_parameters_setup.set_force_south_sugar_list( option[ OptionKeys::full_model::rna::force_south_sugar_list ]() ); //April 29, 2011
 	stepwise_rna_working_parameters_setup.set_protonated_H1_adenosine_list( option[ OptionKeys::stepwise::rna::protonated_H1_adenosine_list ]() ); //May 02, 2011

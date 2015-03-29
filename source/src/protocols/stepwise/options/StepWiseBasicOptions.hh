@@ -90,6 +90,9 @@ namespace options {
 		bool const & output_minimized_pose_list() const { return output_minimized_pose_list_; }
 		void set_output_minimized_pose_list( bool const & setting ){ output_minimized_pose_list_ = setting; }
 
+		bool const & output_cluster_size() const { return output_cluster_size_; }
+		void set_output_cluster_size( bool const & setting ){ output_cluster_size_ = setting; }
+
 		void set_min_type( std::string const & setting ){ min_type_ = setting; }
 		std::string min_type() const{ return min_type_; }
 
@@ -101,6 +104,9 @@ namespace options {
 
 		bool const & vary_polar_hydrogen_geometry() const { return vary_polar_hydrogen_geometry_; }
 		void set_vary_polar_hydrogen_geometry( bool const & setting ){ vary_polar_hydrogen_geometry_ = setting; }
+
+		void set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
+		bool use_packer_instead_of_rotamer_trials() const{ return use_packer_instead_of_rotamer_trials_; }
 
 	protected:
 
@@ -123,10 +129,12 @@ namespace options {
 
 		utility::vector1< std::string > VDW_rep_screen_info_;
 		bool output_minimized_pose_list_;
+		bool output_cluster_size_;
 		std::string min_type_;
 		core::Real min_tolerance_;
 		bool vary_rna_bond_geometry_;
 		bool vary_polar_hydrogen_geometry_;
+		bool use_packer_instead_of_rotamer_trials_;
 		std::string sampler_silent_file_;
 
 	};

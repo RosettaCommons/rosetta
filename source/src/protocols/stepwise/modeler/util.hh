@@ -150,10 +150,14 @@ namespace modeler {
 	fix_up_residue_type_variants( pose::Pose & pose );
 
 	void
-	switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx );
+	switch_focus_to_other_pose( pose::Pose & pose,
+															Size const & focus_pose_idx,
+															scoring::ScoreFunctionCOP scorefxn = 0 );
 
 	bool
-	switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn = 0, bool force_switch = false );
+	switch_focus_among_poses_randomly( pose::Pose & pose,
+																		 scoring::ScoreFunctionCOP scorefxn = 0,
+																		 bool force_switch = false );
 
 	utility::vector1< Size >
 	figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap const & mm );
@@ -248,6 +252,10 @@ namespace modeler {
 	bool
 	revise_root_and_moving_res_list( pose::Pose & pose,
 																	 utility::vector1< Size > & moving_res_list /* note that this can change too*/ );
+
+	Size
+	find_downstream_connection_res( pose::Pose const & pose,
+																	utility::vector1< Size > const & moving_partition_res );
 
 	Size
 	split_pose( pose::Pose & pose, Size const moving_res, Size const reference_res );

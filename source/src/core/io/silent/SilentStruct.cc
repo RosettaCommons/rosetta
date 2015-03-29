@@ -1051,7 +1051,7 @@ SilentStruct::fill_other_struct_list( pose::Pose const & pose ){
 
 	utility::vector1< core::pose::PoseOP > const & other_pose_list = core::pose::full_model_info::const_full_model_info( pose ).other_pose_list();
 	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
-		SilentStructOP other_struct =  this->clone(); //SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type_ );
+		SilentStructOP other_struct =  this->clone();
 		other_struct->scoreline_prefix( "OTHER:" ); // prevents confusion when grepping file for "SCORE:"
 		other_struct->fill_struct( *other_pose_list[ n ], decoy_tag_ /*use same tag*/ );
 		other_struct->add_comment( "OTHER_POSE", ObjexxFCL::string_of( n ) ); // will be used as consistency check when read from disk.
@@ -1145,7 +1145,17 @@ SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream )
 }
 
 void
-SilentStruct::add_other_struct( SilentStructOP silent_struct ){ other_struct_list_.push_back( silent_struct ); }
+SilentStruct::add_other_struct( SilentStructOP silent_struct ){
+	// figure out the right order here.
+	Size const new_idx = ObjexxFCL::int_of( silent_struct->get_all_comments().find( "OTHER_POSE" )->second );
+
+	utility::vector1< SilentStructOP >::iterator it = other_struct_list_.begin();
+	for ( ; it != other_struct_list_.end(); it++ ) {
+		Size const list_idx = ObjexxFCL::int_of( (*it)->get_all_comments().find( "OTHER_POSE" )->second );
+		if ( new_idx < list_idx ) break; // insert here.
+	}
+	other_struct_list_.insert( it, silent_struct );
+}
 
 
 } // namespace silent

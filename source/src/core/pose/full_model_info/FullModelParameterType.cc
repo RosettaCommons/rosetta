@@ -55,7 +55,9 @@ namespace full_model_info {
 			full_model_parameter_type_name[ PREFERRED_ROOT ]  = "PREFERRED_ROOT";
 			full_model_parameter_type_name[ SAMPLE ]          = "SAMPLE";
 			full_model_parameter_type_name[ WORKING ]         = "WORKING";
+			full_model_parameter_type_name[ RNA_SAMPLE_SUGAR ]     = "RNA_SAMPLE_SUGAR";
 			full_model_parameter_type_name[ RNA_SYN_CHI ]     = "RNA_SYN_CHI";
+			full_model_parameter_type_name[ RNA_ANTI_CHI ]     = "RNA_ANTI_CHI";
 			full_model_parameter_type_name[ RNA_BULGE ]       = "RNA_BULGE";
 			full_model_parameter_type_name[ RNA_NORTH_SUGAR ] = "RNA_NORTH_SUGAR";
 			full_model_parameter_type_name[ RNA_SOUTH_SUGAR ] = "RNA_SOUTH_SUGAR";

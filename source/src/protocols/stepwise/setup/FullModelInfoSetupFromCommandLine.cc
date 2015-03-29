@@ -46,7 +46,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.full_model_info.FullModelInfoSetupFromCommandLine" );
+static thread_local basic::Tracer TR( "protocols.stepwise.setup.FullModelInfoSetupFromCommandLine" );
 
 using namespace core;
 using namespace core::pose;
@@ -78,7 +78,7 @@ namespace setup {
 		core::pose::PoseOP pose = get_pdb_and_cleanup( input_file, rsd_set );
 
 		// a bit wasteful, since this checks command-line options over and over again, but hey this works.
-		fill_full_model_info_from_command_line( *pose );
+		//		fill_full_model_info_from_command_line( *pose );
 
 		return pose;
 	}
@@ -94,6 +94,7 @@ namespace setup {
 		PoseOP input_pose( new Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
 		import_pose::pose_from_pdb( *input_pose, *rsd_set_op, input_file );
+		tag_into_pose( *input_pose, input_file );
 		cleanup( *input_pose );
 		make_sure_full_model_info_is_setup( *input_pose );
 		return input_pose;
@@ -111,7 +112,10 @@ namespace setup {
 
 	///////////////////////////////////////////////////////////////
 	void
-	initialize_native_and_align_pose( PoseOP & native_pose, PoseOP & align_pose, core::chemical::ResidueTypeSetCAP rsd_set ) {
+	initialize_native_and_align_pose( PoseOP & native_pose,
+																		PoseOP & align_pose,
+																		core::chemical::ResidueTypeSetCAP rsd_set,
+																		PoseCOP start_pose ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		if ( option[ in::file::native ].user() )  {
@@ -121,14 +125,13 @@ namespace setup {
 			align_pose = get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
 		}
 		if ( align_pose == 0 && option[ in::file::s ].user() ) {
-			align_pose = get_pdb_with_full_model_info(  option[ in::file::s ]()[1], rsd_set );
+			align_pose = start_pose->clone();
+		}
+		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() ) { // could generalize to proteins
+			if ( native_pose != 0)  modeler::rna::virtualize_free_rna_moieties( *native_pose );
+			if ( align_pose  != 0 ) modeler::rna::virtualize_free_rna_moieties( *align_pose );
 		}
 		if ( native_pose == 0 && align_pose != 0 ) native_pose = align_pose;
-
-		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() ) { // could generalize to proteins
-			if ( native_pose != 0) modeler::rna::virtualize_free_rna_moieties( *native_pose );
-			if ( align_pose != 0 ) modeler::rna::virtualize_free_rna_moieties( *align_pose );
-		}
 	}
 
 
@@ -288,7 +291,7 @@ namespace setup {
 		bool found_info_in_previous_sequence( false );
 		Size count( 0 );
 		for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
-			char chain( ' ' );
+			utility::vector1< char > chains;
 			vector1< int > resnum;
 			bool found_info( false );
 			std::string tag;
@@ -298,20 +301,24 @@ namespace setup {
 				bool string_is_ok( false );
 				std::pair< std::vector< int >, std::vector< char > > resnum_and_chain =	utility::get_resnum_and_chain( tag, string_is_ok );
 				if ( !string_is_ok ) continue;
-				for ( Size n = 0; n < resnum_and_chain.first.size(); n++ ) resnum.push_back( resnum_and_chain.first[n] );
-				chain  = resnum_and_chain.second[0];
+				for ( Size n = 0; n < resnum_and_chain.first.size(); n++ ) {
+					resnum.push_back( resnum_and_chain.first[n] );
+					chains.push_back( resnum_and_chain.second[n] );
+				}
 				found_info = true;
 			}
 			if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
 
 
-			if ( !found_info || resnum.size() == 1 /*happens with stray numbers*/ ) {
+			if ( !found_info || resnum.size() != fasta_sequences[n]->sequence().size() /*happens with stray numbers*/ ) {
 				resnum.clear();
-				chain = ' '; // unknown chain
-				for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) resnum.push_back( ++count );
+				for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) {
+					resnum.push_back( ++count );
+					chains.push_back( ' ' ); // unknown chain
+				}
 			}
 			runtime_assert( fasta_sequences[n]->sequence().size() == resnum.size() );
-			for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) conventional_chains.push_back( chain );
+			for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) conventional_chains.push_back( chains[ q ] );
 			for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) conventional_numbering.push_back( resnum[q] );
 
 			found_info_in_previous_sequence  = found_info;
@@ -418,7 +425,8 @@ namespace setup {
 		vector1< Size > input_domain_map( desired_sequence.size(), 0 );
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 			Pose & pose = *pose_pointers[n];
-			vector1< Size > const res_list = full_model_parameters->conventional_to_full( std::make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
+			vector1< Size > res_list = full_model_parameters->conventional_to_full( std::make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
+			reorder_pose( pose, res_list );
 			pose_res_lists.push_back( res_list );
 			for ( Size k = 1; k <= pose.total_residue(); k++ ) {
 				if ( !sample_res.has_value( res_list[ k ] ) ) input_domain_map[ res_list[ k ] ] = n;
@@ -458,8 +466,16 @@ namespace setup {
 		full_model_parameters->set_parameter_as_res_list( PREFERRED_ROOT, preferred_root_res );
 		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,
         full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
+		full_model_parameters->set_parameter_as_res_list( RNA_ANTI_CHI,
+        full_model_parameters->conventional_to_full( option[ full_model::rna::force_anti_chi_res_list ].resnum_and_chain() ) );
+		full_model_parameters->set_parameter_as_res_list( RNA_NORTH_SUGAR,
+        full_model_parameters->conventional_to_full( option[ full_model::rna::force_north_sugar_list ].resnum_and_chain() ) );
+		full_model_parameters->set_parameter_as_res_list( RNA_SOUTH_SUGAR,
+        full_model_parameters->conventional_to_full( option[ full_model::rna::force_south_sugar_list ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, terminal_res );
 		full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
+		full_model_parameters->set_parameter_as_res_list( RNA_SAMPLE_SUGAR,
+			 full_model_parameters->conventional_to_full( option[ full_model::rna::sample_sugar_res ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list_in_pairs( JUMP, jump_res );
 		full_model_parameters->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res );
 		full_model_parameters->read_disulfides( option[ OptionKeys::stepwise::protein::disulfide_file]() );
@@ -470,8 +486,9 @@ namespace setup {
 			Pose & pose = *pose_pointers[n];
 			FullModelInfoOP full_model_info_for_pose( new FullModelInfo( full_model_parameters ) );
 			full_model_info_for_pose->set_res_list( pose_res_lists[ n ] );
-			pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_for_pose );
+			set_full_model_info( pose, full_model_info_for_pose );
 			update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file (residue numbering), constraints, disulfides
+			modeler::fix_up_residue_type_variants( pose ); // for sample sugars...
 		}
 
 	}
@@ -789,6 +806,7 @@ namespace setup {
 																											utility::vector1< Size > const & res_list,
 																											utility::vector1< std::pair< Size, Size > > const & extra_minimize_jump_pairs ) {
 
+
 		for ( Size i = 1; i <= extra_minimize_jump_pairs.size(); i++ ) {
 			Size const & res1_full = extra_minimize_jump_pairs[ i ].first;
 			Size const & res2_full = extra_minimize_jump_pairs[ i ].second;
@@ -832,10 +850,8 @@ namespace setup {
 																										vector1< Size > const & extra_minimize_jump_res ) {
 		utility::vector1< std::pair< Size, Size > > extra_minimize_jump_pairs;
 		for ( Size n = 1; n <= extra_minimize_jump_res.size()/2; n++ ) {
-			for ( Size k = (2*n-1); k <= (2*n); k++ ){
-				extra_minimize_jump_pairs.push_back( std::make_pair( extra_minimize_jump_res[ k ],
-																														 extra_minimize_jump_res[ k + 1 ] ) );
-			}
+			extra_minimize_jump_pairs.push_back( std::make_pair( extra_minimize_jump_res[ 2*n - 1 ],
+																													 extra_minimize_jump_res[ 2*n     ] ) );
 		}
 		update_fixed_domain_from_extra_minimize_jump_pairs( fixed_domain, pose, res_list, extra_minimize_jump_pairs );
 	}
@@ -915,10 +931,10 @@ namespace setup {
 		for ( Size i = 1; i <= sample_res.size(); i++ ) {
 			runtime_assert( working_res.has_value( sample_res[ i ] ) );
 		}
-		bool const reference_pose = looks_like_reference_pose( input_domain_map );
+		//		bool const reference_pose = looks_like_reference_pose( input_domain_map );
 		for ( Size n = 1; n <= input_domain_map.size(); n++ ) {
 			if ( input_domain_map[ n ] > 0 ) {
-				if ( !working_res.has_value( n ) && !reference_pose ) {
+				if ( !working_res.has_value( n ) /* && !reference_pose */ ) {
 					utility_exit_with_message( "Working res does not have input_domain_map residue "+ObjexxFCL::string_of(n) );
 				}
 				if ( sample_res.has_value( n ) ) utility_exit_with_message( "Sample res should not have "+ObjexxFCL::string_of(n) );
@@ -948,14 +964,16 @@ namespace setup {
 
 		for ( Size m = 1; m <= input_domain_map.size(); m++ ) {
 			if ( input_domain_map[ m ] == 0 ) continue;
-			bool const prev_moving = ( m > 1 && input_domain_map[ m - 1 ] == 0 &&
-																 ( working_res.size() == 0 || working_res.has_value( m - 1 ) ) );
-			bool const next_moving = ( m < input_domain_map.size() && input_domain_map[ m + 1 ] == 0 &&
-																 ( working_res.size() == 0 || working_res.has_value( m + 1 ) ) );
 			bool const right_before_chainbreak = ( m == input_domain_map.size() || cutpoint_open_in_full_model.has_value( m ) ||
 																						 ( working_res.size() > 0 && !working_res.has_value( m + 1 ) ) );
 			bool const right_after_chainbreak  = ( m == 1                 || cutpoint_open_in_full_model.has_value( m - 1 ) ||
 																						 ( working_res.size() > 0 && !working_res.has_value( m - 1 )  ) );
+			bool const prev_moving = ( m > 1 && input_domain_map[ m - 1 ] == 0 && !right_after_chainbreak &&
+																 ( working_res.size() == 0 || working_res.has_value( m - 1 ) ) ) ||
+				( m  > 1 && ( input_domain_map[ m - 1 ] != input_domain_map[ m ] ) );
+			bool const next_moving = ( m < input_domain_map.size() && input_domain_map[ m + 1 ] == 0 && !right_before_chainbreak &&
+																 ( working_res.size() == 0 || working_res.has_value( m + 1 ) ) ) ||
+				( m  < input_domain_map.size() && ( input_domain_map[ m + 1 ] != input_domain_map[ m ] ) );
 			if ( ( right_after_chainbreak && !next_moving ) ||
 					 ( right_before_chainbreak && !prev_moving ) ) {
 				terminal_res.push_back( m );
@@ -966,14 +984,15 @@ namespace setup {
 			}
 		}
 
-		if ( looks_like_reference_pose( input_domain_map ) ) return;
-		if ( extra_min_res_save.size() > 0 || terminal_res_save.size() > 0 ) {
-			runtime_assert( extra_min_res == extra_min_res_save );
-			runtime_assert( terminal_res == terminal_res_save );
-		}
+		//		if ( looks_like_reference_pose( input_domain_map ) ) return;
+		runtime_assert( extra_min_res_save.size() == 0 || extra_min_res == extra_min_res_save );
+		runtime_assert( terminal_res_save.size() == 0 || terminal_res == terminal_res_save );
+		
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
+	// DEPRECATE in Feb 2015 if this remains not in use -- align_pose & native_pose no longer
+	//  setup full_model_info via fasta file.
 	bool
 	looks_like_reference_pose( utility::vector1< Size > const & input_domain_map ) {
 		for ( Size m = 1; m <= input_domain_map.size(); m++ ) {
@@ -1086,6 +1105,19 @@ namespace setup {
 		}
 
 		return dock_domain_map;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////
+	void
+	reorder_pose( pose::Pose & pose, utility::vector1< Size > & res_list ) {
+		utility::vector1< Size > res_list_ordered = res_list;
+		std::sort( res_list_ordered.begin(), res_list_ordered.end() );
+		if ( res_list == res_list_ordered ) return;
+
+		vector1< Size > slice_res;
+		for ( Size n = 1; n <= res_list_ordered.size(); n++ ) slice_res.push_back( res_list.index( res_list_ordered[ n ] ) );
+		pose::pdbslice( pose, slice_res );  // will do the rearrangement.
+		res_list = res_list_ordered;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

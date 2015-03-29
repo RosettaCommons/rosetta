@@ -65,10 +65,11 @@ namespace full_model_info {
 		PREFERRED_ROOT, // good positions for roots.
 		SAMPLE,         // Whatever we can add/delete. Cannot include any FIXED_DOMAIN.
 		WORKING,        // Everything that might be modeled [SAMPLE + FIXED_DOMAIN]
-
 		// next-section: RNA-specific. Eventually expand.
 		RNA_BULGE, // nucleotides that should not be instantiated.
+		RNA_SAMPLE_SUGAR, // residues that might be in fixed domains but allow sugar to move.
 		RNA_SYN_CHI,
+		RNA_ANTI_CHI,
 		RNA_NORTH_SUGAR,
 		RNA_SOUTH_SUGAR,
 		RNA_TERMINAL, // base pairs on which new bases cannot stack/pair.

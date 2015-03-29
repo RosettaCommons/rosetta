@@ -138,6 +138,12 @@ has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num );
 void
 apply_Aform_torsions( pose::Pose & pose, Size const n );
 
+ChiState
+get_residue_base_state( core::pose::Pose const & pose, Size const seq_num );
+
+PuckerState
+get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num );
+
 
 } //ns rna
 } //ns pose

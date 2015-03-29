@@ -107,6 +107,10 @@ namespace working_parameters {
 		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting );  // updates working list, too
 		utility::vector1< core::Size > const & working_force_syn_chi_res_list() const { return working_force_syn_chi_res_list_; }
 
+		utility::vector1< core::Size > const & force_anti_chi_res_list() const { return force_anti_chi_res_list_; }
+		void set_force_anti_chi_res_list( utility::vector1< core::Size > const & setting );  // updates working list, too
+		utility::vector1< core::Size > const & working_force_anti_chi_res_list() const { return working_force_anti_chi_res_list_; }
+
 		utility::vector1< core::Size > const &  terminal_res() const { return terminal_res_; }
 		void set_terminal_res(	utility::vector1< core::Size > const & terminal_res );
 		utility::vector1< core::Size > const &  working_terminal_res() const { return working_terminal_res_; }
@@ -170,6 +174,9 @@ namespace working_parameters {
 
 		utility::vector1< core::Size > force_syn_chi_res_list_;
 		utility::vector1< core::Size > working_force_syn_chi_res_list_;
+
+		utility::vector1< core::Size > force_anti_chi_res_list_;
+		utility::vector1< core::Size > working_force_anti_chi_res_list_;
 
 		utility::vector1< core::Size > force_north_sugar_list_;
 		utility::vector1< core::Size > working_force_north_sugar_list_;

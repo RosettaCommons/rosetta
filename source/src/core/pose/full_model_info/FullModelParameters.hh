@@ -159,6 +159,9 @@ namespace full_model_info {
 		std::pair< utility::vector1< int >, utility::vector1< char > >
 		full_to_conventional_resnum_and_chain( utility::vector1< Size > const & res_list ) const;
 
+		std::pair< int, char >
+		full_to_conventional_resnum_and_chain( Size const res_num ) const;
+
 		utility::vector1< Size >
 		chains_in_full_model() const;
 

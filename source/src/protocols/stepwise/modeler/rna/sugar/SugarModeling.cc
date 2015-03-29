@@ -96,7 +96,7 @@ namespace sugar {
 	SugarModeling::check_compatibility( core::Size const nres ) const{
 		using namespace ObjexxFCL;
 		runtime_assert( moving_res >= 1 && moving_res <= nres );
-		runtime_assert( reference_res >= 1 && reference_res <= nres );
+		//runtime_assert( reference_res >= 1 && reference_res <= nres );
 	}
 
 	void
@@ -107,15 +107,19 @@ namespace sugar {
 			if (  ( WP->working_force_north_sugar_list() ).has_value( moving_res ) ) moving_res_pucker_state = NORTH;
 			if (  ( WP->working_force_south_sugar_list() ).has_value( moving_res ) ) moving_res_pucker_state = SOUTH;
 
+			// note: hard-wired anti for pyrimidine
 			moving_res_base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? ANY_CHI: ANTI;
 			if (  ( WP->working_force_syn_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = SYN;
+			if (  ( WP->working_force_anti_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = ANTI;
 
 			bulge_res_pucker_state = ANY_PUCKER;
 			if (  ( WP->working_force_north_sugar_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = NORTH;
 			if (  ( WP->working_force_south_sugar_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = SOUTH;
 
+			// note: hard-wired anti for pyrimidine
 			bulge_res_base_state = ( core::chemical::rna::is_purine( pose.residue( bulge_res ) ) ) ? ANY_CHI: ANTI;
 			if (  ( WP->working_force_syn_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = SYN;
+			if (  ( WP->working_force_anti_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = ANTI;
 
 			////////////////////////Print data!////////////////////////////////////////
 			TR.Debug << "SugarModeling: " << std::endl;

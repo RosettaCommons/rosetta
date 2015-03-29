@@ -21,6 +21,7 @@
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/pose/Pose.hh>
 
 using namespace core;
@@ -37,16 +38,16 @@ namespace checker {
 
 		//Constructor
 		RNA_AtrRepChecker( pose::Pose const & pose,
-									 working_parameters::StepWiseWorkingParametersCOP & working_parameters,
-									 bool const loose_rep_cutoff = false );
+											 working_parameters::StepWiseWorkingParametersCOP & working_parameters,
+											 bool const loose_rep_cutoff = false,
+											 scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
 
 		RNA_AtrRepChecker( pose::Pose const & pose,
-										Size const moving_res,
-										Size const reference_res,
-										Size const gap_size,
-										bool const is_internal = false,
-										bool const separate_moving_residue_to_estimate_baseline = true,
-										bool const sample_both_sugar_base_rotamer = false );
+											 Size const moving_res,
+											 Size const reference_res,
+											 Size const gap_size,
+											 scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0
+											 );
 
 		//destructor
 		~RNA_AtrRepChecker();
@@ -76,7 +77,7 @@ namespace checker {
 		get_base_atr_rep_score( core::pose::Pose const & pose );
 
 		void
-		initialize_scorefxn();
+		initialize_scorefxn( core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
 
 		void
 		initialize_parameters();

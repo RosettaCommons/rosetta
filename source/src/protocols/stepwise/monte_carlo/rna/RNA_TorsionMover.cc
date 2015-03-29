@@ -14,8 +14,8 @@
 
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -35,9 +35,8 @@
 
 #include <map>
 
-
-
 using namespace core;
+using namespace protocols::stepwise::monte_carlo::mover;
 using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,7 +92,7 @@ namespace rna {
 		Size const random_idx = int( numeric::random::rg().uniform() * moving_res_list.size() ) + 1;
 		Size const i = moving_res_list[ random_idx ];
 
-		SWA_MoveSelector swa_move_selector;
+		StepWiseMoveSelector swa_move_selector;
 		Attachments attachments = swa_move_selector.get_attachments( pose, sub_to_full( i, pose ) );
 
 		runtime_assert( attachments.size() > 0 );

@@ -21,6 +21,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <basic/Tracer.hh>
 
 using core::pose::sort_pose_by_score;
@@ -126,8 +127,8 @@ namespace rna {
 						if ( verbose_ ) {
 							TR.Debug << "rmsd = " << rmsd << "  pose " << tag_from_pose( *pose_list_[j] ) << " is a neighbor of pose " << tag_from_pose( *pose_list_[i] );
 							TR.Debug << " same_pucker = "; output_boolean( same_pucker, TR.Debug );
-							print_sugar_pucker_state( " center_pucker = ", get_residue_pucker_state( ( *pose_list_[i] ), actually_moving_res ), TR.Debug );
-							print_sugar_pucker_state( " curr_pucker = ", get_residue_pucker_state( ( *pose_list_[j] ), actually_moving_res ), TR.Debug );
+							print_sugar_pucker_state( " center_pucker = ", core::pose::rna::get_residue_pucker_state( ( *pose_list_[i] ), actually_moving_res ), TR.Debug );
+							print_sugar_pucker_state( " curr_pucker = ", core::pose::rna::get_residue_pucker_state( ( *pose_list_[j] ), actually_moving_res ), TR.Debug );
 							TR.Debug << std::endl;
 						}
 					}

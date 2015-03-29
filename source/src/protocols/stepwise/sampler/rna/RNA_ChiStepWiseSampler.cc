@@ -52,29 +52,29 @@ RNA_ChiStepWiseSampler::RNA_ChiStepWiseSampler(
 //////////////////////////////////////////////////////////////////////////
 void RNA_ChiStepWiseSampler::init() {
 	Real chi_center;
-	TorsionList allowed_torions;
+	TorsionList allowed_torsions;
 	if ( pucker_state_ == NORTH ) {
 		if ( base_state_ == ANTI || base_state_ == ANY_CHI ) {
 			chi_center = torsion_info_.chi_north_anti();
-			add_values_from_center( allowed_torions, chi_center, max_range_, bin_size_ );
+			add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
 		}
 		if ( base_state_ == SYN || base_state_ == ANY_CHI ) {
 			chi_center = torsion_info_.chi_north_syn();
-			add_values_from_center( allowed_torions, chi_center, max_range_, bin_size_ );
+			add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
 		}
 	} else if ( pucker_state_ == SOUTH ) {
 		if ( base_state_ == ANTI || base_state_ == ANY_CHI ) {
 			chi_center = torsion_info_.chi_south_anti();
-			add_values_from_center( allowed_torions, chi_center, max_range_, bin_size_ );
+			add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
 		}
 		if ( base_state_ == SYN || base_state_ == ANY_CHI ) {
 			chi_center = torsion_info_.chi_south_syn();
-			add_values_from_center( allowed_torions, chi_center, max_range_, bin_size_ );
+			add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
 		}
 	}
 
 	set_torsion_id( id::TorsionID( rsd_id_, id::CHI, 1 ) );
-	set_torsions( allowed_torions );
+	set_torsions( allowed_torsions );
 
 	StepWiseSamplerOneTorsion::init();
 }

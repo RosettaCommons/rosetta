@@ -48,6 +48,7 @@
 
 static thread_local basic::Tracer TR( "protocols.stepwise.modeler.StepWiseMinimizer" );
 using ObjexxFCL::format::F;
+using ObjexxFCL::format::I;
 using utility::tools::make_vector1;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +145,8 @@ namespace modeler {
 			if ( num_pose_minimize_ > 0 &&  n > num_pose_minimize_ ) break;
 
 			pose = *pose_list_[ n ];
+			Real const score_original = pose.energies().total_energy();
+
 			if ( options_->rm_virt_phosphate() ) rna::remove_all_virtual_phosphates( pose ); // ERRASER.
 
 			// The movemap has all dofs for "non-fixed residues" free to move.
@@ -153,14 +156,14 @@ namespace modeler {
 			// speed only look at neighbors of moving residues.
 			let_neighboring_side_chains_minimize( mm, pose );
 
-			Real const score_original = (*minimize_scorefxn_)( pose );
-			//			minimize_scorefxn_->show( pose );
+			Real const score_before_min = (*minimize_scorefxn_)( pose );
 			do_minimize( pose, mm );
 
 			close_chainbreaks( pose, mm );
 
-			//			minimize_scorefxn_->show( pose );
-			TR << "Score minimized from " << F(8,3, score_original) << " to " << F(8,3,(*minimize_scorefxn_)( pose )) << std::endl;
+			TR << "Score minimized from " << F(8,3, score_before_min) << " to " << F(8,3,(*minimize_scorefxn_)( pose )) << "   [original: " << F(8,3,score_original);
+			if ( hasPoseExtraScore( pose, "cluster_size" ) ) TR << " with cluster_size " << I( 4, getPoseExtraScore( pose, "cluster_size" ) );
+			TR <<  "]" <<  std::endl;
 			( *final_scorefxn_ )( pose );
 			output_pose_list.push_back( pose.clone() );
     }

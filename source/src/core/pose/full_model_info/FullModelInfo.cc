@@ -194,8 +194,16 @@ FullModelInfo::rna_bulge_res() const {
 	return full_model_parameters_->get_res_list( RNA_BULGE );
 }
 utility::vector1< Size > const &
+FullModelInfo::rna_sample_sugar_res() const {
+	return full_model_parameters_->get_res_list( RNA_SAMPLE_SUGAR );
+}
+utility::vector1< Size > const &
 FullModelInfo::rna_syn_chi_res() const {
 	return full_model_parameters_->get_res_list( RNA_SYN_CHI );
+}
+utility::vector1< Size > const &
+FullModelInfo::rna_anti_chi_res() const {
+	return full_model_parameters_->get_res_list( RNA_ANTI_CHI );
 }
 utility::vector1< std::pair< Size, Size > >
 FullModelInfo::jump_pairs() const {
@@ -405,6 +413,7 @@ update_full_model_info_from_pose( pose::Pose & pose ){
 	FullModelInfoOP full_model_info( new FullModelInfo( pose ) );
 	set_full_model_info( pose, full_model_info );
 }
+
 
 } //full_model_info
 } //pose

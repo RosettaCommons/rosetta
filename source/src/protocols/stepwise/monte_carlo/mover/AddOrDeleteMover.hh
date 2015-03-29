@@ -20,8 +20,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
-#include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.fwd.hh>
@@ -49,10 +49,10 @@ public:
 	using protocols::moves::Mover::apply;
 
 	void
-	apply( core::pose::Pose & pose, SWA_Move const & swa_move );
+	apply( core::pose::Pose & pose, StepWiseMove const & swa_move );
 
 	bool
-  apply( core::pose::Pose & pose, std::string & move_type /* will be updated by mover */ );
+  apply( core::pose::Pose & pose, std::string & move_type_string /* will be updated by mover */ );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
@@ -68,6 +68,9 @@ public:
 	void
 	set_choose_random( bool const setting ){ choose_random_ = setting; }
 
+	monte_carlo::submotif::SubMotifLibraryCOP submotif_library() { return submotif_library_; }
+	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting ) { submotif_library_ = setting; }
+
 private:
 
 	utility::vector1< Size >
@@ -79,7 +82,9 @@ private:
 	DeleteMoverOP rna_delete_mover_;
 	FromScratchMoverOP rna_from_scratch_mover_;
 	bool disallow_deletion_of_last_residue_;
-	SWA_MoveSelectorOP swa_move_selector_;
+	StepWiseMoveSelectorOP swa_move_selector_;
+	monte_carlo::submotif::SubMotifLibraryCOP submotif_library_;
+
 	bool choose_random_;
 	options::StepWiseMonteCarloOptionsCOP options_;
 

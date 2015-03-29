@@ -7,26 +7,30 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/screener/NativeRMSD_Screener.fwd.hh
+/// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.fwd.hh
 /// @brief 
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_screener_NativeRMSD_Screener_FWD_HH
-#define INCLUDED_protocols_stepwise_screener_NativeRMSD_Screener_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_rna_VirtualSugarSamplerFromStringList_FWD_HH
+#define INCLUDED_protocols_stepwise_rna_VirtualSugarSamplerFromStringList_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace stepwise {
-namespace screener {
+namespace modeler {
+namespace rna {
+namespace sugar {
 	
-	class NativeRMSD_Screener;
-	typedef utility::pointer::shared_ptr< NativeRMSD_Screener > NativeRMSD_ScreenerOP;
-	typedef utility::pointer::shared_ptr< NativeRMSD_Screener const > NativeRMSD_ScreenerCOP;
+	class VirtualSugarSamplerFromStringList;
+	typedef utility::pointer::shared_ptr< VirtualSugarSamplerFromStringList > VirtualSugarSamplerFromStringListOP;
+	typedef utility::pointer::shared_ptr< VirtualSugarSamplerFromStringList const > VirtualSugarSamplerFromStringListCOP;
 	
-} //screener
+} //sugar
+} //rna
+} //modeler
 } //stepwise
 } //protocols
 

@@ -47,7 +47,7 @@ namespace loop_graph {
 
 	public:
 
-		void update( pose::Pose & pose );
+		void update( pose::Pose & pose, bool const verbose = false );
 
 		LoopScoreInfoOP loop_score_info( Size const n ) const;
 
@@ -57,6 +57,10 @@ namespace loop_graph {
 
 		// helper functions for computing loop properties, missing residues, etc.
 		void update_loops( core::pose::Pose const & pose );
+
+		void
+		update_loops_and_cycles( utility::vector1< Size > const & pose_domain_map,
+														 utility::vector1< Size > const & cutpoint_open );
 
 		Size nmissing( pose::Pose const & pose ) const;
 
@@ -70,6 +74,12 @@ namespace loop_graph {
 		utility::vector1< utility::vector1< Size > >
 		loop_suites( bool include_free_loops = true ) const;
 
+		void set_error_out_on_complex_cycles( bool const & setting ){ error_out_on_complex_cycles_ = setting; }
+		bool has_just_simple_cycles() const { return has_just_simple_cycles_; }
+
+		void
+		check_loop_cycles_are_disjoint( bool const verbose = false );
+
 	private:
 
 		void
@@ -80,10 +90,6 @@ namespace loop_graph {
 									 Vector & xyz );
 
 		void
-		update_loops_and_cycles( utility::vector1< Size > const & pose_domain_map,
-																				utility::vector1< Size > const & cutpoint_open );
-
-		void
 		figure_out_loop_cycles();
 
 		void
@@ -91,11 +97,8 @@ namespace loop_graph {
 																 utility::vector1< Size > parent_domains_in,
 																 utility::vector1< Loop > loops_so_far_in );
 
-		void
-		check_loop_cycles_are_disjoint();
-
 		bool
-		check_disjoint( LoopCycle loop_cycle1, LoopCycle loop_cycle2 );
+		check_disjoint( LoopCycle loop_cycle1, LoopCycle loop_cycle2 ) const;
 
 		void
 		update_loops( utility::vector1< Size > const & pose_domain_map,
@@ -119,6 +122,8 @@ namespace loop_graph {
 		Real const loop_fixed_cost_;
 
 		Real total_energy_;
+		bool error_out_on_complex_cycles_;
+		bool has_just_simple_cycles_;
 
 	};
 

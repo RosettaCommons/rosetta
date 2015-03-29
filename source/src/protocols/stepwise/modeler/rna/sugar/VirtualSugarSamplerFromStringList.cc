@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.cc
+/// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.cc
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSampler.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarSampler.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
@@ -29,7 +29,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.StepWiseRNA_VirtualSugarSamplerFromStringList" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarSamplerFromStringList" );
 
 namespace protocols {
 namespace stepwise {
@@ -38,7 +38,7 @@ namespace rna {
 namespace sugar {
 
 	//Constructor
-	StepWiseRNA_VirtualSugarSamplerFromStringList::StepWiseRNA_VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
+	VirtualSugarSamplerFromStringList::VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 																																																utility::vector1< std::string > const sample_virtual_sugar_string_list):
 		working_parameters_( working_parameters ),
 		sample_virtual_sugar_string_list_( sample_virtual_sugar_string_list ),
@@ -52,18 +52,18 @@ namespace sugar {
 	}
 
 	//Destructor
-	StepWiseRNA_VirtualSugarSamplerFromStringList::~StepWiseRNA_VirtualSugarSamplerFromStringList()
+	VirtualSugarSamplerFromStringList::~VirtualSugarSamplerFromStringList()
 	{}
 
 	/////////////////////
 	std::string
-	StepWiseRNA_VirtualSugarSamplerFromStringList::get_name() const {
-		return "StepWiseRNA_VirtualSugarSamplerFromStringList";
+	VirtualSugarSamplerFromStringList::get_name() const {
+		return "VirtualSugarSamplerFromStringList";
 }
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_VirtualSugarSamplerFromStringList::apply( core::pose::Pose & pose ){
+	VirtualSugarSamplerFromStringList::apply( core::pose::Pose & pose ){
 
 		using namespace ObjexxFCL;
 		using namespace core::io::silent;
@@ -71,7 +71,7 @@ namespace sugar {
 		using namespace core::scoring;
 		using namespace core::conformation;
 
-		output_title_text( "Enter StepWiseRNA_VirtualSugarSampler::sample_virtual_sugar", TR );
+		output_title_text( "Enter VirtualSugarSampler::sample_virtual_sugar", TR );
 
 		// why all this rigamarole? -- rhiju
 		ConformationOP copy_conformation = pose.conformation().clone();
@@ -93,7 +93,7 @@ namespace sugar {
 			SugarModeling & curr_modeling = sugar_modeling_list[n];
 			curr_modeling.set_base_and_pucker_state( pose, working_parameters_ );
 
-			StepWiseRNA_VirtualSugarSampler virtual_sugar_sampler( working_parameters_, curr_modeling );
+			VirtualSugarSampler virtual_sugar_sampler( working_parameters_, curr_modeling );
 			virtual_sugar_sampler.set_tag( "VIRT_RIBOSE_NUM_" + string_of( n ) );
 			virtual_sugar_sampler.set_scorefxn( scorefxn_ );
 			virtual_sugar_sampler.set_integration_test_mode( integration_test_mode_ );
@@ -119,7 +119,7 @@ namespace sugar {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< SugarModeling >
-	StepWiseRNA_VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const & pose ) const {
+	VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const & pose ) const {
 
 		using namespace ObjexxFCL;
 
@@ -189,7 +189,7 @@ namespace sugar {
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_VirtualSugarSamplerFromStringList::empty_sugar_modeling_list( utility::vector1< SugarModeling > const &  sugar_modeling_list  ){
+	VirtualSugarSamplerFromStringList::empty_sugar_modeling_list( utility::vector1< SugarModeling > const &  sugar_modeling_list  ){
 
 		TR.Debug << "num_virtual_sugar = " << sugar_modeling_list.size() << std::endl;
 		if ( sugar_modeling_list.size() == 0 ){
@@ -209,7 +209,7 @@ namespace sugar {
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ){
+	VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ){
 
 	if (  pose_list.size() == 0 ){
 		TR.Debug << "Case n = " << n << " is_sugar_virt == True but " << tag << ".pose_list.size() == 0. EARLY RETURN!" << std::endl;
@@ -227,7 +227,7 @@ namespace sugar {
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_VirtualSugarSamplerFromStringList::output_pose_data_list( utility::vector1< pose::PoseOP > & pose_data_list ){
+	VirtualSugarSamplerFromStringList::output_pose_data_list( utility::vector1< pose::PoseOP > & pose_data_list ){
 
 		for ( Size n = 1; n <= pose_data_list.size(); n++ ){
 			Pose & pose = ( *pose_data_list[n] ); //set viewer_pose;
@@ -241,7 +241,7 @@ namespace sugar {
 
 	//////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_VirtualSugarSamplerFromStringList::set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn ){
+	VirtualSugarSamplerFromStringList::set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn ){
 		scorefxn_ = scorefxn;
 	}
 

@@ -46,6 +46,7 @@ utility::vector1< std::string > const atoms_involved_in_phosphate_torsion = util
 utility::vector1< std::string > const non_base_atoms = utility::tools::make_vector1(
 	" P  ", " OP2", " OP1", " O5'", " C4'", " O4'", " C3'", " O3'", " C1'",
 	" C2'", " O2'", " H5'", "H5''", " H4'", " H3'", " H2'", "HO2'", " H1'" );
+utility::vector1< std::string > const sugar_atoms = utility::tools::make_vector1( " C1'", " C2'", " C3'", " C4'", " C5'", " O2'", " O3'", " O4'", " O5'" );
 
 ///////////////////////////////////////////////////////////////////////////////
 Size
@@ -103,6 +104,13 @@ get_rna_base_coordinate_system( core::conformation::Residue const & rsd, numeric
 
 bool
 is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2);
+
+ChiState
+get_residue_base_state( conformation::Residue const & rsd );
+
+PuckerState
+get_residue_pucker_state( conformation::Residue const & rsd );
+
 
 } //ns rna
 } //ns chemical

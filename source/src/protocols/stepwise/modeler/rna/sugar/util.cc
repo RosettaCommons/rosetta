@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarUtil.cc
+/// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarUtil.cc
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
@@ -428,6 +428,14 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 
 			if ( !pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) continue;
+			reference_res_for_each_virtual_sugar[ n ] = get_reference_res_for_virtual_sugar_based_on_fold_tree( pose, n );
+		}
+		return reference_res_for_each_virtual_sugar;
+	}
+
+ 	///////////////////////////////////////////////////////////////////////////////////////
+	Size
+	get_reference_res_for_virtual_sugar_based_on_fold_tree( pose::Pose const & pose, Size const n ) {
 			Size possible_reference_res = look_for_jumps( n, pose, true /*force_upstream*/ );
 
 			if ( !possible_reference_res ){
@@ -435,21 +443,23 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 				// that can happen if fold tree gets rerooted upon a merge.
 				possible_reference_res = look_for_jumps( n, pose, false /*force_upstream*/ );
 			}
-			runtime_assert( possible_reference_res );
-			reference_res_for_each_virtual_sugar[ n ] = possible_reference_res;
-		}
-		return reference_res_for_each_virtual_sugar;
+			//runtime_assert( possible_reference_res ); // non-zero reference res is checked outside.
+			return possible_reference_res;
 	}
-
 
  	///////////////////////////////////////////////////////////////////////////////////////
 	Size
 	look_for_jumps( Size const n, pose::Pose const & pose, bool const force_upstream ){
 		Size const possible_reference_res_previous = look_for_jumps_to_previous( n, pose, force_upstream );
 		Size const possible_reference_res_next = look_for_jumps_to_next( n, pose, force_upstream );
-		runtime_assert( !possible_reference_res_previous || !possible_reference_res_next );
+		if ( possible_reference_res_previous && possible_reference_res_next ) {
+			TR << TR.Red << pose.fold_tree() << TR.Reset << std::endl;
+			TR << TR.Red << pose.annotated_sequence() << TR.Reset << std::endl;
+			TR << TR.Red << "n " << n << "  possible_reference_res_previous: " << possible_reference_res_previous << "  possible_reference_res_next: " << possible_reference_res_next << TR.Reset << std::endl;
+			utility_exit_with_message( "two options for reference res" );
+		}
 		if ( possible_reference_res_previous )	return  possible_reference_res_previous;
-		if ( possible_reference_res_next ) return  possible_reference_res_next;
+		if ( possible_reference_res_next )      return  possible_reference_res_next;
 		return 0;
 	}
 
@@ -497,13 +507,13 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP
+	VirtualSugarJustInTimeInstantiatorOP
 	instantiate_any_virtual_sugars( pose::Pose & pose,
 																	working_parameters::StepWiseWorkingParametersCOP working_parameters,
 																	core::scoring::ScoreFunctionCOP scorefxn,
 																	options::StepWiseModelerOptionsCOP options ) {
 		Pose pose_save = pose;
-		StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator( new StepWiseRNA_VirtualSugarJustInTimeInstantiator( working_parameters ) );
+		VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator( new VirtualSugarJustInTimeInstantiator( working_parameters ) );
 		virtual_sugar_just_in_time_instantiator->set_scorefxn( scorefxn );
 		virtual_sugar_just_in_time_instantiator->set_options( options );
 		virtual_sugar_just_in_time_instantiator->apply( pose );

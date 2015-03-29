@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh
+/// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarSamplerFromStringList_HH
-#define INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarSamplerFromStringList_HH
+#ifndef INCLUDED_protocols_stepwise_rna_VirtualSugarSamplerFromStringList_HH
+#define INCLUDED_protocols_stepwise_rna_VirtualSugarSamplerFromStringList_HH
 
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.fwd.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.fwd.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -31,16 +31,16 @@ namespace modeler {
 namespace rna {
 namespace sugar {
 
-	class StepWiseRNA_VirtualSugarSamplerFromStringList: public protocols::moves::Mover {
+	class VirtualSugarSamplerFromStringList: public protocols::moves::Mover {
 
 	public:
 
 		//constructor
-		StepWiseRNA_VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
+		VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 																									 utility::vector1< std::string > const sample_virtual_sugar_string_list);
 
 		//destructor
-		~StepWiseRNA_VirtualSugarSamplerFromStringList();
+		~VirtualSugarSamplerFromStringList();
 
 		virtual void apply( pose::Pose & pose_to_visualize );
 

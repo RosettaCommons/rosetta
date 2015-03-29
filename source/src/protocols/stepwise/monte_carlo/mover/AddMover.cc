@@ -52,7 +52,9 @@ using namespace protocols::stepwise::modeler;
 //  inter-chain docking.
 //
 // Could probably be cleaned up -- append vs. prepend are pretty similar,
-//  and jump-addition moves are actually identical.
+//  and jump-addition moves are actually identical. Best bet might
+//  be to create a pose (even for single nucleotides) and have a single
+//  addition function.
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -66,7 +68,7 @@ namespace mover {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	AddMover::AddMover( scoring::ScoreFunctionOP scorefxn ):
+	AddMover::AddMover( scoring::ScoreFunctionCOP scorefxn ):
 		scorefxn_( scorefxn ),
 		presample_added_residue_( true ),
 		presample_by_swa_( false ),
@@ -108,14 +110,14 @@ namespace mover {
 			(offset > 0 ? BOND_TO_PREVIOUS : BOND_TO_NEXT) :
 			(offset > 0 ? JUMP_TO_PREV_IN_CHAIN : JUMP_TO_NEXT_IN_CHAIN );
 		if ( !check_same_chain( viewer_pose, res_to_add_in_full_model_numbering, res_to_build_off_in_full_model_numbering )) attachment_type = JUMP_DOCK;
-		SWA_Move swa_move( res_to_add_in_full_model_numbering,
+		StepWiseMove swa_move( res_to_add_in_full_model_numbering,
 											 Attachment( res_to_build_off_in_full_model_numbering, attachment_type ), ADD );
 		apply( viewer_pose, swa_move );
 	}
 
 	//////////////////////////////////////////////////////////////////////
   void
-  AddMover::apply( core::pose::Pose & viewer_pose, SWA_Move const & swa_move )
+  AddMover::apply( core::pose::Pose & viewer_pose, StepWiseMove const & swa_move )
 	{
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
@@ -128,7 +130,7 @@ namespace mover {
 		nucleoside_num_ = 0;
 
 		swa_move_ = swa_move;
-		res_to_add_in_full_model_numbering_       = swa_move.moving_res();
+		res_to_add_in_full_model_numbering_       = get_add_res( swa_move, pose );
 		res_to_build_off_in_full_model_numbering_ = swa_move.attached_res();
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 
@@ -457,6 +459,48 @@ namespace mover {
 		}
 
 	}
+
+	// similar to get_remodel_res in ResampleMover but only looks inside full_model_info.
+	Size
+	AddMover::get_add_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const {
+
+		utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+		utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
+		std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
+
+		Size const & attached_res =  swa_move.attached_res();
+		runtime_assert( res_list.has_value( attached_res ) );
+
+		MoveElement const & move_element = swa_move.move_element();
+		for ( Size n = 1; n <= move_element.size(); n++ ){
+			Size const i = move_element[ n ];
+			runtime_assert(  !res_list.has_value( i ) );
+		}
+
+		AttachmentType const & attachment_type = swa_move.attachment_type();
+		Size add_res( 0 );
+		if ( attachment_type == BOND_TO_PREVIOUS) {
+			add_res = attached_res + 1;
+			runtime_assert( !cutpoint_open_in_full_model.has_value( attached_res ) );
+		} else if ( attachment_type == BOND_TO_NEXT ) {
+			add_res = attached_res - 1;
+			runtime_assert( !cutpoint_open_in_full_model.has_value( add_res ) );
+		} else if ( attachment_type == JUMP_TO_PREV_IN_CHAIN ) {
+			add_res = attached_res + 1;
+			while( add_res < full_sequence.size() && !move_element.has_value( add_res ) ) add_res++;
+		} else if ( attachment_type == JUMP_TO_NEXT_IN_CHAIN ) {
+			add_res = attached_res - 1;
+			while( add_res > 1 && !move_element.has_value( add_res ) ) add_res--;
+		} else {
+			runtime_assert( attachment_type == JUMP_DOCK );
+			runtime_assert( move_element.size() == 1 );
+			add_res = move_element[ 1 ];
+		}
+		runtime_assert( move_element.has_value( add_res ) );
+
+		return add_res;
+	}
+
 
 } //mover
 } //monte_carlo

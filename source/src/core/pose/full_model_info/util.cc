@@ -892,6 +892,15 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		return connection_domains_relabel;
 	}
 
+//////////////////////////////////////////////////////////////////////////////
+bool
+check_sample_sugar_in_full_model_info( pose::Pose const & pose,
+																			 Size const i ) {
+	if ( !full_model_info_defined( pose ) ) return false;
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & sample_sugar_res = full_model_info.rna_sample_sugar_res();
+	return sample_sugar_res.has_value( full_model_info.res_list()[ i ] );
+}
 
 
 } //full_model_info

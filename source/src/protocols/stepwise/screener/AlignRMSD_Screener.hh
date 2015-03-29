@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/screener/NativeRMSD_Screener.hh
+/// @file protocols/stepwise/screener/AlignRMSD_Screener.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_screener_NativeRMSD_Screener_HH
-#define INCLUDED_protocols_stepwise_screener_NativeRMSD_Screener_HH
+#ifndef INCLUDED_protocols_stepwise_screener_AlignRMSD_Screener_HH
+#define INCLUDED_protocols_stepwise_screener_AlignRMSD_Screener_HH
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
-#include <protocols/stepwise/screener/NativeRMSD_Screener.fwd.hh>
+#include <protocols/stepwise/screener/AlignRMSD_Screener.fwd.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -28,19 +28,19 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class NativeRMSD_Screener: public StepWiseScreener {
+	class AlignRMSD_Screener: public StepWiseScreener {
 
 	public:
 
 		//constructor
-		NativeRMSD_Screener( core::pose::Pose const & native_pose,
+		AlignRMSD_Screener( core::pose::Pose const & align_pose,
 												 core::pose::Pose const & screening_pose,
 												 utility::vector1< core::Size > const & moving_res_list_,
 												 core::Real const rmsd_cutoff,
 												 bool const do_screen = true );
 
 		//destructor
-		~NativeRMSD_Screener();
+		~AlignRMSD_Screener();
 
 	public:
 
@@ -51,16 +51,16 @@ namespace screener {
 		bool do_screen() const { return do_screen_; }
 
 		std::string
-		name() const { return "NativeRMSD_Screener"; }
+		name() const { return "AlignRMSD_Screener"; }
 
 		StepWiseScreenerType
-		type() const { return NATIVE_RMSD; }
+		type() const { return ALIGN_RMSD; }
 
 		core::Size pass_count() const { return pass_count_; }
 
 	private:
 
-		core::pose::Pose const & native_pose_;
+		core::pose::Pose const & align_pose_;
 		core::pose::Pose const & screening_pose_;
 		utility::vector1< core::Size > const & moving_res_list_;
 		core::Real const rmsd_cutoff_;

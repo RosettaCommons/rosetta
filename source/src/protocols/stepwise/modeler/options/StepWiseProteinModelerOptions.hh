@@ -130,9 +130,6 @@ namespace options {
 		void set_pack_weights( std::string const & setting ){ pack_weights_ = setting; }
 		std::string pack_weights() const{ return pack_weights_; }
 
-		void set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
-		bool use_packer_instead_of_rotamer_trials() const{ return use_packer_instead_of_rotamer_trials_; }
-
 		bool const & expand_loop_takeoff() const { return expand_loop_takeoff_; }
 		void set_expand_loop_takeoff( bool const & setting ){ expand_loop_takeoff_ = setting; }
 
@@ -175,7 +172,6 @@ namespace options {
 		bool cluster_by_all_atom_rmsd_;
 
 		std::string pack_weights_;
-		bool use_packer_instead_of_rotamer_trials_;
 
 		bool expand_loop_takeoff_;
 		bool skip_coord_constraints_;

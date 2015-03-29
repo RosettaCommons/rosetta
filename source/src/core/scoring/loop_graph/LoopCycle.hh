@@ -41,6 +41,8 @@ namespace loop_graph {
 
 		Loop const & loop( Size const n ) const;
 
+		utility::vector1< Loop > const & loops() const { return loops_; }
+
 		Size size() const { return loops_.size(); }
 
 		Size find_index_for_loop_landing_at_domain( Size const & takeoff_domain );

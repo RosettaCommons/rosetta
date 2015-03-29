@@ -65,7 +65,9 @@ namespace align {
 		do_checks_( true ),
 		assume_atom_ids_invariant_( false ),
 		initialized_( false ),
-		count_( 0 )
+		count_( 0 ),
+		cluster_size_( 0 ),
+		output_cluster_size_( false )
 	{
 	}
 
@@ -78,6 +80,8 @@ namespace align {
 		assume_atom_ids_invariant_( false ),
 		initialized_( false ),
 		count_( 0 ),
+		cluster_size_( 0 ),
+		output_cluster_size_( options->output_cluster_size() ),
 		silent_file_( options->sampler_silent_file() )
 	{
 		runtime_assert( !options->cluster_by_all_atom_rmsd() ); // for now.
@@ -97,7 +101,10 @@ namespace align {
 		if ( check_screen_and_kick_out_displaced_model( pose ) ){
 			//			TR << "Inserting into list. Score:  " << total_energy_from_pose( pose ) << "  rmsd " << rmsd_ << "  cutoff: " << cluster_rmsd_ << "  list size " << pose_list_.size() << "  max_decoys " << max_decoys_ << std::endl;
 			pose_list_.push_back( pose.clone() );
+			if ( output_cluster_size_ ) setPoseExtraScore( *pose_list_[ pose_list_.size() ], "cluster_size", cluster_size_ );
 			sort_pose_list();
+		} else {
+			//			TR << TR.Red << "not including in pose list. Score:  " << total_energy_from_pose( pose ) << "  rmsd " << rmsd_ << "  cutoff: " << cluster_rmsd_ << "  list size " << pose_list_.size() << "  max_decoys " << max_decoys_ << TR.Reset << std::endl;
 		}
 
 	}
@@ -143,10 +150,13 @@ namespace align {
 		// is the new pose a neighbor of an old pose? In that case should it replace the old one?
 		for ( core::Size n = 1; n <= pose_list_.size(); n++ ){
 			if ( check_for_closeness( pose, *pose_list_[n] ) ){
+				if ( hasPoseExtraScore( *pose_list_[ n ], "cluster_size" ) ) getPoseExtraScore( *pose_list_[ n ], "cluster_size", cluster_size_ );
+				cluster_size_ += 1;
 				if ( pose_score < total_energy_from_pose( *pose_list_[n] ) ) {
 					kick_out_pose_at_idx( n );
 					return true;
 				} else {
+					if ( output_cluster_size_ ) setPoseExtraScore( *pose_list_[ n ], "cluster_size", cluster_size_ );
 					return false;
 				}
 			}
@@ -155,6 +165,7 @@ namespace align {
 		// made it here -- pose has low enough energy to merit going on the list.
 		// if we've got a full list,  kick out the worse scoring pose to make room.
 		if ( size() > max_decoys_ ) kick_out_pose_at_idx( size() );
+		cluster_size_ = 1;
 		return true;
 	}
 

@@ -98,29 +98,33 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 
 	Size m( 0 );
 
-	for (Size i=1; i < nres; ++i) {
-
+	for (Size i = 1; i < nres; ++i) {
+		bool new_jump( false );
 		if ( (  pose.residue(i).is_RNA() != pose.residue(i+1).is_RNA() ) ||
 				 (  pose.residue(i).is_protein() != pose.residue(i+1).is_protein() ) ||
 				 (  pose.pdb_info() && ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) ) ||
 				 (  pose.residue(i).has_variant_type( CUTPOINT_LOWER ) && pose.residue(i+1).has_variant_type( CUTPOINT_UPPER ) ) ){
-			f.new_jump( i, i+1, i );
-			m++;
-			continue;
+			new_jump = true;
 		}
 
-		if ( pose.residue(i).is_RNA() && pose.residue(i+1).is_RNA() &&
+		if ( !new_jump &&
+				 pose.residue(i).is_RNA() && pose.residue(i+1).is_RNA() &&
 				 pose::rna::is_rna_chainbreak( pose, i ) ){
+			new_jump = true;
+		}
+
+		if ( new_jump ) {
 
 			f.new_jump( i, i+1, i );
 			m++;
 
-			Residue const & current_rsd( pose.residue( i   ) ) ;
-			Residue const &    next_rsd( pose.residue( i+1 ) ) ;
-			f.set_jump_atoms( m,
-												chemical::rna::chi1_torsion_atom( current_rsd ),
-												chemical::rna::chi1_torsion_atom( next_rsd )   );
-
+			if ( pose.residue(i).is_RNA() && pose.residue(i+1).is_RNA() ) {
+				Residue const & current_rsd( pose.residue( i   ) ) ;
+				Residue const &    next_rsd( pose.residue( i+1 ) ) ;
+				f.set_jump_atoms( m,
+													chemical::rna::chi1_torsion_atom( current_rsd ),
+													chemical::rna::chi1_torsion_atom( next_rsd )   );
+			}
 		}
 
 	}
@@ -177,15 +181,13 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 	runtime_assert ( current_rsd.is_RNA() );
 	runtime_assert ( next_rsd.is_RNA() );
 
-	//A little inefficient, since atom indices for these backbone
-	// atoms should be the same for all RNA residue types. I think.
-	Size atom_O3prime = current_rsd.type().RNA_type().o3prime_atom_index(); //( " O3'" );
-	Size atom_P       =    next_rsd.type().RNA_type().p_atom_index(); //atom_index( " P  " );
+	Size atom_O3prime = current_rsd.type().RNA_type().o3prime_atom_index();
+	Size atom_P       =    next_rsd.type().RNA_type().p_atom_index();
 	Real const dist2 =
 		( current_rsd.atom( atom_O3prime ).xyz() - next_rsd.atom( atom_P ).xyz() ).length_squared();
 
 	if ( dist2 > CHAINBREAK_CUTOFF2 ) {
-		//std::cout << "Found chainbreak at residue "<< i << " .  O3'-P distance: " << sqrt( dist2 ) << std::endl;
+		TR.Debug << "Found chainbreak at residue "<< i << " .  O3'-P distance: " << sqrt( dist2 ) << std::endl;
 		return true;
 	}
 
@@ -945,6 +947,7 @@ debug_assert( pucker_state <= 2 );
 
 	}
 
+//////////////////////////////////////////////////////////////////////////////////////
 void
 apply_Aform_torsions( pose::Pose & pose, Size const n ){
 	using namespace core::id;
@@ -958,6 +961,19 @@ apply_Aform_torsions( pose::Pose & pose, Size const n ){
 	pose.set_torsion( TorsionID( n, BB, 6), torsion_info_.zeta_aform() );
 	apply_pucker(pose, n, NORTH, false /*skip_same_state*/, true /*use_phenix_geo_*/);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
+ChiState
+get_residue_base_state( core::pose::Pose const & pose, Size const seq_num ){
+	return core::chemical::rna::get_residue_base_state( pose.residue( seq_num ) );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+PuckerState
+get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num ){
+	return core::chemical::rna::get_residue_pucker_state( pose.residue( seq_num ) );
+}
+
 
 } //ns rna
 } //ns pose

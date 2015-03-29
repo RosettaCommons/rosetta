@@ -33,7 +33,7 @@
 #include <protocols/stepwise/modeler/rna/phosphate/util.hh>
 #include <protocols/stepwise/modeler/rna/rigid_body/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.hh>
 #include <protocols/stepwise/screener/BaseBinMapUpdater.hh>
@@ -47,7 +47,7 @@
 #include <protocols/stepwise/screener/FastForwardToNextRigidBody.hh>
 #include <protocols/stepwise/screener/FastForwardToNextResidueAlternative.hh>
 #include <protocols/stepwise/screener/IntegrationTestBreaker.hh>
-#include <protocols/stepwise/screener/NativeRMSD_Screener.hh>
+#include <protocols/stepwise/screener/AlignRMSD_Screener.hh>
 #include <protocols/stepwise/screener/PoseSelectionScreener.hh>
 #include <protocols/stepwise/screener/ProteinCCD_ClosureScreener.hh>
 #include <protocols/stepwise/legacy/screener/ProteinAtrRepScreener.hh>
@@ -73,6 +73,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/Stub.hh>
@@ -119,7 +120,8 @@ using namespace protocols::stepwise::modeler::rna;
 //  * may be virtual -- the exceptions are if connected through chain closure to reference and/or distal residue.
 //
 // Note that sugar of the floating base will be instantiated if it needs to close chain to
-//  anchor or distal residues. In other cases, code below carries out a geometric 'sanity check' that involves temporarily
+//  anchor or distal residues. See 'to do' note below on how this could be improved.
+//  In other cases, code below carries out a geometric 'sanity check' that involves temporarily
 //  instantiating the sugar (within the screening_pose).
 //
 // The Sample-and-screen uses several poses and checkers to reduce the number of variant changes &
@@ -130,14 +132,22 @@ using namespace protocols::stepwise::modeler::rna;
 //
 // As in other stepwise code,
 //   StepWiseWorkingParameters holds information about this particular modeling job.
-//   options::StepWiseModelerOptions holds information that is const across all of stepwise monte carlo.
+//   StepWiseModelerOptions holds information that is const across all of stepwise monte carlo.
 //
 // And, there are some 'useful info' variables derived below that are inferred from pose and above information -- use of KIC, etc. --
 //   they are set at the beginning and should not change again (perhaps should store them together as a COP).
 //
 // Did not carry over:
+//
 //  protein KIC (which should be refactored anyway to be inside sampler, as Fang nicely carried out for RNA.)
 //  build_pose_from_scratch (for RNA). BaseBinMap (for RNA rigid body).
+//
+// To do:
+//
+//  It should be possible to get rid of ResidueAlternativeSets -- this is a deeply refactored carryover from
+//   parin's original SWA code. Could instead (1) sample base & sugar for residues that are at closure cutpoints but
+//   are otherwise free (there's already a helper function for identifying these residues), and (2) have a screener
+//   that checks for closure at virtual sugars. This might also deprecate "fast-forward" stuff, which is complicated.
 //
 //   -- Rhiju, 2014.
 //    [after massive refactoring of code from Parin Sripakdeevong & Rhiju Das, 2009-2013]
@@ -160,6 +170,7 @@ StepWiseConnectionSampler::StepWiseConnectionSampler( working_parameters::StepWi
 	max_distance_squared_( 0.0 ),   // updated below
 	virt_sugar_atr_rep_screen_( false )
 {
+	// not necessarily native -- just used for alignment & rmsd calcs.
 	set_native_pose( working_parameters->working_native_pose() );
 }
 
@@ -296,14 +307,15 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	// at first, don't copy in dofs for sugar/backbone (i.e., residue alternative), because those copy_dofs take extra computation;
 	//  just apply rigid_body transformation.
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( *screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
-	NativeRMSD_ScreenerOP native_rmsd_screener;
+	AlignRMSD_ScreenerOP align_rmsd_screener;
 	if ( ( get_native_pose() != 0 ) && (moving_res_ != 0) &&
 			 ( options_->rmsd_screen() > 0.0 || options_->integration_test_mode() ) ){
 		bool do_screen = ( ( options_->rmsd_screen() > 0.0 ) && !options_->integration_test_mode() ); // gets toggled to true in integration tests.
-		native_rmsd_screener = NativeRMSD_ScreenerOP( new NativeRMSD_Screener( *get_native_pose(), *screening_pose_,
-																										working_parameters_->working_moving_res_list(), options_->rmsd_screen(),
-																										do_screen ) );
-		screeners_.push_back( native_rmsd_screener );
+		// not necessarily native -- just used for alignment & rmsd calcs.
+		align_rmsd_screener = AlignRMSD_ScreenerOP( new AlignRMSD_Screener( *get_native_pose(), *screening_pose_,
+														 working_parameters_->working_moving_partition_res() /*used to be working_parameters_->working_moving_res_list()*/,
+														 options_->rmsd_screen(),	do_screen ) );
+		screeners_.push_back( align_rmsd_screener );
 	}
 
 	// For KIC closure, immediate check that a closed loop solution was actually found.
@@ -416,7 +428,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	if ( options_->integration_test_mode() ) {
 		screeners_.insert( screeners_.begin() /*right at beginning!*/,
-											 protocols::stepwise::screener::StepWiseScreenerOP( new IntegrationTestBreaker( atr_rep_screener, screeners_[ screeners_.size() ], native_rmsd_screener ) ) );
+											 protocols::stepwise::screener::StepWiseScreenerOP( new IntegrationTestBreaker( atr_rep_screener, screeners_[ screeners_.size() ], align_rmsd_screener ) ) );
 	}
 
 }
@@ -498,7 +510,7 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	//  may now be deprecated due to development of PartitionContactScreener, which handles both protein & RNA.
 	bool const use_loose_rep_cutoff = ( kic_modeler_ || moving_partition_res_.size() > 1 /* is_internal */ );
 	if ( !rigid_body_modeler_ && options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 && !protein_connection_ ) {  // need this for legacy bulge application code.
-		rna_atr_rep_checker_ = RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *screening_pose_, working_parameters_, use_loose_rep_cutoff ) );
+		rna_atr_rep_checker_ = RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options().clone() ) );
 		// not in use anymore -- delete after MAR 2015 if SWA looks OK:
 		//	 	rna_virt_sugar_atr_rep_checker_ = RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *virt_sugar_screening_pose_, working_parameters_, use_loose_rep_cutoff ) );
 	 }
@@ -682,6 +694,7 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 
 	if ( sampler_ == 0 ){
 		pose_list_.push_back( pose.clone() );
+		( *scorefxn_ )( *( pose_list_[ 1 ]) );
 		return false;
 	}
 	return true;
@@ -786,7 +799,7 @@ StepWiseConnectionSampler::presample_virtual_sugars( pose::Pose & pose ){
 
 	using namespace modeler::rna::sugar;
 	if ( moving_res_ == 0 ) return true;
-	StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator =
+	VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator =
 		instantiate_any_virtual_sugars( pose, working_parameters_, scorefxn_, options_ );
 	if ( !virtual_sugar_just_in_time_instantiator->success() )	return false;
 	virtual_sugar_just_in_time_instantiator->instantiate_sugars_at_cutpoint_closed( pose );

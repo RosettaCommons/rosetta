@@ -26,7 +26,7 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_O2PrimeMover.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 
 
 namespace protocols {

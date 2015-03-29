@@ -100,7 +100,7 @@
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
-#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
+#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.hh>
@@ -456,7 +456,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer( pose.conformation(), get_working_directory(), 400, 400 );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
-	sugar::StepWiseRNA_VirtualSugarSamplerFromStringList virtual_sugar_sampler_from_string_list( working_parameters_COP, sample_virtual_sugar_string_list );
+	sugar::VirtualSugarSamplerFromStringList virtual_sugar_sampler_from_string_list( working_parameters_COP, sample_virtual_sugar_string_list );
 	virtual_sugar_sampler_from_string_list.set_scorefxn( scorefxn );
 	virtual_sugar_sampler_from_string_list.set_silent_file_out( silent_file_out );
 	virtual_sugar_sampler_from_string_list.set_tag( input_tags[1] );

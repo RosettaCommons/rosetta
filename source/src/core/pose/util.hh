@@ -149,6 +149,15 @@ bool getPoseExtraScore(
 	core::Real & value
 );
 
+Real getPoseExtraScore(
+	core::pose::Pose const & pose,
+	std::string const name );
+
+bool
+hasPoseExtraScore(
+	core::pose::Pose const & pose,
+	std::string const name );
+
 void setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const name,

@@ -55,6 +55,7 @@ setup_sampler( pose::Pose const & pose,
 	/////Load in constants being used/////
 	utility::vector1<Size> const & working_moving_suite_list(	working_parameters->working_moving_suite_list() );
 	utility::vector1<Size> const & syn_chi_res(	working_parameters->working_force_syn_chi_res_list() );
+	utility::vector1<Size> const & anti_chi_res(	working_parameters->working_force_anti_chi_res_list() );
 	utility::vector1<Size> const & north_puckers(	working_parameters->working_force_north_sugar_list() );
 	utility::vector1<Size> const & south_puckers(	working_parameters->working_force_south_sugar_list() );
 	bool const is_prepend_ = working_parameters->is_prepend();
@@ -94,13 +95,17 @@ setup_sampler( pose::Pose const & pose,
 		if ( sample_sugar[i] ) {
 			bool is_north ( north_puckers.has_value( curr_rsd ) );
 			bool is_south ( south_puckers.has_value( curr_rsd ) );
-			bool is_syn ( syn_chi_res.has_value( curr_rsd ) );
 			runtime_assert( !is_north || !is_south );
+			bool is_syn ( syn_chi_res.has_value( curr_rsd ) );
+			bool is_anti ( anti_chi_res.has_value( curr_rsd ) );
+			runtime_assert( !is_syn || !is_anti );
 			if ( is_north ) pucker_state[i] = NORTH;
 			if ( is_south ) pucker_state[i] = SOUTH;
 			if (  is_purine( pose.residue( curr_rsd ) ) ) {
 				if ( is_syn ) base_state[i] = SYN;
+				if ( is_anti ) base_state[i] = ANTI;
 			} else { // pyrimidine
+				// hard-wired anti? really?
 				if ( !options->allow_syn_pyrimidine() ){
 					runtime_assert( !is_syn );
 					base_state[i] = ANTI;
@@ -167,15 +172,17 @@ setup_sampler( pose::Pose const & pose,
 /////////////////////////////////////////////////////////////////////////
 bool
 modeler_sugar_at_five_prime( pose::Pose const & pose,
-															Size const moving_suite ) {
+														 Size const moving_suite ) {
 	using namespace core::pose::full_model_info;
 	if ( moving_suite == 1 ||
 			 ( pose.fold_tree().is_cutpoint( moving_suite - 1 ) &&
 				 !pose.residue_type( moving_suite ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
 		if ( full_model_info_defined( pose ) ) {
 				utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
+				utility::vector1< Size > const & sample_sugar_res = const_full_model_info( pose ).rna_sample_sugar_res();
 				utility::vector1< Size > const & res_list   = const_full_model_info( pose ).res_list();
-				return sample_res.has_value( res_list[ moving_suite ] );
+				return ( sample_res.has_value( res_list[ moving_suite ] ) ||
+								 sample_sugar_res.has_value( res_list[ moving_suite ] ) );
 		} else {
 			return true;
 		}
@@ -193,8 +200,10 @@ modeler_sugar_at_three_prime( pose::Pose const & pose,
 				 !pose.residue_type( moving_suite + 1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ) ) {
 		if ( full_model_info_defined( pose ) ) {
 				utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
+				utility::vector1< Size > const & sample_sugar_res = const_full_model_info( pose ).rna_sample_sugar_res();
 				utility::vector1< Size > const & res_list   = const_full_model_info( pose ).res_list();
-				return sample_res.has_value( res_list[ moving_suite + 1 ] );
+				return ( sample_res.has_value( res_list[ moving_suite + 1 ] ) ||
+								 sample_sugar_res.has_value( res_list[ moving_suite + 1 ] ) );
 		} else {
 			return true;
 		}

@@ -170,6 +170,8 @@ namespace checker {
 
 			Size const terminal_res = terminal_res_[ n ];
 			if ( is_virtual_base_( terminal_res ) ){
+				TR << TR.Red << pose.fold_tree() << TR.Reset << std::endl;
+				TR << TR.Red << pose.annotated_sequence() << TR.Reset << std::endl;
 				utility_exit_with_message( "working_res: " + string_of( terminal_res ) + " is a terminal res but has a virtual! " );
 			}
 
@@ -179,7 +181,6 @@ namespace checker {
 
 				if ( ( is_moving_res_( terminal_res )  && is_moving_res_( m ) ) ||
 						 ( is_fixed_res_(  terminal_res )  && is_fixed_res_(  m ) ) ){
-
 					stacked_on_terminal_res_in_original_pose_( terminal_res, m )  = check_base_stack( terminal_res, m );
 				}
 			}
@@ -429,8 +430,6 @@ namespace checker {
 
 		if ( !base_pair && !stack_base ) return false;
 
-
-		//		TR << " BASE_PAIR " << base_pair << "  BASE_STACKING " << stack_base << std::endl;
 		return true;
 
 	}
@@ -480,7 +479,8 @@ namespace checker {
 			// what is this? seems gratuitous -- rhiju.
 			for ( Size m = 1; m <= fixed_residues_.size(); m++ ) {
 				Size const & fixed_res = fixed_residues_[ m ];
-				if ( verbose ) TR << "about to check stack: " << terminal_res << " " << fixed_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) << std::endl;
+				if ( !is_fixed_res_[ fixed_res ] ) continue; // in -tether_jump condition, is_fixed_res may be 0 at fixed_res. Confusing.
+				if ( verbose ) TR << "about to check stack: " << terminal_res << " " << fixed_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) << " " << check_base_stack( terminal_res, fixed_res, verbose  ) << std::endl;
 				if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) &&
 						 check_base_stack( terminal_res, fixed_res, verbose  ) ) return false;
 			}

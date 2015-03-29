@@ -7,30 +7,33 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.fwd.hh
-/// @brief 
+/// @file protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarSamplerFromStringList_FWD_HH
-#define INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarSamplerFromStringList_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_monte_carlo_StepWiseMove_FWD_HH
+#define INCLUDED_protocols_stepwise_monte_carlo_StepWiseMove_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace stepwise {
-namespace modeler {
-namespace rna {
-namespace sugar {
-	
-	class StepWiseRNA_VirtualSugarSamplerFromStringList;
-	typedef utility::pointer::shared_ptr< StepWiseRNA_VirtualSugarSamplerFromStringList > StepWiseRNA_VirtualSugarSamplerFromStringListOP;
-	typedef utility::pointer::shared_ptr< StepWiseRNA_VirtualSugarSamplerFromStringList const > StepWiseRNA_VirtualSugarSamplerFromStringListCOP;
-	
-} //sugar
-} //rna
-} //modeler
+namespace monte_carlo {
+namespace mover {
+
+	class StepWiseMove;
+	typedef utility::pointer::shared_ptr< StepWiseMove > StepWiseMoveOP;
+	typedef utility::pointer::shared_ptr< StepWiseMove const > StepWiseMoveCOP;
+
+	class Attachment;
+	typedef utility::pointer::shared_ptr< Attachment > AttachmentOP;
+	typedef utility::pointer::shared_ptr< Attachment const > AttachmentCOP;
+
+
+} //mover
+} //monte_carlo
 } //stepwise
 } //protocols
 

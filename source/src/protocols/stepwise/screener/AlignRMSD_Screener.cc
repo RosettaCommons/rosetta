@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/screener/NativeRMSD_Screener.cc
+/// @file protocols/stepwise/screener/AlignRMSD_Screener.cc
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <protocols/stepwise/screener/NativeRMSD_Screener.hh>
+#include <protocols/stepwise/screener/AlignRMSD_Screener.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.NativeRMSD_Screener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.AlignRMSD_Screener" );
 using namespace core;
 
 namespace protocols {
@@ -28,12 +28,12 @@ namespace stepwise {
 namespace screener {
 
 	//Constructor
-	NativeRMSD_Screener::NativeRMSD_Screener( pose::Pose const & native_pose,
+	AlignRMSD_Screener::AlignRMSD_Screener( pose::Pose const & align_pose,
 																						pose::Pose const & screening_pose,
 																						utility::vector1< core::Size > const & moving_res_list,
 																						core::Real const rmsd_cutoff,
 																						bool const do_screen /* = true */ ):
-		native_pose_( native_pose ),
+		align_pose_( align_pose ),
 		screening_pose_( screening_pose ),
 		moving_res_list_( moving_res_list ),
 		rmsd_cutoff_( rmsd_cutoff ),
@@ -41,7 +41,7 @@ namespace screener {
 		pass_count_( 0 ) // only incremented if do_screen true, and screen passes.
 	{
 		runtime_assert( moving_res_list_.size() > 0 );
-		pose_aligner_ = modeler::align::StepWisePoseAlignerOP( new modeler::align::StepWisePoseAligner( native_pose_ ) );
+		pose_aligner_ = modeler::align::StepWisePoseAlignerOP( new modeler::align::StepWisePoseAligner( align_pose_ ) );
 		pose_aligner_->set_user_defined_calc_rms_res( moving_res_list_ );
 		// this is extra -- I was originally doings checks of alignment based on RMSD screens.
 		//		pose_aligner_->set_root_partition_res( modeler::figure_out_root_partition_res( screening_pose_, moving_res_list ) );
@@ -49,11 +49,11 @@ namespace screener {
 	}
 
 	//Destructor
-	NativeRMSD_Screener::~NativeRMSD_Screener()
+	AlignRMSD_Screener::~AlignRMSD_Screener()
 	{}
 
 	bool
-	NativeRMSD_Screener::check_screen(){
+	AlignRMSD_Screener::check_screen(){
 		if ( !do_screen_ ) return true;
 
 		core::Real const rmsd = pose_aligner_->get_rmsd_no_superimpose( screening_pose_,

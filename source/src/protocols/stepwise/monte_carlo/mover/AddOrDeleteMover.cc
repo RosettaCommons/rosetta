@@ -16,9 +16,10 @@
 #include <protocols/stepwise/monte_carlo/mover/AddMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
-#include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
+#include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -36,6 +37,12 @@ using namespace core::pose::full_model_info;
 //////////////////////////////////////////////////////////////////////////
 // Makes a choice, based on current pose, and information in full_model_info
 //  as to whether to add or delete nucleotide and chunks, and where.
+//
+// This may be deprecated soon, with development of StepWiseMasterMover, which can
+//  make the choice of StepWiseMove (keeping track of probabilities needed
+//  for detailed balance) and could then take the job of running
+//  AddMover or DeleteMover.
+//
 //////////////////////////////////////////////////////////////////////////
 
 static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddOrDeleteMover" );
@@ -55,7 +62,7 @@ namespace mover {
 		rna_delete_mover_( rna_delete_mover ),
 		rna_from_scratch_mover_( rna_from_scratch_mover ),
 		disallow_deletion_of_last_residue_( false ),
-		swa_move_selector_( SWA_MoveSelectorOP( new SWA_MoveSelector ) ),
+		swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
 		choose_random_( true )
 	{}
 
@@ -72,41 +79,51 @@ namespace mover {
 
 	///////////////////////////////////////////////////////////////////////////////
 	void
-	AddOrDeleteMover::apply( core::pose::Pose & pose, SWA_Move const & swa_move ){
+	AddOrDeleteMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_move ){
 		TR << swa_move << std::endl;
+		runtime_assert( swa_move_selector_->just_simple_cycles( swa_move, pose, false /*verbose*/ ) );
 		TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
 		if ( swa_move.move_type() == DELETE ) {
 			rna_delete_mover_->apply( pose, swa_move.move_element() );
 		} else if ( swa_move.move_type() == FROM_SCRATCH ) {
 			rna_from_scratch_mover_->apply( pose, swa_move.move_element() );
 		} else {
-			runtime_assert( swa_move.move_type() == ADD );
+			if ( swa_move.move_type() == ADD_SUBMOTIF ) {
+				runtime_assert( submotif_library_ != 0 );
+				nonconst_full_model_info( pose ).add_other_pose(
+																												submotif_library_->create_new_submotif( swa_move.move_element(), swa_move.submotif_tag() , pose ) );
+			} else {
+				runtime_assert( swa_move.move_type() == ADD );
+			}
 			rna_add_mover_->apply( pose, swa_move );
 		}
 		TR.Debug << "Ended with: " << pose.annotated_sequence() << std::endl;
 	}
 
   //////////////////////////////////////////////////////////////////////////
+	// This may be deprecated soon since we are moving move selection out
+	// to StepWiseMasterMover.
+  //////////////////////////////////////////////////////////////////////////
 	bool
-  AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type /* just used by monte carlo*/ )
+  AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type_string /* just used by monte carlo*/ )
 	{
 		utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
 
 		bool disallow_delete  = disallow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
 		if ( options_->skip_deletions() || 	options_->rebuild_bulge_mode() ) disallow_delete = true;
 
-		SWA_Move swa_move;
+		StepWiseMove swa_move;
 		swa_move_selector_->set_allow_delete( !disallow_delete );
-		swa_move_selector_->set_allow_skip_bulge( options_->allow_skip_bulge() );
+		swa_move_selector_->set_skip_bulge_frequency( options_->skip_bulge_frequency() );
 		swa_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
 		swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
+		swa_move_selector_->set_submotif_frequency( options_->submotif_frequency() );
 		swa_move_selector_->set_choose_random( choose_random_ );
+		swa_move_selector_->set_submotif_library( submotif_library_ );
 
-		utility::vector1< Size > const actual_sample_res = figure_out_actual_sample_res( pose );
-		swa_move_selector_->get_add_or_delete_element( pose, swa_move, actual_sample_res );
+		swa_move_selector_->get_add_or_delete_element( pose, swa_move );
 
-		move_type = to_string( swa_move.move_type() );
-		std::transform(move_type.begin(), move_type.end(), move_type.begin(), ::tolower); // this is why we love C
+		move_type_string = get_move_type_string( swa_move );
 
 		if ( swa_move.move_type() == NO_MOVE ) return false;
 		apply( pose, swa_move );
@@ -119,25 +136,6 @@ namespace mover {
 		rna_add_mover_->set_minimize_single_res( setting );
 		rna_delete_mover_->set_minimize_after_delete( !setting );
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//  I think sample_res is now set correctly in FullModelInfoSetupFromCommandLine -- remove?
-	utility::vector1< Size >
-	AddOrDeleteMover::figure_out_actual_sample_res( pose::Pose const & pose ) const{
-
-		utility::vector1< Size > sample_res = const_full_model_info( pose ).sample_res();
-		utility::vector1< Size > const & bulge_res = const_full_model_info( pose ).rna_bulge_res();
-
-		filter_out_bulge_res( sample_res, bulge_res );
-
-		// this is silly -- an empty sample_res vector is a signal to SWA_MoveSelector that
-		// sample_res was undefined. If we just include 0 (which is not an index of any residue)
-		// we will get the desired behavior -- nothing counts as a sample_res.
-		if ( sample_res.size() == 0 ) sample_res.push_back( 0 );
-
-		return sample_res;
-	}
-
 
 	///////////////////////////////////////////////////////////////////////////////
 	std::string

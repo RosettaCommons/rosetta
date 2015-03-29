@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>

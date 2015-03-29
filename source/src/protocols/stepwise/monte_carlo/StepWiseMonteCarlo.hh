@@ -19,18 +19,14 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.fwd.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/DeleteMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/ResampleMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
-#include <protocols/stepwise/modeler/StepWiseModeler.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
+#include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <ctime>
 
 /*
@@ -40,8 +36,6 @@ Commented out because “using namespace X” in header files outside of class d
 by our coding convention due to problems it create on modern compilers and because of the name clashing.
 For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
 */
-
-using namespace protocols::stepwise::monte_carlo::mover;
 
 namespace protocols {
 namespace stepwise {
@@ -57,6 +51,8 @@ namespace monte_carlo {
 		//destructor
 		~StepWiseMonteCarlo();
 
+	public:
+
 		virtual std::string get_name() const {
 			return "StepWiseMonteCarlo";
 		}
@@ -65,7 +61,8 @@ namespace monte_carlo {
 		virtual
 		void apply ( core::pose::Pose & pose );
 
-	public:
+		///@brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
+		virtual void set_native_pose( core::pose::PoseCOP pose );
 
 		void
 		set_options( options::StepWiseMonteCarloOptionsCOP options );
@@ -79,71 +76,41 @@ namespace monte_carlo {
 		void set_out_path( std::string const & setting ){ out_path_ = setting; }
 		std::string out_path() const{ return out_path_; }
 
-		void set_move( SWA_Move const setting ){ move_ = setting; }
+		void set_move( mover::StepWiseMove const setting ){ move_ = setting; }
+		mover::StepWiseMove move() const { return move_; }
 
-		void set_enumerate( bool const setting ){ enumerate_ = setting; }
-
-		void set_do_preminimize_move( bool const setting ){	do_preminimize_move_ = setting; }
-
-		AddOrDeleteMoverOP add_or_delete_mover();
-
-		void
-		build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
+		void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting );
 
 	private:
 
 		void initialize();
 
-		void initialize_movers();
-
 		void initialize_scorefunction();
 
-		void initialize_for_movie( pose::Pose const & pose );
+		void initialize_for_movie( core::pose::Pose const & pose );
 
-		void do_main_loop( pose::Pose & pose );
-
-		void initialize_pose_if_empty( pose::Pose & pose );
+		void do_main_loop( core::pose::Pose & pose );
 
 		void
-		output_movie( pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file );
+		output_movie( core::pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file );
 
 		Real
-		display_progress( pose::Pose & pose, Size const cycle_num );
-
-		std::string
-		get_all_res_list( pose::Pose & pose );
+		display_progress( core::pose::Pose & pose, Size const cycle_num );
 
 		Real show_scores( core::pose::Pose & pose, std::string const tag );
 
 		void
-		set_minimize_single_res( bool const minimize_single_res );
-
-		void
 		anneal_missing( protocols::moves::MonteCarloOP monte_carlo );
-
-		bool
-		do_test_move( pose::Pose & pose );
-
-		modeler::StepWiseModelerOP
-		setup_unified_stepwise_modeler();
-
-		void
-		preminimize_pose( pose::Pose & pose );
 
 	private:
 
 		core::scoring::ScoreFunctionCOP scorefxn_input_;
+
 		core::scoring::ScoreFunctionOP scorefxn_;
-
 		options::StepWiseMonteCarloOptionsCOP options_;
-		modeler::StepWiseModelerOP stepwise_modeler_;
-		DeleteMoverOP delete_mover_;
-		AddMoverOP add_mover_;
-		FromScratchMoverOP from_scratch_mover_;
-		AddOrDeleteMoverOP add_or_delete_mover_;
-		ResampleMoverOP resample_mover_;
+		mover::StepWiseMasterMoverOP master_mover_;
 
-		bool minimize_single_res_;
+		// are these really in use anymore?
 		core::Real const max_missing_weight_;
 		core::Real missing_weight_interval_;
 		core::Real missing_weight_;
@@ -155,9 +122,7 @@ namespace monte_carlo {
 		std::string movie_file_accepted_;
 
 		// for testing individual moves
-		SWA_Move move_;
-		bool enumerate_;
-		bool do_preminimize_move_;
+		mover::StepWiseMove move_;
 
 		// timing poses
 		std::clock_t start_time_;

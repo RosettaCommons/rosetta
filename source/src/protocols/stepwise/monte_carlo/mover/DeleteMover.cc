@@ -13,7 +13,7 @@
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.hh>
-#include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/packer/util.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/MultiPhosphateSampler.hh>
@@ -70,8 +70,7 @@ namespace mover {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	DeleteMover::DeleteMover( ):
-		options_( options::StepWiseMonteCarloOptionsCOP( options::StepWiseMonteCarloOptionsOP( new options::StepWiseMonteCarloOptions ) ) ),
-		minimize_after_delete_( true )
+		options_( options::StepWiseMonteCarloOptionsCOP( options::StepWiseMonteCarloOptionsOP( new options::StepWiseMonteCarloOptions ) ) )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -121,7 +120,7 @@ namespace mover {
 		if ( keep_remainder_pose  ) fix_up_jump_atoms_and_residue_type_variants( pose );
 		if ( keep_sliced_out_pose ) fix_up_jump_atoms_and_residue_type_variants( *sliced_out_pose_op );
 
-		if ( minimize_after_delete_ ) {
+		if ( options_->minimize_after_delete() ) {
 			if ( keep_remainder_pose  ) minimize_after_delete( pose );
 			if ( keep_sliced_out_pose ) minimize_after_delete( *sliced_out_pose_op );
 		}
@@ -226,8 +225,8 @@ namespace mover {
 		bool const minimize_after_delete_save( minimize_after_delete_ );
 		minimize_after_delete_ = false;
 
-		utility::vector1< SWA_Move > swa_moves;
-		SWA_MoveSelector swa_move_selector;
+		utility::vector1< StepWiseMove > swa_moves;
+		StepWiseMoveSelector swa_move_selector;
 		swa_move_selector.get_intramolecular_delete_move_elements( pose, swa_moves);
 
 		if ( swa_moves.size() > 0 ){ // recursively delete all residues.

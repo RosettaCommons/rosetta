@@ -7,26 +7,30 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/monte_carlo/SWA_MoveSelector.fwd.hh
+/// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.fwd.hh
 /// @brief 
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_monte_carlo_SWA_MoveSelector_FWD_HH
-#define INCLUDED_protocols_stepwise_monte_carlo_SWA_MoveSelector_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_rna_VirtualSugarJustInTimeInstantiator_FWD_HH
+#define INCLUDED_protocols_stepwise_rna_VirtualSugarJustInTimeInstantiator_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace stepwise {
-namespace monte_carlo {
+namespace modeler {
+namespace rna {
+namespace sugar {
 	
-	class SWA_MoveSelector;
-	typedef utility::pointer::shared_ptr< SWA_MoveSelector > SWA_MoveSelectorOP;
-	typedef utility::pointer::shared_ptr< SWA_MoveSelector const > SWA_MoveSelectorCOP;
+	class VirtualSugarJustInTimeInstantiator;
+	typedef utility::pointer::shared_ptr< VirtualSugarJustInTimeInstantiator > VirtualSugarJustInTimeInstantiatorOP;
+	typedef utility::pointer::shared_ptr< VirtualSugarJustInTimeInstantiator const > VirtualSugarJustInTimeInstantiatorCOP;
 	
-} //monte_carlo
+} //sugar
+} //rna
+} //modeler
 } //stepwise
 } //protocols
 

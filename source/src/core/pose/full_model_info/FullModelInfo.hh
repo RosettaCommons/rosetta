@@ -87,8 +87,10 @@ public:
 	utility::vector1< Size > const & working_res() const;
 	utility::vector1< Size > const & calc_rms_res() const;
 	utility::vector1< Size > const & rna_syn_chi_res() const;
+	utility::vector1< Size > const & rna_anti_chi_res() const;
 	utility::vector1< Size > const & rna_terminal_res() const;
 	utility::vector1< Size > const & rna_bulge_res() const;
+	utility::vector1< Size > const & rna_sample_sugar_res() const;
 	utility::vector1< std::pair< Size, Size > > jump_pairs() const;
 	utility::vector1< Size > const & jump_res_map() const;
 

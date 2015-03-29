@@ -347,84 +347,6 @@ namespace rna {
 		return cutpoint;
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////
-	core::Size
-	get_residue_base_state( core::pose::Pose const & pose, Size const seq_num ){
-
-		using namespace core::scoring;
-		using namespace core::chemical::rna;
-
-		Real const CHI_CUTOFF = 15.0; //Kinda RANDOM..ROUGH average between north chi_anti (~79) and north chi_syn (~-50)
-
-		conformation::Residue const & rsd = pose.residue( seq_num );
-		Real const chi = numeric::principal_angle_degrees( rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
-
-		if ( chi <= CHI_CUTOFF ){
-			return SYN;
-		} else{
-			return ANTI;
-		}
-
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-
-	core::Size
-	get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num, bool const verbose ){
-
-		using namespace core::scoring;
-		using namespace core::chemical::rna;
-
-		static RNA_FittedTorsionInfo const rna_fitted_torsion_info;
-		Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
-
-		if ( verbose ) TR.Debug << "  DELTA_CUTOFF angle = " << DELTA_CUTOFF;
-
-		conformation::Residue const & rsd( pose.residue( seq_num ) );
-		Real delta = numeric::principal_angle_degrees( rsd.mainchain_torsion( DELTA ) );
-
-		if ( ( delta > 1.0 && delta < 179.00 ) == false ){
-			TR.Debug << " seq_num = " << seq_num << " delta angle = " << delta << std::endl;
-
-/////////////////////////
-			if ( pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
-				TR.Debug << "Warning: delta angle is out of range for virtual_residue at seq_num " << seq_num << "!" << std::endl;
-			} else{
-				//This part is now obsolete .... Apr 30, 2010...
-				//A possibility for a out of range delta is for imported pdbs (upper element of 1q93 for example).
-				Real principal_delta = numeric::principal_angle_degrees( delta );
-
-				//Consistency check
-				if ( delta <  - 180 ){
-					if ( ( delta + 359 < principal_delta ) == false || ( delta + 361 > principal_delta ) == false ){
-						utility_exit_with_message( "delta <  - 180 but delta + 359 < principal_delta ) == false || ( delta + 361 > principal_delta ) == false!" );
-					}
-				}
-
-				if ( delta > 180 ){
-					if ( ( delta - 359 > principal_delta ) == false || ( delta - 361 < principal_delta ) == false ){
-						utility_exit_with_message( "delta > 180 but delta - 359 > principal_delta ) == false || ( delta - 361 < principal_delta ) == false!" );
-					}
-				}
-
-				delta = principal_delta;
-
-				//Check again
-				if ( ( delta > 1.0 && delta < 179.00 ) == false ) utility_exit_with_message( "principal delta angle out of range!" );
-//////////////////////////
-			}
-		}
-
-		if ( verbose ) TR.Debug << "  delta angle = " << delta << std::endl;
-
-		if ( delta <= DELTA_CUTOFF ) {
-			return NORTH;
-		} else {
-			return SOUTH;
-		}
-	}
-
-
 	////////////////////////////////////////////////////////////////////////
 	void
 	apply_rotamer( pose::Pose & pose, utility::vector1< Torsion_Info > const & rotamer_list ){
@@ -436,11 +358,7 @@ namespace rna {
 
 	bool
 	is_same_sugar_pucker( core::pose::Pose const & current_pose, core::pose::Pose const & cluster_center_pose, Size const seq_num ){
-		if ( get_residue_pucker_state( current_pose, seq_num ) == get_residue_pucker_state( cluster_center_pose, seq_num ) ){
-			return true;
-		} else{
-			return false;
-		}
+		return ( core::pose::rna::get_residue_pucker_state( current_pose, seq_num ) == core::pose::rna::get_residue_pucker_state( cluster_center_pose, seq_num ) );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -614,6 +532,7 @@ namespace rna {
 		output_seq_num_list( "global_sample_res_list = ", WP->global_sample_res_list(), outstream );
 
 		if ( WP->force_syn_chi_res_list().size() > 0 )  output_seq_num_list( "force_syn_chi_res_list = ", WP->force_syn_chi_res_list(), outstream );
+		if ( WP->force_anti_chi_res_list().size() > 0 )  output_seq_num_list( "force_anti_chi_res_list = ", WP->force_anti_chi_res_list(), outstream );
 		if ( WP->force_north_sugar_list().size() > 0 ) output_seq_num_list( "force_north_sugar_list = ", WP->force_north_sugar_list(), outstream );
 		if ( WP->force_south_sugar_list().size() > 0 ) output_seq_num_list( "force_south_sugar_list = ", WP->force_south_sugar_list(), outstream );
 		if ( WP->protonated_H1_adenosine_list().size() > 0 ) output_seq_num_list( "protonated_H1_adenosine_list ", WP->protonated_H1_adenosine_list(), outstream );
@@ -633,6 +552,7 @@ namespace rna {
 
 		output_seq_num_list( "working_global_sample_res_list = ", WP->working_global_sample_res_list(), outstream );
 		if ( WP->force_syn_chi_res_list().size() > 0 )  output_seq_num_list( "working_force_syn_chi_res_list = ", WP->working_force_syn_chi_res_list(), outstream );
+		if ( WP->force_anti_chi_res_list().size() > 0 )  output_seq_num_list( "working_force_anti_chi_res_list = ", WP->working_force_anti_chi_res_list(), outstream );
 		if ( WP->force_north_sugar_list().size() > 0 ) output_seq_num_list( "working_force_north_sugar_list = ", WP->working_force_north_sugar_list(), outstream );
 		if ( WP->force_south_sugar_list().size() > 0 ) output_seq_num_list( "working_force_south_sugar_list = ", WP->working_force_south_sugar_list(), outstream );
 		if ( WP->protonated_H1_adenosine_list().size() > 0 ) output_seq_num_list( "working_protonated_H1_adenosine_list = ", WP->working_protonated_H1_adenosine_list(), outstream );

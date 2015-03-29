@@ -7,31 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/monte_carlo/SWA_Move.fwd.hh
-/// @brief
+/// @file protocols/stepwise/screener/AlignRMSD_Screener.fwd.hh
+/// @brief 
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_monte_carlo_SWA_Move_FWD_HH
-#define INCLUDED_protocols_stepwise_monte_carlo_SWA_Move_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_screener_AlignRMSD_Screener_FWD_HH
+#define INCLUDED_protocols_stepwise_screener_AlignRMSD_Screener_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace stepwise {
-namespace monte_carlo {
-
-	class SWA_Move;
-	typedef utility::pointer::shared_ptr< SWA_Move > SWA_MoveOP;
-	typedef utility::pointer::shared_ptr< SWA_Move const > SWA_MoveCOP;
-
-	class Attachment;
-	typedef utility::pointer::shared_ptr< Attachment > AttachmentOP;
-	typedef utility::pointer::shared_ptr< Attachment const > AttachmentCOP;
-
-
-} //monte_carlo
+namespace screener {
+	
+	class AlignRMSD_Screener;
+	typedef utility::pointer::shared_ptr< AlignRMSD_Screener > AlignRMSD_ScreenerOP;
+	typedef utility::pointer::shared_ptr< AlignRMSD_Screener const > AlignRMSD_ScreenerCOP;
+	
+} //screener
 } //stepwise
 } //protocols
 

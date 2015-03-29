@@ -50,7 +50,8 @@ namespace setup {
 	void
 	initialize_native_and_align_pose( core::pose::PoseOP & native_pose,
 																		core::pose::PoseOP & align_pose,
-																		core::chemical::ResidueTypeSetCAP rsd_set );
+																		core::chemical::ResidueTypeSetCAP rsd_set,
+																		core::pose::PoseCOP start_pose );
 
 	core::pose::PoseOP
 	initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set );
@@ -195,6 +196,9 @@ namespace setup {
 															utility::vector1< core::Size > const & working_res,
 															utility::vector1< core::Size > const & sample_res,
 															core::Size const nres );
+	void
+	reorder_pose( core::pose::Pose & pose, utility::vector1< core::Size > & res_list );
+
 	bool
 	just_modeling_RNA( utility::vector1< std::string > const & fasta_files );
 

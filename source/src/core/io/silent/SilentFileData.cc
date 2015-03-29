@@ -376,12 +376,10 @@ SilentFileData::add_as_other_struct_if_relevant( SilentStructOP const & new_stru
 
 	std::map< std::string, std::string > const & comments = new_struct->get_all_comments();
 	if ( comments.find( "OTHER_POSE" ) == comments.end() ) return false;
-	Size const other_pose_idx = ObjexxFCL::int_of( comments.find( "OTHER_POSE" )->second );
 	runtime_assert( new_struct->scoreline_prefix() == "OTHER:" );
 	runtime_assert( has_tag( new_tag ) );
 	SilentStructOP parent_silent_struct = structure_map_.find( new_tag )->second;
 	parent_silent_struct->add_other_struct( new_struct );
-	runtime_assert( parent_silent_struct->other_struct_list().size() == other_pose_idx );
 	return true;
 }
 

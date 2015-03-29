@@ -32,6 +32,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
@@ -78,8 +79,11 @@ stepwise_monte_carlo()
   using namespace core::pose::full_model_info;
   using namespace protocols::stepwise;
   using namespace protocols::stepwise::modeler;
+  using namespace protocols::stepwise::monte_carlo::submotif;
 	using namespace protocols::stepwise::setup;
   using namespace protocols::stepwise::monte_carlo;
+  using namespace protocols::stepwise::monte_carlo::mover;
+  using namespace protocols::stepwise::monte_carlo::options;
   using namespace utility::file;
 
 	bool const just_RNA = just_modeling_RNA( option[ in::file::fasta ]() );
@@ -93,35 +97,36 @@ stepwise_monte_carlo()
 	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
 	PoseOP native_pose, align_pose;
-	initialize_native_and_align_pose( native_pose, align_pose, rsd_set );
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 	pose::Pose & pose = *pose_op;
+	initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose_op );
 	// temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
 	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn );
 
 	// Get rid of this commented code when it is incorporated into a unit test.
 	//	test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );
 
-	// actual pose to be sampled...
-	if ( pose.total_residue() > 0 ) ( *scorefxn )( pose );
+	// setup test move specified via -stepwise:move option
+	StepWiseMove const test_move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() );
+	
+	// actual pose to be sampled... do not score pose is user has specified a move  
+	if ( pose.total_residue() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( pose );
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
 
 	StepWiseMonteCarloOP stepwise_monte_carlo( new StepWiseMonteCarlo( scorefxn ) );
-	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsOP options( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions );
-	bool const do_preminimize_move = option[ OptionKeys::stepwise::preminimize ]();
-	options->initialize_from_command_line();
-	if ( option[ OptionKeys::stepwise::enumerate ]() ) options->set_output_minimized_pose_list( true );
-	stepwise_monte_carlo->set_options( options );
 	stepwise_monte_carlo->set_native_pose( align_pose ); //allows for alignment to be to non-native
-	stepwise_monte_carlo->set_move( SWA_Move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() ) );
-	stepwise_monte_carlo->set_enumerate( option[ OptionKeys::stepwise::enumerate ]() );
-	stepwise_monte_carlo->set_do_preminimize_move( do_preminimize_move );
+	stepwise_monte_carlo->set_move( test_move );
+
+	StepWiseMonteCarloOptionsOP options( new StepWiseMonteCarloOptions );
+	options->initialize_from_command_line();
+	stepwise_monte_carlo->set_options( options );
 	if ( ( options->from_scratch_frequency() > 0.0 || const_full_model_info( *pose_op ).other_pose_list().size() > 0 ) && !scorefxn->has_nonzero_weight( other_pose ) ) scorefxn->set_weight( other_pose, 1.0 ); // critical if more than one pose shows up and focus switches...
 
 	std::string const silent_file = option[ out::file::silent ]();
 	if ( option[ out::overwrite ]() ) remove_silent_file_if_it_exists( silent_file );
 	stepwise_monte_carlo->set_out_path( FileName( silent_file ).path() );
+	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set ) ) );
 
 	// main loop
 	StepWiseJobDistributorOP stepwise_job_distributor( new StepWiseMonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );
@@ -131,11 +136,11 @@ stepwise_monte_carlo()
 	stepwise_job_distributor->set_native_pose( native_pose );
 	stepwise_job_distributor->set_superimpose_over_all( option[ OptionKeys::stepwise::superimpose_over_all ]() );
 	stepwise_job_distributor->initialize( pose );
+
 	while ( stepwise_job_distributor->has_another_job() ) {
 		stepwise_job_distributor->apply( pose );
 	}
 
-	if ( do_preminimize_move ) pose.dump_pdb( "PREPACK.pdb" );
 }
 
 ///////////////////////////////////////////////////////////////

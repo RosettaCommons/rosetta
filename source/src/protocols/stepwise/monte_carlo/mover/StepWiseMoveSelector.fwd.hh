@@ -7,30 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.fwd.hh
+/// @file protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.fwd.hh
 /// @brief 
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarJustInTimeInstantiator_FWD_HH
-#define INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarJustInTimeInstantiator_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_monte_carlo_StepWiseMoveSelector_FWD_HH
+#define INCLUDED_protocols_stepwise_monte_carlo_StepWiseMoveSelector_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace stepwise {
-namespace modeler {
-namespace rna {
-namespace sugar {
+namespace monte_carlo {
+namespace mover {
 	
-	class StepWiseRNA_VirtualSugarJustInTimeInstantiator;
-	typedef utility::pointer::shared_ptr< StepWiseRNA_VirtualSugarJustInTimeInstantiator > StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP;
-	typedef utility::pointer::shared_ptr< StepWiseRNA_VirtualSugarJustInTimeInstantiator const > StepWiseRNA_VirtualSugarJustInTimeInstantiatorCOP;
+	class StepWiseMoveSelector;
+	typedef utility::pointer::shared_ptr< StepWiseMoveSelector > StepWiseMoveSelectorOP;
+	typedef utility::pointer::shared_ptr< StepWiseMoveSelector const > StepWiseMoveSelectorCOP;
 	
-} //sugar
-} //rna
-} //modeler
+} //mover
+} //monte_carlo
 } //stepwise
 } //protocols
 

@@ -21,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_O2PrimeMover.fwd.hh>
 
 

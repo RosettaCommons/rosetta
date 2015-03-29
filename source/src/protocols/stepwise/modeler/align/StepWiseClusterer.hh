@@ -96,6 +96,8 @@ namespace align {
 		bool assume_atom_ids_invariant_;
 		bool initialized_;
 		Size count_;
+		core::Real cluster_size_; // should be Size, but Real to use setPoseExtraScore
+		bool output_cluster_size_;
 		std::string silent_file_;
 
 		StepWisePoseAlignerOP pose_aligner_;
