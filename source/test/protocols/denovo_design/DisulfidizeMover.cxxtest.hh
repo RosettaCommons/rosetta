@@ -38,6 +38,7 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
+#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
 static thread_local basic::Tracer TR("protocols.denovo_design.DisulfidizeMover.cxxtest");
@@ -59,32 +60,45 @@ public:
 	void tearDown() {
 	}
 
-	void test_accumulator() {
+	void test_multiplex() {
 		using namespace protocols::denovo_design;
 		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/disulf_test.pdb" );
 
 		DisulfidizeMover disulf;
-		// set it up so last pose is properly cached
-		disulf.apply( input_pose );
+		disulf.set_min_loop( 6 );
 
-		// artificially populate with results
-		disulf.push_result( core::pose::PoseOP( new core::pose::Pose(input_pose) ) );
-		disulf.push_result( core::pose::PoseOP( new core::pose::Pose(input_pose) ) );
-
-		core::pose::Pose runpose = input_pose;
-		disulf.apply( runpose );
+		core::pose::PoseOP runpose = input_pose.clone();
+		disulf.apply( *runpose );
 		TS_ASSERT_EQUALS( disulf.get_last_move_status(), protocols::moves::MS_SUCCESS );
-		TS_ASSERT( same_pose( input_pose, runpose ) );
 
-		runpose = input_pose;
-		disulf.apply( runpose );
-		TS_ASSERT_EQUALS( disulf.get_last_move_status(), protocols::moves::MS_SUCCESS );
-		TS_ASSERT( same_pose( input_pose, runpose ) );
+		utility::vector1< core::pose::PoseOP > poses;
+		poses.push_back( runpose );
+		core::pose::PoseOP additional = disulf.get_additional_output();
+		while ( additional ) {
+			poses.push_back( additional );
+			additional = disulf.get_additional_output();
+		}
 
-		// poselist should be empty
-		runpose = input_pose;
-		disulf.apply( runpose );
-		TS_ASSERT_EQUALS( disulf.get_last_move_status(), protocols::moves::FAIL_RETRY );
+		// there should be three results
+		TS_ASSERT_EQUALS( poses.size(), 3 );
+
+		// each should have disulfides
+		std::set< core::Size > num_disulf;
+		BOOST_FOREACH( core::pose::PoseOP p, poses ) {
+			core::Size cyd_count = 0;
+			for ( core::Size i=1, endi=p->total_residue(); i<=endi; ++i ) {
+				TS_ASSERT( p );
+				if ( p->residue(i).name() == "CYD" )
+					++cyd_count;
+			}
+			TS_ASSERT( cyd_count );
+			num_disulf.insert( cyd_count );
+		}
+		TS_ASSERT( num_disulf.find(1) == num_disulf.end() );
+		TS_ASSERT( num_disulf.find(3) == num_disulf.end() );
+		TS_ASSERT( num_disulf.find(2) != num_disulf.end() );
+		TS_ASSERT( num_disulf.find(4) != num_disulf.end() );
 	}
 
 	void test_disulfidize() {
@@ -94,7 +108,11 @@ public:
 
 		// test util.cc: convert_to_poly_ala
 		core::pose::PoseOP posecopy = input_pose.clone();
-		construct_poly_ala_pose( *posecopy, true );
+		std::set< core::Size > set1;
+		for ( core::Size i=1, endi=posecopy->total_residue(); i<=endi; ++i ) {
+			set1.insert( i );
+		}
+		construct_poly_ala_pose( *posecopy, true, set1, set1 );
 		TS_ASSERT_EQUALS( posecopy->total_residue(), input_pose.total_residue() );
 
 		DisulfidizeMover disulf;
@@ -190,6 +208,20 @@ public:
 			disulf.recursive_multiple_disulfide_former( empty_disulfide_list, disulfs );
 
 		TS_ASSERT_EQUALS( disulfide_configurations.size(), 3 );
+
+
+		// test recursive function
+		DisulfidizeMover::DisulfideList mylist, tmplist;
+		mylist.push_back( std::make_pair( 1, 2 ) );
+		mylist.push_back( std::make_pair( 2, 3 ) );
+		mylist.push_back( std::make_pair( 5, 20 ) );
+		mylist.push_back( std::make_pair( 21, 30 ) );
+
+		utility::vector1< DisulfidizeMover::DisulfideList > all_combinations=
+			disulf.recursive_multiple_disulfide_former( tmplist, mylist );
+
+		TS_ASSERT_EQUALS( all_combinations.size(), 11 );
+		TR << "ALl combinations: " << all_combinations << std::endl;
 	}
 
 };

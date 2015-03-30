@@ -34,6 +34,7 @@
 #include <core/util/disulfide_util.hh>
 
 //Basic Headers
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 //Utility Headers
@@ -67,7 +68,7 @@ DisulfidizeMoverCreator::create_mover() const
 std::string
 DisulfidizeMoverCreator::mover_name()
 {
-  return "DisulfidizeMover";
+  return "Disulfidize";
 }
 
 ///  ---------------------------------------------------------------------------------
@@ -76,17 +77,18 @@ DisulfidizeMoverCreator::mover_name()
 
 /// @brief default constructor
 DisulfidizeMover::DisulfidizeMover() :
-	protocols::moves::Mover(),
-	match_rt_limit_( 1.0 ),
+	protocols::rosetta_scripts::MultiplePoseMover(),
+	match_rt_limit_( 2.0 ),
 	max_disulf_score_( -0.25 ),
 	min_loop_( 8 ),
 	min_disulfides_( 1 ),
 	max_disulfides_( 3 ),
 	include_current_ds_( false ),
 	keep_current_ds_( false ),
-	last_pose_()
+	set1_selector_(),
+	set2_selector_()
 {
-	accumulator_.clear();
+	set_rosetta_scripts_tag( utility::tag::TagOP( new utility::tag::Tag() ) );
 }
 
 /// @brief destructor - this class has no dynamic allocation, so
@@ -107,16 +109,51 @@ DisulfidizeMover::clone() const
 	return protocols::moves::MoverOP( new DisulfidizeMover(*this) );
 }
 
+/// @brief sets the selector for set 1 -- disulfides will connect residues in set 1 to residues in set 2
+void
+DisulfidizeMover::set_set1_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector )
+{
+	set1_selector_ = selector;
+}
+
+/// @brief sets the selector for set 2 -- disulfides will connect residues in set 1 to residues in set 2
+void
+DisulfidizeMover::set_set2_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector )
+{
+	set2_selector_ = selector;
+}
+
+/// @brief sets the min_loop value (number of residues between disulfide-joined residues) (default=8)
+void
+DisulfidizeMover::set_min_loop( core::Size const minloopval )
+{
+	min_loop_ = minloopval;
+}
+
+/// @brief sets the maximum allowed per-disulfide dslf_fa13 score (default=0.0)
+void
+DisulfidizeMover::set_max_disulf_score( core::Real const maxscoreval )
+{
+	max_disulf_score_ = maxscoreval;
+}
+
+/// @brief sets the maximum allowed "match-rt-limit" (default=2.0)
+void
+DisulfidizeMover::set_match_rt_limit( core::Real const matchrtval )
+{
+	match_rt_limit_ = matchrtval;
+}
+
 void
 DisulfidizeMover::parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & ,
 		protocols::moves::Movers_map const & ,
 		core::pose::Pose const & )
 {
 	if ( tag->hasOption( "match_rt_limit" ) )
-		match_rt_limit_ = tag->getOption< core::Real >( "match_rt_limit" );
+		set_match_rt_limit( tag->getOption< core::Real >( "match_rt_limit" ) );
 	if ( tag->hasOption( "min_disulfides" ) )
 		min_disulfides_ = tag->getOption< core::Size >( "min_disulfides" );
 	if ( tag->hasOption( "max_disulfides" ) )
@@ -126,60 +163,67 @@ DisulfidizeMover::parse_my_tag(
 	if ( tag->hasOption( "include_current_disulfides" ) )
 		include_current_ds_ = tag->getOption< bool >( "include_current_disulfides" );
 	if ( tag->hasOption( "min_loop" ) )
-		min_loop_ = tag->getOption< core::Size >( "min_loop" );
+		set_min_loop( tag->getOption< core::Size >( "min_loop" ) );
+	if ( tag->hasOption( "max_disulf_score" ) )
+		set_max_disulf_score( tag->getOption< core::Real >( "max_disulf_score" ) );
+	if ( tag->hasOption( "set1" ) ) {
+		set_set1_selector( get_residue_selector( tag->getOption< std::string >( "set1" ), data ) );
+	}
+	if ( tag->hasOption( "set2" ) ) {
+		set_set2_selector( get_residue_selector( tag->getOption< std::string >( "set2" ), data ) );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-DisulfidizeMover::apply( core::pose::Pose & pose )
+/// @brief does the work -- scans pose for disulfides, stores first result in pose, adds others to additional_poses
+bool
+DisulfidizeMover::process_pose(
+		core::pose::Pose & pose,
+		utility::vector1 < core::pose::PoseOP > & additional_poses )
 {
-	bool const newpose = ( !last_pose_ || !same_pose( pose, *last_pose_ ) );
+	DisulfideList current_ds = find_current_disulfides( pose );
+	TR << "Current disulfides are: " << current_ds << std::endl;
 
-	if ( newpose ) {
-		if ( accumulator_.size() ) {
-			// warn the user if the accumulator still has poses and we are starting with a new input
-			TR << "Warning: the accumulator still has poses, but the DisulfidizeMover has been passed a new input. Poses in the accumulator will be lost." << std::endl;
-			accumulator_.clear();
-		}
-		generate_results( pose );
-		last_pose_ = pose.clone();
+	if ( !keep_current_ds_ ) {
+		mutate_disulfides_to_ala( pose, current_ds );
 	}
 
-	// if this is the same pose we saw last time, pop a result off the accumulator
-	if ( accumulator_.size() ) {
-		pose = *(pop_result());
-		TR << "Returning a result from the accumulator -- there are " << accumulator_.size() << " poses left." << std::endl;
-		set_last_move_status( protocols::moves::MS_SUCCESS );
-	} else {
-		TR << "There are no poses left in the accumulator for this input pose. Gracefully failing." << std::endl;
-		set_last_move_status( protocols::moves::FAIL_RETRY );
-	}
-}
-
-/// @brief populate the internally cached list of results for a given pose
-void
-DisulfidizeMover::generate_results( core::pose::Pose const & pose )
-{
-	assert( accumulator_.size() == 0 );
-
-	// create initial list of possible disulfides between residue subset 1 and subset 2
+	// get two sets of residues which will be connected by disulfides
 	core::pack::task::residue_selector::ResidueSubset subset1( pose.total_residue(), true );
 	core::pack::task::residue_selector::ResidueSubset subset2( pose.total_residue(), true );
+	if ( set1_selector_ ) {
+		subset1 = set1_selector_->apply( pose );
+	}
+	if ( set2_selector_ ) {
+		subset2 = set2_selector_->apply( pose );
+	}
+
+	// create initial list of possible disulfides between residue subset 1 and subset 2
 	DisulfideList disulf_partners = find_disulfides_in_the_neighborhood( pose, subset1, subset2 );
+	if ( include_current_ds_ ) {
+		for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
+			disulf_partners.push_back( *ds );
+		}
+	}
+
 	if ( disulf_partners.size() == 0 ) {
 		if ( min_disulfides_ == 0 ) {
-			push_result( pose.clone() );
-			return;
+			return true;
 		}
 		TR << "Failed to build any disulfides." << std::endl;
-		set_last_move_status( protocols::moves::FAIL_RETRY );
-		return;
+		return false;
 	}
 
 	//Use the recursive multiple disulfide former
 	DisulfideList empty_disulfide_list;
 	utility::vector1< DisulfideList > disulfide_configurations =
 		recursive_multiple_disulfide_former( empty_disulfide_list, disulf_partners );
+
+	TR << "disulfide_configurations=" << disulfide_configurations << std::endl;
+	PoseList results;
+	if ( min_disulfides_ == 0 ) {
+		results.push_back( pose.clone() );
+	}
 
 	// iterate over disulfide configurations
 	for ( utility::vector1< DisulfideList >::const_iterator ds_config = disulfide_configurations.begin();
@@ -194,29 +238,63 @@ DisulfidizeMover::generate_results( core::pose::Pose const & pose )
 			}
 			TR << std::endl;
 
-			core::pose::PoseOP disulf_copy_pose( new core::pose::Pose(pose) );
+			core::pose::PoseOP disulf_copy_pose( pose.clone() );
 			make_disulfides( *disulf_copy_pose, *ds_config, false );
-			push_result( disulf_copy_pose );
+			results.push_back( disulf_copy_pose );
 		}
 	}
+
+	TR << "Found " << results.size() << " total results." << std::endl;
+	if ( results.size() == 0 ) {
+		return false;
+	}
+
+	core::Size count = 1;
+	for ( PoseList::const_iterator p=results.begin(), endp=results.end(); p!=endp; ++p ) {
+		if ( count == 1 ) {
+			pose = **p;
+		} else {
+			additional_poses.push_back( *p );
+		}
+		++count;
+	}
+	return true;
 }
 
-/// @brief pushes a result onto the accumulator
-void
-DisulfidizeMover::push_result( core::pose::PoseCOP pose )
+/// @brief finds disulfides within a pose
+DisulfidizeMover::DisulfideList
+DisulfidizeMover::find_current_disulfides( core::pose::Pose const & pose ) const
 {
-	accumulator_.push_back( pose );
-}
-
-/// @brief pops a result off of the front of the accumulator (FIFO), decreasing its size by one
-core::pose::PoseCOP
-DisulfidizeMover::pop_result()
-{
-	assert( accumulator_.size() );
-	core::pose::PoseCOP retval = accumulator_.front();
-	accumulator_.pop_front();
-	assert( retval );
+	DisulfideList retval;
+	std::set< core::Size > cyds;
+	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
+		if ( pose.residue(i).name() == "CYD" )
+			cyds.insert( i );
+	}
+	for ( std::set< core::Size >::const_iterator cyd1=cyds.begin(), endcyds=cyds.end(); cyd1!=endcyds; ++cyd1 ) {
+		for ( std::set< core::Size >::const_iterator cyd2=cyd1; cyd2!=endcyds; ++cyd2 ) {
+			if ( pose.residue(*cyd1).is_bonded( pose.residue(*cyd2) ) ) {
+				retval.push_back( std::make_pair( *cyd1, *cyd2 ) );
+			}
+		}
+	}
 	return retval;
+}
+
+/// @brief mutates the given disulfides to ALA
+void
+DisulfidizeMover::mutate_disulfides_to_ala(
+		core::pose::Pose & pose,
+		DisulfideList const & current_ds ) const
+{
+	TR << "Mutating current disulfides to ALA" << std::endl;
+	// mutate current disulfides to alanine if we aren't keeping or including them
+	for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
+		protocols::simple_moves::MutateResidue mut( ds->first, "ALA" );
+		mut.apply( pose );
+		protocols::simple_moves::MutateResidue mut2( ds->second, "ALA" );
+		mut2.apply( pose );
+	}
 }
 
 /// @brief Function for recursively creating multiple disulfides
@@ -330,7 +408,7 @@ DisulfidizeMover::find_disulfides_in_the_neighborhood(
 	core::scoring::disulfides::DisulfideMatchingPotential disulfPot;
 
 	core::pose::Pose pose_copy = pose;
-	construct_poly_ala_pose( pose_copy, false );
+	construct_poly_ala_pose( pose_copy, false, set1, set2 );
 
 	core::scoring::ScoreFunctionOP sfxn_disulfide_only = core::scoring::ScoreFunctionOP(new core::scoring::ScoreFunction());
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
@@ -370,19 +448,11 @@ DisulfidizeMover::find_disulfides_in_the_neighborhood(
 
 			// disulfide score check
 			if ( !check_disulfide_score( pose_copy, *itr, *itr2, sfxn_disulfide_only ) ) {
-				if ( include_current_ds_ && pose.residue(*itr).is_bonded( pose.residue(*itr2) ) ) {
-					TR << "DISULF \tIncluding pre-existing disulfide despite failed disulf_fa_max check." << std::endl;
-					add_to_list( disulf_partners, *itr, *itr2 );
-				}
 				continue;
 			}
 
 			// disulfide potential scoring
 			if ( !check_disulfide_match_rt( pose, *itr, *itr2, disulfPot ) ) {
-				if ( include_current_ds_ && pose.residue(*itr).is_bonded(pose.residue(*itr2)) ) {
-					TR << "DISULF \tIncluding pre-existing disulfide despite failed match_rt_limit check." << std::endl;
-					add_to_list( disulf_partners, *itr, *itr2 );
-				}
 				continue;
 			}
 
@@ -401,7 +471,7 @@ DisulfidizeMover::make_disulfide(
 		core::Size const res2,
 		bool const relax_bb ) const
 {
-	TR << "build_disulf between " << res1 << " and " << res2 << std::endl;
+	TR.Debug << "build_disulf between " << res1 << " and " << res2 << std::endl;
 	// create movemap which allows only chi to move
 	core::kinematics::MoveMapOP mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
 	mm->set_bb( res1, relax_bb );
@@ -538,6 +608,22 @@ DisulfidizeMover::check_disulfide_match_rt(
 		TR << "DISULF \tFailed match_rt_limit check." << std::endl;
 	}
 	return retval;
+}
+
+core::pack::task::residue_selector::ResidueSelectorCOP
+DisulfidizeMover::get_residue_selector( std::string const & name, basic::datacache::DataMap const & data ) const
+{
+	core::pack::task::residue_selector::ResidueSelectorCOP selector;
+	try {
+		selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", name );
+	} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		std::stringstream error_msg;
+		error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap from DisulfidizeMover.\n";
+		error_msg << e.msg();
+		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+	}
+	assert( selector );
+	return selector;
 }
 
 } // namespace denovo_design

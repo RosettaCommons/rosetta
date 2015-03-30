@@ -23,7 +23,7 @@
 // Protocol headers
 
 // Package headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/MultiplePoseMover.hh>
 
 // Core headers
 #include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
@@ -36,10 +36,10 @@
 namespace protocols {
 namespace denovo_design {
 
-class DisulfidizeMover : public protocols::moves::Mover {
+class DisulfidizeMover : public protocols::rosetta_scripts::MultiplePoseMover {
 public:
 	typedef utility::vector1< std::pair< core::Size, core::Size > > DisulfideList;
-	typedef std::list< core::pose::PoseCOP > PoseList;
+	typedef std::list< core::pose::PoseOP > PoseList;
 
 	/// @brief default constructor
 	DisulfidizeMover();
@@ -61,19 +61,15 @@ public:
   /// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::moves::MoverOP clone() const;
 
-  /// @brief Apply the DisulfidizerMover. Overloaded apply function from mover base class.
-	virtual void apply( core::pose::Pose & pose );
-
 	// public methods
 public:
-	/// @brief populate the internally cached list of results for a given pose
-	void generate_results( core::pose::Pose const & pose );
+	/// @brief finds existing disulfides within a pose
+	DisulfideList find_current_disulfides( core::pose::Pose const & pose ) const;
 
-	/// @brief pushes the given pose to the accumulator
-	void push_result( core::pose::PoseCOP pose );
-
-	/// @brief pops the given pose off the accumulator
-	core::pose::PoseCOP pop_result();
+	/// @brief mutates the given disulfides to ALA
+	void mutate_disulfides_to_ala(
+			core::pose::Pose & pose,
+			DisulfideList const & current_ds ) const;
 
 	/// @brief Function for recursively creating multiple disulfides
 	utility::vector1< DisulfideList >
@@ -140,6 +136,32 @@ public:
 			core::Size const res2,
 			core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot ) const;
 
+	/// @brief pulls a residue selector from the datamap
+	core::pack::task::residue_selector::ResidueSelectorCOP
+		get_residue_selector( std::string const & name, basic::datacache::DataMap const & data ) const;
+
+public: //mutators
+	/// @brief sets the selector for set 1 -- disulfides will connect residues in set 1 to residues in set 2
+	void set_set1_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+
+	/// @brief sets the selector for set 2 -- disulfides will connect residues in set 1 to residues in set 2
+	void set_set2_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+
+	/// @brief sets the min_loop value (number of residues between disulfide-joined residues) (default=8)
+	void set_min_loop( core::Size const minloopval );
+
+	/// @brief sets the maximum allowed per-disulfide dslf_fa13 score (default=0.0)
+	void set_max_disulf_score( core::Real const maxscoreval );
+
+	/// @brief sets the maximum allowed "match-rt-limit" (default=2.0)
+	void set_match_rt_limit( core::Real const matchrtval );
+
+protected:
+	/// @brief Identifies disulfides for a given input pose
+	virtual bool process_pose(
+			core::pose::Pose & pose,
+			utility::vector1 < core::pose::PoseOP > & additional_poses );
+
 private:   // options
 	core::Real match_rt_limit_;
 	core::Real max_disulf_score_;
@@ -150,10 +172,9 @@ private:   // options
 	bool keep_current_ds_;
 
 private:   // other data
-	/// @brief list of results
-	PoseList accumulator_;
-	/// @brief copy of the pose last seen by apply
-	core::pose::PoseCOP last_pose_;
+	/// @brief disulfides connect residues from set1 to residues from set2
+	core::pack::task::residue_selector::ResidueSelectorCOP set1_selector_;
+	core::pack::task::residue_selector::ResidueSelectorCOP set2_selector_;
 
 };
 

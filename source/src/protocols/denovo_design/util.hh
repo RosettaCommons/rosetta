@@ -24,10 +24,14 @@
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
 
 // C++ Headers
+#include <set>
+#include <list>
+#include <map>
 
 namespace protocols {
 namespace denovo_design {
@@ -36,7 +40,42 @@ namespace denovo_design {
 bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
 
 /// @brief creates a poly-ala pose where every non-gly, non-cyd, protein residue except those in the given set are converted to alanine
-void construct_poly_ala_pose( core::pose::Pose & pose, bool const keep_disulf );
+void construct_poly_ala_pose(
+	core::pose::Pose & pose,
+	bool const keep_disulf,
+	std::set< core::Size > const & set1,
+	std::set< core::Size > const & set2 );
+
+/// @brief creates a poly-ala pose where every non-gly, non-cyd, protein residue except those in the given set are converted to alanine
+void construct_poly_ala_pose(
+	core::pose::Pose & pose,
+	bool const keep_disulf,
+	std::set< core::Size > const & res_set );
+
+//////////////////////////////////////////////////////////////////////////
+/// Output operators for std template classes                          ///
+//////////////////////////////////////////////////////////////////////////
+
+/// @brief outputs a set
+std::ostream & operator<<( std::ostream & os, std::set< core::Size > const & set );
+
+/// @brief outputs a set
+std::ostream & operator<<( std::ostream & os, std::set< std::string > const & set );
+
+/// @brief outputs a list of strings
+std::ostream & operator<<( std::ostream & os, std::list< std::string > const & list );
+
+/// @brief outputs a map
+std::ostream & operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map );
+
+/// @brief outputs a map
+std::ostream & operator<<( std::ostream & os, std::map< std::string, core::Size > const & map );
+
+/// @brief outputs a map
+std::ostream & operator<<( std::ostream & os, std::map< std::pair< std::string, std::string >, core::Size > const & map );
+
+/// @brief outputs a map
+std::ostream & operator<<( std::ostream & os, std::map< std::string, core::Real > const & map );
 
 } // denovo_design
 } // protocols
