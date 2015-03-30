@@ -511,13 +511,7 @@ void RemodelMover::apply( Pose & pose ) {
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "Remodel" );
 #endif
-	bool const same_pose = (last_input_pose_ && SamePose(*last_input_pose_, pose ));
-	if ( !last_input_pose_ || !same_pose || accumulator_.size() == 0) {
-		if ( same_pose && ( accumulator_.size() == 0 ) ) {
-			TR << "Input pose is same as cached and accumulator is empty." << std::endl;
-			set_last_move_status( protocols::moves::FAIL_RETRY );
-			return;
-		}
+	if (!last_input_pose_  || !SamePose(*last_input_pose_, pose) || accumulator_.size() == 0) {
 		last_input_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 
 
