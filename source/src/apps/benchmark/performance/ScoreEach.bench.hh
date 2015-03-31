@@ -294,7 +294,7 @@ ScoreEachBenchmark Score_yhh_planarity_("core.scoring.Score_1000000x_yhh_planari
 //centroid
 // amw reduced EACH by a factor of 10
 ScoreEachBenchmark Score_cbeta_("core.scoring.Score_100000x_cbeta",cbeta,100000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_env_("core.scoring.Score_100000x_env",env,100000,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_env_("core.scoring.Score_5000000x_env",env,5000000,"test_in_cen.pdb",true);
 
 // really fast
 ScoreEachBenchmark Score_fa_pair_("core.scoring.Score_10000x_fa_pair",fa_pair,10000);
@@ -310,7 +310,7 @@ ScoreEachBenchmark Score_p_aa_pp_("core.scoring.Score_400000x_p_aa_pp",p_aa_pp,4
 ScoreEachBenchmark Score_p_aa_("core.scoring.Score_400000x_p_aa",p_aa,400000);
 ScoreEachBenchmark Score_mm_lj_intra_rep_("core.scoring.Score_100000x_mm_lj_intra_rep",mm_lj_intra_rep,100000);
 ScoreEachBenchmark Score_mm_lj_intra_atr_("core.scoring.Score_100000x_mm_lj_intra_atr",mm_lj_intra_atr,100000);
-ScoreEachBenchmark Score_unfolded_("core.scoring.Score_10000x_unfolded",unfolded,10000);
+ScoreEachBenchmark Score_unfolded_("core.scoring.Score_100000x_unfolded",unfolded,100000);
 ScoreEachBenchmark Score_e_pH_("core.scoring.Score_10000x_e_pH",e_pH,10000);
 //disulfides
 ScoreEachBenchmark Score_dslf_ss_dst_("core.scoring.Score_10000x_dslf_ss_dst",dslf_ss_dst,10000,"1bbi_disulf.pdb");
@@ -334,9 +334,9 @@ ScoreEachBenchmark Score_fa_dun_semi_("core.scoring.Score_1000x_fa_dun_semi",fa_
 ScoreEachBenchmark Score_ref_nc_("core.scoring.Score_1000x_ref_nc",ref_nc,1000);
 ScoreEachBenchmark Score_co_("core.scoring.Score_1000x_co",co,1000);
 //chainbreak terms currently give zero energies, though it takes quite a while to do so
-ScoreEachBenchmark Score_chainbreak_("core.scoring.Score_1000x_chainbreak",chainbreak,1000);
+ScoreEachBenchmark Score_chainbreak_("core.scoring.Score_100000x_chainbreak",chainbreak,100000);
 // not reduced
-ScoreEachBenchmark Score_linear_chainbreak_("core.scoring.Score_10000x_linear_chainbreak",linear_chainbreak,10000);
+ScoreEachBenchmark Score_linear_chainbreak_("core.scoring.Score_100000x_linear_chainbreak",linear_chainbreak,100000);
 ScoreEachBenchmark Score_overlap_chainbreak_("core.scoring.Score_1000x_overlap_chainbreak",overlap_chainbreak,1000);
 ScoreEachBenchmark Score_distance_chainbreak_("core.scoring.Score_1000x_distance_chainbreak",distance_chainbreak,1000);
 ScoreEachBenchmark Score_cart_bonded_("core.scoring.Score_1000x_cart_bonded",cart_bonded,1000);
