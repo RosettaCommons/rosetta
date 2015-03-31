@@ -92,16 +92,17 @@ bool SimulatedTempering::t_jump() {
 	if ( temperatures_.size() == 1 ) return false;
 
 	// Obtain the new temperature id. Only move one step upward or downward.
-	Size new_temp_id( temp_id_ );
-	if ( temp_id_ == 1 ) {
-		++new_temp_id;
-	} else if ( temp_id_ == temperatures_.size() ) {
-		--new_temp_id;
+	Size new_temp_id;
+	if ( temperatures_.size() == 2 ) {
+		// Special case: only 2 temperatures.
+		new_temp_id = ( temp_id_ == 1 ) ? 2 : 1;
 	} else {
 		if ( numeric::random::rg().uniform() < 0.5 ) {
-			++new_temp_id;
+			if ( temp_id_ == temperatures_.size() ) return false;  // Out of bound
+			new_temp_id = temp_id_ + 1;
 		} else {
-			--new_temp_id;
+			if ( temp_id_ == 1 ) return false; // out of bound
+			new_temp_id = temp_id_ - 1;
 		}
 	}
 

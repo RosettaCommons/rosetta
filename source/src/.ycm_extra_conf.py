@@ -41,7 +41,7 @@ flags = [
 '-Wno-long-long',
 '-pedantic',
 '-DNDEBUG',
-'-std=c++98',
+'-std=c++11',
 '-isystem',
 '../external/boost_1_55_0/',
 '-I../src',

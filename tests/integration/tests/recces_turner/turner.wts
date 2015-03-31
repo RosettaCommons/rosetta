@@ -1,0 +1,10 @@
+NO_HB_ENV_DEP
+fa_atr                      0.3651
+fa_rep                      0.2008
+fa_intra_rep                0.003492
+rna_torsion                 9.5238
+hbond_sc                    3.8095
+lk_nonpolar                 0.5079
+geom_sol_fast               0.3968
+stack_elec                  1.746
+fa_elec_rna_phos_phos       1.5873

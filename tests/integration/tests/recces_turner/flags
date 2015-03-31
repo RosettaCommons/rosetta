@@ -1,0 +1,13 @@
+-rna::corrected_geo
+-score:weights turner.wts
+-score:rna_torsion_potential RNA11_based_new
+-chemical::enlarge_H_lj
+-analytic_etable_evaluation false
+-seq1 gu
+-seq2 aac
+-n_cycle 900
+-temps 0.8 1.0 1.4 1.8 3.0 7.0 30.0
+-dump_pdb
+-st_weights 0 4.33575105083 7.20297783022 6.68236033611 2.82841650026 -4.17194501682 -11.6606953133
+-out_prefix ST
+

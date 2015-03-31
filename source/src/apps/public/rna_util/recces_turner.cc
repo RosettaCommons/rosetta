@@ -330,11 +330,11 @@ MC_run () {
 		sampler.apply( pose );
 		if ( tempering.boltzmann( pose ) || n == n_cycle_ ) {
 			if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
+			++n_accept_total;
 			hist_list[temp_id].add( scores[1], curr_counts );
 			update_scores( scores, pose, scorefxn );
 			if ( n == n_cycle_ ) break;
 			sampler.update();
-			++n_accept_total;
 			curr_counts = 1;
 			if ( option[dump_pdb]() && scores[1] < min_score ) {
 				min_score = scores[1];

@@ -70,6 +70,11 @@ public:
 		set_and_reinit( idealize_coord_, setting );
 	}
 
+	/// @brief Set angle ranges for A form rotamers
+	void set_a_form_range( core::Real const setting ) {
+		set_and_reinit( a_form_range_, setting );
+	}
+
 	/// @brief Set if only sample near A form rotamers
 	void set_sample_near_a_form( bool const setting ) {
 		set_and_reinit( sample_near_a_form_, setting );
@@ -112,8 +117,7 @@ private:
 	core::Size const rsd_id_;
 	bool skip_same_pucker_, idealize_coord_, sample_near_a_form_, sample_bb_,
 			 sample_lower_nucleoside_, sample_upper_nucleoside_;
-	core::Real pucker_flip_rate_, gaussian_stdev_;
-	core::Real const a_form_range_;
+	core::Real pucker_flip_rate_, gaussian_stdev_, a_form_range_;
 	core::chemical::rna::PuckerState init_pucker_;
 	utility::vector1<core::Real> a_form_torsions_, init_torsions_;
 	utility::vector1<core::id::TorsionID> torsion_ids_;
