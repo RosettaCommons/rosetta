@@ -6,7 +6,12 @@
 #
 # Use 'source SetPyRosettaEnvironment.sh' before starting to work with PyRosetta.
 
-READLINK=$(which readlink)
+READLINK=""
+if [ "Darwin" != $(uname -s) ]; then
+    # FIXME: MacOS X does not have the -f option for readlink and realpath 
+    #        is not available, either. 
+    READLINK=$(which readlink)
+fi
 
 if [[ "${BASH_SOURCE[0]}" == "" ]]; then
     #echo "zsh like shell..."
