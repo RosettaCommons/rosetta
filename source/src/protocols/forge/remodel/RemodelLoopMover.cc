@@ -136,7 +136,8 @@ RemodelLoopMover::RemodelLoopMover() :
 	user_provided_movers_apply_cycle_(3),
 	boost_closure_cycles_( 30 ),
 	temperature_( 2.0 ),
-	keep_input_foldtree_( false )
+	keep_input_foldtree_( false ),
+	seal_foldtree_( true )
 {
 	set_param_from_options();
 }
@@ -156,7 +157,8 @@ RemodelLoopMover::RemodelLoopMover( loops::LoopsOP const loops ) :
 	user_provided_movers_apply_cycle_(3),
 	boost_closure_cycles_( 30 ),
 	temperature_( 2.0 ),
-	keep_input_foldtree_( false )
+	keep_input_foldtree_( false ),
+	seal_foldtree_( true )
 {
 	// Options that don't have default values.  Check before access.
 	set_param_from_options();
@@ -181,7 +183,8 @@ RemodelLoopMover::RemodelLoopMover( RemodelLoopMover const & rval ) :
 	boost_closure_cycles_( rval.boost_closure_cycles_ ),
 	temperature_( rval.temperature_ ),
 	fragsets_( rval.fragsets_ ),
-	keep_input_foldtree_(rval.keep_input_foldtree_)
+	keep_input_foldtree_(rval.keep_input_foldtree_),
+	seal_foldtree_(rval.seal_foldtree_)
 {}
 
 
@@ -969,8 +972,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	FoldTree sealed_ft;
 	if ( pose::symmetry::is_symmetric(pose) ) {
 		sealed_ft = pose::symmetry::sealed_symmetric_fold_tree( pose );
-	} else {
+	} else if ( seal_foldtree_ ) {
 		sealed_ft = fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() ); // used during structure accumulation
+	} else {
+		sealed_ft = pose.fold_tree();
 	}
 
 

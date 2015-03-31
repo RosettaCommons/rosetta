@@ -321,7 +321,14 @@ public: // mutators
 	inline
 	void
 	set_keep_input_foldtree( bool const setting ){
-		keep_input_foldtree_ = setting; }
+		keep_input_foldtree_ = setting;
+	}
+
+	inline
+	void
+	set_seal_foldtree( bool const setting ){
+		seal_foldtree_ = setting;
+	}
 
 public: // loop management
 
@@ -649,6 +656,8 @@ private: // data
 	///user to supply a decent FoldTree
 	bool keep_input_foldtree_;
 
+	///@brief whether to (true) generate a sealed fold tree or (false) keep the cut fold tree (default=true)
+	bool seal_foldtree_;
 };
 
 
