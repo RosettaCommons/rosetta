@@ -111,18 +111,6 @@ GroupElec::initialize( etable::coulomb::Coulomb const &coulomb )
 	cpfxn_weight_.resize( 3 ); cpfxn_weight_[1] = 0.0; cpfxn_weight_[2] = 0.2; cpfxn_weight_[3] = 1.0;
 	if( option[ score::grpelec_cpfxn_weight ].user() ) cpfxn_weight_ = option[ score::grpelec_cpfxn_weight ]();
 
-  use_subtract_ = true;
-	use_shift_ = false;
-	if( fade_type().compare( "shift" ) == 0 ){
-		use_subtract_ = false; use_shift_ = true;
-	} else if( fade_type().compare( "grpsubtract" ) == 0 ){
-		use_subtract_ = true; use_shift_ = true;
-	}
-
-	grp_maxdis2_ = coulomb.max_dis2();
-	Real maxdis = std::sqrt( grp_maxdis2_ );
-	grp_swdis2_ = ( maxdis - fade_param1_ )*( maxdis - fade_param1_);
-
 }
 
 
@@ -230,7 +218,7 @@ GroupElec::build_groupinfo( std::string const group_file,
 			Size n_donor( 0 ), n_acceptor( 0 ), polar_type( 0 );
 
 			linestream >> polar_type;
-			if( polar_type < 4 ){
+			if ( /*polar_type >= 0 && */polar_type < 4 ){
 				grp.qeps = qeps[ polar_type+1 ];
 			} else {
 				TR << "PolarType index exceeds boundary, skip! line: " << line << std::endl;
@@ -281,7 +269,30 @@ GroupElec::build_groupinfo( std::string const group_file,
 	}
 }
 
-/*
+Vector
+GroupElec::get_grpdis2( 
+               conformation::Residue const & rsd1,
+							 conformation::Residue const & rsd2,
+							 utility::vector1< Size > const &com1atms,
+							 utility::vector1< Size > const &com2atms,
+							 core::Vector &com1,
+							 core::Vector &com2
+			         ) const
+{
+  com1 = core::Vector( 0.0 );
+  com2 = core::Vector( 0.0 );
+
+  //core::Size n1( 0 ), n2( 0 );
+  for( core::Size i = 1; i <= com1atms.size(); ++i ) com1 += rsd1.xyz( com1atms[i] ); 
+  for( core::Size i = 1; i <= com2atms.size(); ++i ) com2 += rsd2.xyz( com2atms[i] ); 
+
+  com1 /= (core::Real)( com1atms.size() );
+  com2 /= (core::Real)( com2atms.size() );
+
+  Vector dcom = com1 - com2;
+  return dcom;
+}
+
 Real
 GroupElec::eval_respair_group_coulomb( 
 	conformation::Residue const & rsd1,
@@ -299,11 +310,11 @@ GroupElec::eval_respair_group_coulomb(
 	// default "subtract"
 	bool use_subtract( true ), use_shift( false );
 
-//	if( fade_type().compare( "shift" ) == 0 ){
-//		use_subtract = false; use_shift = true;
-//	} else if( fade_type().compare( "grpsubtract" ) == 0 ){
-//		use_subtract = true; use_shift = true;
-	//}
+	if( fade_type().compare( "shift" ) == 0 ){
+		use_subtract = false; use_shift = true;
+	} else if( fade_type().compare( "grpsubtract" ) == 0 ){
+		use_subtract = true; use_shift = true;
+	}
 
 	CountPairFunctionOP cpfxn =
 		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -311,9 +322,11 @@ GroupElec::eval_respair_group_coulomb(
 	bool const is_bonded = ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) );
 	bool intrares( rsd1.seqpos() == rsd2.seqpos() );
 
-	//TR << "entering score: " << rsd1.seqpos() << " " << rsd2.seqpos() << " " 
-	//	 << rsd1.name() << " " << rsd2.name() << " " 
-	//	 << resgrp1.size() << " " << resgrp2.size() << std::endl;
+	/*
+	TR << "entering score: " << rsd1.seqpos() << " " << rsd2.seqpos() << " " 
+		 << rsd1.name() << " " << rsd2.name() << " " 
+		 << resgrp1.size() << " " << resgrp2.size() << std::endl;
+	*/
 
 	for ( Size ii = 1; ii <= resgrp1.size(); ++ii ) {
 		ElecGroup const &grp1 = resgrp1[ii];
@@ -322,14 +335,14 @@ GroupElec::eval_respair_group_coulomb(
 
 			ElecGroup const &grp2 = resgrp2[jj];
 
-			core::Vector dcom;
-			dcom = get_grpdis2( rsd1, rsd2, grp1.comatms, grp2.comatms
-													);
+			core::Vector com1, com2, dcom;
+			dcom = get_grpdis2( rsd1, rsd2, grp1.comatms, grp2.comatms,
+													com1, com2 );
 
 			core::Real const grpdis2 = dcom.length_squared();
 
 			//if( !use_subtract && (grpdis2 > coulomb().max_dis2()) ) continue;
-			if( use_shift_ && (grpdis2 > coulomb().max_dis2()) ) continue;
+			if( use_shift && (grpdis2 > coulomb().max_dis2()) ) continue;
 			//if( grpdis2 > coulomb().max_dis2() ) continue;
 
 			Real grp_cpweight( 1.0 );
@@ -342,19 +355,22 @@ GroupElec::eval_respair_group_coulomb(
 			core::Real group_score( 0.0 );
 
 			Real dsw_dr( 1.0 ), sw( 1.0 );
-			//if( !use_subtract_ )
-			if( use_shift_ )
+			//if( !use_subtract )
+			if( use_shift )
 				sw = eval_grp_trunc( false, grpdis2, false, dsw_dr );
 
 			Size const n1( grp1.atms.size() );
 			Size const n2( grp2.atms.size() );
 			for ( Size kk = 1; kk <= n1; ++kk ){
 				core::Size const &atm1( grp1.atms[kk] );
-				//Real const q1( rsd1.atomic_charge( atm1 ) );
+				Real const &q1( rsd1.atomic_charge( atm1 ) );
 
 				for ( Size ll = 1; ll <= n2; ++ll ){
 					core::Size const &atm2( grp2.atms[ll] );
-					//Real const q2( rsd2.atomic_charge( atm2 ) );
+					Real const &q2( rsd2.atomic_charge( atm2 ) );
+					d2 = rsd1.xyz(atm1).distance_squared( rsd2.xyz(atm2) );
+
+					if ( use_subtract && d2 > coulomb().max_dis2() ) continue;
 
 					bool is_count( true );
 					Real atom_cpweight( 1.0 );
@@ -362,19 +378,33 @@ GroupElec::eval_respair_group_coulomb(
 						path_dist = 0;
 						is_count = cpfxn->count( atm1, atm2, atom_cpweight, path_dist );
 					}
+
 					if( !is_count ) continue;
 					//atom_cpweight = 1.0;
 
-					Real atompair_score = eval_atompair_score( rsd1, rsd2, atm1, atm2 );
+					Real atompair_score( 0.0 );
+					if( use_subtract ){
+						atompair_score = coulomb().eval_atom_atom_fa_elecE( rsd1.xyz( atm1 ), q1, 
+																																rsd2.xyz( atm2 ), q2 );
+					} else {
+						atompair_score = eval_standard_coulomb( q1, q2, d2, false, dE_dr );
+					}
 
-					//TR << "Residue " << rsd1.seqpos() << " atom " << rsd1.atom_name(atm1) << " to Residue " << rsd2.seqpos() << " atom " << rsd2.atom_name(atm2)
-					//	 << " q1 " << rsd1.atomic_charge(atm1) << " q2 " << rsd2.atomic_charge(atm2)
-					//	 << " dist " << std::sqrt(d2) << " energy " << atompair_score << " cpwt " << atom_cpweight << std::endl;
+					/*
+					TR << "kk/ll "  << ii << " " << jj << " " << kk << " " << ll << " " << std::sqrt(d2) 
+						 << " " << atompair_score << " " << path_dist << " " << atom_cpweight
+						 <<std::endl;
+					*/
+
+					/*
+					TR << "Residue " << rsd1.seqpos() << " atom " << rsd1.atom_name(atm1) << " to Residue " << rsd2.seqpos() << " atom " << rsd2.atom_name(atm2)
+						 << " q1 " << rsd1.atomic_charge(atm1) << " q2 " << rsd2.atomic_charge(atm2)
+						 << " dist " << std::sqrt(d2) << " energy " << atompair_score << " cpwt " << atom_cpweight << std::endl;
+					*/
 
 					group_score += atom_cpweight*atompair_score;
 				}
 			}
-
 
 			group_score *= grp_cpweight;
 
@@ -388,10 +418,18 @@ GroupElec::eval_respair_group_coulomb(
 			if( is_hbond_pair && fade_hbond_ ) 
 				fade_hbonding_group_score( grp1, grp2, group_score, dw_dE );
 
-			//if( std::abs(group_score) > 1.0e-5 && do_fade )
-			//	printf("Score,Grp: %3d %3d %3d %3d %8.3f %2d %2d %8.5f %8.5f %8.5f\n", int(rsd1.seqpos()), int(rsd2.seqpos()),
-			//				 int(ii), int(jj), std::sqrt(grpdis2), do_fade,
-			//				 is_hbond_pair, grp_cpweight, score_exp, group_score);
+			/*
+			if( std::abs(group_score) > 1.0e-5 && do_fade )
+				printf("Score,Grp: %3d %3d %3d %3d %8.3f %2d %2d %8.5f %8.5f %8.5f\n", int(rsd1.seqpos()), int(rsd2.seqpos()),
+							 int(ii), int(jj), std::sqrt(grpdis2), do_fade,
+							 is_hbond_pair, grp_cpweight, score_exp, group_score);
+			*/
+
+			/*
+			if( group_score_exp < -1.0 )
+				TR << "do fade? " << rsd1.seqpos() << " " << rsd2.seqpos()
+					 << " " << ii << " " << jj << ": " << do_fade << " "  << group_score_exp << " " << group_score << std::endl;
+			*/
 
 			group_score *= sw;
 
@@ -401,7 +439,6 @@ GroupElec::eval_respair_group_coulomb(
 
   return score;
 }
-*/
 
 bool
 GroupElec::fade_hbonding_group_score( ElecGroup const &grp1,
@@ -436,7 +473,6 @@ GroupElec::fade_hbonding_group_score( ElecGroup const &grp1,
 	return do_fade;
 }
 
-/*
 void
 GroupElec::eval_respair_group_derivatives(
 	conformation::Residue const & rsd1,
@@ -450,6 +486,14 @@ GroupElec::eval_respair_group_derivatives(
 {
   using namespace etable::count_pair;
 
+	// default "subtract"
+	bool use_subtract( true ), use_shift( false );
+	if( fade_type().compare( "shift" ) == 0 ){
+		use_subtract = false; use_shift = true;
+	} else if( fade_type().compare( "grpsubtract" ) == 0 ){
+		use_subtract = true; use_shift = true;
+	}
+
 	Erespair = 0.0;
 	ResElecGroup const &resgrp1 = get_group( rsd1.type() );
 	ResElecGroup const &resgrp2 = get_group( rsd2.type() );
@@ -460,10 +504,9 @@ GroupElec::eval_respair_group_derivatives(
 	bool intrares( rsd1.seqpos() == rsd2.seqpos() );
 
 	// dummy array
-	//utility::vector1< Vector > f2r1( r1_atom_derivs.size(), Iv );
-	//utility::vector1< Vector > f2r2( r2_atom_derivs.size(), Iv );
-
-	//TR << "!!" << std::endl;
+	Vector Iv( 0.0 );
+	utility::vector1< Vector > f2r1( r1_atom_derivs.size(), Iv );
+	utility::vector1< Vector > f2r2( r2_atom_derivs.size(), Iv );
 
 	for ( Size ii = 1; ii <= resgrp1.size(); ++ii ) {
 		ElecGroup const &grp1 = resgrp1[ii];
@@ -475,12 +518,12 @@ GroupElec::eval_respair_group_derivatives(
 			ElecGroup const &grp2 = resgrp2[jj];
 			core::Size const &ncom2 = grp2.comatms.size();
 
-			core::Vector dcom;
-			dcom = get_grpdis2( rsd1, rsd2, grp1.comatms, grp2.comatms
-													);
+			core::Vector com1, com2, dcom;
+			dcom = get_grpdis2( rsd1, rsd2, grp1.comatms, grp2.comatms,
+													com1, com2 );
 			core::Real const grpdis2 = dcom.length_squared();
 
-			if ( use_shift_ && (grpdis2 > coulomb().max_dis2()) ) continue;
+			if ( use_shift && (grpdis2 > coulomb().max_dis2()) ) continue;
 			//if ( !use_subtract && (grpdis2 > coulomb().max_dis2()) ) continue;
 			//if ( grpdis2 > coulomb().max_dis2() ) continue;
 
@@ -499,35 +542,30 @@ GroupElec::eval_respair_group_derivatives(
 			// get group-truncation info first
 			Real dsw_dr( 1.0 ), sw( 1.0 );
 			//if( !use_subtract )
-			if( use_shift_ )
+			if( use_shift )
 				sw = eval_grp_trunc( false, grpdis2, true, dsw_dr );
 
 			// 1. derivative on Coulomb part: dE*sw
 			core::Real group_score( 0.0 );
 
-			bool is_hbond_pair = (grp1.n_donor*grp2.n_acceptor + grp2.n_donor*grp1.n_acceptor > 0);
-
-			// temporary vector for hbonding pair; allocate only if hbonding
-			utility::vector1< Vector > v1,v2; 
-			Vector Iv( 0.0 );
-			if( is_hbond_pair && fade_hbond_ ){
-				v1 = utility::vector1< Vector >( n1, Iv );
-				v2 = utility::vector1< Vector >( n2, Iv );
-			}
+			utility::vector1< Vector > v1( n1, Iv );
+			utility::vector1< Vector > v2( n2, Iv );
 
 			for ( Size kk = 1; kk <= n1; ++kk ){
 				core::Size const &atm1( grp1.atms[kk] );
 				Vector const & atom1xyz( rsd1.xyz( atm1 ) );
-				//Real const q1( rsd1.atomic_charge( atm1 ) );
+				Real const &q1( rsd1.atomic_charge( atm1 ) );
 
 				for ( Size ll = 1; ll <= n2; ++ll ){
 					core::Size const &atm2( grp2.atms[ll] );
 					Vector const & atom2xyz( rsd2.xyz( atm2 ) );
-					//Real const q2( rsd2.atomic_charge( atm2 ) );
+					Real const &q2( rsd2.atomic_charge( atm2 ) );
 
 					Vector f2 = ( atom1xyz - atom2xyz );
-					//Real const &dis2( f2.length_squared() );
-					//if ( use_subtract_ && dis2 > coulomb().max_dis2() ) continue;
+					Real const &dis2( f2.length_squared() );
+					Real dE_dr( 0.0 );
+
+					if ( use_subtract && dis2 > coulomb().max_dis2() ) continue;
 
 					bool is_count( true );
 					Real atom_cpweight( 1.0 );
@@ -537,29 +575,25 @@ GroupElec::eval_respair_group_derivatives(
 					}
 
 					if( !is_count ) continue;
-
 					atom_cpweight = 1.0;
-					Real dE_dr( 0.0 );
-					Real atompair_score = eval_atompair_deriv( rsd1, rsd2, atm1, atm2, dE_dr );
+
+					// untruncated energy
+					Real atompair_score( 0.0 );
+					if( use_subtract ){
+						atompair_score = coulomb().eval_atom_atom_fa_elecE( rsd1.xyz( atm1 ), q1, 
+																																rsd2.xyz( atm2 ), q2 );
+						dE_dr = coulomb().eval_dfa_elecE_dr_over_r( dis2, q1, q2 );
+					} else {
+						atompair_score = eval_standard_coulomb( q1, q2, dis2, true, dE_dr );
+					}
 
 					Real sfxn_weight = atom_cpweight*elec_weight;
 
 					group_score += atom_cpweight*atompair_score;
 
-					f2 *= dE_dr*sw*sfxn_weight*grp_cpweight;
-					Vector const f1 = atom1xyz.cross( -f2 );
-
-					if( is_hbond_pair && fade_hbond_ ){
-						v1[kk] += f2;
-						v2[ll] -= f2;
-					} else {
-						//f2r1_[ atm1 ] += f2*grp_cpweight;
-						//f2r2_[ atm2 ] -= f2*grp_cpweight;
-						r1_atom_derivs[ atm1 ].f2() += f2;
-						r2_atom_derivs[ atm2 ].f2() -= f2;
-						r1_atom_derivs[ atm1 ].f1() += f1;
-						r2_atom_derivs[ atm2 ].f1() -= f1;
-					}
+					f2 *= dE_dr*sw*sfxn_weight;
+					v1[kk] += f2;
+					v2[ll] -= f2;
 				}
 			}
 
@@ -567,48 +601,49 @@ GroupElec::eval_respair_group_derivatives(
 			Erespair += group_score;
 
 			// converge to constant for hbonding groups
+			bool is_hbond_pair = (grp1.n_donor*grp2.n_acceptor + grp2.n_donor*grp1.n_acceptor > 0);
 			Real dw_dE( 1.0 );
 			bool do_fade( false );
 
-			if( is_hbond_pair && fade_hbond_ ){
+			if( is_hbond_pair && fade_hbond_ )
 				do_fade = fade_hbonding_group_score( grp1, grp2, group_score, dw_dE );
-				if( dw_dE > 0.0 ){
-					for ( Size kk = 1; kk <= n1; ++kk ){ v1[kk] *= dw_dE; }
-					for ( Size kk = 1; kk <= n2; ++kk ){ v2[kk] *= dw_dE; }
-				}
 
-				if( !do_fade ){ // long enough
-					// E = E
-					for ( Size kk = 1; kk <= n1; ++kk ){
-						core::Size const &atm1( grp1.atms[kk] );
-						Vector const & atom1xyz( rsd1.xyz( atm1 ) );
-						r1_atom_derivs[ atm1 ].f2() += v1[kk];
-						r1_atom_derivs[ atm1 ].f1() += atom1xyz.cross( -v1[kk] );
-					}
-					for ( Size ll = 1; ll <= n2; ++ll ){
-						core::Size const &atm2( grp2.atms[ll] );
-						Vector const & atom2xyz( rsd2.xyz( atm2 ) );
-						r2_atom_derivs[ atm2 ].f2() += v2[ll];
-						r2_atom_derivs[ atm2 ].f1() += atom2xyz.cross( -v2[ll] );
-					}
-				}
+			/*
+			TR << "Deriv,groupscore: "  << rsd1.seqpos() << " " << rsd2.seqpos() 
+				 << " " << ii << " " << jj << " " << std::sqrt(grpdis2) 
+				 << " " << grp_cpfxn_ << " " << grp_cpweight << " " << path_dist
+				 << " " << do_fade << " " << dw_dE << " " << sw << " " << dsw_dr
+				 << " " << group_score << std::endl;
+			*/
+
+			if( dw_dE > 0.0 ){
+				for ( Size kk = 1; kk <= n1; ++kk ){ v1[kk] *= dw_dE; }
+ 				for ( Size kk = 1; kk <= n2; ++kk ){ v2[kk] *= dw_dE; }
 			}
 
+			if( !do_fade ){ // long enough
+				// E = E
+				for ( Size kk = 1; kk <= n1; ++kk ){
+					core::Size const &atm1( grp1.atms[kk] );
+					f2r1[ atm1 ] += v1[kk]*grp_cpweight;
+				}
+				for ( Size ll = 1; ll <= n2; ++ll ){
+					core::Size const &atm2( grp2.atms[ll] );
+					f2r2[ atm2 ] += v2[ll]*grp_cpweight;
+				}
+			}
 			// 2. derivative on truncation part: E*dsw
 			// below will matter if applying different weight on bb/sc...
 
 			//if( !use_subtract ){
-			if( use_shift_ ){
+			if( use_shift ){
 				if( ncom1 > 0 ){
 					core::Real const c_grp1_heavy = 1.0/((core::Real)(ncom1));
 
 					for ( Size kk = 1; kk <= ncom1; ++kk ){
 						core::Size const &atm1( grp1.comatms[kk] );
-						Vector const & atom1xyz( rsd1.xyz( atm1 ) );
 						Vector f2 = c_grp1_heavy*group_score*dsw_dr*dcom*elec_weight;
-						//f2r1_[ atm1 ] += f2;
-						r1_atom_derivs[ atm1 ].f2() += f2;
-						r1_atom_derivs[ atm1 ].f1() += atom1xyz.cross( -f2 );
+						f2r1[ atm1 ] += f2;
 					}
 				}
 
@@ -617,11 +652,8 @@ GroupElec::eval_respair_group_derivatives(
 
 					for ( Size kk = 1; kk <= ncom2; ++kk ){
 						core::Size const &atm2( grp2.comatms[kk] );
-						Vector const & atom2xyz( rsd2.xyz( atm2 ) );
 						Vector f2 = -c_grp2_heavy*group_score*dsw_dr*dcom*elec_weight;
-						//f2r2_[ atm2 ] += f2;
-						r2_atom_derivs[ atm2 ].f2() += f2;
-						r2_atom_derivs[ atm2 ].f1() += atom2xyz.cross( -f2 );
+						f2r2[ atm2 ] += f2;
 					}
 				}
 			}
@@ -631,23 +663,22 @@ GroupElec::eval_respair_group_derivatives(
   //TR << "end deriv" << std::endl;
 
 	// finally get f1
-	//for( Size ii = 1; ii <= rsd1.natoms(); ++ii ){
-	//	Vector const & atom1xyz( rsd1.xyz( ii ) );
-	//	Vector const & f2 =	f2r1_[ii];
-	//		r1_atom_derivs[ ii ].f2() += f2;
-	//	r1_atom_derivs[ ii ].f1() += atom1xyz.cross( -f2 );
-	//}
-	//for( Size ii = 1; ii <= rsd2.natoms(); ++ii ){
-	//	Vector const & atom1xyz( rsd2.xyz( ii ) );
-	//	Vector const & f2 =	f2r2_[ii];
-	//	r2_atom_derivs[ ii ].f2() += f2;
-	//		r2_atom_derivs[ ii ].f1() += atom1xyz.cross( -f2 );
-	//}
+	for( Size ii = 1; ii <= rsd1.natoms(); ++ii ){
+		Vector const & atom1xyz( rsd1.xyz( ii ) );
+		Vector const & f2 =	f2r1[ii];
+		r1_atom_derivs[ ii ].f2() += f2;
+		r1_atom_derivs[ ii ].f1() += atom1xyz.cross( -f2 );
+	}
+	for( Size ii = 1; ii <= rsd2.natoms(); ++ii ){
+		Vector const & atom1xyz( rsd2.xyz( ii ) );
+		Vector const & f2 =	f2r2[ii];
+		r2_atom_derivs[ ii ].f2() += f2;
+		r2_atom_derivs[ ii ].f1() += atom1xyz.cross( -f2 );
+	}
 
 	Erespair *= elec_weight;
 
 }
-*/
 
 Real
 GroupElec::get_grp_countpair( 

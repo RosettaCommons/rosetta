@@ -116,6 +116,8 @@
 #include <core/scoring/dssp/StrandPairing.hh>
 #include <core/scoring/rms_util.hh>
 
+#include <boost/math/distributions/poisson.hpp>
+
 #include <set>
 #include <list>
 
@@ -285,6 +287,8 @@ FoldTreeHybridize::init() {
 
 	overlap_chainbreaks_ = option[ jumps::overlap_chainbreak ](); // default is true
 
+	max_contig_insertion_ = -1;  // dont limit by default
+
 	// evaluation
 	// native
 	if ( option[ in::file::native ].user() ) {
@@ -386,7 +390,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	TR.Debug << "Chunks from initial template: " << std::endl;
 	TR.Debug << my_chunks << std::endl;
 
-	if ( add_non_init_chunks_ ) {
+	if ( add_non_init_chunks_ > 0 ) {
 		// (b) probabilistically sampled chunks from all other templates _outside_ these residues
 		utility::vector1< std::pair< core::Real, protocols::loops::Loop > >  wted_insertions_to_consider;
 		for (core::Size itempl = 1; itempl<=template_chunks_.size(); ++itempl) {
@@ -404,7 +408,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 					protocols::loops::Loop new_loop = template_chunks_[itempl][icontig];
 					new_loop.set_start( seqpos_start_target );
 					new_loop.set_stop( seqpos_stop_target );
-					wted_insertions_to_consider.push_back( std::pair< core::Real, protocols::loops::Loop >( template_wts_[itempl] , new_loop ) );
+					wted_insertions_to_consider.push_back( std::pair< core::Real, protocols::loops::Loop >( 1.0 /*template_wts_[itempl]*/ , new_loop ) );
 				}
 			}
 		}
@@ -412,8 +416,20 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 		// (c) randomly shuffle, then add each with given prob
 		TR.Debug << "Chunks from all template: " << std::endl;
 		TR.Debug << my_chunks << std::endl;
-		std::random_shuffle ( wted_insertions_to_consider.begin(), wted_insertions_to_consider.end() );
+		numeric::random::random_permutation( wted_insertions_to_consider, numeric::random::rg() );
+
+		core::Size nchunks_taken = 0;
+		boost::math::poisson_distribution<> P( (core::Real) add_non_init_chunks_ );
+		core::Real selector = numeric::random::uniform();
+
 		for (Size i=1; i<=wted_insertions_to_consider.size(); ++i) {
+			// on average we want to take 'add_non_init_chunks_' chunks
+			// -- poisson distribution
+			if (selector < boost::math::cdf(P,nchunks_taken)) {
+				TR << "STOP after chunk " << nchunks_taken << " sel=" << selector << " cdf=" << boost::math::cdf(P,nchunks_taken) << std::endl;
+				break;
+			}
+
 			// ensure the insert is still valid
 			bool uncovered = true;
 			for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j)
@@ -421,16 +437,13 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 			if (!uncovered) continue;
 
-			core::Real selector = numeric::random::uniform();
-
-			TR << "Consider " << wted_insertions_to_consider[i].second.start() << "," << wted_insertions_to_consider[i].second.stop() << std::endl;
-			if (selector <= wted_insertions_to_consider[i].first) {
-				TR << " ====> taken!" << std::endl;
-				my_chunks.add_loop( wted_insertions_to_consider[i].second );
-				for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop(); ++j) {
-					template_mask[j] = true;
-				}
+			TR << "Steal chunk: " << wted_insertions_to_consider[i].second.start() << "," << wted_insertions_to_consider[i].second.stop() << std::endl;
+			my_chunks.add_loop( wted_insertions_to_consider[i].second );
+			for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop(); ++j) {
+				template_mask[j] = true;
 			}
+
+			nchunks_taken++;
 		}
 	}
 
@@ -1058,6 +1071,32 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		if ( user_csts_.size() > 0 ) {
 			setup_user_coordinate_constraints(pose,user_csts_);
 		}
+	}
+
+	utility::vector1 < protocols::loops::Loops > template_chunks_working;
+
+	// subdivide chunks if they are too long
+	if (max_contig_insertion_>0) {
+		for (core::Size i=1; i<=template_chunks_.size(); ++i) {
+			protocols::loops::Loops new_chunks_i;
+
+			for (core::Size j=1; j<=template_chunks_[i].num_loop(); ++j) {
+				core::Size start_ij = template_chunks_[i][j].start();
+				core::Size stop_ij = template_chunks_[i][j].stop();
+
+				if ( stop_ij - start_ij + 1 > max_contig_insertion_) {
+					TR << "splitting chunk " << start_ij << "," << stop_ij << std::endl;
+					for (core::Size k=start_ij; k<=stop_ij - max_contig_insertion_+1; ++k) {
+						new_chunks_i.add_loop( k, k+max_contig_insertion_-1 );
+					}
+				} else {
+					new_chunks_i.add_loop(start_ij,stop_ij );
+				}
+			}
+			template_chunks_working.push_back( new_chunks_i );
+		}
+	} else {
+		template_chunks_working = template_chunks_;
 	}
 
 	ChunkTrialMoverOP random_sample_chunk_mover(

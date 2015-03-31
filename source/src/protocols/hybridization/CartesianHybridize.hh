@@ -84,11 +84,12 @@ public:
 	void set_skip_long_min(bool skip_long_min_in) { skip_long_min_=skip_long_min_in; }
 	void set_cenrot(bool cenrot_in) { cenrot_=cenrot_in; }
 	void set_temperature(core::Real temp_in) { temperature_ = temp_in; }
-	void set_max_contig_insertion(int max_in) { max_contig_insertion_ = max_in; }
 	void set_fragment_probs(core::Real prob, core::Real randprob) {
 			fragprob_ = prob;
 			randfragprob_ = randprob;
 	}
+
+	void set_max_insertion(int max_in) { max_contig_insertion_ = max_in; }
 
 	void set_per_residue_controls(
 			utility::vector1<bool> const &residue_sample_template_in,

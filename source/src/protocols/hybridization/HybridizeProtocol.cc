@@ -1022,6 +1022,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				ft_hybridize->set_minimize_at_end( min_after_stage1_ );
 				ft_hybridize->set_minimize_sf( stage2_scorefxn_ );
 
+				// max insertion
+				ft_hybridize->set_max_insertion( max_contig_insertion_ );
+
 				// other cst stuff
 				ft_hybridize->set_user_csts( user_csts_ );
 
@@ -1108,6 +1111,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_skip_long_min( skip_long_min_ );
 			cart_hybridize->set_cenrot( cenrot_ );
 			cart_hybridize->set_fragment_probs(fragprob_stage2_, randfragprob_stage2_);
+
+			// max insertion
+			cart_hybridize->set_max_insertion( max_contig_insertion_ );
 
 			// per-residue controls
 			cart_hybridize->set_per_residue_controls( residue_sample_template_, residue_sample_abinitio_ );
@@ -1300,7 +1306,10 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 
 	// find corresepondance of ligands to nearest residues (in moving pose)
 	core::Size last_protein_residue=pose.total_residue();
-	while (!pose.residue_type(last_protein_residue).is_protein()) last_protein_residue--;
+	while (last_protein_residue>0 && !pose.residue_type(last_protein_residue).is_protein()) last_protein_residue--;
+
+	if (last_protein_residue == 0) return;
+
 	std::map< core::Size, core::Size > ligres_map;
 	for (core::Size i=last_protein_residue+1; i<=pose.total_residue(); ++i) {
 		core::Real mindist = 999.0;
@@ -1476,7 +1485,7 @@ HybridizeProtocol::parse_my_tag(
 	if( tag->hasOption( "realign_domains_stage2" ) )
 		realign_domains_stage2_ = tag->getOption< bool >( "realign_domains_stage2" );
 	if( tag->hasOption( "add_non_init_chunks" ) )
-		add_non_init_chunks_ = tag->getOption< bool >( "add_non_init_chunks" );
+		add_non_init_chunks_ = tag->getOption< core::Size >( "add_non_init_chunks" );
 	if( tag->hasOption( "frag_1mer_insertion_weight" ) )
 		frag_1mer_insertion_weight_ = tag->getOption< core::Real >( "frag_1mer_insertion_weight" );
 	if( tag->hasOption( "small_frag_insertion_weight" ) )

@@ -264,8 +264,10 @@ DDomainParse::split( core::pose::Pose const &templ ) {
 
 	std::string fname;
 	mseq_ = templ.total_residue();
-	while (!templ.residue(mseq_).is_protein() && mseq_>0) mseq_--;
+	while (mseq_>0 && !templ.residue(mseq_).is_protein()) mseq_--;
 	nseq_ = mseq_;
+
+	if (mseq_ == 0) { return retval; }
 
 	utility::vector1<int> ipdom(mseq_,0);
 	utility::vector1< numeric::xyzVector<core::Real> > xs(mseq_, numeric::xyzVector<core::Real>(0,0,0));

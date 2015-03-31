@@ -101,7 +101,7 @@ public:
 	void set_stage1_2_cycles(core::Size stage1_2_cycles_in) { stage1_2_cycles_=stage1_2_cycles_in; }
 	void set_stage1_3_cycles(core::Size stage1_3_cycles_in) { stage1_3_cycles_=stage1_3_cycles_in; }
 	void set_stage1_4_cycles(core::Size stage1_4_cycles_in) { stage1_4_cycles_=stage1_4_cycles_in; }
-	void set_add_non_init_chunks(bool add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
+	void set_add_non_init_chunks(core::Size add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
 	void set_add_hetatm(
 			bool add_hetatm_in,
 			core::Real hetatm_self_cst_weight_in,
@@ -129,6 +129,8 @@ public:
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn) { scorefxn_ = core::scoring::ScoreFunctionOP(scorefxn->clone()); }
 	inline void set_minimize_at_end( bool min_at_end_in ) { min_at_end_ = min_at_end_in; }
 	inline void set_minimize_sf( core::scoring::ScoreFunctionOP minscorefxn_in ) { minscorefxn_ = core::scoring::ScoreFunctionOP(minscorefxn_in->clone()); }
+
+	void set_max_insertion(int max_in) { max_contig_insertion_ = max_in; }
 
 	void set_user_csts(  utility::vector1< core::Size > user_csts_in ) { user_csts_=user_csts_in; }
 
@@ -196,12 +198,13 @@ private:
 
 	core::Real chunk_insertion_weight_;
 
-	bool add_non_init_chunks_;
+	core::Size add_non_init_chunks_;
 	bool add_hetatm_;
 	core::Real hetatm_self_cst_weight_, hetatm_prot_cst_weight_;
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
 	bool auto_frag_insertion_weight_; // automatically set the fragment insertion weight
 	core::Size max_registry_shift_;
+	core::Size max_contig_insertion_;
 	std::string cst_file_;
 
 	bool min_at_end_;
