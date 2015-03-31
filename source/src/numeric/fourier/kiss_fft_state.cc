@@ -20,8 +20,6 @@
 #endif
 #include <numeric/fourier/kiss_fft.hh>
 #include <cstdlib> //g++ 4.3.2 requires for exit()
-#include <algorithm> //VS2013 requires for std::max
-
 // tracer
 
 namespace numeric {
@@ -81,6 +79,50 @@ void kiss_fft_state::resize(int n, int inv) {
 		kf_cexp(twiddles_[i], phase );
 	}
 	kf_factor(nfft_,factors_);
+}
+
+/////////////////////////
+/// 1D c->c split fft
+/////////////////////////
+kiss_fftsplit_state::kiss_fftsplit_state() { }
+
+kiss_fftsplit_state::kiss_fftsplit_state(int n, int inv) {
+	resize( n, inv );
+}
+
+void kiss_fftsplit_state::resize(int n, int inv) {
+	if (substate_.nfft() == n && substate_.inverse() == inv ) return; // already the correct size
+
+	tmpbuf_.resize( n );
+	substate_.resize( n , inv );
+}
+
+/////////////////////////
+/// 1D dft
+/////////////////////////
+kiss_dct_state::kiss_dct_state() { }
+
+kiss_dct_state::kiss_dct_state(int n, int inv) {
+	resize( n, inv );
+}
+
+void kiss_dct_state::resize(int n, int inv) {
+	if (substate_.nfft() == n && substate_.inverse() == inv ) return; // already the correct size
+
+	if (n & 1) {
+		std::cerr << "Real->Real DCT optimization must be even.\n";
+		exit(1);
+	}
+	tmpbuf_.resize( n );
+	super_twiddles_.resize( n );
+	substate_.resize( n , inv );
+
+	for (int i=0; i < n; ++i) {
+		double phase = -M_PI * ((double) i/(2*substate_.nfft()));
+		if (substate_.inverse())
+			phase *= -1;
+		kf_cexp (super_twiddles_[i],phase);
+	}
 }
 
 /////////////////////////

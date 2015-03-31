@@ -61,7 +61,7 @@ static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.p
 
 ///@brief Creator for GeneralizedKICperturber.
 GeneralizedKICperturber::GeneralizedKICperturber():
-		//utility::pointer::ReferenceCount(),
+		utility::pointer::ReferenceCount(),
 		bbgmover_(),
 		bin_transition_calculator_(),
 		effect_(no_effect),
@@ -77,6 +77,7 @@ GeneralizedKICperturber::GeneralizedKICperturber():
 ///@brief Copy constructor for GeneralizedKICperturber.
 ///
 GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const &src ):
+	utility::pointer::ReferenceCount(),
 	bbgmover_( ), //Cloned later
 	bin_transition_calculator_( ), //Cloned later
 	effect_(src.effect_),

@@ -302,7 +302,7 @@ namespace mover {
 		if ( !swa_moves_.has_value( swa_move ) ) {
 			TR << TR.Red << "WARNING! WARNING! WARNING! swa_moves_.has_value( swa_move ) == false!" << TR.Reset << std::endl;
 			return 1.0;
-		}	 
+		}
 		return proposal_probabilities_[ swa_moves_.index( swa_move ) ];
 	}
 
@@ -570,7 +570,7 @@ namespace mover {
 
 			Size const downstream_res = pose.fold_tree().downstream_jump_residue( n );
 			Size const upstream_res = pose.fold_tree().upstream_jump_residue( n );
-			
+
 			// by convention, moving res should have higher
 			Size const moving_res = std::max( downstream_res, upstream_res );
 			Size const reference_res = std::min( downstream_res, upstream_res );
@@ -583,7 +583,7 @@ namespace mover {
 
 			partition_res1 = get_partition_res( partition_definition, ( moving_res < reference_res ) );
 			partition_res2 = get_partition_res( partition_definition, ( moving_res > reference_res ) );
-			
+
 			// make sure that at least one partition is a single nucleotide.
 			if ( partition_res1.size() > 1 && partition_res2.size() > 1 ) continue;
 
@@ -1281,6 +1281,8 @@ namespace mover {
 			return StepWiseMove( utility::tools::make_vector1( std::min(res1,res2), std::max(res1,res2) ), Attachments(), FROM_SCRATCH );
 		}
 
+		//fpd  dummy statement for llvm-gcc-4.2 warnings-as-errors
+		return StepWiseMove();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////

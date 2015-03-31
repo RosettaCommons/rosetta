@@ -70,6 +70,7 @@ GeneralizedKICfilter::GeneralizedKICfilter():
 ///@brief Copy constructor for GeneralizedKICfilter.
 ///
 GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
+		utility::pointer::ReferenceCount(),
 		filtertype_(src.filtertype_),
 		filter_params_real_( src.filter_params_real_ ),
 		filter_params_size_( src.filter_params_size_ ),

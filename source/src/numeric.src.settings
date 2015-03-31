@@ -34,6 +34,7 @@ sources = {
 		"FFT",
 		"kiss_fft",
 		"kiss_fft_state",
+		"SHT",
 	],
 	"numeric/geometry/hashing": [
 		"SixDHasher",
@@ -85,7 +86,7 @@ sources = {
 	],
 	"numeric/random": [
 		"random",
-		"random_xyz",		
+		"random_xyz",
 		"WeightedSampler",
 	],
 	"numeric/statistics": [

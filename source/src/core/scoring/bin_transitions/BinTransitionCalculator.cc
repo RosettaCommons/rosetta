@@ -49,6 +49,7 @@ namespace core {
 					/// @brief Copy constructor for BinTransitionCalculator
 					///
 					BinTransitionCalculator::BinTransitionCalculator( BinTransitionCalculator const &src ): //TODO -- copy variables here:
+						utility::pointer::ReferenceCount(),
 						bin_params_loaded_(src.bin_params_loaded_),
 						bin_params_file_(src.bin_params_file_),
 						bin_transition_data_()

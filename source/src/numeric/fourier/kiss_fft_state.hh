@@ -37,10 +37,12 @@ typedef std::complex< kiss_fft_scalar > kiss_fft_cpx;
 #define KISSFFT_MAXFACTORS 32 ///
 
 
-typedef class kiss_fft_state    * kiss_fft_cfg;
-typedef class kiss_fftnd_state  * kiss_fftnd_cfg;
-typedef class kiss_fftr_state   * kiss_fftr_cfg;
-typedef class kiss_fftndr_state * kiss_fftndr_cfg;
+typedef class kiss_fft_state      * kiss_fft_cfg;
+typedef class kiss_fftsplit_state * kiss_fftsplit_cfg;
+typedef class kiss_dct_state      * kiss_dct_cfg;
+typedef class kiss_fftnd_state    * kiss_fftnd_cfg;
+typedef class kiss_fftr_state     * kiss_fftr_cfg;
+typedef class kiss_fftndr_state   * kiss_fftndr_cfg;
 
 class kiss_fft_state{
 public:
@@ -61,6 +63,44 @@ private:
 	int inverse_;
 	int factors_[2*KISSFFT_MAXFACTORS];
 	std::vector<kiss_fft_cpx> twiddles_;
+};
+
+///////////////////////////
+class kiss_dct_state{
+public:
+	kiss_dct_state();
+	kiss_dct_state(int n, int inv);
+	void resize(int n, int inv);
+
+	// we give raw access to the pointers to avoid rewriting significant portions of kiss-fft
+	int nfft()    { return substate_.nfft(); }
+	int inverse() { return substate_.inverse(); }
+	kiss_fft_cfg substate() { return &substate_; }
+	kiss_fft_cpx *tmpbuf() { return (&tmpbuf_[0]); }
+	kiss_fft_cpx *super_twiddles() { return (&super_twiddles_[0]); }
+
+private:
+	kiss_fft_state substate_;
+	std::vector<kiss_fft_cpx> tmpbuf_;
+	std::vector<kiss_fft_cpx> super_twiddles_;
+};
+
+///////////////////////////
+class kiss_fftsplit_state{
+public:
+	kiss_fftsplit_state();
+	kiss_fftsplit_state(int n, int inv);
+	void resize(int n, int inv);
+
+	// we give raw access to the pointers to avoid rewriting significant portions of kiss-fft
+	int nfft()    { return substate_.nfft(); }
+	int inverse() { return substate_.inverse(); }
+	kiss_fft_cfg substate() { return &substate_; }
+	kiss_fft_cpx *tmpbuf() { return (&tmpbuf_[0]); }
+
+private:
+	kiss_fft_state substate_;
+	std::vector<kiss_fft_cpx> tmpbuf_;
 };
 
 ///////////////////////////
