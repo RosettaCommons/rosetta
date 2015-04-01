@@ -34,6 +34,7 @@
 #include <protocols/kinematic_closure/solution_pickers/FilteredSolutions.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
+#include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -147,6 +148,12 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	// Only attempt to rebuild loops that are marked as "extended".
 
 	if (! loop.is_extended()) return true;
+
+	// Idealize all the backbone atoms.  This is especially important if the 
+	// backbone atoms were missing in the first place and had to be rebuilt from 
+	// scratch.  This command makes sure everything looks reasonable.
+	
+	loops::idealize_loop(pose, loop);
 
 	// Setup the loop movers.
 
