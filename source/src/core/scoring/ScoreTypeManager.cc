@@ -28,7 +28,6 @@
 
 #include <utility/vector1.hh>
 
-
 namespace core {
 namespace scoring {
 
@@ -130,7 +129,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "goap" ] = goap;
 	name2score_type_[ "goap_dist" ] = goap_dist;
 	name2score_type_[ "goap_angle" ] = goap_angle;
-
+	name2score_type_["vall_lb"] = vall_lb;
 
 	// PyRosetta score types
 	#ifdef PYROSETTA
@@ -197,7 +196,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "facts_elec" ] = facts_elec;
 	name2score_type_[ "facts_solv" ] = facts_solv;
 	name2score_type_[ "facts_sasa" ] = facts_sasa;
-	
+
 	name2score_type_[ "PB_elec" ] = PB_elec;
 	name2score_type_[ "dslf_ss_dst" ] = dslf_ss_dst;
 	name2score_type_[ "dslf_cs_ang" ] = dslf_cs_ang;

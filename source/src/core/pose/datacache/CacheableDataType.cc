@@ -67,6 +67,7 @@ CacheableDataType::initialize_name_map() {
 	name2enum_()["FILTER_STAGE2_QUARTER"] = FILTER_STAGE2_QUARTER;
 	name2enum_()["FILTER_STAGE2_HALF"] = FILTER_STAGE2_HALF;
 	name2enum_()["FILTER_STAGE2_END"] = FILTER_STAGE2_END;
+	name2enum_()["VALL_LOOKBACK_DATA"] = VALL_LOOKBACK_DATA;
 	name2enum_()["ARBITRARY_FLOAT_DATA"] = ARBITRARY_FLOAT_DATA;
 	name2enum_()["ARBITRARY_STRING_DATA"] = ARBITRARY_STRING_DATA;
 	name2enum_()["POSE_BEFORE_CAVITIES_ADDED"] = POSE_BEFORE_CAVITIES_ADDED;
@@ -95,7 +96,7 @@ CacheableDataType::initialize_name_map() {
 	name2enum_()["SURFACE_PARAMS"] = SURFACE_PARAMS;
 	name2enum_()["FULL_MODEL_INFO"] = FULL_MODEL_INFO;
 	name2enum_()["NCS_RESIDUE_MAPPING"] = NCS_RESIDUE_MAPPING;
-	name2enum_()["FLOATING_POINT_CLOUD_INFO"] = FLOATING_POINT_CLOUD_INFO;	
+	name2enum_()["FLOATING_POINT_CLOUD_INFO"] = FLOATING_POINT_CLOUD_INFO;
 	name2enum_()["CDR_CLUSTER_INFO"] = CDR_CLUSTER_INFO;
 
 debug_assert( name2enum_().size() == CacheableDataType::num_cacheable_data_types );

@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/util/ABEGOManager.hh
+/// @file core/sequence/ABEGOManager.hh
 /// @brief header file for class of ABEGO plus
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
-#ifndef INCLUDED_core_util_ABEGOManager_hh
-#define INCLUDED_core_util_ABEGOManager_hh
+#ifndef INCLUDED_core_sequence_ABEGOManager_hh
+#define INCLUDED_core_sequence_ABEGOManager_hh
 
-#include <core/util/ABEGOManager.fwd.hh>
+#include <core/sequence/ABEGOManager.fwd.hh>
 
 // package headers
 #include <core/pose/Pose.fwd.hh>
@@ -31,12 +31,12 @@
 #include <map>
 
 namespace core {
-namespace util {
+namespace sequence {
 
 /// @brief struct
 struct Line {
-	
-	
+
+
 	/// @brief default constructor
 	inline
 	Line() :
@@ -44,8 +44,8 @@ struct Line {
 		intercept( 0.0 ),
 		region( true ) // true means region above the line is indicated
 	{}
-	
-	
+
+
 	/// @brief value constructor
 	inline
 	Line(
@@ -57,7 +57,7 @@ struct Line {
 	intercept( r2 ),
 	region( b )
 	{}
-	
+
 	/// @brief copy constructor
 	inline
 	Line( Line const & rval ) :
@@ -65,13 +65,13 @@ struct Line {
 	intercept( rval.intercept ),
 	region( rval.region )
 	{}
-	
-	
+
+
 	/// @brief default destructor
 	inline
 	~Line() {}
-	
-	
+
+
 	/// @brief copy assignment
 	inline
 	Line & operator =( Line const & rval ) {
@@ -82,16 +82,16 @@ struct Line {
 		}
 		return *this;
 	}
-	
+
 	/// @brief slope of line
 	Real slope;
-	
+
 	/// @brief intercept of line
 	Real intercept;
-	
+
 	/// @brief region to be selected, true: above the line, false below the line
 	bool region;
-	
+
 };
 
 /// @brief abego elments
@@ -160,7 +160,7 @@ private: // data
 	Real psi_min_;
 	Real psi_max_;
 	bool cis_omega_;
-	
+
 	utility::vector1< Line > lines_;
 
 };
@@ -193,17 +193,17 @@ public:
 
 	/// @brief total number of abego definition
 	Size total_number_abego() { return totnum_abego_; }
-	
-	
+
+
 public:
-	
-	
+
+
 	/// @brief initialize
 	void initialize();
 
 	/// @brief check input torsion angle are in a given abego region
 	bool check_rama( char const & symbol, Real const & phi, Real const & psi, Real const & omega );
-	
+
 	/// @brief get abego index from torsion angles
 	Size torsion2index( Real const phi, Real const psi, Real const omega, Size const level=1 );
 
@@ -218,12 +218,15 @@ public:
 
 	/// @brief get abego index from torsion angles at level 3
 	Size torsion2index_level4( Real const phi, Real const psi, Real const omega );
-	
+
 	/// @brief all output level in current setup
 	Size alllevel() { return 3; }
 
 	/// @brief transform abego symbol to index
 	Size symbol2index( char const & symbol );
+
+	/// @brief transform abego symbol string to base5 index
+	Size symbolString2base5index( std::string symbolString);
 
 	/// @brief transform abego index to symbol
 	char index2symbol( Size const & idx );
@@ -257,4 +260,4 @@ get_abego( core::pose::Pose const & pose, core::Size const level=1 );
 } // namespace util
 } // namespace core
 
-#endif /* INCLUDED_core_util_hh */
+#endif /* INCLUDED_core_sequence_hh */

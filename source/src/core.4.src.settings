@@ -176,14 +176,14 @@ sources = {
 		"TrueResidueSelector",
 	],
 	"core/util": [
-		"ABEGOManager",
 		"ChainbreakUtil",
 		"cryst_util",
 		"disulfide_util",
 		"kinematics_util",
 		"metalloproteins_util",
 		"SwitchResidueTypeSet",
-	],
+	]
+
 }
 include_path = [
 ]

@@ -21,13 +21,13 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 
 #include <numeric/random/random.hh>
 #include <utility/vector1.hh>
 #include <string>
 
-static basic::Tracer TR("test.core.util.ABEGOManager");
+static basic::Tracer TR("test.core.sequence.ABEGOManager");
 
 // --------------- Test Class --------------- //
 
@@ -38,7 +38,7 @@ public:
 	typedef std::string String;
 	typedef core::Real Real;
 	typedef core::Size Size;
-  typedef core::util::ABEGOManager ABEGOManager;
+  typedef core::sequence::ABEGOManager ABEGOManager;
 	typedef core::pose::Pose Pose;
 	
 public:
@@ -142,11 +142,11 @@ public:
 		TS_ASSERT( "AB[SP][MN]EO" == abm.get_abego_string( abego ) );
 				
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/util/abego_test.pdb" );
+		core::import_pose::pose_from_pdb( pose, "core/sequence/abego_test.pdb" );
 		// check get abego from pose
-		TS_ASSERT( abm.get_abego_string( core::util::get_abego( pose, /* level */ 1 ) ) == "EBAAAGBO" );
-		TS_ASSERT( abm.get_abego_string( core::util::get_abego( pose, /* level */ 3 ) ) == "EZAAAGSO" );
-		TS_ASSERT( abm.get_abego_string( core::util::get_abego( pose, /* level */ 4 ) ) == "EZNNMGSO" );
+		TS_ASSERT( abm.get_abego_string( core::sequence::get_abego( pose, /* level */ 1 ) ) == "EBAAAGBO" );
+		TS_ASSERT( abm.get_abego_string( core::sequence::get_abego( pose, /* level */ 3 ) ) == "EZAAAGSO" );
+		TS_ASSERT( abm.get_abego_string( core::sequence::get_abego( pose, /* level */ 4 ) ) == "EZNNMGSO" );
 		
 	}
 

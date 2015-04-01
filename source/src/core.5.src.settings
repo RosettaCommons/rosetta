@@ -18,7 +18,7 @@ sources = {
 		"FragID",
 		"FragID_Iterator",
 		"FragmentIO",
-                "FragmentRmsd",
+		"FragmentRmsd",
 		"FragSet",
 		"FragSetCollection",
 		"Frame",
@@ -72,17 +72,10 @@ sources = {
 		"SilentFilePoseInputStream",
 		"util",
 	],
-  "core/indexed_structure_store": [
-    "FragmentStore",
-    "FragmentLookup",
-    "H5FragmentStoreBackend",
-    "BinaryFragmentStoreBackend",
-    "StructureStoreManager",
-    ],
 	"core/init": [
 		"init",
 		"score_function_corrections",
-	]
+	],
 }
 include_path = [
 ]

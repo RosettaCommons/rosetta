@@ -66,6 +66,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/nv/NVlookup.fwd.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.fwd.hh>
+#include <core/scoring/methods/vall_lookback/VallLookbackPotential.fwd.hh>
 #include <core/scoring/interface_/DDPlookup.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 
@@ -184,7 +185,7 @@ public:
 	nv::NVlookup const & get_NVLookupTable() const;
 	core::scoring::orbitals::OrbitalsLookup const & get_OrbitalsLookupTable() const;
 
-
+	methods::VallLookbackPotential const & get_vallLookbackPotential() const;
 
 	interface_::DDPlookup const & get_DDPLookupTable() const;
 
@@ -310,7 +311,7 @@ private:
 	mutable UnfoldedStatePotentialOP unf_state_;
 	mutable nv::NVlookupOP NV_lookup_table_;
 	mutable orbitals::OrbitalsLookupOP orbitals_lookup_table_;
-
+	mutable methods::VallLookbackPotentialOP vallLookbackPotential_;
 	mutable interface_::DDPlookupOP DDP_lookup_table_;
 	// data
 

@@ -515,7 +515,6 @@ void RemodelMover::apply( Pose & pose ) {
 		last_input_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 
 
-
 		TR << "apply(): entered RemodelMover apply(). pose.total_residue(): " << pose.total_residue() << std::endl;
 
 		// store the starting pose for KIC confirmation RMSD calculation
@@ -586,9 +585,12 @@ void RemodelMover::apply( Pose & pose ) {
 		//TR << "After working_model_" << std::endl;
 
 		// test PyMol viewer
-		if ( option[OptionKeys::run::show_simulation_in_pymol].user() ) {
+		/*
+			 NOTE:: If pose size changes such as in repeat_mover this can crash remodel
+		if ( option[OptionKeys::run::show_simulation_in_pymol] ) {
 			moves::AddPyMolObserver( pose, false, core::Real( 0.50 ) );
 		}
+		*/
 
 
 
@@ -611,19 +613,23 @@ void RemodelMover::apply( Pose & pose ) {
 			//this is pre modify, so simply extend to 2x blueprint length,
 			//with extensions, the pose will go beyond the correct length.  need to fix
 			//that after modify. Residues beyond first copy+ jxn doesn't really matter
-			if (pose.total_residue() < 2*remodel_data.sequence.length()){ //just making sure it's shorter before grow, input pose can be longer
+				if (pose.total_residue() < 2*remodel_data.sequence.length()){ //just making sure it's shorter before grow, input pose can be longer
 				Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
 				// append a tail of the same length
+				String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
+				if(build_aa_type.size() == 1){
+						char build_aa_oneLetter= build_aa_type[0];
+						build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
+				}
 				for (Size i = 1; i<= len_diff; ++i){
 					core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map(build_aa_type) ) );
 					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
 					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
 					pose.set_omega(pose.total_residue()-1,180);
 				}
 			}
 		}
-
 		//
 		//	Pose testArc;
 		//	testArc = pose;
@@ -634,9 +640,10 @@ void RemodelMover::apply( Pose & pose ) {
 				working_model.manager.dummy_modify(pose.total_residue());
 
 			}
-
+		
 			scoring::dssp::Dssp dssp( pose );
 			dssp.insert_ss_into_pose( pose );
+
 			//	protocols::forge::methods::restore_residues(working_model.manager.original2modified(), testArc, pose);
 			//	pose.dump_pdb("testArcRestore.pdb");
 			//testArc=pose;
@@ -649,15 +656,13 @@ void RemodelMover::apply( Pose & pose ) {
 				false // rotate_chain_id
 			);
 		}
-
 		//finally recheck length to ensure blueprint compliance
 		if(option[OptionKeys::remodel::repeat_structure].user()) {
 			Size max_pdb_index = remodel_data_.blueprint.size()*2;
-			while (pose.total_residue() >= max_pdb_index){
+			while (pose.total_residue() > max_pdb_index){
 				pose.conformation().delete_residue_slow(pose.total_residue());
 				pose.pdb_info()->obsolete(true); //note the previous line was having issues with the pymol observer. You may also want to add -show_simulation_in_pymol 0 to your flags.
 			}
-
 			if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
 				Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
 				// append a tail of the same length
@@ -672,7 +677,7 @@ void RemodelMover::apply( Pose & pose ) {
 			}
 
 		}
-
+		
 
 		/*
 		up = working_model.manager.undefined_positions();
@@ -822,6 +827,7 @@ void RemodelMover::apply( Pose & pose ) {
 					//return;
 				}
 			}
+
 			if (option[OptionKeys::remodel::repeat_structure].user() ) {
 				// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
 				add_lower_terminus_type_to_pose_residue(pose,1);
@@ -834,7 +840,6 @@ void RemodelMover::apply( Pose & pose ) {
 					replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
 				}
 			}
-
 			core::pose::renumber_pdbinfo_based_on_conf_chains(
 					pose,
 			    true ,  // fix chain

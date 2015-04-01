@@ -16,7 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <utility/excn/Exceptions.hh>
@@ -77,7 +77,7 @@ main( int argc, char * argv [] )
 	protocols::moves::DsspMover dsm;
 	dsm.apply( pose );
 
-	utility::vector1< std::string > abego_ = core::util::get_abego( pose, option[ abego ]() );
+	utility::vector1< std::string > abego_ = core::sequence::get_abego( pose, option[ abego ]() );
 
 	using namespace ObjexxFCL::format;
 	out << "# resn aa ss abego phi psi omega" << std::endl;

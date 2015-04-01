@@ -24,7 +24,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 // AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
@@ -150,7 +150,7 @@ SecondaryStructureFilter::parse_my_tag(
 	}
 	tr << filtered_ss_ << " is filtered." << std::endl;
 
-	core::util::ABEGOManager abego_manager;
+	core::sequence::ABEGOManager abego_manager;
 	if( filtered_abego_.size() >= 1 && use_abego_ ) {
 		tr << abego_manager.get_abego_string( filtered_abego_ ) << " is filtered " << std::endl;
 	}
@@ -228,7 +228,7 @@ SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
 core::Size
 SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 
-	core::util::ABEGOManager abego_manager;
+	core::sequence::ABEGOManager abego_manager;
 	core::Size match_count( 0 );
 	for( Size i=1; i<=pose.total_residue(); i++ ){
 		// if this residue is a ligand, ignore and move on

@@ -70,6 +70,10 @@ RG_Energy_Fast::RG_Energy_Fast() :
 	parent( EnergyMethodCreatorOP( new RG_Energy_FastCreator ) )
 {}
 
+/// c-tor
+RG_Energy_Fast::RG_Energy_Fast( EnergyMethodCreatorOP CreatorOP ) :
+  parent( CreatorOP )
+{}
 
 /// clone
 EnergyMethodOP

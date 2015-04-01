@@ -16,7 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/Sheet.hh>
@@ -111,9 +111,9 @@ main( int argc, char * argv [] )
 	output << bab;
 
 	//
-	core::util::ABEGOManager am;
+	core::sequence::ABEGOManager am;
 	Size level( option[ abego ]() );
-	utility::vector1< std::string > abego = core::util::get_abego( pose, level );
+	utility::vector1< std::string > abego = core::sequence::get_abego( pose, level );
 
 	if( level <= am.alllevel() ) {
 		for( Size i=1; i<= pose.total_residue(); i++ ){

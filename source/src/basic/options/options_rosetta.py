@@ -4911,9 +4911,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # -hotspot
 
 	Option_Group( 'indexed_structure_store',
-		Option( 'fragment_store', 'File', desc='Fragment store. [.h5] file')
+		Option( 'fragment_store', 'File', desc='Fragment store. [.h5] file'),
+  Option( 'fragment_threshold_distance', 'Real', desc='sets the fragment threshold distance when being read in by the VallLookback score function',default = '0.4'),
 	), # -indexed_structure_store
-
 	Option_Group( 'lh',
 #		Option( 'db_prefix', 'String', default = 'loopdb', desc='stem for loop database' ),
 		Option( 'loopsizes', 'IntegerVector', default = ['10','15','20'] , desc='Which loopsizes to use' ),

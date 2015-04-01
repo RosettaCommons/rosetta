@@ -48,8 +48,8 @@ public:
 typedef utility::pointer::shared_ptr< RG_Local_MinData > RG_Local_MinDataOP;
 
 class RG_LocalEnergy: public RG_Energy_Fast  {
-public:
 
+public:
 	/// @brief Defines a center of mass based RG calculation that is O(n) rather
 	/// than O(n^2).
 	RG_LocalEnergy();
@@ -63,6 +63,7 @@ public:
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
+	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,

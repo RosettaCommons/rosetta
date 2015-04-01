@@ -14,6 +14,7 @@
 #ifdef USEHDF5
 
 #include <string>
+#include <map>
 #include <stdexcept>
 
 #include <boost/algorithm/string.hpp>
@@ -39,14 +40,13 @@ static thread_local basic::Tracer TR( "core.indexed_structure_store.H5FragmentSt
 #else
 #define RealPredType PredType::NATIVE_DOUBLE
 #endif
+#define Int64PredType PredType::NATIVE_UINT64
 
 H5::DataType H5FragmentStoreBackend::FragmentThresholdDistanceEntryDatatype()
 {
 	using namespace H5;
-
 	CompType entry_type(sizeof(numeric::Real));
 	entry_type.insertMember("threshold_distance", 0, RealPredType);
-
 	return entry_type;
 }
 
@@ -64,6 +64,27 @@ H5::DataType H5FragmentStoreBackend::FragmentCoordinateEntryDatatype(FragmentSpe
 
 	return entry_type;
 }
+
+H5::DataType H5FragmentStoreBackend::FragmentInt64GroupEntryDatatype(std::string group_field)
+{
+  using namespace H5;
+
+	CompType entry_type(sizeof(numeric::Size));
+	entry_type.insertMember(group_field, 0, Int64PredType);
+
+	return entry_type;
+}
+
+H5::DataType H5FragmentStoreBackend::FragmentRealGroupEntryDatatype(std::string group_field)
+{
+  using namespace H5;
+
+	CompType entry_type(sizeof(numeric::Size));
+	entry_type.insertMember(group_field, 0, RealPredType);
+
+	return entry_type;
+}
+
 
 H5FragmentStoreBackend::H5FragmentStoreBackend(std::string target_filename)
 {
@@ -111,7 +132,7 @@ FragmentStoreOP H5FragmentStoreBackend::get_fragment_store(std::string store_nam
 	DataSpace store_dataspace(store_dataset.getSpace());
 	TR.Debug << "Loading: " << store_path << " size:" << store_dataspace.getSimpleExtentNpoints() << std::endl;
 
-  FragmentStoreOP fragment_store = new FragmentStore(fragment_spec, store_dataspace.getSimpleExtentNpoints());
+  FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, store_dataspace.getSimpleExtentNpoints()));
 
 	store_dataset.read(
       &fragment_store->fragment_threshold_distances[0],
@@ -119,9 +140,39 @@ FragmentStoreOP H5FragmentStoreBackend::get_fragment_store(std::string store_nam
 	store_dataset.read(
       &fragment_store->fragment_coordinates[0],
       FragmentCoordinateEntryDatatype(fragment_spec));
-
 	return fragment_store;
 }
+
+FragmentStoreOP H5FragmentStoreBackend::get_fragment_store(std::string store_name, std::string group_field, std::string group_type){
+	using namespace H5;
+	FragmentStoreOP fragment_store(NULL);
+	fragment_store = get_fragment_store(store_name);
+	std::string store_path = "/fragments/" + store_name;
+	TR.Debug << "Re-Opening: " << store_path << std::endl;
+	DataSet store_dataset(target_file_.openDataSet(store_path));
+	DataSpace store_dataspace(store_dataset.getSpace());
+	TR.Debug <<"Loading group type: " << group_field << "of type " << group_type << std::endl;
+	if(group_type != "int64" && group_type != "real")
+		utility_exit_with_message(group_type + " is not a valid entry in the fragment store. Currently only int64 and real are implemented");
+	if(group_type =="int64"){
+		std::vector<numeric::Size> int64_group;
+		int64_group.resize(store_dataspace.getSimpleExtentNpoints());
+		store_dataset.read(
+		&int64_group[0],
+		FragmentInt64GroupEntryDatatype(group_field));
+		fragment_store->int64_groups.insert(std::pair<std::string,std::vector <numeric::Size> > (group_field,int64_group));
+
+		}
+	if(group_type == "real"){
+		std::vector<numeric::Real> real_group;
+		real_group.resize(store_dataspace.getSimpleExtentNpoints());
+		store_dataset.read(
+		&real_group[0],
+		FragmentRealGroupEntryDatatype(group_field));
+		fragment_store->real_groups.insert(std::pair<std::string,std::vector <numeric::Real> > (group_field,real_group));
+		}
+	return fragment_store;
+	}
 
 }
 }

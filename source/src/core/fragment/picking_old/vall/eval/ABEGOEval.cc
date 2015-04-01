@@ -13,7 +13,7 @@
 
 // unit headers
 #include <core/fragment/picking_old/vall/eval/ABEGOEval.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 
 // project headers
 #include <basic/Tracer.hh>

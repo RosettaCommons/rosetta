@@ -18,7 +18,7 @@
 
 // Project header
 #include <core/types.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 
@@ -307,7 +307,7 @@ BluePrint::read_blueprint( std::string const & filename )
 			char sec( tokens[3][0] );
 			String abego("");
 			if( tokens[3].length() > 1 ) {
-				core::util::ABEGOManager am;
+				core::sequence::ABEGOManager am;
 				// check characters of abego is appropriate or not
 				for( Size k=2; k<=tokens[3].length(); k++ ) {
 					am.symbol2index( tokens[3][k-1] );

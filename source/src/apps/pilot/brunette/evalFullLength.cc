@@ -47,7 +47,7 @@
 
 #include <core/types.hh>
 
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <devel/init.hh>

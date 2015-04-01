@@ -10,6 +10,13 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"core/indexed_structure_store": [
+		"FragmentStore",
+		"FragmentLookup",
+		"H5FragmentStoreBackend",
+		"BinaryFragmentStoreBackend",
+		"StructureStoreManager",
+	],
 	"core/io/carbohydrates": [
 		"pose_io",
 	],
@@ -688,11 +695,17 @@ sources = {
 		"TrieCollection",
 		"TrieCountPairBase",
 	],
+	"core/scoring/methods/vall_lookback":[
+		"VallLookbackData",
+		"VallLookbackEnergy",
+		"VallLookbackPotential",
+	],
 	"core/scoring/vdwaals": [
 		"VDW_Energy",
 		"VDWTrie",
 	],
 	"core/sequence": [
+		"ABEGOManager",
 		"Aligner",
 		"AlignerFactory",
 		"AnnotatedSequence",
@@ -723,6 +736,7 @@ sources = {
 		"SWAligner",
 		"util",
 	],
+
 }
 include_path = [
 ]

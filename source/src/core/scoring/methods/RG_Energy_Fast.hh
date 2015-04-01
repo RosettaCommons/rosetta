@@ -61,6 +61,8 @@ public:
 	/// @brief Defines a center of mass based RG calculation that is O(n) rather
 	/// than O(n^2).
 	RG_Energy_Fast();
+		
+	RG_Energy_Fast( EnergyMethodCreatorOP CreatorOP );
 
 	/// clone
 	virtual

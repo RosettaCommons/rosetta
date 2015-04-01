@@ -50,10 +50,14 @@ public:
 
 	// @brief Retrieves fragment store from backend.
 	FragmentStoreOP get_fragment_store(std::string store_name);
+	FragmentStoreOP get_fragment_store(std::string store_name,std::string group_field,std::string group_type);
+
 
 	//H5 DataTypes for store datatypes.
 	static H5::DataType FragmentThresholdDistanceEntryDatatype();
 	static H5::DataType FragmentCoordinateEntryDatatype(FragmentSpecification fragment_spec);
+	static H5::DataType FragmentInt64GroupEntryDatatype(std::string group_field);
+	static H5::DataType FragmentRealGroupEntryDatatype(std::string group_field);
 
 private:
 	H5::H5File target_file_;

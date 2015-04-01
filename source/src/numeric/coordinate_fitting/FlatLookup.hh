@@ -39,19 +39,21 @@ class FlatLookup
       prepare_for_query(query);
 
       distance = std::numeric_limits<Real>::max();
-
       for (numeric::Size i = 0; i < entries.size(); i++)
       {
         Real test_distance = entry_distance(query, entries[i]);
 
-        if ( test_distance < entry_radius(entries[i]))
+        if ( test_distance < distance)
         {
           distance = test_distance;
+				}
+				if ( test_distance < entry_radius(entries[i]))
+        {
+          distance = test_distance; //redundant. 
           entry = entries[i];
           return true;
         }
       }
-
       return false;
     }
 

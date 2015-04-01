@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/util/ABEGOManager.cc
+/// @file core/sequence/ABEGOManager.cc
 /// @brief class for ABEGO
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 #include <core/chemical/ResidueType.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <core/pose/Pose.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <cmath>
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer TR( "core.util.ABEGOManager" );
+static thread_local basic::Tracer TR( "core.sequence.ABEGOManager" );
 
 namespace core {
-namespace util {
+namespace sequence {
 
 // @brief Auto-generated virtual destructor
 ABEGOManager::~ABEGOManager() {}
@@ -410,6 +410,21 @@ ABEGOManager::symbol2index( char const & symbol )
 	}
 }
 
+/// @brief transform abego symbol string to base5 index. This is used to quickly pool the abego from Alex's hd5 database
+Size ABEGOManager::symbolString2base5index( std::string symbolString){
+	std::string allowedChar = "ABEGO";
+	for(Size ii=0; ii<symbolString.size(); ++ii ){ //check for only allowed characters
+		if(allowedChar.find(symbolString.substr(ii,1)) == std::string::npos)
+			utility_exit_with_message("Looking for " + symbolString.substr(ii,1) + " which doesn't exist in the hdf5 database");
+	}
+	Size base5index = 0;
+	for(Size ii=0; ii<symbolString.size(); ++ii){
+		Size symbolValue = symbol2index( symbolString[ii]);
+		Size abego_index_radix = pow(5,ii);
+		base5index += abego_index_radix*(symbolValue-1);
+	}
+	return(base5index);
+}
 
 /// @brief get abego sequence from pose
 utility::vector1< std::string >
@@ -469,6 +484,6 @@ get_abego( core::pose::Pose const & pose, core::Size const level )
 	return am.get_symbols( pose, level );
 }
 
-} // namespace util
+} // namespace sequence
 } // namespace core
 

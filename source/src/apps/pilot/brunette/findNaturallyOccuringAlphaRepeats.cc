@@ -46,7 +46,7 @@
 
 #include <core/types.hh>
 
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 
 #include <devel/init.hh>
 

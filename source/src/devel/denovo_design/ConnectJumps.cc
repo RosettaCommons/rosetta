@@ -32,7 +32,7 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 
 //Protocol Headers
 #include <protocols/forge/build/BuildManager.hh>
@@ -295,7 +295,7 @@ void ConnectJumps::apply( core::pose::Pose & pose )
 		TR << "CLOSED THE LOOP" << std::endl;
 		set_last_move_status( protocols::moves::MS_SUCCESS );
 		pose = test_pose;
-		TR << "connected abego = " << core::util::get_abego( pose, 2 ) << std::endl;
+		TR << "connected abego = " << core::sequence::get_abego( pose, 2 ) << std::endl;
 		// check SS against wanted SS
 		dssp.apply( pose );
 		std::string pose_ss( pose.secstruct() );

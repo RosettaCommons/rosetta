@@ -105,6 +105,81 @@ FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_
 	return lookup;
 }
 
+FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_name, std::string store_path, std::string group_field,std::string group_type)
+{
+	FragmentStoreOP target_store(NULL);
+    TR.Debug << "loading fragment lookup "+lookup_name+" store path "+store_path+" group_field "+ group_field+ " group type " + group_type;
+	std::string resolved_path = resolve_store_path(store_path);
+
+	if(resolved_path.empty())
+	{
+			utility_exit_with_message("Unable to resolve specified store: " + store_path);
+	}
+
+	if(utility::file::file_extension(resolved_path) == "h5")
+	{
+#ifdef USEHDF5
+		H5FragmentStoreBackend backend(store_path);
+		target_store = backend.get_fragment_store(lookup_name,group_field,group_type);
+#else
+		utility_exit_with_message("StructureStoreManager::load_fragment_lookup without HDF5 support, unable to load lookup: " + lookup_name + " resolved from: " + store_path);
+#endif
+	}
+	else
+	{
+		BinaryFragmentStoreBackend backend(resolved_path);
+		target_store = backend.get_fragment_store(lookup_name);
+	}
+
+	FragmentLookupOP lookup = FragmentLookupOP(new FragmentLookup(target_store));
+	return lookup;
+}
+
+std::map<Size, FragmentStoreOP> StructureStoreManager::group_fragment_store_int(std::string group_field,FragmentStoreOP fullStore){
+	//get counts
+	std::map <Size,Size> type_ct;
+	std::map <Size,Size>::iterator type_ct_iter;
+	std::vector<Size> fragsGroupIds = fullStore->int64_groups[group_field];
+	Size fragment_length = fullStore->fragment_specification.fragment_length;
+	for(Size ii=0; ii<fragsGroupIds.size(); ++ii){
+		//second time id seen increment counter 1st time increment to 1
+		type_ct_iter = type_ct.find(fragsGroupIds[ii]);
+		if(type_ct_iter != type_ct.end()){
+			type_ct_iter->second++;
+		}
+		else{
+			type_ct.insert(std::pair<Size,Size>(fragsGroupIds[ii],1));
+		}
+	}
+	//create correctly sized fragmentStores
+	std::map<Size,FragmentStoreOP> typed_frags;
+	FragmentSpecification fragment_spec = fullStore->fragment_specification;
+	for(type_ct_iter=type_ct.begin(); type_ct_iter != type_ct.end(); ++type_ct_iter){
+		FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, type_ct_iter->second ));
+		typed_frags.insert(std::pair<Size,FragmentStoreOP> (type_ct_iter->first, fragment_store));
+	}
+	//populate fragment stores
+	std::map <Size,Size> type_currentCt;
+	for(Size ii =0; ii<fragsGroupIds.size(); ++ii){
+		Size newFragStartPosition = 0; //position in new fragment array the fragment should start
+		Size originalFragStartPosition = ii*fragment_length;
+		type_ct_iter = type_currentCt.find(fragsGroupIds[ii]);
+		if(type_ct_iter != type_currentCt.end()){
+			newFragStartPosition = type_ct_iter->second*fragment_length;
+			type_ct_iter->second++;
+		}
+		else{
+			newFragStartPosition = 0*fragment_length;  //always will be 0 just set so I remember what is actually going on.
+			type_currentCt.insert(std::pair<Size,Size>(fragsGroupIds[ii],1));
+		}
+		for(Size jj=0; jj<fragment_length; ++jj){
+			typed_frags[fragsGroupIds[ii]]->fragment_coordinates[newFragStartPosition+jj] =fullStore->fragment_coordinates[originalFragStartPosition+jj];
+		}
+	}
+	return(typed_frags);
+}
+
+
 std::string StructureStoreManager::resolve_store_path(std::string target_path)
 {
 	std::string basename = utility::file::file_basename(target_path);

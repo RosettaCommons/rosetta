@@ -385,6 +385,7 @@ enum ScoreType {
 	Mlipo,
 	rg, // radius of gyration
 	rg_local, //radius of gyration for repeat proteins
+	vall_lb, //vall_lookback. Requires use of hdf5 database
 	co, // contact order
 	hs_pair,
 	ss_pair,

@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include <iostream>
 
 namespace core
@@ -35,14 +36,14 @@ struct FragmentSpecification
 		fragment_length(0),
 		fragment_atoms(0)
 	{
-		
+
 	}
 
 	FragmentSpecification(numeric::Size fragment_length, std::vector<std::string> fragment_atoms) :
 		fragment_length(fragment_length),
 		fragment_atoms(fragment_atoms)
 	{
-		
+
 	}
 
 	numeric::Size fragment_length;
@@ -60,10 +61,15 @@ public:
 	FragmentStore(FragmentSpecification fragment_specification, numeric::Size num_fragments = 0);
 
 	void resize(numeric::Size num_fragments);
+	void add_threshold_distance_allFrag(numeric::Real distance);
 
-  FragmentSpecification fragment_specification;
+
+	FragmentSpecification fragment_specification;
 	std::vector<numeric::Real> fragment_threshold_distances;
 	std::vector< numeric::xyzVector<numeric::Real> > fragment_coordinates;
+	std::map<std::string, std::vector<numeric::Size> > int64_groups;
+	std::map<std::string, std::vector<numeric::Real> > real_groups;
+
 };
 
 }

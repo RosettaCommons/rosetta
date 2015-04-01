@@ -47,7 +47,7 @@
 
 #include <core/types.hh>
 
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <devel/init.hh>
@@ -252,7 +252,7 @@ int main( int argc, char * argv [] ) {
 		Real fa_score = scorefxn->score(*input_poseOP);
 		Real resTypeScore = res_type_score(*input_poseOP);
 		Real hb_srbb_score = get_hb_srbb_score(*input_poseOP);
-		utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
+		utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
 		output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance1_4) << " "<< F(8,3,distance2_5) << " "<< F(8,3,distance3_6) << " "<< F(8,3,distance1_2)  <<" " << F(8,3,distance2_3) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " " <<F(8,3,hb_srbb_score) << "  " << std::endl;
   }
   } catch ( utility::excn::EXCN_Base const & e ) {

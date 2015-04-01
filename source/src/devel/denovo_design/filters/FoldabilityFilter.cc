@@ -25,7 +25,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
@@ -219,7 +219,7 @@ FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 	}
 
 	// create abego vector
-	utility::vector1< std::string > abego_all( core::util::get_abego( pose, 2 ) );
+	utility::vector1< std::string > abego_all( core::sequence::get_abego( pose, 2 ) );
 	TR << "abego from full input pose is " << abego_all << std::endl;
 	utility::vector1< std::string > abego;
 	if ( ignore_pose_abego_ ) {

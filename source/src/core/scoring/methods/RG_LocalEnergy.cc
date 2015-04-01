@@ -60,7 +60,9 @@ RG_LocalEnergyCreator::score_types_for_method() const {
 
 
 /// was going to have this read in the blueprint. But core can't relly on something in protocols.
-RG_LocalEnergy::RG_LocalEnergy():RG_Energy_Fast()
+//RG_LocalEnergy::RG_LocalEnergy():RG_Energy_Fast()
+RG_LocalEnergy::RG_LocalEnergy():
+		RG_Energy_Fast( EnergyMethodCreatorOP( new RG_LocalEnergyCreator ) ) 
 {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -85,7 +87,7 @@ assert(lastRes_ > 0);
 EnergyMethodOP
 RG_LocalEnergy::clone() const
 {
-	return EnergyMethodOP( new RG_LocalEnergy );
+	return EnergyMethodOP( new RG_LocalEnergy() );
 }
 
 /////////////////////////////////////////////////////////////////////////////

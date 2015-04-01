@@ -33,7 +33,7 @@
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <core/types.hh>
 #include <devel/init.hh>
 #include <utility/vector1.hh>
@@ -68,7 +68,7 @@ int main( int argc, char * argv [] ) {
 			std::string tag = core::pose::tag_from_pose(*input_poseOP);
         		std::string outFile = (tag + ".abego");
         		utility::io::ozstream output(outFile);
-       		utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
+       		utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
        		 for (Size ii=1; ii<=abego_vector.size(); ++ii){
 				output << abego_vector[ii];
 			}

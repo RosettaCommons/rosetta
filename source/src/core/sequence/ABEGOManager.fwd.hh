@@ -11,23 +11,23 @@
 /// @brief foward header file for class of ABEGO
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
-#ifndef INCLUDED_core_util_ABEGOManager_FWD_hh
-#define INCLUDED_core_util_ABEGOManager_FWD_hh
+#ifndef INCLUDED_core_sequence_ABEGOManager_FWD_hh
+#define INCLUDED_core_sequence_ABEGOManager_FWD_hh
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace util {
+namespace sequence {
 
 class ABEGOManager;
 
 typedef utility::pointer::shared_ptr<ABEGOManager> ABEGOManagerOP;
 typedef utility::pointer::shared_ptr<ABEGOManager const> ABEGOManagerCOP;
 
-} // namespace util
+} // namespace sequence
 } // namespace core
 
 
-#endif /* INCLUDED_core_util_ABEGOManager_FWD_hh */
+#endif /* INCLUDED_core_sequence_ABEGOManager_FWD_hh */
 

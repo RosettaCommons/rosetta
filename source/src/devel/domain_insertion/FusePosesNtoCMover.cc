@@ -39,7 +39,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 
 #include <protocols/relax/FastRelax.hh>
 #include <basic/datacache/DataMap.hh>
@@ -657,7 +657,7 @@ FusePosesNtoCMover::analyze_fused_pose(
 	core::Real rms( core::scoring::CA_rmsd( fusion_raw, fusion_rlx, residues ) );
 
 	//3.
-	utility::vector1< std::string > complete_abegos( core::util::get_abego( fusion_rlx ) );
+	utility::vector1< std::string > complete_abegos( core::sequence::get_abego( fusion_rlx ) );
 	core::scoring::dssp::Dssp ss_frlx(fusion_rlx);
 	//ss_frlx.insert_ss_into_pose( fusion_rlx );
 	utility::vector1< std::string > fusion_region_abegos;

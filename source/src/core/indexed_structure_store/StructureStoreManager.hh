@@ -18,12 +18,15 @@
 #include <core/types.hh>
 #include <core/indexed_structure_store/StructureStoreManager.fwd.hh>
 #include <core/indexed_structure_store/FragmentLookup.fwd.hh>
+#include <core/indexed_structure_store/FragmentStore.fwd.hh>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
 
 // C++ headers
+#include <numeric/types.hh>
 #include <string>
+#include <map>
 
 namespace core
 {
@@ -50,6 +53,8 @@ public:
 	// lookup_name - Lookup name within store. Fragment lookups within store are
 	//     under <store_path>/fragments/<lookup_name>
 	FragmentLookupOP load_fragment_lookup(std::string lookup_name, std::string store_path);
+	FragmentLookupOP load_fragment_lookup(std::string lookup_name, std::string store_path, std::string group_field,std::string group_type);
+	std::map<numeric::Size,FragmentStoreOP> group_fragment_store_int(std::string group_field, FragmentStoreOP fullStore);
 
 	std::string resolve_store_path(std::string store_path);
 

@@ -59,6 +59,7 @@
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/scoring/UnfoldedStatePotential.hh>
 #include <core/scoring/PoissonBoltzmannPotential.hh>
+#include <core/scoring/methods/vall_lookback/VallLookbackPotential.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -165,6 +166,7 @@ ScoringManager::ScoringManager() :
 	unf_state_( /* 0 */ ),
 	NV_lookup_table_(/* 0 */),
 	orbitals_lookup_table_( /* 0 */ ),
+	vallLookbackPotential_(0),
   DDP_lookup_table_(/* 0 */),
 	method_creator_map_( n_score_types, 0 )
 {}
@@ -688,6 +690,14 @@ ScoringManager::get_NVLookupTable() const
 	}
 
 
+///////////////////////////////////////////////////////////////////////////////
+methods::VallLookbackPotential const & ScoringManager::get_vallLookbackPotential() const{
+	if(vallLookbackPotential_ == 0)
+	{
+		vallLookbackPotential_ = methods::VallLookbackPotentialOP(new core::scoring::methods::VallLookbackPotential());
+	}
+	return *vallLookbackPotential_;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

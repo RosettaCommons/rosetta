@@ -72,6 +72,7 @@
 #include <core/scoring/methods/ReferenceEnergyNoncanonicalCreator.hh>
 #include <core/scoring/methods/SecondaryStructureEnergyCreator.hh>
 #include <core/scoring/methods/dfire/DFIRE_EnergyCreator.hh>
+#include <core/scoring/methods/vall_lookback/VallLookbackEnergyCreator.hh>
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 #include <core/scoring/methods/GoapEnergyCreator.hh>
 
@@ -362,6 +363,7 @@ static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyCreator > Refer
 static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyNoncanonicalCreator > ReferenceEnergyNoncanonicalCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SecondaryStructureEnergyCreator > SecondaryStructureEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > DFIRE_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::VallLookbackEnergyCreator > VallLookbackEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;
 

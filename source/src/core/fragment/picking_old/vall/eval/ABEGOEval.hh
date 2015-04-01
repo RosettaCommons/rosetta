@@ -18,7 +18,7 @@
 // unit headers
 #include <core/fragment/picking_old/vall/eval/ABEGOEval.fwd.hh>
 // AUTO-REMOVED #include <core/fragment/picking_old/vall/eval/IdentityEval.hh>
-#include <core/util/ABEGOManager.fwd.hh>
+#include <core/sequence/ABEGOManager.fwd.hh>
 
 // type headers
 #include <core/types.hh>
@@ -57,8 +57,8 @@ public: // typedefs
 	typedef std::string String;
 	typedef core::Real Real;
 
-	typedef core::util::ABEGOManager ABEGOManager;
-	typedef core::util::ABEGOManagerOP ABEGOManagerOP;
+	typedef core::sequence::ABEGOManager ABEGOManager;
+	typedef core::sequence::ABEGOManagerOP ABEGOManagerOP;
 
 public: // concept typedefs
 

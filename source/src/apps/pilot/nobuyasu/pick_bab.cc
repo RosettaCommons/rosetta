@@ -13,7 +13,7 @@
 
 // Package headers
 #include <protocols/jd2/parser/BluePrint.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.hh>

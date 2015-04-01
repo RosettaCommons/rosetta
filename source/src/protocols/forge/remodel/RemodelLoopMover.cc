@@ -23,6 +23,10 @@
 #include <protocols/forge/methods/fold_tree_functions.hh>
 #include <protocols/forge/methods/util.hh>
 
+//datacache
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
+
 // project headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -44,14 +48,19 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/methods/vall_lookback/VallLookbackPotential.hh>
+#include <core/scoring/methods/vall_lookback/VallLookbackData.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/util/ABEGOManager.hh>
+#include <core/scoring/ScoreType.hh>
+
+#include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
@@ -59,6 +68,8 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/GunnCost.hh>
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
+#include <protocols/simple_moves/VallLookbackFragMover.hh>
+
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <basic/datacache/DataMap.hh>
@@ -67,6 +78,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/indexed_structure_store.OptionKeys.gen.hh>
 
 //loophash
 #include <protocols/loophash/BackboneDB.hh>
@@ -547,6 +559,8 @@ void RemodelLoopMover::repeat_sync( //utility function
 	using namespace protocols::loops;
 	using namespace core::kinematics;
 	using namespace basic::options;
+	using namespace core::pose::datacache;
+	using namespace core::scoring::methods;
 
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate.pdb");
 
@@ -569,12 +583,20 @@ void RemodelLoopMover::repeat_sync( //utility function
 			linkPositions.push_back(i);
 		}
 
+		bool vallLookbackActive = repeat_pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA);
+		VallLookbackDataOP vall_history_repeat_pose(0);
+		if(vallLookbackActive){
+			vall_history_repeat_pose = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >( repeat_pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
+		}
+
 		for ( Size i = 1; i<= linkPositions.size(); i++){
 
 				Size res = linkPositions[i];
 				Real loop_phi = 0;
 				Real loop_psi = 0;
 				Real loop_omega = 0;
+				Real loop_rmsd_history = 0;
+				Real loop_res_changed_history = 0;
 				char loop_secstruct = 'H';
 				if (res <= segment_length ){ // should already be, just to be sure
 
@@ -587,11 +609,21 @@ void RemodelLoopMover::repeat_sync( //utility function
 						repeat_pose.set_psi( 1, loop_psi);
 						repeat_pose.set_omega( 1, loop_omega);
 						repeat_pose.set_secstruct(1,loop_secstruct);
+						if(vallLookbackActive){
+							loop_rmsd_history = vall_history_repeat_pose->get_rmsd(1);
+							loop_res_changed_history = vall_history_repeat_pose->get_res_changed(1);
+						}
+
 					} else {
 						loop_phi = repeat_pose.phi(res);
 						loop_psi = repeat_pose.psi(res);
 						loop_omega = repeat_pose.omega(res);
 						loop_secstruct = repeat_pose.secstruct(res);
+						if(vallLookbackActive) {
+							loop_rmsd_history = vall_history_repeat_pose->get_rmsd(res);
+							loop_res_changed_history = vall_history_repeat_pose->get_res_changed(res);
+						}
+
 					}
 
 					for (Size rep = 1; rep < repeat_number; rep++){
@@ -599,6 +631,11 @@ void RemodelLoopMover::repeat_sync( //utility function
 						repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 						repeat_pose.set_omega( res+(segment_length*rep),loop_omega );
 						repeat_pose.set_secstruct( res+(segment_length*rep),loop_secstruct );
+						if(vallLookbackActive){
+							vall_history_repeat_pose->set_rmsd(res+(segment_length*rep),loop_rmsd_history);
+							vall_history_repeat_pose->set_res_changed(res+(segment_length*rep),loop_res_changed_history);
+						}
+
 					}
 				}
 				else if (res > segment_length ){ //for spanning builds
@@ -653,6 +690,10 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	using namespace core::kinematics;
 	using namespace core::pose::symmetry;
 	using namespace core::scoring::constraints;
+	using namespace core::pose::datacache;
+	using namespace core::scoring::methods;
+
+
 
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate.pdb");
 
@@ -803,15 +844,20 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	//take care of the start if build across jxn
 	if (build_across_jxn){
 		while (residues_beyond_jxn){
-		  pose.set_secstruct(residues_beyond_jxn, pose.secstruct(residues_beyond_jxn+segment_length));
-		  pose.set_phi(residues_beyond_jxn, pose.phi(residues_beyond_jxn+segment_length));
+			pose.set_secstruct(residues_beyond_jxn, pose.secstruct(residues_beyond_jxn+segment_length));
+			pose.set_phi(residues_beyond_jxn, pose.phi(residues_beyond_jxn+segment_length));
 			pose.set_psi(residues_beyond_jxn, pose.psi(residues_beyond_jxn+segment_length));
 			pose.set_omega(residues_beyond_jxn, pose.omega(residues_beyond_jxn+segment_length));
 			residues_beyond_jxn--;
 		}
 	}
-
-
+	bool vallLookbackActive = pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA);
+	VallLookbackDataOP vall_history_repeat_pose_(0);
+	VallLookbackDataOP vall_history_pose_(0);
+	if(vallLookbackActive){
+		vall_history_pose_ = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >( pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
+		vall_history_repeat_pose_ = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >( repeat_pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
+	}
 	for (Size rep = 0; rep < repeat_number; rep++){
 		for (Size res = 1; res <= segment_length; res++){
 				//std::cout << "DEBUG: res+segmentlength*rep = " << res+(segment_length*rep) << std::endl;
@@ -832,6 +878,12 @@ void RemodelLoopMover::repeat_propagation( //utility function
 				repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 				repeat_pose.set_omega( res+(segment_length*rep), pose.omega(res) );
 				repeat_pose.set_secstruct( res+(segment_length*rep),pose.secstruct(res) );
+				if(vallLookbackActive){
+					Real rmsd_tmp = vall_history_pose_->get_rmsd(res);
+					bool res_changed_tmp= vall_history_pose_->get_res_changed(res);
+					vall_history_repeat_pose_->set_rmsd(res+( segment_length*rep),rmsd_tmp);
+					vall_history_repeat_pose_->set_res_changed(res+( segment_length*rep),res_changed_tmp);
+				}
 		}
 	}
 
@@ -889,11 +941,13 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace OptionKeys::indexed_structure_store;
 	using namespace core;
+	using namespace core::scoring::methods;
+	using namespace core::scoring;
 	using namespace chemical;
 	using core::kinematics::FoldTree;
 	using protocols::forge::methods::fold_tree_from_pose;
-
 	// archive
 	FoldTree const archive_ft = pose.fold_tree();
 	//std::cout << "archived foldtree " << archive_ft << std::endl;
@@ -1025,7 +1079,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
 	if(option[OptionKeys::remodel::staged_sampling::staged_sampling].user()){
 		//initialize options
-
+		std::cout << "************************INSIDE STAGED SAMPLING" << std::endl;
 		if(option[OptionKeys::remodel::staged_sampling::starting_sequence].user())
 			set_starting_sequence(pose);
 		if(option[OptionKeys::remodel::staged_sampling::start_w_ideal_helices].user())
@@ -1064,6 +1118,12 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 		}
 		sfxStage1_OP->show_pretty(TR);
+		if(option[fragment_threshold_distance].user()){
+			//prime the score function because of const issues involved with the score function.
+			VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
+			potential_.lookback(pose);
+			potential_.lookback(repeat_pose_);
+		}
 		//setup fragments so they sample correctly-----------
 		Real fragScoreThreshold = 0.99999;  //1.00XX indicates 1 ABEGO or HLE mismatch.  I chose to use the numbers for future finer control
 		if(!option[OptionKeys::remodel::staged_sampling::require_frags_match_blueprint])
@@ -1077,14 +1137,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				abinitio_stage( pose,999, movemap,sfxStage1_OP,1,100,sampleAllResidues,true,"full_length_frags",false,fragScoreThreshold);
 		//Sample with 9mers in all positions------------------------------
 		//This should be read in from staging file.
-		abinitio_stage( pose, 9, movemap,sfxStage0_OP,3,500,sampleSubsetResidues ,false,"9mers_allPos",false,fragScoreThreshold);
-		abinitio_stage( pose, 3, movemap,sfxStage1_OP,3,500,sampleSubsetResidues ,false,"9mers_allPos",false,fragScoreThreshold);
-		abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,500,sampleSubsetResidues,false,"9mers_allPos",true,fragScoreThreshold);
-		if(option[OptionKeys::remodel::staged_sampling::small_moves].user()){
-				pose.dump_pdb("pre_small.pdb");
-				small_move_stage(pose,movemap,sfxStage1_OP,3,500,true,0,0,5.0);
-				pose.dump_pdb("post_small.pdb");
-		}
+		abinitio_stage( pose, 9, movemap,sfxStage0_OP,1,100,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
+		abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,100,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
+		abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,500,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
+		abinitio_stage( pose, 3, movemapAll,sfxStage1_OP,3,500,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
 		if(option[OptionKeys::remodel::staged_sampling::fa_relax_moves].user()){
 				fa_relax_stage(pose);
 		}
@@ -1122,7 +1178,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			sfxOP->set_weight( scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure] );
 			sfxOP->set_weight( scoring::coordinate_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure] );
 		}
-
 		// randomize loops
 		if( randomize_loops_ ) {
 			randomize_stage( pose );
@@ -1146,7 +1201,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		else {
 			mc.reset(pose);
 		}
-
 		for ( Size attempt = 1; attempt <= allowed_closure_attempts_; ++attempt ) {
 
 			TR << "* closure_attempt " << attempt << std::endl;
@@ -1225,7 +1279,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			//JobDistributor::get_instance()->job_outputter()->other_pose( JobDistributor::get_instance()->current_job(), pose, ss.str() );
 		}
 	}
-
 	TR << "* " << accumulator.size() << " / " << allowed_closure_attempts_ << "   closed / attempts " << std::endl;
 
 	// return the best structure if available, otherwise mark failure
@@ -1739,7 +1792,7 @@ void RemodelLoopMover::loophash_stage(
 
 						//special case for DB's test
 					  if(option[OptionKeys::remodel::lh_filter_string].user()){
-										core::util::ABEGOManager AM;
+										core::sequence::ABEGOManager AM;
 										std::string alphabet;
 										std::string target = filter_target[loop_number];
 										//turn string to same case
@@ -1869,9 +1922,11 @@ void RemodelLoopMover::abinitio_stage(
 	using namespace chemical;
 	using namespace OptionKeys::remodel;
 	using numeric::random::random_permutation;
-
+	using namespace core::scoring;
 	using protocols::loops::add_cutpoint_variants;
 	using protocols::loops::remove_cutpoint_variants;
+	using namespace core::pose::datacache;
+	using namespace core::scoring::methods;
 
 
 	TR << "** abinitio_stage_" << stage_name << std::endl;
@@ -1906,7 +1961,6 @@ void RemodelLoopMover::abinitio_stage(
 	} else {
 		mc.reset( pose );
 	}
-
 	// reset counters
 	mc.reset_counters();
 
@@ -1932,6 +1986,11 @@ void RemodelLoopMover::abinitio_stage(
 			}
 		}else{
 			pose = mc.lowest_score_pose();
+		}
+		if(pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA)){
+			//Efficiency could be improved by copying rmsd and lookback. But I figure a fresh copy might be better for now
+			VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
+			potential_.lookback(pose);
 		}
 		if(option[OptionKeys::remodel::repeat_structure].user()){
 			repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
@@ -1991,6 +2050,12 @@ void RemodelLoopMover::abinitio_stage(
 				}
 		}
 	}
+	if(pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA)){
+		//Efficiency could be improved by copying rmsd and lookback. But I figure a fresh copy might be better for now
+		VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
+		potential_.lookback(pose);
+		potential_.lookback(repeat_pose_);
+	}
 }
 
 /// @brief  relax stage
@@ -2014,13 +2079,10 @@ void RemodelLoopMover::abinitio_stage(
 				}
 				core::util::switch_to_residue_type_set( fa_pose, core::chemical::FA_STANDARD);
 				protocols::relax::FastRelax frelax(scorefxn,1);//only 1 stage
-				fa_pose.dump_pdb("before_relax.pdb");
 				TR << "Relaxing pose" << std::endl;
 				frelax.apply(fa_pose);
 				TR << "Finished relaxing" << std::endl;
-				fa_pose.dump_pdb("after_relax.pdb");
 				core::util::switch_to_residue_type_set( fa_pose, core::chemical::CENTROID);
-				fa_pose.dump_pdb("centroid.pdb");
 				//copy fa_pose to original_pose
 				if (option[OptionKeys::remodel::repeat_structure].user() ) {
 						Size copy_size =0;
@@ -2039,7 +2101,6 @@ void RemodelLoopMover::abinitio_stage(
 				else{//non repeat case
 						pose = fa_pose;
 				}
-				pose.dump_pdb("finalRelaxStagePdb.pdb");
  }
 
 protocols::simple_moves::symmetry::SetupNCSMover RemodelLoopMover::generate_ncs_csts(Pose & pose){
@@ -3076,6 +3137,8 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 {
 	using namespace protocols::simple_moves;
 	using namespace core::fragment;
+	using namespace basic::options;
+	using namespace OptionKeys::indexed_structure_store;
 	FragmentMoverOPs frag_movers;
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(); f != fragsets_.end(); ++f ) {
 		if((*f)->max_frag_length()==frag_size || ((frag_size == 999)&&((*f)->max_frag_length()>9))) {
@@ -3095,10 +3158,15 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 					}
 			}
 			ClassicFragmentMoverOP cfm;
-			if(smoothMoves)
-				cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
-			else
-				cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( *f, movemap.clone() ) );
+			if(option[fragment_threshold_distance].user()){
+				cfm = ClassicFragmentMoverOP(new VallLookbackFragMover(*f,movemap.clone()));
+			}
+			else{
+				if(smoothMoves)
+					cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
+				else
+					cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( *f, movemap.clone() ) );
+				}
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			frag_movers.push_back( cfm );

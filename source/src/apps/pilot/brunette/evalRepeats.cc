@@ -47,7 +47,7 @@
 
 #include <core/types.hh>
 
-#include <core/util/ABEGOManager.hh>
+#include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <devel/init.hh>
@@ -308,7 +308,7 @@ int main( int argc, char * argv [] ) {
         Size helixCAInContact = get_helixCAInContact(*input_poseOP,helices,repeatLength*2);
       	output << F(8,3,score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,d1_2) << " "<< F(8,3,d1_3) << " "<< F(8,3,d1_4) << " "<< F(8,3,d2_4)  <<" " << F(8,3,d2_5) <<" " << F(8,3,d3_6) << " "<< " " << I(6,tag) <<" " << I(4,resTypeScore) << " " << I(4,alaCt) << " " << I(4,helixCAInContact) << " ";
 
-        utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
+        utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
 		for (Size ii=1; ii<(2*repeatLength); ++ii){
 			output << abego_vector[ii];
 		}

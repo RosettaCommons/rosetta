@@ -34,13 +34,19 @@ namespace indexed_structure_store
     fragment_threshold_distances(num_fragments),
     fragment_coordinates(num_fragments * fragment_specification.coordinates_per_fragment() )
   {
-  }
+	}
 
 	void FragmentStore::resize(numeric::Size num_fragments)
 	{
 		fragment_threshold_distances.resize(num_fragments);
 		fragment_coordinates.resize(num_fragments * fragment_specification.coordinates_per_fragment());
 	}
+
+    void FragmentStore::add_threshold_distance_allFrag(numeric::Real distance)
+    {
+        for(numeric::Size ii=0; ii< fragment_threshold_distances.size(); ++ii)
+            fragment_threshold_distances[ii]=distance;
+    }
 
 }
 }

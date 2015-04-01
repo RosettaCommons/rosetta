@@ -106,13 +106,11 @@ FragmentLookupResult FragmentLookup::lookup_fragment(std::vector< numeric::xyzVe
 
 	numeric::Real* coordinate_start = &(query_coordinates[0].x());
 	result.found_match = lookup_.first_match(coordinate_start, result.match_index, result.match_rmsd);
-
 	if(result.found_match)
 	{
 		result.match_score = 1;
 		result.match_rmsd_threshold = store_->fragment_threshold_distances[result.match_index];
 	}
-
 	return result;
 }
 
