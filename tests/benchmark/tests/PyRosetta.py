@@ -34,7 +34,7 @@ def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
 
-    if res:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
+    if res  and  platform['os'] != 'windows':  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
