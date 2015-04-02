@@ -1,7 +1,10 @@
 NO_HB_ENV_DEP
+ENLARGE_H_LJ_WDEPTH
+RNA_TORSION_POTENTIAL RNA11_based_new
 fa_atr                      0.73
 fa_rep                      0.1
 fa_intra_rep                0.0071
+fa_stack                    0
 rna_torsion                 4.26
 hbond_sc                    2.46
 lk_nonpolar                 0.25
