@@ -242,8 +242,23 @@ void PerformanceBenchmark::executeOneBenchmark(
 		PerformanceBenchmark * B = all[i];
 		if ( B->name() == name ) {
 			
-			perform_until_set_found( B, scaleFactor );
-				
+			// right now, take the minimum of 3 trials...
+			for ( Size j = 0; j < 3; ++j ) {
+				double prev_result = B->result_;
+				perform_until_set_found( B, scaleFactor );
+				if ( prev_result == 0 ) {
+					// definitely overwrite
+					prev_result = B->result_;
+				} else {
+					// it ran once before
+					if ( B->result_ > prev_result ) {
+						B->result_ = prev_result;
+					} else {
+						// necessary for more than two trials>
+						prev_result = B->result_;
+					}
+				}
+			}
 			found_benchmark = true;
 			break;
 		}
@@ -268,10 +283,26 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 	TR << std::endl << "Executing all benchmarks..." << std::endl << std::endl;
 
 	std::vector<PerformanceBenchmark *> & all( allBenchmarks() );
+	// right now, take the minimum of 3 trials...
 	
-	for ( Size i = 0; i < all.size(); ++i ) {
-		PerformanceBenchmark * B = all[ i ];
-		perform_until_set_found( B, scaleFactor );
+	std::vector< double > prev_results( all.size(), 0 );
+	for ( Size j = 0; j < 3; ++j ) {
+		for ( Size i = 0; i < all.size(); ++i ) {
+			PerformanceBenchmark * B = all[ i ];
+			perform_until_set_found( B, scaleFactor );
+			if ( prev_results[ i ] == 0 ) {
+				// definitely overwrite
+				prev_results[ i ] = B->result_;
+			} else {
+				// it ran once before
+				if ( B->result_ > prev_results[ i ] ) {
+					B->result_ = prev_results[ i ];
+				} else {
+					// necessary for more than two trials>
+					prev_results[ i ] = B->result_;
+				}
+			}
+		}
 	}
 	TR << std::endl << "Executing all benchmarks... Done." << std::endl;
 }
@@ -352,7 +383,6 @@ int main( int argc, char *argv[])
 		//TR << "native:"  << basic::options::option[ james::native ]() << "\n";
 		//TR << "DB:"  << basic::options::option[ in::path::database ]() << "\n";
 		Real scale = basic::options::option[ run::benchmark_scale ]();
-
 
 		TR << "Performance Benchmark started! Scale factor: " << scale << " -------------" << std::endl;
 

@@ -393,11 +393,11 @@ private:
 	core::Size base_scale_;
 };
 
-InteractionGraphPerformanceBenchmark igpb_lmig_sc12( "core.pack.linmem_ig_score12", interaction_graph_perfbench_linmemig_score12 );
-InteractionGraphPerformanceBenchmark igpb_lmig_sc12sp2( "core.pack.linmem_ig_sc12sp2", interaction_graph_perfbench_linmemig_sc12sp2 );
-InteractionGraphPerformanceBenchmark igpb_lmig_sc12he( "core.pack.linmem_ig_sc12he", interaction_graph_perfbench_linmemig_sc12he );
-InteractionGraphPerformanceBenchmark igpb_lmig_mmstd( "core.pack.linmem_ig_mmstd", interaction_graph_perfbench_linmemig_mmstd );
-InteractionGraphPerformanceBenchmark igpb_pdig_sc12( "core.pack.pdig_score12", interaction_graph_perfbench_pdig_score12, 2 ); // amw 20 to 2
-InteractionGraphPerformanceBenchmark igpb_denseig_sc12( "core.pack.denseig_score12", interaction_graph_perfbench_denseig_score12, 70000 ); // amw 700000 to 70000
+InteractionGraphPerformanceBenchmark igpb_lmig_sc12( "core.pack.linmem_ig_score12", interaction_graph_perfbench_linmemig_score12, 5 );
+InteractionGraphPerformanceBenchmark igpb_lmig_sc12sp2( "core.pack.linmem_ig_sc12sp2", interaction_graph_perfbench_linmemig_sc12sp2, 5 );
+InteractionGraphPerformanceBenchmark igpb_lmig_sc12he( "core.pack.linmem_ig_sc12he", interaction_graph_perfbench_linmemig_sc12he, 5 );
+InteractionGraphPerformanceBenchmark igpb_lmig_mmstd( "core.pack.linmem_ig_mmstd", interaction_graph_perfbench_linmemig_mmstd, 5 );
+InteractionGraphPerformanceBenchmark igpb_pdig_sc12( "core.pack.pdig_score12", interaction_graph_perfbench_pdig_score12, 20 );
+InteractionGraphPerformanceBenchmark igpb_denseig_sc12( "core.pack.denseig_score12", interaction_graph_perfbench_denseig_score12, 700000 );
 
 #endif

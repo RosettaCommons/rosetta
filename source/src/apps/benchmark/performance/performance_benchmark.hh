@@ -42,7 +42,7 @@ public:
 	/// return number of seconds that was used to performe 'run' step.
 	double execute(core::Real scaleFactor);
 	std::string name() { return name_; }
-
+	
 public:
 	static void executeOneBenchmark(
 		std::string const & name,
